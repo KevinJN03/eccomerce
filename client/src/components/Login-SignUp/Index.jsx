@@ -1,9 +1,8 @@
 function LoginSignUp(){
-    return(<>
-    <p>
-        At Login PAge
-    </p>
-    </>)
+    return(
+        <>
+        </>
+    )
 }
 
 export default LoginSignUp
