@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import './App.css'
-
+import Layout from './components/Layout/layout'
+import Body from './components/Body'
 function App() {
 
 
   return (
-    <>
-     <p>App COmponent</p>
-    </>
+    <div id="App" className='w-full h-full flex flex-col justify-center align-center'>
+      <Layout>
+     <Body/>
+     </Layout>
+    </div>
   )
 }
 

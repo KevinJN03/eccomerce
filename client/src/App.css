@@ -1,42 +1,191 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.header {
+    /* @apply flex flex-row w-full max-h-28 px-10 justify-center  */
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0 80px;
+    height: 60px;
+    width: 100%;
+    
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+}
+.image-wrapper, #men, #women {
+   border-right: 1px solid white ; 
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+#men, #women {
+    height: 100%;
+    color: var(--white);
+    min-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.image-wrapper {
+/* @apply h-full max-w-xs */
+height: 100%;
+width: 100px;
+padding-right: 20px;
+min-width: 100px;
+display: flex;
+justify-content: center;
+align-items: center;
+
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: contain;
+}
+#icons-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-height: 100%;
+   width: 150px;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    
+}
+#header-icons {
+    height: 100%;
+    width: calc(100% / 3);
+    padding: 10px
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header-icon {
+    width: 100%;
+    height: 100%;
+  
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.img-icon {
+object-fit: cover;
+width: 100%;
+height: 100%
 }
 
-.card {
-  padding: 2em;
+/* search setion */
+
+#search-input-section {
+ width: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    align-items: center;
+    position: relative;
+    margin: 0 50px
 }
 
-.read-the-docs {
-  color: #888;
+#search-input {
+    width: 100%;
+    border-radius: 30px;
+    border: 1px solid black;
+    height: 70%;
+    padding: 10px 20px
+    
+}
+#search-icon-section {
+    max-height: 50%;
+    max-width: 30px;
+    position: absolute;
+    right: 10px
+}
+
+#search-icon {
+    max-height: 25px;
+    width: 25px
+}
+
+/* Banner css */
+
+#banner-text{
+    width: 90%;
+    text-align: center;
+}
+
+
+.background-color-pink {
+     background-color: var(--pink); 
+}
+
+#discount {
+    border-top: 1px solid white
+}
+
+
+#slide-btn {
+    /* content: " "; */
+    width: 80px;
+    /* background-color: green; */
+    border: 1px solid black;
+    height: 10px;
+    background-color: turquoise;
+    
+}
+
+.bottom-text {
+    bottom: 4%;
+    left: 50%;
+    margin-left:-50px;
+    color: var(--white);
+    font-size: 1.2rem;
+    
+}
+
+.section-1 {
+    @apply w-full flex flex-row mb-10;
+    max-height: 600px;
+   
+}
+
+.salebanner-gap {
+    gap: 3px
+}
+.salebanner4-text{
+    width: 100px;
+  position: absolute;
+  left: 50%;
+  margin-left: -50px;
+  top: 50%;
+  margin-top: -50px;
+    color: var(--black);
+    font-size: 2.2rem;
+    text-align: center;
+    
+}
+
+.max-700px {
+    height: 500px !important;
+}
+
+.badge-icon {
+    width: 150px;
+    height: 50px;
+}
+
+.newletter-btn {
+@apply w-6 h-6 rounded-full absolute;
+right: 4%
+}
+
+#footer-icons-section {
+    @apply flex flex-row w-full gap-7 justify-center my-4;
+}
+
+.footer-copyrght {
+    @apply flex flex-row justify-between py-3;
+    border-top: 1px solid ;
+    margin: 0 28px
+}
+
+.footer-copyrght > div:nth-child(2){
+    @apply gap-7 flex
 }

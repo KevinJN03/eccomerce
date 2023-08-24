@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 150px;
+        fill: #fff;
+        font-family: Gotham;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <text id="g" class="cls-1" x="41.5" y="299">g</text>
+  <text id="l" class="cls-1" x="125.5" y="284">l</text>
+  <text id="a" class="cls-1" x="154.5" y="320">a</text>
+  <text id="m" class="cls-1" x="228.5" y="283">m</text>
+  <text id="o" class="cls-1" x="358.5" y="321">o</text>
+</svg>
