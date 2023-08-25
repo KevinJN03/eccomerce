@@ -11,11 +11,14 @@ function Header() {
   return (
     <header className="header">
       <div id="image-wrapper" className="image-wrapper">
-        <img
+        <a href="/">
+          <img
           src={logo}
           alt="glamo logo"
           className=""
         />
+        </a>
+        
       </div>
       <section id="women">Women</section>
       <section id="men">Men</section>

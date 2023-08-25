@@ -7,9 +7,9 @@ function Footer_Link({legend, linkArr}){
             {linkArr.map((item)=>{
                 return(
                     <div key={linkArr.indexOf(item)}>
-                        <Link to={item.url}>
+                        <a href={item.url}>
                         {item.name}
-                    </Link>
+                    </a>
                     </div>
                     
                 )
