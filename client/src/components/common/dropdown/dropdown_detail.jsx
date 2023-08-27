@@ -1,4 +1,4 @@
-import arrow from '../../assets/footer-icons/right-arrow.png';
+import arrow from '../../../assets/footer-icons/right-arrow.png';
 
 import { useState } from 'react';
 function DropDown_Detail({ details, header }) {

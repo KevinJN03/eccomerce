@@ -18,9 +18,10 @@
 }
 
 :root {
-    --primary: #666;
+    --primary: #2d2d2d;
     --white: white;
     --pink: #f799ba;
     --black: black;
     --grey: #808080;
+    --primary-2 : #525050
 }

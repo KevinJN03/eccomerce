@@ -1,5 +1,5 @@
 import Rating from "./rating";
-import Dropdown_Size from "./dropdown_size";
+import Dropdown_Size from "./dropdown/dropdown_size";
 import Input_S from "./input/input_s";
 function Drawer({product}) {
     return (
@@ -33,7 +33,7 @@ function Drawer({product}) {
             </div>
        
         <div id="how-it-fit-wrrapper">
-<p>How did it fit?</p>
+<p className="mt-2 text-sm font-medium">How did it fit?</p>
 <div className="fit-btn-wrapper flex flex-row w-full gap-3 mt-3">
     <button type="button" className="border-1 px-4 whitespace-nowrap py-3 rounded-full font-semibold text-sm" >True to Size</button>
     <button type="button" className="border-1 px-4 whitespace-nowrap py-3 rounded-full font-semibold text-sm" >Runs small</button>

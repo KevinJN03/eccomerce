@@ -1,0 +1,13 @@
+.profile_dropdown-btn {
+    @apply py-3 px-5 h-8 w-full rounded-full flex justify-center items-center text-xs font-semibold;
+
+}
+
+.signin-signup-btn-container {
+    @apply flex w-full flex-row gap-3 h-16 justify-between items-center px-4;
+    
+}
+
+.dropdown-menu {
+    /* min-width: 130px; */
+}
