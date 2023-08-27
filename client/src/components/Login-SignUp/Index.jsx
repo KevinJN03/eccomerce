@@ -1,9 +1,5 @@
-function LoginSignUp(){
-    return(<>
-    <p>
-        At Login PAge
-    </p>
-    </>)
+function LoginSignUp() {
+    return <></>;
 }
 
-export default LoginSignUp
+export default LoginSignUp;

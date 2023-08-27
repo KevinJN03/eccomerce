@@ -1,0 +1,212 @@
+#App {
+    width: 100%;
+    @apply flex flex-col items-center;
+}
+
+#main {
+    width: 80vw;
+    max-width: 1500px;
+}
+.header {
+    /* @apply flex flex-row w-full max-h-28 px-10 justify-center  */
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0 80px;
+    height: 60px;
+    width: 100%;
+
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+}
+.image-wrapper,
+#men,
+#women {
+    border-right: 1px solid white;
+}
+
+#men,
+#women {
+    height: 100%;
+    color: var(--white);
+    min-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+.image-wrapper {
+    /* @apply h-full max-w-xs */
+    height: 100%;
+    width: 100px;
+    padding-right: 20px;
+    min-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: contain;
+}
+#icons-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    max-height: 100%;
+    width: 150px;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+}
+#header-icons {
+    height: 100%;
+    width: calc(100% / 3);
+    padding: 10px;
+}
+
+.header-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.img-icon {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* search setion */
+
+#search-input-section {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    align-items: center;
+    position: relative;
+    margin: 0 50px;
+}
+
+#search-input {
+    width: 100%;
+    border-radius: 30px;
+    border: 1px solid black;
+    height: 70%;
+    padding: 10px 20px;
+}
+#search-icon-section {
+    max-height: 50%;
+    max-width: 30px;
+    position: absolute;
+    right: 10px;
+}
+
+#search-icon {
+    max-height: 25px;
+    width: 25px;
+}
+
+/* Banner css */
+
+#banner-text {
+    width: 90%;
+    text-align: center;
+}
+
+.background-color-pink {
+    background-color: var(--pink);
+}
+
+#discount {
+    border-top: 1px solid white;
+}
+
+#slide-btn {
+    /* content: " "; */
+    width: 80px;
+    /* background-color: green; */
+    border: 1px solid black;
+    height: 10px;
+    background-color: turquoise;
+}
+
+.bottom-text {
+    bottom: 4%;
+    left: 50%;
+    margin-left: -50px;
+    color: var(--white);
+    font-size: 1.2rem;
+}
+
+.section-1 {
+    @apply mb-10 flex w-full flex-row;
+    max-height: 600px;
+}
+
+.salebanner-gap {
+    gap: 3px;
+}
+.salebanner4-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    @apply text-4xl text-center ;
+    color: black;
+    width: 80%;
+    
+}
+
+.max-700px {
+    height: 500px !important;
+}
+
+.badge-icon {
+    width: 150px;
+    height: 50px;
+}
+
+#newsletter {
+    max-width: 448px
+}
+#newletter-btn-container {
+    background-color: white;
+    @apply h-full flex items-center justify-center w-12 rounded-r-lg
+}
+.newletter-btn {
+    /* @apply absolute h-6 w-6 rounded-full; */
+    @apply h-6 w-6 rounded-full;
+    right: 4%;
+}
+
+#footer-icons-section {
+    @apply my-4 flex w-full flex-row justify-center gap-7;
+}
+
+.footer-copyrght {
+    @apply flex flex-row justify-between py-3;
+    border-top: 1px solid;
+    margin: 0 28px;
+}
+
+.footer-copyrght > div:nth-child(2) {
+    @apply flex gap-7;
+}
+
+.gradientBackground {
+    @apply bg-gradient-to-r from-green-200 via-green-300 to-blue-500
+}
+
+.gradient-banner-2 {
+    @apply bg-gradient-to-r from-sky-400 via-rose-400 to-lime-400
+}
+
+.google-badge {
+/* scale: 1.19; */
+}
