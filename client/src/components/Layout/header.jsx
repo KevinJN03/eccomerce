@@ -3,11 +3,32 @@ import search_icon from '../../assets/search.svg';
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
 import heart from '../../assets/heart.png';
-
+import Dropdown_Hover from '../common/dropdown/dropdown_hover';
+import '../../CSS/dropdown.css';
+import Profile_Dropdown from '../common/dropdown/profile_dropdown';
 function Header() {
     const search = (e) => {
         console.log(e);
     };
+
+    const profile_options = [
+        <div className="signin-signup-btn-container flex w-full flex-row gap-3 border-b-2 border-black pb-3">
+            <a
+                href="/login"
+                type="button"
+                className="profile_dropdown bg-white text-black"
+            >
+                Sign In
+            </a>
+            <a
+                href="/signup"
+                type="button"
+                className="profile_dropdown bg-black text-white"
+            >
+                Sign Up
+            </a>
+        </div>,
+    ];
     return (
         <header className="header">
             <div id="image-wrapper" className="image-wrapper">
@@ -29,27 +50,32 @@ function Header() {
                 </div>
             </section>
 
-            <section id="icons-wrapper">
-                <div id="header-icons" className="header-icon">
-                    <img
-                        src={profile}
-                        alt="profile icon"
-                        className="img-icon"
-                    ></img>
-                </div>
-                <div id="header-icons" className="header-icon">
+            <section id="icons-wrapper" className="h-full">
+                
+                    <Dropdown_Hover
+                        button={profile}
+                        dropdown_options={<Profile_Dropdown />}
+                    />
+                
+
+                <div className="header-icon">
+                <a href='/wishlist' className='w-full h-full'>
                     <img
                         src={heart}
                         alt="heart icon"
                         className="img-icon"
                     ></img>
+                    </a>
                 </div>
-                <div id="header-icons" className="header-icon">
-                    <img
+                <div className="header-icon" >
+                    <a href='/cart' className='w-full h-full'>
+                      <img
                         src={basket}
                         alt="basket icon"
-                        className="img-icon scale-200"
-                    ></img>
+                        className="img-icon "
+                    ></img>  
+                    </a>
+                    
                 </div>
             </section>
         </header>

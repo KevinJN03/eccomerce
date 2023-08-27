@@ -1,4 +1,4 @@
-import DropDown_Detail from '../common/dropdown_detail';
+import DropDown_Detail from '../common/dropdown/dropdown_detail';
 
 function Product_Detail({ details }) {
     const returnDetail = () => {

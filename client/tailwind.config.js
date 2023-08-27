@@ -13,6 +13,7 @@ export default {
             ,
             fontSize: {
                 s: '0.8rem',
+                xxs: "0.7rem"
             },
             borderRadius: {
                 "inherit": "inherit"
