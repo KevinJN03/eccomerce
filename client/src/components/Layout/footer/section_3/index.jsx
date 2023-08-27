@@ -1,14 +1,13 @@
-import Icons from "./icons"
-import Newsletter from "./newletter"
+import Icons from './icons';
+import Newsletter from './newletter';
 
-function Index(){
-    return(
+function Index() {
+    return (
         <section id="section-3">
-        <Newsletter/>
-        <Icons/>
+            <Newsletter />
+            <Icons />
         </section>
-    )
-
+    );
 }
 
-export default Index
+export default Index;

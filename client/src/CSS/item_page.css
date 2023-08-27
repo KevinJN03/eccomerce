@@ -1,0 +1,129 @@
+#item-page {
+    min-height: 100vh;
+    width: 100%;
+    /* display: flex; */
+}
+.item-section {
+    @apply mb-10 mt-3 flex justify-center;
+    max-height: max-content;
+    width: 100%;
+}
+#item-list-section {
+}
+
+#item-list-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* grid-template-rows: repeat(auto-fit); */
+    width: 100px;
+
+    @apply mr-3 gap-1;
+}
+.photo-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.list-image {
+    @apply h-full w-full object-scale-down;
+}
+
+#Main_Image {
+    /* min-width: 600px; */
+    width: 100%;
+    height: calc(100% - 50px);
+}
+
+/* Size Section */
+
+.item-size-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.size-btn-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, minMax(100px, 1fr));
+    grid-auto-flow: row;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.item-size-btn {
+    @apply rounded-lg border py-3;
+}
+
+.adddtocart-wishlist {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    gap: 10px;
+}
+
+/* wishlist */
+
+.wishlist {
+    @apply h-16 w-16;
+}
+
+/* Add to cart button */
+
+#add-to-cart {
+    color: var(--white);
+    background-color: var(--black);
+    border-radius: 32px;
+    @apply font-bold tracking-wide;
+}
+
+/* Shipping */
+
+#Shipping {
+    @apply mt-6 flex flex-row gap-4;
+}
+.shipping-icon {
+    @apply h-10 w-10;
+}
+
+/* similar Styles */
+
+.styles-image-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, minMax(100px, 1fr));
+    gap: 5px;
+    width: 100%;
+    @apply mb-4;
+}
+
+.similar_styles {
+    max-width: 100%;
+}
+
+#Product_info {
+    /* max-width: 400px; */
+
+    margin-left: 50px;
+}
+
+#similar-btn {
+    color: var(--white);
+    background-color: var(--black);
+    @apply whitespace-nowrap rounded-3xl  px-9 font-bold;
+}
+.style-with-card {
+    @apply flex gap-2;
+}
+
+/* Reviews */
+.reviews {
+    @apply flex w-full justify-center;
+
+    justify-self: center;
+}
+
+#review-btn {
+}
+
+.max-650 {
+    max-width: 650px;
+}
+
+

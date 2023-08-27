@@ -1,8 +1,5 @@
-function LoginSignUp(){
-    return(
-        <>
-        </>
-    )
+function LoginSignUp() {
+    return <></>;
 }
 
-export default LoginSignUp
+export default LoginSignUp;

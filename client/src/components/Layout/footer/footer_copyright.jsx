@@ -1,22 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function Footer_Copyright() {
-  return (
-    <section className="footer-copyrght">
-      <div>
-        <p>© 2023 Glamo, LLC All Rights Reserved</p>
-      </div>
-      <div>
-        <Link to="pages/promo-terms-and-conditions">PromoT&Cs</Link>
-        <Link to="pages/privacy-policy">Privacy Policy</Link>
-        <Link to="pages/terms-of-service">Terms Of Service</Link>
-        <Link to="pages/privacy-policy#donotsell">
-          DO Not Sell My Information
-        </Link>
-      </div>
-    </section>
-  );
+    return (
+        <section className="footer-copyrght">
+            <div>
+                <p className='text-xs'>© 2023 Glamo, LLC All Rights Reserved</p>
+            </div>
+            <div>
+                <a className='text-xs' href="pages/promo-terms-and-conditions">PromoT&Cs</a>
+                <a className='text-xs' href="pages/privacy-policy">Privacy Policy</a>
+                <a className='text-xs' href="pages/terms-of-service">Terms Of Service</a>
+                <a className='text-xs' href="pages/privacy-policy#donotsell">
+                    DO Not Sell My Information
+                </a>
+            </div>
+        </section>
+    );
 }
 
-
-export default Footer_Copyright
+export default Footer_Copyright;

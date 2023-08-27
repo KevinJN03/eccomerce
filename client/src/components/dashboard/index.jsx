@@ -1,9 +1,9 @@
-function Dashboard(){
-    return(
+function Dashboard() {
+    return (
         <>
-        <p>AT dashboard page</p>
+            <p>AT dashboard page</p>
         </>
-    )
+    );
 }
 
-export default Dashboard
+export default Dashboard;

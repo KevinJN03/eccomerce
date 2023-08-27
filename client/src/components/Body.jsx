@@ -1,20 +1,15 @@
-import {useParams} from "react-router-dom"
-import Home from "./home/Home"
-function Body(){
+import { useParams } from 'react-router-dom';
+import Home from './home/Home';
+function Body() {
     let content;
-const route = useParams()
+    const route = useParams();
 
-function changeContent(){
-    if 
-    (route == undefined || "home") return content= (<Home/>)
+    function changeContent() {
+        if (route == undefined || 'home') return (content = <Home />);
+    }
+
+    changeContent();
+    return <>{content}</>;
 }
 
-changeContent()
-    return(
-        <>
-        {content}
-        </>
-    )
-}
-
-export default Body
+export default Body;
