@@ -1,23 +1,27 @@
 .login-signup-page {
-@apply flex h-full w-full flex-col items-center mb-10;
+@apply flex h-full flex-col items-center  m-0 p-0;
+min-width: 100%;
+background-color: var(--light-grey);
+
 
 }
+
 
 #login-signup-container {
     min-width: 600px;
     border: 3px solid black;
     margin-top: 80px;
     padding: 12px;
-    @apply flex flex-col justify-center items-center
+    @apply flex flex-col justify-center items-center bg-white
 }
 
 #login-signup-option {
     /* @apply flex flex-row justify-between outline-dashed w-full */
     display: grid;
     grid-template-columns: 1fr 0.5px 1fr;
-    width: 100%;
+    width: 95%;
     margin-top: 20px;
-    border-bottom: 2px solid var(--grey)
+    
 }
 
 #midldle-border {
@@ -108,6 +112,13 @@ padding: 25px 0;
     @apply px-4
 }
 .middle-seperator{
-    width: 1px;
+    width: 2px;
     background-color: var(--grey);
+}
+
+.active-option {
+    border-bottom: 2px solid #0770cf;
+}
+.not-active-option {
+    border-bottom: 2px solid var(--grey)
 }

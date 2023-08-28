@@ -1,11 +1,13 @@
 #App {
     width: 100%;
-    @apply flex flex-col items-center;
+    @apply flex flex-col items-center m-0 p-0;
 }
 
 #main {
-    width: 80vw;
+    min-width: 100%;
     max-width: 1500px;
+    margin: 0;
+    padding: 0;
 }
 .header {
     /* @apply flex flex-row w-full max-h-28 px-10 justify-center  */
@@ -33,7 +35,7 @@
     /* gap: 0px 20px */
 }
 .parallelogram {
-    transform: skew(-10deg);
+    transform: skew(-20deg);
     /* padding: 0 5px;
     margin-left: 20px */
 }
@@ -246,7 +248,7 @@ transform: scale(1.5);
 }
 
 #footer-icons-section {
-    @apply my-4 flex w-full flex-row justify-center gap-7;
+    @apply flex w-full flex-row justify-center gap-7;
 }
 
 .footer-copyrght {
