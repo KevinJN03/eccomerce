@@ -7,6 +7,7 @@ import Dashboard from './components/dashboard/index';
 import LoginSignUp from './components/Login-SignUp/Index';
 import Layout from './components/Layout/layout';
 import Home from './components/home/Home';
+import Cart from './components/cart';
 // import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
     const router = createBrowserRouter([
@@ -36,8 +37,16 @@ function Router({ Header, Footer }) {
         },
         {
             path: '/login',
-            element: <LoginSignUp />,
+            element: <LoginSignUp loginorSignup={"login"} />,
         },
+        {
+            path: '/signup',
+            element: <LoginSignUp loginorSignup={"signup"} />,
+        },
+        {
+            path: "/cart",
+            element : <Cart/>
+        }
     ]);
 
     return (
