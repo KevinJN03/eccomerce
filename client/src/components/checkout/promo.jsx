@@ -9,8 +9,8 @@ function Promo({}) {
         return (
             <div class="promo-container">
                 <section className="promo-header-container">
-                    <span  onClick={()=> setOption("promo")}>PROMO / STUDENT CODE</span>
-                    <span onClick={()=> setOption("voucher")}>VOUCHER</span>
+                    <span className={option == "promo" ? "active-promo-voucher": "promo-voucher"} onClick={()=> setOption("promo")}>PROMO / STUDENT CODE</span>
+                    <span  className={option == "voucher" ? "active-promo-voucher": "promo-voucher"} onClick={()=> setOption("voucher")}>VOUCHER</span>
                 </section>
                 {option == "promo" ? <Promo_Student/> : <Voucher/>}
             </div>

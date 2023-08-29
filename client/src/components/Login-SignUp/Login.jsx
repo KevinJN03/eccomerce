@@ -7,7 +7,7 @@ function Login({}){
                     <input
                         type="email"
                         id="email-address"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                 </div>
 <div className="input-container">
@@ -15,7 +15,7 @@ function Login({}){
                     <input
                         type="password"
                         id="passworde"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                 </div>
                 <Link to="/forget-password" className="text-s font-normal tracking-wide">Forgot password?</Link>

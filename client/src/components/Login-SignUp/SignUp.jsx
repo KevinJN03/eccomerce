@@ -16,7 +16,7 @@ function SignUp() {
                     <input
                         type="email"
                         id="email-address"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                     <p>We'll send your order confirmation here</p>
                 </div>
@@ -26,7 +26,7 @@ function SignUp() {
                     <input
                         type="text"
                         id="first-name"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                 </div>
                 <div className="input-container">
@@ -34,7 +34,7 @@ function SignUp() {
                     <input
                         type="text"
                         id="last-name"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                 </div>
                 <div className="input-container">
@@ -42,7 +42,7 @@ function SignUp() {
                     <input
                         type="password"
                         id="passworde"
-                        class="login-signup-input"
+                        className="login-signup-input"
                     />
                     <p>Must be 10 or more characters</p>
                 </div>

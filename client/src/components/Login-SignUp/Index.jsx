@@ -6,23 +6,31 @@ import glamo from '../../assets/icons/glamo-black-logo.svg';
 import SignUp from './SignUp';
 import Login from './Login';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 function LoginSignUp({ loginorSignup }) {
-    const [option, setOption] = useState()
+    const [option, setOption] = useState(loginorSignup)
+// useEffect(()=> {
+// setOption(loginorSignup)
+
+// return()=> {
+//     setOption("")
+// }
+// }, [])
+   
     return (
         <>
-            <secton className="login-signup-page ">
+            <section className="login-signup-page ">
                 <section id="login-signup-container" className="">
                     <Link to="/" className="login-logo mt-10 w-40">
                         <img src={glamo} />
                     </Link >
                     <div id="login-signup-option">
-                        <span onClick={()=> setOption("login") } className={option=="login" ? "active-option" :"not-active-option"}>
-                            <Link to='/signup'>Join</Link>
+                        <span onClick={()=> setOption("signup") } className={option=="signup" ? "active-option" :"not-active-option"}>
+                            <Link  to='/signup'>Join</Link>
                         </span>
                         <span id="midldle-border"></span>
-                        <span onClick={()=> setOption("signup") } className={option=="signup" ? "active-option" : "not-active-option"}>
+                        <span onClick={()=> setOption("login") } className={option=="login" ? "active-option" : "not-active-option"}>
                             <Link to="/login" >Sign In</Link>
                         </span>
                     </div>
@@ -41,7 +49,7 @@ function LoginSignUp({ loginorSignup }) {
                         <a href="/pages/terms-of-service">Term Of Service</a>
                     </span>
                 </div>
-            </secton>
+            </section>
         </>
     );
 }

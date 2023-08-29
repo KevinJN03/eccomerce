@@ -24,6 +24,7 @@ background-color: var(--light-grey);
     
 }
 
+
 #midldle-border {
     content: "";
 background-color: lightgrey;
@@ -39,7 +40,7 @@ align-self: center
 
 
 #login-signup-option span a {
-    @apply font-semibold tracking-widest text-xl
+    @apply font-semibold tracking-widest text-xl w-full text-center
 }
 
 .input-container {
@@ -118,7 +119,9 @@ padding: 25px 0;
 
 .active-option {
     border-bottom: 2px solid #0770cf;
+    
 }
 .not-active-option {
-    border-bottom: 2px solid var(--grey)
+    border-bottom: 2px solid var(--grey);
+    
 }
