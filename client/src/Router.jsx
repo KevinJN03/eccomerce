@@ -8,6 +8,8 @@ import LoginSignUp from './components/Login-SignUp/Index';
 import Layout from './components/Layout/layout';
 import Home from './components/home/Home';
 import Cart from './components/cart';
+import Checkout from './components/checkout';
+import Admin from './components/admin';
 // import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
     const router = createBrowserRouter([
@@ -37,15 +39,23 @@ function Router({ Header, Footer }) {
         },
         {
             path: '/login',
-            element: <LoginSignUp loginorSignup={"login"} />,
+            element: <LoginSignUp loginorSignup={'login'} />,
         },
         {
             path: '/signup',
-            element: <LoginSignUp loginorSignup={"signup"} />,
+            element: <LoginSignUp loginorSignup={'signup'} />,
         },
         {
-            path: "/cart",
-            element : <Cart/>
+            path: '/cart',
+            element: <Cart />,
+        },
+        {
+            path: '/checkout',
+            element: <Checkout />,
+        },
+        {
+            path: "/admin",
+            element: <Admin/>
         }
     ]);
 
