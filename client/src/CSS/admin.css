@@ -1,0 +1,24 @@
+
+#admin {
+    width: 100%;
+    @apply flex justify-center
+}
+#admin-wrapper {
+ outline: 2px dashed black;
+ width: 50%;
+
+}
+
+#admin-header {
+    @apply flex justify-between w-full items-center;
+
+
+}
+
+#admin-header img {
+    width: 200px
+}
+
+#admin-header h1 {
+    @apply font-gotham  text-4xl pr-4
+}

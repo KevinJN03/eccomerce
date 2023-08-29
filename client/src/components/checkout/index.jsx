@@ -1,4 +1,5 @@
 import '../../CSS/checkout.css';
+import disableLayout from '../../hooks/disableLayout';
 import Address from './address';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total';
@@ -8,6 +9,8 @@ import Email_address from './email-address';
 import Payment from './payment/payment';
 import Promo from './promo';
 function Checkout() {
+
+    disableLayout()
     return (
         <section id="checkout-page">
             <section id="checkout">

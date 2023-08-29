@@ -9,6 +9,7 @@ import Layout from './components/Layout/layout';
 import Home from './components/home/Home';
 import Cart from './components/cart';
 import Checkout from './components/checkout';
+import Admin from './components/admin';
 // import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
     const router = createBrowserRouter([
@@ -52,6 +53,10 @@ function Router({ Header, Footer }) {
             path: '/checkout',
             element: <Checkout />,
         },
+        {
+            path: "/admin",
+            element: <Admin/>
+        }
     ]);
 
     return (
