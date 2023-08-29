@@ -24,7 +24,14 @@ function Total({}) {
             <Shipping/>
             <p className="text-red-800 text-sm flex justify-center">Yay! You've saved £38.50</p>
             <Link to="/checkout" className="checkout-btn">CHECKOUT</Link>
-            <Payment_Methods />
+            <section id="payment-methods" className={"w-full"}>
+            <p className="font-semibold tracking-wider">WE ACCEPT:</p>
+            
+           <Payment_Methods />
+            
+            <p className="font-light text-black text-sm mt-2">Got a discount code? Add it in the next step.</p>
+        </section>
+            
             </section>
             
         </section>

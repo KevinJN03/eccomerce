@@ -17,7 +17,7 @@ export default {
             },
             borderRadius: {
                 "inherit": "inherit"
-            }
+            },
         },
     },
     plugins: [

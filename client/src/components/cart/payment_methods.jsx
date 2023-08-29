@@ -7,20 +7,18 @@ import paypal from "../../assets/icons/payment-icons/paypal.svg"
 import mastercard from "../../assets/icons/payment-icons/mastercard-alt.svg"
 import maestro from "../../assets/icons/payment-icons/maestro.svg"
 const payment_icons = [american_exp, visa, discover, klarna, paypal, mastercard, maestro]
-function Payment_Methods({}) {
+function Payment_Methods({className}) {
     return (
-        <section id="payment-methods" className="w-full">
-            <p className="font-semibold tracking-wider">WE ACCEPT:</p>
+        
             <div className="payment-icons">
             {payment_icons.map(img => {
                 return (
-                   <img src={img} alt={img.split("/", 6).slice(-1)} /> 
+                   <img src={img} alt={img.split("/", 6).slice(-1)} className={className ? className : null} /> 
                 )
                 
             })}
             </div>
-            <p className="font-light text-black text-sm mt-2">Got a discount code? Add it in the next step.</p>
-        </section>
+     
     );
 }
 
