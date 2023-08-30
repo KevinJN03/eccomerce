@@ -5,11 +5,14 @@ import ItemPage from './components/Item_page/ItemPage';
 import About from './components/miscellaneos/About';
 import Dashboard from './components/dashboard/index';
 import LoginSignUp from './components/Login-SignUp/Index';
-import Layout from './components/Layout/layout';
+
 import Home from './components/home/Home';
 import Cart from './components/cart';
 import Checkout from './components/checkout';
-import Admin from './components/admin';
+import Admin from './components/admin/home';
+import Admin_login from './components/admin/components/login/login';
+import List from './components/admin/components/list/list';
+import Admin_Dashboard from './components/admin/home/admin_dashboard';
 // import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
     const router = createBrowserRouter([
@@ -53,10 +56,28 @@ function Router({ Header, Footer }) {
             path: '/checkout',
             element: <Checkout />,
         },
+
         {
-            path: "/admin",
-            element: <Admin/>
-        }
+            path: '/admin',
+            element: <Admin/>,
+
+            children: [
+                {
+                    path: 'users',
+                    element: <List />,
+                },
+            ]
+        },
+        // {
+        //     path: '/admin/:id',
+        //     // element: <Admin_Dashboard />,
+        //     children: [
+        //         {
+        //             path: 'users',
+        //             element: <Users/>,
+        //         },
+        //     ],
+        // }
     ]);
 
     return (

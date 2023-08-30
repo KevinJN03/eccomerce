@@ -1,0 +1,46 @@
+.datatable {
+    padding: 20px;
+
+    .cellWithImg {
+        @apply flex items-center;
+
+        .cellImg {
+            @apply w-10 h-10 rounded-full object-cover mr-5;
+        }
+    }
+    .cellWithStatus {
+        padding: 5px;
+        border-radius: 5px;
+
+
+        &.active {
+            color: green;
+            background-color: rgba(0, 128, 0, 0.288);
+        }
+
+        &.restricted {
+            background-color: rgba(255, 0, 0, 0.137);
+            color: red
+        }
+    }
+
+    .cellAction {
+        @apply flex items-center gap-4;
+
+        .viewButton {
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: darkblue;
+            border: 1px dotted rgba(0, 0, 139, 0.578);
+            cursor: pointer;
+        }
+
+        .deleteButton {
+            padding: 2px 5px;
+            border-radius: 5px;
+            color: red;
+            border: 1px dotted rgba(255, 0, 0, 0.605);
+            cursor: pointer;
+        }
+    }
+}
