@@ -1,9 +1,13 @@
 :root{
-    --primary: green;
+    // --primary: green;
     --secondary: rgb(167, 237, 167);
     
 }
-
+h1 {
+    font-size: 30px;
+    font-weight: bold;
+    
+}
 .home {
     @apply flex;
     .homeContainer {
@@ -21,7 +25,8 @@
         }
 
         .listContainer {
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
            padding: 20px;
            margin: 20px;
 
@@ -48,7 +53,8 @@
     @apply flex justify-between;
     flex: 1;
     padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
 border-radius: 10px;
 height: fit-content;
 
@@ -96,7 +102,8 @@ height: fit-content;
 
 .featured {
     flex: 2;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
     padding: 10px;
 
     .top {
@@ -170,7 +177,8 @@ height: fit-content;
 
 .chart {
 flex: 4;
-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+-webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
 padding: 10px;
 
 .title{

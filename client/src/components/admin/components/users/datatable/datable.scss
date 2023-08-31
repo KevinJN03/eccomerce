@@ -1,5 +1,25 @@
 .datatable {
     padding: 20px;
+    
+
+    .datatableTitle {
+        
+        @apply w-full flex justify-between items-center;
+        font-size: 24px;
+        margin-bottom: 10px;
+
+
+        .link {
+            color: green;
+            font-size: 16px;
+            font-weight: 400;
+            border: 1px solid green;
+            padding: 5px;
+            border-radius: 5px;
+            text-decoration: none
+        }
+
+    }
 
     .cellWithImg {
         @apply flex items-center;
@@ -26,7 +46,7 @@
 
     .cellAction {
         @apply flex items-center gap-4;
-
+        
         .viewButton {
             padding: 2px 5px;
             border-radius: 5px;

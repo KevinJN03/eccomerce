@@ -133,3 +133,58 @@ export const userColumn = [
       
     },
 ]
+
+
+export const productRow = [
+{
+    id: 1,
+    product: "Shirt",
+    img: "https://images.asos-media.com/products/bolongaro-trevor-slim-fit-grandad-shirt/203568885-1-white?$n_240w$&wid=40&fit=constrain",
+    category: "men",
+    size: "XS, S, L",
+    price: "30.99",
+    quantity: 10
+},
+{
+    id: 2,
+    product: "Shirt",
+    img: "https://images.asos-media.com/products/bolongaro-trevor-slim-fit-grandad-shirt/203568885-1-white?$n_240w$&wid=40&fit=constrain",
+    category: "men",
+    size: "XS, S, L",
+    price: "30.99",
+    quantity: 10
+},
+{
+    id: 3,
+    product: "Shirt",
+    img: "https://images.asos-media.com/products/bolongaro-trevor-slim-fit-grandad-shirt/203568885-1-white?$n_240w$&wid=40&fit=constrain",
+    category: "men",
+    size: "XS, S, L",
+    price: "30.99",
+    quantity: 10
+}
+]
+
+export const productColumn = [
+    {field: 'id', headerName: 'ID', width: 70 },
+    {field: "product", headerName: "Product", width: 230, sortable: false, renderCell: (params)=> {
+        return (
+            <div className="cellWithImg">
+                    <img className="cellImg" src={params.row.img} alt="avatar"/>
+                    {params.row.product}
+            </div>
+
+
+        )
+    },
+},
+    { field: 'category', headerName: 'Category', width: 200 },
+    { field: 'size', headerName: 'Size', width: 130 },
+    { field: 'price', headerName: 'Price', width: 130 },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      type: 'number',
+      width: 90,
+    },
+]

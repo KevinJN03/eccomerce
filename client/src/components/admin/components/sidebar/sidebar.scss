@@ -1,8 +1,9 @@
 .side-bar {
-    flex: 1;
+    // flex: 1;
     border-right: 0.5px solid var(--primary-2);
     min-height: 100vh;
     background-color: white;
+    width: 300px;
     .top {
         height: 50px;
         @apply flex justify-center items-center;
@@ -30,7 +31,7 @@
                 margin-bottom: 5px;
             }
 
-            li {
+            a {
                 @apply flex items-center cursor-pointer p-1;
 
                 &:hover {
@@ -38,7 +39,7 @@
                 }
 
                 .icons {
-                    font-size: 18px;
+                    font-size: 42px;
                     color: green
                 }
 
@@ -57,8 +58,8 @@
         margin: 10px;
 
         .colorOption {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 5px;
             border: 1px solid green;
             cursor: pointer;

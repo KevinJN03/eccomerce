@@ -10,79 +10,83 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
+import { Link } from 'react-router-dom';
+import './sidebar.scss';
+import { useDarkMode } from '../../../../context/darkModeContext';
+function SideBar({}) {
 
-import "./sidebar.scss"
-function SideBar({}){
-  return (
-    <section className='side-bar'>
-      
+    const {darkMode, dispatch} = useDarkMode()
+    return (
+        <section className="side-bar">
+            <div className="top">
+                <Link to="/admin">
+                    <span className="logo">glamo</span>
+                </Link>
+            </div>
+            <hr />
+            <div className="center">
+                <ul>
+                    <p className="title">MAIN</p>
+                    <Link to="/admin">
+                        <DashboardIcon className="icons" />
+                        <span>DashBoard</span>
+                    </Link>
+                    <p className="title">LISTS</p>
+                    <Link to="/admin/users">
+                        <PersonOutlineOutlinedIcon className="icons" />
+                        <span>Users</span>
+                    </Link>
+                    <Link to="/admin/products">
+                        <StoreRoundedIcon className="icons" />
+                        <span>Products</span>
+                    </Link>
+                    <Link>
+                        <CreditCardRoundedIcon className="icons" />
+                        <span>Orders</span>
+                    </Link>
+                    <Link>
+                        <LocalShippingIcon className="icons" />
+                        <span>Delivery</span>
+                    </Link>
+                    <p className="title">USEFUL LINKS</p>
+                    <Link>
+                        <AssessmentRoundedIcon className="icons" />
+                        <span>Stats</span>
+                    </Link>
+                    <Link>
+                        <NotificationsActiveRoundedIcon className="icons" />
+                        <span>Notifications</span>
+                    </Link>
+                    <p className="title">SERVICE</p>
+                    <Link>
+                        <SettingsSystemDaydreamRoundedIcon className="icons" />
+                        <span>System Health</span>
+                    </Link>
+                    <Link>
+                        <PsychologyRoundedIcon className="icons" />
+                        <span>Logs</span>
+                    </Link>
+                    <Link>
+                        <SettingsSuggestRoundedIcon className="icons" />
+                        <span>Settings</span>
+                    </Link>
+                    <p className="title">USER</p>
+                    <Link>
+                        <AccountCircleOutlinedIcon className="icons" />
+                        <span>Profile</span>
+                    </Link>
+                    <Link>
+                        <LogoutOutlinedIcon className="icons" />
+                        <span>Logout</span>
+                    </Link>
+                </ul>
+            </div>
+            <div className="bottom">
+                <div className="colorOption"onClick={() => dispatch({type:"LIGHT"})}></div>
+                <div className="colorOption"onClick={() => dispatch({type:"DARK"})}></div>
+            </div>
+        </section>
+    );
+}
 
-      <div className="top"><span className="logo">glamo</span></div>
-      <hr/>
-      <div className="center">
-        <ul>
-            <p className="title">MAIN</p>
-            <li>
-                <DashboardIcon className="icons"/>
-                <span>DashBoard</span>
-            </li>
-            <p className="title">LISTS</p>
-            <li>
-                <PersonOutlineOutlinedIcon className="icons"/>
-                <span>Users</span>
-            </li>
-            <li>
-                <StoreRoundedIcon className="icons"/>
-                <span>Products</span>
-            </li>
-            <li>
-                <CreditCardRoundedIcon className="icons"/>
-                <span>Orders</span>
-            </li>
-            <li>
-                <LocalShippingIcon className="icons"/>
-                <span>Delivery</span>
-            </li>
-            <p className="title">USEFUL LINKS</p>
-            <li>
-                <AssessmentRoundedIcon className="icons"/>
-                <span>Stats</span>
-            </li>
-            <li>
-                <NotificationsActiveRoundedIcon className="icons"/>
-                <span>Notifications</span>
-            </li>
-            <p className="title">SERVICE</p>
-            <li>
-                <SettingsSystemDaydreamRoundedIcon className="icons"/>
-                <span>System Health</span>
-            </li>
-            <li>
-                <PsychologyRoundedIcon className="icons"/>
-                <span>Logs</span>
-            </li>
-            <li>
-                <SettingsSuggestRoundedIcon className="icons"/>
-                <span>Settings</span>
-            </li>
-            <p className="title">USER</p>
-            <li>
-                <AccountCircleOutlinedIcon className="icons"/>
-                <span>Profile</span>
-            </li>
-            <li>
-                <LogoutOutlinedIcon className="icons"/>
-                <span>Logout</span>
-            </li>
-        </ul>
-      </div>
-      <div className="bottom">
-        <div className="colorOption"></div>
-        <div className="colorOption"></div>
-        
-      </div>
-    </section>
-  )
-};
-
-export default SideBar
+export default SideBar;

@@ -1,0 +1,159 @@
+:root {
+    --about-primary: #4d6bc6;
+}
+
+.new-product {
+    @apply flex w-full;
+
+    
+    .new-product-container {
+        flex: 6;
+        
+        .product-listing {
+            @apply m-6 bg-white p-6;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+            .subheader {
+                @apply flex w-8/12 flex-row flex-nowrap justify-around;
+
+                a {
+                    height: 30px;
+                }
+
+                a:hover {
+                    color: var(--about-primary);
+                    border-bottom: 2px solid var(--about-primary);
+                }
+            }
+        }
+    }
+}
+
+.title {
+    @apply text-xl font-medium;
+}
+p {
+    @apply text-s;
+}
+
+
+
+.about {
+    @apply m-4 w-7/12 p-6;
+    border-radius: 10px;
+    border: 2px solid black;
+    
+    input {
+        @apply outline;
+    }
+    
+
+    .dropzone {
+        @apply flex flex-col items-center justify-center gap-12;
+        height: 300px;
+        outline: 2px dashed black;
+        border-radius: 20px;
+    }
+
+    .uploads {
+        .img-grid {
+
+            // max-width: 100%;
+            height: 100px;
+            display: grid;
+            grid-template-columns:  repeat (5, 1fr);
+            grid-template-rows: repeat(10,1fr);
+            gap: 5px;
+            // grid-auto-flow: column;
+            
+            li {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            li:nth-of-type(1){
+                //   grid-area: 1 / 1 /  2 / 3;
+                  
+            //     // display: none
+
+            // }
+            // li:nth-of-type(2){
+            //      grid-area: 1 / 3 / span 2 / span 1
+               
+            // }
+            // li:nth-of-type(3){
+            //      grid-area: 1 / 4 / span 2 / span 1
+            // }
+            // li:nth-of-type(4){
+            //     grid-area: 1 / 5 / span 2 / span 1
+            // }
+            li:nth-of-type(5){
+                 grid-area: 2 / 1 / span 2 / span 2;
+            }
+            // li:nth-of-type(6){
+            //     grid-area : 3 / 3 / span 2 / span 1
+            }
+            li:nth-of-type(7){
+                grid-area : 3 / 4 / span 2 / span 1
+            }
+            li:nth-of-type(8){
+                // grid-area : 3 / 4 / span 2 / span 1
+            }
+
+        }
+    }
+}
+
+
+.outline {
+    @apply mb-8 mt-3  w-full rounded-md p-3;
+    height: 50px;
+    border: 1px solid black;
+    outline-offset: 2px;
+
+    &:focus {
+        outline: 2px solid var(--about-primary);
+    }
+}
+
+#description {
+    @apply outline;
+    
+    
+}
+
+
+// Price & Inventory Section 
+
+#price-inventory {
+    @apply m-4 w-7/12 p-6;
+    border-radius: 10px;
+    border: 2px solid black;
+
+    input {
+        @apply outline;
+    }
+
+    .price-input, .quantity-input {
+        // width: 30px !important;
+        width: 50%
+        
+    }
+}
+
+#details {
+    @apply m-4 w-7/12 p-6;
+    border-radius: 10px;
+    border: 2px solid black;
+
+       
+}
+
+.category-select {
+    width: 50%
+}
+#delivery {
+    @apply m-4 w-7/12 p-6;
+    border-radius: 10px;
+    border: 2px solid black;
+}

@@ -4,6 +4,7 @@ import Widget from '../components/widget/widget';
 import Featured from '../components/featured/featured';
 import Chart from '../components/chart/chart';
 import Transaction_Table from '../components/table/transaction_table';
+import { Outlet } from 'react-router-dom';
 function Admin_Dashboard() {
     return (
         <section className="home">

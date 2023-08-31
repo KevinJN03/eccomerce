@@ -5,7 +5,10 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import "./navbar.scss"
+import { useDarkMode } from '../../../../context/darkModeContext';
 function Navbar({}) {
+
+    const {darkMode, dispatch} = useDarkMode()
     return (
         <section className="navbar">
             <div className="wrapper">
@@ -19,7 +22,7 @@ function Navbar({}) {
                         English
                     </div>
                     <div className="item">
-                        <DarkModeOutlinedIcon className='icon'/>
+                        <DarkModeOutlinedIcon className='icon' onClick={()=>dispatch({type: "TOGGLE"})}/>
                       
                     </div>
                     <div className="item">
