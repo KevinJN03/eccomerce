@@ -4,13 +4,13 @@ function SaleBanner_4({ images }) {
         height: '100%',
     };
     return (
-        <section id="section-1" className="section-1 salebanner-gap max-700px">
+        <section id="section-1" className="section-1 salebanner-gap max-700px sm:!h-72">
             {images.map((img) => {
                 return (
                     <>
                         <div
                             id="section-1-wrapper"
-                            style={imageStyle}
+                           
                             className=" h-full relative"
                         >
                             <img

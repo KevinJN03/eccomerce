@@ -5,6 +5,7 @@ const slideStyles = {
     height: '100%',
 
     backgroundSize: 'cover',
+    backgroundRepeat: "no-repeat",
     backgroundPosition: 'center',
 };
 

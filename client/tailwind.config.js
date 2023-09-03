@@ -25,7 +25,8 @@ export default {
 
             spacing: {
                 "70": "17rem",
-                "70.1": "17.1rem"
+                "70.1": "17.1rem",
+                "700": "700px"
             }
         },
 
@@ -34,8 +35,11 @@ export default {
             
       
             'md': {min: "481px", max: '980px'},
+
+            'sm+md' : {max: '980px'},
             
             'lg': '1024px',
+
       
           }
     },

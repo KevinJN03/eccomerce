@@ -1,8 +1,5 @@
 function Section_1({ images }) {
-    const imageStyle = {
-        width: 'calc(100% / 4)',
-        height: '100%',
-    };
+    
     return (
         <section id="section-1" className="section-1">
             {images.map((img) => {
@@ -10,7 +7,7 @@ function Section_1({ images }) {
                     <>
                         <div
                             id="section-1-wrapper"
-                            style={imageStyle}
+                            
                             className="relative h-full"
                         >
                             <img

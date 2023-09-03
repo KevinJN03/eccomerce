@@ -2,7 +2,8 @@ import logo from '../../assets/glamo.png';
 import search_icon from '../../assets/search.svg';
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
-import heart from '../../assets/heart.png';
+import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
+import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import Dropdown_Hover from '../common/dropdown/dropdown_hover';
 import '../../CSS/dropdown.css';
 import Profile_Dropdown from '../common/dropdown/profile_dropdown';
@@ -19,11 +20,11 @@ function Header() {
 
  
     return (
-        <section className="flex w-full flex-col justify-center">
+        <section className="flex w-full flex-col justify-center ">
             <section id="header-wrapper">
                 <header className="header">
-
-                    <Mobile_Nav/>
+                    <section className="header-left">
+ <Mobile_Nav/>
                     <div id="image-wrapper" className="image-wrapper">
                         <a href="/">
                             <img src={logo} alt="glamo logo" className="" />
@@ -32,20 +33,24 @@ function Header() {
                     <section
                         id="women"
                         onClick={() => setCategory(false)}
-                        className={` sm:hidden md:hidden ${ !category && 'active-header-category'}` 
+                        className={`header-category-btn ${ !category ? 'active-header-category' : ""}` 
                             
                         }
                     >
+                        
                         Women
                     </section>
                     <section
                         id="men"
                         onClick={() => setCategory(true)}
-                        className={` sm:hidden md:hidden ${ category && 'active-header-category'}` }
+                        className={`header-category-btn ${ category ? 'active-header-category'  : ""}` }
                     >
                         Men
                     </section>
-                    <section id="search-input-section">
+
+                    </section>
+                   
+                    <section className="header-middle">
                         <input
                             type="text"
                             id="search-input"
@@ -61,30 +66,33 @@ function Header() {
                         </div>
                     </section>
 
-                    <section id="icons-wrapper" className="h-full">
-                        <Dropdown_Hover
+                    <section className="header-right h-full" >
+                       <a href="/login"><Dropdown_Hover
                             button={profile}
                             dropdown_options={<Profile_Dropdown />}
                         />
+                        </a> 
 
-                        <div className="header-icon">
-                            <a href="/wishlist" className="h-full w-full">
-                                <img
+                        
+                            <a href="/wishlist" className="header-icons">
+                                {/* <img
                                     src={heart}
                                     alt="heart icon"
-                                    className="img-icon"
-                                ></img>
+                                    className="img-icon p-1"
+                                ></img> */}
+                                <FavoriteBorderSharpIcon className='img-icon'/>
                             </a>
-                        </div>
-                        <div className="header-icon">
-                            <a href="/cart" className="h-full w-full">
-                                <img
+                        
+                        
+                            <a href="/cart" className="header-icons">
+                                {/* <img
                                     src={basket}
                                     alt="basket icon"
                                     className="img-icon "
-                                ></img>
+                                ></img> */}
+                                <LocalMallOutlinedIcon className='img-icon' fontSize='large'/>
                             </a>
-                        </div>
+                        
                     </section>
                 </header>
 

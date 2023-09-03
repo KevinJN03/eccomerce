@@ -58,14 +58,14 @@ function Home() {
     ];
     const containerStyles = {
         width: '100%',
-        height: '700px',
+        height: '100%',
         margin: '10px auto',
     };
 
     return (
         <>
             <Banner />
-            <div style={containerStyles}>
+            <div className='carousel-container w-full sm+md:h-80 h-700'>
                 <Carousel slides={slides} />
             </div>
             <Section_1 images={section_1_images} />
