@@ -8,6 +8,28 @@
     max-width: 1500px;
     margin: 0;
     padding: 0;
+    min-height: calc(100vh - (400px));
+    background-color: var(--light-grey);
+}
+
+#header-wrapper {
+display: flex;
+flex-direction: column;
+justify-content: center;
+width: 100%;
+/* margin: 0 auto; */
+
+}
+
+#header-wrapper {
+    background-color: var(--primary);
+    position: relative;
+}
+
+#category-wrapper {
+    background-color: var(--primary-2);
+    /* position: relative;
+    left: 40px */
 }
 .header {
     /* @apply flex flex-row w-full max-h-28 px-10 justify-center  */
@@ -15,23 +37,33 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding: 0 80px;
+    /* padding: 0 80px; */
     height: 60px;
     width: 100%;
-
+    position: relative;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary);
+    margin: 0 auto;
+    width: 1366px
 }
 
 #header_category-container {
-    background-color: var(--primary-2);
+margin: 0 auto;
     width: 100%;
     height: 48px;
     color: white;
-    padding: 0 80px;
+    /* padding: 0 130px; */
     display: flex;
     align-items: center;
+    justify-content: left;
+    position: relative;
+    left: 40px;
+    width: 1366px;
+
+    @apply md:hidden sm:hidden
+
+    
+    
     /* gap: 0px 20px */
 }
 .parallelogram {
@@ -131,7 +163,7 @@
     object-fit: contain;
     height: 100%;
     width: 100%;
-    filter: invert(100%);
+   @apply filter
 
     
 }
@@ -247,18 +279,45 @@ transform: scale(1.5);
     right: 4%;
 }
 
+
+/* footer section */
+.footer-wrapper {
+    background-color: var(--light-grey);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: black;
+  margin-top: auto
+
+
+}
+.footer {
+@apply flex w-full flex-row px-5;
+max-width: 1366px;
+align-self: center;
+
+}
+.footer_copyright-wrapper {
+    width: 100%;
+    background-color: var(--grey-medium);
+    @apply flex w-full flex-row justify-center mt-2;
+    
+}
+
 #footer-icons-section {
-    @apply flex w-full flex-row justify-center gap-7;
+    @apply flex w-full flex-row justify-around m-3;
 }
 
 .footer-copyrght {
-    @apply flex flex-row justify-between py-3;
-    border-top: 1px solid;
+    @apply flex flex-row justify-between py-3 px-10 w-full self-center;
+    align-self: center;
     margin: 0 28px;
+    max-width: 1366px;
 }
 
 .footer-copyrght > div:nth-child(2) {
-    @apply flex gap-7;
+    @apply flex justify-around gap-3;
 }
 
 .gradientBackground {
@@ -272,3 +331,56 @@ transform: scale(1.5);
 .google-badge {
 /* scale: 1.19; */
 }
+
+.footer-header .left {
+    @apply flex w-60 justify-around;
+    
+}
+.footer-header .item {
+    width: 32px;
+    height: 32px;
+    
+
+border-radius: 50%;
+@apply flex items-center justify-center;
+
+
+
+}
+.footer-header .item:hover {
+    border: 2px solid rgb(28, 131, 216);
+}
+
+.footer-header .item:nth-of-type(1){
+    background-color: #4267B2;
+}
+
+.footer-header .item:nth-of-type(2){
+    background-color:#813aa4;
+}
+.footer-header .item:nth-of-type(3){
+    background-color: #FFFF00;
+    
+}
+.footer-header .item svg {
+width: 20px;
+height: 20px;
+
+}
+
+.snapchat{
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+
+
+}
+
+.footer-header .divider {
+    background-color: black;
+    width: 2px;
+    height: 50%;
+    @apply mx-10;
+    align-self: center;
+}
+

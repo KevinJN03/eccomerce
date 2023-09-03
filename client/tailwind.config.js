@@ -21,8 +21,23 @@ export default {
 
             boxShadow: {
                 "my-shadow": "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+            },
+
+            spacing: {
+                "70": "17rem",
+                "70.1": "17.1rem"
             }
         },
+
+        screens: {
+            'sm': { max: '480px'},
+            
+      
+            'md': {min: "481px", max: '980px'},
+            
+            'lg': '1024px',
+      
+          }
     },
     plugins: [
        
