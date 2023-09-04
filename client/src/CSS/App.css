@@ -8,7 +8,8 @@
     max-width: 1500px;
     margin: 0;
     padding: 0;
-    min-height: calc(100vh - (400px));
+    /* min-height: calc(100vh - (400px)); */
+   
     background-color: var(--light-grey);
 }
 
@@ -302,7 +303,7 @@
     flex-direction: column;
     justify-content: center;
     color: black;
-    margin-top: auto;
+    /* margin-top: auto; */
 }
 .footer {
     @apply flex w-full flex-row px-5;
@@ -316,7 +317,7 @@
 }
 
 #footer-icons-section {
-    @apply m-3 flex w-full flex-row justify-around;
+    @apply my-4 flex w-full flex-row justify-around sm:!justify-center sm:!items-center sm:gap-10;
 }
 
 .footer-copyrght {
@@ -343,15 +344,23 @@
 }
 
 .footer-header .left {
-    @apply flex w-60 justify-around;
+    @apply flex lg:w-60 flex-row h-full justify-end items-center lg:gap-14 sm+md:gap-4;
 }
 .footer-header .item {
-    width: 32px;
-    height: 32px;
+    
+
+    @apply lg:w-8 lg:h-8 sm+md:w-5 sm+md:h-5 ;
 
     border-radius: 50%;
     @apply flex items-center justify-center;
 }
+
+.footer-header .item svg {
+    color: white !important;
+    @apply filter ;
+    @apply sm+md:!w-2/4 sm+md:!h-2/4
+}
+
 .footer-header .item:hover {
     border: 2px solid rgb(28, 131, 216);
 }
@@ -372,16 +381,17 @@
 }
 
 .snapchat {
-    width: 24px;
-    height: 24px;
+   
+    @apply h-6 w-6 sm+md:h-4 sm+md:w-4;
     object-fit: cover;
 }
 
 .footer-header .divider {
-    background-color: black;
-    width: 2px;
+    border-width: thin;
+    border-right-style: solid;
+    width: 1px;
     height: 50%;
-    @apply mx-10;
+    @apply lg:mx-10 sm+md:mx-4;
     align-self: center;
 }
 
@@ -391,25 +401,58 @@
     }
 
 
-   
+   .footer_copyright-wrapper {
+    display: none
+   }
+
+   .footer-badge {
+    display: none
+   }
+
+
+   .footer {
+    
+    display: flex;
+    flex-direction: column-reverse !important;
+    
+    
+   }
+
+   .footer-section{
+@apply !flex-col-reverse;
+   }
+
+
+   #section-3{
+    display: flex;
+    @apply !flex-col-reverse;
+
+    
+   }
 }
 
 @media screen and (max-width: 980px) {
 
     .section-1 {
         display: flex;
-        flex-wrap: wrap;
+        /* flex-wrap:wrap ; */
         @apply mt-7 gap-1;
 
         
     }
-   #section-1-wrapper {
-    flex: 48%
-    
-    
 
+    #section-1{
+        
+        flex-wrap:wrap
+    }
+   #section-1-wrapper {
+    flex: 48%;
+    height: 100%
 
    }
+   
+
+
 
 
 

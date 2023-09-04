@@ -9,10 +9,10 @@ import snapchat from "../../../assets/icons/Snapchat-Ghost-Outlined-Logo.wine (1
 function Footer() {
     return (
         <div className="footer-wrapper">
-            <section className="footer-header w-full bg-white h-14 flex justify-center items-center py-2">
-                <div className="left flex flex-row w-40 h-full justify-around items-center">
-                <div className="item"><FontAwesomeIcon icon={faSquareFacebook} style={{color: "#ffffff",}} /></div>
-                    <div className="item"><FontAwesomeIcon icon={faInstagram} style={{color: "#ffffff"}} /></div>
+            <section className="footer-header w-full bg-white h-14 flex justify-center items-center py-2 sm+md:px-4">
+                <div className="left ">
+                <div className="item"><FontAwesomeIcon icon={faSquareFacebook} /></div>
+                    <div className="item"><FontAwesomeIcon icon={faInstagram}  /></div>
                     {/* <div className="item"><FontAwesomeIcon icon={faSnapchat} className="snapchat" style={{color: "#ffffff"}}/></div> */}
                     <div className="item">
                         <img className="snapchat" src={snapchat} alt="snapchat icon" />
@@ -20,11 +20,11 @@ function Footer() {
                 </div>
                 <span className='divider'></span>
                 <div className="right">
-                    <Payment_Methods className="h-9 w-9 mr-7"/>
+                    <Payment_Methods className="h-9 w-9 mr-7 sm:!h-5 sm:!w-5 !border-none"/>
                 </div>
             </section>
             <footer className="footer">
-                <div className="mt-3 flex flex-row justify-center gap-5">
+                <div className="footer-section mt-3 flex flex-row justify-center lg:gap-5 sm+md:gap-1">
                     <Section_1 />
                     <Section_2 />
                     <Section_3 />

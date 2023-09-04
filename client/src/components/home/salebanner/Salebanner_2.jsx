@@ -6,7 +6,7 @@ function SaleBanner_2() {
                 <h3 className="lg:text-2xl font-bold  w-full flex items-center justify-center sm:text-xl text-center">
                     Unlimited free Next Day Delivery for whole year for £9.95
                 </h3>
-                <p className="font-normal text-xs mt-3">Minimum spend and Ts&Cs apply.</p>
+                <p className="font-normal text-xs mt-3 sm:!font-medium">Minimum spend and Ts&Cs apply.</p>
             </div>
         </section>
     );

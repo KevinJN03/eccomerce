@@ -63,7 +63,7 @@ function Home() {
     };
 
     return (
-        <>
+        <section className='bg-white h-full'>
             <Banner />
             <div className='carousel-container w-full sm+md:h-80 h-700'>
                 <Carousel slides={slides} />
@@ -75,7 +75,8 @@ function Home() {
             <SaleBanner_3 />
             <SaleBanner_4 images={section_4_images} />
             <Hero image={hero_img2} />
-        </>
+            {/* <Hero image={hero_img} /> */}
+        </section>
     );
 }
 

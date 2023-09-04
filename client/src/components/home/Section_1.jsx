@@ -1,7 +1,7 @@
 function Section_1({ images }) {
     
     return (
-        <section id="section-1" className="section-1">
+        <section id="section-1" className="section-1 ">
             {images.map((img) => {
                 return (
                     <>
