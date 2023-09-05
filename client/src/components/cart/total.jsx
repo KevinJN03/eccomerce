@@ -1,11 +1,12 @@
 import {Link} from "react-router-dom"
 import Payment_Methods from "./payment_methods";
 import Shipping from "./shipping";
+import { forwardRef } from "react";
 
-function Total({}) {
+const Total = forwardRef(function({}, ref){
     return (
         <section id="total-container">
-            <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest">
+            <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">
                 TOTAL
             </h1>
             <section id="total-delivery-container">
@@ -23,8 +24,8 @@ function Total({}) {
             </div>
             <Shipping/>
             <p className="text-red-800 text-sm flex justify-center">Yay! You've saved £38.50</p>
-            <Link to="/checkout" className="checkout-btn">CHECKOUT</Link>
-            <section id="payment-methods" className={"w-full"}>
+            <Link to="/checkout" className="checkout-btn" ref={ref} >CHECKOUT</Link>
+            <section id="payment-methods" className="w-full ">
             <p className="font-semibold tracking-wider">WE ACCEPT:</p>
             
            <Payment_Methods />
@@ -36,6 +37,6 @@ function Total({}) {
             
         </section>
     );
-}
+})
 
 export default Total;

@@ -1,5 +1,5 @@
 
-import "./new_product.scss"
+// import "./new_product.scss"
 
 import SideBar from "../../sidebar/sidebar"
 import Navbar from "../../navbar/navbar"

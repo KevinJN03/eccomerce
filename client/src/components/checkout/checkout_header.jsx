@@ -7,8 +7,8 @@ function Checkout_Header({}){
                     <Link to="/" className="checkout-logo-wrapper">
                         <img src={glamo_logo} alt="glamo logo in black"/>
                     </Link>
-                    <h1 className="text-3xl font-semibold mr-10">CHECKOUT</h1>
-                    <span>
+                    <h1 className="text-3xl font-semibold mr-10 sm:text-xl md:text-2xl">CHECKOUT</h1>
+                    <span className='sm+md:h-10 '>
                     <img src={digicert_logo} alt='digicert logo'className="digicert-logo"/>
                     </span>
                 </div>

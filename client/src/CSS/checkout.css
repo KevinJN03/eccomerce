@@ -1,10 +1,11 @@
 #checkout-page {
-    @apply flex justify-center w-full;
+    @apply flex justify-center lg:!w-[100vw] sm+md:min-w-[100vw];
     background-color: var(--light-grey);
 }
 
 #checkout {
     max-width: 1000px;
+    @apply sm+md:max-w-[90vw];
     width: fit-content;
     /* background-color: white; */
    
@@ -22,7 +23,7 @@
 .checkout-logo-wrapper {
      height: 50px;
     width: 150px;
-    @apply flex justify-center items-baseline
+    @apply flex justify-center items-baseline sm:h-10 md:h-12;
 
 }
 
@@ -51,7 +52,7 @@
 }
 
 .checkout-body {
-    @apply flex flex-row gap-3;
+    @apply flex flex-row gap-3 sm+md:flex-col-reverse;
     background-color: var(--light-grey) !important;
 }
 
@@ -127,7 +128,7 @@ border-bottom-color: none
 .address-form-wrapper {
     display: grid;
     grid-template-columns: 2fr 1fr;;
-   
+  
     gap: 100px
 }
 
@@ -241,10 +242,9 @@ margin: auto 0;
 
 #checkout-total{
     /* min-width:  fit-content; */
-    min-width: 400px;
-    max-width: 400px;
+    
     height: fit-content;
-    @apply p-6 mt-5
+    @apply p-6 mt-5 sm+md:self-center lg:w-[400px] sm+md:w-[90vw]
 }
 
 #checkout-total div {
@@ -268,9 +268,10 @@ margin: auto 0;
 #checkout-body-wrapper {
     background-color: var(--light-grey) !important;
     height: 100%;
-    min-width: 600px;
+    
+    @apply lg:w-[600px] 
 }
 
 .digicert-logo{
-    @apply h-10 pr-4
+    @apply h-10 pr-4 sm+md:object-contain
 }

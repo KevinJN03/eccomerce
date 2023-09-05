@@ -20,7 +20,7 @@ function Header() {
 
  
     return (
-        <section className="flex w-full flex-col justify-center ">
+        <section className="flex max-w-full w-full flex-col justify-center header-section bg-[var(--primary)]">
             <section id="header-wrapper">
                 <header className="header">
                     <section className="header-left">

@@ -1,15 +1,16 @@
 #App {
-    width: 100%;
+    max-width: 100%;
     @apply m-0 flex flex-col items-center p-0;
+    background-color: var(--light-grey);
+    width:100%;
+    overflow-x: hidden;
 }
 
 #main {
-    min-width: 100%;
-    max-width: 1500px;
-    margin: 0;
-    padding: 0;
-    /* min-height: calc(100vh - (400px)); */
-   
+
+  @apply flex justify-center m-0 p-0;
+  min-height: 80vh;
+   width: 100%;
     background-color: var(--light-grey);
 }
 
@@ -17,34 +18,39 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
-    /* margin: 0 auto; */
-}
+   
 
-#header-wrapper {
+ width: 100%;
+
     background-color: var(--primary);
     position: relative;
+    
 }
+
 
 #category-wrapper {
     background-color: var(--primary-2);
-    /* position: relative;
+  
     left: 40px */
 }
 .header {
-    /* @apply flex flex-row w-full max-h-28 px-10 justify-center  */
+    /* @apply flex flex-row w-full max-h-28 px-10 justify-center ; */
 
+    @apply px-4;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    /* padding: 0 80px; */
+   
     height: 60px;
-    width: 100vw;
+
     position: relative;
     align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    max-width: 1366px;
+align-self: center;
+justify-content: center;
+   width: 100%;
+
+  /* @apply lg:px-20; */
+    max-width: 1366px
 }
 
 #header_category-container {
@@ -57,10 +63,10 @@
     align-items: center;
     justify-content: left;
     position: relative;
-    left: 40px;
-    width: 1366px;
+    left: 15px;
+ 
 
-    @apply sm+md:hidden
+    @apply sm+md:hidden lg:max-w-[1366px];
 
     
     
@@ -124,6 +130,9 @@
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    width: 100%;
+    /* flex: 0 0 30% */
+    flex: 1 1 auto;
 }
 .image-wrapper {
     /* @apply h-full max-w-xs */
@@ -142,18 +151,12 @@
     object-fit: contain;
 }
 .header-right {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    place-items: center;
-    /* flex-direction: row;
-    flex-wrap: nowrap; */
+    flex: 1 1 auto;
+    @apply flex justify-around items-center ;
+    min-width: 0;
     height: 100%;
-    /* max-width: 300px; */
-    /* justify-content: space-between; */
-    margin: 0;
-    padding: 0;
-    @apply sm:mr-3 sm:gap-3;
+   max-width:150px;
+    @apply sm:gap-5 lg:gap-5 w-full sm:pl-3;
 }
 
 .header-icon {
@@ -182,22 +185,27 @@
 /* search setion */
 
 .header-left {
-    flex: 1;
+    flex : 1 1 1;
     display: flex;
-    @apply pl-4;
+    @apply md:!w-fit;
+    min-width: 0;
     height: 100%;
+    /* max-width: 150px; */
 }
 
 .header-middle {
-    flex: 2;
+    flex: 2 2 auto;
+
+    @apply md:mx-10 lg:mx-20 sm:mx-0;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: 100%;
     align-items: center;
     position: relative;
-    /* margin: 0 50px; */
-    width: 100%;
+    /* width: 70%; */
+    max-width: 700px;
+min-width: 0;
 }
 
 #search-input {
@@ -283,7 +291,7 @@
 }
 
 #newsletter {
-    max-width: 448px;
+    
 }
 #newletter-btn-container {
     background-color: white;
@@ -303,7 +311,7 @@
     flex-direction: column;
     justify-content: center;
     color: black;
-    /* margin-top: auto; */
+
 }
 .footer {
     @apply flex w-full flex-row px-5;
@@ -317,7 +325,7 @@
 }
 
 #footer-icons-section {
-    @apply my-4 flex w-full flex-row justify-around sm:!justify-center sm:!items-center sm:gap-10;
+    @apply my-4 flex w-full flex-row justify-around sm+md:!items-center;
 }
 
 .footer-copyrght {
@@ -401,7 +409,7 @@
     }
 
 
-   .footer_copyright-wrapper {
+   /* .footer_copyright-wrapper {
     display: none
    }
 
@@ -428,7 +436,7 @@
     @apply !flex-col-reverse;
 
     
-   }
+   } */
 }
 
 @media screen and (max-width: 980px) {
@@ -450,7 +458,36 @@
     height: 100%
 
    }
-   
+   .footer_copyright-wrapper {
+    display: none
+   }
+
+   .footer-badge {
+    display: none
+   }
+
+
+   .footer {
+    
+    display: flex;
+    flex-direction: column-reverse !important;
+    @apply !px-4 justify-center items-center;
+
+    
+    
+   }
+
+   .footer-section{
+@apply !flex-col-reverse;
+   }
+
+
+   #section-3{
+    display: flex;
+    @apply !flex-col-reverse justify-center;
+
+    
+   }
 
 
 

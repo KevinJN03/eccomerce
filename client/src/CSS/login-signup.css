@@ -8,8 +8,10 @@ background-color: var(--light-grey);
 
 
 #login-signup-container {
-    min-width: 600px;
-    border: 3px solid black;
+    /* max-width: 600px; */
+    /* width: clamp(300px, 00px, 600px); */
+    border: thin solid black;
+    
     margin-top: 80px;
     padding: 12px;
     @apply flex flex-col justify-center items-center bg-white
@@ -66,8 +68,9 @@ align-self: center
 .date-picker {
     display: grid;
     width: 100%;
-    grid-template-columns: 30% 40% 30%;
+    grid-template-columns: 30% 30% 30%;
     gap: 10px;
+    grid-auto-flow: column;
 
 
 }

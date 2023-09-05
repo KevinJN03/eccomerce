@@ -40,6 +40,8 @@ export default {
             
             'lg': '1024px',
 
+            'md+lg': '481px'
+
       
           }
     },

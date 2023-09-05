@@ -1,18 +1,26 @@
 import { useEffect, useState } from 'react';
 import ReactFlagsSelect from 'react-flags-select';
 import ReactCountryFlag from 'react-country-flag';
+import {useWindowSize} from "@uidotdev/usehooks"
 function Country_Picker({}) {
+
+    const screenSize = useWindowSize()
     const [select, setSelect] = useState('Gb');
     const [showOption, setShowOption] = useState(false);
     const onSelect = (code) => setSelect(code);
 
     const handleShowOption = () => {
-        setShowOption(!showOption);
+        setShowOption(true);
     };
-
+    const handleCloseOption = () => {
+        setShowOption(false);
+    };
+    
+console.log("option", showOption)
     // A use effect that will run wenever a select is changed
     useEffect(()=> {
-        handleShowOption()
+        handleCloseOption()
+
     }, [select])
 
     return (
@@ -33,8 +41,8 @@ function Country_Picker({}) {
 
                 {showOption ? (
                     <>
-                    <ReactFlagsSelect selected={select} onSelect={onSelect} selectedSize={20}/>
-                    <button type="button" onClick={handleShowOption}>Cancel</button>
+                    <ReactFlagsSelect selected={select} onSelect={onSelect} selectedSize={screenSize > 480 ? 20 : 14}/>
+                    <button type="button" onClick={handleCloseOption}>Cancel</button>
                     </>
                     
                 ) : (

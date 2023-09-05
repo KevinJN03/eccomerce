@@ -2,14 +2,15 @@
 
 
 #cart-page{
-@apply flex justify-center gap-4 ;
+@apply flex justify-center gap-4 sm+md:flex sm+md:flex-col sm+md:self-center md:mx-6 ;
 background-color: var(--light-grey);
 min-height: 100%;
-
+max-width: 100%;
 }
-
 .cart{
-  
+
+     @apply w-full lg:w-[500px] md:w-[100%];
+    
 }
 #cart-product{
     @apply px-8 flex-row flex gap-5 white py-5 relative;
@@ -79,14 +80,18 @@ object-fit: contain;
 }
 
 .product-cart-wrapper{
-    @apply mb-2
+    @apply mb-2 w-full
 }
 
 #total-container {
-    @apply my-4 white px-8 py-5 ;
-    min-width: 300px;
-    max-width: 400px;
+    @apply lg:w-96 md:mr-3 my-4 white lg:px-8 md:px-5  sm:px-3 py-5 sm+md:w-full sm+md:flex sm+md:justify-center ;
+    // min-width: 300px;
+    // max-width: 400px;
+  
     height: fit-content;
+
+
+    
 }
 
 #delivery-container {
@@ -131,3 +136,5 @@ object-fit: contain;
     border: 1px solid var(--light-grey);
     object-fit: contain;
  }
+
+ 

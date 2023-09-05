@@ -1,12 +1,14 @@
+import {v4 as uuidv4} from "uuid"
+import { Fragment } from "react";
 function SaleBanner_4({ images }) {
     return (
-        <section className="section-1 sm:!h-72">
+        <section className=" section-1 sm:!h-72">
             {images.map((img) => {
                 return (
-                    <>
+                    <Fragment key={uuidv4()}>
                         <div
                             id="section-1-wrapper"
-                           
+                        
                             className=" h-full relative"
                         >
                             <img
@@ -18,7 +20,7 @@ function SaleBanner_4({ images }) {
                                 <img src={img.src} className="w-full h-full "/>
                             </div>
                         </div>
-                    </>
+                    </Fragment>
                 );
             })}
         </section>

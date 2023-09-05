@@ -27,6 +27,12 @@
             }
         }
     }
+
+    #delivery {
+        @apply m-4 w-7/12 p-6;
+        border-radius: 10px;
+        border: 2px solid black;
+    }
 }
 
 .title {
@@ -125,9 +131,4 @@ p {
 
 .category-select {
     width: 50%
-}
-#delivery {
-    @apply m-4 w-7/12 p-6;
-    border-radius: 10px;
-    border: 2px solid black;
 }

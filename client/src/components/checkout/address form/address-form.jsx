@@ -2,7 +2,7 @@ import Address_Input from './address.input';
 
 function Address_Form({ setChange }) {
     return (
-        <section id="address-form">
+        <section id="address-form" className='relative'>
             <h1 className="mb-6">EDIT ADDRESS</h1>
             <div className="address-form-wrapper">
                 <div className="address-input-wrapper">
@@ -19,7 +19,7 @@ function Address_Form({ setChange }) {
                     </h1>
                     <button className="font-gotham font-bold tracking-wider text-white bg-primary py-3 px-3 my-4 " type="button" onClick={() => setChange(false)}>DELIVER TO THIS ADDRESS</button>
                 </div>
-                <button onClick={() => setChange(false)}>Cancel</button>
+                <button onClick={() => setChange(false)} className='sm+md:absolute sm+md:top-1 sm+md:right-0'>Cancel</button>
             </div>
         </section>
     );

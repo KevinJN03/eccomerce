@@ -57,7 +57,9 @@ function Nav_Category({category}){
 
     {
         Category.map(banner=> {
-            return banner
+            return <div key={uuidv4()}>
+            {banner}
+            </div>
         })
     }
   

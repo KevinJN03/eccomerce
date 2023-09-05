@@ -1,10 +1,12 @@
+import { Fragment } from "react";
+import {v4 as uuidv4} from "uuid"
 function Section_1({ images }) {
     
     return (
         <section id="section-1" className="section-1 ">
             {images.map((img) => {
                 return (
-                    <>
+                    <Fragment key={uuidv4()}>
                         <div
                             id="section-1-wrapper"
                             
@@ -18,7 +20,7 @@ function Section_1({ images }) {
                                 {img.text ? img.text : ''}
                             </h3>
                         </div>
-                    </>
+                    </Fragment>
                 );
             })}
         </section>
