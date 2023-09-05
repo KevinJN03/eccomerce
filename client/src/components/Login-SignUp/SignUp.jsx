@@ -59,7 +59,7 @@ function SignUp() {
                             views={['month']}
                             slotProps={{ textField: { size: 'small' } }}
                         />
-                        #
+                        
                         <DatePicker
                             views={['year']}
                             slotProps={{ textField: { size: 'small' } }}

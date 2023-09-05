@@ -1,16 +1,15 @@
+import { Fragment } from "react";
+import {v4 as uuidv4} from "uuid"
 function Section_1({ images }) {
-    const imageStyle = {
-        width: 'calc(100% / 4)',
-        height: '100%',
-    };
+    
     return (
-        <section id="section-1" className="section-1">
+        <section id="section-1" className="section-1 ">
             {images.map((img) => {
                 return (
-                    <>
+                    <Fragment key={uuidv4()}>
                         <div
                             id="section-1-wrapper"
-                            style={imageStyle}
+                            
                             className="relative h-full"
                         >
                             <img
@@ -21,7 +20,7 @@ function Section_1({ images }) {
                                 {img.text ? img.text : ''}
                             </h3>
                         </div>
-                    </>
+                    </Fragment>
                 );
             })}
         </section>

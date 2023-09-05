@@ -1,16 +1,14 @@
+import {v4 as uuidv4} from "uuid"
+import { Fragment } from "react";
 function SaleBanner_4({ images }) {
-    const imageStyle = {
-        width: 'calc(100% / 4)',
-        height: '100%',
-    };
     return (
-        <section id="section-1" className="section-1 salebanner-gap max-700px">
+        <section className=" section-1 sm:!h-72">
             {images.map((img) => {
                 return (
-                    <>
+                    <Fragment key={uuidv4()}>
                         <div
                             id="section-1-wrapper"
-                            style={imageStyle}
+                        
                             className=" h-full relative"
                         >
                             <img
@@ -22,7 +20,7 @@ function SaleBanner_4({ images }) {
                                 <img src={img.src} className="w-full h-full "/>
                             </div>
                         </div>
-                    </>
+                    </Fragment>
                 );
             })}
         </section>

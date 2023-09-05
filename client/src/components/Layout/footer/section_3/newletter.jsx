@@ -3,7 +3,7 @@ import arrow from '../../../../assets/footer-icons/right-arrow.png';
 function Newsletter() {
     return (
         <section id="newsletter">
-            <p className="mb-2 text-sm font-bold">
+            <p className="mb-2 text-sm font-bold sm:text-xs">
                 SIGN UP FOR DISCOUNTS + UPDATES
             </p>
             <div

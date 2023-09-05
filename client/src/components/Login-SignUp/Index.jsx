@@ -21,7 +21,7 @@ function LoginSignUp({ loginorSignup }) {
     return (
         <>
             <section className="login-signup-page ">
-                <section id="login-signup-container" className="">
+                <section id="login-signup-container" className="lg:w-[600px] sm:w-[90vw] md:w-[500px]">
                     <Link to="/" className="login-logo mt-10 w-40">
                         <img src={glamo} />
                     </Link >

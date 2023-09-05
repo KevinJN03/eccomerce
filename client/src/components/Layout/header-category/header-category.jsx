@@ -35,13 +35,13 @@ function Header_Category({ category }) {
 <Header_link text="Marketplace" />
                 <div className="parallelogram flex h-full w-20 items-center justify-center bg-red-800 font-semibold ">
                     <Header_link text="Outlet" />
+                    
                 </div>
-                
             </section>
         );
     };
 
-    return <>{category === 'men' ? menCategory() : womenCategory()}</>;
+    return <>{category ? menCategory() : womenCategory()}</>;
 }
 
 export default Header_Category;

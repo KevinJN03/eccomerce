@@ -21,7 +21,7 @@ function Icons() {
                     <div
                         key={all_icons.indexOf(icon)}
                         id="footer-icons"
-                        className="h-6 w-6 filter"
+                        className="h-6 w-6"
                     >
                         <img src={icon} className="h-full w-full" />
                     </div>

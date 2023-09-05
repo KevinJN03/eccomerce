@@ -2,109 +2,112 @@ import logo from '../../assets/glamo.png';
 import search_icon from '../../assets/search.svg';
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
-import heart from '../../assets/heart.png';
+import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
+import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import Dropdown_Hover from '../common/dropdown/dropdown_hover';
 import '../../CSS/dropdown.css';
 import Profile_Dropdown from '../common/dropdown/profile_dropdown';
 import Header_Category from './header-category/header-category';
 import { useState } from 'react';
+import Mobile_Nav from './mobile/mobile-nav';
 function Header() {
-    const [category, setCategory] = useState('men');
+    const [category, setCategory] = useState(true);
     //const [activeCategory, setActiveCategory] = useState(false)
 
     const search = (e) => {
         console.log(e);
     };
 
-    const profile_options = [
-        <div className="signin-signup-btn-container flex w-full flex-row gap-3 border-b-2 border-black pb-3">
-            <a
-                href="/login"
-                type="button"
-                className="profile_dropdown bg-white text-black"
-            >
-                Sign In
-            </a>
-            <a
-                href="/signup"
-                type="button"
-                className="profile_dropdown bg-black text-white"
-            >
-                Sign Up
-            </a>
-        </div>,
-    ];
+ 
     return (
-        <>
-            <header className="header">
-                <div id="image-wrapper" className="image-wrapper">
-                    <a href="/">
-                        <img src={logo} alt="glamo logo" className="" />
-                    </a>
-                </div>
-                <section
-                    id="women"
-                    onClick={() => setCategory('women')}
-                    className={
-                        category == 'women' ? 'active-header-category' : null
-                    }
-                >
-                    Women
-                </section>
-                <section
-                    id="men"
-                    onClick={() => setCategory('men')}
-                    className={
-                        category == 'men' ? 'active-header-category' : null
-                    }
-                >
-                    Men
-                </section>
-                <section id="search-input-section">
-                    <input
-                        type="text"
-                        id="search-input"
-                        onChange={search}
-                        placeholder="Search for items"
-                    />
-                    <div id="search-icon-section">
-                        <img
-                            src={search_icon}
-                            alt="search icon"
-                            id="search-icon"
+        <section className="flex max-w-full w-full flex-col justify-center header-section bg-[var(--primary)]">
+            <section id="header-wrapper">
+                <header className="header">
+                    <section className="header-left">
+ <Mobile_Nav/>
+                    <div id="image-wrapper" className="image-wrapper">
+                        <a href="/">
+                            <img src={logo} alt="glamo logo" className="" />
+                        </a>
+                    </div>
+                    <section
+                        id="women"
+                        onClick={() => setCategory(false)}
+                        className={`header-category-btn ${ !category ? 'active-header-category' : ""}` 
+                            
+                        }
+                    >
+                        
+                        Women
+                    </section>
+                    <section
+                        id="men"
+                        onClick={() => setCategory(true)}
+                        className={`header-category-btn ${ category ? 'active-header-category'  : ""}` }
+                    >
+                        Men
+                    </section>
+
+                    </section>
+                   
+                    <section className="header-middle">
+                        <input
+                            type="text"
+                            id="search-input"
+                            onChange={search}
+                            placeholder="Search for items"
                         />
-                    </div>
-                </section>
-
-                <section id="icons-wrapper" className="h-full">
-                    <Dropdown_Hover
-                        button={profile}
-                        dropdown_options={<Profile_Dropdown />}
-                    />
-
-                    <div className="header-icon">
-                        <a href="/wishlist" className="h-full w-full">
+                        <div id="search-icon-section">
                             <img
-                                src={heart}
-                                alt="heart icon"
-                                className="img-icon"
-                            ></img>
-                        </a>
-                    </div>
-                    <div className="header-icon">
-                        <a href="/cart" className="h-full w-full">
-                            <img
-                                src={basket}
-                                alt="basket icon"
-                                className="img-icon "
-                            ></img>
-                        </a>
-                    </div>
-                </section>
-            </header>
-            {category=="men" ? (<Header_Category category={"men"}/>) : (<Header_Category category={"women"}/>)}
-            
-        </>
+                                src={search_icon}
+                                alt="search icon"
+                                id="search-icon"
+                            />
+                        </div>
+                    </section>
+
+                    <section className="header-right h-full" >
+                       <a href="/login"><Dropdown_Hover
+                            button={profile}
+                            dropdown_options={<Profile_Dropdown />}
+                        />
+                        </a> 
+
+                        
+                            <a href="/wishlist" className="header-icons">
+                                {/* <img
+                                    src={heart}
+                                    alt="heart icon"
+                                    className="img-icon p-1"
+                                ></img> */}
+                                <FavoriteBorderSharpIcon className='img-icon'/>
+                            </a>
+                        
+                        
+                            <a href="/cart" className="header-icons">
+                                {/* <img
+                                    src={basket}
+                                    alt="basket icon"
+                                    className="img-icon "
+                                ></img> */}
+                                <LocalMallOutlinedIcon className='img-icon' fontSize='large'/>
+                            </a>
+                        
+                    </section>
+                </header>
+
+                <section id="category-wrapper" className='md:hidden'>
+                {/* {category == 'men' ? (
+                    <Header_Category category={'men'} />
+                ) : (
+                    <Header_Category category={'women'} />
+                )} */}
+                <Header_Category category={category}/>
+                
+            </section>
+            </section>
+           
+        </section>
     );
 }
 

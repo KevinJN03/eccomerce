@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto&family=Roboto+Slab:wght@100;200;300;400;500;600&display=swap');
+
+
+#cart-page{
+@apply flex justify-center gap-4 sm+md:flex sm+md:flex-col sm+md:self-center md:mx-6 ;
+background-color: var(--light-grey);
+min-height: 100%;
+max-width: 100%;
+}
+.cart{
+
+     @apply w-full lg:w-[500px] md:w-[100%];
+    
+}
+#cart-product{
+    @apply px-8 flex-row flex gap-5 white py-5 relative;
+    border-bottom: 2px solid var(--light-grey)
+    
+}
+.cart-header {
+    @apply px-8 flex justify-between h-14 py-10 mb-2 items-center white mt-4;
+
+}
+
+.cart-img-container {
+    height: 150px;
+    width: 120px;
+    @apply flex justify-start white
+    
+}
+
+#cart-info {
+    width: 70%
+}
+
+.cart-options {
+@apply flex flex-row items-baseline gap-3 text-sm;
+margin-top: 10px;
+
+}
+.cart-options div {
+    @apply flex flex-row items-baseline
+}
+
+
+#save-later-btn {
+    @apply flex flex-row items-center justify-center px-2 mt-5 h-8 whitespace-nowrap;
+    border: 1px solid var(--light-grey);
+    gap: 10px;
+    
+}
+#save-later-btn img {
+    height: 50%;
+
+    @apply m-0
+}
+
+.white {
+    background-color: white !important;
+}
+
+#cart-close {
+    /* position: absolute;
+    right:30px;
+    font-family: "Gotham"; */
+    @apply absolute right-6  text-xl w-4 h-4 flex justify-center items-center;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 50%;
+   
+   
+
+}
+
+#cart-close img {
+width: 100%;
+height: 100%;
+object-position: center;
+object-fit: contain;
+
+}
+
+.product-cart-wrapper{
+    @apply mb-2 w-full
+}
+
+#total-container {
+    @apply lg:w-96 md:mr-3 my-4 white lg:px-8 md:px-5  sm:px-3 py-5 sm+md:w-full sm+md:flex sm+md:justify-center ;
+    // min-width: 300px;
+    // max-width: 400px;
+  
+    height: fit-content;
+
+
+    
+}
+
+#delivery-container {
+    @apply flex flex-row justify-between items-baseline
+}
+
+#total-delivery-container {
+    @apply flex flex-col gap-3
+}
+/* shipping select 
+ */
+
+ /* The container must be positioned relative: */
+
+ .shipping {
+    min-width: 100%;
+ }
+ .shipping select {
+    min-width: 100%;
+    @apply text-sm
+ }
+
+ .checkout-btn {
+    @apply w-full text-white py-3 font-semibold tracking-widest text-sm flex justify-center items-center;
+    background-color: var(--green);
+    transition: background-color 0.3s ease-in-out;
+ }
+
+ .checkout-btn:hover {
+    background-color: #016536;
+ }
+
+ .payment-icons {
+    @apply mt-1;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0px 2px;
+
+ }
+ .payment-icons img {
+    border: 1px solid var(--light-grey);
+    object-fit: contain;
+ }
+
+ 

@@ -5,6 +5,7 @@ const slideStyles = {
     height: '100%',
 
     backgroundSize: 'cover',
+    backgroundRepeat: "no-repeat",
     backgroundPosition: 'center',
 };
 
@@ -74,10 +75,10 @@ const Carousel = ({ slides }) => {
         <div style={sliderStyles}>
             <div>
                 <div onClick={goToPrevious} style={leftArrowStyles}>
-                    ❰
+                    {/* ❰ */}
                 </div>
                 <div onClick={goToNext} style={rightArrowStyles}>
-                    ❱
+                    {/* ❱ */}
                 </div>
             </div>
             <div style={slideStylesWidthBackground}></div>
