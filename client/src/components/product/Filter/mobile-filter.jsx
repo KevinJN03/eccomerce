@@ -12,7 +12,7 @@ return (
 	<div className="modal-content flex flex-col gap-5 w-full h-full pt-0">
 
     
-           <div className="mobile-filter-header sticky top-0 !bg-white z-[1] flex sm:!items-center mx-[-24px] min-full border-b-2 !justify-center !h-full !min-h-16">
+           <div className="mobile-filter-header sticky top-0 !bg-white z-[1] flex sm:!items-center mx-[-24px] min-full border-b-2 !justify-center !h-full !min-h-16 !max-h-16">
              
 		<h2 className="text-base font-medium flex mx-auto items-center h-full pl-11" >Filter & Sort</h2> 
           <label htmlFor="modal-2" className=" rounded-full h-8 w-8 flex items-center justify-center !self-center bg-[--light-grey] mr-3"><CloseRoundedIcon className='!text-2xl'/></label>

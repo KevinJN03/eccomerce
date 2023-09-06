@@ -27,10 +27,16 @@ function Product_info({
             </div>
 
             <Shipping />
-            <Product_Detail details={details} />
-            <Return />
-            <Similar_Styles images={images} />
-            <Style_It_With products={style_it_with_image} />
+            <div className=" flex flex-col sm+md:gap-0 border-t-[thin] sm+md:mb-10 sm:mx-4 lg:mt-6">
+                {/* flex flex-col sm+md:gap-4 sm+md:border-t-2 sm:pt-3 sm+md:mb-4 */}
+                <Product_Detail details={details} />
+                <Return />
+            </div>
+            <section className="similar-style-with-container sm:mx-4 flex lg:flex-col sm+md:flex-col-reverse sm+md:gap-8 lg:mt-12">
+             <Similar_Styles images={images} />
+            <Style_It_With products={style_it_with_image} />   
+            </section>
+            
         </section>
     );
 }
