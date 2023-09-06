@@ -34,7 +34,7 @@ flex: 2 2 80%
 }
  #collection-section .card {
     /* min-height: 500px; */
-    @apply sm:max-h-max lg:h-[500px] bg-white shadow-none;
+    @apply sm:max-h-max lg:max-h-[500px] bg-white shadow-none w-full h-full;
     max-height: max-content;
     /* width: 300px; */
     border: none;
@@ -112,8 +112,10 @@ flex: 1 1 20%
 .section-title {
     
     
-    @apply min-h-full w-full font-semibold mb-4 text-[16px] flex items-center;
+    @apply min-h-full w-full font-semibold md+lg:mb-4 text-[16px] sm:text-sm sm:mb-2 sm:font-medium flex sm:items-center;
 }
+
+
 
 #color-section,
 #size-section,
@@ -121,7 +123,7 @@ flex: 1 1 20%
     width: 100%;
 }
 .section-header {
-    @apply flex flex-row justify-between;
+    @apply flex flex-row justify-between items-center py-3;
 }
 
 /* Category Section */
@@ -135,12 +137,12 @@ flex: 1 1 20%
     @apply h-4 w-4 flex items-center sm+md:w-3 sm+md:h-3;
 }
 .up-arrow {
-    transform: rotate(-90deg);
+    transform: rotate(180deg);
     @apply h-full w-full;
 }
 
 .down-arrow {
-    transform: rotate(90deg);
+    transform: rotate(0deg);
 }
 
 #product_page .bottom {

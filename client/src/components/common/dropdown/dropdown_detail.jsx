@@ -1,5 +1,5 @@
 import arrow from '../../../assets/footer-icons/right-arrow.png';
-
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { useState } from 'react';
 function DropDown_Detail({ details, header, headerClass, borderNone }) {
     const [show, setShow] = useState(false);
@@ -8,14 +8,15 @@ function DropDown_Detail({ details, header, headerClass, borderNone }) {
     };
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
     return (
-        <section id="dropdown-detail" className={borderNone ? null : "border-b-2"}>
-            <div className="section-header">
+        <section id="dropdown-detail" className={borderNone ? null : "border-b-[thin]"}>
+            <div className="section-header" onClick={toggleShow}>
                 <h3 className={`section-title ${headerClass}`}>{header}</h3>
-                <div className="arrow-wrapper" onClick={toggleShow}>
-                    <img src={arrow} className={toggleClass} />
-                </div>
+                   <ExpandMoreRoundedIcon className={toggleClass}/>
+        
+
+                
             </div>
-            <section className="max-650">{show ? details : null}</section>
+            {show && <section className=" sm+md:mb-3 mb-5 !max-w-[610px]">{details}</section>}
         </section>
     );
 }

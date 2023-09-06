@@ -7,7 +7,7 @@ function Product_Detail({ details }) {
         });
     };
     return (
-        <section id="Product Detail">
+        <section id="product-detail">
             <DropDown_Detail
                 details={returnDetail()}
                 header={'Product Details'}
