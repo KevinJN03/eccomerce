@@ -1,8 +1,9 @@
+function Header_link({ text, link }) {
+    return (
+        <a className="header-link text-s tracking-wider" href={link}>
+            {text}
+        </a>
+    );
+}
 
-function Header_link({text, link}){
-  return (
-    <a  className="text-s tracking-wider header-link" href={link}>{text}</a>
-  )
-};
-
-export default Header_link
+export default Header_link;

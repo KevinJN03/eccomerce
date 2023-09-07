@@ -15,7 +15,7 @@ function Widget({ type }) {
         data = {
             title: 'USERS',
             isMoney: false,
-            link: (<Link to="users">See all users</Link>),
+            link: <Link to="users">See all users</Link>,
             icon: (
                 <>
                     <PersonOutlineOutlinedIcon className="icon" />

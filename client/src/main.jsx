@@ -8,6 +8,6 @@ import Router from './Router.jsx';
 import App from './App';
 ReactDOM.createRoot(document.getElementById('root')).render(
     // <React.StrictMode>
-        <App />
-    // </React.StrictMode> 
+    <App />
+    // </React.StrictMode>
 );

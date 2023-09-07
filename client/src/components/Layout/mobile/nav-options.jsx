@@ -8,15 +8,13 @@ function Nav_Options({ sideBar, closeMenu }) {
 
     return (
         <>
-           { sideBar && <button className="close-btn" onClick={closeMenu}>
-                <img src={close} className="self-center" />
-            </button>}
-            
-            <nav
-                className={`menu-body ${
-                    sideBar && 'menu-body-open' 
-                }`}
-            >
+            {sideBar && (
+                <button className="close-btn" onClick={closeMenu}>
+                    <img src={close} className="self-center" />
+                </button>
+            )}
+
+            <nav className={`menu-body ${sideBar && 'menu-body-open'}`}>
                 <div className="menu-header">
                     <button
                         className={`category-btn w-full tracking-wider ${
@@ -36,12 +34,9 @@ function Nav_Options({ sideBar, closeMenu }) {
                         MEN
                     </button>
                 </div>
-                        <section className='menu-body-wrapper'>
-                           <Nav_Category category={category} />
-                        </section>
-                         
-                        
-                
+                <section className="menu-body-wrapper">
+                    <Nav_Category category={category} />
+                </section>
             </nav>
         </>
     );

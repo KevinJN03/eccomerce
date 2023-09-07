@@ -1,10 +1,9 @@
-function Product_Single({}){
-
-    return(
+function Product_Single({}) {
+    return (
         <>
-        <h1>Hi singe product</h1>
+            <h1>Hi singe product</h1>
         </>
-    )
+    );
 }
 
-export default Product_Single
+export default Product_Single;

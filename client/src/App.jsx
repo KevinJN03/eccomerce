@@ -13,12 +13,9 @@ function App() {
             <LayoutProvider>
                 <Layout>
                     <main id="main">
-                    <DarkModeContextProvider>
-                        <Router />
-                    </DarkModeContextProvider>
-                            
-                            
-                        
+                        <DarkModeContextProvider>
+                            <Router />
+                        </DarkModeContextProvider>
                     </main>
                 </Layout>
             </LayoutProvider>

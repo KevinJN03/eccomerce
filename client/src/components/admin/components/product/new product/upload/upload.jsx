@@ -3,7 +3,7 @@ import add_image from './add-image.png';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import { useRef } from 'react';
-import close from "../../../../../../assets/icons/close.png"
+import close from '../../../../../../assets/icons/close.png';
 function Upload({ files, setFiles }) {
     console.log('files at upload', files);
     const addInputRef = useRef();
@@ -22,43 +22,39 @@ function Upload({ files, setFiles }) {
 
     const handleAddphoto = (e, newfiles) => {
         console.log('you clicked on', newfiles);
-    
+
         const images = Array.from(e.target.files, (file) =>
             URL.createObjectURL(file)
         );
 
-        
-const findFile = files.find((item) =>  item.isDragDisabled == true)
+        const findFile = files.find((item) => item.isDragDisabled == true);
 
+        setFiles(
+            files.map((file) => {
+                if (file.id === findFile.id) {
+                    return { ...file, img: images[0], isDragDisabled: false };
+                }
+                return file;
+            })
+        );
 
-        setFiles(files.map((file) => {
-          if(file.id === findFile.id){
-              return {...file, img: images[0], isDragDisabled: false}
-          }
-          return file
-        }));
-
-        console.log("files after update", files)
-
-       
-
-        
+        console.log('files after update', files);
     };
 
     const deletePhoto = (oldfile) => {
+        let newfile = oldfile;
+        delete newfile.img;
+        newfile.isDragDisabled = true;
 
-    let newfile = oldfile;
-    delete newfile.img;
-    newfile.isDragDisabled = true
-
-    setFiles(files.map(item=> {
-      if(item.id == oldfile.id){
-        return newfile
-      }
-      return item
-    }) )
-
-    }
+        setFiles(
+            files.map((item) => {
+                if (item.id == oldfile.id) {
+                    return newfile;
+                }
+                return item;
+            })
+        );
+    };
 
     function DragItem({ id, droppableId, className }) {
         return (
@@ -81,33 +77,46 @@ const findFile = files.find((item) =>  item.isDragDisabled == true)
                         >
                             {(provided) => (
                                 <div
-                                    className="h-full w-full rounded-inherit relative"
+                                    className="relative h-full w-full rounded-inherit"
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     ref={provided.innerRef}
                                 >
-                                  
                                     {files[id].img ? (
-                                      <>
-                                      <button type="button" className='delete-btn absolute top-2 right-3 w-8 h-8 bg-red-600 p-2'  onClick={() => deletePhoto(files[id])}><img className="w-full h-full" src={close}/></button>
-                                        <img src={files[id].img} />
-                                      </>
-                                      
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="delete-btn absolute right-3 top-2 h-8 w-8 bg-red-600 p-2"
+                                                onClick={() =>
+                                                    deletePhoto(files[id])
+                                                }
+                                            >
+                                                <img
+                                                    className="h-full w-full"
+                                                    src={close}
+                                                />
+                                            </button>
+                                            <img src={files[id].img} />
+                                        </>
                                     ) : (
-                                        <div className="h-full w-full flex justify-center items-center" onClick={() =>
-                                          addInputRef.current.click()
-                                      }>
+                                        <div
+                                            className="flex h-full w-full items-center justify-center"
+                                            onClick={() =>
+                                                addInputRef.current.click()
+                                            }
+                                        >
                                             <input
                                                 type="file"
                                                 ref={addInputRef}
-                                                onChange={(e) => handleAddphoto(e, files[id])}
+                                                onChange={(e) =>
+                                                    handleAddphoto(e, files[id])
+                                                }
                                                 accept="image/jpeg,image/x-png"
                                                 hidden
                                             />
                                             <img
                                                 src={add_image}
                                                 className="add-image"
-                                                
                                             />
                                         </div>
                                     )}

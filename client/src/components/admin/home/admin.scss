@@ -1,23 +1,21 @@
-:root{
+:root {
     // --primary: green;
     --secondary: rgb(167, 237, 167);
-    
 }
 h1 {
     font-size: 30px;
     font-weight: bold;
-    
 }
 .home {
     @apply flex;
     .homeContainer {
         flex: 6;
 
-        .widgets, .charts {
-            @apply flex ;
+        .widgets,
+        .charts {
+            @apply flex;
             padding: 20px;
             gap: 20px;
-            
         }
 
         .charts {
@@ -26,78 +24,69 @@ h1 {
 
         .listContainer {
             -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-           padding: 20px;
-           margin: 20px;
+            box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+            padding: 20px;
+            margin: 20px;
 
-           .listTitle {
-            font-weight: 500;
-            color: var(--primary);
-            margin-bottom: 15px;
-           }
+            .listTitle {
+                font-weight: 500;
+                color: var(--primary);
+                margin-bottom: 15px;
+            }
         }
-
-
-
     }
-
-    
-
-
 }
-
-
-
 
 .widget {
     @apply flex justify-between;
     flex: 1;
     padding: 10px;
     -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-border-radius: 10px;
-height: fit-content;
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    border-radius: 10px;
+    height: fit-content;
 
-.left, .right {
-    @apply flex flex-col justify-between
-}
+    .left,
+    .right {
+        @apply flex flex-col justify-between;
+    }
 
-.title {
-    @apply font-bold text-lg;
-    color: var(--primary-2)
-}
+    .title {
+        @apply text-lg font-bold;
+        color: var(--primary-2);
+    }
 
-.counter {
-    font-size: 28px;
-    font-weight:  300;
-}
+    .counter {
+        font-size: 28px;
+        font-weight: 300;
+    }
 
-.link {
-    font-size: 12px;
-    border-bottom: 1px solid gray;
-    width: max-content;
-}
+    .link {
+        font-size: 12px;
+        border-bottom: 1px solid gray;
+        width: max-content;
+    }
 
-.percentage {
-  @apply flex items-center;
-  font-size: 16px;
+    .percentage {
+        @apply flex items-center;
+        font-size: 16px;
 
-  &.positive {
-    color: green
-  }
+        &.positive {
+            color: green;
+        }
 
-  &.negative {
-    color: red
-  }
-}
+        &.negative {
+            color: red;
+        }
+    }
 
-.icon {
-    font-size: 30px;
-    padding: 5px;
-    background-color: rgb(167, 237, 167);
-    border-radius: 5px;
-    align-self: flex-end;
-}
+    .icon {
+        font-size: 30px;
+        padding: 5px;
+        background-color: rgb(167, 237, 167);
+        border-radius: 5px;
+        align-self: flex-end;
+    }
 }
 
 .featured {
@@ -116,7 +105,7 @@ height: fit-content;
 
     .bottom {
         padding: 20px;
-        @apply flex items-center justify-center flex-col gap-4;
+        @apply flex flex-col items-center justify-center gap-4;
 
         .featuredChart {
             width: 100px;
@@ -125,12 +114,11 @@ height: fit-content;
 
         .title {
             font-weight: 500;
-            color: green
+            color: green;
         }
 
         .amount {
             font-size: 30px;
-
         }
 
         .description {
@@ -141,55 +129,47 @@ height: fit-content;
         }
 
         .summary {
-            @apply flex items-center justify-between w-full;
+            @apply flex w-full items-center justify-between;
 
             .item {
-            text-align: center;
-            
+                text-align: center;
 
-            .itemTitle {
-                font-size: 16px;
-            color: green
-            }
-
-            .itemResult {
-                @apply flex items-center mt-3;
-                font: 14px;
-
-                &.positive {
-                    color: green
+                .itemTitle {
+                    font-size: 16px;
+                    color: green;
                 }
 
-                &.negative {
-                    color: red
+                .itemResult {
+                    @apply mt-3 flex items-center;
+                    font: 14px;
+
+                    &.positive {
+                        color: green;
+                    }
+
+                    &.negative {
+                        color: red;
+                    }
                 }
             }
-            }
-
-
-        
-        
-        
         }
     }
-
 }
 
 .chart {
-flex: 4;
--webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-padding: 10px;
+    flex: 4;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
 
-.title{
-    margin-bottom: 20px;
-}
+    .title {
+        margin-bottom: 20px;
+    }
 
-.chartGrid {
-stroke: var(--primary);
+    .chartGrid {
+        stroke: var(--primary);
+    }
 }
-}
-
 
 .table {
     .cellWrapper {
@@ -207,22 +187,19 @@ stroke: var(--primary);
     .status {
         padding: 5px;
         border-radius: 5px;
-        
+
         &.Approved {
-        color: green;
-        background-color: rgba(0, 128, 0, 0.244)
-    }
-    &.Pending {
-        color: goldenrod;
-        background-color: rgba(218, 165, 32, 0.251);
-    }
+            color: green;
+            background-color: rgba(0, 128, 0, 0.244);
+        }
+        &.Pending {
+            color: goldenrod;
+            background-color: rgba(218, 165, 32, 0.251);
+        }
 
-    &.Cancelled {
-        color: red;
-        background-color: rgba(255, 0, 0, 0.205);
+        &.Cancelled {
+            color: red;
+            background-color: rgba(255, 0, 0, 0.205);
+        }
     }
-    }
-
-    
 }
-

@@ -1,19 +1,21 @@
 import heart from '../../assets/heart.png';
 import QTY_SIZE_OPTION from './qty-size-options';
-import close from "../../assets/icons/close.png"
+import close from '../../assets/icons/close.png';
 import { useRef } from 'react';
 const arrayRange = (start, stop, step) =>
-        Array.from(
-            { length: (stop - start) / step + 1 },
-            (value, index) => start + index * step
-        );
+    Array.from(
+        { length: (stop - start) / step + 1 },
+        (value, index) => start + index * step
+    );
 
-function Cart_Item({product}) {
-    const heart_icon_ref = useRef()
+function Cart_Item({ product }) {
+    const heart_icon_ref = useRef();
     let quantityArr = arrayRange(1, 10, 1);
     return (
         <div id="cart-product">
-            <button type="button" id="cart-close"><img src={close} /> </button>
+            <button type="button" id="cart-close">
+                <img src={close} />{' '}
+            </button>
             <div className="cart-img-container">
                 <img
                     src={product.img}

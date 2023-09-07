@@ -1,58 +1,49 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto&family=Roboto+Slab:wght@100;200;300;400;500;600&display=swap');
 
-
-#cart-page{
-@apply flex justify-center gap-4 sm+md:flex sm+md:flex-col sm+md:self-center md:mx-6 ;
-background-color: var(--light-grey);
-min-height: 100%;
-max-width: 100%;
+#cart-page {
+    @apply flex justify-center gap-4 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center;
+    background-color: var(--light-grey);
+    min-height: 100%;
+    max-width: 100%;
 }
-.cart{
-
-     @apply w-full lg:w-[500px] md:w-[100%];
-    
+.cart {
+    @apply w-full md:w-[100%] lg:w-[500px];
 }
-#cart-product{
-    @apply px-8 flex-row flex gap-5 white py-5 relative;
-    border-bottom: 2px solid var(--light-grey)
-    
+#cart-product {
+    @apply white relative flex flex-row gap-5 px-8 py-5;
+    border-bottom: 2px solid var(--light-grey);
 }
 .cart-header {
-    @apply px-8 flex justify-between h-14 py-10 mb-2 items-center white mt-4;
-
+    @apply white mb-2 mt-4 flex h-14 items-center justify-between px-8 py-10;
 }
 
 .cart-img-container {
     height: 150px;
     width: 120px;
-    @apply flex justify-start white
-    
+    @apply white flex justify-start;
 }
 
 #cart-info {
-    width: 70%
+    width: 70%;
 }
 
 .cart-options {
-@apply flex flex-row items-baseline gap-3 text-sm;
-margin-top: 10px;
-
+    @apply flex flex-row items-baseline gap-3 text-sm;
+    margin-top: 10px;
 }
 .cart-options div {
-    @apply flex flex-row items-baseline
+    @apply flex flex-row items-baseline;
 }
 
-
 #save-later-btn {
-    @apply flex flex-row items-center justify-center px-2 mt-5 h-8 whitespace-nowrap;
+    @apply mt-5 flex h-8 flex-row items-center justify-center whitespace-nowrap px-2;
     border: 1px solid var(--light-grey);
     gap: 10px;
-    
 }
 #save-later-btn img {
     height: 50%;
 
-    @apply m-0
+    @apply m-0;
 }
 
 .white {
@@ -63,78 +54,68 @@ margin-top: 10px;
     /* position: absolute;
     right:30px;
     font-family: "Gotham"; */
-    @apply absolute right-6  text-xl w-4 h-4 flex justify-center items-center;
+    @apply absolute right-6  flex h-4 w-4 items-center justify-center text-xl;
     font-family: 'Roboto', sans-serif;
     border-radius: 50%;
-   
-   
-
 }
 
 #cart-close img {
-width: 100%;
-height: 100%;
-object-position: center;
-object-fit: contain;
-
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: contain;
 }
 
-.product-cart-wrapper{
-    @apply mb-2 w-full
+.product-cart-wrapper {
+    @apply mb-2 w-full;
 }
 
 #total-container {
-    @apply lg:w-96 md:mr-3 my-4 white lg:px-8 md:px-5  sm:px-3 py-5 sm+md:w-full sm+md:flex sm+md:justify-center ;
+    @apply white my-4 py-5 sm:px-3 md:mr-3 md:px-5  sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8;
     // min-width: 300px;
     // max-width: 400px;
-  
+
     height: fit-content;
-
-
-    
 }
 
 #delivery-container {
-    @apply flex flex-row justify-between items-baseline
+    @apply flex flex-row items-baseline justify-between;
 }
 
 #total-delivery-container {
-    @apply flex flex-col gap-3
+    @apply flex flex-col gap-3;
 }
 /* shipping select 
  */
 
- /* The container must be positioned relative: */
+/* The container must be positioned relative: */
 
- .shipping {
+.shipping {
     min-width: 100%;
- }
- .shipping select {
+}
+.shipping select {
     min-width: 100%;
-    @apply text-sm
- }
+    @apply text-sm;
+}
 
- .checkout-btn {
-    @apply w-full text-white py-3 font-semibold tracking-widest text-sm flex justify-center items-center;
+.checkout-btn {
+    @apply flex w-full items-center justify-center py-3 text-sm font-semibold tracking-widest text-white;
     background-color: var(--green);
     transition: background-color 0.3s ease-in-out;
- }
+}
 
- .checkout-btn:hover {
+.checkout-btn:hover {
     background-color: #016536;
- }
+}
 
- .payment-icons {
+.payment-icons {
     @apply mt-1;
     max-width: 100%;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 0px 2px;
-
- }
- .payment-icons img {
+}
+.payment-icons img {
     border: 1px solid var(--light-grey);
     object-fit: contain;
- }
-
- 
+}

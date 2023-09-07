@@ -5,8 +5,10 @@ import New_Product_Header from './header';
 function About() {
     return (
         <div className="about">
-          
-                <New_Product_Header title={"About"} text="Tell the world all about your item and why they’ll love it."/>
+            <New_Product_Header
+                title={'About'}
+                text="Tell the world all about your item and why they’ll love it."
+            />
             <form id="about-form" className="mt-6">
                 <label htmlFor="#title" className="text-lg font-medium">
                     Title<span className="asterisk">*</span>
@@ -29,11 +31,16 @@ function About() {
                 <label htmlFor="#description" className="text-lg font-medium">
                     Description<span className="asterisk">*</span>
                 </label>
-                <p>What makes your item special? Buyers will only see the first few lines unless they expand the description.
-</p>
-                <textarea name="description" id="description"  row="30"></textarea>
+                <p>
+                    What makes your item special? Buyers will only see the first
+                    few lines unless they expand the description.
+                </p>
+                <textarea
+                    name="description"
+                    id="description"
+                    row="30"
+                ></textarea>
             </form>
-            
         </div>
     );
 }

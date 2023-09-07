@@ -1,23 +1,22 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
 
-const LayoutContext = createContext("");
+const LayoutContext = createContext('');
 
-export function useLayoutContext(){
-return useContext(LayoutContext)
+export function useLayoutContext() {
+    return useContext(LayoutContext);
 }
 
-export function LayoutProvider({children}){
-    const [layout, setLayout] = useState(true)
+export function LayoutProvider({ children }) {
+    const [layout, setLayout] = useState(true);
 
-    const value={layout, setLayout}
-    return(
+    const value = { layout, setLayout };
+    return (
         <>
-        <LayoutContext.Provider value={value}>
-    {children}
-</LayoutContext.Provider>
+            <LayoutContext.Provider value={value}>
+                {children}
+            </LayoutContext.Provider>
         </>
-
-    )
+    );
 }
 
-export default LayoutProvider
+export default LayoutProvider;

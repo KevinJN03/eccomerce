@@ -4,11 +4,10 @@ import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import "./navbar.scss"
+import './navbar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
 function Navbar({}) {
-
-    const {darkMode, dispatch} = useDarkMode()
+    const { darkMode, dispatch } = useDarkMode();
     return (
         <section className="navbar">
             <div className="wrapper">
@@ -18,30 +17,32 @@ function Navbar({}) {
                 </div>
                 <div className="items">
                     <div className="item">
-                        <LanguageRoundedIcon className='icon'/>
+                        <LanguageRoundedIcon className="icon" />
                         English
                     </div>
                     <div className="item">
-                        <DarkModeOutlinedIcon className='icon' onClick={()=>dispatch({type: "TOGGLE"})}/>
-                      
+                        <DarkModeOutlinedIcon
+                            className="icon"
+                            onClick={() => dispatch({ type: 'TOGGLE' })}
+                        />
                     </div>
                     <div className="item">
-                        <LanguageRoundedIcon className='icon'/>
-                      
+                        <LanguageRoundedIcon className="icon" />
                     </div>
                     <div className="item">
-                        <NotificationsNoneOutlinedIcon className='icon'/>
-                      <div className="counter">1</div>
+                        <NotificationsNoneOutlinedIcon className="icon" />
+                        <div className="counter">1</div>
                     </div>
                     <div className="item">
-                        <ChatBubbleOutlineOutlinedIcon className='icon'/>
-                      <div className="counter">2</div>
+                        <ChatBubbleOutlineOutlinedIcon className="icon" />
+                        <div className="counter">2</div>
                     </div>
                     <div className="item">
-                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80"
-                      alt=""
-                      className='profile-photo'/>
-                        
+                        <img
+                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80"
+                            alt=""
+                            className="profile-photo"
+                        />
                     </div>
                 </div>
             </div>

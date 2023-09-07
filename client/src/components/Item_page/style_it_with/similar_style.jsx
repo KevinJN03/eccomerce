@@ -6,7 +6,7 @@ function Similar_Styles({ images }) {
                     return <img src={image}></img>;
                 })}
             </div>
-            <div className="lg:mb-12 flex w-full flex-row justify-between sm+md:items-center">
+            <div className="flex w-full flex-row justify-between sm+md:items-center lg:mb-12">
                 <h2 className="text-2xl font-extrabold sm:text-xl">
                     SEE 20+ SIMILAR STYLES
                 </h2>

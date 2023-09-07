@@ -15,18 +15,17 @@ import section_1_image2 from '../../assets/section-1-image/image2.avif';
 import section_1_image3 from '../../assets/section-1-image/image3.avif';
 import section_1_image4 from '../../assets/section-1-image/image4.avif';
 
-
 //Import Images for SaleBanner 4
 import sale_banner_4_image1 from '../../assets/sale-banner-4-images/image1.jpg';
 import sale_banner_4_image2 from '../../assets/sale-banner-4-images/image2.jpg';
 import sale_banner_4_image3 from '../../assets/sale-banner-4-images/image3.jpg';
 import sale_banner_4_image4 from '../../assets/sale-banner-4-images/image4.jpg';
-import glamo_design from "../../assets/icons/glamo-design.png";
-import levi_logo from "../../assets/icons/levi-logo.png"
-import ensemble from "../../assets/icons/ensemble2.png"
-import infashion from "../../assets/icons/infashion2.png"
-import infashion_mod from "../../assets/icons/infashion-modified.png"
-// 
+import glamo_design from '../../assets/icons/glamo-design.png';
+import levi_logo from '../../assets/icons/levi-logo.png';
+import ensemble from '../../assets/icons/ensemble2.png';
+import infashion from '../../assets/icons/infashion2.png';
+import infashion_mod from '../../assets/icons/infashion-modified.png';
+//
 import Section_1 from './Section_1';
 import Hero from './hero';
 import SaleBanner_1 from './salebanner/Salebanner_1';
@@ -51,8 +50,8 @@ function Home() {
     ];
 
     const section_4_images = [
-        { url: sale_banner_4_image1, src: glamo_design  },
-        { url: sale_banner_4_image2, src: levi_logo},
+        { url: sale_banner_4_image1, src: glamo_design },
+        { url: sale_banner_4_image2, src: levi_logo },
         { url: sale_banner_4_image3, src: ensemble },
         { url: sale_banner_4_image4, src: infashion },
     ];
@@ -63,9 +62,9 @@ function Home() {
     };
 
     return (
-        <section className='bg-white h-full'>
+        <section className="h-full bg-white">
             <Banner />
-            <div className='carousel-container w-full sm+md:h-80 h-700'>
+            <div className="carousel-container h-700 w-full sm+md:h-80">
                 <Carousel slides={slides} />
             </div>
             <Section_1 images={section_1_images} />

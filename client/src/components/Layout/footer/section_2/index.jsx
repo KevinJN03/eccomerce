@@ -65,7 +65,10 @@ function Section_2() {
         },
     ];
     return (
-        <section id="link-section" className="w-full flex flex-row flex-nowrap lg:gap-5 lg:justify-around sm+md:!flex sm+md:!flex-col sm+md:!mb-20">
+        <section
+            id="link-section"
+            className="flex w-full flex-row flex-nowrap sm+md:!mb-20 sm+md:!flex sm+md:!flex-col lg:justify-around lg:gap-5"
+        >
             <Footer_Link legend={'GET HELP'} linkArr={get_help} />
             <Footer_Link legend={'COMPANY'} linkArr={company} />
             <Footer_Link legend={'QUICK LINKS'} linkArr={quick_links} />

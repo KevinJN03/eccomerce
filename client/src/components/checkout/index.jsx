@@ -9,15 +9,13 @@ import Email_address from './email-address';
 import Payment from './payment/payment';
 import Promo from './promo';
 function Checkout() {
-
-    disableLayout()
+    disableLayout();
     return (
         <section id="checkout-page">
             <section id="checkout">
-<Checkout_Header/>
+                <Checkout_Header />
                 <div className="checkout-body">
                     <section id="checkout-body-wrapper">
-                    
                         <Country_Picker />
                         <Promo />
                         <Email_address />
@@ -35,7 +33,7 @@ function Checkout() {
                         </div>
                     </section>
 
-                    <Checkout_Total/>
+                    <Checkout_Total />
                 </div>
             </section>
         </section>

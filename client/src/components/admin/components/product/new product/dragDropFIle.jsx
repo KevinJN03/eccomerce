@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import dragImage from './dragtest/dragtest';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Upload from './upload/upload';
-import { v4 as uuidv4} from "uuid"
+import { v4 as uuidv4 } from 'uuid';
 function DragDropFile() {
     const [files, setFiles] = useState();
     console.log('files', files);
@@ -12,45 +12,49 @@ function DragDropFile() {
     };
     const handleDrop = (e) => {
         e.preventDefault();
-        console.log("e.dataTransfer.files", e.dataTransfer.files)
-        const filesImg = Array.from((e.dataTransfer.files), (file) => ({ id: uuidv4() , img : URL.createObjectURL(file) , isDragDisabled: false}))
-        if(filesImg.length < 6) {
-
-            
-            for(let i = filesImg.length; i < 6; i++) {
-                let obj = {id: uuidv4(), isDragDisabled: true}
+        console.log('e.dataTransfer.files', e.dataTransfer.files);
+        const filesImg = Array.from(e.dataTransfer.files, (file) => ({
+            id: uuidv4(),
+            img: URL.createObjectURL(file),
+            isDragDisabled: false,
+        }));
+        if (filesImg.length < 6) {
+            for (let i = filesImg.length; i < 6; i++) {
+                let obj = { id: uuidv4(), isDragDisabled: true };
                 filesImg.push(obj);
-                console.log("filesImg while iterating:", filesImg)
+                console.log('filesImg while iterating:', filesImg);
             }
         }
-        console.log("filesImg ", filesImg)
+        console.log('filesImg ', filesImg);
         setFiles(filesImg);
     };
 
     const handleInput = (e) => {
         e.preventDefault();
-        
-        const filesImg = Array.from((e.target.files), (file) => ({ id: uuidv4() , img : URL.createObjectURL(file) , isDragDisabled: false}))
-        if(filesImg.length < 6) {
 
-            
-            for(let i = filesImg.length; i < 6; i++) {
-                let obj = {id: uuidv4(), isDragDisabled: true}
+        const filesImg = Array.from(e.target.files, (file) => ({
+            id: uuidv4(),
+            img: URL.createObjectURL(file),
+            isDragDisabled: false,
+        }));
+        if (filesImg.length < 6) {
+            for (let i = filesImg.length; i < 6; i++) {
+                let obj = { id: uuidv4(), isDragDisabled: true };
                 filesImg.push(obj);
-                console.log("filesImg while iterating:", filesImg)
+                console.log('filesImg while iterating:', filesImg);
             }
         }
-        console.log("filesImg ", filesImg)
+        console.log('filesImg ', filesImg);
         setFiles(filesImg);
     };
 
-    if (files) return (
-        <>
-          {console.log("files before going to upload", files)}
-    <Upload files={files} setFiles={setFiles} />
-        </>
-  
-    );
+    if (files)
+        return (
+            <>
+                {console.log('files before going to upload', files)}
+                <Upload files={files} setFiles={setFiles} />
+            </>
+        );
 
     return (
         <section>

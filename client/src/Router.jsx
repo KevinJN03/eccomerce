@@ -73,49 +73,45 @@ function Router({ Header, Footer }) {
                 },
                 {
                     path: 'users/',
-                    
+
                     element: <Users />,
 
                     children: [
                         {
-                            index:  true,
+                            index: true,
                             element: <List />,
                         },
                         {
-                             path: ":id",
-                             element: <Single_User/>
+                            path: ':id',
+                            element: <Single_User />,
                         },
                         {
-                            path: "new",
-                            element: <New type="User" title="Add New User"/>
-                        }
-
-                    ]
+                            path: 'new',
+                            element: <New type="User" title="Add New User" />,
+                        },
+                    ],
                 },
                 {
-                    path: "products/",
+                    path: 'products/',
                     element: <Admin_Product />,
 
                     children: [
+                        {
+                            index: true,
+                            element: <All_Products />,
+                        },
+                        {
+                            path: 'new',
+                            // element: <New type="Product" title="Add New Product"/>
+                            element: <New_Product />,
+                        },
 
                         {
-                        index: true,
-                        element: <All_Products/>
-                    
-                    },
-                        {path: "new",
-                        // element: <New type="Product" title="Add New Product"/>
-                        element: <New_Product/>
-                    },
-
-                    {
-                        path: ":id",
-                        element: <Product_Single/>
-                    }
-                    ]
-
-                }
-                
+                            path: ':id',
+                            element: <Product_Single />,
+                        },
+                    ],
+                },
             ],
         },
     ]);

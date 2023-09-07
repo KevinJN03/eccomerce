@@ -2,10 +2,12 @@ const example = {
     title: 'The Forest Drive Short Sleeve Crew Tee - Cream',
     price: '12.00',
     text: '30% Off! Prices As Marked, No Code Needed',
-    image: ['https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',
-    'https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',
-    'https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',
-    'https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',],
+    image: [
+        'https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',
+        'https://www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-16_74_ZDF01V330017_Hunter_20108_EH_468x.jpg?v=1690484958,%20//www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-16_74_ZDF01V330017_Hunter_20108_EH_468x@2x.jpg?v=1690484958%202x',
+        '//www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-10_74_ZDF01V330017_Hunter_20103_EH_468x.jpg?v=1691081693, //www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-10_74_ZDF01V330017_Hunter_20103_EH_468x@2x.jpg?v=1691081693 2x',
+        '//www.fashionnova.com/cdn/shop/files/07-28-23Studio7_RA_DJ_14-22-17_86_ZDF01V330017_Hunter_23681_MP_PLUS_468x.jpg?v=1691081692, //www.fashionnova.com/cdn/shop/files/07-28-23Studio7_RA_DJ_14-22-17_86_ZDF01V330017_Hunter_23681_MP_PLUS_468x@2x.jpg?v=1691081692 2x',
+    ],
     size: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
     details: [
         'Available In Dark Brown.',
@@ -38,6 +40,5 @@ const example = {
         },
     ],
 };
-
 
 export default example;

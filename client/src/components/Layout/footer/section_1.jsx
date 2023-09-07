@@ -3,8 +3,8 @@ import google_badge from '../../../assets/download-icon/google-play-badge (2).pn
 
 function Section_1() {
     return (
-        <section className='footer-badge'>
-            <p className='font-bold mb-2'>SHOP FASTER WITH THE APP</p>
+        <section className="footer-badge">
+            <p className="mb-2 font-bold">SHOP FASTER WITH THE APP</p>
             <section className="flex flex-row flex-nowrap gap-2">
                 <div id="apple-badge" className="badge-icon  ">
                     <img
@@ -17,7 +17,7 @@ function Section_1() {
                     <img
                         src={google_badge}
                         alt="get it on google play badge"
-                        className="h-full w-full object-fill google-badge"
+                        className="google-badge h-full w-full object-fill"
                     />
                 </div>
             </section>
