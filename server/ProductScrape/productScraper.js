@@ -8,7 +8,7 @@ import ScrapeIndividual from './individualPageScrape.js';
 
 export default async function getProductData(category, productUrl) {
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: false,
     defaultViewport: false,
   });
   const page = await browser.newPage();
@@ -28,14 +28,14 @@ export default async function getProductData(category, productUrl) {
     return productUrl;
   });
 
-  const results = {category, products: []};
-  for (let i = 0; i < 1; i++) {
-    await page.goto(products[i]);
+  const results = { category, products: [] };
+  for (let i = 0; i < 2; i++) {
+    await page.goto(products[i], { timeout: 0 });
+    
     const productInfo = await ScrapeIndividual(page);
     results.products.push(productInfo);
   }
 
   await browser.close();
-  console.log('Results at inididualScrape: ', await results);
   return await results;
 }

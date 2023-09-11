@@ -8,23 +8,35 @@ export default (async function temporaryScrape() {
   const menCategories = menUrls.map(async (category) => {
     return await getProductData(category.category, category.link);
   });
-
+  //   let counter = 0;
+  //   let menCategories;
+  //   while (counter < menUrls.length) {
+  //     await getProductData(menUrls[counter].category, menUrls[counter].link).then(
+  //       (res) => {
+  //         console.log('res', res);
+  //         counter++;
+  //       },
+  //     );
+  //   }
   const result = await Promise.all(menCategories);
-  //   console.log(await result);
+  console.log(await result);
 
-  fs.writeFile('temporyData.js', JSON.stringify(result), (err) => {
-    if (err) throw err;
-    console.log('the file has been created successfully');
-  });
+  //   fs.writeFile('temporyData.js', JSON.stringify(result), (err) => {
+  //     if (err) throw err;
+  //     console.log('the file has been created successfully');
+  //   });
 
   //   const browser = await puppeteer.launch({
   //     headless: false,
   //     defaultViewport: false,
-  //     dumpio: true
+  //     dumpio: true,
   //   });
   //   const page = await browser.newPage();
-  //   //   page.on('console', (msg) => console.log(msg.type, 'PAGE LOG:', msg.text));  oductUrl =
-  //     'https://www.asos.com/messina-hembry-clothing-ltd/vintage-levis-size-l-90s-sweatshirt-in-grey/prd/205035157?clr=grey&colourWayId=205035165&cid=51032';
+  //   page.on('console', (msg) => console.log(msg.type, 'PAGE LOG:', msg.text));  oductUrl =
+  //   const productUrl =
+  //     'https://www.asos.com/men/ctas/usa-fashion-online-14/cat/?cid=16691';
+
+  //     await getProductData(menUrls[0].category, menUrls[0].link)
   //   await page.goto(productUrl);
   //   console.log('hdcnakhzckhzcx');
   //   console.log(

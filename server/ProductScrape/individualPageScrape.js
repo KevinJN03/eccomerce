@@ -1,22 +1,30 @@
 import { v4 as uuid } from 'uuid';
 
 async function ScrapeIndividual(page) {
+  // page.waitForNavigation({
+  //   waitUntil: 'load',
+  // });
   const titleSelector = await page.waitForSelector('.jcdpl');
-  const imageSelector = await page.waitForSelector('.gallery-image');
   const priceSelector = await page.waitForSelector(
     'span[data-testid="current-price"]',
   );
   // const SizeSelector = await page.waitForSelector('#variantSelector');
   const detailSelector = await page.waitForSelector('.F_yfF');
   const title = await titleSelector.evaluate((el) => el.textContent);
-  const images = await page.evaluate(() =>
-    Array.from(
+  const images = await page.evaluate(() => {
+    const imagesArr = Array.from(
       document.querySelectorAll(
         '.amp-images > .amp-frame > .fullImageContainer > .img',
       ),
       (el) => el.src,
-    ),
-  );
+    );
+
+    // imagesArr.sort((a, b) =>
+    //   a == imagesArr[1] ? -1 : b == imagesArr[1] ? 1 : 0,
+    // );
+
+    return imagesArr;
+  });
   const price = await priceSelector.evaluate((el) =>
     parseFloat(el.textContent.slice(1)),
   );
@@ -67,7 +75,7 @@ async function ScrapeIndividual(page) {
     return itemDetail;
   });
 
-  page.close();
+  // page.close();
   return { id: uuid(), title, images, price, sizes: totalSize, detail };
 }
 
