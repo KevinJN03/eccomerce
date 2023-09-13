@@ -40,10 +40,10 @@ function Banner() {
                     <h1 className="py-2 text-6xl font-black   sm+md:text-5xl">
                         UP TO 30%{' '}
                     </h1>
-                    <h1 className="text-5xl sm+md:text-4xl font-extrabold">
+                    <h1 className="text-5xl font-extrabold sm+md:text-4xl">
                         OFF ALMOST EVERTYTHING!*
                     </h1>
-                    <h4 className="py-3 text-3xl font-bold sm+md:text-xl sm+md:px-8">
+                    <h4 className="py-3 text-3xl font-bold sm+md:px-8 sm+md:text-xl">
                         *Mystery* discount revealed @ checkout{' '}
                     </h4>
                     <h1 className="mb-3 text-2xl font-bold sm+md:text-xl">
@@ -52,7 +52,7 @@ function Banner() {
                             SURPRISE
                         </span>
                     </h1>
-                    <p className="text-xs text-black sm+md: px-3 sm+md:pt-5">
+                    <p className="sm+md: px-3 text-xs text-black sm+md:pt-5">
                         *Minimum spend of £20 applies. See website banner for
                         full Ts&Cs. Selected marked products excluded from
                         promo.

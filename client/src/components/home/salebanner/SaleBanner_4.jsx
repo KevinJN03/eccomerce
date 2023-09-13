@@ -1,5 +1,5 @@
-import {v4 as uuidv4} from "uuid"
-import { Fragment } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import { Fragment } from 'react';
 function SaleBanner_4({ images }) {
     return (
         <section className=" section-1 sm:!h-72">
@@ -8,16 +8,17 @@ function SaleBanner_4({ images }) {
                     <Fragment key={uuidv4()}>
                         <div
                             id="section-1-wrapper"
-                        
-                            className=" h-full relative"
+                            className=" relative h-full"
                         >
                             <img
                                 src={img.url}
                                 className="h-full w-full object-cover object-center"
                             />
-                            <div className={`salebanner4-text absolute font-bold`}>
+                            <div
+                                className={`salebanner4-text absolute font-bold`}
+                            >
                                 {/* {img.text ? img.text : ''} */}
-                                <img src={img.src} className="w-full h-full "/>
+                                <img src={img.src} className="h-full w-full " />
                             </div>
                         </div>
                     </Fragment>

@@ -4,7 +4,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 function SignUp() {
-    
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <>
@@ -54,12 +53,14 @@ function SignUp() {
                         <DatePicker
                             views={['day']}
                             slotProps={{ textField: { size: 'small' } }}
+                            
                         />
                         <DatePicker
                             views={['month']}
-                            slotProps={{ textField: { size: 'small' } }}
+                            slotProps={{ textField: { size: 'small', placeholder: 'MM'} }}
+                          
                         />
-                        
+
                         <DatePicker
                             views={['year']}
                             slotProps={{ textField: { size: 'small' } }}
@@ -89,7 +90,6 @@ function SignUp() {
                                 name="interest"
                                 id="menswear"
                                 value={'menswear'}
-                               
                             />
                             <label htmlFor="womenswear">Menswear</label>
                         </div>

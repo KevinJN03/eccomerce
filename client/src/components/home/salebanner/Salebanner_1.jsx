@@ -1,10 +1,16 @@
 function SaleBanner_1() {
     return (
         <section id="sale-banner-1">
-            <div className="flex w-full flex-col items-center justify-center lg:mt-5 sm+md:mt-5 gradientBackground pt-5 pb-4">
-                <h1 className="text-6xl sm:text-3xl  md:text-5xl font-black italic ">UP TO 50% OFF</h1>
-                <h1 className="text-4xl sm:text-3xl md:text-5xl font-black italic mb-4">SUN-READY STUFF</h1>
-                <p className="text-xs text-black sm:font-medium">Limited time only. Selected styles marked down as shown.</p>
+            <div className="gradientBackground flex w-full flex-col items-center justify-center pb-4 pt-5 sm+md:mt-5 lg:mt-5">
+                <h1 className="text-6xl font-black  italic sm:text-3xl md:text-5xl ">
+                    UP TO 50% OFF
+                </h1>
+                <h1 className="mb-4 text-4xl font-black italic sm:text-3xl md:text-5xl">
+                    SUN-READY STUFF
+                </h1>
+                <p className="text-xs text-black sm:font-medium">
+                    Limited time only. Selected styles marked down as shown.
+                </p>
             </div>
         </section>
     );

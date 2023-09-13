@@ -6,14 +6,18 @@ const useBodyScollLock = () => {
     const [isLocked, setIsLocked] = useState(false);
 
     useEffect(() => {
-        bodyStyle.overflowY = isLocked == "hidden" ? 'hidden' : 'auto';
+        bodyStyle.overflowY = isLocked == 'hidden' ? 'hidden' : 'auto';
 
-        if(isLocked) {
-            bodyStyle.overflowY = "hidden"
-        }else {
-         bodyStyle.overflowY = "auto"
+        if (isLocked) {
+            bodyStyle.overflowY = 'hidden';
+        } else {
+            bodyStyle.overflowY = 'auto';
         }
-    
+
+        return () => {
+
+            // bodyStyle.overflowY = null;
+        };
     }, [isLocked]);
 
     const toggle = () => {
@@ -24,3 +28,4 @@ const useBodyScollLock = () => {
 };
 
 export default useBodyScollLock;
+ 

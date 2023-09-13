@@ -3,7 +3,7 @@ import Newsletter from './newletter';
 
 function Index() {
     return (
-        <section id="section-3" className='lg:w-full'>
+        <section id="section-3" className="lg:w-full">
             <Newsletter />
             <Icons />
         </section>

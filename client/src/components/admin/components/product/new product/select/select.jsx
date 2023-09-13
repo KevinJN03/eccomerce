@@ -9,7 +9,9 @@ export default function CategorySelect({ options, title }) {
                 // console.log("index: ", index)
                 return (
                     <>
-                        <option key={index} value={option}>{option}</option>
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
                     </>
                 );
             })}

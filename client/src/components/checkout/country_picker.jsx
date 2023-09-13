@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import ReactFlagsSelect from 'react-flags-select';
 import ReactCountryFlag from 'react-country-flag';
-import {useWindowSize} from "@uidotdev/usehooks"
+import { useWindowSize } from '@uidotdev/usehooks';
 function Country_Picker({}) {
-
-    const screenSize = useWindowSize()
+    const screenSize = useWindowSize();
     const [select, setSelect] = useState('Gb');
     const [showOption, setShowOption] = useState(false);
     const onSelect = (code) => setSelect(code);
@@ -15,17 +14,18 @@ function Country_Picker({}) {
     const handleCloseOption = () => {
         setShowOption(false);
     };
-    
-console.log("option", showOption)
-    // A use effect that will run wenever a select is changed
-    useEffect(()=> {
-        handleCloseOption()
 
-    }, [select])
+    console.log('option', showOption);
+    // A use effect that will run wenever a select is changed
+    useEffect(() => {
+        handleCloseOption();
+    }, [select]);
 
     return (
         <section id="country-picker">
-            <h1 className='font-bold text-lg tracking-wider mb-2'>DELIVERY COUNTRY:</h1>
+            <h1 className="mb-2 text-lg font-bold tracking-wider">
+                DELIVERY COUNTRY:
+            </h1>
 
             <div className="country-select-container">
                 <ReactCountryFlag
@@ -41,10 +41,15 @@ console.log("option", showOption)
 
                 {showOption ? (
                     <>
-                    <ReactFlagsSelect selected={select} onSelect={onSelect} selectedSize={screenSize > 480 ? 20 : 14}/>
-                    <button type="button" onClick={handleCloseOption}>Cancel</button>
+                        <ReactFlagsSelect
+                            selected={select}
+                            onSelect={onSelect}
+                            selectedSize={screenSize > 480 ? 20 : 14}
+                        />
+                        <button type="button" onClick={handleCloseOption}>
+                            Cancel
+                        </button>
                     </>
-                    
                 ) : (
                     <button
                         type="button"

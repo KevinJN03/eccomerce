@@ -38,7 +38,7 @@ function Chart({}) {
     return (
         <section className="chart">
             <div className="title">Last 6 Months (Revenue)</div>
-            <ResponsiveContainer width="100%" aspect={2 /1}>
+            <ResponsiveContainer width="100%" aspect={2 / 1}>
                 <AreaChart
                     width={730}
                     height={250}
@@ -59,9 +59,12 @@ function Chart({}) {
                             />
                         </linearGradient>
                     </defs>
-                    <XAxis dataKey="name" stroke="green"/>
-                    
-                    <CartesianGrid strokeDasharray="3 3" className='chartGrid'/>
+                    <XAxis dataKey="name" stroke="green" />
+
+                    <CartesianGrid
+                        strokeDasharray="3 3"
+                        className="chartGrid"
+                    />
                     <Tooltip />
                     <Area
                         type="monotone"

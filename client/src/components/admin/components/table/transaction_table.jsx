@@ -59,7 +59,9 @@ function Transaction_Table({}) {
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
                 <TableHead>
                     <TableRow>
-                        <TableCell className="tableCell">Transaction ID</TableCell>
+                        <TableCell className="tableCell">
+                            Transaction ID
+                        </TableCell>
                         <TableCell className="tableCell">Product</TableCell>
                         <TableCell className="tableCell">Customer</TableCell>
                         <TableCell className="tableCell">Date</TableCell>
@@ -78,7 +80,11 @@ function Transaction_Table({}) {
                             </TableCell>
                             <TableCell className="tableCell">
                                 <div className="cellWrapper">
-                                    <img src={row.product_img} alt="" className="image" />
+                                    <img
+                                        src={row.product_img}
+                                        alt=""
+                                        className="image"
+                                    />
                                     {row.product}
                                 </div>
                             </TableCell>
@@ -95,7 +101,9 @@ function Transaction_Table({}) {
                                 {row.method}
                             </TableCell>
                             <TableCell className="tableCell">
-                                <span className={`status ${row.status}`}>{row.status}</span>
+                                <span className={`status ${row.status}`}>
+                                    {row.status}
+                                </span>
                             </TableCell>
                         </TableRow>
                     ))}

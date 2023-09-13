@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import arrow from '../../../assets/footer-icons/right-arrow.png';
+import Arrow from './arrow'
 function Category({}) {
     const [count, setCount] = useState();
     const [show, setShow] = useState(true);
@@ -24,7 +24,7 @@ function Category({}) {
                     {count ? `Category (${count})` : 'Category'}
                 </h3>
                 <div className="arrow-wrapper" onClick={toggleShow}>
-                    <img src={arrow} className={toggleClass} />
+                <Arrow show={show}/>
                 </div>
             </div>
             {show ? (

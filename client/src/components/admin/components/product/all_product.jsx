@@ -1,22 +1,18 @@
+import SideBar from '../sidebar/sidebar';
+import Navbar from '../navbar/navbar.jsx';
+import './all_product.scss';
+import Datatable from '../users/datatable/datatable';
 
-import SideBar from "../sidebar/sidebar"
-import Navbar from "../navbar/navbar.jsx"
-import "./all_product.scss"
-import Datatable from "../users/datatable/datatable"
-
-function All_Products(){
-    return(
+function All_Products() {
+    return (
         <section className="product">
-            <SideBar/>
+            <SideBar />
             <div className="productContainer">
-              <Navbar/> 
-              <Datatable type="Product"/> 
+                <Navbar />
+                <Datatable type="Product" />
             </div>
-            </section>
-            
-            
-    )
+        </section>
+    );
 }
 
-export default All_Products
-
+export default All_Products;

@@ -10,46 +10,54 @@ import Profile_Dropdown from '../common/dropdown/profile_dropdown';
 import Header_Category from './header-category/header-category';
 import { useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
+import { ProductsProvider, useProducts } from '../../hooks/ScrapeData/scrape';
+import { Link} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 function Header() {
-    const [category, setCategory] = useState(true);
-    //const [activeCategory, setActiveCategory] = useState(false)
 
+    //const [activeCategory, setActiveCategory] = useState(false)
+    const navigate = useNavigate();
+    const [state, dispatch] = useProducts();
+    console.log("state", state)
     const search = (e) => {
         console.log(e);
     };
 
- 
     return (
-        <section className="flex max-w-full w-full flex-col justify-center header-section bg-[var(--primary)]">
+        <section className="header-section flex w-full max-w-full flex-col justify-center bg-[var(--primary)]">
             <section id="header-wrapper">
                 <header className="header">
                     <section className="header-left">
- <Mobile_Nav/>
-                    <div id="image-wrapper" className="image-wrapper">
-                        <a href="/">
-                            <img src={logo} alt="glamo logo" className="" />
-                        </a>
-                    </div>
-                    <section
-                        id="women"
-                        onClick={() => setCategory(false)}
-                        className={`header-category-btn ${ !category ? 'active-header-category' : ""}` 
-                            
-                        }
-                    >
-                        
-                        Women
-                    </section>
-                    <section
-                        id="men"
-                        onClick={() => setCategory(true)}
-                        className={`header-category-btn ${ category ? 'active-header-category'  : ""}` }
-                    >
-                        Men
+                        <Mobile_Nav />
+                        <div id="image-wrapper" className="image-wrapper">
+                            <a href="/">
+                                <img src={logo} alt="glamo logo" className="" />
+                            </a>
+                        </div>
+                        <section
+                            id="women"
+                            onClick={() =>{ 
+                                dispatch({type: 'women'});
+                                navigate('/home')
+                        }}
+                            className={`header-category-btn ${
+                                state.category=='women' ? 'active-header-category' : ''
+                            }`}
+                        >
+                            Women
+                        </section>
+                        <section
+                            id="men"
+                            onClick={() => {dispatch({type: 'men'})
+                            navigate('/home')}}
+                            className={`header-category-btn ${
+                                state.category=='men' ? 'active-header-category' : ''
+                            }`}
+                        >
+                            Men
+                        </section>
                     </section>
 
-                    </section>
-                   
                     <section className="header-middle">
                         <input
                             type="text"
@@ -66,47 +74,42 @@ function Header() {
                         </div>
                     </section>
 
-                    <section className="header-right h-full" >
-                       <a href="/login"><Dropdown_Hover
-                            button={profile}
-                            dropdown_options={<Profile_Dropdown />}
-                        />
-                        </a> 
+                    <section className="header-right h-full">
+                        <a href="/login">
+                            <Dropdown_Hover
+                                button={profile}
+                                dropdown_options={<Profile_Dropdown />}
+                            />
+                        </a>
 
-                        
-                            <a href="/wishlist" className="header-icons">
-                                {/* <img
+                        <a href="/wishlist" className="header-icons">
+                            {/* <img
                                     src={heart}
                                     alt="heart icon"
                                     className="img-icon p-1"
                                 ></img> */}
-                                <FavoriteBorderSharpIcon className='img-icon'/>
-                            </a>
-                        
-                        
-                            <a href="/cart" className="header-icons">
-                                {/* <img
-                                    src={basket}
-                                    alt="basket icon"
-                                    className="img-icon "
-                                ></img> */}
-                                <LocalMallOutlinedIcon className='img-icon' fontSize='large'/>
-                            </a>
-                        
+                            <FavoriteBorderSharpIcon className="img-icon" />
+                        </a>
+
+                        <Link to="/cart" className="header-icons">
+                            
+                            <LocalMallOutlinedIcon
+                                className="img-icon"
+                                fontSize="large"
+                            />
+                        </Link>
                     </section>
                 </header>
 
-                <section id="category-wrapper" className='md:hidden'>
-                {/* {category == 'men' ? (
+                <section id="category-wrapper" className="md:hidden">
+                    {/* {category == 'men' ? (
                     <Header_Category category={'men'} />
                 ) : (
                     <Header_Category category={'women'} />
                 )} */}
-                <Header_Category category={category}/>
-                
+                    <Header_Category category={state.category} />
+                </section>
             </section>
-            </section>
-           
         </section>
     );
 }

@@ -1,10 +1,10 @@
-import "./new_product.scss"
+import './new_product.scss';
 
-export default function New_Product_Header({title, text}) {
+export default function New_Product_Header({ title, text }) {
     return (
         <>
-        <div className="title ">{title}</div>
+            <div className="title ">{title}</div>
             <p>{text}</p>
         </>
-    )
+    );
 }

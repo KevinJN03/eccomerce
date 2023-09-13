@@ -1,17 +1,20 @@
 import ReactFlagsSelect from 'react-flags-select';
-import { useState } from "react";
-import {userInput}from "./formSource.jsx"
+import { useState } from 'react';
+import { userInput } from './formSource.jsx';
 function User_Form() {
-    const [selected, setSelected] = useState("");
+    const [selected, setSelected] = useState('');
     return (
         <>
-            {userInput.map(input => {
-                return(
+            {userInput.map((input) => {
+                return (
                     <div className="formInput" key={input.id}>
                         <label>{input.label}</label>
-                        <input type={input.type} placeholder={input.placeHolder}/>
+                        <input
+                            type={input.type}
+                            placeholder={input.placeHolder}
+                        />
                     </div>
-                )
+                );
             })}
             <div className="formInput">
                 <label>Country</label>
@@ -25,4 +28,4 @@ function User_Form() {
     );
 }
 
-export default User_Form
+export default User_Form;

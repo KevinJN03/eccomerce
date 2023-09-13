@@ -14,8 +14,7 @@ import { Link } from 'react-router-dom';
 import './sidebar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
 function SideBar({}) {
-
-    const {darkMode, dispatch} = useDarkMode()
+    const { darkMode, dispatch } = useDarkMode();
     return (
         <section className="side-bar">
             <div className="top">
@@ -82,8 +81,14 @@ function SideBar({}) {
                 </ul>
             </div>
             <div className="bottom">
-                <div className="colorOption"onClick={() => dispatch({type:"LIGHT"})}></div>
-                <div className="colorOption"onClick={() => dispatch({type:"DARK"})}></div>
+                <div
+                    className="colorOption"
+                    onClick={() => dispatch({ type: 'LIGHT' })}
+                ></div>
+                <div
+                    className="colorOption"
+                    onClick={() => dispatch({ type: 'DARK' })}
+                ></div>
             </div>
         </section>
     );

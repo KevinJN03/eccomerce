@@ -1,13 +1,10 @@
 .datatable {
     padding: 20px;
-    
 
     .datatableTitle {
-        
-        @apply w-full flex justify-between items-center;
+        @apply flex w-full items-center justify-between;
         font-size: 24px;
         margin-bottom: 10px;
-
 
         .link {
             color: green;
@@ -16,22 +13,20 @@
             border: 1px solid green;
             padding: 5px;
             border-radius: 5px;
-            text-decoration: none
+            text-decoration: none;
         }
-
     }
 
     .cellWithImg {
         @apply flex items-center;
 
         .cellImg {
-            @apply w-10 h-10 rounded-full object-cover mr-5;
+            @apply mr-5 h-10 w-10 rounded-full object-cover;
         }
     }
     .cellWithStatus {
         padding: 5px;
         border-radius: 5px;
-
 
         &.active {
             color: green;
@@ -40,13 +35,13 @@
 
         &.restricted {
             background-color: rgba(255, 0, 0, 0.137);
-            color: red
+            color: red;
         }
     }
 
     .cellAction {
         @apply flex items-center gap-4;
-        
+
         .viewButton {
             padding: 2px 5px;
             border-radius: 5px;

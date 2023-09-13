@@ -1,9 +1,9 @@
-function Change_Btn({setChange, change}) {
+function Change_Btn({ setChange, change }) {
     return (
         <button
             type="button"
             id="checkout-change-btn"
-            onClick={()=>setChange(!change)}
+            onClick={() => setChange(!change)}
         >
             Change
         </button>

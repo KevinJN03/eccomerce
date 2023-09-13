@@ -5,10 +5,9 @@
 .new-product {
     @apply flex w-full;
 
-    
     .new-product-container {
         flex: 6;
-        
+
         .product-listing {
             @apply m-6 bg-white p-6;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -42,17 +41,14 @@ p {
     @apply text-s;
 }
 
-
-
 .about {
     @apply m-4 w-7/12 p-6;
     border-radius: 10px;
     border: 2px solid black;
-    
+
     input {
         @apply outline;
     }
-    
 
     .dropzone {
         @apply flex flex-col items-center justify-center gap-12;
@@ -64,26 +60,22 @@ p {
     .uploads {
         height: fit-content;
         .img-grid {
-
             // max-width: 100%;
             height: 100%;
             display: flex;
             flex-direction: row;
-           
+
             gap: 5px;
             // grid-auto-flow: column;
-            
+
             li {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
             }
-           
-
         }
     }
 }
-
 
 .outline {
     @apply mb-8 mt-3  w-full rounded-md p-3;
@@ -98,12 +90,9 @@ p {
 
 #description {
     @apply outline;
-    
-    
 }
 
-
-// Price & Inventory Section 
+// Price & Inventory Section
 
 #price-inventory {
     @apply m-4 w-7/12 p-6;
@@ -114,10 +103,10 @@ p {
         @apply outline;
     }
 
-    .price-input, .quantity-input {
+    .price-input,
+    .quantity-input {
         // width: 30px !important;
-        width: 50%
-        
+        width: 50%;
     }
 }
 
@@ -125,10 +114,8 @@ p {
     @apply m-4 w-7/12 p-6;
     border-radius: 10px;
     border: 2px solid black;
-
-       
 }
 
 .category-select {
-    width: 50%
+    width: 50%;
 }

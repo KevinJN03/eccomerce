@@ -8,19 +8,22 @@ function Newsletter() {
             </p>
             <div
                 id="newsletter-input"
-                className="rounded-l-lg relative flex h-14 w-full flex-row items-center "
+                className="relative flex h-14 w-full flex-row items-center rounded-l-lg "
             >
                 <input
                     type="text"
                     placeholder="Phone Number or Email"
-                    className="rounded-inherit h-full w-11/12 px-3 text-sm text-black"
+                    className="h-full w-11/12 rounded-inherit px-3 text-sm text-black"
                 />
                 <div id="newletter-btn-container">
                     <button
                         type="button"
                         className="newletter-btn  h-full w-full bg-slate-200 p-1"
                     >
-                        <img src={arrow} className="h-full w-full object-cover" />
+                        <img
+                            src={arrow}
+                            className="h-full w-full object-cover"
+                        />
                     </button>
                 </div>
             </div>
