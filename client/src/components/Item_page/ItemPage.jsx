@@ -10,6 +10,7 @@ import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from '../product/navigationLinks';
 import { useParams, useLocation } from 'react-router-dom';
 import { useProducts } from '../../hooks/ScrapeData/scrape';
+import Shipping from '../cart/shipping';
 
 function filterProduct(products, id) {
     // const [singleItem, setSingleItem] = useState(null);
@@ -114,21 +115,21 @@ function filterProduct(products, id) {
                         <Navigation_Links className="mt-3 pl-3" />
                         <section className="item-section">
                             <Item_List
-                                images={example.image}
+                                images={singleProduct.images}
                                 handleImgChange={handleImgChange}
                             />
-                            <Main_Image ref={imageRef} images={example.image} />
+                            <Main_Image ref={imageRef} images={singleProduct.images} />
                             <Product_info
-                                price={example.price}
+                                price={singleProduct.price}
                                 text={example.text}
-                                title={example.title}
-                                size={example.size}
-                                details={example.details}
+                                title={singleProduct.title}
+                                size={singleProduct.sizes}
+                                details={singleProduct.details}
                                 images={example.similar_styles_images}
                                 style_it_with_image={
                                     example.style_it_with_image
                                 }
-                                product={example}
+                                product={singleProduct}
 
                             />
                         </section>

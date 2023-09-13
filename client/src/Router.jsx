@@ -3,7 +3,7 @@ import {
     RouterProvider,
     useRoutes,
 } from 'react-router-dom';
-import App from './App';
+
 import Product from './components/Product/Product_Page';
 import ItemPage from './components/Item_page/ItemPage';
 import About from './components/miscellaneos/About';
@@ -24,7 +24,6 @@ import Product_Single from './components/admin/components/product/product single
 import New_Product from './components/admin/components/product/new product/new_product';
 import Error from './components/error/error';
 import Layout from './components/Layout/layout';
-// import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/product', '/women/product'];
@@ -47,6 +46,7 @@ function Router({ Header, Footer }) {
             errorElement: <Error />,
             
             children: [
+                
                 {
                     path: '/',
                     element: <Home />,

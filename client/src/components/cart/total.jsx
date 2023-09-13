@@ -1,9 +1,24 @@
 import { Link } from 'react-router-dom';
 import Payment_Methods from './payment_methods';
 import Shipping from './shipping';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import { useCart } from '../../context/cartContext';
 
 const Total = forwardRef(function ({}, ref) {
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [products, dispatch] = useCart();
+    useEffect(()=> {
+calculateTotal()
+    }, [])
+    const calculateTotal = () => {
+            let total = 0;
+
+            for ( let item of products){
+               total += item.price 
+            }
+setTotalAmount(total)
+            
+    }
     return (
         <section id="total-container">
             <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">
@@ -14,7 +29,7 @@ const Total = forwardRef(function ({}, ref) {
                     <p className="text-base font-semibold tracking-wide">
                         Sub-total
                     </p>
-                    <p>£90.50</p>
+                    <p>£{totalAmount}</p>
                 </div>
                 <div id="delivery-container">
                     <p className="text-base font-semibold tracking-wide">

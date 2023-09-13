@@ -11,6 +11,7 @@ import Header_Category from './header-category/header-category';
 import { useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
 import { ProductsProvider, useProducts } from '../../hooks/ScrapeData/scrape';
+import { Link} from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 function Header() {
 
@@ -90,17 +91,13 @@ function Header() {
                             <FavoriteBorderSharpIcon className="img-icon" />
                         </a>
 
-                        <a href="/cart" className="header-icons">
-                            {/* <img
-                                    src={basket}
-                                    alt="basket icon"
-                                    className="img-icon "
-                                ></img> */}
+                        <Link to="/cart" className="header-icons">
+                            
                             <LocalMallOutlinedIcon
                                 className="img-icon"
                                 fontSize="large"
                             />
-                        </a>
+                        </Link>
                     </section>
                 </header>
 

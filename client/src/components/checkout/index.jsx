@@ -2,7 +2,7 @@ import '../../CSS/checkout.css';
 import disableLayout from '../../hooks/disableLayout';
 import Address from './address';
 import Checkout_Header from './checkout_header';
-import Checkout_Total from './checkout_total';
+import Checkout_Total from './checkout_total/Checkout_Total.jsx';
 import Country_Picker from './country_picker';
 import Delivery from './delivery/delivery';
 import Email_address from './email-address';

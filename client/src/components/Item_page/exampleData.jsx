@@ -1,7 +1,7 @@
 const example = {
-    id: '30e5e22a-f54e-498f-aa23-59fe035a76d2',
+
     title: 'The Forest Drive Short Sleeve Crew Tee - Cream',
-    price: '12.00',
+    price: 12.00,
     text: '30% Off! Prices As Marked, No Code Needed',
     image: [
         'https://www.fashionnova.com/cdn/shop/files/06-30-23Studio7_CB_DJ_11-13-47_41_ZDF01K330031_Cream_7912_MP.jpg?v=1688408862',

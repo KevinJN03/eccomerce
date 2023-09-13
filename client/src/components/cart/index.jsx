@@ -11,22 +11,21 @@ import { useWindowSize } from '@uidotdev/usehooks';
 import { Link } from 'react-router-dom';
 import zIndex from '@mui/material/styles/zIndex';
 import { useCart } from '../../context/cartContext';
+import Empty_Cart from './emptyCart';
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
-    const [products, dispatch] = useCart();
-    const product = {
-        img: 'https://images.asos-media.com/products/dr-martens-garin-sandals-in-back-brando-leather/203997482-1-black',
-        title: 'Dr Martens Garin sandals in back brando leather',
-        color: 'BLACK',
-        size: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-        price: 90.99,
-    };
-
+    const [cart, dispatch] = useCart();
+    console.log("cart at cart:", cart)
+    
+const handleRemove = (item) => {
+    console.log(item)
+    dispatch({type: 'remove', product: item})
+}
     return (
-        <>
-            <section id="cart-page">
+        <>{
+            cart.length > 0 ? <section id="cart-page">
                 <motion.span
                     className="sticky-header sticky  flex items-center justify-between bg-white p-3 lg:!hidden"
                     animate={{
@@ -60,14 +59,18 @@ function Cart({}) {
                         </p>
                     </div>
                     <div className="product-cart-wrapper">
-                        {products.map((item) => {
-                            <Cart_Item key={item.id} product={item} />;
-                        })}
+                        {cart && cart.map((item => {
+                           return ( <Cart_Item key={item.id} product={item} handleClick={() => handleRemove(item)}/>)
+                        }))}
                     </div>
                 </div>
 
                 <Total ref={checkoutBottomRef} />
-            </section>
+            </section> :
+
+            <Empty_Cart/>
+        }
+            
         </>
     );
 }
