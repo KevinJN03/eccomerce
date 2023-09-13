@@ -1,1 +1,0 @@
-[{"category":"new in","products":[]},{"category":"clothing","products":[]},{"category":"shoes","products":[]},{"category":"accessories","products":[]},{"category":"Sportswear","products":[]},{"category":"Summer","products":[]},{"category":"Brands","products":[]},{"category":"topman","products":[]},{"category":"Marketplace","products":[]},{"category":"outlet","products":[]}]
