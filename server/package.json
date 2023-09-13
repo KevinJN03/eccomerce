@@ -12,9 +12,7 @@
     "lint:eslint": "eslint --fix .",
     "lint:prettier": "prettier --write .",
     "populate": "cd populate && node populate.js",
-    "temporaryScrape" : "cd ProductScrape && node temporaryScrape.js"
-    
-    
+    "temporaryScrape": "cd ProductScrape && node temporaryScrape.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +22,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-prettier": "^5.0.0",
+    "jsonfile": "^6.1.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",
     "puppeteer": "^21.1.1"
