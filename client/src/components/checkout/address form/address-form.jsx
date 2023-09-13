@@ -1,6 +1,6 @@
 import Address_Input from './address.input';
 
-function Address_Form({ setChange }) {
+function Address_Form({ setChange, buttontext }) {
     return (
         <section id="address-form" className="relative">
             <h1 className="mb-6">EDIT ADDRESS</h1>
@@ -22,7 +22,7 @@ function Address_Form({ setChange }) {
                         type="button"
                         onClick={() => setChange(false)}
                     >
-                        DELIVER TO THIS ADDRESS
+                       {buttontext ? buttontext :  'DELIVER TO THIS ADDRESS'}
                     </button>
                 </div>
                 <button

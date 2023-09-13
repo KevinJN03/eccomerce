@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 
@@ -11,12 +12,12 @@ function Promo_Student({}) {
                     button_text="APPLY CODE"
                 />
 
-                <a className="mb-12" href="/refer-a-friend">
+                <Link target='_blank' to="/refer-a-friend" className="mb-12">
                     Have you been{' '}
                     <strong className="underline underline-offset-1">
                         referred by a friend?
                     </strong>
-                </a>
+                </Link>
                 <div className="need-to-know-container">
                     <h2 className="text-xl font-bold tracking-widest">
                         NEED TO KNOW

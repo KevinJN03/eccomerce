@@ -28,10 +28,10 @@ function Dropdown_Size({ title, options }) {
                         return (
                             <li>
                                 <option
-                                    value={option}
+                                    value={option.size}
                                     onClick={(e) => setSize(e.target.value)}
                                 >
-                                    {option}
+                                    {option.size}
                                 </option>
                             </li>
                         );

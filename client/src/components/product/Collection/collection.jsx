@@ -1,6 +1,6 @@
 import Item from './item';
 
-function Collection({}) {
+function Collection({products}) {
     const example = {
         title: 'The Forest Drive Short Sleeve Crew Tee - Cream',
         price: '12.00',
@@ -9,102 +9,22 @@ function Collection({}) {
     };
     return (
         <section id="collection-section">
-            <Item
-                image={example.image}
-                price={example.price}
+
+        {products && products.map(product=> {
+            return (
+                <Item
+            key={product.id}
+                image={product.images[0]}
+                price={product.price}
                 text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
-            <Item
-                image={example.image}
-                price={example.price}
-                text={example.text}
-                title={example.title}
-            />
+                title={product.title}
+                url={product.id}
+            /> 
+            )
+           
+        }) }
+            
+            
         </section>
     );
 }

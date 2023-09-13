@@ -53,10 +53,12 @@ function SignUp() {
                         <DatePicker
                             views={['day']}
                             slotProps={{ textField: { size: 'small' } }}
+                            
                         />
                         <DatePicker
                             views={['month']}
-                            slotProps={{ textField: { size: 'small' } }}
+                            slotProps={{ textField: { size: 'small', placeholder: 'MM'} }}
+                          
                         />
 
                         <DatePicker

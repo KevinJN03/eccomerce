@@ -1,4 +1,5 @@
 const example = {
+    id: '30e5e22a-f54e-498f-aa23-59fe035a76d2',
     title: 'The Forest Drive Short Sleeve Crew Tee - Cream',
     price: '12.00',
     text: '30% Off! Prices As Marked, No Code Needed',
@@ -8,7 +9,36 @@ const example = {
         '//www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-10_74_ZDF01V330017_Hunter_20103_EH_468x.jpg?v=1691081693, //www.fashionnova.com/cdn/shop/files/07-21-23Studio7_KF_DJ_14-47-10_74_ZDF01V330017_Hunter_20103_EH_468x@2x.jpg?v=1691081693 2x',
         '//www.fashionnova.com/cdn/shop/files/07-28-23Studio7_RA_DJ_14-22-17_86_ZDF01V330017_Hunter_23681_MP_PLUS_468x.jpg?v=1691081692, //www.fashionnova.com/cdn/shop/files/07-28-23Studio7_RA_DJ_14-22-17_86_ZDF01V330017_Hunter_23681_MP_PLUS_468x@2x.jpg?v=1691081692 2x',
     ],
-    size: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+    size :[
+        {
+            "size": "UK 6",
+            "stock": 0
+        },
+        {
+            "size": "UK 8",
+            "stock": 3
+        },
+        {
+            "size": "UK 10",
+            "stock": 7
+        },
+        {
+            "size": "UK 12",
+            "stock": 9
+        },
+        {
+            "size": "UK 14",
+            "stock": 9
+        },
+        {
+            "size": "UK 16",
+            "stock": 11
+        },
+        {
+            "size": "UK 18",
+            "stock": 6
+        }
+    ],
     details: [
         'Available In Dark Brown.',
         'Crew Neck',

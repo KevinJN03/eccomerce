@@ -13,6 +13,11 @@ const useBodyScollLock = () => {
         } else {
             bodyStyle.overflowY = 'auto';
         }
+
+        return () => {
+
+            // bodyStyle.overflowY = null;
+        };
     }, [isLocked]);
 
     const toggle = () => {
@@ -23,3 +28,4 @@ const useBodyScollLock = () => {
 };
 
 export default useBodyScollLock;
+ 

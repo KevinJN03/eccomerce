@@ -10,10 +10,14 @@ import Profile_Dropdown from '../common/dropdown/profile_dropdown';
 import Header_Category from './header-category/header-category';
 import { useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
+import { ProductsProvider, useProducts } from '../../hooks/ScrapeData/scrape';
+import { useNavigate } from 'react-router-dom';
 function Header() {
-    const [category, setCategory] = useState(true);
-    //const [activeCategory, setActiveCategory] = useState(false)
 
+    //const [activeCategory, setActiveCategory] = useState(false)
+    const navigate = useNavigate();
+    const [state, dispatch] = useProducts();
+    console.log("state", state)
     const search = (e) => {
         console.log(e);
     };
@@ -31,18 +35,22 @@ function Header() {
                         </div>
                         <section
                             id="women"
-                            onClick={() => setCategory(false)}
+                            onClick={() =>{ 
+                                dispatch({type: 'women'});
+                                navigate('/home')
+                        }}
                             className={`header-category-btn ${
-                                !category ? 'active-header-category' : ''
+                                state.category=='women' ? 'active-header-category' : ''
                             }`}
                         >
                             Women
                         </section>
                         <section
                             id="men"
-                            onClick={() => setCategory(true)}
+                            onClick={() => {dispatch({type: 'men'})
+                            navigate('/home')}}
                             className={`header-category-btn ${
-                                category ? 'active-header-category' : ''
+                                state.category=='men' ? 'active-header-category' : ''
                             }`}
                         >
                             Men
@@ -102,7 +110,7 @@ function Header() {
                 ) : (
                     <Header_Category category={'women'} />
                 )} */}
-                    <Header_Category category={category} />
+                    <Header_Category category={state.category} />
                 </section>
             </section>
         </section>

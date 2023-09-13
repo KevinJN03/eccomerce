@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import RemoveSharpIcon from '@mui/icons-material/RemoveSharp';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+
 import { v4 as uuidv4 } from 'uuid';
 import { AnimatePresence, animate, easeIn, motion } from 'framer-motion';
-import { Container, duration } from '@mui/material';
-import { useWindowSize } from '@uidotdev/usehooks';
 
+import { useWindowSize } from '@uidotdev/usehooks';
+import Arrow from './arrow';
 const sizes = [
     { id: uuidv4(), value: 'S', type: 'shirt' },
     { id: uuidv4(), value: 'M', type: 'shirt' },
@@ -110,11 +110,7 @@ function Size({ addToFilter }) {
                     {count ? `Size (${count})` : 'Size'}
                 </h3>
                 <div className="arrow-wrapper" onClick={toggleShow}>
-                    <KeyboardArrowDownRoundedIcon
-                        className={` !text-[32px] ${
-                            show ? 'up-arrow' : 'down-arrow'
-                        }`}
-                    />
+                    <Arrow show={show} />
                 </div>
             </div>
             <AnimatePresence>

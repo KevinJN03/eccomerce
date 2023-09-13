@@ -16,13 +16,14 @@ function Product_info({
     details,
     images,
     style_it_with_image,
+    product
 }) {
     return (
         <section id="Product_info">
             <Info title={title} price={price} text={text} />
             <Size size={size} />
             <div className="adddtocart-wishlist">
-                <AddToCart />
+                <AddToCart product={product}/>
                 <WishList />
             </div>
 

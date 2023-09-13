@@ -5,16 +5,16 @@ function Size({ size }) {
                 <h3 className="section-title">Size</h3>
             </div>
             <div className="size-btn-wrapper">
-                {size.map((item) => {
+                {size.map((item, index) => {
                     return (
                         // <div key={size.indexOf(item)} id="size-btn" value={item}>
                         //     {item}
                         // </div>
                         <input
                             className="item-size-btn"
-                            key={size.indexOf(item)}
+                            key={index}
                             type="button"
-                            value={item}
+                            value={item.size}
                         ></input>
                     );
                 })}

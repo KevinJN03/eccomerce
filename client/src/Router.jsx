@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+    createBrowserRouter,
+    RouterProvider,
+    useRoutes,
+} from 'react-router-dom';
 import App from './App';
 import Product from './components/Product/Product_Page';
 import ItemPage from './components/Item_page/ItemPage';
@@ -18,97 +22,126 @@ import Admin_Product from './components/admin/components/product/admin_product';
 import All_Products from './components/admin/components/product/all_product';
 import Product_Single from './components/admin/components/product/product single page/product_single';
 import New_Product from './components/admin/components/product/new product/new_product';
+import Error from './components/error/error';
+import Layout from './components/Layout/layout';
 // import Footer from "./src/components/Layout/footer/footer";
 function Router({ Header, Footer }) {
+    const productRoutes = () => {
+        const paths = ['/men/product', '/women/product'];
+        let allPaths = paths.map((path) => [
+            {
+                path: path,
+                element: <Product />,
+            },
+            {
+                path: `${path}/:id`,
+                element: <ItemPage />,
+            },
+        ]);
+        
+        return allPaths;
+    };
     const router = createBrowserRouter([
         {
-            path: '/',
-            element: <Home />,
-        },
-        {
-            path: '/home',
-            element: <Home />,
-        },
-        {
-            path: '/product',
-            element: <Product />,
-        },
-        {
-            path: '/product/:id',
-            element: <ItemPage />,
-        },
-        {
-            path: '/about',
-            element: <About />,
-        },
-        {
-            path: '/dashboard',
-            element: <Dashboard />,
-        },
-        {
-            path: '/login',
-            element: <LoginSignUp loginorSignup={'login'} />,
-        },
-        {
-            path: '/signup',
-            element: <LoginSignUp loginorSignup={'signup'} />,
-        },
-        {
-            path: '/cart',
-            element: <Cart />,
-        },
-        {
-            path: '/checkout',
-            element: <Checkout />,
-        },
-
-        {
-            path: '/admin',
-            element: <Admin />,
-
+            element: <Layout />,
+            errorElement: <Error />,
+            
             children: [
                 {
-                    index: true,
-                    element: <Admin_Dashboard />,
+                    path: '/',
+                    element: <Home />,
                 },
                 {
-                    path: 'users/',
+                    path: '/home',
+                    element: <Home />,
+                },
+                
+                // ...productRoutes()[0],
+                // ...productRoutes()[1],
+                {
+                    path: '/men/product/',
+                    element: <Product />,
+                },
+                {
+                    path: '/men/product/:id',
+                    element: <ItemPage />,
+                },
+                {
+                    path: '/about',
+                    element: <About />,
+                },
+                {
+                    path: '/dashboard',
+                    element: <Dashboard />,
+                },
+                {
+                    path: '/login',
+                    element: <LoginSignUp loginorSignup={'login'} />,
+                },
+                {
+                    path: '/signup',
+                    element: <LoginSignUp loginorSignup={'signup'} />,
+                },
+                {
+                    path: '/cart',
+                    element: <Cart />,
+                },
+                {
+                    path: '/checkout',
+                    element: <Checkout />,
+                },
 
-                    element: <Users />,
+                {
+                    path: '/admin',
+                    element: <Admin />,
 
                     children: [
                         {
                             index: true,
-                            element: <List />,
+                            element: <Admin_Dashboard />,
                         },
                         {
-                            path: ':id',
-                            element: <Single_User />,
-                        },
-                        {
-                            path: 'new',
-                            element: <New type="User" title="Add New User" />,
-                        },
-                    ],
-                },
-                {
-                    path: 'products/',
-                    element: <Admin_Product />,
+                            path: 'users/',
 
-                    children: [
-                        {
-                            index: true,
-                            element: <All_Products />,
-                        },
-                        {
-                            path: 'new',
-                            // element: <New type="Product" title="Add New Product"/>
-                            element: <New_Product />,
-                        },
+                            element: <Users />,
 
+                            children: [
+                                {
+                                    index: true,
+                                    element: <List />,
+                                },
+                                {
+                                    path: ':id',
+                                    element: <Single_User />,
+                                },
+                                {
+                                    path: 'new',
+                                    element: (
+                                        <New type="User" title="Add New User" />
+                                    ),
+                                },
+                            ],
+                        },
                         {
-                            path: ':id',
-                            element: <Product_Single />,
+                            path: 'products/',
+                            element: <Admin_Product />,
+
+                            children: [
+                                {
+                                    index: true,
+                                    element: <All_Products />,
+                                },
+                                {
+                                    path: 'new',
+                                    // element: <New type="Product" title="Add New Product"/>
+                                    element: <New_Product />,
+                                },
+
+                                {
+                                    path: ':id',
+                                    element: <Product_Single />,
+                                },
+                            ],
                         },
                     ],
                 },

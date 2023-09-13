@@ -5,19 +5,31 @@ import Collection from './Collection/collection';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import Mobile_Filter from './Filter/mobile-filter';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from './navigationLinks';
+import {useProducts} from '../../hooks/ScrapeData/scrape.jsx'
+import { Outlet, useLocation } from 'react-router-dom';
 function Product_Page() {
     const [filterCount, setFilterCount] = useState(0);
+    const [state, dispatch] = useProducts();
+    const products = state.products.categoryResults
+    console.log("products", products[0].products)
+    const location = useLocation()
+    console.log("location", location.pathname.split('/')[1])
+    const route = location.pathname.split('/')[1]
+    useEffect(() => {
+
+        dispatch({type: route})
+       
+        
+    }, []);
+
 
     const screenSize = useWindowSize();
 
-    console.log(screenSize.width);
     return (
         <section id="product_page">
-           
-
             <section className="product-page-section flex w-full max-w-[1366px] flex-col sm:px-5 md+lg:!px-10">
                 <div className="product-header mb-4 flex flex-col sm:gap-2 md+lg:gap-4">
                     <Navigation_Links />
@@ -77,9 +89,11 @@ function Product_Page() {
                         filterCount={filterCount}
                         setFilterCount={setFilterCount}
                     />
-                    <Collection />
+                    <Collection products={products[0].products}/>
+                    
                 </section>
             </section>
+            
         </section>
     );
 }

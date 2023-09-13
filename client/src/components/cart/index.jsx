@@ -10,12 +10,12 @@ import { useWindowSize } from '@uidotdev/usehooks';
 
 import { Link } from 'react-router-dom';
 import zIndex from '@mui/material/styles/zIndex';
-
+import { useCart } from '../../context/cartContext';
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
-
+    const [products, dispatch] = useCart();
     const product = {
         img: 'https://images.asos-media.com/products/dr-martens-garin-sandals-in-back-brando-leather/203997482-1-black',
         title: 'Dr Martens Garin sandals in back brando leather',
@@ -23,6 +23,7 @@ function Cart({}) {
         size: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
         price: 90.99,
     };
+
     return (
         <>
             <section id="cart-page">
@@ -59,9 +60,9 @@ function Cart({}) {
                         </p>
                     </div>
                     <div className="product-cart-wrapper">
-                        <Cart_Item product={product} />
-                        <Cart_Item product={product} />
-                        <Cart_Item product={product} />
+                        {products.map((item) => {
+                            <Cart_Item key={item.id} product={item} />;
+                        })}
                     </div>
                 </div>
 

@@ -1,9 +1,10 @@
 #App {
     max-width: 100%;
     @apply m-0 flex flex-col items-center p-0;
-    background-color: var(--light-grey);
+    /* background-color: var(--light-grey); */
     width: 100%;
     overflow-x: hidden;
+    
 }
 
 #main {
@@ -11,6 +12,7 @@
     min-height: 80vh;
     width: 100%;
     background-color: var(--light-grey);
+   
 }
 
 #header-wrapper {
@@ -243,7 +245,7 @@
     /* background-color: green; */
     border: 1px solid black;
     height: 10px;
-    background-color: turquoise;
+    background-color: var(--light-grey)
 }
 
 .bottom-text {

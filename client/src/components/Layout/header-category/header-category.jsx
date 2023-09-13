@@ -40,7 +40,7 @@ function Header_Category({ category }) {
         );
     };
 
-    return <>{category ? menCategory() : womenCategory()}</>;
+    return <>{category=='men' ? menCategory() : womenCategory()}</>;
 }
 
 export default Header_Category;
