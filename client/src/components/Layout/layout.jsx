@@ -2,7 +2,7 @@ import Footer from './footer/footer';
 import Header from './header';
 import { useLayoutContext } from '../../context/layoutContext';
 import { useContext } from 'react';
-import { ProductsProvider } from '../../hooks/ScrapeData/scrape';
+import { ProductsProvider } from '../../hooks/genderCategory.jsx';
 import { Outlet } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
 import { CartProvider } from '../../context/cartContext';
@@ -19,9 +19,9 @@ function Layout() {
 
         return () => {
             setLoading(true);
-            clearTimeout(timout)
+            clearTimeout(timout);
         };
-    },[]);
+    }, []);
     function Loader() {
         return <span className="loading loading-infinity loading-lg"></span>;
     }
@@ -35,15 +35,13 @@ function Layout() {
 
                             <main id="main">
                                 {/* {children} */}
-                               {loading ? <Loader/> : <Outlet />} 
+                                {loading ? <Loader /> : <Outlet />}
                             </main>
 
                             <Footer />
                         </>
                     ) : (
-                        <>
-                             {loading ? <Loader/> : <Outlet />} 
-                        </>
+                        <>{loading ? <Loader /> : <Outlet />}</>
                     )}
                 </ProductsProvider>
             </CartProvider>

@@ -8,13 +8,12 @@ import Mobile_Filter from './Filter/mobile-filter';
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from './navigationLinks';
-import {useProducts} from '../../hooks/ScrapeData/scrape.jsx'
+
 import { Outlet, useLocation } from 'react-router-dom';
+import { useGenderCategory } from '../../hooks/genderCategory';
 function Product_Page() {
     const [filterCount, setFilterCount] = useState(0);
-    const [state, dispatch] = useProducts();
-    const products = state.products.categoryResults
-    console.log("products", products[0].products)
+    const [state, dispatch] = useGenderCategory()
     const location = useLocation()
     console.log("location", location.pathname.split('/')[1])
     const route = location.pathname.split('/')[1]
@@ -89,7 +88,7 @@ function Product_Page() {
                         filterCount={filterCount}
                         setFilterCount={setFilterCount}
                     />
-                    <Collection products={products[0].products}/>
+                    {/* <Collection products={}/> */}
                     
                 </section>
             </section>

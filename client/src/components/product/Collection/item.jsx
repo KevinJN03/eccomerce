@@ -1,8 +1,8 @@
 import Info from '../../common/info';
-import {Link} from 'react-router-dom';
-import { useProducts } from '../../../hooks/ScrapeData/scrape';
+import { Link } from 'react-router-dom';
+import { useGenderCategory } from '../../../hooks/genderCategory';
 function Item({ image, title, price, text, url }) {
-    const [state] = useProducts()
+    const [state] = useGenderCategory();
     return (
         <a href={`/${state.category}/product/${url}`} className="card ">
             <div id="image-wrapper" className="h-full w-full">

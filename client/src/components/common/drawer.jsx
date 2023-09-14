@@ -1,7 +1,14 @@
 import Rating from './rating';
 import Dropdown_Size from './dropdown/dropdown_size';
 import Input_S from './input/input_s';
+import { useState } from 'react';
 function Drawer({ product }) {
+    const [fit, setFit] = useState(null);
+
+    const handleFitClick = (e) => {
+        setFit(e.target.textContent)
+        console.log(fit)
+    }
     return (
         <>
             <input
@@ -30,7 +37,7 @@ function Drawer({ product }) {
                     >
                         <div className="review-img-container h-36 w-24">
                             <img
-                                src={product.image}
+                                src={product.images[0]}
                                 className="h-full w-full object-contain"
                             ></img>
                         </div>
@@ -61,19 +68,22 @@ function Drawer({ product }) {
                             <div className="fit-btn-wrapper mt-3 flex max-w-full flex-row sm:grid sm:grid-cols-3 sm:gap-1 md+lg:gap-3">
                                 <button
                                     type="button"
-                                    className="border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs"
+                                    onClick={(e) => handleFitClick(e)}
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'True to Size' && 'border-black'}`}
                                 >
                                     True to Size
                                 </button>
                                 <button
+                                    onClick={(e) => handleFitClick(e)}
                                     type="button"
-                                    className="border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs"
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'Runs small' && 'border-black'}`}
                                 >
                                     Runs small
                                 </button>
                                 <button
+                                    onClick={(e) => handleFitClick(e)}
                                     type="button"
-                                    className="border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs"
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'Runs Large' && 'border-black'}`}
                                 >
                                     Runs Large
                                 </button>

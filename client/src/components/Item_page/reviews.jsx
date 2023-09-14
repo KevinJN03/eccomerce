@@ -15,7 +15,7 @@ function Reviews({ product }) {
                         htmlFor="drawer-right"
                         id="review-btn"
                         className="whitespace-nowrap rounded-full  border-[thin] bg-white px-6 py-3 font-semibold text-black sm:px-4 sm:text-sm"
-                        onClick={() => handleClick()}
+                        // onClick={() => handleClick()}
                     >
                         Write a Review
                     </label>

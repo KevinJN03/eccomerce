@@ -10,15 +10,17 @@ import Profile_Dropdown from '../common/dropdown/profile_dropdown';
 import Header_Category from './header-category/header-category';
 import { useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
-import { ProductsProvider, useProducts } from '../../hooks/ScrapeData/scrape';
-import { Link} from 'react-router-dom'
+import {
+    ProductsProvider,
+    useGenderCategory,
+} from '../../hooks/genderCategory.jsx';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 function Header() {
-
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
-    const [state, dispatch] = useProducts();
-    console.log("state", state)
+    const [state, dispatch] = useGenderCategory();
+    console.log('state', state);
     const search = (e) => {
         console.log(e);
     };
@@ -36,22 +38,28 @@ function Header() {
                         </div>
                         <section
                             id="women"
-                            onClick={() =>{ 
-                                dispatch({type: 'women'});
-                                navigate('/home')
-                        }}
+                            onClick={() => {
+                                dispatch({ type: 'women' });
+                                navigate('/home');
+                            }}
                             className={`header-category-btn ${
-                                state.category=='women' ? 'active-header-category' : ''
+                                state.category == 'women'
+                                    ? 'active-header-category'
+                                    : ''
                             }`}
                         >
                             Women
                         </section>
                         <section
                             id="men"
-                            onClick={() => {dispatch({type: 'men'})
-                            navigate('/home')}}
+                            onClick={() => {
+                                dispatch({ type: 'men' });
+                                navigate('/home');
+                            }}
                             className={`header-category-btn ${
-                                state.category=='men' ? 'active-header-category' : ''
+                                state.category == 'men'
+                                    ? 'active-header-category'
+                                    : ''
                             }`}
                         >
                             Men
@@ -92,7 +100,6 @@ function Header() {
                         </a>
 
                         <Link to="/cart" className="header-icons">
-                            
                             <LocalMallOutlinedIcon
                                 className="img-icon"
                                 fontSize="large"

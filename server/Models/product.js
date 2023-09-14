@@ -13,7 +13,7 @@ const productSchema = new Schema({
     required: true,
   },
   price: { type: Schema.Types.Mixed },
-  details: {
+  detail: {
     type: Schema.Types.Array,
     required: true,
     maxlength: [400, 'Details must be under 200 characters'],

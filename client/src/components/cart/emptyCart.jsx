@@ -1,21 +1,28 @@
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import { Link } from 'react-router-dom';
-import { useProducts } from '../../hooks/ScrapeData/scrape';
-function Empty_Cart({}){
-    const [state] = useProducts();
-    const gender = state.category
-  return (
-    <section className='emptyCart flex flex-col self-center items-center gap-3 w-[90vw]'>
-      <LocalMallOutlinedIcon className='!text-4xl'/>
-      <p className='font-bold text-lg'>Your bag is empty</p>
-      <p className='max-w-sm text-center'>Items remain in your bag for 60 minutes, and then they’re moved to your Saved Items.</p>
-      <Link to='wishlist' className='text-white text-s tracking-wider font-bold bg-[var(--green)] w-full max-w-[300px] py-3 text-center'>
-      VIEW SAVED ITEMS
-      </Link>
-        <Link to={`/${gender}/product`} className='underline text-s'>Continue Shopping</Link>
-      
-    </section>
-  )
-};
+import { useGenderCategory } from '../../hooks/genderCategory';
+function Empty_Cart({}) {
+    const [state] = useGenderCategory();
+    const gender = state.category;
+    return (
+        <section className="emptyCart flex w-[90vw] flex-col items-center gap-3 self-center">
+            <LocalMallOutlinedIcon className="!text-4xl" />
+            <p className="text-lg font-bold">Your bag is empty</p>
+            <p className="max-w-sm text-center">
+                Items remain in your bag for 60 minutes, and then they’re moved
+                to your Saved Items.
+            </p>
+            <Link
+                to="wishlist"
+                className="w-full max-w-[300px] bg-[var(--green)] py-3 text-center text-s font-bold tracking-wider text-white"
+            >
+                VIEW SAVED ITEMS
+            </Link>
+            <Link to={`/${gender}/product`} className="text-s underline">
+                Continue Shopping
+            </Link>
+        </section>
+    );
+}
 
-export default Empty_Cart
+export default Empty_Cart;
