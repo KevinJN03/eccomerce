@@ -109,7 +109,7 @@ async function ScrapeIndividual(page) {
         selector.evaluate(async (section) => {
           const itemDetail = Array.from(
             section.querySelectorAll('ul > li'),
-            (el) => el.textContent,
+            (el) => el.textContent.replaceAll('ASOS', 'GLAMO'),
           );
           return itemDetail;
         }),
@@ -133,7 +133,7 @@ async function ScrapeIndividual(page) {
       title,
       images,
       price,
-      totalSize,
+      size: totalSize,
       detail,
       url: page.url(),
       color,

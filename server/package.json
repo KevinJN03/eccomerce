@@ -11,8 +11,9 @@
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --fix .",
     "lint:prettier": "prettier --write .",
-    "populate": "cd populate && node populate.js",
-    "temporaryScrape": "cd ProductScrape && node temporaryScrape.js"
+    "populate": "clear && cd populate && node populate.js",
+    "temporaryScrape": "clear && cd ProductScrape && node temporaryScrape.js",
+    "createProduct": "cd populate && node createProducts.js"
   },
   "author": "",
   "license": "ISC",

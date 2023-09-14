@@ -1,7 +1,9 @@
 import mainCategory from '../Models/mainCategory.js';
-import category from '../Models/category.js';
-export default async function createBulkCategories(currentCategory) {
+import Category from '../Models/Category.js';
+import mongoose from 'mongoose';
+export default async function createBulkCategories() {
   const arr = [
+    'new in',
     'shoes',
     'clothing',
     'accessories',
@@ -11,25 +13,17 @@ export default async function createBulkCategories(currentCategory) {
     'topman',
     'marketplace',
     'outlet',
+    'topshop',
   ];
   try {
-    const createCategory = arr.map(async (elem) => {
-      const newCategory = await category.create({
-        name: elem,
-        gender: currentCategory.name,
-        mainCategory: currentCategory.id,
+    const createCategory = await arr.map(async (name) => {
+      const newCategory = await Category.create({
+        name,
       });
       return newCategory;
     });
-
-    await Promise.all(
-      createCategory.map(async (elem) => {
-        const { id } = await elem;
-        await mainCategory.findByIdAndUpdate(currentCategory.id, {
-          $push: { categories: id },
-        });
-      }),
-    ).catch((err) => console.log(err));
+    const promiseArr = await Promise.all(createCategory);
+    return promiseArr;
   } catch (error) {
     console.log('error', error);
   }
