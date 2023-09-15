@@ -26,7 +26,7 @@ import Error from './components/error/error';
 import Layout from './components/Layout/layout';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
-        const paths = ['/men/product', '/women/product'];
+        const paths = ['/men/:category', '/women/:category'];
         let allPaths = paths.map((path) => [
             {
                 path: path,

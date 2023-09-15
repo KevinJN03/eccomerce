@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Fragment } from 'react';
 function SaleBanner_4({ images }) {
     return (
-        <section className=" section-1 sm:!h-72">
+        <section id="section-1">
             {images.map((img) => {
                 return (
                     <Fragment key={uuidv4()}>
@@ -13,6 +13,7 @@ function SaleBanner_4({ images }) {
                             <img
                                 src={img.url}
                                 className="h-full w-full object-cover object-center"
+                                loading="lazy"
                             />
                             <div
                                 className={`salebanner4-text absolute font-bold`}

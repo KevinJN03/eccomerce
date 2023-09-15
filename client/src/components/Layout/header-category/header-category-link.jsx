@@ -6,7 +6,7 @@ function Header_link({ text, link }) {
     return (
         <Link onClick={()=> dispatch({type: 'changeProductCategory', productCategory: text})}
             className="header-link text-s tracking-wider"
-            to={link ? link : `/${state.gender}/product`}
+            to={link ? link : `/${state.gender}/${text.toLowerCase()}`}
         >
             {text}
         </Link>

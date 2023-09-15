@@ -7,7 +7,7 @@ const calculateTotal = () => {
     for ( let item of products){
        total += item.price.current
     }
-return total
+return total.toFixed(2)
     
 }
 

@@ -74,7 +74,6 @@ function Home() {
             <SaleBanner_3 />
             <SaleBanner_4 images={section_4_images} />
             <Hero image={hero_img2} />
-            {/* <Hero image={hero_img} /> */}
         </section>
     );
 }

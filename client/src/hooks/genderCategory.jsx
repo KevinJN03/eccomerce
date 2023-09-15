@@ -11,10 +11,12 @@ function reducer(state, action) {
     if (action.type === 'men') {
         return {
             gender: 'men',
+            productCategory: state.productCategory
         };
     } else if (action.type === 'women') {
         return {
             gender: 'women',
+            productCategory: state.productCategory
         };
     } else if(action.type === 'changeProductCategory'){
 return {
