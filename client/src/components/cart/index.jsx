@@ -12,11 +12,14 @@ import { Link } from 'react-router-dom';
 import zIndex from '@mui/material/styles/zIndex';
 import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
+import calculateTotal from '../common/calculateTotal';
 
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
+
+    const cartTotal = calculateTotal()
     // const [cart, setCart] = useState(null)
     const [cart, dispatch] = useCart();   
     const handleRemove = (id) => {
@@ -38,7 +41,7 @@ function Cart({}) {
                 >
                     <div className="left">
                         <p className="text-base font-semibold">BAG SUB-TOTAL</p>
-                        <p className="text-sm">£28.00</p>
+                        <p className="text-sm">{cartTotal}</p>
                     </div>
                     <div className="right">
                         <Link

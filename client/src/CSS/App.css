@@ -258,7 +258,6 @@
 
 .section-1 {
     @apply mb-10 flex w-full flex-row;
-    max-height: 600px;
 }
 
 .salebanner-gap {
@@ -429,7 +428,7 @@
 @media screen and (max-width: 980px) {
     .section-1 {
         display: flex;
-        /* flex-wrap:wrap ; */
+        flex-wrap:wrap ;
         @apply mt-7 gap-1;
     }
 
@@ -437,8 +436,7 @@
         flex-wrap: wrap;
     }
     #section-1-wrapper {
-        flex: 48%;
-        height: 100%;
+        flex: 49%;
     }
     .footer_copyright-wrapper {
         display: none;

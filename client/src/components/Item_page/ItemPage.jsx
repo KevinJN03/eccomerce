@@ -27,6 +27,8 @@ function ItemPage() {
                 console.log(res.data);
                 setProduct(res.data);
                 setLoading(false);
+            }).catch((error)=> {
+                console.log("Error fetching data, not found", error)
             });
         }, 1500);
         return () => {
