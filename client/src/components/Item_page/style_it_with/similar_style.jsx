@@ -7,7 +7,7 @@ function Similar_Styles({ images }) {
                 })}
             </div>
             <div className="flex w-full flex-row justify-between sm+md:items-center lg:mb-12">
-                <h2 className="text-2xl font-extrabold sm:text-xl">
+                <h2 className="text-2xl font-extrabold sm:text-lg !self-end">
                     SEE 20+ SIMILAR STYLES
                 </h2>
                 <button type="button" id="similar-btn">

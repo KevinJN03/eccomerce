@@ -19,7 +19,7 @@ function Cart_Item({ product, handleClick }) {
             <button type="button" id="cart-close" onClick={handleClick}>
                 <img src={close} />{' '}
             </button>
-            <Link to={`/men/product/${product.id}`} className="cart-img-container">
+            <Link to={`/product/${product.id}`} className="cart-img-container">
                 <img
                     src={product.images[0]}
                     className="h-full w-full object-cover"
@@ -30,7 +30,7 @@ function Cart_Item({ product, handleClick }) {
                 <p className="">{product.title}</p>
                 <div className="cart-options">
                     {/* <span>{product.color}</span> */}
-                    <QTY_SIZE_OPTION options={product.size} type='size'/>
+                    <QTY_SIZE_OPTION options={product.size} selectSize={product.selectSize} type='size'/>
                     <div>
                         <p>Qty</p>
                         <QTY_SIZE_OPTION options={quantityArr} />

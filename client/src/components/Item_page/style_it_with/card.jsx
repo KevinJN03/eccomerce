@@ -6,7 +6,7 @@ function Card({ product }) {
             </div>
             <div className="style-with-info">
                 <p>{product.title}</p>
-                <p>{product.price}</p>
+                <p>{product.price.toFixed(2)}</p>
             </div>
         </section>
     );

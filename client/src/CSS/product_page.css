@@ -26,9 +26,9 @@
 
 /* Collection Section */
 #collection-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minMax(200px, 1fr));
-    @apply sm:mx-[-20px] sm:grid-cols-2 sm:gap-x-[2px] sm:gap-y-0 md:gap-2 lg:gap-5;
+    /* display: grid; */
+    /* grid-template-columns: repeat(auto-fit, minMax(200px, 1fr)); */
+    @apply grid grid-cols-4 md:mx-5 sm:mx-3 sm:grid-cols-2 md:grid-cols-3  sm+md:gap-x-3 sm+md:gap-y-5 lg:gap-y-4 lg:gap-x-3;
 
     flex: 2 2 80%;
 }
@@ -41,8 +41,8 @@
     border-radius: 0%;
 }
 
-.card-info {
-    @apply sm:mx-4;
+#product_page .card-info {
+    @apply sm:!h-20 hidden;
 }
 
 /* Filter Section */
@@ -152,6 +152,4 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 2px;
 }
 
-.product-header .links p {
-    @apply sm:text-[10px];
-}
+

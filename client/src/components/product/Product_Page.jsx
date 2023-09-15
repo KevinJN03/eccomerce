@@ -39,7 +39,8 @@ function Product_Page() {
                     <Navigation_Links />
                     <div className="middle flex flex-row items-center sm+md:justify-between">
                         <h2 className="font-black tracking-tight sm:w-28 sm:text-2xl md+lg:text-4xl">
-                            WOMEN'S ACTIVEWEAR TOPS
+                            {/* WOMEN'S ACTIVEWEAR TOPS */}
+                            {state.gender.toUpperCase() + "'S" + ' ' +  state.productCategory.toUpperCase()}
                         </h2>
                         {screenSize.width < 800 && (
                             <>
