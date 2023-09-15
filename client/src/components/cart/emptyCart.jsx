@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 function Empty_Cart({}) {
     const [state] = useGenderCategory();
-    const gender = state.category;
+    const gender = state.gender;
     return (
         <section className="emptyCart flex w-[90vw] flex-col items-center gap-3 self-center">
             <LocalMallOutlinedIcon className="!text-4xl" />

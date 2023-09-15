@@ -15,10 +15,10 @@ function Collection({products}) {
                 <Item
             key={product.id}
                 image={product.images[0]}
-                price={product.price}
+                price={product.price.current}
                 text={example.text}
                 title={product.title}
-                url={product.id}
+                url={product._id}
             /> 
             )
            

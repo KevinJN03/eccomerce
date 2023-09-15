@@ -56,16 +56,8 @@ function Router({ Header, Footer }) {
                     element: <Home />,
                 },
                 
-                // ...productRoutes()[0],
-                // ...productRoutes()[1],
-                {
-                    path: '/men/product/',
-                    element: <Product />,
-                },
-                {
-                    path: '/men/product/:id',
-                    element: <ItemPage />,
-                },
+                ...productRoutes()[0],
+                ...productRoutes()[1],
                 {
                     path: '/about',
                     element: <About />,

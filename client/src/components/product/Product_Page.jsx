@@ -8,21 +8,26 @@ import Mobile_Filter from './Filter/mobile-filter';
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from './navigationLinks';
-
-import { Outlet, useLocation } from 'react-router-dom';
+import axios from '../../api/axios'
+import { Outlet } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 function Product_Page() {
     const [filterCount, setFilterCount] = useState(0);
     const [state, dispatch] = useGenderCategory()
-    const location = useLocation()
-    console.log("location", location.pathname.split('/')[1])
-    const route = location.pathname.split('/')[1]
-    useEffect(() => {
+  const [products, setProducts] = useState([])
 
-        dispatch({type: route})
+
+    useEffect(() => {
+        axios.get(`/category/${state.productCategory}/${state.gender}`).then((res)=> {
+            let lowerCaseGender = state.gender.toLowerCase();
+            console.log("data response: ", res.data[lowerCaseGender])
+            setProducts(res.data[lowerCaseGender])
+        }).catch(err => {
+            console.log("err at product fetch: ", err)
+        })
        
         
-    }, []);
+    }, [state]);
 
 
     const screenSize = useWindowSize();
@@ -88,7 +93,7 @@ function Product_Page() {
                         filterCount={filterCount}
                         setFilterCount={setFilterCount}
                     />
-                    {/* <Collection products={}/> */}
+                    <Collection products={products}/>
                     
                 </section>
             </section>

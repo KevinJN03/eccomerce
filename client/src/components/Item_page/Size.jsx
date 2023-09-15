@@ -1,5 +1,9 @@
-function Size({ size }) {
+import { useState } from "react";
+
+function Size({ size,select, handleClick }) {
+
     return (
+      
         <section className="item-size-section">
             <div>
                 <h3 className="section-title">Size</h3>
@@ -11,10 +15,11 @@ function Size({ size }) {
                         //     {item}
                         // </div>
                         <input
-                            className="item-size-btn"
+                            className={`item-size-btn ${select == item.size && 'border-2 border-black'}`}
                             key={index}
                             type="button"
                             value={item.size}
+                            onClick={(e) => handleClick(e)}
                         ></input>
                     );
                 })}

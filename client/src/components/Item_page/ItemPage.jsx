@@ -8,7 +8,7 @@ import exampleData from './exampleData';
 import { useEffect, useRef, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from '../product/navigationLinks';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';
 
@@ -23,7 +23,7 @@ function ItemPage() {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            axios.get('/product/65031efeded2fbe790611cb4').then((res) => {
+            axios.get(`/product/${id}`).then((res) => {
                 console.log(res.data);
                 setProduct(res.data);
                 setLoading(false);

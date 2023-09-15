@@ -3,22 +3,17 @@ import Payment_Methods from './payment_methods';
 import Shipping from './shipping';
 import { forwardRef, useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
+import calculateTotal from '../common/calculateTotal';
 
 const Total = forwardRef(function ({}, ref) {
-    const [totalAmount, setTotalAmount] = useState(0)
+    const totalAmount = calculateTotal()
     const [products, dispatch] = useCart();
-    useEffect(()=> {
-calculateTotal()
-    }, [])
-    const calculateTotal = () => {
-            let total = 0;
 
-            for ( let item of products){
-               total += item.price 
-            }
-setTotalAmount(total)
+   
+   
+
             
-    }
+    
     return (
         <section id="total-container">
             <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">

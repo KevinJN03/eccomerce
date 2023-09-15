@@ -1,11 +1,10 @@
 import { useCart } from '../../context/cartContext';
 import {v4 as uuidv4 }from 'uuid'
-function AddToCart({ product }) {
+function AddToCart({ product, selectSize }) {
     const  [state, dispatch ]= useCart();
 
     const handleClick = () => {
-        let id = uuidv4()
-    product.id = id
+      product.selectSize = selectSize
     
     product.quantity = 1
     dispatch({ type: 'add', product: product })

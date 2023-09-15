@@ -26,11 +26,11 @@ function Cart_Item({ product, handleClick }) {
                 ></img>
             </Link>
             <section id="cart-info">
-                <p className="font-bold text-[var(--primary-2)] text-sm tracking-wider">£{product.price}</p>
+                <p className="font-bold text-[var(--primary-2)] text-sm tracking-wider">£{product.price.current}</p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
                     {/* <span>{product.color}</span> */}
-                    <QTY_SIZE_OPTION options={product.sizes} type='size'/>
+                    <QTY_SIZE_OPTION options={product.size} type='size'/>
                     <div>
                         <p>Qty</p>
                         <QTY_SIZE_OPTION options={quantityArr} />

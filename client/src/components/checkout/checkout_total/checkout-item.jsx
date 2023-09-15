@@ -13,7 +13,7 @@ function Checkout_Item({ product }) {
                 
                 <span className="product-info-container">
                     <h3 className="font-bold tracking-wide">
-                        £{product.price}
+                        £{product.price.current}
                     </h3>
                     <p id="product-title" className="text-xs">
                         {product.title}

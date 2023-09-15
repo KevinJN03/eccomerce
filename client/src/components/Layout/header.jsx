@@ -43,7 +43,7 @@ function Header() {
                                 navigate('/home');
                             }}
                             className={`header-category-btn ${
-                                state.category == 'women'
+                                state.gender == 'women'
                                     ? 'active-header-category'
                                     : ''
                             }`}
@@ -57,7 +57,7 @@ function Header() {
                                 navigate('/home');
                             }}
                             className={`header-category-btn ${
-                                state.category == 'men'
+                                state.gender == 'men'
                                     ? 'active-header-category'
                                     : ''
                             }`}
@@ -114,7 +114,7 @@ function Header() {
                 ) : (
                     <Header_Category category={'women'} />
                 )} */}
-                    <Header_Category category={state.category} />
+                    <Header_Category category={state.gender} />
                 </section>
             </section>
         </section>
