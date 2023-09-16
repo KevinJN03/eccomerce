@@ -4,7 +4,7 @@ function Checkout_Item({ product }) {
     return (
         
             <div className="product-cart">
-                <Link to=''>
+                <Link to={`/product/${product.id}`} target='_blank' rel="noopener noreferrer" >
                 <img
                     src={product.images[0]}
                     className="h-28 w-28 object-contain object-center"

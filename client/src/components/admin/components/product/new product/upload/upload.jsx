@@ -96,7 +96,10 @@ function Upload({ files, setFiles }) {
                                                     src={close}
                                                 />
                                             </button>
-                                            <img src={files[id].img} />
+                                            <img
+                                                loading="lazy"
+                                                src={files[id].img}
+                                            />
                                         </>
                                     ) : (
                                         <div

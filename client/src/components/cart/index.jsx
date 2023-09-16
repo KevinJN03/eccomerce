@@ -63,7 +63,7 @@ function Cart({}) {
                     </div>
                     <div className="product-cart-wrapper">
                         {cart.length > 0 && cart.map((item => {
-                           return ( <Cart_Item key={item._id} product={item} handleClick={() => handleRemove(item._id)}/>)
+                           return ( <Cart_Item key={item._id} product={item}/>)
                         }))}
                     </div>
                 </div>

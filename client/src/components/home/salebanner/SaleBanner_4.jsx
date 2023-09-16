@@ -19,7 +19,11 @@ function SaleBanner_4({ images }) {
                                 className={`salebanner4-text absolute font-bold`}
                             >
                                 {/* {img.text ? img.text : ''} */}
-                                <img src={img.src} className="h-full w-full " />
+                                <img
+                                    loading="lazy"
+                                    src={img.src}
+                                    className="h-full w-full "
+                                />
                             </div>
                         </div>
                     </Fragment>

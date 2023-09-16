@@ -2,7 +2,7 @@ function Card({ product }) {
     return (
         <section id="Card">
             <div className="style-with-img-wrapper">
-                <img src={product.src}></img>
+                <img loading="lazy" src={product.src}></img>
             </div>
             <div className="style-with-info">
                 <p>{product.title}</p>

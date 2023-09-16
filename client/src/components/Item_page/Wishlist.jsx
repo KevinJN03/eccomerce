@@ -8,7 +8,7 @@ function WishList({ handleClick }) {
                 id="wishlist-btn"
                 className="flex h-full w-full items-center justify-center rounded-full border sm+md:h-11 sm+md:w-11 sm+md:p-0"
             >
-                {/* <img src={heart} className="h-full w-full object-cover" /> */}
+                {/* <img loading="lazy"src={heart} className="h-full w-full object-cover" /> */}
                 {/* <Heart/> */}
                 <FavoriteBorderSharpIcon className="lg:!text-4xl" />
             </button>

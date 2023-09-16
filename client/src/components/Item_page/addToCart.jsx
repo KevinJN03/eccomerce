@@ -4,11 +4,12 @@ function AddToCart({ product, selectSize }) {
     const  [state, dispatch ]= useCart();
 
     const handleClick = () => {
-      product.selectSize = selectSize
-    
-    product.quantity = 1
-    dispatch({ type: 'add', product: product })
-    console.log(product)
+        const newProduct = {...product}
+        newProduct.selectSize = selectSize
+        newProduct.cartId = uuidv4()
+        newProduct.quantity = 1
+    dispatch({ type: 'add', product: newProduct })
+
         
     };
     console.log('state:', state);

@@ -33,7 +33,12 @@ function Header() {
                         <Mobile_Nav />
                         <div id="image-wrapper" className="image-wrapper">
                             <a href="/">
-                                <img src={logo} alt="glamo logo" className="" />
+                                <img
+                                    loading="lazy"
+                                    src={logo}
+                                    alt="glamo logo"
+                                    className=""
+                                />
                             </a>
                         </div>
                         <section

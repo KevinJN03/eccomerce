@@ -256,9 +256,10 @@
     font-size: 1.2rem;
 }
 
-.section-1 {
+.section-1, #section-1 {
     @apply mb-10 flex w-full flex-row;
 }
+
 
 .salebanner-gap {
     gap: 3px;
@@ -394,43 +395,11 @@
     #search-icon {
         @apply filter;
     }
-
-    /* .footer_copyright-wrapper {
-    display: none
-   }
-
-   .footer-badge {
-    display: none
-   }
-
-
-   .footer {
-    
-    display: flex;
-    flex-direction: column-reverse !important;
-    
-    
-   }
-
-   .footer-section{
-@apply !flex-col-reverse;
-   }
-
-
-   #section-3{
-    display: flex;
-    @apply !flex-col-reverse;
-
-    
-   } */
 }
 
 @media screen and (max-width: 980px) {
    
     #section-1 {
-        /* flex-wrap: wrap; */
-        /* display: flex;
-        flex-wrap:wrap ; */
         @apply mt-7 mb-4 gap-1 grid grid-cols-2 w-full grid-flow-row;
     }
     #section-1-wrapper {

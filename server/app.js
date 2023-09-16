@@ -12,6 +12,7 @@ import sharp from 'sharp';
 import s3Upload from './s3Service.js';
 import productRoute from './Routes/productRoute.js';
 import categoryRoute from './Routes/categoryRoute.js';
+import couponRoute from './Routes/couponRoute.js';
 // import sharp from 'sharp';
 
 const { DBNAME, URL } = process.env;
@@ -33,10 +34,12 @@ const PORT = 3000;
 app.use(morgan('dev'));
 app.use(cors({ origin: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.get('/server-status', (req, res) => {
   res.send('OK');
 });
 app.use('/product', productRoute);
+app.use('/coupon', couponRoute);
 app.use('/category', categoryRoute);
 const storage = multer.memoryStorage();
 
@@ -111,9 +114,9 @@ app.post('/upload', upload.array('file'), async (req, res) => {
   }
 });
 
-app.use((error, req, res, next) => {
+function errorHandler(error, req, res, next) {
   error.statusCode = error.statusCode || 500;
-  error.status = error.status || 'erroror';
+  error.status = error.status || 'error';
 
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return res.status(400).json({ success: false, msg: 'Invalid Id format' });
@@ -122,7 +125,10 @@ app.use((error, req, res, next) => {
     msg: error.message,
     success: false,
   });
-});
+}
+
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`listening on Port: ${PORT}`);
 });

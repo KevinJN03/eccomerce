@@ -11,7 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import BasicModal from '../../modal/modal';
-function Datatable({ type }) {
+function Datatable({ type, products }) {
     const actionColumn = [
         {
             field: 'action',
@@ -40,7 +40,8 @@ function Datatable({ type }) {
         {
             field: 'action',
             headerName: 'Action',
-            width: 200,
+            width: 160,
+            headerAlign: 'left',
             renderCell: () => {
                 return (
                     <div className="cellAction">
@@ -69,10 +70,12 @@ function Datatable({ type }) {
                 </Link>
             </div>
             <DataGrid
+                
+                getRowId={(row) => row._id}
                 className="datagrid"
                 rows={
                     (type == 'User' && userRows) ||
-                    (type == 'Product' && productRow)
+                    (type == 'Product' && products)
                 }
                 columns={
                     (type == 'User' && userColumn.concat(actionColumn)) ||

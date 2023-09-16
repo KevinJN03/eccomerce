@@ -26,7 +26,7 @@ function LoginSignUp({ loginorSignup }) {
                     className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
                 >
                     <Link to="/" className="login-logo mt-10 w-40">
-                        <img src={glamo} />
+                        <img loading="lazy" src={glamo} />
                     </Link>
                     <div id="login-signup-option">
                         <span

@@ -24,8 +24,6 @@ function DragDropFile() {
                 filesImg.push(obj);
                 console.log('filesImg while iterating:', filesImg);
             }
-        }
-        console.log('filesImg ', filesImg);
         setFiles(filesImg);
     };
 
@@ -84,5 +82,6 @@ function DragDropFile() {
             )}
         </section>
     );
+}
 }
 export default DragDropFile;

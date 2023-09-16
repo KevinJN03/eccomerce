@@ -9,7 +9,7 @@ const reducer = (cart, action) => {
     if (action.type == 'add') {
         return [...cart, action.product];
     } else if (action.type == 'remove') {
-        return cart.filter((product) => product._id !== action.productId);
+        return cart.filter((product) => product.cartId !== action.cartId);
     } 
     else {
         throw new Error(

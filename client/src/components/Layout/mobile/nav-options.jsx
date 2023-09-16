@@ -6,21 +6,21 @@ import { motion } from 'framer-motion';
 import { useGenderCategory } from '../../../hooks/genderCategory';
 function Nav_Options({ sideBar, closeMenu }) {
     const [category, setCategory] = useState(true);
-    const  [state, dispatch] = useGenderCategory()
+    const [state, dispatch] = useGenderCategory();
 
-    useEffect(()=> {
-        if(state.gender == 'men'){
-                setCategory(true)
+    useEffect(() => {
+        if (state.gender == 'men') {
+            setCategory(true);
         } else {
-            setCategory(false)
+            setCategory(false);
         }
-    },[state])
+    }, [state]);
 
     return (
         <>
             {sideBar && (
                 <button className="close-btn" onClick={closeMenu}>
-                    <img src={close} className="self-center" />
+                    <img loading="lazy" src={close} className="self-center" />
                 </button>
             )}
 
@@ -30,7 +30,7 @@ function Nav_Options({ sideBar, closeMenu }) {
                         className={`category-btn w-full tracking-wider ${
                             state.gender == 'women' && 'category-btn-active'
                         }`}
-                        onClick={() => dispatch({type: 'women'})}
+                        onClick={() => dispatch({ type: 'women' })}
                     >
                         WOMEN
                     </button>
@@ -39,13 +39,13 @@ function Nav_Options({ sideBar, closeMenu }) {
                         className={`category-btn w-full tracking-wider ${
                             state.gender == 'men' && 'category-btn-active'
                         }`}
-                        onClick={() => dispatch({type: 'men'})}
+                        onClick={() => dispatch({ type: 'men' })}
                     >
                         MEN
                     </button>
                 </div>
                 <section className="menu-body-wrapper">
-                    <Nav_Category category={category} handleClick={closeMenu}/>
+                    <Nav_Category category={category} handleClick={closeMenu} />
                 </section>
             </nav>
         </>

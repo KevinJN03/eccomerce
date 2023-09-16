@@ -17,7 +17,7 @@ function Dropdown_Size({ title, options }) {
                     </div>
 
                     {/* <span className="arrow-wrapper">
-                        <img src={arrow} className='down-arrow'/>
+                        <img loading="lazy"src={arrow} className='down-arrow'/>
                     </span> */}
                     <ExpandMoreRoundedIcon
                         className={open ? 'up-arrow' : 'down-arrow'}
