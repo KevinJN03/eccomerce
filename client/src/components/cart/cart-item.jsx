@@ -30,7 +30,7 @@ function Cart_Item({ product, handleClick }) {
                 <p className="">{product.title}</p>
                 <div className="cart-options">
                     {/* <span>{product.color}</span> */}
-                    <QTY_SIZE_OPTION options={product.size} selectSize={product.selectSize} type='size'/>
+                    {product.size.length > 0  && <QTY_SIZE_OPTION options={product.size} selectSize={product.selectSize} type='size'/>}
                     <div>
                         <p>Qty</p>
                         <QTY_SIZE_OPTION options={quantityArr} />

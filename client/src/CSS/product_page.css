@@ -34,7 +34,7 @@
 }
 #collection-section .card {
     /* min-height: 500px; */
-    @apply h-full w-full bg-white shadow-none sm:max-h-max lg:max-h-[500px];
+    @apply h-full w-full bg-white shadow-none sm:max-h-max lg:max-h-[500px] cursor-pointer;
     max-height: max-content;
     /* width: 300px; */
     border: none;
@@ -42,9 +42,8 @@
 }
 
 #product_page .card-info {
-    @apply sm:!h-20 hidden;
+    @apply sm:h-20;
 }
-
 /* Filter Section */
 .filter-btn {
     @apply w-full w-full rounded-full py-4 text-sm font-medium;

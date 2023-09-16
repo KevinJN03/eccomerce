@@ -91,7 +91,7 @@
     color: var(--white);
     background-color: var(--black);
     /* border-radius: 32px; */
-    @apply font-bold tracking-wide bg-[var(--green)] sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
+    @apply bg-[var(--green)] font-bold tracking-wide sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
 }
 
 /* Shipping */
@@ -121,22 +121,18 @@
     flex: 2.5;
     @apply flex flex-col sm:mx-4 md:mx-8 sm+md:mt-4 lg:pl-14;
 }
-#Product_info .card-info{
-    @apply lg:mb-3 sm+md:mb-3 flex sm+md:!gap-10 sm+md:h-24;
+#Product_info .card-info {
+    @apply flex sm:gap-1 md:gap-2 lg:gap-3;
 }
 #Product_info .card-info p {
-
     @apply text-xl sm+md:text-lg;
-
 }
 
 #Product_info .card-info h2 {
-
     @apply text-xl;
 }
 #similar-btn {
-    
-    @apply text-white bg-[var(--primary)] whitespace-nowrap !self-end px-9 font-bold sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold;
+    @apply !self-end whitespace-nowrap bg-[var(--primary)] px-9 font-bold text-white sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold;
 }
 .style-with-card {
     @apply flex gap-2;
@@ -167,7 +163,7 @@
 }
 
 #Recommended .card-info {
-    @apply  sm:h-20;
+    @apply sm:h-20;
 }
 
 #item-page .section-title:nth-of-type(1) {

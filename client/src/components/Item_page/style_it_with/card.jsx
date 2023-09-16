@@ -1,7 +1,7 @@
 function Card({ product }) {
     return (
         <section id="Card">
-            <div className="stye-with-img-wrapper">
+            <div className="style-with-img-wrapper">
                 <img src={product.src}></img>
             </div>
             <div className="style-with-info">

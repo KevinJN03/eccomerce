@@ -68,7 +68,7 @@ function ItemPage() {
             ) : (
                 <section className="item-page-wrapper">
                     <section id="item-page">
-                        <Navigation_Links productName={product.title} className="mt-3 pl-3" />
+                        <Navigation_Links product={{title: product.title, gender: product.gender, category: product.category}} className="mt-3 pl-3" />
                         <section className="item-section">
                             <Item_List
                                 images={product.images}
