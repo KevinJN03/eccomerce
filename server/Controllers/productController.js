@@ -20,7 +20,41 @@ export const get_all_products = asyncHandler(async (req, res) => {
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await Product.findOne({ _id: id });
+  const product = await Product.findOne({ _id: id })
+    .populate({
+      path: 'category',
+      populate: [
+        {
+          path: 'men',
+          perDocumentLimit: 10,
+          match: { _id: { $ne: id } },
+        },
+        {
+          path: 'women',
+          perDocumentLimit: 10,
+          match: { _id: { $ne: id } },
+        },
+      ],
+    })
+    .exec();
 
-  return res.send(product);
+  const { title, price, detail, color, size, images, reviews, category , gender} =
+    product;
+
+  const newData = {
+    id: product.id,
+    gender,
+    title,
+    price,
+    detail,
+    color,
+    size,
+    images,
+    reviews,
+    category: category.name,
+    also_like: { men: category.men, women: category.women },
+  };
+  console.log(product.id);
+
+  return res.send(newData);
 });

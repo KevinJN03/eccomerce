@@ -13,6 +13,13 @@ const productSchema = new Schema({
     required: true,
   },
   price: { type: Schema.Types.Mixed },
+  gender: {
+    type: Schema.Types.String,
+    enum: {
+      values: ['men', 'women'],
+      message: ['{VALUE} is not support, only men or women is allowed'],
+    },
+  },
   detail: {
     type: Schema.Types.Array,
     required: true,

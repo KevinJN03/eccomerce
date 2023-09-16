@@ -22,6 +22,7 @@ async function createProduct(data, gender, categoryList) {
           title: product.title,
           images: product.images,
           price: product.price,
+          gender,
           size: product.totalSize,
           detail: product.detail,
           color: [product.color],
