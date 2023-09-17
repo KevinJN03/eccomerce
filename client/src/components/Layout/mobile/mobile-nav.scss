@@ -13,17 +13,14 @@
         }
     }
     .menu-body {
-        transform: translateX(-100%);
-        transition: all 0.4s;
-    }
-
-    .menu-body {
         background-color: white;
         position: absolute;
         top: 60px;
         @apply sm:top-0;
         left: 0;
-
+        transform: translateX(-100%);
+        transition: all 0.4s;
+        z-index: 4 !important;
         //   overflow: hidden;
         //   overflow-y: scroll;
 
@@ -31,7 +28,7 @@
         @apply sm:pb-4 md:pb-20;
 
         width: 100%;
-        z-index: 2;
+        z-index: 3;
         @apply sm:w-70 md:w-80;
         max-width: 24rem;
 
@@ -56,6 +53,7 @@
 
     .menu-body-open {
         transform: translateX(0%);
+       
     }
 }
 
@@ -95,7 +93,7 @@
     padding: 0;
     margin: 0;
     // border-top: 1px solid black;
-
+z-index: 4;
     background-color: white;
 }
 

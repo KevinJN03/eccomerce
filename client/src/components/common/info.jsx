@@ -1,7 +1,7 @@
 function Info({ title, price, text }) {
     return (
         <div className="card-info h-full flex flex-col">
-            <p className=" font-medium text-xs text-[var(--primary-2)] font-poppin underline-offset-2 hover:underline sm:mb-3 sm:text-xs">
+            <p className=" font-medium text-[var(--primary-2)] font-poppin underline-offset-2 hover:underline sm:mb-3 sm:text-xs">
                 {title}
             </p>
           

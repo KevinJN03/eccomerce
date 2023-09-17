@@ -9,7 +9,7 @@ function Style_It_With({ products }) {
                 {products.map((product, index) => {
                     return (
                         <div key={index}>
-                            <img loading="lazy" src={product.src}></img>
+                            <img loading="lazy" src={product.src} className='w-full object-cover'></img>
                             <Info title={product.title} price={product.price} />
                         </div>
                     );

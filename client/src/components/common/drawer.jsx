@@ -35,10 +35,10 @@ function Drawer({ product }) {
                         id="review-container"
                         className="mb-4 mt-14 flex flex-row gap-3"
                     >
-                        <div className="review-img-container h-36 w-24">
+                        <div className="review-img-container h-36 w-24 sm:h-24">
                             <img
                                 src={product.images[0]}
-                                className="h-full w-full object-contain"
+                                className="h-full w-full object-contain sm:object-cover "
                             ></img>
                         </div>
                         <div className="review-text-container">

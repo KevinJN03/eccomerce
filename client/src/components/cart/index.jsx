@@ -24,7 +24,7 @@ function Cart({}) {
     const [cart, dispatch] = useCart();   
     const handleRemove = (id) => {
     console.log("Id:", id)
-        dispatch({type: 'remove', productId: id})
+        dispatch({type: 'remove', cartId: id})
     }
     return (
         <>{

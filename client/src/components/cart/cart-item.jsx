@@ -15,6 +15,13 @@ function Cart_Item({ product }) {
     let quantityArr = arrayRange(1, 10, 1);
     const [state, dispatch] = useCart();
     console.log('cartProduct', product);
+
+
+    const handleRemove = (id) => {
+        console.log("Id:", id)
+            dispatch({type: 'remove', cartId: product.cartId})
+        }
+
     return (
         <div id="cart-product">
             <button
