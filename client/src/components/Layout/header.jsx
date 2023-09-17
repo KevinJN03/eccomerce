@@ -1,5 +1,5 @@
 import logo from '../../assets/glamo.png';
-import search_icon from '../../assets/search.svg';
+
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
 import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
@@ -16,6 +16,7 @@ import {
 } from '../../hooks/genderCategory.jsx';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import Search from './search';
 function Header() {
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
@@ -72,19 +73,7 @@ function Header() {
                     </section>
 
                     <section className="header-middle">
-                        <input
-                            type="text"
-                            id="search-input"
-                            onChange={search}
-                            placeholder="Search for items"
-                        />
-                        <div id="search-icon-section">
-                            <img
-                                src={search_icon}
-                                alt="search icon"
-                                id="search-icon"
-                            />
-                        </div>
+                       <Search/>
                     </section>
 
                     <section className="header-right h-full">
