@@ -5,7 +5,11 @@ function Checkout_Header({}) {
     return (
         <div className="checkout-header">
             <Link to="/" className="checkout-logo-wrapper">
-                <img src={glamo_logo} alt="glamo logo in black" />
+                <img
+                    loading="lazy"
+                    src={glamo_logo}
+                    alt="glamo logo in black"
+                />
             </Link>
             <h1 className="mr-10 text-3xl font-semibold sm:text-xl md:text-2xl">
                 CHECKOUT

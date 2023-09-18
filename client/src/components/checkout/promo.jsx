@@ -7,7 +7,7 @@ function Promo({}) {
     const [option, setOption] = useState('promo');
     const details = () => {
         return (
-            <div class="promo-container">
+            <div className="promo-container">
                 <section className="promo-header-container">
                     <span
                         className={

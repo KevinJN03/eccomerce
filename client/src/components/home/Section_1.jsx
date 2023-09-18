@@ -10,6 +10,7 @@ function Section_1({ images }) {
                             <img
                                 src={img.url}
                                 className="h-full w-full object-cover object-center"
+                                loading="lazy"
                             />
                             <h3 className="bottom-text absolute font-bold">
                                 {img.text ? img.text : ''}

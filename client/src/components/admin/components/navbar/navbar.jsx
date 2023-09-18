@@ -13,7 +13,7 @@ function Navbar({}) {
             <div className="wrapper">
                 <div className="search">
                     <input type="text" placeholder="search" />
-                    <img src={search_icon} className="h-4 w-4" />
+                    <img loading="lazy" src={search_icon} className="h-4 w-4" />
                 </div>
                 <div className="items">
                     <div className="item">

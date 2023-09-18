@@ -8,6 +8,8 @@ import Shipping from './shipping';
 import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
+import { useState } from 'react';
+
 function Product_info({
     title,
     price,
@@ -16,14 +18,21 @@ function Product_info({
     details,
     images,
     style_it_with_image,
-    product
+    product,
 }) {
+    const [select, setSelect] = useState(null);
+
+    const handleClick = (e) => {
+        console.log(e.target.value);
+        setSelect(e.target.value);
+    };
+
     return (
         <section id="Product_info">
             <Info title={title} price={price} text={text} />
-            <Size size={size} />
+            <Size size={size} select={select} handleClick={handleClick} />
             <div className="adddtocart-wishlist">
-                <AddToCart product={product}/>
+                <AddToCart product={product} selectSize={select} />
                 <WishList />
             </div>
 

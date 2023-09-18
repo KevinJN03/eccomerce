@@ -6,6 +6,7 @@ export default {
             // sans: ["Poppins", "sans-serif"]
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
+                raleway: ['Raleway',' sans-serif']
             },
             letterSpacing: {
                 tightest: '-.099em',

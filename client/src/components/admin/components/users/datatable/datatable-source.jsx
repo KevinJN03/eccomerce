@@ -169,32 +169,69 @@ export const productRow = [
 ];
 
 export const productColumn = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    { field: '_id', headerName: 'ID', width: 70 },
     {
-        field: 'product',
+        field: 'title',
         headerName: 'Product',
-        width: 230,
+       width: 200,
+        margin: 10,
         sortable: false,
+        headerAlign: 'center',
         renderCell: (params) => {
             return (
                 <div className="cellWithImg">
                     <img
                         className="cellImg"
-                        src={params.row.img}
+                        src={params.row.images[0]}
                         alt="avatar"
                     />
-                    {params.row.product}
+                    {params.row.title}
                 </div>
             );
         },
     },
+    { field: 'gender', headerName: 'Gender', width: 100 },
     { field: 'category', headerName: 'Category', width: 200 },
-    { field: 'size', headerName: 'Size', width: 130 },
-    { field: 'price', headerName: 'Price', width: 130 },
+    { field: 'size', headerName: 'Size', width: 130,
+    renderCell:(params) => {
+        return (
+            <>
+            {params.row.size.map((elem, idx) => {
+
+                if(idx != (params.row.size).length -1){
+                  return elem.size + ', '   
+                }
+                return elem.size
+               
+            })}
+       </>
+        )
+    }
+},
+    { field: 'price', headerName: 'Price',   width: 50 , margin : '10',
+    headerAlign: 'center',
+renderCell: (params) => {
+    return(
+        <p>
+        £ {params.row.price.current}
+        </p>
+    )
+} },
     {
-        field: 'quantity',
-        headerName: 'Quantity',
+        field: 'stock',
+        headerName: 'Stock',
         type: 'number',
         width: 90,
+        renderCell: (params) => {
+            let total = 0
+            params.row.size.map((elem) => {
+                total += elem.stock
+            })
+            return(
+                <>
+                {total}
+                </>
+            )
+        }
     },
 ];

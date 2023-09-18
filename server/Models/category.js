@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const CategorySchema = new Schema({
   name: { type: String, required: true },
-  products: [{ type: Schema.Types.String }],
-  gender: { type: Schema.Types.String, ref: 'mainCategory' },
-  mainCategory: { type: Schema.Types.ObjectId, ref: 'mainCategory' },
+  // products: [{ type: Schema.Types.String }],
+  men: [{ type: Schema.Types.ObjectId, ref: 'product' }],
+  women: [{ type: Schema.Types.ObjectId, ref: 'product' }],
 });
 
 export default mongoose.model('category', CategorySchema);

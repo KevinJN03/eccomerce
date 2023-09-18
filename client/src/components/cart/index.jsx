@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import '../../CSS/cart.scss';
 import heart from '../../assets/heart.png';
 import QTY_SIZE_OPTION from './qty-size-options';
@@ -12,17 +12,20 @@ import { Link } from 'react-router-dom';
 import zIndex from '@mui/material/styles/zIndex';
 import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
+import calculateTotal from '../common/calculateTotal';
+
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
-    const [cart, dispatch] = useCart();
-    console.log("cart at cart:", cart)
-    
-const handleRemove = (item) => {
-    console.log(item)
-    dispatch({type: 'remove', product: item})
-}
+
+    const cartTotal = calculateTotal()
+    // const [cart, setCart] = useState(null)
+    const [cart, dispatch] = useCart();   
+    const handleRemove = (id) => {
+    console.log("Id:", id)
+        dispatch({type: 'remove', cartId: id})
+    }
     return (
         <>{
             cart.length > 0 ? <section id="cart-page">
@@ -38,7 +41,7 @@ const handleRemove = (item) => {
                 >
                     <div className="left">
                         <p className="text-base font-semibold">BAG SUB-TOTAL</p>
-                        <p className="text-sm">£28.00</p>
+                        <p className="text-sm">{cartTotal}</p>
                     </div>
                     <div className="right">
                         <Link
@@ -59,8 +62,8 @@ const handleRemove = (item) => {
                         </p>
                     </div>
                     <div className="product-cart-wrapper">
-                        {cart && cart.map((item => {
-                           return ( <Cart_Item key={item.id} product={item} handleClick={() => handleRemove(item)}/>)
+                        {cart.length > 0 && cart.map((item => {
+                           return ( <Cart_Item key={item._id} product={item}/>)
                         }))}
                     </div>
                 </div>

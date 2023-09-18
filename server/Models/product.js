@@ -5,21 +5,28 @@ const { Schema } = mongoose;
 const productSchema = new Schema({
   title: {
     type: Schema.Types.String,
-    maxlength: [100, 'Title must be under 100 characters'],
+    maxlength: [140, 'Title must be under 140 characters'],
   },
   category: {
     type: Schema.Types.ObjectId,
     ref: 'category',
     required: true,
   },
-  price: { type: Schema.Types.Decimal128 },
-  details: {
+  price: { type: Schema.Types.Mixed },
+  gender: {
     type: Schema.Types.String,
-    required: true,
-    maxlength: [200, 'Details must be under 200 characters'],
+    enum: {
+      values: ['men', 'women'],
+      message: ['{VALUE} is not support, only men or women is allowed'],
+    },
   },
-  color: [{ type: Schema.Types.ObjectId, required: true }],
-  sizes: { type: Schema.Types.Array, default: [] },
+  detail: {
+    type: Schema.Types.Array,
+    required: true,
+    maxlength: [400, 'Details must be under 200 characters'],
+  },
+  color: [{ type: Schema.Types.String }],
+  size: { type: Schema.Types.Array, default: [] },
   images: { type: Schema.Types.Array, default: [] },
   reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
 });

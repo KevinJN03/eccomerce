@@ -7,6 +7,7 @@ function Hero({ image, height }) {
                 <img
                     src={image}
                     className="h-full w-full object-contain object-center"
+                    loading="lazy"
                 ></img>
             </div>
         </section>

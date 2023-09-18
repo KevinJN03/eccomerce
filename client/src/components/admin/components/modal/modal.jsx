@@ -8,7 +8,6 @@ function BasicModal({ modalContent, ModalContent, button_text, modal_title }) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    console.log('modal: ', open);
     return (
         <div>
             <Button

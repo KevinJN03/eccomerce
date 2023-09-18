@@ -3,7 +3,7 @@ function Shipping({}) {
     return (
         <section id="Shipping">
             <div className="shipping-icon">
-                <img src={plane} className="h-full w-full" />
+                <img loading="lazy" src={plane} className="h-full w-full" />
             </div>
             <div className="sm+md:mb-5">
                 <p className="font-semibold sm:mb-1 sm:text-xs">

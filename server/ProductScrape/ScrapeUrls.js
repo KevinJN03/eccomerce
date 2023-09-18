@@ -16,15 +16,15 @@ export const menUrls = [
     link: `https://www.asos.com/men/accessories/cat/?cid=4210`,
   },
   {
-    category: 'Sportswear',
+    category: 'sportswear',
     link: `https://www.asos.com/men/sportswear/cat/?cid=26090`,
   },
   {
-    category: 'Summer',
+    category: 'summer',
     link: `https://www.asos.com/men/t-shirts-vests/cat/?cid=7616`,
   },
   {
-    category: 'Brands',
+    category: 'brands',
     link: `https://www.asos.com/men/a-to-z-of-brands/topman/cat/?cid=29065`,
   },
   {
@@ -32,7 +32,7 @@ export const menUrls = [
     link: `https://www.asos.com/men/a-to-z-of-brands/topman/cat/?cid=29065`,
   },
   {
-    category: 'Marketplace',
+    category: 'marketplace',
     link: `https://www.asos.com/men/marketplace/cat/?cid=51032`,
   },
   {
@@ -59,15 +59,15 @@ export const WomenUrls = [
     link: `https://www.asos.com/women/accessories/cat/?cid=4174`,
   },
   {
-    category: 'Sportswear',
+    category: 'sportswear',
     link: `https://www.asos.com/women/sportswear/cat/?cid=26091`,
   },
   {
-    category: 'Summer',
+    category: 'summer',
     link: `https://www.asos.com/women/dresses/summer-dresses/cat/?cid=10860`,
   },
   {
-    category: 'Brands',
+    category: 'brands',
     link: `https://www.asos.com/women/ctas/ss-fashion-trend-10/cat/?cid=20246`,
   },
   {
@@ -75,7 +75,7 @@ export const WomenUrls = [
     link: `https://www.asos.com/women/a-to-z-of-brands/topshop/topshop-new-in/cat/?cid=50698`,
   },
   {
-    category: 'Marketplace',
+    category: 'marketplace',
     link: `https://www.asos.com/women/marketplace/cat/?cid=51004`,
   },
   {

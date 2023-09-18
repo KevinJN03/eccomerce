@@ -10,6 +10,10 @@ import multer from 'multer';
 import { Readable } from 'stream';
 import sharp from 'sharp';
 import s3Upload from './s3Service.js';
+import productRoute from './Routes/productRoute.js';
+import categoryRoute from './Routes/categoryRoute.js';
+import couponRoute from './Routes/couponRoute.js';
+import searchRoute from './Routes/searchRoute.js'
 // import sharp from 'sharp';
 
 const { DBNAME, URL } = process.env;
@@ -30,10 +34,15 @@ const app = express();
 const PORT = 3000;
 app.use(morgan('dev'));
 app.use(cors({ origin: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.get('/server-status', (req, res) => {
   res.send('OK');
 });
-
+app.use('/product', productRoute);
+app.use('/coupon', couponRoute);
+app.use('/category', categoryRoute);
+app.use('/search', searchRoute)
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -106,6 +115,22 @@ app.post('/upload', upload.array('file'), async (req, res) => {
     return console.log(err);
   }
 });
+
+function errorHandler(error, req, res, next) {
+  error.statusCode = error.statusCode || 500;
+  error.status = error.status || 'error';
+
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return res.status(400).json({ success: false, msg: 'Invalid Id format' });
+  }
+  res.status(error.statusCode).json({
+    msg: error.message,
+    success: false,
+  });
+}
+
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`listening on Port: ${PORT}`);
 });

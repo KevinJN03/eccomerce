@@ -21,72 +21,45 @@ womenImg.sort((a, b) => {
     return numA - numB;
 });
 
-function Nav_Category({ category }) {
+function Nav_Category({ category , handleClick}) {
     let counter = 0;
-    const newUrl = (image) => {
-        let url = new URL(image[counter], import.meta.url).href;
-        counter++;
+    const newUrl = (image, index) => {
+        let url = new URL(image[index], import.meta.url).href;
+        // counter++;
 
         return url;
     };
-
-    const Category = [
-        <Nav_Banner
-            title={'HOME'}
-            small={true}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'NEW IN'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'CLOTHING'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'SHOES'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'TRAINERS'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'ACCESORIES'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'SPORTSWEAR'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'SUMMER'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'BRANDS'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'FACE + BODY'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'MARKETPLACE'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
-        <Nav_Banner
-            title={'OUTLET'}
-            img={category ? newUrl(menImg) : newUrl(womenImg)}
-        />,
+    const categoryNavs = [
+        { title: 'HOME', small: true, home: true },
+        { title: 'NEW IN' },
+        { title: 'CLOTHING' },
+        { title: 'SHOES' },
+        { title: 'TRAINERS' },
+        { title: 'ACCESORIES' },
+        { title: 'SPORTSWEAR' },
+        { title: 'SUMMER' },
+        { title: 'BRANDS' },
+        { title: 'FACE + BODY' },
+        { title: 'MARKETPLACE' },
+        { title: 'OUTLET' },
     ];
 
     return (
         <section className="nav-category">
-            {Category.map((banner) => {
-                return <div key={uuidv4()}>{banner}</div>;
+            {categoryNavs.map((banner, idx) => {
+        
+                return (
+                    <Nav_Banner
+                    key={uuidv4()}
+                        title={banner.title}
+                        small={banner.small || false}
+                        home={banner.home || false}
+                        img={category ? newUrl(menImg, idx) : newUrl(womenImg, idx)}
+                        handleClick={handleClick}
+                    />
+                );
             })}
+
         </section>
     );
 }

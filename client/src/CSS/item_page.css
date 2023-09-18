@@ -90,9 +90,8 @@
 #add-to-cart {
     color: var(--white);
     background-color: var(--black);
-    border-radius: 32px;
-    @apply /* sm+md: */ font-bold tracking-wide 
-    sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
+    /* border-radius: 32px; */
+    @apply bg-[var(--green)] font-bold tracking-wide sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
 }
 
 /* Shipping */
@@ -122,14 +121,21 @@
     flex: 2.5;
     @apply flex flex-col sm:mx-4 md:mx-8 sm+md:mt-4 lg:pl-14;
 }
+#Product_info > .card-info:nth-of-type(1) {
+    @apply mb-4 flex sm:gap-1 md:gap-2 lg:gap-3;
+}
+#Product_info .card-info:nth-of-type(1) p {
+    @apply text-lg sm+md:text-lg;
+}
 
+#Product_info .card-info:nth-of-type(1) h2 {
+    @apply text-xl;
+}
 #similar-btn {
-    color: var(--white);
-    background-color: var(--black);
-    @apply whitespace-nowrap rounded-full  px-9 font-bold sm+md:self-start sm+md:px-8 sm+md:py-[10px] sm+md:font-semibold;
+    @apply !self-end whitespace-nowrap bg-[var(--primary)] px-9 font-bold text-white sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold  lg:h-10;
 }
 .style-with-card {
-    @apply flex gap-2;
+    @apply grid grid-cols-3 gap-1;
 }
 
 /* Reviews */
@@ -147,21 +153,24 @@
 }
 
 .style-with-card .card-info {
-    @apply flex h-20 flex-col sm+md:mx-0 sm+md:mt-2;
+    @apply relative bottom-0 mt-2 flex h-20 flex-col sm+md:mx-0;
+}
+.style-with-card .card-info p {
+    @apply !text-sm sm:!text-xs;
 }
 .style-with-card .card-info-price {
     @apply mt-auto flex flex-col;
 }
-.style-with-card .card-info-price h2 {
-    @apply self-start;
+.style-with-card .card-info h2 {
+    @apply mt-auto sm:!text-sm;
 }
 
 #Recommended .card-info {
-    @apply sm+md:px-4;
+    @apply sm:h-20;
 }
 
-#item-page .section-title:nth-of-type(1) {
-    @apply md+lg:mb-3;
+#item-page .item-size-section .section-title {
+    @apply hidden md+lg:mb-3;
 }
 #product-detail .section-title {
     @apply md+lg:mb-0;
