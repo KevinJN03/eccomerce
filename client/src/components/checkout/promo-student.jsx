@@ -2,16 +2,27 @@ import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 import axios from '../../api/axios';
+import { usePromo } from '../../hooks/promoContext';
 import { useState } from 'react';
-function Promo_Student({}) {
+function Promo_Student({ triggerClose, setPromo }) {
     const [promoText, setPromoText] = useState();
     const [error, setError] = useState({ bool: false });
-    const handleClick = (e) => {
+    const {setPromo} = usePromo()
+    const handleClick = () => {
         if (promoText) {
             axios
                 .get(`/coupon?code=${promoText}`)
                 .then((res) => {
-                    console.log(res);
+                    if (res.status == 200) {
+                        const { code, amount } = res.data;
+                        const newObj = {
+                            bool: true,
+                            code,
+                            amount,
+                        };
+                        setPromo(newObj);
+                        triggerClose(true);
+                    }
                 })
                 .catch((error) => {
                     console.log('error at promo', error);
@@ -19,7 +30,7 @@ function Promo_Student({}) {
                 });
 
             console.log(promoText);
-        }else {
+        } else {
             setError({ msg: 'emptyField', bool: true });
         }
     };
@@ -35,7 +46,7 @@ function Promo_Student({}) {
                     error={error}
                     setError={setError}
                 />
-                
+
                 <Link target="_blank" to="/refer-a-friend" className="mb-12">
                     Have you been{' '}
                     <strong className="underline underline-offset-1">

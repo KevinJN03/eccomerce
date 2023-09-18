@@ -3,7 +3,7 @@ import Promo_Voucher_header from './promo-voucher-header';
 import Address_Form from './address form/address-form';
 import Customer_Info from './address form/customer-info';
 import Change_Btn from '../common/btn/change-btn';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import customerData from './address form/examplecustomerInfo.jsx';
 
 function Address({}) {
@@ -28,12 +28,15 @@ function Address({}) {
 
     return (
         <section id="address">
-            <Helmet>
-                <script
-                    type="text/javascript"
-                    src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
-                ></script>
-            </Helmet>
+            <HelmetProvider>
+                <Helmet>
+                    <script
+                        type="text/javascript"
+                        src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
+                    ></script>
+                </Helmet>
+            </HelmetProvider>
+
             <h1 className="checkout-title">DELIVERY ADDRESS</h1>
             <div id="address-container">
                 <div className="address-header">

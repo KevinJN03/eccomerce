@@ -103,7 +103,7 @@
     @apply mt-4;
 }
 #promo-section {
-    @apply mb-3 px-6 pb-6 pt-8;
+    @apply mb-3 pb-0 pt-8 flex flex-col;
 }
 #promo-section * {
     border-bottom-color: none;

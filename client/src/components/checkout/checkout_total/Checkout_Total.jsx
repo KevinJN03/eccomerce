@@ -32,7 +32,7 @@ function Checkout_Total({}) {
             </div>
             <div className="product-container">
                 {cart && cart.map((product) => {
-                    return <Checkout_Item product={product} />;
+                    return <Checkout_Item product={product} key={product.cartId}/>;
                 })}
             </div>
 
