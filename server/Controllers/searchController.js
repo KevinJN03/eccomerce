@@ -8,26 +8,25 @@ export const search_product = asyncHandler(async (req, res, next) => {
     {
       $search: {
         index: 'default',
-        text: {
+        autocomplete: {
           query: q,
           path: 'title',
-        },
-        highlight: {
-          path: 'title',
+          fuzzy: {
+            maxEdits: 2,
+          },
         },
       },
     },
     {
       $project: {
         title: 1,
-        score: {
-          $meta: 'searchScore',
-        },
-        highlight: {
-          $meta: 'searchHighlights',
-        },
+        images: 1,
       },
     },
+    {
+      $limit: 10,
+    },
+
     // {
     //   $limit: 5,
     // },

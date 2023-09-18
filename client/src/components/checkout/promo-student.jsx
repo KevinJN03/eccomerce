@@ -1,8 +1,28 @@
 import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
-
+import axios from '../../api/axios';
+import { useState } from 'react';
 function Promo_Student({}) {
+    const [promoText, setPromoText] = useState();
+    const [error, setError] = useState({ bool: false });
+    const handleClick = (e) => {
+        if (promoText) {
+            axios
+                .get(`/coupon?code=${promoText}`)
+                .then((res) => {
+                    console.log(res);
+                })
+                .catch((error) => {
+                    console.log('error at promo', error);
+                    setError({ msg: 'invalidCoupon', bool: true });
+                });
+
+            console.log(promoText);
+        }else {
+            setError({ msg: 'emptyField', bool: true });
+        }
+    };
     return (
         <section id="promo-body">
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
@@ -10,9 +30,13 @@ function Promo_Student({}) {
                 <Input
                     header={'PROMO/STUDENT CODE:'}
                     button_text="APPLY CODE"
+                    handleClick={handleClick}
+                    setText={setPromoText}
+                    error={error}
+                    setError={setError}
                 />
-
-                <Link target='_blank' to="/refer-a-friend" className="mb-12">
+                
+                <Link target="_blank" to="/refer-a-friend" className="mb-12">
                     Have you been{' '}
                     <strong className="underline underline-offset-1">
                         referred by a friend?

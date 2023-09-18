@@ -14,8 +14,6 @@ function Country_Picker({}) {
     const handleCloseOption = () => {
         setShowOption(false);
     };
-
-    console.log('option', showOption);
     // A use effect that will run wenever a select is changed
     useEffect(() => {
         handleCloseOption();
@@ -46,7 +44,7 @@ function Country_Picker({}) {
                             onSelect={onSelect}
                             selectedSize={screenSize > 480 ? 20 : 14}
                         />
-                        <button type="button" onClick={handleCloseOption}>
+                        <button type="button" onClick={handleCloseOption}  id='checkout-change-btn'>
                             Cancel
                         </button>
                     </>

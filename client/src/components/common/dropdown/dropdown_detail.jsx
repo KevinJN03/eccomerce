@@ -17,7 +17,7 @@ function DropDown_Detail({ details, header, headerClass, borderNone }) {
                 <ExpandMoreRoundedIcon className={toggleClass} />
             </div>
             {show && (
-                <section className=" mb-5 !max-w-[610px] sm+md:mb-3">
+                <section className=" mb-5 !max-w-[610px] md:min-w-full sm+md:mb-3">
                     {details}
                 </section>
             )}
