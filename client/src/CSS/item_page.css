@@ -132,7 +132,7 @@
     @apply text-xl;
 }
 #similar-btn {
-    @apply !self-end whitespace-nowrap bg-[var(--primary)] px-9 font-bold text-white sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold;
+    @apply !self-end whitespace-nowrap bg-[var(--primary)] px-9 font-bold text-white sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold  lg:h-10;
 }
 .style-with-card {
     @apply grid grid-cols-3 gap-1;
@@ -170,7 +170,7 @@
 }
 
 #item-page .item-size-section .section-title {
-    @apply md+lg:mb-3 hidden;
+    @apply hidden md+lg:mb-3;
 }
 #product-detail .section-title {
     @apply md+lg:mb-0;

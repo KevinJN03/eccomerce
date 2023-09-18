@@ -15,25 +15,27 @@ function Search({ search }) {
 
     const [mobileOverlay, setMobileOverlay] = useState(false);
     const screenSize = useWindowSize();
-const inputRef = useRef(null);
-const mobileInputRef = useRef(null)
+    const inputRef = useRef(null);
+    const mobileInputRef = useRef(null);
     const navigate = useNavigate();
     const handleOnChange = (e) => {
         setSearchText(e.target.value);
     };
 
     useEffect(() => {
-        axios
-            .get(`/search?q=${debounceValue}`)
-            .then((res) => {
-                console.log('suggestions', res.data);
-                setSuggestions(res.data);
-            })
-            .catch((error) => {
-                console.log('error fetching suggestions: ', error);
-            });
+        if (debounceValue) {
+            axios
+                .get(`/search?q=${debounceValue}`)
+                .then((res) => {
+                    console.log('suggestions', res.data);
+                    setSuggestions(res.data);
+                })
+                .catch((error) => {
+                    console.log('error fetching suggestions: ', error);
+                });
+        }
     }, [debounceValue]);
-    
+
     const openSearch = () => {
         setOpen(true);
         toggle();
@@ -48,7 +50,7 @@ const mobileInputRef = useRef(null)
         setSearchText((prevState) => (prevState = ''));
         inputRef.current.value = '';
         mobileInputRef.current.value = '';
-        setSuggestions(prevState => prevState = [])
+        setSuggestions((prevState) => (prevState = []));
     };
     return (
         <section
@@ -77,7 +79,7 @@ const mobileInputRef = useRef(null)
                             screenSize.width < 480 && setMobileOverlay(true)
                         }
                         className={`${
-                            searchText && 'lg:bg-orange-400 filter'
+                            searchText && 'filter lg:bg-orange-400'
                         } h-full rounded-full p-1 sm:!text-[40px] sm:invert lg:!text-3xl`}
                     />
                 </span>
@@ -129,7 +131,7 @@ const mobileInputRef = useRef(null)
                             ref={mobileInputRef}
                         />
                         <span className="absolute right-0 flex h-full flex-row items-center gap-2">
-                            <CloseRounded onClick={clearInput}/>
+                            <CloseRounded onClick={clearInput} />
                             <SearchRounded
                                 className="rounded-full bg-orange-400 p-1 filter"
                                 fontSize="large"
