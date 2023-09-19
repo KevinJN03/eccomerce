@@ -1,7 +1,8 @@
 import Promo_Voucher_header from './promo-voucher-header';
-import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
+
 import calculatePromo from '../common/calculatePromo';
 import { usePromo } from '../../hooks/promoContext';
+import PromoSavings from './promoSavings';
 export default function ActivePromo({type }) {
     const {savePercent, amountOff} = calculatePromo()
     const {promo, setPromo} = usePromo()
@@ -15,12 +16,8 @@ export default function ActivePromo({type }) {
                 className={'!mb-0'}
             />
             <span className="flex flex-row items-center gap-2">
-                <CheckCircleOutlineRoundedIcon className="active-green" />
-                <p className="text-base">{promo.code}</p>
-                <p className="text-base font-light text-[var(--primary-2)]">
-                    Saving £{amountOff} ({savePercent}%)
-                </p>
-                <button className="ml-auto text-sm font-semibold text-[var(--primary-2)]" onClick={() => {setPromo({bool: false})}}>
+               <PromoSavings amountOff={amountOff } savePercent={savePercent} promo={promo[0]}/>
+                <button className="ml-auto text-sm font-semibold text-[var(--primary-2)]" onClick={() => {setPromo([{bool: false}])}}>
                     Remove
                 </button>
             </span>

@@ -26,9 +26,15 @@ function Promo_Student({ triggerClose, display, setDisplay}) {
                             type,
                             promoType: 'coupon'
                         };
-                        setPromo(newObj);
+                        
+
+                        if(!promo[0].code){
+                           setPromo([newObj]);
+                        }else {
+                            setPromo([...promo, newObj])
+                        }
                         triggerClose(true);
-                        setError({ bool: false })
+                        setError({ bool: false }) 
                     }
                 })
                 .catch((error) => {
@@ -44,7 +50,7 @@ function Promo_Student({ triggerClose, display, setDisplay}) {
     return (
         <section id="promo-body">
             
-            {!display && promo.bool && promo.promoType=='coupon' && <ActivePromo  type='promo'/> }
+            {!display && promo[0].bool && promo[0].promoType=='coupon' && <ActivePromo  type='promo'/> }
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
             <div id="promo-input-container">
               

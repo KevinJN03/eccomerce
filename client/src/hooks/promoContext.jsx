@@ -5,7 +5,7 @@ export const usePromo = () => {
 };
 
 export const PromoProvider = ({children}) => {
-const [promo, setPromo] = useState({ bool: false });
+const [promo, setPromo] = useState([{ bool: false }]);
     return (
         <PromoContext.Provider value={{promo, setPromo}}>
 {children}

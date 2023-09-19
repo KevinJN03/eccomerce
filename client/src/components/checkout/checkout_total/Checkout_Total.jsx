@@ -50,7 +50,7 @@ function Checkout_Total({}) {
                 <p className="flex justify-between">
                     Subtotal <span>£{total}</span>
                 </p>
-                {promo.bool && (
+                {promo[0].bool && (
                     <p className="flex justify-between">
                         Promo <span>-£{amountOff}</span>
                     </p>

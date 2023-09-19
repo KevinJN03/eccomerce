@@ -1,16 +1,24 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import DropDown_Detail from '../common/dropdown/dropdown_detail';
 import Promo_Student from './promo-student';
 import Voucher from './voucher';
 import AppliedCoupon from './appliedCoupon';
 import { usePromo } from '../../hooks/promoContext';
+import MultiplePromo from './multiplePromo';
 
 
 function Promo({}) {
     const [option, setOption] = useState('promo');
     // const [Promo, setPromo] = useState({ bool: false });
+    const [openMultiple, setOpenMultiple] = useState(false)
     const [display, setDisplay] = useState(false)
     const {promo, setPromo} = usePromo()
+
+    useEffect(() => {
+        if(promo.length > 1){
+            setOpenMultiple(true)
+        }
+    }, [promo])
     const [triggerClose, setTriggerClose] = useState(false);
     const details = () => {
       
@@ -58,7 +66,8 @@ function Promo({}) {
                     trigger={{ triggerClose, setTriggerClose }}
                     displayPromo={{display,setDisplay}}
                 />
-                {promo.bool && display &&  <AppliedCoupon />}
+                {promo[0].bool && display &&  <AppliedCoupon />}
+                <MultiplePromo setCheck={setOpenMultiple} check={openMultiple}/>
             </section>
       
     );

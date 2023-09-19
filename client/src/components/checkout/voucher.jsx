@@ -22,7 +22,13 @@ function Voucher({triggerClose,  setDisplay, display}) {
                             type,
                             promoType: 'voucher',
                         };
-                        setPromo(newObj);
+                       
+                        if(!promo[0].code){
+                            setPromo([newObj]);
+                         }else {
+                             setPromo([...promo, newObj])
+                         }
+                         
                         setDisplay(true)
                         setError({ bool: false })
                         triggerClose(true);

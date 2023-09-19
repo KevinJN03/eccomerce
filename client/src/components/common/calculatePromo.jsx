@@ -1,14 +1,14 @@
 import { usePromo } from '../../hooks/promoContext';
 import calculateTotal from './calculateTotal';
 import { useState } from 'react';
-const calculatePromo = () => {
+const calculatePromo = (index = 0 ) => {
     const totalBeforePromo = calculateTotal();
     // const [totalAfterPromo, setPromoAfterTotal] = useState(0);
 
-    let totalAfterPromo = 0;
+    let totalAfterPromo = index;
     const { promo } = usePromo();
 
-    const { amount, type } = promo;
+    const { amount, type } = promo[index];
 
     let savePercent;
     let amountOff;
