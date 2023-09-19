@@ -56,18 +56,18 @@ function Promo({}) {
     };
     return (
        
-            <section id="promo-section" className={`${!promo.bool && '!pb-8'}`}>
+            <section id="promo-section" className={`${!promo[0].bool && '!pb-8'}`}>
                 <DropDown_Detail
                     header={'PROMO/STUDENT CODE OR VOUCHERS'}
                     headerClass="promo-header"
                     details={details()}
                     borderNone="true"
-                    className={` ${promo.bool && 'pb-4'} px-6`}
+                    className={` ${promo[0].bool && 'pb-4'} px-6`}
                     trigger={{ triggerClose, setTriggerClose }}
                     displayPromo={{display,setDisplay}}
                 />
                 {promo[0].bool && display &&  <AppliedCoupon />}
-                <MultiplePromo setCheck={setOpenMultiple} check={openMultiple}/>
+                {/* <MultiplePromo setCheck={setOpenMultiple} check={openMultiple}/> */}
             </section>
       
     );
