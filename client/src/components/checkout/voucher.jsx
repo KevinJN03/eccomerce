@@ -48,7 +48,7 @@ function Voucher({triggerClose,  setDisplay, display}) {
 
     return (
         <section id="promo-body">
-            {promo.bool && promo.promoType == 'voucher' && (
+            {promo[0].bool && promo[0].promoType == 'voucher' && (
                 <ActivePromo type="voucher" />
             )}
             <Promo_Voucher_header header_text="ADD A VOUCHER" />
