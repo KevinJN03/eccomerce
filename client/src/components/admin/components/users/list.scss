@@ -1,7 +1,8 @@
-.list {
-    @apply flex w-full;
-
-    .listContainer {
-        flex: 6;
+.user-list {
+    @apply flex;
+    
+    .user-listContainer {
+        width: 100%;
+        flex: 6 ;
     }
 }

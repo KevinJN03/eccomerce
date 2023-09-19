@@ -9,7 +9,7 @@ import { useDarkMode } from '../../../../context/darkModeContext';
 function Navbar({}) {
     const { darkMode, dispatch } = useDarkMode();
     return (
-        <section className="navbar">
+        <section className="navbar-section">
             <div className="wrapper">
                 <div className="search">
                     <input type="text" placeholder="search" />

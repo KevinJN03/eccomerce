@@ -22,7 +22,7 @@ function SideBar({}) {
                     <span className="logo">glamo</span>
                 </Link>
             </div>
-            <hr />
+            
             <div className="center">
                 <ul>
                     <p className="title">MAIN</p>

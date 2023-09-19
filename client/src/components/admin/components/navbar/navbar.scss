@@ -1,16 +1,15 @@
-.navbar {
+.navbar-section {
     height: 50px;
     border-bottom: 0.5px solid var(--primary-2);
-    @apply flex items-center justify-center;
+    @apply flex items-center justify-center pl-5;
     color: #555;
 
     .wrapper {
         @apply flex w-full items-center justify-between;
 
-        // padding: 20px;
 
         .search {
-            @apply flex items-center;
+            @apply flex items-center w-[50%];
             border: 0.5px solid var(--primary-2);
             padding: 3px;
 
@@ -18,6 +17,8 @@
                 border: none;
                 outline: none;
                 background-color: transparent;
+                
+                @apply w-full px-2;
                 &::placeholder {
                     font-size: 14px;
                 }

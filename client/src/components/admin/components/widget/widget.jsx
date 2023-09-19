@@ -4,12 +4,12 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import { Link } from 'react-router-dom';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-function Widget({ type }) {
+function Widget({ type, amount }) {
     let data;
 
     // tempory amount
 
-    const amount = 100;
+  
     const diff = 20;
     if (type == 'user') {
         data = {

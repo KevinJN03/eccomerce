@@ -4,7 +4,9 @@ import { useState } from 'react';
 import axios from '../../api/axios';
 import { usePromo } from '../../hooks/promoContext.jsx';
 import ActivePromo from './active-promo';
-function Voucher({triggerClose,  setDisplay, display}) {
+import { v4 as uuidv4 } from 'uuid';
+
+function Voucher({ triggerClose, setDisplay, display }) {
     const [voucherText, setVoucherText] = useState();
     const [error, setError] = useState({ bool: false });
     const { promo, setPromo } = usePromo();
@@ -16,21 +18,22 @@ function Voucher({triggerClose,  setDisplay, display}) {
                     if (res.status == 200) {
                         const { code, amount, type } = res.data;
                         let newObj = {
+                            id: uuidv4(),
                             bool: true,
                             code,
                             amount,
                             type,
                             promoType: 'voucher',
                         };
-                       
-                        if(!promo[0].code){
+
+                        if (!promo[0].code) {
                             setPromo([newObj]);
-                         }else {
-                             setPromo([...promo, newObj])
-                         }
-                         
-                        setDisplay(true)
-                        setError({ bool: false })
+                        } else {
+                            setPromo([...promo, newObj]);
+                        }
+
+                        setDisplay(true);
+                        setError({ bool: false });
                         triggerClose(true);
                     }
                     console.log(res);

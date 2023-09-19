@@ -7,34 +7,34 @@ function DropDown_Detail({
     headerClass,
     borderNone,
     className,
-    trigger,
-    displayPromo
+    triggerClose,
+    setTriggerClose,
+    display, setDisplay
 }) {
     const [show, setShow] = useState(false);
-  
-        const {triggerClose, setTriggerClose} = trigger
-    
-    
 
-    const {display, setDisplay} = displayPromo;
+ 
     const toggleShow = () => {
         setShow(!show);
-        setDisplay(show)
-            
-        
+
+        if(display != undefined){
+             setDisplay(show);
+        }
+       
     };
 
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
 
-    useEffect(() => {
-        setShow(false)
-        setTriggerClose(false)
-        setDisplay(true)
+    if(triggerClose != null){
+         useEffect(() => {
+        setShow(false);
+        setTriggerClose(false);
+        setDisplay(true);
     }, [triggerClose]);
+    }
+   
 
-    useEffect(()=> {
-
-    },[])
+    useEffect(() => {}, []);
     return (
         <section
             id="dropdown-detail"

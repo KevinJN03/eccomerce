@@ -10,7 +10,7 @@ function MultiplePromo({setCheck,
    
     const handleClick = (item) => {
          const promoArr = [...promo]
-    const filtered = promoArr.filter((promo) => promo.code == item.code)
+    const filtered = promoArr.filter((promo) => promo.id == item.id)
         setPromo(filtered)
         setCheck(false)
 // console.log(filtered)

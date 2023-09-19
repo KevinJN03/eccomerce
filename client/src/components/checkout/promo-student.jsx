@@ -5,7 +5,7 @@ import axios from '../../api/axios';
 import { usePromo } from '../../hooks/promoContext';
 import { useState } from 'react';
 import calculatePromo from '../common/calculatePromo';
-
+import {v4 as uuidv4 } from 'uuid'
 import ActivePromo from './active-promo';
 function Promo_Student({ triggerClose, display, setDisplay}) {
     const [promoText, setPromoText] = useState();
@@ -20,6 +20,7 @@ function Promo_Student({ triggerClose, display, setDisplay}) {
                     if (res.status == 200) {
                         const { code, amount, type } = res.data;
                         const newObj = {
+                            id : uuidv4(),
                             bool: true,
                             code,
                             amount,
