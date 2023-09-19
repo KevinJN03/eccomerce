@@ -3,7 +3,7 @@ import Navbar from '../navbar/navbar.jsx';
 import './list.scss';
 import '../sidebar/sidebar.scss'
 import Datatable from './datatable/datatable.jsx';
-
+import DragDropFile from '../product/new product/dragDropFile.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios.js';
@@ -29,6 +29,8 @@ function List() {
                 <div className="user-listContainer">
                     <Navbar />
                     <Datatable type="User" users={users} setLoading={setLoading} loading={loading} />
+
+                    
                 </div>
             </div>
         </>

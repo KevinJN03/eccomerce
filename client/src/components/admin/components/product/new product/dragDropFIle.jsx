@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
-import dragImage from './dragtest/dragtest';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+// import dragImage from './dragtest/dragtest';
+// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
 function DragDropFile() {
+    console.log('dragDrop mounted');
     const [files, setFiles] = useState();
     console.log('files', files);
     const inputRef = useRef();
@@ -24,9 +25,9 @@ function DragDropFile() {
                 filesImg.push(obj);
                 console.log('filesImg while iterating:', filesImg);
             }
-        setFiles(filesImg);
+            setFiles(filesImg);
+        }
     };
-
     const handleInput = (e) => {
         e.preventDefault();
 
@@ -62,7 +63,7 @@ function DragDropFile() {
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                 >
-                    <h1>Drag and Drop FIles to Upload</h1>
+                    <h1>Drag and Drop Files to Upload</h1>
                     <input
                         type="file"
                         multiple
@@ -80,8 +81,8 @@ function DragDropFile() {
                     </button>
                 </div>
             )}
+         
         </section>
     );
-}
 }
 export default DragDropFile;

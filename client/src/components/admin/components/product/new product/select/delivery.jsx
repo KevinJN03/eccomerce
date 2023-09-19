@@ -135,10 +135,10 @@ export default function Delivery() {
                 <h3>
                     Delivery Option<span>*</span>
                 </h3>
-                <BasicModal
+                {/* <BasicModal
                     button_text="Select Profile"
                     ModalContent={ModalContent}
-                />
+                /> */}
             </div>
         </section>
     );
