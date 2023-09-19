@@ -2,7 +2,9 @@
     @apply flex justify-center sm+md:min-w-[100vw] lg:!w-[100vw];
     background-color: var(--light-grey);
 }
-
+.active-green {
+    filter: invert(60%) sepia(91%) saturate(947%) hue-rotate(70deg) brightness(95%) contrast(88%);
+}
 #checkout {
     max-width: 1000px;
     @apply sm+md:max-w-[90vw];

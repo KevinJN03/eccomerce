@@ -4,24 +4,31 @@ import Promo_Voucher_header from './promo-voucher-header';
 import axios from '../../api/axios';
 import { usePromo } from '../../hooks/promoContext';
 import { useState } from 'react';
-function Promo_Student({ triggerClose, setPromo }) {
+import calculatePromo from '../common/calculatePromo';
+
+import ActivePromo from './active-promo';
+function Promo_Student({ triggerClose, display, setDisplay}) {
     const [promoText, setPromoText] = useState();
     const [error, setError] = useState({ bool: false });
-    const {setPromo} = usePromo()
+    const {savePercent, amountOff} = calculatePromo()
+    const {promo, setPromo} = usePromo()
     const handleClick = () => {
         if (promoText) {
             axios
                 .get(`/coupon?code=${promoText}`)
                 .then((res) => {
                     if (res.status == 200) {
-                        const { code, amount } = res.data;
+                        const { code, amount, type } = res.data;
                         const newObj = {
                             bool: true,
                             code,
                             amount,
+                            type,
+                            promoType: 'coupon'
                         };
                         setPromo(newObj);
                         triggerClose(true);
+                        setError({ bool: false })
                     }
                 })
                 .catch((error) => {
@@ -36,8 +43,12 @@ function Promo_Student({ triggerClose, setPromo }) {
     };
     return (
         <section id="promo-body">
+            
+            {!display && promo.bool && promo.promoType=='coupon' && <ActivePromo  type='promo'/> }
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
             <div id="promo-input-container">
+              
+      
                 <Input
                     header={'PROMO/STUDENT CODE:'}
                     button_text="APPLY CODE"

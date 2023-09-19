@@ -9,7 +9,8 @@ import { usePromo } from '../../hooks/promoContext';
 function Promo({}) {
     const [option, setOption] = useState('promo');
     // const [Promo, setPromo] = useState({ bool: false });
-    const {Promo} = usePromo()
+    const [display, setDisplay] = useState(false)
+    const {promo, setPromo} = usePromo()
     const [triggerClose, setTriggerClose] = useState(false);
     const details = () => {
       
@@ -38,25 +39,26 @@ function Promo({}) {
                     </span>
                 </section>
                 {option == 'promo' ? (
-                    <Promo_Student triggerClose={setTriggerClose}  />
+                    <Promo_Student triggerClose={setTriggerClose}  setDisplay={setDisplay} display={display} />
                 ) : (
-                    <Voucher />
+                    <Voucher triggerClose={setTriggerClose}  setDisplay={setDisplay} display={display}/>
                 )}
             </div>
         );
     };
     return (
        
-            <section id="promo-section">
+            <section id="promo-section" className={`${!promo.bool && '!pb-8'}`}>
                 <DropDown_Detail
                     header={'PROMO/STUDENT CODE OR VOUCHERS'}
                     headerClass="promo-header"
                     details={details()}
                     borderNone="true"
-                    className={'px-6'}
+                    className={` ${promo.bool && 'pb-4'} px-6`}
                     trigger={{ triggerClose, setTriggerClose }}
+                    displayPromo={{display,setDisplay}}
                 />
-                {Promo.bool && <AppliedCoupon code={Promo.code} setPromo={ setPromo} />}
+                {promo.bool && display &&  <AppliedCoupon />}
             </section>
       
     );

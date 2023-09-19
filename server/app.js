@@ -13,7 +13,8 @@ import s3Upload from './s3Service.js';
 import productRoute from './Routes/productRoute.js';
 import categoryRoute from './Routes/categoryRoute.js';
 import couponRoute from './Routes/couponRoute.js';
-import searchRoute from './Routes/searchRoute.js'
+import searchRoute from './Routes/searchRoute.js';
+import giftCardRoute from './Routes/giftCardRoute.js';
 // import sharp from 'sharp';
 
 const { DBNAME, URL } = process.env;
@@ -42,7 +43,8 @@ app.get('/server-status', (req, res) => {
 app.use('/product', productRoute);
 app.use('/coupon', couponRoute);
 app.use('/category', categoryRoute);
-app.use('/search', searchRoute)
+app.use('/search', searchRoute);
+app.use('/giftcard', giftCardRoute);
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {

@@ -3,11 +3,15 @@ import { useCart } from '../../../context/cartContext';
 import Checkout_Item from './checkout-item';
 import calculateTotal from '../../common/calculateTotal';
 import { useEffect, useState } from 'react';
+import { usePromo } from '../../../hooks/promoContext';
+import calculatePromo from '../../common/calculatePromo';
 
 function Checkout_Total({}) {
     const [cart] = useCart();
     let total = calculateTotal();
     // const [total, setTotal] = useState(count);
+    const { promo } = usePromo();
+    const { savePercent, amountOff, totalAfterPromo } = calculatePromo();
     useEffect(() => {
         // setTotal(calculateTotal())
     }, []);
@@ -25,26 +29,39 @@ function Checkout_Total({}) {
     return (
         <section id="checkout-total">
             <div className="flex flex-row items-center justify-between border-b-2 pb-4">
-                <h1 className="font-gotham font-bold text-xl tracking-wider">
+                <h1 className="font-gotham text-xl font-bold tracking-wider">
                     {cart.length} {cart.length > 1 ? 'ITEMS' : 'ITEM'}
                 </h1>
                 <Link to="/cart">Edit</Link>
             </div>
             <div className="product-container">
-                {cart && cart.map((product) => {
-                    return <Checkout_Item product={product} key={product.cartId}/>;
-                })}
+                {cart &&
+                    cart.map((product) => {
+                        return (
+                            <Checkout_Item
+                                product={product}
+                                key={product.cartId}
+                            />
+                        );
+                    })}
             </div>
 
             <div className="flex flex-col gap-3">
                 <p className="flex justify-between">
                     Subtotal <span>£{total}</span>
                 </p>
+                {promo.bool && (
+                    <p className="flex justify-between">
+                        Promo <span>-£{amountOff}</span>
+                    </p>
+                )}
+
                 <p className="flex justify-between">
                     Delivery <span>{product.delivery}</span>
                 </p>
                 <p className="flex justify-between font-gotham font-bold">
-                    TOTAL TO PAY <span>£{total}</span>
+                    TOTAL TO PAY{' '}
+                    <span>£{totalAfterPromo || total}</span>
                 </p>
             </div>
         </section>

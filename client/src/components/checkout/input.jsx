@@ -1,12 +1,5 @@
 import { useState } from 'react';
-function Input({
-    header,
-    button_text,
-    handleClick,
-    setText,
-    error,
-    setError,
-}) {
+function Input({ header, button_text, handleClick, setText, error, setError }) {
     const msg = {
         invalidCoupon:
             "Oops! The code you entered doesn't exist. Please check and try again.",
@@ -16,6 +9,14 @@ function Input({
     const handleOnChange = (e) => {
         setText(e.target.value);
         setError((prevstate) => (prevstate = { bool: false }));
+    };
+
+    const onKeyDown = (e) => {
+       
+        if(e.keyCode === 13){
+            handleClick()
+        }
+     
     };
     return (
         <>
@@ -28,12 +29,16 @@ function Input({
                     id="promo"
                     onChange={(e) => handleOnChange(e)}
                     className={`${error.bool && '!border-red-400'}`}
+                    onKeyDown={(e) => onKeyDown(e)}
+                    tabIndex='0'
                 ></input>
 
                 <button
                     type="button"
                     className="font-gotham font-bold tracking-wider text-white"
                     onClick={handleClick}
+                
+                   
                 >
                     {button_text}
                 </button>
