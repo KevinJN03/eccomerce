@@ -67,7 +67,7 @@ function Promo({}) {
                     displayPromo={{display,setDisplay}}
                 />
                 {promo[0].bool && display &&  <AppliedCoupon />}
-                {/* <MultiplePromo setCheck={setOpenMultiple} check={openMultiple}/> */}
+                <MultiplePromo setCheck={setOpenMultiple} check={openMultiple}/>
             </section>
       
     );
