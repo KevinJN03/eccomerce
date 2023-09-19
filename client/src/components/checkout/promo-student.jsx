@@ -1,18 +1,70 @@
 import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
+import axios from '../../api/axios';
+import { usePromo } from '../../hooks/promoContext';
+import { useState } from 'react';
+import calculatePromo from '../common/calculatePromo';
 
-function Promo_Student({}) {
+import ActivePromo from './active-promo';
+function Promo_Student({ triggerClose, display, setDisplay}) {
+    const [promoText, setPromoText] = useState();
+    const [error, setError] = useState({ bool: false });
+    const {savePercent, amountOff} = calculatePromo()
+    const {promo, setPromo} = usePromo()
+    const handleClick = () => {
+        if (promoText) {
+            axios
+                .get(`/coupon?code=${promoText}`)
+                .then((res) => {
+                    if (res.status == 200) {
+                        const { code, amount, type } = res.data;
+                        const newObj = {
+                            bool: true,
+                            code,
+                            amount,
+                            type,
+                            promoType: 'coupon'
+                        };
+                        
+
+                        if(!promo[0].code){
+                           setPromo([newObj]);
+                        }else {
+                            setPromo([...promo, newObj])
+                        }
+                        triggerClose(true);
+                        setError({ bool: false }) 
+                    }
+                })
+                .catch((error) => {
+                    console.log('error at promo', error);
+                    setError({ msg: 'invalidCoupon', bool: true });
+                });
+
+            console.log(promoText);
+        } else {
+            setError({ msg: 'emptyField', bool: true });
+        }
+    };
     return (
         <section id="promo-body">
+            
+            {!display && promo[0].bool && promo[0].promoType=='coupon' && <ActivePromo  type='promo'/> }
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
             <div id="promo-input-container">
+              
+      
                 <Input
                     header={'PROMO/STUDENT CODE:'}
                     button_text="APPLY CODE"
+                    handleClick={handleClick}
+                    setText={setPromoText}
+                    error={error}
+                    setError={setError}
                 />
 
-                <Link target='_blank' to="/refer-a-friend" className="mb-12">
+                <Link target="_blank" to="/refer-a-friend" className="mb-12">
                     Have you been{' '}
                     <strong className="underline underline-offset-1">
                         referred by a friend?

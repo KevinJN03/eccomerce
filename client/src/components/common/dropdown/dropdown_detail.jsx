@@ -1,23 +1,51 @@
 import arrow from '../../../assets/footer-icons/right-arrow.png';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { useState } from 'react';
-function DropDown_Detail({ details, header, headerClass, borderNone }) {
+import { useEffect, useState } from 'react';
+function DropDown_Detail({
+    details,
+    header,
+    headerClass,
+    borderNone,
+    className,
+    trigger,
+    displayPromo
+}) {
     const [show, setShow] = useState(false);
+  
+        const {triggerClose, setTriggerClose} = trigger
+    
+    
+
+    const {display, setDisplay} = displayPromo;
     const toggleShow = () => {
         setShow(!show);
+        setDisplay(show)
+            
+        
     };
+
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
+
+    useEffect(() => {
+        setShow(false)
+        setTriggerClose(false)
+        setDisplay(true)
+    }, [triggerClose]);
+
+    useEffect(()=> {
+
+    },[])
     return (
         <section
             id="dropdown-detail"
-            className={borderNone ? null : 'border-b-[thin]'}
+            className={`${borderNone ? null : 'border-b-[thin]'} ${className} `}
         >
             <div className="section-header" onClick={toggleShow}>
                 <h3 className={`section-title ${headerClass}`}>{header}</h3>
                 <ExpandMoreRoundedIcon className={toggleClass} />
             </div>
             {show && (
-                <section className=" mb-5 !max-w-[610px] sm+md:mb-3">
+                <section className=" mb-5 !max-w-[610px] md:min-w-full sm+md:mb-3">
                     {details}
                 </section>
             )}
