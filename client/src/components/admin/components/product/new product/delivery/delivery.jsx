@@ -14,7 +14,7 @@ import {
 export default function Delivery() {
   
     const { content, setContent, modalCheck, setModalCheck, profile } = useContent();
-    console.log("content", content)
+
     return (
         <section id="delivery">
             <New_Product_Header title={'Delivery'} />
