@@ -8,24 +8,27 @@ import Edit from './edit';
 const allProfiles = [
     {
         id: 1,
+        name: 'Free Delivery',
+        shipping_time: '1-3 days',
+        active_listings: '2',
+        processing_time: '1-4days',
+        price: 0.00
+    },
+    {
+        id: 2,
         name: 'Standard Delivery',
         shipping_time: '1-3 days',
         active_listings: '2',
         processing_time: '1-4days',
-    },
-    {
-        id: 2,
-        name: 'Standard Delivery 2',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
+        price: 3.99
     },
     {
         id: 3,
-        name: 'Standard Delivery 3',
+        name: 'Expedited Delivery',
         shipping_time: '1-3 days',
         active_listings: '2',
         processing_time: '1-4days',
+        price: 5.99
     },
 ];
 
