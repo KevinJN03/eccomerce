@@ -3,6 +3,7 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Popover from './edit';
 import { useContent } from '../../../../../../context/ContentContext';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import Edit from './edit';
 const allProfiles = [
     {
@@ -29,7 +30,15 @@ const allProfiles = [
 ];
 
 function MainContent() {
-    const { content, dispatch, setModalCheck } = useContent();
+    const { content, dispatch, setModalCheck, setProfile } = useContent();
+
+
+    const handleClick = (profile) => {
+
+        setModalCheck(false)
+        setProfile(profile)
+
+    }
     return (
         <div className="delivery-profile flex w-full flex-col">
             <span
@@ -39,7 +48,7 @@ function MainContent() {
                 <CloseRoundedIcon />
             </span>
             <div className="modal-header flex items-center justify-between">
-                <h2 className="font-bold ">Delivery profiles</h2>
+                <h2 className="font-bold font-gotham text-xl">DELIVERY PROFILES</h2>
                 <button
                     onClick={() => dispatch({ type: 'New' })}
                     className="flex items-center justify-center gap-1 rounded-2xl border-2 px-2 py-1 font-medium"
@@ -52,7 +61,7 @@ function MainContent() {
                     return (
                         <div
                             key={profile.id}
-                            className="item border-1 mb-3 flex flex-row justify-between rounded-lg p-2"
+                            className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
                         >
                             <div className="profile-info">
                                 <h2 className="mb-1 font-medium">
@@ -67,7 +76,7 @@ function MainContent() {
                                 id="profile-btn"
                                 className="flex items-center justify-center"
                             >
-                                <button>Apply</button>
+                                <button className='mr-4' onClick={() => handleClick(profile)}><AddCircleOutlineRoundedIcon/></button>
                                 <Edit profile={profile} />
                             </section>
                         </div>

@@ -13,7 +13,7 @@ import {
 } from '../../../../../../context/ContentContext';
 export default function Delivery() {
   
-    const { content, setContent, modalCheck, setModalCheck } = useContent();
+    const { content, setContent, modalCheck, setModalCheck, profile } = useContent();
     console.log("content", content)
     return (
         <section id="delivery">
@@ -23,9 +23,12 @@ export default function Delivery() {
                 <h3>
                     Delivery Option<span>*</span>
                 </h3>
-                <button onClick={() => setModalCheck(true)}>
+                {profile && <button onClick={() => setModalCheck(true)}>
+                    {profile.name}
+                    </button>}
+                { !profile && <button onClick={() => setModalCheck(true)}>
                     Choose Profile
-                </button>
+                </button>}
                 {modalCheck && (
                     <BasicModal
                         button_text="Select Profile"

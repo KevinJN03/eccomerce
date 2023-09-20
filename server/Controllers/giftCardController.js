@@ -21,6 +21,10 @@ export const get_all_giftCard = asyncHandler(async (req, res, next) => {
 export const get_single_giftCard = asyncHandler(async (req, res, next) => {
   let { code } = req.query;
   code = code.toUpperCase();
+
+  if (code.substring(0, 3) != 'GL-') {
+    code = `GL-${code}`;
+  }
   const giftCard = await GiftCard.findOne({ code });
 
   if (giftCard) {

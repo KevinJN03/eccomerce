@@ -19,15 +19,23 @@ const reducer = (state, action) => {
         return (state = <New />);
     }
     if (action.type === 'Edit') {
-        return (state = <New profile={action.profile}/>);
+        return (state = <New profile={action.profile} />);
     }
 };
 export function ContentProvider({ children }) {
     const [content, dispatch] = useReducer(reducer, <Main />);
     const [modalCheck, setModalCheck] = useState(false);
-
+    const [profile, setProfile] = useState(null);
+    const value = {
+        content,
+        dispatch,
+        modalCheck,
+        setModalCheck,
+        profile,
+        setProfile,
+    };
     return (
-        <ContentContext.Provider value={{ content, dispatch, modalCheck, setModalCheck }}>
+        <ContentContext.Provider value={value}>
             {children}
         </ContentContext.Provider>
     );
