@@ -8,21 +8,21 @@ const defaultTimes = [
         },
     },
     {
-        name: '1-2 day',
+        name: '1-2 days',
         processingTime: {
             start: 1,
             end: 2,
         },
     },
     {
-        name: '1-3 day',
+        name: '1-3 days',
         processingTime: {
             start: 1,
             end: 3,
         },
     },
     {
-        name: '3-5 day',
+        name: '3-5 days',
         processingTime: {
             start: 3,
             end: 5,

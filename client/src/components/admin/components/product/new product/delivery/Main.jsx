@@ -7,6 +7,7 @@ import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRou
 import Edit from './edit';
 import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
+import Delete from './delete';
 const allProfiles = [
     {
         id: 1,
@@ -102,6 +103,7 @@ function MainContent() {
                                     <AddCircleOutlineRoundedIcon />
                                 </button>
                                 <Edit profile={profile} />
+                                <Delete/>
                             </section>
                         </div>
                     );

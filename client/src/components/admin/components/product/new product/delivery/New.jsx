@@ -8,11 +8,14 @@ import axios, { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
 function New({ profile }) {
+    console.log('New Render');
     const { content, dispatch } = useContent();
     const [customRange, setCustomRange] = useState(false);
-    const [name, setName] = useState('');
+    const [name, setName] = useState();
     const [cost, setCost] = useState();
-    const [processingTime, setProcessingTime] = useState({});
+    const [processingTime, setProcessingTime] = useState();
+    const [selected, setSelected] = useState();
+
     const back = () => {
         dispatch({ type: 'Main' });
     };
@@ -22,16 +25,25 @@ function New({ profile }) {
             // debugger
             console.log(profile);
             console.log('cost', profile.cost);
-            return setCost((prev) => (prev = profile.cost));
+            setCost((prev) => (prev = profile.cost));
+            const {start, end, type} = profile.processingTime
+            const newName = `${start}-${end} ${type}`
+            console.log({newName})
+            setSelected(newName);
+            setProcessingTime(profile.processingTime)
+        } else {
+            setCost(0);
         }
-        return setCost(0);
     }, []);
 
     const handleCost = (value) => {
+        console.log('handleCost triggered');
+
         const newValue = parseFloat(value).toFixed(2);
         setCost(newValue);
     };
     const save = () => {
+        console.log('name: ', name)
         if (profile) {
             adminAxios
                 .put(`/delivery/update/${profile._id}`, {
@@ -39,7 +51,10 @@ function New({ profile }) {
                     processingTime,
                     cost,
                 })
-                .then((res) => {})
+                .then((res) => {
+
+                    console.log("resoult", res.data)
+                })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
                 });
@@ -55,29 +70,26 @@ function New({ profile }) {
                     console.log('error whilst creating or adding:', error);
                 });
         }
+
+        back()
     };
-    const handleOnchange = (value) => {
+
+    const handleOnchange = (e, value) => {
+        console.log('onchange triggered');
         const fetchProfile = value[event.target.selectedIndex].dataset.profile;
         const profileToJson = JSON.parse(fetchProfile);
-    const  {name } = profileToJson
-    console.log({name,processingTime })
-        if (name === 'Custom range') {
-         setCustomRange(true);
+        
+        if (profileToJson.name === 'Custom range') {
+            setCustomRange(true);
         } else {
-            const currentTime = profileToJson.processingTime
-            const {start, end} = currentTime
-            console.log({currentTime})
-            setProcessingTime((prev)  => {
-                
-                return {...prev , start: start, end: end}
-            });
-          
+            const currentTime = profileToJson.processingTime;
+            setProcessingTime(currentTime);
+
             setCustomRange(false);
         }
 
-        
+        setSelected(profileToJson.name);
     };
-
     return (
         <section className="new-delivery flex w-full flex-col gap-3">
             <span
@@ -94,7 +106,8 @@ function New({ profile }) {
                 className="font-poppins border-1 w-full border-black p-2 text-sm font-light"
                 type="text"
                 placeholder="Name Your Delivery Profile"
-                onClick={(e) => setName(e.target.value)}
+            
+                onChange={(e) => setName(e.target.value)}
                 defaultValue={profile ? profile.name : ''}
             />
 
@@ -103,7 +116,7 @@ function New({ profile }) {
                 <select
                     key={uuidv4()}
                     className="!border-1 select max-w-[50%] appearance-none  rounded-none"
-                    onChange={(e) => handleOnchange(e.target.options)}
+                    onChange={(e) => handleOnchange(e, e.target.options)}
                 >
                     {defaultTimes.map((time, idx) => {
                         return (
@@ -113,6 +126,7 @@ function New({ profile }) {
                                     value={time.name}
                                     data-profile={JSON.stringify(time)}
                                     disabled={time.disabled || false}
+                                    selected={selected == time.name}
                                 >
                                     {time.name}
                                 </option>
