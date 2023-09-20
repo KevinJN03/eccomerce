@@ -32,12 +32,12 @@
 
             &:nth-of-type(1)::before {
                 content: 'Primary';
-                color: white;
+               
                 position: absolute;
-                top: 0;
-                right: 0;
-                background-color: black;
-                @apply m-1 rounded-xl px-2 py-1 text-xs;
+                top: 5px;
+                right: 5px;
+              
+                @apply m-1 rounded-xl px-2 py-1 text-xs bg-green-200 ;
             }
         }
     }
@@ -68,7 +68,4 @@
     }
 }
 
-.add-image {
-    width: 100px !important;
-    height: 100px !important;
-}
+

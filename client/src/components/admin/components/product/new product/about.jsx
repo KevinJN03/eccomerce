@@ -1,4 +1,4 @@
-import DragDropFile from './dragDropFIle';
+import DragDropFile from './dragDropFile';
 import { useState, useRef } from 'react';
 import New_Product_Header from './header';
 
@@ -20,13 +20,15 @@ function About() {
                 <input type="text" id="title" max={140} min={1} />
             </form>
 
-            <form>
+            <form className='mb-4'>
                 <label htmlFor="#photo" className="text-lg font-medium">
                     Photo<span className="asterisk">*</span>
                 </label>
                 <p>Add up to 6 photos</p>
-                <DragDropFile />
+               <DragDropFile  />
+
             </form>
+            
             <form>
                 <label htmlFor="#description" className="text-lg font-medium">
                     Description<span className="asterisk">*</span>
@@ -38,7 +40,8 @@ function About() {
                 <textarea
                     name="description"
                     id="description"
-                    row="30"
+                    className='!min-h-[200px]'
+                
                 ></textarea>
             </form>
         </div>

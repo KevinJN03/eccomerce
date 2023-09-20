@@ -1,6 +1,7 @@
 import './upload.scss';
 import add_image from './add-image.png';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import wiredIcon from '../../../../../../assets/icons/wired-outline-49-plus-circle.webp'
 import { v4 as uuidv4 } from 'uuid';
 import { useRef } from 'react';
 import close from '../../../../../../assets/icons/close.png';
@@ -28,17 +29,29 @@ function Upload({ files, setFiles }) {
         );
 
         const findFile = files.find((item) => item.isDragDisabled == true);
-
+        let counter = 0;
         setFiles(
             files.map((file) => {
-                if (file.id === findFile.id) {
-                    return { ...file, img: images[0], isDragDisabled: false };
+                // if (file.id === findFile.id) {
+
+                if (file.isDragDisabled == true && images[counter] != null) {
+                    console.log("image counter", images)
+                    const newFile = {
+                        ...file,
+                        img: images[counter],
+                        isDragDisabled: false,
+                    };
+                    counter += 1;
+                    console.log("newFile after adding", newFile)
+                    return newFile
                 }
+
+                // }
                 return file;
             })
         );
 
-        console.log('files after update', files);
+        // console.log('files after update', files);
     };
 
     const deletePhoto = (oldfile) => {
@@ -86,7 +99,7 @@ function Upload({ files, setFiles }) {
                                         <>
                                             <button
                                                 type="button"
-                                                className="delete-btn absolute right-3 top-2 h-8 w-8 bg-red-600 p-2"
+                                                className="delete-btn absolute right-3 bottom-2 h-8 w-8 bg-slate-100 rounded-full p-2"
                                                 onClick={() =>
                                                     deletePhoto(files[id])
                                                 }
@@ -99,6 +112,7 @@ function Upload({ files, setFiles }) {
                                             <img
                                                 loading="lazy"
                                                 src={files[id].img}
+                                                className="!object-contain object-cover"
                                             />
                                         </>
                                     ) : (
@@ -116,11 +130,13 @@ function Upload({ files, setFiles }) {
                                                 }
                                                 accept="image/jpeg,image/x-png"
                                                 hidden
+                                                multiple
                                             />
                                             <img
-                                                src={add_image}
-                                                className="add-image"
+                                                src={wiredIcon}
+                                                className="!w-20 !h-20"
                                             />
+                                       
                                         </div>
                                     )}
 

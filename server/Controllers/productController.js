@@ -38,8 +38,17 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     })
     .exec();
 
-  const { title, price, detail, color, size, images, reviews, category , gender} =
-    product;
+  const {
+    title,
+    price,
+    detail,
+    color,
+    size,
+    images,
+    reviews,
+    category,
+    gender,
+  } = product;
 
   const newData = {
     id: product.id,
@@ -57,4 +66,15 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
   console.log(product.id);
 
   return res.send(newData);
+});
+
+export const delete_product = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const product = await Product.findByIdAndDelete(id);
+
+  res.status(200).json({
+    msg: 'Product deleted.',
+    product,
+  });
 });

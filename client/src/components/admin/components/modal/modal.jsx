@@ -1,63 +1,97 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import './modal.scss';
-function BasicModal({ modalContent, ModalContent, button_text, modal_title }) {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    return (
-        <div>
-            <Button
-                onClick={handleOpen}
-                className={modalContent == 'delete' ? 'deleteButton' : ''}
-            >
-                {button_text}
-            </Button>
+import { useEffect } from 'react';
 
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                className="relative"
-            >
-                <Box className="modal-box">
-                    <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h2"
-                    >
-                        {modal_title}
-                    </Typography>
-                    <div className="button-container mt-4 flex w-full justify-center gap-3">
-                        {modalContent == 'delete' ? (
-                            <>
-                                {' '}
+import axios from '../../../../api/axios';
+function BasicModal({
+    id,
+    setCheck,
+    check,
+    loading,
+    deleteType,
+    setLoading,
+    ModalContent,
+}) {
+
+    console.log("mondalContent", ModalContent)
+    const handleDelete = () => {
+        axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
+            if (res.status === 200) {
+                setLoading(true);
+            }
+        });
+    };
+
+    useEffect(() => {
+        let timeout;
+
+        if (loading == true) {
+            timeout = setTimeout(() => {
+                setLoading(false);
+                setCheck(false);
+            }, 1000);
+        }
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [loading]);
+
+    console.log(deleteType);
+    return (
+        <>
+            <input
+                className="modal-state"
+                id="modal-1"
+                type="checkbox"
+                checked={check}
+            />
+            <div className="modal">
+                <label
+                    className="modal-overlay"
+                    htmlFor="modal-1"
+                    onClick={() => setCheck(false)}
+                ></label>
+                <div className="modal-content flex flex-col items-center gap-4 rounded-none border-none">
+                    {loading && (
+                        <div class="spinner-circle [--spinner-color:var(--gray-9)]"></div>
+                    )}
+                    {ModalContent && {...ModalContent}}
+                    {ModalContent == null && (
+                        <>
+                            <label
+                                htmlFor="modal-1"
+                                className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                onClick={() => setCheck(false)}
+                            >
+                                ✕
+                            </label>
+                            <h2 className="text-center font-gotham text-xl tracking-wider">
+                                CONFIRMATION
+                            </h2>
+                            <span className="text-center">
+                                Are you sure you want to delete this
+                            </span>
+                            <div className="flex w-full justify-center gap-5">
                                 <button
-                                    type="button"
-                                    className="delete-btn"
-                                    onClick={handleClose}
+                                    className="bg-red-200 px-2 py-1  hover:bg-red-500"
+                                    onClick={handleDelete}
                                 >
                                     Delete
                                 </button>
                                 <button
-                                    type="button"
-                                    className="cancel-btn"
-                                    onClick={handleClose}
+                                    className="bg-blue-100  px-2 py-1 hover:bg-blue-500"
+                                    onClick={() => setCheck(false)}
                                 >
+                                   
                                     Cancel
                                 </button>
-                            </>
-                        ) : (
-                            ModalContent(handleClose, handleOpen, open)
-                        )}
-                    </div>
-                </Box>
-            </Modal>
-        </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+        </>
     );
 }
 

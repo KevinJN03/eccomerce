@@ -2,10 +2,13 @@
 
 import SideBar from '../../sidebar/sidebar';
 import Navbar from '../../navbar/navbar';
-import About from './about';
+import About from'./about.jsx'
 import Price_Inventory from './price-inventory';
 import Details from './details';
-import Delivery from './select/delivery';
+import Delivery from './delivery/delivery';
+import DragDropFile from './dragDropFile';
+import { ContentProvider } from '../../../../../context/ContentContext';
+
 function New_Product() {
     return (
         <section className="new-product">
@@ -26,9 +29,13 @@ function New_Product() {
                         <a href="#settings">Settings</a>
                     </div>
                     <About />
+                    
                     <Price_Inventory />
                     <Details />
-                    <Delivery />
+                    <ContentProvider>
+                           <Delivery />
+                    </ContentProvider>
+                 
                 </div>
             </div>
         </section>

@@ -2,34 +2,52 @@ import './datable.scss';
 
 import { DataGrid } from '@mui/x-data-grid';
 
-import {
-    userColumn,
-    userRows,
-    productColumn,
-    productRow,
-} from './datatable-source';
+import { userColumn, productColumn } from './datatable-source';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import BasicModal from '../../modal/modal';
-function Datatable({ type, products }) {
+import axios from '../../../../../api/axios';
+function Datatable({ type, products, users , loading, setLoading}) {
+    
+    const [modalCheck, setModalCheck] = useState(false);
+    const [deleteType, setDeleteType] = useState(null);
+    const [id, setId] = useState(null);
+    const modalHandleClick = (type, id) => {
+        if (type === 'user') {
+            axios.delete(`/delete/user/${id}`).then((res) => {
+                if (res.status === 200) {
+                    setLoading(true);
+                }
+            });
+        }
+    };
+
+    const deleteButtonClick = (type, id) => {
+        setDeleteType(type);
+        setId(id)
+        setModalCheck(true);
+    };
+
     const actionColumn = [
         {
             field: 'action',
             headerName: 'Action',
             width: 200,
-            renderCell: () => {
+            renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to="test">
+                        <Link to={params.row._id}>
                             <div className="viewButton">View</div>
                         </Link>
-                        <BasicModal
-                            modal_title={
-                                ' Are you sure you want to delete this'
+
+                        <button
+                            className="deleteButton"
+                            onClick={() =>
+                                deleteButtonClick('user', params.row._id)
                             }
-                            modalContent="delete"
-                            button_text={'Delete'}
-                        />
+                        >
+                            Delete
+                        </button>
                     </div>
                 );
             },
@@ -42,20 +60,20 @@ function Datatable({ type, products }) {
             headerName: 'Action',
             width: 160,
             headerAlign: 'left',
-            renderCell: () => {
+            renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to="test">
+                        <Link to={params.row._id}>
                             <div className="viewButton">View</div>
                         </Link>
-
-                        <BasicModal
-                            modal_title={
-                                ' Are you sure you want to delete this'
+                        <button
+                            className="deleteButton"
+                            onClick={() =>
+                                deleteButtonClick('product', params.row._id)
                             }
-                            modalContent="delete"
-                            button_text={'Delete'}
-                        />
+                        >
+                            Delete
+                        </button>
                     </div>
                 );
             },
@@ -70,12 +88,10 @@ function Datatable({ type, products }) {
                 </Link>
             </div>
             <DataGrid
-                
                 getRowId={(row) => row._id}
                 className="datagrid"
                 rows={
-                    (type == 'User' && userRows) ||
-                    (type == 'Product' && products)
+                    (type == 'User' && users) || (type == 'Product' && products)
                 }
                 columns={
                     (type == 'User' && userColumn.concat(actionColumn)) ||
@@ -90,6 +106,17 @@ function Datatable({ type, products }) {
                 pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
             />
+            {modalCheck && (
+                <BasicModal
+                    setCheck={setModalCheck}
+                    check={modalCheck}
+                    loading={loading}
+                    deleteType={deleteType}
+                    id={id}
+                  
+                    setLoading={setLoading}
+                />
+            )}
         </section>
     );
 }

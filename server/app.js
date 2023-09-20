@@ -15,6 +15,8 @@ import categoryRoute from './Routes/categoryRoute.js';
 import couponRoute from './Routes/couponRoute.js';
 import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
+import userRoute from './Routes/userRoute.js';
+import adminRoute from './Routes/adminRoute.js';
 // import sharp from 'sharp';
 
 const { DBNAME, URL } = process.env;
@@ -45,6 +47,8 @@ app.use('/coupon', couponRoute);
 app.use('/category', categoryRoute);
 app.use('/search', searchRoute);
 app.use('/giftcard', giftCardRoute);
+app.use('/user', userRoute);
+app.use('/admin', adminRoute);
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
