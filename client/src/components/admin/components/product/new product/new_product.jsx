@@ -32,9 +32,9 @@ function New_Product() {
                     
                     <Price_Inventory />
                     <Details />
-                    <ContentProvider>
+                   
                            <Delivery />
-                    </ContentProvider>
+                    
                  
                 </div>
             </div>

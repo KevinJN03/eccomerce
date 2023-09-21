@@ -7,7 +7,7 @@ import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
-function New({ profile }) {
+function New({ profile, close, setProfile, setLoadingState}) {
     console.log('New Render');
     const { content, dispatch, setLoading } = useContent();
     const [customRange, setCustomRange] = useState(false);
@@ -17,7 +17,7 @@ function New({ profile }) {
     const [selected, setSelected] = useState();
     const [error, setError] = useState({});
     const back = () => {
-        dispatch({ type: 'Main' });
+        close ? close() : dispatch({ type: 'Main' });
     };
 
     useEffect(() => {
@@ -26,10 +26,9 @@ function New({ profile }) {
             console.log('cost', profile.cost);
             setCost((prev) => (prev = profile.cost));
             const newArr = defaultTimes.slice(1, 4);
-            console.log({newArr})
+            console.log({ newArr });
             const findTime = newArr.find((time) => {
                 const { start, end, type } = time.processingTime;
-              
 
                 if (
                     time.processingTime &&
@@ -80,7 +79,7 @@ function New({ profile }) {
                     console.log('resoult', res.data);
 
                     if (res.status == 200) {
-                        setLoading(true);
+                       setLoadingState ?  setLoadingState(true) : setLoading(true);
                         back();
                     }
                 })
@@ -98,7 +97,7 @@ function New({ profile }) {
                 })
                 .then((res) => {
                     if (res.status == 201) {
-                        setLoading(true);
+                        setLoadingState ?  setLoadingState(true) : setLoading(true);
                         back();
                     }
                 })
@@ -178,7 +177,9 @@ function New({ profile }) {
                 <CloseRoundedIcon />{' '}
             </span>
             <h3 className="text-center font-gotham text-lg">
-                CREATE A DELIVERY PROFILE
+                {profile
+                    ? 'EDIT A DELIVERY PROFILE'
+                    : 'CREATE A DELIVERY PROFILE'}
             </h3>
             <input
                 className="font-poppins border-1 w-full border-black p-2 text-sm font-light"

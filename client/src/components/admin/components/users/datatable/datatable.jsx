@@ -5,11 +5,19 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Modal from '../../modal/modal';
 import axios from '../../../../../api/axios';
-function Datatable({ type, loading, setLoading, column, row }) {
+function Datatable({
+    type,
+    loading,
+    setLoading,
+    column,
+    row,
+    addBtn,
+    viewBtn,
+}) {
     const [modalCheck, setModalCheck] = useState(false);
-    const [deleteType, setDeleteType] = useState(null);
+
     const [id, setId] = useState(null);
-    const headerTitle = type[0].toUpperCase() + type.substring(1)
+    const headerTitle = type[0].toUpperCase() + type.substring(1);
     const modalHandleClick = (type, id) => {
         if (type === 'user') {
             axios.delete(`/delete/user/${id}`).then((res) => {
@@ -34,9 +42,15 @@ function Datatable({ type, loading, setLoading, column, row }) {
             renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to={params.row._id}>
-                            <div className="viewButton">View</div>
-                        </Link>
+                        {viewBtn ? (
+                            <button type="button" className="viewButton" onClick={() => viewBtn(params.row._id)}>
+                                View
+                            </button>
+                        ) : (
+                            <Link to={params.row._id}>
+                                <div className="viewButton">View</div>
+                            </Link>
+                        )}
 
                         <button
                             className="deleteButton"
@@ -52,38 +66,19 @@ function Datatable({ type, loading, setLoading, column, row }) {
         },
     ];
 
-    // const product_actionColumn = [
-    //     {
-    //         field: 'action',
-    //         headerName: 'Action',
-    //         width: 160,
-    //         headerAlign: 'left',
-    //         renderCell: (params) => {
-    //             return (
-    //                 <div className="cellAction">
-    //                     <Link to={params.row._id}>
-    //                         <div className="viewButton">View</div>
-    //                     </Link>
-    //                     <button
-    //                         className="deleteButton"
-    //                         onClick={() =>
-    //                             deleteButtonClick('product', params.row._id)
-    //                         }
-    //                     >
-    //                         Delete
-    //                     </button>
-    //                 </div>
-    //             );
-    //         },
-    //     },
-    // ];
     return (
         <section className="datatable">
             <div className="datatableTitle">
                 Add New {headerTitle}
-                <Link className="link" to="new">
-                    Add New
-                </Link>
+                {addBtn ? (
+                    <button type="button" className="link" onClick={addBtn}>
+                        Add New
+                    </button>
+                ) : (
+                    <Link className="link" to="new">
+                        Add New
+                    </Link>
+                )}
             </div>
             <DataGrid
                 getRowId={(row) => row._id}

@@ -9,6 +9,7 @@ import {
     DarkModeContextProvider,
 } from '../../../context/darkModeContext';
 import { useContext } from 'react';
+import { ContentProvider } from '../../../context/ContentContext';
 // import List from '../components/list/list';
 
 function Admin({}) {
@@ -17,7 +18,10 @@ function Admin({}) {
     disableLayout();
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
-            <Outlet />
+            <ContentProvider>
+                   <Outlet />
+            </ContentProvider>
+         
         </section>
     );
 }
