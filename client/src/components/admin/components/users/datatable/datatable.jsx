@@ -1,17 +1,15 @@
 import './datable.scss';
 
 import { DataGrid } from '@mui/x-data-grid';
-
-import { userColumn, productColumn } from './datatable-source';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import BasicModal from '../../modal/modal';
+import Modal from '../../modal/modal';
 import axios from '../../../../../api/axios';
-function Datatable({ type, products, users , loading, setLoading}) {
-    
+function Datatable({ type, loading, setLoading, column, row }) {
     const [modalCheck, setModalCheck] = useState(false);
     const [deleteType, setDeleteType] = useState(null);
     const [id, setId] = useState(null);
+    const headerTitle = type[0].toUpperCase() + type.substring(1)
     const modalHandleClick = (type, id) => {
         if (type === 'user') {
             axios.delete(`/delete/user/${id}`).then((res) => {
@@ -23,8 +21,8 @@ function Datatable({ type, products, users , loading, setLoading}) {
     };
 
     const deleteButtonClick = (type, id) => {
-        setDeleteType(type);
-        setId(id)
+        // setDeleteType(type);
+        setId(id);
         setModalCheck(true);
     };
 
@@ -43,7 +41,7 @@ function Datatable({ type, products, users , loading, setLoading}) {
                         <button
                             className="deleteButton"
                             onClick={() =>
-                                deleteButtonClick('user', params.row._id)
+                                deleteButtonClick(type, params.row._id)
                             }
                         >
                             Delete
@@ -54,35 +52,35 @@ function Datatable({ type, products, users , loading, setLoading}) {
         },
     ];
 
-    const product_actionColumn = [
-        {
-            field: 'action',
-            headerName: 'Action',
-            width: 160,
-            headerAlign: 'left',
-            renderCell: (params) => {
-                return (
-                    <div className="cellAction">
-                        <Link to={params.row._id}>
-                            <div className="viewButton">View</div>
-                        </Link>
-                        <button
-                            className="deleteButton"
-                            onClick={() =>
-                                deleteButtonClick('product', params.row._id)
-                            }
-                        >
-                            Delete
-                        </button>
-                    </div>
-                );
-            },
-        },
-    ];
+    // const product_actionColumn = [
+    //     {
+    //         field: 'action',
+    //         headerName: 'Action',
+    //         width: 160,
+    //         headerAlign: 'left',
+    //         renderCell: (params) => {
+    //             return (
+    //                 <div className="cellAction">
+    //                     <Link to={params.row._id}>
+    //                         <div className="viewButton">View</div>
+    //                     </Link>
+    //                     <button
+    //                         className="deleteButton"
+    //                         onClick={() =>
+    //                             deleteButtonClick('product', params.row._id)
+    //                         }
+    //                     >
+    //                         Delete
+    //                     </button>
+    //                 </div>
+    //             );
+    //         },
+    //     },
+    // ];
     return (
         <section className="datatable">
             <div className="datatableTitle">
-                Add New {type}
+                Add New {headerTitle}
                 <Link className="link" to="new">
                     Add New
                 </Link>
@@ -90,14 +88,8 @@ function Datatable({ type, products, users , loading, setLoading}) {
             <DataGrid
                 getRowId={(row) => row._id}
                 className="datagrid"
-                rows={
-                    (type == 'User' && users) || (type == 'Product' && products)
-                }
-                columns={
-                    (type == 'User' && userColumn.concat(actionColumn)) ||
-                    (type == 'Product' &&
-                        productColumn.concat(product_actionColumn))
-                }
+                rows={row}
+                columns={column.concat(actionColumn)}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 10 },
@@ -107,13 +99,12 @@ function Datatable({ type, products, users , loading, setLoading}) {
                 checkboxSelection
             />
             {modalCheck && (
-                <BasicModal
+                <Modal
                     setCheck={setModalCheck}
                     check={modalCheck}
                     loading={loading}
-                    deleteType={deleteType}
+                    deleteType={type}
                     id={id}
-                  
                     setLoading={setLoading}
                 />
             )}

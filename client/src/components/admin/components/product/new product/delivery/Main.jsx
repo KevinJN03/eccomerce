@@ -8,54 +8,41 @@ import Edit from './edit';
 import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
-const allProfiles = [
-    {
-        id: 1,
-        name: 'Free Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 0.0,
-    },
-    {
-        id: 2,
-        name: 'Standard Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 3.99,
-    },
-    {
-        id: 3,
-        name: 'Expedited Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 5.99,
-    },
-];
+import fetchProfile from './fetchDeliveryProfile';
 
 function MainContent() {
-    const { content, dispatch, setModalCheck, setProfile } = useContent();
+    const {
+        content,
+        dispatch,
+        setModalCheck,
+        setProfile,
+        loading,
+        setLoading,
+    } = useContent();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
 
     useEffect(() => {
-        adminAxios
-            .get('/delivery/all')
-            .then((res) => {
-                if (res.status == 200) {
-                    setDeliveryProfiles(res.data);
-                }
-            })
-            .catch((error) => {
-                console.log('error at deliver: ', error);
-            });
+        fetchProfile(setDeliveryProfiles);
     }, []);
+
+    useEffect(() => {
+        fetchProfile(setDeliveryProfiles);
+        let timeout = 0;
+        if (loading == true) {
+            timeout = setTimeout(() => {
+                setLoading(false);
+            }, 1000);
+        }
+    }, [loading]);
 
     const handleClick = (profile) => {
         setModalCheck(false);
         setProfile(profile);
     };
+
+    const confirm = () => {
+        setModalCheck(false);
+    }
     return (
         <div className="delivery-profile flex w-full flex-col">
             <span
@@ -75,39 +62,69 @@ function MainContent() {
                     <span className="text-3xl">+</span> Create New
                 </button>
             </div>
-            <div className="profiles mt-3">
-                {deliveryProfiles && deliveryProfiles.map((profile) => {
-                    const {start, end} = profile.processingTime
-                    return (
-                        <div
-                            key={profile._id}
-                            className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
-                        >
-                            <div className="profile-info">
-                                <h2 className="mb-1 font-medium">
-                                    {profile.name}
-                                </h2>
-                                <p className="mb-2">
-                                    {`${start} - ${end}`} Processing Time
-                                </p>
-                                <p>{profile.active_listings} Active Listing</p>
-                            </div>
-                            <section
-                                id="profile-btn"
-                                className="flex items-center justify-center"
-                            >
-                                <button
-                                    className="mr-4"
-                                    onClick={() => handleClick(profile)}
-                                >
-                                    <AddCircleOutlineRoundedIcon />
-                                </button>
-                                <Edit profile={profile} />
-                                <Delete/>
-                            </section>
-                        </div>
-                    );
-                })}
+            <div className="profiles mt-3 flex flex-col">
+                {loading ? (
+                    <div class="spinner-circle self-center [--spinner-color:var(--gray-9)]"></div>
+                ) : (
+                    <>
+                        {deliveryProfiles &&
+                            deliveryProfiles.map((profile) => {
+                                const { start, end, type } =
+                                    profile.processingTime;
+                                return (
+                                    <div
+                                        key={profile._id}
+                                        className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
+                                    >
+                                        <div className="profile-info">
+                                            <h2 className="mb-1 font-medium">
+                                                {profile.name}
+                                            </h2>
+                                            <p className="mb-1">
+                                                {`${start} - ${end} ${type}`}{' '}
+                                                Processing Time
+                                            </p>
+
+                                            <p className="mb-1">
+                                               {profile.cost > 0 ? <span>£ {profile.cost} </span> : 'FREE'} 
+                                            </p>
+                                            <p>
+                                                {profile.active_listings} Active
+                                                Listing
+                                            </p>
+                                        </div>
+                                        <section
+                                            id="profile-btn"
+                                            className="flex items-center justify-center"
+                                        >
+                                            <button
+                                                className="mr-2"
+                                                onClick={() =>
+                                                    handleClick(profile)
+                                                }
+                                            >
+                                                <AddCircleOutlineRoundedIcon />
+                                            </button>
+                                            <Edit profile={profile} />
+                                            <Delete id={profile._id} />
+                                        </section>
+                                    </div>
+                                );
+                            })}
+
+                        {deliveryProfiles.length < 1 && (
+                            <p className="my-3 w-full text-center">
+                                There are no delivery profiles, Please create a
+                                Profile
+                            </p>
+                        )}
+
+
+                        {deliveryProfiles.length > 0 && <>
+                        <button type='button' onClick={confirm} className='py-2 bg-green-300 hover:bg-green-500'>Confirm</button>
+                        </>}
+                    </>
+                )}
             </div>
         </div>
     );

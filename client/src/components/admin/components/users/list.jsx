@@ -7,6 +7,7 @@ import DragDropFile from '../product/new product/dragDropFile.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios.js';
+import { userColumn, } from './datatable/datatable-source.jsx';
 function List() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ function List() {
                 <SideBar />
                 <div className="user-listContainer">
                     <Navbar />
-                    <Datatable type="User" users={users} setLoading={setLoading} loading={loading} />
+                    <Datatable type="user"  setLoading={setLoading} loading={loading} column={userColumn} row={users}/>
 
                     
                 </div>

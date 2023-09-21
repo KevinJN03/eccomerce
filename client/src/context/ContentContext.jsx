@@ -26,6 +26,7 @@ export function ContentProvider({ children }) {
     const [content, dispatch] = useReducer(reducer, <Main />);
     const [modalCheck, setModalCheck] = useState(false);
     const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(false);
     const value = {
         content,
         dispatch,
@@ -33,6 +34,8 @@ export function ContentProvider({ children }) {
         setModalCheck,
         profile,
         setProfile,
+        loading,
+        setLoading,
     };
     return (
         <ContentContext.Provider value={value}>

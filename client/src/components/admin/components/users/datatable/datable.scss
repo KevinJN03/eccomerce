@@ -1,21 +1,7 @@
 .datatable {
     padding: 20px;
     width: 100%;
-    .datatableTitle {
-        @apply flex w-full items-center justify-between;
-        font-size: 24px;
-        margin-bottom: 10px;
-
-        .link {
-            color: green;
-            font-size: 16px;
-            font-weight: 400;
-            border: 1px solid green;
-            padding: 5px;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-    }
+   
 
     .cellWithImg {
         @apply flex items-center;
@@ -59,3 +45,19 @@
         }
     }
 }
+
+ .datatableTitle {
+        @apply flex w-full items-center justify-between;
+        font-size: 24px;
+        margin-bottom: 10px;
+
+        .link {
+            color: green;
+            font-size: 16px;
+            font-weight: 400;
+            border: 1px solid green;
+            padding: 5px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+    }
