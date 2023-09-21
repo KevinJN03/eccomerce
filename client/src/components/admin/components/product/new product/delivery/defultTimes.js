@@ -3,8 +3,9 @@ const defaultTimes = [
     {
         name: '1 day',
         processingTime: {
-            start: 1,
+            start: 0,
             end: 1,
+            type: 'days',
         },
     },
     {
@@ -12,6 +13,7 @@ const defaultTimes = [
         processingTime: {
             start: 1,
             end: 2,
+            type: 'days',
         },
     },
     {
@@ -19,6 +21,7 @@ const defaultTimes = [
         processingTime: {
             start: 1,
             end: 3,
+            type: 'days',
         },
     },
     {
@@ -26,9 +29,10 @@ const defaultTimes = [
         processingTime: {
             start: 3,
             end: 5,
+            type: 'days',
         },
     },
     { name: 'Custom range' },
 ];
 
-export default defaultTimes
+export default defaultTimes;

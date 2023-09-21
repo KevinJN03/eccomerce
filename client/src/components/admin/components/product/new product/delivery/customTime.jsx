@@ -1,4 +1,5 @@
-export default function CustomTime({ setProcessingTime }) {
+export default function CustomTime({ setProcessingTime, processingTime }) {
+
     const updateType = (type) => {
         setProcessingTime((prevstate) => {
             return { ...prevstate, type: type };
@@ -21,16 +22,17 @@ export default function CustomTime({ setProcessingTime }) {
                 <input
                     type="number"
                     className="border-1 w-16 px-3 py-2"
-                    defaultValue='1'
+                    defaultValue={ processingTime ? processingTime.start : '1'}
                     min="1"
                     onChange={(e) => handleStart(e.target.value)}
                 />
                 <p>-</p>
                 <input
                 min="1"
-                defaultValue='1'
+               
                     type="number"
                     className="border-1 w-16 px-3 py-2"
+                    defaultValue={ processingTime ? processingTime.end : '1'}
                     onChange={(e) => handleEnd(e.target.value)}
                 />
             </span>
@@ -38,7 +40,7 @@ export default function CustomTime({ setProcessingTime }) {
                 <label htmlFor="days">Days</label>
                 <input
                     type="radio"
-                    defaultChecked
+                    defaultChecked = {processingTime && processingTime.type == 'days'}
                     id="days"
                     name="dayorweek"
                     value="days"
@@ -52,6 +54,7 @@ export default function CustomTime({ setProcessingTime }) {
                     id="weeks"
                     name="dayorweek"
                     value="weeks"
+                    defaultChecked = {processingTime && processingTime.type == 'weeks'}
                     onChange={(e) => updateType(e.target.value)}
                 />
             </span>

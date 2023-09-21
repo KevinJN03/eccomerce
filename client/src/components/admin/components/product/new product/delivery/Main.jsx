@@ -8,6 +8,7 @@ import Edit from './edit';
 import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
+import fetchProfile from './fetchDeliveryProfile';
 const allProfiles = [
     {
         id: 1,
@@ -36,21 +37,29 @@ const allProfiles = [
 ];
 
 function MainContent() {
-    const { content, dispatch, setModalCheck, setProfile } = useContent();
+    const {
+        content,
+        dispatch,
+        setModalCheck,
+        setProfile,
+        loading,
+        setLoading,
+    } = useContent();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
 
     useEffect(() => {
-        adminAxios
-            .get('/delivery/all')
-            .then((res) => {
-                if (res.status == 200) {
-                    setDeliveryProfiles(res.data);
-                }
-            })
-            .catch((error) => {
-                console.log('error at deliver: ', error);
-            });
+        fetchProfile(setDeliveryProfiles);
     }, []);
+
+    useEffect(() => {
+        fetchProfile(setDeliveryProfiles);
+        let timeout = 0;
+        if (loading == true) {
+            timeout = setTimeout(() => {
+                setLoading(false);
+            }, 1000);
+        }
+    }, [loading]);
 
     const handleClick = (profile) => {
         setModalCheck(false);
@@ -75,39 +84,64 @@ function MainContent() {
                     <span className="text-3xl">+</span> Create New
                 </button>
             </div>
-            <div className="profiles mt-3">
-                {deliveryProfiles && deliveryProfiles.map((profile) => {
-                    const {start, end} = profile.processingTime
-                    return (
-                        <div
-                            key={profile._id}
-                            className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
-                        >
-                            <div className="profile-info">
-                                <h2 className="mb-1 font-medium">
-                                    {profile.name}
-                                </h2>
-                                <p className="mb-2">
-                                    {`${start} - ${end}`} Processing Time
-                                </p>
-                                <p>{profile.active_listings} Active Listing</p>
-                            </div>
-                            <section
-                                id="profile-btn"
-                                className="flex items-center justify-center"
-                            >
-                                <button
-                                    className="mr-4"
-                                    onClick={() => handleClick(profile)}
-                                >
-                                    <AddCircleOutlineRoundedIcon />
-                                </button>
-                                <Edit profile={profile} />
-                                <Delete/>
-                            </section>
-                        </div>
-                    );
-                })}
+            <div className="profiles mt-3 flex flex-col">
+                {loading ? (
+                    <div class="spinner-circle self-center [--spinner-color:var(--gray-9)]"></div>
+                ) : (
+                    <>
+                        {deliveryProfiles &&
+                            deliveryProfiles.map((profile) => {
+                                const { start, end, type } =
+                                    profile.processingTime;
+                                return (
+                                    <div
+                                        key={profile._id}
+                                        className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
+                                    >
+                                        <div className="profile-info">
+                                            <h2 className="mb-1 font-medium">
+                                                {profile.name}
+                                            </h2>
+                                            <p className="mb-1">
+                                                {`${start} - ${end} ${type}`}{' '}
+                                                Processing Time
+                                            </p>
+
+                                            <p className="mb-1">
+                                                £ {profile.cost}
+                                            </p>
+                                            <p>
+                                                {profile.active_listings} Active
+                                                Listing
+                                            </p>
+                                        </div>
+                                        <section
+                                            id="profile-btn"
+                                            className="flex items-center justify-center"
+                                        >
+                                            <button
+                                                className="mr-4"
+                                                onClick={() =>
+                                                    handleClick(profile)
+                                                }
+                                            >
+                                                <AddCircleOutlineRoundedIcon />
+                                            </button>
+                                            <Edit profile={profile} />
+                                            <Delete id={profile._id} />
+                                        </section>
+                                    </div>
+                                );
+                            })}
+
+                        {deliveryProfiles.length < 1 && (
+                            <p className="my-3 w-full text-center">
+                                There are no delivery profiles, Please create a
+                                Profile
+                            </p>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

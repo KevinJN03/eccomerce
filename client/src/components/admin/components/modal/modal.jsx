@@ -11,9 +11,9 @@ function BasicModal({
     deleteType,
     setLoading,
     ModalContent,
+    className,
 }) {
-
-    console.log("mondalContent", ModalContent)
+  
     const handleDelete = () => {
         axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
             if (res.status === 200) {
@@ -46,17 +46,18 @@ function BasicModal({
                 type="checkbox"
                 checked={check}
             />
-            <div className="modal">
+            <div className={`modal ${className}`}>
                 <label
-                    className="modal-overlay"
+                    className={`modal-overlay ${className}`}
                     htmlFor="modal-1"
                     onClick={() => setCheck(false)}
                 ></label>
                 <div className="modal-content flex flex-col items-center gap-4 rounded-none border-none">
-                    {loading && (
+                    {loading ? (
                         <div class="spinner-circle [--spinner-color:var(--gray-9)]"></div>
-                    )}
-                    {ModalContent && {...ModalContent}}
+                    ) : 
+                    <>
+                    {ModalContent && { ...ModalContent }}
                     {ModalContent == null && (
                         <>
                             <label
@@ -83,12 +84,15 @@ function BasicModal({
                                     className="bg-blue-100  px-2 py-1 hover:bg-blue-500"
                                     onClick={() => setCheck(false)}
                                 >
-                                   
                                     Cancel
                                 </button>
                             </div>
                         </>
                     )}
+                    
+                    </>
+                    }
+                    
                 </div>
             </div>
         </>

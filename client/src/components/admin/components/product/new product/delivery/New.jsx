@@ -9,7 +9,7 @@ import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
 function New({ profile }) {
     console.log('New Render');
-    const { content, dispatch } = useContent();
+    const { content, dispatch, setLoading } = useContent();
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState();
     const [cost, setCost] = useState();
@@ -26,11 +26,25 @@ function New({ profile }) {
             console.log(profile);
             console.log('cost', profile.cost);
             setCost((prev) => (prev = profile.cost));
-            const {start, end, type} = profile.processingTime
-            const newName = `${start}-${end} ${type}`
-            console.log({newName})
-            setSelected(newName);
-            setProcessingTime(profile.processingTime)
+            // const { start, end, type } = profile.processingTime;
+            // const newName = `${start}-${end} ${type}`;
+            // console.log({ newName });
+            const findTime = defaultTimes.find(
+                (time) =>
+                    JSON.stringify(time.processingTime) ==
+                    JSON.stringify(profile.processingTime)
+            );
+            console.log('findTime', findTime);
+            if (findTime) {
+                console.log('contains');
+                setSelected(findTime.name);
+            } else {
+                // if its a custom range, set the selected type to custom
+                setSelected('Custom range');
+                setCustomRange(true);
+            }
+
+            setProcessingTime(profile.processingTime);
         } else {
             setCost(0);
         }
@@ -43,7 +57,7 @@ function New({ profile }) {
         setCost(newValue);
     };
     const save = () => {
-        console.log('name: ', name)
+        console.log('name: ', name);
         if (profile) {
             adminAxios
                 .put(`/delivery/update/${profile._id}`, {
@@ -52,8 +66,12 @@ function New({ profile }) {
                     cost,
                 })
                 .then((res) => {
+                    console.log('resoult', res.data);
 
-                    console.log("resoult", res.data)
+                    if (res.status == 200) {
+                        setLoading(true);
+                        back();
+                    }
                 })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
@@ -65,20 +83,23 @@ function New({ profile }) {
                     processingTime,
                     cost,
                 })
-                .then((res) => {})
+                .then((res) => {
+                    if (res.status == 201) {
+                        setLoading(true);
+                        back();
+                    }
+                })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
                 });
         }
-
-        back()
     };
 
     const handleOnchange = (e, value) => {
         console.log('onchange triggered');
         const fetchProfile = value[event.target.selectedIndex].dataset.profile;
         const profileToJson = JSON.parse(fetchProfile);
-        
+
         if (profileToJson.name === 'Custom range') {
             setCustomRange(true);
         } else {
@@ -106,7 +127,6 @@ function New({ profile }) {
                 className="font-poppins border-1 w-full border-black p-2 text-sm font-light"
                 type="text"
                 placeholder="Name Your Delivery Profile"
-            
                 onChange={(e) => setName(e.target.value)}
                 defaultValue={profile ? profile.name : ''}
             />
@@ -136,7 +156,10 @@ function New({ profile }) {
                 </select>
 
                 {customRange && (
-                    <CustomTime setProcessingTime={setProcessingTime} />
+                    <CustomTime
+                        setProcessingTime={setProcessingTime}
+                        processingTime={processingTime}
+                    />
                 )}
             </div>
             <span className="flex flex-row items-center justify-between">
@@ -158,7 +181,7 @@ function New({ profile }) {
                 </span>
             </span>
 
-            <button onClick={save}>Save</button>
+            <button onClick={save} className='bg-green-300 py-2 hover:bg-green-400'>Save</button>
         </section>
     );
 }
