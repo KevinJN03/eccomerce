@@ -9,32 +9,6 @@ import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
 import fetchProfile from './fetchDeliveryProfile';
-const allProfiles = [
-    {
-        id: 1,
-        name: 'Free Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 0.0,
-    },
-    {
-        id: 2,
-        name: 'Standard Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 3.99,
-    },
-    {
-        id: 3,
-        name: 'Expedited Delivery',
-        shipping_time: '1-3 days',
-        active_listings: '2',
-        processing_time: '1-4days',
-        price: 5.99,
-    },
-];
 
 function MainContent() {
     const {
@@ -65,6 +39,10 @@ function MainContent() {
         setModalCheck(false);
         setProfile(profile);
     };
+
+    const confirm = () => {
+        setModalCheck(false);
+    }
     return (
         <div className="delivery-profile flex w-full flex-col">
             <span
@@ -108,7 +86,7 @@ function MainContent() {
                                             </p>
 
                                             <p className="mb-1">
-                                                £ {profile.cost}
+                                               {profile.cost > 0 ? <span>£ {profile.cost} </span> : 'FREE'} 
                                             </p>
                                             <p>
                                                 {profile.active_listings} Active
@@ -120,7 +98,7 @@ function MainContent() {
                                             className="flex items-center justify-center"
                                         >
                                             <button
-                                                className="mr-4"
+                                                className="mr-2"
                                                 onClick={() =>
                                                     handleClick(profile)
                                                 }
@@ -140,6 +118,11 @@ function MainContent() {
                                 Profile
                             </p>
                         )}
+
+
+                        {deliveryProfiles.length > 0 && <>
+                        <button type='button' onClick={confirm} className='py-2 bg-green-300 hover:bg-green-500'>Confirm</button>
+                        </>}
                     </>
                 )}
             </div>

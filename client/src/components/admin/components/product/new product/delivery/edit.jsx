@@ -5,7 +5,7 @@ function Edit({profile}) {
     const {dispatch} = useContent()
     return (
         <section className="edit-delivery">
-            <button onClick={() => dispatch({type: 'Edit', profile: profile})}>
+            <button className= 'mr-2' onClick={() => dispatch({type: 'Edit', profile: profile})}>
                 <ModeEditOutlineOutlinedIcon />
             </button>
         </section>

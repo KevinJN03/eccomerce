@@ -15,25 +15,34 @@ function New({ profile }) {
     const [cost, setCost] = useState();
     const [processingTime, setProcessingTime] = useState();
     const [selected, setSelected] = useState();
-
+    const [error, setError] = useState({});
     const back = () => {
         dispatch({ type: 'Main' });
     };
 
     useEffect(() => {
         if (profile) {
-            // debugger
             console.log(profile);
             console.log('cost', profile.cost);
             setCost((prev) => (prev = profile.cost));
-            // const { start, end, type } = profile.processingTime;
-            // const newName = `${start}-${end} ${type}`;
-            // console.log({ newName });
-            const findTime = defaultTimes.find(
-                (time) =>
-                    JSON.stringify(time.processingTime) ==
-                    JSON.stringify(profile.processingTime)
-            );
+            const newArr = defaultTimes.slice(1, 4);
+            console.log({newArr})
+            const findTime = newArr.find((time) => {
+                const { start, end, type } = time.processingTime;
+              
+
+                if (
+                    time.processingTime &&
+                    start == profile.processingTime.start &&
+                    end == profile.processingTime.end &&
+                    type == profile.processingTime.type
+                ) {
+                    profile.processingTime.start == start;
+                    console.log(profile.processingTime.start);
+                    console.log('timestart ', time);
+                    return time;
+                }
+            });
             console.log('findTime', findTime);
             if (findTime) {
                 console.log('contains');
@@ -46,7 +55,9 @@ function New({ profile }) {
 
             setProcessingTime(profile.processingTime);
         } else {
+            // if a new profile is being created set the default processing time to 0
             setCost(0);
+            setProcessingTime(defaultTimes[1].processingTime);
         }
     }, []);
 
@@ -75,6 +86,8 @@ function New({ profile }) {
                 })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
+                    const message = error.response.data.msg;
+                    setError({ bool: true, msg: message });
                 });
         } else {
             adminAxios
@@ -91,6 +104,14 @@ function New({ profile }) {
                 })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
+                    const message = error.response.data.msg;
+                    const messageArr = message.map((msg) => {
+                        return {
+                            id: uuidv4(),
+                            msg,
+                        };
+                    });
+                    setError(messageArr);
                 });
         }
     };
@@ -111,8 +132,44 @@ function New({ profile }) {
 
         setSelected(profileToJson.name);
     };
+
+    const closeError = (id) => {
+        const newErrors = [...error];
+        const filter = newErrors.filter((item) => item.id != id);
+
+        setError(filter);
+    };
     return (
         <section className="new-delivery flex w-full flex-col gap-3">
+            <div className="error">
+                {error.length > 0 &&
+                    error.map((item) => {
+                        const { id, msg } = item;
+                        return (
+                            <div
+                                key={id}
+                                class="alert alert-error mb-2 rounded-none py-2"
+                            >
+                                <svg
+                                    onClick={() => closeError(id)}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6 shrink-0 stroke-current"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                                <span className="text-s">{msg}</span>
+                            </div>
+                        );
+                    })}
+            </div>
+
             <span
                 className="mb-2 flex items-center justify-center self-end rounded-full bg-slate-100 p-1 hover:bg-slate-300"
                 onClick={back}
@@ -181,7 +238,12 @@ function New({ profile }) {
                 </span>
             </span>
 
-            <button onClick={save} className='bg-green-300 py-2 hover:bg-green-400'>Save</button>
+            <button
+                onClick={save}
+                className="bg-green-300 py-2 hover:bg-green-400"
+            >
+                Save
+            </button>
         </section>
     );
 }

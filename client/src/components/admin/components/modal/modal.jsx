@@ -11,7 +11,7 @@ function BasicModal({
     deleteType,
     setLoading,
     ModalContent,
-    className,
+  className
 }) {
   
     const handleDelete = () => {
@@ -39,17 +39,17 @@ function BasicModal({
 
     console.log(deleteType);
     return (
-        <>
+        <section className={className}>
             <input
                 className="modal-state"
-                id="modal-1"
+                id="modal-3"
                 type="checkbox"
                 checked={check}
             />
-            <div className={`modal ${className}`}>
+            <div className={`modal`}>
                 <label
-                    className={`modal-overlay ${className}`}
-                    htmlFor="modal-1"
+                    className={`modal-overlay `}
+                    htmlFor="modal-3"
                     onClick={() => setCheck(false)}
                 ></label>
                 <div className="modal-content flex flex-col items-center gap-4 rounded-none border-none">
@@ -95,7 +95,7 @@ function BasicModal({
                     
                 </div>
             </div>
-        </>
+        </section>
     );
 }
 

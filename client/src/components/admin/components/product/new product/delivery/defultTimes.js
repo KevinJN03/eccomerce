@@ -1,5 +1,6 @@
 const defaultTimes = [
-    { name: 'Select your processing time...', disabled: true },
+    { name: 'Select your processing time...', disabled: true, 
+ },
     {
         name: '1 day',
         processingTime: {

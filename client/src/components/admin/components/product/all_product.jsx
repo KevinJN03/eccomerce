@@ -4,14 +4,14 @@ import './all_product.scss';
 import Datatable from '../users/datatable/datatable';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios';
+import { productColumn } from '../users/datatable/datatable-source';
 function All_Products() {
     const [loading, setLoading] = useState(false)
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
         axios.get('/product').then((res) => {
-            setProducts(res.data);
-            console.log(res.data);
+            setProducts(res.data)
         });
     }, [loading]);
     return (
@@ -19,7 +19,7 @@ function All_Products() {
             <SideBar />
             <div className="productContainer">
                 <Navbar />
-                <Datatable type="Product" products={products} loading={loading} setLoading={setLoading}/>
+                <Datatable type="product" loading={loading} setLoading={setLoading} column={productColumn} row={products}/>
             </div>
         </section>
     );

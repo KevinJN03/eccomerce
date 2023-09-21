@@ -22,22 +22,21 @@ export const userColumn = [
             );
         },
     },
-    { field: 'email', headerName: 'Email', /* width: 100 */ },
-    { field: 'firstName', headerName: 'First name', /* width: 100 */ },
+    { field: 'email', headerName: 'Email' /* width: 100 */ },
+    { field: 'firstName', headerName: 'First name' /* width: 100 */ },
 
-    { field: 'lastName', headerName: 'Last name', /* width: 100 */ },
-    { field: 'interest', headerName: 'Interest', /* width: 100 */ },
+    { field: 'lastName', headerName: 'Last name' /* width: 100 */ },
+    { field: 'interest', headerName: 'Interest' /* width: 100 */ },
     {
         field: 'dob',
         headerName: 'Age',
         // type: 'number',
-      /*   width: 100, */
+        /*   width: 100, */
         renderCell: (params) => {
-            const year = new Date( params.row.dob).getFullYear();
+            const year = new Date(params.row.dob).getFullYear();
             const currentYear = new Date().getFullYear();
-            return currentYear - year
-   
-        }
+            return currentYear - year;
+        },
     },
     {
         field: 'status',
@@ -54,8 +53,6 @@ export const userColumn = [
         },
     },
 ];
-
-
 
 export const productColumn = [
     { field: '_id', headerName: 'ID', width: 70 },
@@ -121,4 +118,17 @@ export const productColumn = [
             return <>{total}</>;
         },
     },
+];
+
+export const deliveryColumn = [
+    { field: '_id', headerName: 'ID', width: 200 },
+    { field: 'name', headerName: 'Name', width: 200 },
+
+    { field: 'processingTime', headerName: 'Processing Time', width: 150, renderCell: (params) => {
+        const {start, end} = params.row.processingTime
+        return `${start} - ${end}`
+    } },
+    { field: 'cost', headerName: 'Cost', width: 100, renderCell: (params) => {
+        return `£ ${params.row.cost}` 
+    }},
 ];

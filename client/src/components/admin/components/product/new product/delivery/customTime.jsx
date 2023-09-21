@@ -5,15 +5,24 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
             return { ...prevstate, type: type };
         });
     };
+
+    const handleTime = (value, property) => {
+        if(value == 0){
+            return setProcessingTime((prevstate) => {
+                  return { ...prevstate, [`${property}`]: 1 };
+              });
+          };
+      
+          return setProcessingTime((prevstate) => {
+              return { ...prevstate,[ `${property}`] : value };
+          });
+    }
+
     const handleStart = (value) => {
-        setProcessingTime((prevstate) => {
-            return { ...prevstate, start: value };
-        });
-    };
+        handleTime(value, 'start')
+    }
     const handleEnd = (value) => {
-        setProcessingTime((prevstate) => {
-            return { ...prevstate, end: value };
-        });
+        handleTime(value, 'end')
     };
 
     return (
@@ -24,6 +33,7 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
                     className="border-1 w-16 px-3 py-2"
                     defaultValue={ processingTime ? processingTime.start : '1'}
                     min="1"
+                    value={processingTime.start}
                     onChange={(e) => handleStart(e.target.value)}
                 />
                 <p>-</p>
@@ -32,6 +42,7 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
                
                     type="number"
                     className="border-1 w-16 px-3 py-2"
+                    value={processingTime.end}
                     defaultValue={ processingTime ? processingTime.end : '1'}
                     onChange={(e) => handleEnd(e.target.value)}
                 />

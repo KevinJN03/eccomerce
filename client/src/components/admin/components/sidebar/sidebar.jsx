@@ -43,7 +43,7 @@ function SideBar({}) {
                         <CreditCardRoundedIcon className="icons" />
                         <span>Orders</span>
                     </Link>
-                    <Link>
+                    <Link to="/admin/delivery">
                         <LocalShippingIcon className="icons" />
                         <span>Delivery</span>
                     </Link>

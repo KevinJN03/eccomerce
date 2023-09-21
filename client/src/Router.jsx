@@ -24,6 +24,7 @@ import Product_Single from './components/admin/components/product/product single
 import New_Product from './components/admin/components/product/new product/new_product';
 import Error from './components/error/error';
 import Layout from './components/Layout/layout';
+import Delivery from './components/admin/delivery/delivery';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -37,16 +38,15 @@ function Router({ Header, Footer }) {
                 element: <ItemPage />,
             },
         ]);
-        
+
         return allPaths;
     };
     const router = createBrowserRouter([
         {
             element: <Layout />,
             errorElement: <Error />,
-            
+
             children: [
-                
                 {
                     path: '/',
                     element: <Home />,
@@ -55,7 +55,7 @@ function Router({ Header, Footer }) {
                     path: '/home',
                     element: <Home />,
                 },
-                
+
                 ...productRoutes()[0],
                 ...productRoutes()[1],
 
@@ -96,6 +96,10 @@ function Router({ Header, Footer }) {
                         {
                             index: true,
                             element: <Admin_Dashboard />,
+                        },
+                        {
+                            path: 'delivery/',
+                            element: <Delivery />,
                         },
                         {
                             path: 'users/',

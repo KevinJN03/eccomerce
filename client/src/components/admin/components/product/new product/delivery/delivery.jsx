@@ -35,6 +35,7 @@ export default function Delivery() {
                         ModalContent={content}
                         check={modalCheck}
                         setCheck={setModalCheck}
+                        // className={"!z-[1]"}
                     />
                 )}
             </div>

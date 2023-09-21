@@ -4,19 +4,24 @@ import { useState } from 'react';
 import { useContent } from '../../../../../../context/ContentContext.jsx';
 function Delete({ id }) {
     const [check, setCheck] = useState(false);
-    const {loading, setLoading} = useContent()
+    const { loading, setLoading } = useContent();
     return (
-        <section id="Delete" className="">
+        <section id="Delete">
             <DeleteForeverSharpIcon onClick={() => setCheck(true)} />
-            <Modal
-                setCheck={setCheck}
-                check={check}
-                className={'!absolute !z-[2000] '}
-                deleteType={'delivery'}
-                id={id}
-                loading={loading}
-                setLoading={setLoading}
-            />
+            <div className={'!fixed !z-[2000] !min-h-[2000px]'}>
+                <Modal
+                    setCheck={setCheck}
+                    check={check}
+                    // className={
+                    //     '!absolute '
+                    // }
+                    deleteType={'delivery'}
+                    id={id}
+                    loading={loading}
+                    setLoading={setLoading}
+                    className={'!h-full !min-h-screen'}
+                />
+            </div>
         </section>
     );
 }
