@@ -7,7 +7,7 @@ import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
-function New({ profile, close, setProfile, setLoadingState, loadingState }) {
+function New({ profile, close, setLoadingState }) {
     console.log('New Render');
     const { content, dispatch, setLoading, loading } = useContent();
     const [customRange, setCustomRange] = useState(false);
@@ -16,22 +16,24 @@ function New({ profile, close, setProfile, setLoadingState, loadingState }) {
     const [processingTime, setProcessingTime] = useState();
     const [selected, setSelected] = useState();
     const [error, setError] = useState({});
+    const [fetchRoute, setFetchRoute] = useState('create');
     const back = () => {
         close ? close() : dispatch({ type: 'Main' });
     };
 
     const handleError = (error) => {
         const message = error.response.data.msg;
-                    const messageArr = message.map((msg) => {
-                        return {
-                            id: uuidv4(),
-                            msg,
-                        };
-                    });
-                    setError(messageArr);
-    }
+        const messageArr = message.map((msg) => {
+            return {
+                id: uuidv4(),
+                msg,
+            };
+        });
+        setError(messageArr);
+    };
     useEffect(() => {
         if (profile) {
+            setFetchRoute('update');
             console.log(profile);
             console.log('cost', profile.cost);
             setCost((prev) => (prev = profile.cost));
@@ -77,43 +79,33 @@ function New({ profile, close, setProfile, setLoadingState, loadingState }) {
         setCost(newValue);
     };
     const save = () => {
-        console.log('name: ', name);
+        const url = `/delivery/${fetchRoute}`;
+        const fetchUrl = profile ? `${url}/${profile._id}` : url;
+        const fetchOptions = {
+            name,
+            processingTime,
+            cost,
+        };
+        const axiosThen = (res) => {
+            if (res.status == 200 || 201) {
+                setLoadingState ? setLoadingState(true) : setLoading(true);
+            }
+        };
+        const axiosCatch = (error) => {
+            console.log('error whilst creating or adding:', error);
+            handleError(error);
+        };
+
         if (profile) {
             adminAxios
-                .put(`/delivery/update/${profile._id}`, {
-                    name,
-                    processingTime,
-                    cost,
-                })
-                .then((res) => {
-                    if (res.status == 200) {
-                        setLoadingState ? setLoadingState(true) :  setLoading(true);
-                    }
-                })
-                .catch((error) => {
-                    console.log('error whilst creating or adding:', error);
-                    handleError(error)
-                });
+                .put(fetchUrl, fetchOptions)
+                .then((res) => axiosThen(res))
+                .catch((error) => axiosCatch(error));
         } else {
             adminAxios
-                .post(`/delivery/create`, {
-                    name,
-                    processingTime,
-                    cost,
-                })
-                .then((res) => {
-                    if (res.status == 201) {
-                        setLoadingState
-                            ? setLoadingState(true)
-                            : setLoading(true);
-                         
-                    }
-                })
-                .catch((error) => {
-                    console.log('error whilst creating or adding:', error);
-                    const message = error.response.data.msg;
-                    handleError(error)
-                });
+                .post(fetchUrl, fetchOptions)
+                .then((res) => axiosThen(res))
+                .catch((error) => axiosCatch(error));
         }
     };
 
