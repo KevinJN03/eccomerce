@@ -12,6 +12,7 @@ function Modal({
     setLoading,
     ModalContent,
     className,
+    back
 }) {
     const handleDelete = () => {
         axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
@@ -27,8 +28,8 @@ function Modal({
         if (loading == true) {
             timeout = setTimeout(() => {
                 setLoading(false);
-                setCheck(false);
-            }, 1000);
+                back ? back():  setCheck(false);
+            }, 2000);
         }
 
         return () => {

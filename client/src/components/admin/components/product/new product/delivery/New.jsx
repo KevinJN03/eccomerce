@@ -7,9 +7,9 @@ import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
-function New({ profile, close, setProfile, setLoadingState}) {
+function New({ profile, close, setProfile, setLoadingState, loadingState }) {
     console.log('New Render');
-    const { content, dispatch, setLoading } = useContent();
+    const { content, dispatch, setLoading, loading } = useContent();
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState();
     const [cost, setCost] = useState();
@@ -19,7 +19,6 @@ function New({ profile, close, setProfile, setLoadingState}) {
     const back = () => {
         close ? close() : dispatch({ type: 'Main' });
     };
-
     useEffect(() => {
         if (profile) {
             console.log(profile);
@@ -76,11 +75,8 @@ function New({ profile, close, setProfile, setLoadingState}) {
                     cost,
                 })
                 .then((res) => {
-                    console.log('resoult', res.data);
-
                     if (res.status == 200) {
-                       setLoadingState ?  setLoadingState(true) : setLoading(true);
-                        back();
+                        setLoadingState ? setLoadingState(true) :  setLoading(true);
                     }
                 })
                 .catch((error) => {
@@ -97,8 +93,10 @@ function New({ profile, close, setProfile, setLoadingState}) {
                 })
                 .then((res) => {
                     if (res.status == 201) {
-                        setLoadingState ?  setLoadingState(true) : setLoading(true);
-                        back();
+                        setLoadingState
+                            ? setLoadingState(true)
+                            : setLoading(true);
+                         
                     }
                 })
                 .catch((error) => {

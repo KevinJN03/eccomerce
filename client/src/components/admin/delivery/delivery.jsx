@@ -19,18 +19,11 @@ export default function Delivery() {
     // const { dispatch, setModalCheck, content, modalCheck } = useContent();
 
     const [modalCheck, setModalCheck] = useState(false);
-    // useEffect(() => {
-    //     fetchProfile(setProfiles);
-    // }, []);
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            fetchProfile(setProfiles);
-            setLoading(false);
-        }, 3000);
-
-        return () => {
-            clearTimeout(timeout);
-        };
+        fetchProfile(setProfiles);
+    }, []);
+    useEffect(() => {
+        fetchProfile(setProfiles);
     }, [loading]);
 
     const addClick = () => {
@@ -72,6 +65,7 @@ export default function Delivery() {
                                 profile={deliveryProfile}
                                 setProfile={setDeliveryProfile}
                                 setLoadingState={setLoading}
+                                loadingState={loading}
                             />
                         }
                         button_text="Select Profile"
@@ -79,6 +73,7 @@ export default function Delivery() {
                         setCheck={setModalCheck}
                         loading={loading}
                         setLoading={setLoading}
+                
                     />
                 )}
             </section>

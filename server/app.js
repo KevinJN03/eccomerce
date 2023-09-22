@@ -18,7 +18,7 @@ import giftCardRoute from './Routes/giftCardRoute.js';
 import userRoute from './Routes/userRoute.js';
 import adminRoute from './Routes/adminRoute.js';
 // import sharp from 'sharp';
-
+import errorHandler from './errorHandler.js';
 const { DBNAME, URL } = process.env;
 
 const db = () => {
@@ -121,19 +121,6 @@ app.post('/upload', upload.array('file'), async (req, res) => {
     return console.log(err);
   }
 });
-
-function errorHandler(error, req, res, next) {
-  error.statusCode = error.statusCode || 500;
-  error.status = error.status || 'error';
-
-  if (error.name === 'CastError' && error.kind === 'ObjectId') {
-    return res.status(400).json({ success: false, msg: 'Invalid Id format' });
-  }
-  res.status(error.statusCode).json({
-    msg: error.message,
-    success: false,
-  });
-}
 
 app.use(errorHandler);
 

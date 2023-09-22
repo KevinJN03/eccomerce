@@ -1,4 +1,4 @@
-import BasicModal from '../../../modal/modal';
+import Modal from '../../../modal/modal';
 import New_Product_Header from '../header';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -13,8 +13,10 @@ import {
 } from '../../../../../../context/ContentContext';
 export default function Delivery() {
   
-    const { content, setContent, modalCheck, setModalCheck, profile } = useContent();
-
+    const { content, setContent, modalCheck, setModalCheck, profile, loading, setLoading, dispatch } = useContent();
+const back = () => {
+    dispatch({ type: 'Main' })
+}
     return (
         <section id="delivery">
             <New_Product_Header title={'Delivery'} />
@@ -30,12 +32,14 @@ export default function Delivery() {
                     Choose Profile
                 </button>}
                 {modalCheck && (
-                    <BasicModal
+                    <Modal
                         button_text="Select Profile"
                         ModalContent={content}
                         check={modalCheck}
                         setCheck={setModalCheck}
-                        // className={"!z-[1]"}
+                       loading={loading}
+                       setLoading={setLoading}
+                       back={back}
                     />
                 )}
             </div>
