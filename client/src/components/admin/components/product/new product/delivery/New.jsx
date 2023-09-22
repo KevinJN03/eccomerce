@@ -19,6 +19,17 @@ function New({ profile, close, setProfile, setLoadingState, loadingState }) {
     const back = () => {
         close ? close() : dispatch({ type: 'Main' });
     };
+
+    const handleError = (error) => {
+        const message = error.response.data.msg;
+                    const messageArr = message.map((msg) => {
+                        return {
+                            id: uuidv4(),
+                            msg,
+                        };
+                    });
+                    setError(messageArr);
+    }
     useEffect(() => {
         if (profile) {
             console.log(profile);
@@ -81,8 +92,7 @@ function New({ profile, close, setProfile, setLoadingState, loadingState }) {
                 })
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
-                    const message = error.response.data.msg;
-                    setError({ bool: true, msg: message });
+                    handleError(error)
                 });
         } else {
             adminAxios
@@ -102,13 +112,7 @@ function New({ profile, close, setProfile, setLoadingState, loadingState }) {
                 .catch((error) => {
                     console.log('error whilst creating or adding:', error);
                     const message = error.response.data.msg;
-                    const messageArr = message.map((msg) => {
-                        return {
-                            id: uuidv4(),
-                            msg,
-                        };
-                    });
-                    setError(messageArr);
+                    handleError(error)
                 });
         }
     };

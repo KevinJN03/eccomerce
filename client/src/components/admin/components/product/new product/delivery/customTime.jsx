@@ -14,7 +14,7 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
           };
       
           return setProcessingTime((prevstate) => {
-              return { ...prevstate,[ `${property}`] : value };
+              return { ...prevstate,[ `${property}`] : parseInt(value) };
           });
     }
 

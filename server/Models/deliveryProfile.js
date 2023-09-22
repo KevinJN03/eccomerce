@@ -24,12 +24,6 @@ const DeliveryProfileSchema = new Schema({
         true,
         "You didn't enter a start day for your profile. Please enter a start date",
       ],
-      validate: {
-        validator: function (x) {
-          return x < this.processingTime.end;
-        },
-        message: 'Your start day must be less than end day',
-      },
     },
     end: {
       type: Schema.Types.Number,
@@ -41,10 +35,17 @@ const DeliveryProfileSchema = new Schema({
   },
 });
 
-DeliveryProfileSchema.post('save', async (error, doc, next) => {
-  // console.log('error here: ', error.errors['processingTime.end'].message);
-  // console.log(error);
+DeliveryProfileSchema.pre('updateOne', function (next) {
+  this.options.runValidators = true;
+  next();
+});
 
+DeliveryProfileSchema.path('processingTime.start').validate(function (value) {
+  const time = this.get('processingTime');
+  return value < time.end;
+}, 'Your start day must be less than end day');
+
+DeliveryProfileSchema.post('save', async function (error, doc, next) {
   if (error.name === 'MongoServerError' && error.code === 11000) {
     return next(
       new Error(
@@ -53,6 +54,7 @@ DeliveryProfileSchema.post('save', async (error, doc, next) => {
     );
   }
 
-  next();
+  return next();
 });
+
 export default mongoose.model('deliveryProfile', DeliveryProfileSchema);

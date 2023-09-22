@@ -23,13 +23,12 @@ export const delete_single_delivery_profile = asyncHandler(
 export const update_single_delivery_profile = asyncHandler(
   async (req, res, next) => {
     const { id } = req.params;
-
-    const profile = await DeliveryProfile.findOneAndUpdate(
-      { _id: id },
-      req.body,
-      {new : true}
-    );
-
+    console.log(req.body)
+    const profile = await DeliveryProfile.updateOne({ _id: id }, req.body, {
+      new: true,
+      context: 'query',
+    });
+   
     res.status(200).send(profile);
   },
 );
