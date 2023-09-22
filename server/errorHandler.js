@@ -13,12 +13,21 @@ export default function errorHandler(error, req, res, next) {
     return res.status(400).json({ success: false, msg: 'Invalid Id format' });
   }
 
+  if (error.name === 'MongoServerError' && error.code == 11000) {
+    error.message = `${
+      error.keyValue.name
+    } already exists. Please try A different ${
+      Object.keys(error.keyValue)[0]
+    }.`;
+  }
+
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
+  console.log(error);
   res.status(error.statusCode).json({
     // if js an array is ann object
-    msg: typeof error.message === "object" ? error.message : [error.message],
+    msg: typeof error.message === 'object' ? error.message : [error.message],
     success: false,
   });
 }

@@ -7,7 +7,7 @@ const DeliveryProfileSchema = new Schema({
       true,
       "You didn't provide a name for your delivery profile. Please enter a name",
     ],
-    unique: true,
+    unique: [true, 'err'],
   },
   cost: Schema.Types.Number,
   processingTime: {
@@ -43,7 +43,7 @@ DeliveryProfileSchema.pre('updateOne', function (next) {
 DeliveryProfileSchema.path('processingTime.start').validate(function (value) {
   const time = this.get('processingTime');
   return value < time.end;
-}, 'Your start day must be less than end day');
+}, 'Your start day or week must be less than end day');
 
 DeliveryProfileSchema.post('save', async function (error, doc, next) {
   if (error.name === 'MongoServerError' && error.code === 11000) {
