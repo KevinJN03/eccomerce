@@ -16,6 +16,7 @@ const UserSchema = new Schema({
     },
     required: true,
   },
+  profileImg: String,
 });
 
 export default mongoose.model('Users', UserSchema);

@@ -5,6 +5,7 @@ import List from '../users.jsx';
 import './single.scss';
 import Transaction_Table from '../../table/transaction_table.jsx';
 function Single_User({}) {
+ 
     return (
         <div className="single">
             <Sidebar />

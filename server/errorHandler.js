@@ -14,9 +14,9 @@ export default function errorHandler(error, req, res, next) {
   }
 
   if (error.name === 'MongoServerError' && error.code == 11000) {
-    error.message = `${
-      error.keyValue.name
-    } already exists. Please try A different ${
+    const key = Object.values(error.keyValue);
+
+    error.message = `${key[0]} already exists. Please try A different ${
       Object.keys(error.keyValue)[0]
     }.`;
   }
@@ -24,7 +24,7 @@ export default function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-
+  console.log(error.message);
   res.status(error.statusCode).json({
     // if js an array is ann object
     msg: typeof error.message === 'object' ? error.message : [error.message],

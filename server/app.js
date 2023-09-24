@@ -18,6 +18,8 @@ import giftCardRoute from './Routes/giftCardRoute.js';
 import userRoute from './Routes/userRoute.js';
 import adminRoute from './Routes/adminRoute.js';
 // import sharp from 'sharp';
+import fileFilter from './Upload/fileFilter.js';
+import sharpify from './Upload/sharpify.js';
 import errorHandler from './errorHandler.js';
 const { DBNAME, URL } = process.env;
 
@@ -51,13 +53,13 @@ app.use('/user', userRoute);
 app.use('/admin', adminRoute);
 const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.split('/')[0] === 'image') {
-    cb(null, true);
-  } else {
-    cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE'), false);
-  }
-};
+// const fileFilter = (req, file, cb) => {
+//   if (file.mimetype.split('/')[0] === 'image') {
+//     cb(null, true);
+//   } else {
+//     cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE'), false);
+//   }
+// };
 const upload = multer({
   storage,
   fileFilter,
@@ -84,23 +86,23 @@ const upload = multer({
 //   }
 // };
 
-const sharpify = async (file) => {
-  const compressedFile = await sharp(file.buffer)
-    .toFormat('webp')
-    .webp({ quality: 80, force: true })
-    .toBuffer();
-  let newName = file.originalname.split('.');
-  newName.pop();
-  newName = newName.toString().concat('.webp');
-  console.log(newName);
-  const newFile = {
-    originalname: newName,
-    buffer: compressedFile,
-  };
-  console.log('new file: ', newFile);
-  console.log('oldfile', file);
-  return newFile;
-};
+// const sharpify = async (file) => {
+//   const compressedFile = await sharp(file.buffer)
+//     .toFormat('webp')
+//     .webp({ quality: 80, force: true })
+//     .toBuffer();
+//   let newName = file.originalname.split('.');
+//   newName.pop();
+//   newName = newName.toString().concat('.webp');
+//   console.log(newName);
+//   const newFile = {
+//     originalname: newName,
+//     buffer: compressedFile,
+//   };
+//   console.log('new file: ', newFile);
+//   console.log('oldfile', file);
+//   return newFile;
+// };
 app.post('/upload', upload.array('file'), async (req, res) => {
   try {
     const newFile = await sharpify(req.files[0]);

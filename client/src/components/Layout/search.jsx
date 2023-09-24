@@ -14,7 +14,7 @@ function Search({ search }) {
     const debounceValue = useDebounce(searchText, 500);
 
     const [mobileOverlay, setMobileOverlay] = useState(false);
-    // const screenSize = useWindowSize();
+    const screenSize = useWindowSize();
     const inputRef = useRef(null);
     const mobileInputRef = useRef(null);
     const navigate = useNavigate();
@@ -37,9 +37,17 @@ function Search({ search }) {
     }, [debounceValue]);
 
     const openSearch = () => {
+
+       
         setOpen(true);
         toggle();
     };
+
+    const mobileSearch = ()=> {
+         if (screenSize.width <= 480) {
+          return  setMobileOverlay(true);
+        }
+    }
     console.log('searchText: ', searchText);
     const closeSearch = () => {
         setOpen(false);
@@ -75,9 +83,7 @@ function Search({ search }) {
                         />
                     )}
                     <SearchRounded
-                        // onClick={() =>
-                        //     // screenSize.width < 480 && setMobileOverlay(true)
-                        // }
+                        onClick={mobileSearch}
                         className={`${
                             searchText && 'filter lg:bg-orange-400'
                         } h-full rounded-full p-1 sm:!text-[40px] sm:invert lg:!text-3xl`}

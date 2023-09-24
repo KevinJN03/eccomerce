@@ -7,6 +7,8 @@ import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defultTimes';
 import { v4 as uuidv4 } from 'uuid';
+
+import handleError, { closeError } from '../../../../../common/handleError';
 function New({ profile, close, setLoadingState }) {
     console.log('New Render');
     const { content, dispatch, setLoading, loading } = useContent();
@@ -15,22 +17,12 @@ function New({ profile, close, setLoadingState }) {
     const [cost, setCost] = useState();
     const [processingTime, setProcessingTime] = useState();
     const [selected, setSelected] = useState();
-    const [error, setError] = useState({});
+    const [error, setError] = useState([]);
     const [fetchRoute, setFetchRoute] = useState('create');
     const back = () => {
         close ? close() : dispatch({ type: 'Main' });
     };
 
-    const handleError = (error) => {
-        const message = error.response.data.msg;
-        const messageArr = message.map((msg) => {
-            return {
-                id: uuidv4(),
-                msg,
-            };
-        });
-        setError(messageArr);
-    };
     useEffect(() => {
         if (profile) {
             setFetchRoute('update');
@@ -93,19 +85,19 @@ function New({ profile, close, setLoadingState }) {
         };
         const axiosCatch = (error) => {
             console.log('error whilst creating or adding:', error);
-            handleError(error);
+            setError(handleError(error));
+        };
+
+        const axiosFetch = (result) => {
+            return result
+                .then((res) => axiosThen(res))
+                .catch((error) => axiosCatch(error));
         };
 
         if (profile) {
-            adminAxios
-                .put(fetchUrl, fetchOptions)
-                .then((res) => axiosThen(res))
-                .catch((error) => axiosCatch(error));
+            axiosFetch(adminAxios.put(fetchUrl, fetchOptions));
         } else {
-            adminAxios
-                .post(fetchUrl, fetchOptions)
-                .then((res) => axiosThen(res))
-                .catch((error) => axiosCatch(error));
+            axiosFetch(adminAxios.post(fetchUrl, fetchOptions));
         }
     };
 
@@ -126,12 +118,12 @@ function New({ profile, close, setLoadingState }) {
         setSelected(profileToJson.name);
     };
 
-    const closeError = (id) => {
-        const newErrors = [...error];
-        const filter = newErrors.filter((item) => item.id != id);
+    // const closeError = (id,setState) => {
+    //     const newErrors = [...error];
+    //     const filter = newErrors.filter((item) => item.id != id);
 
-        setError(filter);
-    };
+    //     setState(filter);
+    // };
     return (
         <section className="new-delivery flex w-full flex-col gap-3">
             <div className="error">
@@ -144,7 +136,9 @@ function New({ profile, close, setLoadingState }) {
                                 class="alert alert-error mb-2 rounded-none py-2"
                             >
                                 <svg
-                                    onClick={() => closeError(id)}
+                                    onClick={() =>
+                                        closeError(id, error, setError)
+                                    }
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-6 w-6 shrink-0 stroke-current"
                                     fill="none"
