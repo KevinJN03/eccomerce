@@ -7,27 +7,18 @@ import Header from './components/Layout/header';
 import Layout from './components/Layout/layout';
 import LayoutProvider from './context/layoutContext';
 import { DarkModeContextProvider } from './context/darkModeContext';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+// import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 function App() {
-    // const [loading, setLoading] = useState(true);
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setLoading(false);
-    //     }, 1500);
-
-    //     return () => {
-    //         setLoading(true);
-    //     };
-    // },[]);
-    // function Loader() {
-    //     return <span className="loading loading-infinity loading-lg"></span>;
-    // }
     return (
         <div id="App">
             <LayoutProvider>
-                <DarkModeContextProvider>
-                    <Router />
-                </DarkModeContextProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DarkModeContextProvider>
+                        <Router />
+                    </DarkModeContextProvider>
+                </LocalizationProvider>
             </LayoutProvider>
         </div>
     );

@@ -12,14 +12,23 @@ function Modal({
     setLoading,
     ModalContent,
     className,
-    back
+    back,
+    selection,
 }) {
     const handleDelete = () => {
-        axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
-            if (res.status === 200) {
-                setLoading(true);
-            }
-        });
+        if (selection.length > 1) {
+            axios.delete(`/admin/delete/${deleteType}/many/${selection}`).then((res) => {
+                if (res.status === 200) {
+                    setLoading(true);
+                }
+            });
+        } else {
+            axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
+                if (res.status === 200) {
+                    setLoading(true);
+                }
+            });
+        }
     };
 
     useEffect(() => {
@@ -28,7 +37,7 @@ function Modal({
         if (loading == true) {
             timeout = setTimeout(() => {
                 setLoading(false);
-                back ? back():  setCheck(false);
+                back ? back() : setCheck(false);
             }, 2000);
         }
 
@@ -71,7 +80,9 @@ function Modal({
                                         CONFIRMATION
                                     </h2>
                                     <span className="text-center">
-                                        Are you sure you want to delete this
+                                        {selection.length > 1
+                                            ? `Are you sure you want to delete (${selection.length}) ${deleteType}`
+                                            : 'Are you sure you want to delete this'}
                                     </span>
                                     <div className="flex w-full justify-center gap-5">
                                         <button

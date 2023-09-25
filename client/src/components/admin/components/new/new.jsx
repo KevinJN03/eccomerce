@@ -2,7 +2,7 @@ import './new.scss';
 import SideBar from '../sidebar/sidebar';
 import Navbar from '../navbar/navbar';
 import ReactFlagsSelect from 'react-flags-select';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import User_Form from './userForm';
 import Product_Form from './productForm';
@@ -10,7 +10,12 @@ import { Save } from '@mui/icons-material';
 import axios, { adminAxios } from '../../../../api/axios';
 import handleError, { closeError } from '../../../common/handleError';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+
 import { v4 as uuidv4 } from 'uuid';
+import ErrorList from './errorList';
+import Success from './success';
+import { useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 function New({ type, title }) {
     const [selected, setSelected] = useState('');
     const [file, setFile] = useState();
@@ -18,23 +23,51 @@ function New({ type, title }) {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [mobile, setMobile] = useState('');
-    const [address, setAddress] = useState('');
+    const [address, setAddress] = useState({});
     const [password, setPassword] = useState('');
-    const [interest, setInterest] = useState('');
+    const [interest, setInterest] = useState('Menswear');
     const [error, setError] = useState([]);
-    const [dob, setDob] = useState();
+    const [dob, setDob] = useState('');
+    const [success, setSuccess] = useState(false);
+    const [userId, setUserId] = useState();
+    const [generateUrl, setGenerateUrl] = useState(true)
     const value = [
-        { state: firstName, setState: setFirstName, id: 0 },
-        { state: lastName, setState: setLastName, id: 1 },
-        { state: email, setState: setEmail, id: 2 },
-        { state: mobile, setState: setMobile, id: 3 },
-        { state: password, setState: setPassword, id: 4 },
-        { state: address, setState: setAddress, id: 5 },
-        { state: dob, setState: setDob, id: 6 },
+        { firstName, setFirstName },
+        { lastName, setLastName },
+        { email, setEmail },
+        { mobile, setMobile },
+        { password, setPassword },
+        { interest, setInterest },
+        { address, setAddress },
+        { dob, setDob },
 
         // { interest, setInterest },
     ];
 
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            console.log(id);
+            adminAxios.get(`/user/${id}`).then((res) => {
+                let data = res.data;
+                console.log(data);
+                // setFile(data.profileImg)
+                setGenerateUrl(false)
+                setFirstName(data.firstName);
+                setFile(data.profileImg);
+                setLastName(data.lastName);
+                setMobile(data.mobile);
+                setInterest(data.interest)
+                setEmail(data.email)
+             setAddress(data.address)
+             
+                // setDob(dayjs(data.dob).format('MM/DD/YYYY'))
+                {
+                }
+            });
+        }
+    }, []);
     const handleFile = (e) => {
         let fileType = e.target.files[0].type;
         if (fileType.includes('image')) {
@@ -44,7 +77,9 @@ function New({ type, title }) {
                 ...error,
                 {
                     id: uuidv4(),
-                    msg: `${fileType.split('/')[1]} is unsupported, only png, jpeg, webp accepted.`,
+                    msg: `${
+                        fileType.split('/')[1]
+                    } is unsupported, only png, jpeg, webp accepted.`,
                 },
             ]);
         }
@@ -73,6 +108,8 @@ function New({ type, title }) {
             interest,
             dob,
             file,
+            address,
+            mobile,
         };
         console.log('body', body);
         adminAxios
@@ -84,13 +121,19 @@ function New({ type, title }) {
 
                 if (res.status == 201) {
                     setError([]);
+                    setSuccess(true);
+                    const { _id } = res.data;
+                    setUserId(_id);
                 }
             })
             .catch((error) => {
                 setError(handleError(error));
             });
     };
-
+const handleDelete = () => {
+    setFile(null)
+    setGenerateUrl(true)
+}
     return (
         <div className="new">
             <SideBar />
@@ -102,108 +145,63 @@ function New({ type, title }) {
                         <h1 className="title">{title}</h1>
                     </div>
                     <section className="errors-wrapper mt-3">
-                        {error.length > 0 &&
-                            error.map((err) => {
-                                return (
-                                    <div
-                                        className="alert alert-warning rounded-none"
-                                        key={err.id}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-6 w-6 shrink-0 stroke-current"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                                            />
-                                        </svg>
-                                        <span>{err.msg}</span>
-                                        <svg
-                                            onClick={() =>
-                                                closeError(
-                                                    err.id,
-                                                    error,
-                                                    setError
-                                                )
-                                            }
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="ml-auto h-6 w-6 shrink-0 stroke-current"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                );
-                            })}
+                        <ErrorList error={error} setError={setError} />
                     </section>
 
                     <div className="bottom">
-                        <div className="left">
-                            <div className="relative">
-                                <img
-                                    src={
-                                        file
-                                            ? URL.createObjectURL(file)
-                                            : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
-                                    }
-                                    alt=""
-                                />
-                                {file && (
-                                    <DeleteRoundedIcon
-                                        className="absolute bottom-0 right-0"
-                                        onClick={() => setFile(null)}
-                                    />
-                                )}
-                            </div>
+                        {success && (
+                            <Success setSuccess={setSuccess} userId={userId} />
+                        )}
+                        {!success && (
+                            <>
+                                <div className="left">
+                                    <div className="relative">
+                                        <img
+                                            src={
+                                                 file && generateUrl  ?  URL.createObjectURL(file) :  !generateUrl ? file
+                                                    : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
+                                            }
+                                            alt=""
+                                        />
+                                        {file && (
+                                            <DeleteRoundedIcon
+                                                className="absolute bottom-0 right-0"
+                                                onClick={handleDelete}
+                                            />
+                                        )}
+                                    </div>
 
-                            <button
-                                type="button"
-                                className="mb-4 bg-green-500 p-2 text-white hover:bg-[var(--green)]"
-                                onClick={save}
-                            >
-                                Create {type}
-                            </button>
-                        </div>
-
-                        <div className="right">
-                            <form action>
-                                <div className="formInput">
-                                    <label htmlFor="file">
-                                        Image:
-                                        <DriveFolderUploadIcon className="icon" />
-                                    </label>
-                                    <input
-                                        type="file"
-                                        placeholder="Choose File"
-                                        accept="image/*"
-                                        id="file"
-                                        className="hidden"
-                                        onChange={(e) => handleFile(e)}
-                                    />
+                                    <button
+                                        type="button"
+                                        className="mb-4 bg-green-500 p-2 text-white hover:bg-[var(--green)]"
+                                        onClick={save}
+                                    >
+                                        Create {type}
+                                    </button>
                                 </div>
-                                {type == 'User' && (
-                                    <User_Form
-                                        states={value}
-                                        interestState={{
-                                            interest,
-                                            setInterest,
-                                        }}
-                                    />
-                                )}
-                                {type == 'Product' && <Product_Form />}
-                            </form>
-                        </div>
+
+                                <div className="right">
+                                    <form action>
+                                        <div className="formInput">
+                                            <label htmlFor="file">
+                                                Image:
+                                                <DriveFolderUploadIcon className="icon" />
+                                            </label>
+                                            <input
+                                                type="file"
+                                                placeholder="Choose File"
+                                                accept="image/*"
+                                                id="file"
+                                                className="hidden"
+                                                onChange={(e) => handleFile(e)}
+                                            />
+                                        </div>
+
+                                        <User_Form states={value}  type={type}/>
+                                    </form>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </section>
             </div>

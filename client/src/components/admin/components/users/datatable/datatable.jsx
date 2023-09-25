@@ -15,25 +15,20 @@ function Datatable({
     viewBtn,
 }) {
     const [modalCheck, setModalCheck] = useState(false);
-
+    const [selection, setSelection] = useState([]);
+    const [checkBox, setCheckBox] = useState(true)
     const [id, setId] = useState(null);
     const headerTitle = type[0].toUpperCase() + type.substring(1);
-    const modalHandleClick = (type, id) => {
-        if (type === 'user') {
-            axios.delete(`/delete/user/${id}`).then((res) => {
-                if (res.status === 200) {
-                    setLoading(true);
-                }
-            });
-        }
-    };
-
     const deleteButtonClick = (type, id) => {
         // setDeleteType(type);
         setId(id);
         setModalCheck(true);
+        // setCheckBox(false)
     };
-
+    const deleteAllClick = () => {
+        setModalCheck(true);
+       
+    };
     const actionColumn = [
         {
             field: 'action',
@@ -43,7 +38,11 @@ function Datatable({
                 return (
                     <div className="cellAction">
                         {viewBtn ? (
-                            <button type="button" className="viewButton" onClick={() => viewBtn(params.row._id)}>
+                            <button
+                                type="button"
+                                className="viewButton"
+                                onClick={() => viewBtn(params.row._id)}
+                            >
                                 View
                             </button>
                         ) : (
@@ -52,14 +51,18 @@ function Datatable({
                             </Link>
                         )}
 
+                        { selection.length < 2 && 
                         <button
                             className="deleteButton"
                             onClick={() =>
                                 deleteButtonClick(type, params.row._id)
                             }
                         >
+                            
+                            
                             Delete
                         </button>
+                        }
                     </div>
                 );
             },
@@ -70,15 +73,26 @@ function Datatable({
         <section className="datatable">
             <div className="datatableTitle">
                 Add New {headerTitle}
-                {addBtn ? (
-                    <button type="button" className="link" onClick={addBtn}>
-                        Add New
-                    </button>
-                ) : (
-                    <Link className="link" to="new">
-                        Add New
-                    </Link>
-                )}
+                <div>
+                    {selection.length > 0 && (
+                        <button
+                            type="button"
+                            className="link mr-2 !border-red-500 !text-red-500"
+                            onClick={deleteAllClick}
+                        >
+                            Delete All ({selection.length})
+                        </button>
+                    )}
+                    {addBtn ? (
+                        <button type="button" className="link" onClick={addBtn}>
+                            Add New
+                        </button>
+                    ) : (
+                        <Link className="link" to="new">
+                            Add New
+                        </Link>
+                    )}
+                </div>
             </div>
             <DataGrid
                 getRowId={(row) => row._id}
@@ -92,6 +106,10 @@ function Datatable({
                 }}
                 pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
+                isRowSelectable={(params) => params.row.name != 'Express Delivery'}
+                onRowSelectionModelChange={(select) => {
+                    setSelection(select);
+                }}
             />
             {modalCheck && (
                 <Modal
@@ -101,6 +119,7 @@ function Datatable({
                     deleteType={type}
                     id={id}
                     setLoading={setLoading}
+                    selection={selection}
                 />
             )}
         </section>

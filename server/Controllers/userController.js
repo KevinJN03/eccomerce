@@ -61,6 +61,12 @@ export const delete_user = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+export const delete_many_user = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const idArr = id.split(',');
+  const user = await User.deleteMany({ _id: idArr });
+  res.send(user);
+});
 
 const storage = multer.memoryStorage();
 
@@ -92,7 +98,7 @@ export const create_user = [
       firstName,
       lastName,
       dob,
-      address,
+      address: [address],
       mobile,
       email,
       interest,
@@ -118,3 +124,15 @@ export const create_user = [
     res.status(201).send(user);
   }),
 ];
+
+export const get_single_user = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    res.status(404).send('User Not Found');
+  } else {
+    res.status(200).send(user);
+  }
+});

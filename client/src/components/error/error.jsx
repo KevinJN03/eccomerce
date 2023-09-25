@@ -1,7 +1,7 @@
 import disableLayout from '../../hooks/disableLayout';
 import { Link } from 'react-router-dom';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
-export default function Error() {
+export default function Error({message, link, buttonText}) {
     disableLayout();
     return (
         <section className="error-page flex h-screen w-full items-center justify-center">
@@ -15,10 +15,10 @@ export default function Error() {
                     retry or come back later
                 </p>
                 <Link
-                    to="/home"
+                    to={link ? link : "/home"}
                     className="mt-4 bg-[var(--primary)] px-3 py-3 font-bold tracking-wide text-white"
                 >
-                    GO TO HOMEPAGE
+                    {buttonText ? buttonText : 'GO TO HOMEPAGE'}
                 </Link>
             </section>
         </section>
