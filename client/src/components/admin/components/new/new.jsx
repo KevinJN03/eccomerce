@@ -30,7 +30,7 @@ function New({ type, title }) {
     const [dob, setDob] = useState('');
     const [success, setSuccess] = useState(false);
     const [userId, setUserId] = useState();
-    const [generateUrl, setGenerateUrl] = useState(true)
+    const [generateUrl, setGenerateUrl] = useState(true);
     const value = [
         { firstName, setFirstName },
         { lastName, setLastName },
@@ -53,16 +53,17 @@ function New({ type, title }) {
                 let data = res.data;
                 console.log(data);
                 // setFile(data.profileImg)
-                setGenerateUrl(false)
+                setAddress(data.address[0]);
+                setGenerateUrl(false);
                 setFirstName(data.firstName);
                 setFile(data.profileImg);
                 setLastName(data.lastName);
                 setMobile(data.mobile);
-                setInterest(data.interest)
-                setEmail(data.email)
-             setAddress(data.address)
-             
-                // setDob(dayjs(data.dob).format('MM/DD/YYYY'))
+                setInterest(data.interest);
+                setEmail(data.email);
+                
+
+                setDob(dayjs(data.dob));
                 {
                 }
             });
@@ -71,6 +72,7 @@ function New({ type, title }) {
     const handleFile = (e) => {
         let fileType = e.target.files[0].type;
         if (fileType.includes('image')) {
+            setGenerateUrl(true)
             setFile(e.target.files[0]);
         } else {
             setError([
@@ -104,22 +106,31 @@ function New({ type, title }) {
             firstName,
             lastName,
             email,
-            password,
             interest,
             dob,
-            file,
+
             address,
             mobile,
         };
+        if (generateUrl) {
+            body.file = file;
+           
+        }
+
+        if(type == 'new'){
+            body.password = password;
+        }
         console.log('body', body);
+        let option =
+            type == 'new' ? 'create' : `update/${id}`;
+
+
         adminAxios
-            .postForm('/user/create', {
-                ...body,
-            })
+            .postForm(`/user/${option}`, body)
             .then((res) => {
                 console.log(res.data);
 
-                if (res.status == 201) {
+                if (res.status == 201 || 200) {
                     setError([]);
                     setSuccess(true);
                     const { _id } = res.data;
@@ -130,10 +141,10 @@ function New({ type, title }) {
                 setError(handleError(error));
             });
     };
-const handleDelete = () => {
-    setFile(null)
-    setGenerateUrl(true)
-}
+    const handleDelete = () => {
+        setFile(null);
+        setGenerateUrl(true);
+    };
     return (
         <div className="new">
             <SideBar />
@@ -150,7 +161,7 @@ const handleDelete = () => {
 
                     <div className="bottom">
                         {success && (
-                            <Success setSuccess={setSuccess} userId={userId} />
+                            <Success setSuccess={setSuccess} userId={userId} type={type} id={id}/>
                         )}
                         {!success && (
                             <>
@@ -158,7 +169,10 @@ const handleDelete = () => {
                                     <div className="relative">
                                         <img
                                             src={
-                                                 file && generateUrl  ?  URL.createObjectURL(file) :  !generateUrl ? file
+                                                file && generateUrl
+                                                    ? URL.createObjectURL(file)
+                                                    : !generateUrl
+                                                    ? file
                                                     : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
                                             }
                                             alt=""
@@ -197,7 +211,7 @@ const handleDelete = () => {
                                             />
                                         </div>
 
-                                        <User_Form states={value}  type={type}/>
+                                        <User_Form states={value} type={type} />
                                     </form>
                                 </div>
                             </>

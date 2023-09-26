@@ -49,6 +49,7 @@ function Single_User({}) {
                                         src={user.profileImg || userIcon}
                                         alt=""
                                         className="itemImg"
+                                
                                     />
                                     <div className="details">
                                         <h1 className="itemTitle">{`${user.firstName} ${user.lastName}`}</h1>

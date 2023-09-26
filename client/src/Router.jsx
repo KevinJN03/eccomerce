@@ -121,7 +121,7 @@ function Router({ Header, Footer }) {
                                 {
                                     path: 'new',
                                     element: (
-                                        <New type="User" title="Add New User" />
+                                        <New type="new" title="Add New User" />
                                     ),
                                 },
                                 {

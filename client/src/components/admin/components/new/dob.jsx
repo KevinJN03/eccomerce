@@ -9,15 +9,14 @@ function DOB({ states }) {
     const { dob, setDob } = states;
 
     const handleDateChange = (date) => {
-        
         console.log(date.format());
-        setDob(date.format('YYYY-MM-DD'))
+        setDob(date.format('YYYY-MM-DD'));
     };
     return (
         <div className="flex items-center gap-2">
             <label>DOB</label>
             <DatePicker
-                value={dob}
+                value={dayjs(dob)}
                 onChange={handleDateChange}
                 slotProps={{ textField: { size: 'small' } }}
                 // timezone="Europe/London"

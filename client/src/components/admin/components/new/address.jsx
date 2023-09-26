@@ -2,11 +2,21 @@ import ReactFlagsSelect from 'react-flags-select';
 import { useEffect, useState } from 'react';
 import FormInput from './formInput';
 
-import { getName } from 'country-list';
+import { getName, getCode } from 'country-list';
 function Address({ states }) {
     const [selected, setSelected] = useState('GB');
     const { address, setAddress } = states[6];
-
+    useEffect(() => {
+        let { country } = address;
+        console.log("here 2",{country})
+        const newCode = getCode(`${country}`);
+        console.log(newCode);
+        if (newCode) {
+            setSelected(newCode)
+        }
+        // console.log("here", address.country, newCode)
+        // setSelected(getCode(address.country))
+    }, []);
     const addressFields = [
         {
             type: 'text',
@@ -35,12 +45,13 @@ function Address({ states }) {
             placeholder: 'BR2 6DX',
         },
     ];
+
     const handleSelect = (code) => {
         setSelected(code);
         setAddress({ ...address, country: getName(code) });
     };
     return (
-        <section className="flex w-full pl-6">
+        <section className="flex w-full">
             <div className="formInput flex flex-col gap-3 self-start">
                 <label className="mb-2">Address</label>
                 {addressFields.map((field) => {
