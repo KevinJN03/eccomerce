@@ -2,8 +2,28 @@ import { Modal } from '@mui/material';
 import New_Product_Header from './header';
 import MultipleSelect from './select/select';
 import CategorySelect from './select/select';
-
+import { useEffect, useState } from 'react';
+import axios from '../../../../../api/axios';
 function Details() {
+    const [category, setCategory] = useState([]);
+
+    const fetchData = (route, setState) => {
+        axios
+            .get(route)
+            .then((res) => {
+                if (res.status == 200) {
+                    setState(res.data);
+                }
+            })
+            .catch((error) => {
+                console.log('error at details: ', error);
+            });
+    };
+    useEffect(() => {
+
+
+        fetchData('category', setCategory)
+    }, []);
     return (
         <section id="details">
             <New_Product_Header
@@ -14,11 +34,12 @@ function Details() {
             />
 
             <div className="flex flex-col">
-                <CategorySelect options={['Men', 'Women']} title="Category" />
-                <CategorySelect
-                    options={['Shirt', 'Bottoms', 'Shoe', 'Accessory']}
+            <CategorySelect
+                    options={category.map((cat) => cat.name.toUpperCase())}
                     title="Category"
                 />
+                <CategorySelect options={['Men', 'Women']} title="Gender" />
+               
                 <CategorySelect
                     options={[
                         'Red',
@@ -30,18 +51,6 @@ function Details() {
                         'White',
                     ]}
                     title="Primary Color"
-                />
-                <CategorySelect
-                    options={[
-                        'Red',
-                        'Yellow',
-                        'Blue',
-                        'Green',
-                        'Orange',
-                        'Black',
-                        'White',
-                    ]}
-                    title="Secondary Color"
                 />
             </div>
         </section>

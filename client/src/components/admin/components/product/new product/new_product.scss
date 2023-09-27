@@ -2,6 +2,9 @@
     --about-primary: #4d6bc6;
 }
 
+.format {
+    @apply m-4 w-7/12 p-6 rounded-xl;
+}
 .new-product {
     @apply flex w-full;
 
@@ -9,7 +12,7 @@
         flex: 6;
 
         .product-listing {
-            @apply m-6 bg-white p-6;
+            @apply m-6 p-6;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
             .subheader {
@@ -28,9 +31,9 @@
     }
 
     #delivery {
-        @apply m-4 w-7/12 p-6;
+        @apply format;
         border-radius: 10px;
-        border: 2px solid black;
+        
     }
 }
 
@@ -42,9 +45,9 @@ p {
 }
 
 .about {
-    @apply m-4 w-7/12 p-6;
-    border-radius: 10px;
-    border: 2px solid black;
+    @apply format bg-white;
+    
+    
 
     input {
         @apply outline;
@@ -54,7 +57,7 @@ p {
         @apply flex flex-col items-center justify-center gap-12;
         height: 300px;
         outline: 2px dashed black;
-        border-radius: 20px;
+        border-radius: 12px;
     }
 
     .uploads {
@@ -95,9 +98,9 @@ p {
 // Price & Inventory Section
 
 #price-inventory {
-    @apply m-4 w-7/12 p-6;
-    border-radius: 10px;
-    border: 2px solid black;
+    @apply format;
+   
+
 
     input {
         @apply outline;
@@ -111,11 +114,21 @@ p {
 }
 
 #details {
-    @apply m-4 w-7/12 p-6;
-    border-radius: 10px;
-    border: 2px solid black;
+    @apply format;
+ 
+
 }
 
 .category-select {
     width: 50%;
+}
+
+.new-product-footer {
+    button {
+        @apply px-4 py-3  text-base rounded-full border-2 border-black hover:scale-105 transition-all;
+    }
+}
+
+.new-product-wrapper * {
+    @apply bg-white
 }

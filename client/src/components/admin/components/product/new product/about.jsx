@@ -24,7 +24,7 @@ function About() {
                 <label htmlFor="#photo" className="text-lg font-medium">
                     Photo<span className="asterisk">*</span>
                 </label>
-                <p>Add up to 6 photos</p>
+                <p className='mb-2'>Add up to 6 photos</p>
                <DragDropFile  />
 
             </form>

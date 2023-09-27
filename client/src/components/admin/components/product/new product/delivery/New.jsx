@@ -5,7 +5,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CustomTime from './customTime';
 import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
-import defaultTimes from './defultTimes';
+import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
 
 import handleError, { closeError } from '../../../../../common/handleError';

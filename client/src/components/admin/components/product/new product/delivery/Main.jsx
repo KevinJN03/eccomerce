@@ -4,6 +4,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Popover from './edit';
 import { useContent } from '../../../../../../context/ContentContext';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
 import Edit from './edit';
 import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
@@ -16,18 +17,19 @@ function MainContent() {
         dispatch,
         setModalCheck,
         setProfile,
+        profile,
         loading,
         setLoading,
     } = useContent();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
-
+    const [profileReplacement, setProfileReplacement] = useState(profile);
     useEffect(() => {
         fetchProfile(setDeliveryProfiles);
     }, []);
 
     useEffect(() => {
         fetchProfile(setDeliveryProfiles);
-        let timeout = 0;
+        let timeout;
         if (loading == true) {
             timeout = setTimeout(() => {
                 setLoading(false);
@@ -36,13 +38,19 @@ function MainContent() {
     }, [loading]);
 
     const handleClick = (profile) => {
-        setModalCheck(false);
-        setProfile(profile);
+        setProfileReplacement((prevState) => [...prevState, profile]);
     };
 
     const confirm = () => {
         setModalCheck(false);
-    }
+        setProfile(profileReplacement);
+    };
+
+    const removeProfile = (id) => {
+        let newArr = [...profileReplacement];
+        const newProfile = newArr.filter((item) => item._id != id);
+        setProfileReplacement(newProfile);
+    };
     return (
         <div className="delivery-profile flex w-full flex-col">
             <span
@@ -68,17 +76,23 @@ function MainContent() {
                 ) : (
                     <>
                         {deliveryProfiles &&
-                            deliveryProfiles.map((profile) => {
+                            deliveryProfiles.map((delivery) => {
                                 const { start, end, type } =
-                                    profile.processingTime;
+                                    delivery.processingTime;
+
+                                const findProfile = profileReplacement.find(
+                                    (item) => item._id == delivery._id
+                                );
                                 return (
                                     <div
-                                        key={profile._id}
-                                        className="item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2"
+                                        key={delivery._id}
+                                        className={`item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2 ${
+                                            findProfile && 'border-green-400'
+                                        }`}
                                     >
                                         <div className="profile-info">
                                             <h2 className="mb-1 font-medium">
-                                                {profile.name}
+                                                {delivery.name}
                                             </h2>
                                             <p className="mb-1">
                                                 {`${start} - ${end} ${type}`}{' '}
@@ -86,27 +100,41 @@ function MainContent() {
                                             </p>
 
                                             <p className="mb-1">
-                                               {profile.cost > 0 ? <span>£ {profile.cost} </span> : 'FREE'} 
+                                                {delivery.cost > 0 ? (
+                                                    <span>
+                                                        £ {delivery.cost}{' '}
+                                                    </span>
+                                                ) : (
+                                                    'FREE'
+                                                )}
                                             </p>
                                             <p>
-                                                {profile.active_listings} Active
-                                                Listing
+                                                {delivery.active_listings}{' '}
+                                                Active Listing
                                             </p>
                                         </div>
                                         <section
                                             id="profile-btn"
-                                            className="flex items-center justify-center"
+                                            className="flex items-center justify-center gap-2"
                                         >
-                                            <button
-                                                className="mr-2"
+                                            {findProfile && (
+                                                <RemoveCircleOutlineRoundedIcon
+                                                    onClick={() =>
+                                                        removeProfile(
+                                                            delivery._id
+                                                        )
+                                                    }
+                                                />
+                                            )}
+
+                                            {!findProfile && <AddCircleOutlineRoundedIcon
                                                 onClick={() =>
-                                                    handleClick(profile)
+                                                    handleClick(delivery)
                                                 }
-                                            >
-                                                <AddCircleOutlineRoundedIcon />
-                                            </button>
-                                            <Edit profile={profile} />
-                                            <Delete id={profile._id} />
+                                            />}
+
+                                            <Edit profile={delivery} />
+                                            <Delete id={delivery._id} />
                                         </section>
                                     </div>
                                 );
@@ -119,10 +147,17 @@ function MainContent() {
                             </p>
                         )}
 
-
-                        {deliveryProfiles.length > 0 && <>
-                        <button type='button' onClick={confirm} className='py-2 bg-green-300 hover:bg-green-500'>Confirm</button>
-                        </>}
+                        {deliveryProfiles.length > 0 && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={confirm}
+                                    className="bg-green-300 py-2 hover:bg-green-500"
+                                >
+                                    Confirm
+                                </button>
+                            </>
+                        )}
                     </>
                 )}
             </div>

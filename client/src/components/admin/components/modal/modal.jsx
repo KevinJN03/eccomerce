@@ -16,7 +16,7 @@ function Modal({
     selection,
 }) {
     const handleDelete = () => {
-        if (selection.length > 1) {
+        if (selection && selection.length > 1) {
             axios.delete(`/admin/delete/${deleteType}/many/${selection}`).then((res) => {
                 if (res.status === 200) {
                     setLoading(true);
@@ -57,7 +57,7 @@ function Modal({
             />
             <div className={`modal`}>
                 <label
-                    className={`modal-overlay `}
+                    className={`modal-overlay bg-transparent`}
                     htmlFor="modal-3"
                     onClick={() => setCheck(false)}
                 ></label>
@@ -80,7 +80,7 @@ function Modal({
                                         CONFIRMATION
                                     </h2>
                                     <span className="text-center">
-                                        {selection.length > 1
+                                        { selection && selection.length > 1
                                             ? `Are you sure you want to delete (${selection.length}) ${deleteType}`
                                             : 'Are you sure you want to delete this'}
                                     </span>

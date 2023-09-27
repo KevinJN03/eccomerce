@@ -25,10 +25,15 @@ const back = () => {
                 <h3>
                     Delivery Option<span>*</span>
                 </h3>
-                {profile && <button onClick={() => setModalCheck(true)}>
-                    {profile.name}
+                {profile.length > 0  && <button onClick={() => setModalCheck(true)}>
+                    <>
+                    {profile.map((item) => {
+                        return <p>{item.name}</p>
+                    })}
+                    </>
+                    
                     </button>}
-                { !profile && <button onClick={() => setModalCheck(true)}>
+                { profile.length == 0  && <button onClick={() => setModalCheck(true)}>
                     Choose Profile
                 </button>}
                 {modalCheck && (
