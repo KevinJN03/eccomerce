@@ -3,7 +3,7 @@
 }
 
 .format {
-    @apply m-4 w-7/12 p-6 rounded-xl;
+    @apply m-4 w-7/12 rounded-xl p-6;
 }
 .new-product {
     @apply flex w-full;
@@ -33,7 +33,6 @@
     #delivery {
         @apply format;
         border-radius: 10px;
-        
     }
 }
 
@@ -46,8 +45,6 @@ p {
 
 .about {
     @apply format bg-white;
-    
-    
 
     input {
         @apply outline;
@@ -99,8 +96,6 @@ p {
 
 #price-inventory {
     @apply format;
-   
-
 
     input {
         @apply outline;
@@ -115,8 +110,6 @@ p {
 
 #details {
     @apply format;
- 
-
 }
 
 .category-select {
@@ -125,14 +118,24 @@ p {
 
 .new-product-footer {
     button {
-        @apply px-4 py-3  text-base rounded-full border-2 border-black hover:scale-105 transition-all;
+        @apply rounded-full border-2  border-black px-4 py-3 text-base transition-all hover:scale-105;
     }
 }
 
 .new-product-wrapper * {
-    @apply bg-white
+    @apply bg-white;
 }
 
-.searchBody{
+.searchBody {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.cancel-btn {
+    // animation: circle-in-hesitate 2s ease-in-out;
+    transition: background-color 0.2s linear;
+
+    &:hover {
+        @apply bg-[var(--light-grey)];
+       
+    }
 }

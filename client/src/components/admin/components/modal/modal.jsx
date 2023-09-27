@@ -50,7 +50,7 @@ function Modal({
 
     console.log(deleteType);
     return (
-        <section className="">
+        <section >
             <input
                 className="modal-state "
                 id="modal-3"
