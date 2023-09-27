@@ -10,7 +10,7 @@ import DragDropFile from './dragDropFile';
 import { ContentProvider } from '../../../../../context/ContentContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import Variation from './variation';
+import Variation from './variation/variation';
 import { Modal } from '@mui/material';
 function New_Product() {
     let navigate = useNavigate();

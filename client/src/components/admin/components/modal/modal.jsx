@@ -17,11 +17,13 @@ function Modal({
 }) {
     const handleDelete = () => {
         if (selection && selection.length > 1) {
-            axios.delete(`/admin/delete/${deleteType}/many/${selection}`).then((res) => {
-                if (res.status === 200) {
-                    setLoading(true);
-                }
-            });
+            axios
+                .delete(`/admin/delete/${deleteType}/many/${selection}`)
+                .then((res) => {
+                    if (res.status === 200) {
+                        setLoading(true);
+                    }
+                });
         } else {
             axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
                 if (res.status === 200) {
@@ -48,20 +50,22 @@ function Modal({
 
     console.log(deleteType);
     return (
-        <section className={className}>
+        <section className="">
             <input
-                className="modal-state"
+                className="modal-state "
                 id="modal-3"
                 type="checkbox"
                 checked={check}
             />
             <div className={`modal`}>
                 <label
-                    className={`modal-overlay bg-transparent`}
+                    className={`modal-overlay bg-transparent `}
                     htmlFor="modal-3"
                     onClick={() => setCheck(false)}
                 ></label>
-                <div className="modal-content flex flex-col items-center gap-4 rounded-none border-none">
+                <div
+                    className={`modal-content flex flex-col items-center gap-4 rounded-none border-none ${className}`}
+                >
                     {loading ? (
                         <div class="spinner-circle [--spinner-color:var(--gray-9)]"></div>
                     ) : (
@@ -80,7 +84,7 @@ function Modal({
                                         CONFIRMATION
                                     </h2>
                                     <span className="text-center">
-                                        { selection && selection.length > 1
+                                        {selection && selection.length > 1
                                             ? `Are you sure you want to delete (${selection.length}) ${deleteType}`
                                             : 'Are you sure you want to delete this'}
                                     </span>
