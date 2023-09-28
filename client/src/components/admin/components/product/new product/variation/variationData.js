@@ -21,11 +21,38 @@ export const sizeList = [
     'Double Extra Large (XXL)',
 ];
 
-export const generateVariation = (list) => {
-    const generatedList = list.map((item) => {
-        return { variation: item, id: uuidv4() };
-    });
-    return generatedList;
+const list = { Colour: colorList, Size: sizeList };
+
+export const generateVariation = (name) => {
+    const catergoryList = list[`${name}`];
+
+    if (catergoryList.length > 0) {
+        const generatedList = catergoryList.map((item) => {
+            return { variation: item, id: uuidv4() };
+        });
+        return generatedList;
+    }
+    
+         return [];
+   
+
+   
+};
+
+export const filteredVariation = (name, options) => {
+    let generatedList = generateVariation(name);
+    console.log({ generatedList, options });
+    if (generatedList.length > 0 && options.length > 0) {
+        console.log('filter stage');
+        let filterArr = generatedList.filter(
+            (item) =>
+                !options.some((item2) => item2.variation === item.variation)
+        );
+        console.log({ filterArr });
+        return filterArr;
+    } else {
+        return [];
+    }
 };
 
 export const generateCustomVariation = (text) => {

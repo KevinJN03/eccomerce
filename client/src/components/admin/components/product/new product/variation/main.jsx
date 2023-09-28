@@ -2,9 +2,10 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 
 import SelectVariation from './selectVariation';
-export default function Main({setContent, toggle}) {
+import { useVariation } from '../../../../../../context/variationContext';
+export default function Main({ toggle}) {
 
-
+const {dispatch} = useVariation()
     
     return (
         <section className="">
@@ -15,13 +16,13 @@ export default function Main({setContent, toggle}) {
                 custom variation, but buyers won’t see the option in
                 filters.
             </p>
-
+            <div className="variation-main-wrapper max-h-full h-full">
             <div className="mb-2 mt-5 flex flex-row flex-wrap gap-3">
                 <button
                     type="button"
                     className="rounded-full !bg-[var(--light-grey)] px-4 py-2 font-gotham transition-all hover:!bg-gray-200"
                     onClick={() =>
-                        setContent({type: 'select', title: 'Colour'})
+                        dispatch({type: 'select', title: 'Colour'})
                     }
                 >
                     Colour
@@ -30,7 +31,7 @@ export default function Main({setContent, toggle}) {
                     type="button"
                     className="rounded-full !bg-[var(--light-grey)] px-4 py-2 font-gotham transition-all hover:!bg-gray-200"
                     onClick={() =>
-                        setContent({type: 'select', title: 'Size'})
+                        dispatch({type: 'select', title: 'Size'})
                     }
                 >
                     Size
@@ -39,11 +40,13 @@ export default function Main({setContent, toggle}) {
             <button
                 type="button"
                 className="mb-6 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"
-                onClick={() => setContent({type: 'select'})}
+                onClick={() => dispatch({type: 'select'})}
             >
                 <AddRoundedIcon className="bg-transparent" />
                 <span className="bg-transparent">Create your Own</span>
             </button>
+            </div>
+            
             <footer className='variation-footer'>
                 <button type="button" onClick={toggle} className='hover:!bg-gray-200 py-3 px-3 text-sm font-medium rounded-full'>
                     Cancel

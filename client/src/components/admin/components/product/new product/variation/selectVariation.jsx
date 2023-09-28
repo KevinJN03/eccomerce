@@ -3,34 +3,56 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useEffect, useState } from 'react';
-
+import { v4 as uuidv4 } from 'uuid';
 import Manage from './manage';
-import { colorList,sizeList, generateVariation, generateCustomVariation } from './variationData';
+import { generateVariation, generateCustomVariation, filteredVariation } from './variationData';
+import ErrorAlert from './errorAlert';
+import VariationResults from './searchResults';
+import { useVariation } from '../../../../../../context/variationContext';
+import OptionError from './optionError';
 
-function SelectVariation({ title, setContent, variations }) {
-    console.log('select Variation', title);
+function SelectVariation({}) {
+    const { content, dispatch, setVariations, variations } = useVariation();
     const [option, setOption] = useState([]);
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
-    const [name, setName] = useState('')
-
+    const [name, setName] = useState(content.title || '');
+    const [defaultVariation, setDefaultVariation] = useState(false);
+    const [error, setError] = useState();
 
     useEffect(() => {
-        if (title == 'Colour') {
-            const generatedVariations = generateVariation(colorList);
-            console.log('gennerated', generatedVariations);
-            setVariation(generatedVariations);
-            setName(title)
-        }
-        if (title == 'Size') {
-            const generatedVariations = generateVariation(sizeList);
-            console.log('gennerated', generatedVariations);
-            setVariation(generatedVariations);
-            setName(title)
-        }
+        if (content.currentVariation != null) {
+            const currentVariation = content.currentVariation;
 
+            const { name, options } = currentVariation;
+            console.log({ name, options })
 
+            const result = filteredVariation(name, options)
+            console.log('result', result)
+            setOption(options);
+            setVariation(result)
+
+            if (name == 'Colour' || name == 'Size') {
+                setDefaultVariation(true);
+            }
+
+        } else {
+
+            if (name == 'Colour' || name == 'Size') {
+                
+            console.log('else Block')
+                const generatedVariations = generateVariation(name, option);
+                console.log('generateOptions', option);
+                setDefaultVariation(true);
+                setVariation(generatedVariations);
+            }
+        }
     }, []);
+
+
+    const onNameChange = (value) => {
+setName(value)
+    }
     const filterColor = (id) => {
         let newArr = [...variation];
         const newColor = newArr.filter((item) => item.id != id);
@@ -68,30 +90,70 @@ function SelectVariation({ title, setContent, variations }) {
     };
 
     const handleCustom = () => {
-       const customVariation = generateCustomVariation(searchText)
+        const customVariation = generateCustomVariation(searchText);
         setOption([...option, customVariation]);
         setSearchText('');
     };
+
+    const createVariation = () => {
+        try {
+            if (content.currentVariation) {
+                const { id } = content.currentVariation;
+                console.log('here')
+                setVariations(
+                    variations.map((item) => {
+                        if (item.id == id) {
+                            return { ...item, options: option, name: name };
+                        } else {
+                            return item;
+                        }
+                    })
+                );
+            } else {
+                const newVariation = {
+                    name,
+                    options: option,
+                    id: uuidv4(),
+                };
+
+                setVariations((prevState) => [...prevState, newVariation]);
+            }
+
+            dispatch({ type: 'manage' });
+        } catch (error) {
+            console.log('error at singleVariation:', error.message);
+            setError(error.message);
+        }
+    };
+    const clearError = () => {
+        setError(null);
+    };
+
     return (
-        <section className="select-variation h-full w-full">
-            <header className="flex w-full flex-col border-b-2 pb-10 !text-left">
-                <h1 className=" font-semibold">{title || 'Custom variation'} </h1>
-                { title && <p>Variation</p>}
-                {!title && 
-                <div className=" min-w-full max-w-xs flex, flex-col gap-0 m-0 p-0">
-                <label className="py-2 font-medium text-lg">
-                  Name <span className='asterisk'>*</span>
-                </label>
-                <input type="text"  className="input input-bordered min-w-full max-w-xs !rounded-md"  required value= {name} onChange={(e) => setName(e.target.value)}/>
-             
-              </div>
-                
-                
-                
-               }
+        <section className="select-variation min-h-full w-full">
+            {error && <ErrorAlert msg={error} clearError={clearError} />}
+            <header className="flex w-full flex-col border-b-2 pb-4 !text-left">
+                <h1 className=" font-semibold">
+                    {defaultVariation ? name : 'Custom variation'}
+                </h1>
+                {defaultVariation && <p>Variation</p>}
+                {!defaultVariation && (
+                    <div className=" flex, m-0 min-w-full max-w-xs flex-col gap-0 p-0">
+                        <label className="py-2 text-lg font-medium">
+                            Name <span className="asterisk">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            className="input input-bordered min-w-full max-w-xs !rounded-md"
+                            required
+                            value={name}
+                            onChange={(e) => onNameChange(e.target.value)}
+                        />
+                    </div>
+                )}
             </header>
 
-            <section className="options mt-4">
+            <section className="options my-4 min-h-full">
                 <div className="mb-6">
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
@@ -106,87 +168,51 @@ function SelectVariation({ title, setContent, variations }) {
                     </p>
                 </div>
 
-                <section className={` ${variation.length > 0 && 'dropdown'} w-[400px]`}>
+                <section
+                    className={` ${
+                        defaultVariation && 'dropdown'
+                    } w-[400px] border-none`}
+                >
                     <div
-                        className="searchOption flex !w-full flex-row items-center relative"
+                        className="searchOption relative flex !w-full flex-row items-center"
                         tabIndex={0}
                     >
                         <input
                             type="text"
                             value={searchText}
-                            className="input input-lg !min-w-full rounded-md"
+                            className="input input-lg !min-w-full rounded-md pr-10"
                             placeholder="Enter an option..."
                             onChange={(e) => setSearchText(e.target.value)}
-                            
-    
                         />
                         <ArrowDropDownIcon className="absolute right-3" />
-                        {!title && <button type="button" className='ml-2 rounded-3xl py-2 px-3 hover:bg-[var(--light-grey)] font-medium disabled:opacity-40' onClick={handleCustom} disabled={searchText.length < 1}>Add</button>}
-                    </div>
-
-                    <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll p-0">
-                        <ul>
-                            {variation.map((item) => {
-                                const { variation } = item;
-                                let variationStr = variation.toLowerCase();
-                                let searchTextStr = searchText.toLowerCase();
-                                if (
-                                    variationStr.substring(
-                                        0,
-                                        searchTextStr.length
-                                    ) == searchTextStr
-                                ) {
-                                    return (
-                                        <li
-                                            className="flex flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
-                                            onClick={() => addOption(item)}
-                                        >
-                                            <p className="bg-transparent text-sm">
-                                                {item.variation}
-                                            </p>
-                                            <AddRoundedIcon className="bg-transparent" />
-                                        </li>
-                                    );
+                        {!defaultVariation && (
+                            <button
+                                type="button"
+                                className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
+                                onClick={handleCustom}
+                                disabled={
+                                    searchText.length < 1 ||
+                                    searchText.length > 20
                                 }
-                            })}
-
-                            {searchText == '' && variation.length > 0 &&  (
-                                <li
-                                    className="px-3 py-3 hover:bg-[var(--light-grey)]"
-                                    onClick={addRemainingColors}
-                                >
-                                    Add all options{' '}
-                                    <span className="text-sm font-semibold">
-                                        ({variation.length})
-                                    </span>{' '}
-                                    left
-                                </li>
-                            )}
-
-                            {searchText.length > 1 &&
-                                !variation.find(
-                                    (item) =>
-                                        item.variation.toLowerCase() ===
-                                        searchText.toLowerCase()
-                                ) && (
-                                    <li
-                                        onClick={handleCustom}
-                                        className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
-                                    >
-                                        <p className="bg-transparent text-sm">
-                                            Custom Option:{' '}
-                                            <span className="bg-transparent font-medium">
-                                                {searchText}
-                                            </span>
-                                        </p>
-                                        <AddRoundedIcon className="bg-transparent" />
-                                    </li>
-                                )}
-                        </ul>
+                            >
+                                Add
+                            </button>
+                        )}
                     </div>
+                    {!defaultVariation && searchText.length > 20 && (
+                        <OptionError />
+                    )}
+                    <VariationResults
+                        addRemainingColors={addRemainingColors}
+                        searchText={searchText}
+                        variation={variation}
+                        addOption={addOption}
+                        handleCustom={handleCustom}
+                        option={option}
+                    />
                 </section>
 
-                <div className="options-wrapper mt-3 flex flex-col gap-y-2">
+                <div className="options-wrapper mt-3 flex flex-col gap-y-2 ">
                     {option.length > 0 &&
                         option.map((item) => {
                             const { variation, id } = item;
@@ -199,10 +225,12 @@ function SelectVariation({ title, setContent, variations }) {
                                         <MenuRoundedIcon fontSize="small" />
                                         <p className="text-sm">{variation}</p>
                                     </span>
-                                    <span className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300">
+                                    <span
+                                        onClick={() => deleteColor(item)}
+                                        className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300"
+                                    >
                                         <DeleteRoundedIcon
                                             fontSize="small"
-                                            onClick={() => deleteColor(item)}
                                             className="bg-transparent"
                                         />
                                     </span>
@@ -214,9 +242,9 @@ function SelectVariation({ title, setContent, variations }) {
 
             <section className="variation-footer">
                 <button
-                    onClick={() => setContent({ type: 'manage' })}
+                    onClick={() => dispatch({ type: 'manage' })}
                     type="button"
-                    className="no-wrap first-letter: mr-auto flex flex-row items-center rounded-full !bg-[var(--light-grey)] px-3  py-[10px]  "
+                    className="no-wrap first-letter: mr-auto flex flex-row items-center justify-center rounded-full !bg-[var(--light-grey)] px-3  py-[10px] transition-all  ease-in-out hover:scale-[1.02] hover:!bg-gray-300"
                 >
                     <DeleteRoundedIcon className="!bg-transparent !fill-red-800" />
                     <span className=" !bg-transparent font-medium tracking-tight text-red-800">
@@ -224,17 +252,18 @@ function SelectVariation({ title, setContent, variations }) {
                     </span>
                 </button>
                 <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
-                 
+                    {(name.length < 1 && (
+                        <ErrorMessage message={'Enter a variation name'} />
+                    )) ||
+                        (option.length < 1 && (
+                            <ErrorMessage message={'Add at least 1 option'} />
+                        ))}
 
-                      
-                        {
-                           name.length < 1 && <ErrorMessage message={'Enter a variation name'}/> || option.length < 1 && <ErrorMessage message={'Add at least 1 option'}/> 
-                        }
-                  
                     <button
                         type="button"
                         className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
                         disabled={option.length < 1 || name.length < 1}
+                        onClick={createVariation}
                     >
                         Done
                     </button>
@@ -244,12 +273,8 @@ function SelectVariation({ title, setContent, variations }) {
     );
 }
 
-function ErrorMessage({ message}) {
-    return (
-        <span className="text-sm text-gray-500">
-                        {message}
-                        </span> 
-    )
+function ErrorMessage({ message }) {
+    return <span className="text-sm text-gray-500">{message}</span>;
 }
 
 export default SelectVariation;
