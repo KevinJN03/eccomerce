@@ -1,29 +1,53 @@
 import ReactFlagsSelect from 'react-flags-select';
-import { useState } from 'react';
-import { userInput } from './formSource.jsx';
-function User_Form() {
-    const [selected, setSelected] = useState('');
+import { useRef, useState } from 'react';
+import { userInput, passwordInput } from './formSource.jsx';
+import Address from './address.jsx';
+import FormInput from './formInput.jsx';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
+import Passwordinput from './passwordInput.jsx';
+import DOB from './dob.jsx';
+import Interest from './interest.jsx';
+
+function User_Form({ states, interestState, type}) {
+ 
+    const { password, setPassword } = states[4];
+    const { dob, setDob } = states[7];
+    const passwordRef = useRef(null);
+ 
+
     return (
         <>
-            {userInput.map((input) => {
+            {userInput.map((input, idx) => {
+                 const state = Object.values(states[idx]);
+                 const value = state[0]
+                 const setState = state[1]
                 return (
-                    <div className="formInput" key={input.id}>
-                        <label>{input.label}</label>
-                        <input
-                            type={input.type}
-                            placeholder={input.placeHolder}
-                        />
-                    </div>
+                    <FormInput
+                        inputInfo={input}
+                        setState={setState}
+                        key={input.label}
+                        value={value}
+                    />
                 );
             })}
-            <div className="formInput">
-                <label>Country</label>
-                <ReactFlagsSelect
-                    selected={selected}
-                    onSelect={(code) => setSelected(code)}
-                    selectedSize={14}
-                />
-            </div>
+            { type !== 'edit' && <Passwordinput
+                passwordRef={passwordRef}
+                setPassword={setPassword}
+                password={password}
+            />}
+            {/* <FormInput
+                inputInfo={passwordInput}
+                content={<PasswordContent />}
+                ref={passwordRef}
+                setState={setPassword}
+                className={'pr-10'}
+            /> */}
+ 
+            <DOB states={{ dob, setDob }} />
+                   <Interest states={states}/>
+            <Address states={states} />
+     
         </>
     );
 }

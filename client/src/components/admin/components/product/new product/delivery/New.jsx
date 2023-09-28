@@ -5,31 +5,34 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CustomTime from './customTime';
 import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
 import axios, { adminAxios } from '../../../../../../api/axios';
-import defaultTimes from './defultTimes';
+import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
-function New({ profile }) {
+
+import handleError, { closeError } from '../../../../../common/handleError';
+function New({ profile, close, setLoadingState }) {
     console.log('New Render');
-    const { content, dispatch, setLoading } = useContent();
+    const { content, dispatch, setLoading, loading } = useContent();
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState();
     const [cost, setCost] = useState();
     const [processingTime, setProcessingTime] = useState();
     const [selected, setSelected] = useState();
-    const [error, setError] = useState({});
+    const [error, setError] = useState([]);
+    const [fetchRoute, setFetchRoute] = useState('create');
     const back = () => {
-        dispatch({ type: 'Main' });
+        close ? close() : dispatch({ type: 'Main' });
     };
 
     useEffect(() => {
         if (profile) {
+            setFetchRoute('update');
             console.log(profile);
             console.log('cost', profile.cost);
             setCost((prev) => (prev = profile.cost));
             const newArr = defaultTimes.slice(1, 4);
-            console.log({newArr})
+            console.log({ newArr });
             const findTime = newArr.find((time) => {
                 const { start, end, type } = time.processingTime;
-              
 
                 if (
                     time.processingTime &&
@@ -68,51 +71,33 @@ function New({ profile }) {
         setCost(newValue);
     };
     const save = () => {
-        console.log('name: ', name);
-        if (profile) {
-            adminAxios
-                .put(`/delivery/update/${profile._id}`, {
-                    name,
-                    processingTime,
-                    cost,
-                })
-                .then((res) => {
-                    console.log('resoult', res.data);
+        const url = `/delivery/${fetchRoute}`;
+        const fetchUrl = profile ? `${url}/${profile._id}` : url;
+        const fetchOptions = {
+            name,
+            processingTime,
+            cost,
+        };
+        const axiosThen = (res) => {
+            if (res.status == 200 || 201) {
+                setLoadingState ? setLoadingState(true) : setLoading(true);
+            }
+        };
+        const axiosCatch = (error) => {
+            console.log('error whilst creating or adding:', error);
+            setError(handleError(error));
+        };
 
-                    if (res.status == 200) {
-                        setLoading(true);
-                        back();
-                    }
-                })
-                .catch((error) => {
-                    console.log('error whilst creating or adding:', error);
-                    const message = error.response.data.msg;
-                    setError({ bool: true, msg: message });
-                });
+        const axiosFetch = (result) => {
+            return result
+                .then((res) => axiosThen(res))
+                .catch((error) => axiosCatch(error));
+        };
+
+        if (profile) {
+            axiosFetch(adminAxios.put(fetchUrl, fetchOptions));
         } else {
-            adminAxios
-                .post(`/delivery/create`, {
-                    name,
-                    processingTime,
-                    cost,
-                })
-                .then((res) => {
-                    if (res.status == 201) {
-                        setLoading(true);
-                        back();
-                    }
-                })
-                .catch((error) => {
-                    console.log('error whilst creating or adding:', error);
-                    const message = error.response.data.msg;
-                    const messageArr = message.map((msg) => {
-                        return {
-                            id: uuidv4(),
-                            msg,
-                        };
-                    });
-                    setError(messageArr);
-                });
+            axiosFetch(adminAxios.post(fetchUrl, fetchOptions));
         }
     };
 
@@ -133,12 +118,12 @@ function New({ profile }) {
         setSelected(profileToJson.name);
     };
 
-    const closeError = (id) => {
-        const newErrors = [...error];
-        const filter = newErrors.filter((item) => item.id != id);
+    // const closeError = (id,setState) => {
+    //     const newErrors = [...error];
+    //     const filter = newErrors.filter((item) => item.id != id);
 
-        setError(filter);
-    };
+    //     setState(filter);
+    // };
     return (
         <section className="new-delivery flex w-full flex-col gap-3">
             <div className="error">
@@ -151,7 +136,9 @@ function New({ profile }) {
                                 class="alert alert-error mb-2 rounded-none py-2"
                             >
                                 <svg
-                                    onClick={() => closeError(id)}
+                                    onClick={() =>
+                                        closeError(id, error, setError)
+                                    }
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-6 w-6 shrink-0 stroke-current"
                                     fill="none"
@@ -178,7 +165,9 @@ function New({ profile }) {
                 <CloseRoundedIcon />{' '}
             </span>
             <h3 className="text-center font-gotham text-lg">
-                CREATE A DELIVERY PROFILE
+                {profile
+                    ? 'EDIT A DELIVERY PROFILE'
+                    : 'CREATE A DELIVERY PROFILE'}
             </h3>
             <input
                 className="font-poppins border-1 w-full border-black p-2 text-sm font-light"

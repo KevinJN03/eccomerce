@@ -10,18 +10,18 @@ import { useState, useEffect } from 'react';
 function Layout() {
     const { layout } = useLayoutContext();
     console.log('layout:', layout);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        let timout = setTimeout(() => {
-            setLoading(false);
-        }, 1500);
+    // useEffect(() => {
+    //     let timout = setTimeout(() => {
+    //         setLoading(false);
+    //     }, 1500);
 
-        return () => {
-            setLoading(true);
-            clearTimeout(timout);
-        };
-    }, []);
+    //     return () => {
+    //         setLoading(true);
+    //         clearTimeout(timout);
+    //     };
+    // }, []);
     function Loader() {
         return <span className="loading loading-infinity loading-lg"></span>;
     }

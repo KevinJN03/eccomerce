@@ -112,15 +112,22 @@ function Router({ Header, Footer }) {
                                     element: <List />,
                                 },
                                 {
-                                    path: ':id',
+                                    path: ':id/',
                                     element: <Single_User />,
+                                    
+    
+                                
                                 },
                                 {
                                     path: 'new',
                                     element: (
-                                        <New type="User" title="Add New User" />
+                                        <New type="new" title="Add New User" />
                                     ),
                                 },
+                                {
+                                    path: ':id/edit',
+                                    element: <New type="edit" title="Edit User" /> 
+                                }
                             ],
                         },
                         {

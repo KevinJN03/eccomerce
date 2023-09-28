@@ -14,7 +14,7 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
           };
       
           return setProcessingTime((prevstate) => {
-              return { ...prevstate,[ `${property}`] : value };
+              return { ...prevstate,[ `${property}`] : parseInt(value) };
           });
     }
 
@@ -38,7 +38,7 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
                 />
                 <p>-</p>
                 <input
-                min="1"
+                min={processingTime.start.toString()}
                
                     type="number"
                     className="border-1 w-16 px-3 py-2"

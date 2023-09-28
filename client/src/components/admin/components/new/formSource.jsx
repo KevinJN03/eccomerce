@@ -1,42 +1,52 @@
 export const userInput = [
     {
-        id: 1,
+        id: 0,
         label: 'First Name',
         type: 'text',
         placeHolder: 'John',
     },
     {
-        id: 2,
+        id: 1,
         label: 'Last Name',
         type: 'text',
         placeHolder: 'Doe',
     },
     {
-        id: 3,
+        id: 2,
         label: 'Email',
         type: 'email',
         placeHolder: 'john_doe@gmail.com',
     },
     {
-        id: 4,
+        id: 3,
         label: 'Phone Number',
         type: 'text',
         placeHolder: '+44 1234 5678',
     },
 
-    {
-        id: 5,
-        label: 'Password',
-        type: 'password',
-    },
-    {
-        id: 6,
-        label: 'Address',
-        type: 'text',
-        placeHolder: 'Andover Rd 	Basingstoke',
-    },
+    
+
+
+    // {
+    //     id: 5,
+    //     label: 'Address',
+    //     type: 'text',
+    //     placeHolder: 'Andover Rd 	Basingstoke',
+    // },
+
+    // {
+    //     id: 6,
+    //     label: 'DOB',
+    //     type: 'date',
+    //     placeHolder: 'DOB',
+    // },
 ];
 
+export const passwordInput = {
+    id: 4,
+    label: 'Password',
+    type: 'password',
+}
 export const productInputs = [
     {
         id: 1,

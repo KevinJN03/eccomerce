@@ -1,7 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 import asyncHandler from 'express-async-handler';
 import User from '../Models/user.js';
-
+import multer from 'multer';
+import fileFilter from '../Upload/fileFilter.js';
+import sharpify from '../Upload/sharpify.js';
+import bcrypt from 'bcryptjs';
+import s3Upload from '../s3Service.js';
+import sharp from 'sharp';
 export const get_all_users = asyncHandler(async (req, res, next) => {
   const users = await User.find();
   res.status(200).send(users);
@@ -55,4 +60,79 @@ export const delete_user = asyncHandler(async (req, res, next) => {
     msg: 'user Deleted',
     user,
   });
+});
+export const delete_many_user = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const idArr = id.split(',');
+  const user = await User.deleteMany({ _id: idArr });
+  res.send(user);
+});
+
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 1000000000, files: 6 },
+});
+
+export const create_user = [
+  upload.single('file'),
+  asyncHandler(async (req, res, next) => {
+    const { file } = req;
+
+    const {
+      password,
+      firstName,
+      lastName,
+      dob,
+      address,
+      mobile,
+      email,
+      interest,
+    } = req.body;
+
+    const hashPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      password: hashPassword,
+      firstName,
+      lastName,
+      dob,
+      address: [address],
+      mobile,
+      email,
+      interest,
+    });
+
+    const { id } = user;
+    let compressImg;
+
+    if (file) {
+      compressImg = await sharpify(file, 'profile');
+      compressImg.id = id;
+      await s3Upload([compressImg], 'profile');
+      const profileImg = `https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/user/${id}.${compressImg.format}`;
+      const updateUser = await User.findByIdAndUpdate(
+        id,
+        { profileImg },
+        { upsert: true, new: true },
+      );
+
+      console.log(updateUser);
+    }
+
+    res.status(201).send(user);
+  }),
+];
+
+export const get_single_user = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    res.status(404).send('User Not Found');
+  } else {
+    res.status(200).send(user);
+  }
 });

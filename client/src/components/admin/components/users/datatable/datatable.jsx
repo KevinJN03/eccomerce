@@ -5,27 +5,30 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Modal from '../../modal/modal';
 import axios from '../../../../../api/axios';
-function Datatable({ type, loading, setLoading, column, row }) {
+function Datatable({
+    type,
+    loading,
+    setLoading,
+    column,
+    row,
+    addBtn,
+    viewBtn,
+}) {
     const [modalCheck, setModalCheck] = useState(false);
-    const [deleteType, setDeleteType] = useState(null);
+    const [selection, setSelection] = useState([]);
+    const [checkBox, setCheckBox] = useState(true)
     const [id, setId] = useState(null);
-    const headerTitle = type[0].toUpperCase() + type.substring(1)
-    const modalHandleClick = (type, id) => {
-        if (type === 'user') {
-            axios.delete(`/delete/user/${id}`).then((res) => {
-                if (res.status === 200) {
-                    setLoading(true);
-                }
-            });
-        }
-    };
-
+    const headerTitle = type[0].toUpperCase() + type.substring(1);
     const deleteButtonClick = (type, id) => {
         // setDeleteType(type);
         setId(id);
         setModalCheck(true);
+        // setCheckBox(false)
     };
-
+    const deleteAllClick = () => {
+        setModalCheck(true);
+       
+    };
     const actionColumn = [
         {
             field: 'action',
@@ -34,56 +37,62 @@ function Datatable({ type, loading, setLoading, column, row }) {
             renderCell: (params) => {
                 return (
                     <div className="cellAction">
-                        <Link to={params.row._id}>
-                            <div className="viewButton">View</div>
-                        </Link>
+                        {viewBtn ? (
+                            <button
+                                type="button"
+                                className="viewButton"
+                                onClick={() => viewBtn(params.row._id)}
+                            >
+                                View
+                            </button>
+                        ) : (
+                            <Link to={params.row._id}>
+                                <div className="viewButton">View</div>
+                            </Link>
+                        )}
 
+                        { selection.length < 2 && 
                         <button
                             className="deleteButton"
                             onClick={() =>
                                 deleteButtonClick(type, params.row._id)
                             }
                         >
+                            
+                            
                             Delete
                         </button>
+                        }
                     </div>
                 );
             },
         },
     ];
 
-    // const product_actionColumn = [
-    //     {
-    //         field: 'action',
-    //         headerName: 'Action',
-    //         width: 160,
-    //         headerAlign: 'left',
-    //         renderCell: (params) => {
-    //             return (
-    //                 <div className="cellAction">
-    //                     <Link to={params.row._id}>
-    //                         <div className="viewButton">View</div>
-    //                     </Link>
-    //                     <button
-    //                         className="deleteButton"
-    //                         onClick={() =>
-    //                             deleteButtonClick('product', params.row._id)
-    //                         }
-    //                     >
-    //                         Delete
-    //                     </button>
-    //                 </div>
-    //             );
-    //         },
-    //     },
-    // ];
     return (
         <section className="datatable">
             <div className="datatableTitle">
                 Add New {headerTitle}
-                <Link className="link" to="new">
-                    Add New
-                </Link>
+                <div>
+                    {selection.length > 0 && (
+                        <button
+                            type="button"
+                            className="link mr-2 !border-red-500 !text-red-500"
+                            onClick={deleteAllClick}
+                        >
+                            Delete All ({selection.length})
+                        </button>
+                    )}
+                    {addBtn ? (
+                        <button type="button" className="link" onClick={addBtn}>
+                            Add New
+                        </button>
+                    ) : (
+                        <Link className="link" to="new">
+                            Add New
+                        </Link>
+                    )}
+                </div>
             </div>
             <DataGrid
                 getRowId={(row) => row._id}
@@ -97,6 +106,10 @@ function Datatable({ type, loading, setLoading, column, row }) {
                 }}
                 pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
+                isRowSelectable={(params) => params.row.name != 'Express Delivery'}
+                onRowSelectionModelChange={(select) => {
+                    setSelection(select);
+                }}
             />
             {modalCheck && (
                 <Modal
@@ -106,6 +119,7 @@ function Datatable({ type, loading, setLoading, column, row }) {
                     deleteType={type}
                     id={id}
                     setLoading={setLoading}
+                    selection={selection}
                 />
             )}
         </section>

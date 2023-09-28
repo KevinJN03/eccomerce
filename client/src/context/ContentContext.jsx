@@ -25,7 +25,7 @@ const reducer = (state, action) => {
 export function ContentProvider({ children }) {
     const [content, dispatch] = useReducer(reducer, <Main />);
     const [modalCheck, setModalCheck] = useState(false);
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(false);
     const value = {
         content,

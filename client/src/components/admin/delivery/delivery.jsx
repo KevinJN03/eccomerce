@@ -5,16 +5,44 @@ import { adminAxios } from '../../../api/axios';
 import fetchProfile from '../components/product/new product/delivery/fetchDeliveryProfile';
 import '../components/users/list.scss';
 import Datatable from '../components/users/datatable/datatable';
+
+import { useContent } from '../../../context/ContentContext';
 import { deliveryColumn } from '../components/users/datatable/datatable-source';
+import Modal from '../components/modal/modal';
+import New from '../components/product/new product/delivery/New';
+import Edit from '../components/product/new product/delivery/edit';
 export default function Delivery() {
-    const [profile, setProfile] = useState([]);
+    const [profiles, setProfiles] = useState([]);
+    const [deliveryProfile, setDeliveryProfile] = useState({});
     const [loading, setLoading] = useState(false);
+    const [type, setType] = useState();
+    // const { dispatch, setModalCheck, content, modalCheck } = useContent();
+
+    const [modalCheck, setModalCheck] = useState(false);
     useEffect(() => {
-        fetchProfile(setProfile);
+        fetchProfile(setProfiles);
     }, []);
     useEffect(() => {
-        fetchProfile(setProfile);
+        fetchProfile(setProfiles);
     }, [loading]);
+
+    const addClick = () => {
+        setType('new');
+        setDeliveryProfile(null);
+        setModalCheck(true);
+    };
+
+    const viewClick = (id) => {
+        setType('view');
+        console.log({ id });
+        const findProfile = profiles.find((profile) => profile._id == id);
+        setDeliveryProfile(findProfile);
+        setModalCheck(true);
+    };
+    const close = () => {
+        setModalCheck(false);
+    };
+
     return (
         <section className="delivery flex">
             <SideBar />
@@ -23,10 +51,31 @@ export default function Delivery() {
                 <Datatable
                     type="delivery"
                     column={deliveryColumn}
-                    row={profile}
+                    row={profiles}
                     setLoading={setLoading}
                     loading={loading}
+                    addBtn={addClick}
+                    viewBtn={viewClick}
                 />
+                {modalCheck && (
+                    <Modal
+                        ModalContent={
+                            <New
+                                close={close}
+                                profile={deliveryProfile}
+                                setProfile={setDeliveryProfile}
+                                setLoadingState={setLoading}
+                                loadingState={loading}
+                            />
+                        }
+                        button_text="Select Profile"
+                        check={modalCheck}
+                        setCheck={setModalCheck}
+                        loading={loading}
+                        setLoading={setLoading}
+                
+                    />
+                )}
             </section>
         </section>
     );

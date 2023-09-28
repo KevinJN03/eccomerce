@@ -1,16 +1,18 @@
 import SideBar from '../sidebar/sidebar.jsx';
 import Navbar from '../navbar/navbar.jsx';
 import './list.scss';
-import '../sidebar/sidebar.scss'
+import '../sidebar/sidebar.scss';
 import Datatable from './datatable/datatable.jsx';
 import DragDropFile from '../product/new product/dragDropFile.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios.js';
-import { userColumn, } from './datatable/datatable-source.jsx';
+import { userColumn } from './datatable/datatable-source.jsx';
 function List() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selection, setSelection] = useState([]);
+    console.log(selection);
     useEffect(() => {
         axios
             .get('/user/all')
@@ -29,9 +31,13 @@ function List() {
                 <SideBar />
                 <div className="user-listContainer">
                     <Navbar />
-                    <Datatable type="user"  setLoading={setLoading} loading={loading} column={userColumn} row={users}/>
-
-                    
+                    <Datatable
+                        type="user"
+                        setLoading={setLoading}
+                        loading={loading}
+                        column={userColumn}
+                        row={users}
+                    />
                 </div>
             </div>
         </>
