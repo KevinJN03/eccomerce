@@ -1,5 +1,5 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { useVariation } from '../../../../../../context/variationContext';
+
 
 import SelectVariation from './selectVariation';
 export default function Main({setContent, setCheck}) {
@@ -39,6 +39,7 @@ export default function Main({setContent, setCheck}) {
             <button
                 type="button"
                 className="mb-6 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"
+                onClick={() => setContent({type: 'select'})}
             >
                 <AddRoundedIcon className="bg-transparent" />
                 <span className="bg-transparent">Create your Own</span>

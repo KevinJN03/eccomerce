@@ -2,74 +2,76 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useState } from 'react';
+
 import Manage from './manage';
-const colorList = [
-    { color: 'Red', id: uuidv4() },
-    { color: 'Yellow', id: uuidv4() },
-    { color: 'Blue', id: uuidv4() },
-    { color: 'Green', id: uuidv4() },
-    { color: 'Purple', id: uuidv4() },
-    { color: 'Orange', id: uuidv4() },
-    { color: 'Pink', id: uuidv4() },
-    { color: 'Brown', id: uuidv4() },
-    { color: 'Cyan', id: uuidv4() },
-    { color: 'Magenta', id: uuidv4() },
-];
+import { colorList,sizeList, generateVariation, generateCustomVariation } from './variationData';
 
 function SelectVariation({ title, setContent }) {
+    console.log('select Variation', title);
     const [option, setOption] = useState([]);
-    const [colors, setColors] = useState(colorList);
+    const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
+
+    useEffect(() => {
+        if (title == 'Colour') {
+            const generatedVariations = generateVariation(colorList);
+            console.log('gennerated', generatedVariations);
+            setVariation(generatedVariations);
+        }
+        if (title == 'Size') {
+            const generatedVariations = generateVariation(sizeList);
+            console.log('gennerated', generatedVariations);
+            setVariation(generatedVariations);
+        }
+
+    }, []);
     const filterColor = (id) => {
-        let newArr = [...colors];
+        let newArr = [...variation];
         const newColor = newArr.filter((item) => item.id != id);
 
-        setColors(newColor);
+        setVariation(newColor);
     };
 
-    const addOption = (color) => {
-        if(searchText.length > 0){
-           setSearchText('')
+    const addOption = (variationOption) => {
+        if (searchText.length > 0) {
+            setSearchText('');
         }
-        setOption([...option, color]);
-        filterColor(color.id);
+        setOption([...option, variationOption]);
+        filterColor(variationOption.id);
     };
 
-    const deleteColor = (color) => {
+    const deleteColor = (variationOption) => {
         const newArr = [...option];
-        const filterOption = newArr.filter((item) => item.id != color.id);
+        const filterOption = newArr.filter(
+            (item) => item.id != variationOption.id
+        );
         setOption(filterOption);
 
-        // if(newArr.find((item) => item.id == color.id) == false){
+        // if(newArr.find((item) => item.id == variationOption.id) == false){
 
-        if(color && color.custom != true){
-            setColors([color, ...colors]); 
+        if (variationOption && variationOption.type != 'custom') {
+            setVariation([variationOption, ...variation]);
         }
-       
+
         // }
     };
 
     const addRemainingColors = () => {
-        setOption([...option, ...colors]);
-        setColors([]);
+        setOption([...option, ...variation]);
+        setVariation([]);
     };
 
     const handleCustom = () => {
-        const customVariation = {
-            color: searchText,
-            id: uuidv4(),
-            custom: true
-        }
-        setOption([...option, customVariation])
-        setSearchText('')
-    }
+       const customVariation = generateCustomVariation(searchText)
+        setOption([...option, customVariation]);
+        setSearchText('');
+    };
     return (
         <section className="select-variation h-full w-full">
             <header className="flex w-full flex-col border-b-2 pb-10 !text-left">
-                <h1 className=" font-semibold">{title} </h1>
-                <p>Variation</p>
+                <h1 className=" font-semibold">{title || 'Custom variation'} </h1>
+                { title && <p>Variation</p>}
             </header>
 
             <section className="options mt-4">
@@ -104,23 +106,23 @@ function SelectVariation({ title, setContent }) {
 
                     <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll p-0">
                         <ul>
-                            {colors.map((item) => {
-                                const { color } = item;
-                                let colorStr = color.toLowerCase();
+                            {variation.map((item) => {
+                                const { variation } = item;
+                                let variationStr = variation.toLowerCase();
                                 let searchTextStr = searchText.toLowerCase();
                                 if (
-                                    colorStr.substring(
+                                    variationStr.substring(
                                         0,
                                         searchTextStr.length
                                     ) == searchTextStr
                                 ) {
                                     return (
                                         <li
-                                            className="flex flex-row flex-nowrap justify-between px-3 py-3 hover:bg-[var(--light-grey)] text-sm"
+                                            className="flex flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
                                             onClick={() => addOption(item)}
                                         >
                                             <p className="bg-transparent text-sm">
-                                                {item.color}
+                                                {item.variation}
                                             </p>
                                             <AddRoundedIcon className="bg-transparent" />
                                         </li>
@@ -128,23 +130,38 @@ function SelectVariation({ title, setContent }) {
                                 }
                             })}
 
-                            {searchText == '' && (
+                            {searchText == '' && variation.length > 0 &&  (
                                 <li
                                     className="px-3 py-3 hover:bg-[var(--light-grey)]"
                                     onClick={addRemainingColors}
                                 >
-                                    Add all options <span className='font-semibold text-sm'>({colors.length})</span> left
+                                    Add all options{' '}
+                                    <span className="text-sm font-semibold">
+                                        ({variation.length})
+                                    </span>{' '}
+                                    left
                                 </li>
                             )}
 
                             {searchText.length > 1 &&
-                                !colors.find(
-                                    (item) =>item.color.toLowerCase() === searchText.toLowerCase()) && 
-                                    <li onClick={() => handleCustom()} className="px-3 py-3 hover:bg-[var(--light-grey)] flex flex-row justify-between">
-                                        <p className='bg-transparent text-sm'>Custom Option: <span className='font-medium bg-transparent'>{searchText}</span></p>
+                                !variation.find(
+                                    (item) =>
+                                        item.variation.toLowerCase() ===
+                                        searchText.toLowerCase()
+                                ) && (
+                                    <li
+                                        onClick={() => handleCustom()}
+                                        className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
+                                    >
+                                        <p className="bg-transparent text-sm">
+                                            Custom Option:{' '}
+                                            <span className="bg-transparent font-medium">
+                                                {searchText}
+                                            </span>
+                                        </p>
                                         <AddRoundedIcon className="bg-transparent" />
                                     </li>
-                                }
+                                )}
                         </ul>
                     </div>
                 </section>
@@ -152,7 +169,7 @@ function SelectVariation({ title, setContent }) {
                 <div className="options-wrapper mt-3 flex flex-col gap-y-2">
                     {option.length > 0 &&
                         option.map((item) => {
-                            const { color, id } = item;
+                            const { variation, id } = item;
                             return (
                                 <div
                                     className="border-1 flex flex-row items-center justify-between rounded-lg p-2"
@@ -160,7 +177,7 @@ function SelectVariation({ title, setContent }) {
                                 >
                                     <span className="flex flex-row items-center gap-3">
                                         <MenuRoundedIcon fontSize="small" />
-                                        <p className="text-sm">{color}</p>
+                                        <p className="text-sm">{variation}</p>
                                     </span>
                                     <span className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300">
                                         <DeleteRoundedIcon
@@ -177,7 +194,7 @@ function SelectVariation({ title, setContent }) {
 
             <section className="variation-select-footer  bottom-0 left-0 flex w-full flex-row flex-nowrap pt-5">
                 <button
-                onClick={() => setContent({type: 'manage'})}
+                    onClick={() => setContent({ type: 'manage' })}
                     type="button"
                     className="no-wrap first-letter: mr-auto flex flex-row items-center rounded-full !bg-[var(--light-grey)] px-3  py-[10px]  "
                 >
