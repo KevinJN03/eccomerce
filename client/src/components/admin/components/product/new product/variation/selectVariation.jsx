@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import Manage from './manage';
 import { colorList,sizeList, generateVariation, generateCustomVariation } from './variationData';
 
-function SelectVariation({ title, setContent }) {
+function SelectVariation({ title, setContent, variations }) {
     console.log('select Variation', title);
     const [option, setOption] = useState([]);
     const [variation, setVariation] = useState([]);
@@ -212,7 +212,7 @@ function SelectVariation({ title, setContent }) {
                 </div>
             </section>
 
-            <section className="variation-select-footer  bottom-0 left-0 flex w-full flex-row flex-nowrap pt-5">
+            <section className="variation-footer">
                 <button
                     onClick={() => setContent({ type: 'manage' })}
                     type="button"

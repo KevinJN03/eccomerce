@@ -1,28 +1,44 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import layer_icon from '../../../../../../assets/icons/layers.png'
-function Manage({setContent}) {
-    return (
-        <section className="variation-manage w-full relative flex flex-col">
-            <h2 className="text-left font-semibold text-2xl ">Manage variations</h2>
- <button onClick={()=> setContent({type: 'main'})} className='flex flex-row flex-nowrap justify-start items-center px-2 mt-3 py-2 box-border border-black border-1 hover:!px-[12.5px] transition-all ease-in-out rounded-full max-w-fit self-start'>
-            <AddRoundedIcon className='bg-transparent' />
-                <span className='bg-transparent text-sm'>Add a variation</span>
-            </button>
-            <section className="manage-body mt-4 flex flex-col items-center gap-y-3 max-w-[400px] self-center">
-           
 
-    <div className='h-28 w-28 flex self-center rounded-full !bg-[var(--light-grey)] p-4'><img src={layer_icon} alt="icon of stack" className='bg-transparent'/></div>
-            
-            <div className='text-center mt-3'>
-                <h3 className=''>You don't have any variations</h3>
-            <p>Use variations if your item is offered in different colours, sizes, materials, etc.</p> 
-            </div>
-           
-        
+import SingleVariation from './singleVariation';
+import Empty from './Empty';
+function Manage({ setContent, toggle, variations }) {
+    return (
+        <section className="variation-manage relative flex w-full flex-col">
+            <h2 className="text-left text-2xl font-semibold mb-2">
+                Manage variations
+            </h2>
+            {variations.length > 0 &&
+                variations.map((variation) => {
+                    return <SingleVariation singleVariation={variation} />;
+                })}
+            {variations.length < 2 && (
+                <button
+                    onClick={() => setContent({ type: 'main' })}
+                    className="border-1 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-black px-2 py-2 transition-all ease-in-out hover:!px-[12.5px]"
+                >
+                    <AddRoundedIcon className="bg-transparent" />
+                    <span className="bg-transparent text-sm">
+                        Add a variation
+                    </span>
+                </button>
+            )}
+            <section className="manage-body mt-4 flex max-w-[400px] flex-col items-center gap-y-3 self-center">
+                {variations.length < 1 && <Empty/>}
             </section>
-            <footer className="fixed bottom-0 left-0 p-7 flex flex-row justify-between w-full">
-                <button type="button" className='cancel-btn px-3 py-2 rounded-full'>Cancel</button>
-                <button type="button" className="bg-black text-white px-3 py-2 rounded-full disabled:opacity-40" disabled >
+            <footer className="variation-footer">
+                <button
+                    type="button"
+                    className="cancel-btn rounded-full px-3 py-2"
+                    onClick={toggle}
+                >
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    className="rounded-full bg-black px-3 py-2 text-white disabled:opacity-40"
+                    disabled
+                >
                     Apply
                 </button>
             </footer>

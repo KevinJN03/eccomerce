@@ -8,16 +8,18 @@ import SelectVariation from './selectVariation';
 import Manage from './manage';
 import { useContent } from '../../../../../../context/ContentContext';
 import Main from './main';
+import { colorList, generateVariation } from './variationData';
 
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-    const [content, setContent] = useState({type: 'main'});
+    const [content, setContent] = useState({ type: 'manage' });
+
+    const [variations, setVariations] = useState([{id: 1, name: 'Colour', options: [...generateVariation(colorList)]}])
+
     const toggle = () => {
         setCheck(!check);
     };
- 
-   
 
     return (
         <section
@@ -42,7 +44,25 @@ function Variation() {
                 <Modal
                     check={check}
                     setCheck={setCheck}
-                    ModalContent={content.type == 'main' ? <Main setContent={setContent}/> : content.type == 'select' ? <SelectVariation setContent={setContent} title={content.title}/> : content.type == 'manage'&& <Manage setContent={setContent} />}
+                    ModalContent={
+                        content.type == 'main' ? (
+                            <Main setContent={setContent} toggle={toggle} />
+                        ) : content.type == 'select' ? (
+                            <SelectVariation
+                                setContent={setContent}
+                                title={content.title}
+                            variations = {variations}
+                            />
+                        ) : (
+                            content.type == 'manage' && (
+                                <Manage
+                                    setContent={setContent}
+                                    toggle={toggle}
+                                    variations={variations}
+                                />
+                            )
+                        )
+                    }
                     loading={loading}
                     setLoading={setLoading}
                     className={

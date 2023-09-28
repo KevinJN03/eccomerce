@@ -2,7 +2,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 
 import SelectVariation from './selectVariation';
-export default function Main({setContent, setCheck}) {
+export default function Main({setContent, toggle}) {
 
 
     
@@ -44,8 +44,8 @@ export default function Main({setContent, setCheck}) {
                 <AddRoundedIcon className="bg-transparent" />
                 <span className="bg-transparent">Create your Own</span>
             </button>
-            <footer>
-                <button type="button" onClick={() => setCheck(false)} className='hover:!bg-gray-200 py-3 px-3 text-sm font-medium rounded-full'>
+            <footer className='variation-footer'>
+                <button type="button" onClick={toggle} className='hover:!bg-gray-200 py-3 px-3 text-sm font-medium rounded-full'>
                     Cancel
                 </button>
             </footer>
