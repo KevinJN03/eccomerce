@@ -12,18 +12,23 @@ function SelectVariation({ title, setContent }) {
     const [option, setOption] = useState([]);
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [name, setName] = useState('')
+
 
     useEffect(() => {
         if (title == 'Colour') {
             const generatedVariations = generateVariation(colorList);
             console.log('gennerated', generatedVariations);
             setVariation(generatedVariations);
+            setName(title)
         }
         if (title == 'Size') {
             const generatedVariations = generateVariation(sizeList);
             console.log('gennerated', generatedVariations);
             setVariation(generatedVariations);
+            setName(title)
         }
+
 
     }, []);
     const filterColor = (id) => {
@@ -72,6 +77,18 @@ function SelectVariation({ title, setContent }) {
             <header className="flex w-full flex-col border-b-2 pb-10 !text-left">
                 <h1 className=" font-semibold">{title || 'Custom variation'} </h1>
                 { title && <p>Variation</p>}
+                {!title && 
+                <div className=" min-w-full max-w-xs flex, flex-col gap-0 m-0 p-0">
+                <label className="py-2 font-medium text-lg">
+                  Name <span className='asterisk'>*</span>
+                </label>
+                <input type="text"  className="input input-bordered min-w-full max-w-xs !rounded-md"  required value= {name} onChange={(e) => setName(e.target.value)}/>
+             
+              </div>
+                
+                
+                
+               }
             </header>
 
             <section className="options mt-4">
@@ -89,9 +106,9 @@ function SelectVariation({ title, setContent }) {
                     </p>
                 </div>
 
-                <section className="dropdown w-[400px]">
+                <section className={` ${variation.length > 0 && 'dropdown'} w-[400px]`}>
                     <div
-                        className="searchOption flex !w-full flex-row items-center"
+                        className="searchOption flex !w-full flex-row items-center relative"
                         tabIndex={0}
                     >
                         <input
@@ -100,8 +117,11 @@ function SelectVariation({ title, setContent }) {
                             className="input input-lg !min-w-full rounded-md"
                             placeholder="Enter an option..."
                             onChange={(e) => setSearchText(e.target.value)}
+                            
+    
                         />
                         <ArrowDropDownIcon className="absolute right-3" />
+                        {!title && <button type="button" className='ml-2 rounded-3xl py-2 px-3 hover:bg-[var(--light-grey)] font-medium disabled:opacity-40' onClick={handleCustom} disabled={searchText.length < 1}>Add</button>}
                     </div>
 
                     <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll p-0">
@@ -150,7 +170,7 @@ function SelectVariation({ title, setContent }) {
                                         searchText.toLowerCase()
                                 ) && (
                                     <li
-                                        onClick={() => handleCustom()}
+                                        onClick={handleCustom}
                                         className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
                                     >
                                         <p className="bg-transparent text-sm">
@@ -204,15 +224,17 @@ function SelectVariation({ title, setContent }) {
                     </span>
                 </button>
                 <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
-                    {option.length < 1 && (
-                        <span className="text-sm text-gray-500">
-                            Add at least 1 option
-                        </span>
-                    )}
+                 
+
+                      
+                        {
+                           name.length < 1 && <ErrorMessage message={'Enter a variation name'}/> || option.length < 1 && <ErrorMessage message={'Add at least 1 option'}/> 
+                        }
+                  
                     <button
                         type="button"
                         className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
-                        disabled={option.length < 1}
+                        disabled={option.length < 1 || name.length < 1}
                     >
                         Done
                     </button>
@@ -220,6 +242,14 @@ function SelectVariation({ title, setContent }) {
             </section>
         </section>
     );
+}
+
+function ErrorMessage({ message}) {
+    return (
+        <span className="text-sm text-gray-500">
+                        {message}
+                        </span> 
+    )
 }
 
 export default SelectVariation;
