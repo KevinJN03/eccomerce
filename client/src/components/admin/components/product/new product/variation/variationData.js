@@ -25,7 +25,7 @@ const list = { Colour: colorList, Size: sizeList };
 
 export const generateVariation = (name) => {
     const catergoryList = list[`${name}`];
-debugger
+
     if (catergoryList) {
         const generatedList = catergoryList.map((item) => {
             return { variation: item, id: uuidv4() };

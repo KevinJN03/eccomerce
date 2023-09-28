@@ -5,7 +5,11 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Manage from './manage';
-import { generateVariation, generateCustomVariation, filteredVariation } from './variationData';
+import {
+    generateVariation,
+    generateCustomVariation,
+    filteredVariation,
+} from './variationData';
 import ErrorAlert from './errorAlert';
 import VariationResults from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
@@ -19,28 +23,26 @@ function SelectVariation({}) {
     const [name, setName] = useState(content.title || '');
     const [defaultVariation, setDefaultVariation] = useState(false);
     const [error, setError] = useState();
+    const [exist, setExist] = useState(false);
 
     useEffect(() => {
         if (content.currentVariation != null) {
             const currentVariation = content.currentVariation;
 
             const { name, options } = currentVariation;
-            console.log({ name, options })
+            console.log({ name, options });
 
-            const result = filteredVariation(name, options)
-            console.log('result', result)
+            const result = filteredVariation(name, options);
+            console.log('result', result);
             setOption(options);
-            setVariation(result)
+            setVariation(result);
 
             if (name == 'Colour' || name == 'Size') {
                 setDefaultVariation(true);
             }
-
         } else {
-
             if (name == 'Colour' || name == 'Size') {
-                
-            console.log('else Block')
+                console.log('else Block');
                 const generatedVariations = generateVariation(name, option);
                 console.log('generateOptions', option);
                 setDefaultVariation(true);
@@ -49,10 +51,19 @@ function SelectVariation({}) {
         }
     }, []);
 
-
     const onNameChange = (value) => {
-setName(value)
-    }
+        setName(value);
+        const newArr = [...variations];
+        const variationExist = newArr.some(
+            ({ name }) => name.toLowerCase() == value.toLowerCase()
+        );
+        if (variationExist) {
+            console.log('exist:', value);
+            return setExist(true);
+        }
+
+        return setExist(false);
+    };
     const filterColor = (id) => {
         let newArr = [...variation];
         const newColor = newArr.filter((item) => item.id != id);
@@ -89,6 +100,21 @@ setName(value)
         setVariation([]);
     };
 
+    const deleteVariation = () => {
+
+        try {
+        
+            dispatch({ type: 'manage' })
+
+        
+        } catch (error) {
+console.log(error)
+            setError(error.message || 'Fail to proceed. Please try again.')
+            
+        }
+       
+    }
+
     const handleCustom = () => {
         const customVariation = generateCustomVariation(searchText);
         setOption([...option, customVariation]);
@@ -99,7 +125,7 @@ setName(value)
         try {
             if (content.currentVariation) {
                 const { id } = content.currentVariation;
-                console.log('here')
+                console.log('here');
                 setVariations(
                     variations.map((item) => {
                         if (item.id == id) {
@@ -151,6 +177,7 @@ setName(value)
                         />
                     </div>
                 )}
+                {exist && <OptionError msg={`Variation ${name} already exist. Please try different a name.`}/>}
             </header>
 
             <section className="options my-4 min-h-full">
@@ -242,7 +269,7 @@ setName(value)
 
             <section className="variation-footer">
                 <button
-                    onClick={() => dispatch({ type: 'manage' })}
+                    onClick={deleteVariation}
                     type="button"
                     className="no-wrap first-letter: mr-auto flex flex-row items-center justify-center rounded-full !bg-[var(--light-grey)] px-3  py-[10px] transition-all  ease-in-out hover:scale-[1.02] hover:!bg-gray-300"
                 >
@@ -252,7 +279,9 @@ setName(value)
                     </span>
                 </button>
                 <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
-                    {(name.length < 1 && (
+                    {
+                    exist && <ErrorMessage message={'Variation already exist'}/> || 
+                    (name.length < 1 && (
                         <ErrorMessage message={'Enter a variation name'} />
                     )) ||
                         (option.length < 1 && (
@@ -262,7 +291,7 @@ setName(value)
                     <button
                         type="button"
                         className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
-                        disabled={option.length < 1 || name.length < 1}
+                        disabled={option.length < 1 || name.length < 1 || exist}
                         onClick={createVariation}
                     >
                         Done
