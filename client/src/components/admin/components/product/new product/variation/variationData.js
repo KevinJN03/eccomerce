@@ -25,14 +25,14 @@ const list = { Colour: colorList, Size: sizeList };
 
 export const generateVariation = (name) => {
     const catergoryList = list[`${name}`];
-
-    if (catergoryList.length > 0) {
+debugger
+    if (catergoryList) {
         const generatedList = catergoryList.map((item) => {
             return { variation: item, id: uuidv4() };
         });
         return generatedList;
     }
-    
+
          return [];
    
 

@@ -9,7 +9,7 @@ function VariationResults({
     handleCustom,
     option,
 }) {
-
+console.log({searchText})
     
     return (
         <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
@@ -49,15 +49,15 @@ function VariationResults({
                     </li>
                 )}
 
-                {searchText.length < 20 &&
+                {searchText.length > 1 &&
                     !variation.some(
                         (item) =>
                             item.variation.toLowerCase() ===
                             searchText.toLowerCase()
                     ) &&
-                   !option.some((item) => {
-                       return  item.variation.toLowerCase() != searchText.toLowerCase();
-                    }) && (
+                   !option.some((item) => 
+                        item.variation.toLowerCase() != searchText.toLowerCase()
+                    ) && (
                         <li
                             onClick={handleCustom}
                             className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
