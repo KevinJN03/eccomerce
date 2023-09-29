@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
+import expressAsyncHandler from 'express-async-handler';
 dayjs.extend(relativeTime);
 const { Schema } = mongoose;
 

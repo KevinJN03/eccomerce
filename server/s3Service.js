@@ -15,7 +15,9 @@ const s3Upload = async (files, type) => {
       Body: file.buffer,
 
       ContentDisposition: 'inline',
-      ContentType: file.type,
+      ContentType: 'image/png',
+      ResponseCacheControl: 'no-cache',
+      CacheControl: "no-cache"
     };
   });
   const s3Client = new S3Client();
