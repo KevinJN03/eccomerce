@@ -49,14 +49,14 @@ console.log({searchText})
                     </li>
                 )}
 
-                {searchText.length > 1 &&
+                {   (searchText.length > 0) &&( searchText.length < 20) &&
                     !variation.some(
                         (item) =>
                             item.variation.toLowerCase() ===
                             searchText.toLowerCase()
                     ) &&
                    !option.some((item) => 
-                        item.variation.toLowerCase() != searchText.toLowerCase()
+                        item.variation.toLowerCase() === searchText.toLowerCase()
                     ) && (
                         <li
                             onClick={handleCustom}

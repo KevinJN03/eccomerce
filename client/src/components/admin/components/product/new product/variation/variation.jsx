@@ -23,7 +23,9 @@ import {
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-    const [content, dispatch] = useReducer(variationReducer, { type: 'manage' });
+    const [content, dispatch] = useReducer(variationReducer, {
+        type: 'manage',
+    });
 
     const [variations, setVariations] = useState([
         { id: 1, name: 'Colour', options: [...generateVariation('Colour')] },
@@ -42,28 +44,29 @@ function Variation() {
         setVariations,
     };
 
-
-
     return (
+        
         <VariationProvider value={value}>
-            <section
-                id="variations"
-                className="format relative z-[5] flex w-full flex-row justify-between"
-            >
-                <New_Product_Header
-                    title={'Variations'}
-                    text={
-                        'If your item is offered in different colours, sizes, materials,etc.'
-                    }
-                />
-                <button
-                    type="button"
-                    onClick={toggle}
-                    className="rounded-full border-2 border-black px-3 py-2"
+            <section className="new-product-wrapper relative variations">
+                <section
+             
+                    className="relative z-[5] flex w-full flex-row justify-between"
                 >
-                    <AddRoundedIcon />
-                    <span>Add Variations</span>
-                </button>
+                    <New_Product_Header
+                        title={'Variations'}
+                        text={
+                            'If your item is offered in different colours, sizes, materials,etc.'
+                        }
+                    />
+                    <button
+                        type="button"
+                        onClick={toggle}
+                        className="rounded-full border-2 border-black px-3 py-2"
+                    >
+                        <AddRoundedIcon />
+                        <span>Add Variations</span>
+                    </button>
+                </section>
                 {check && (
                     <Modal
                         check={check}
@@ -92,6 +95,7 @@ function Variation() {
                     />
                 )}
             </section>
+           
         </VariationProvider>
     );
 }

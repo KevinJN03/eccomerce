@@ -101,19 +101,20 @@ function SelectVariation({}) {
     };
 
     const deleteVariation = () => {
-
         try {
-        
-            dispatch({ type: 'manage' })
-
-        
+            if (content.currentVariation) {
+                const newVariation = variations.filter((item) => {
+                    return item.id != content.currentVariation.id;
+                });
+                setVariations(newVariation);
+              
+            }
+            return   dispatch({ type: 'manage' });
         } catch (error) {
-console.log(error)
-            setError(error.message || 'Fail to proceed. Please try again.')
-            
+            console.log(error);
+            setError('Fail to delete variation. Please try again.');
         }
-       
-    }
+    };
 
     const handleCustom = () => {
         const customVariation = generateCustomVariation(searchText);
@@ -136,6 +137,9 @@ console.log(error)
                     })
                 );
             } else {
+
+                const findName = variations.some((item) => item.name.toLowerCase() == name.toLowerCase())
+                if(findName) throw new Error('Variation name already exists. Please try again.')
                 const newVariation = {
                     name,
                     options: option,
@@ -156,7 +160,7 @@ console.log(error)
     };
 
     return (
-        <section className="select-variation min-h-full w-full">
+        <section className="select-variation max-h-full w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}
             <header className="flex w-full flex-col border-b-2 pb-4 !text-left">
                 <h1 className=" font-semibold">
@@ -177,7 +181,11 @@ console.log(error)
                         />
                     </div>
                 )}
-                {exist && <OptionError msg={`Variation ${name} already exist. Please try different a name.`}/>}
+                {exist && (
+                    <OptionError
+                        msg={`Variation ${name} already exist. Please try different a name.`}
+                    />
+                )}
             </header>
 
             <section className="options my-4 min-h-full">
@@ -267,7 +275,7 @@ console.log(error)
                 </div>
             </section>
 
-            <section className="variation-footer">
+            <section className="variation-footer !bottom-[-25px] py-4 ">
                 <button
                     onClick={deleteVariation}
                     type="button"
@@ -279,11 +287,12 @@ console.log(error)
                     </span>
                 </button>
                 <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
-                    {
-                    exist && <ErrorMessage message={'Variation already exist'}/> || 
-                    (name.length < 1 && (
-                        <ErrorMessage message={'Enter a variation name'} />
+                    {(exist && (
+                        <ErrorMessage message={'Variation already exist'} />
                     )) ||
+                        (name.length < 1 && (
+                            <ErrorMessage message={'Enter a variation name'} />
+                        )) ||
                         (option.length < 1 && (
                             <ErrorMessage message={'Add at least 1 option'} />
                         ))}

@@ -20,39 +20,39 @@ function Details() {
             });
     };
     useEffect(() => {
-
-
-        fetchData('category', setCategory)
+        fetchData('category', setCategory);
     }, []);
     return (
-        <section id="details">
-            <New_Product_Header
-                title={'Details'}
-                text={
-                    'Share a few more specifics about your item to make it easier to find in search, and to help buyers know what to expect.'
-                }
-            />
+        <section className="new-product-wrapper">
+            <section id="details">
+                <New_Product_Header
+                    title={'Details'}
+                    text={
+                        'Share a few more specifics about your item to make it easier to find in search, and to help buyers know what to expect.'
+                    }
+                />
 
-            <div className="flex flex-col">
-            <CategorySelect
-                    options={category.map((cat) => cat.name.toUpperCase())}
-                    title="Category"
-                />
-                <CategorySelect options={['Men', 'Women']} title="Gender" />
-               
-                <CategorySelect
-                    options={[
-                        'Red',
-                        'Yellow',
-                        'Blue',
-                        'Green',
-                        'Orange',
-                        'Black',
-                        'White',
-                    ]}
-                    title="Primary Color"
-                />
-            </div>
+                <div className="flex flex-col">
+                    <CategorySelect
+                        options={category.map((cat) => cat.name.toUpperCase())}
+                        title="Category"
+                    />
+                    <CategorySelect options={['Men', 'Women']} title="Gender" />
+
+                    <CategorySelect
+                        options={[
+                            'Red',
+                            'Yellow',
+                            'Blue',
+                            'Green',
+                            'Orange',
+                            'Black',
+                            'White',
+                        ]}
+                        title="Primary Color"
+                    />
+                </div>
+            </section>
         </section>
     );
 }

@@ -23,7 +23,7 @@ function Manage({ toggle }) {
     };
 
     return (
-        <section className="variation-manage relative flex max-h-full w-full flex-col">
+        <section className="variation-manage relative flex min-h-full w-full flex-col">
             <h2 className="mb-2 text-left text-2xl font-semibold">
                 Manage variations
             </h2>
@@ -50,10 +50,10 @@ function Manage({ toggle }) {
                     </span>
                 </button>
             )}
-            <section className="manage-body flex h-full min-h-full w-full flex-col items-center gap-y-3">
+            <section className="manage-body flex h-full w-full flex-col items-center gap-y-3">
                 {variations.length < 1 && <Empty />}
                 {variations.length > 0 && (
-                    <div className="mt-2 flex h-full w-full min-w-full flex-col gap-y-5 border-t-2 pt-10">
+                    <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
                         <ToggleSwitch
                             label={'Price'}
                             state={price}

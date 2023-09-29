@@ -34,27 +34,28 @@ function New_Product() {
                         <a href="#settings">Settings</a>
                     </div>
 
-                    <section className="new-product-wrapper bg-[var(--light-grey)] py-4 pl-6 mx-[-24px]">
+                    <section className="new-product-wrapper !rounded-none mx-[-24px] flex flex-col gap-y-3 bg-[var(--light-grey)] py-4 pl-6">
                         <About />
                         <Price_Inventory />
-                        <Variation/>
+                        <Variation />
                         <Details />
 
                         <Delivery />
                     </section>
 
                     <div className="new-product-footer flex gap-2 p-6 font-medium">
-                        <button className='border-none hover:bg-[var(--light-grey)]' onClick={() => navigate('/admin/products')}>
+                        <button
+                            className="border-none hover:bg-[var(--light-grey)]"
+                            onClick={() => navigate('/admin/products')}
+                        >
                             Cancel
                         </button>
                         <button className="ml-auto">Preview</button>
                         <button>Save as draft</button>
-                        <button className='text-white bg-black'>Publish</button>
+                        <button className="bg-black text-white">Publish</button>
                     </div>
-                 
                 </div>
             </div>
-        
         </section>
     );
 }

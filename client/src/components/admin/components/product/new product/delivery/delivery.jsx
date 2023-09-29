@@ -18,6 +18,7 @@ const back = () => {
     dispatch({ type: 'Main' })
 }
     return (
+        <section className='new-product-wrapper'>
         <section id="delivery">
             <New_Product_Header title={'Delivery'} />
             
@@ -48,6 +49,7 @@ const back = () => {
                     />
                 )}
             </div>
+        </section>
         </section>
     );
 }
