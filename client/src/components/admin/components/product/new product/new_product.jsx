@@ -50,9 +50,9 @@ function New_Product() {
                         >
                             Cancel
                         </button>
-                        <button className="ml-auto">Preview</button>
-                        <button>Save as draft</button>
-                        <button className="bg-black text-white">Publish</button>
+                        <button className="ml-auto theme-btn">Preview</button>
+                        <button className='theme-btn'>Save as draft</button>
+                        <button className="bg-black text-white theme-btn">Publish</button>
                     </div>
                 </div>
             </div>

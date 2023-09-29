@@ -119,11 +119,7 @@ p {
     width: 50%;
 }
 
-.new-product-footer {
-    button {
-        @apply rounded-full border-2  border-black px-4 py-3 text-base transition-all hover:scale-105;
-    }
-}
+
 
 .new-product-wrapper section {
     @apply bg-white;
@@ -133,7 +129,25 @@ p {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
+.theme-btn {
+    @apply rounded-full font-semibold border-2  border-black px-4 py-3 text-base transition-all hover:scale-105;
+}
 .variations {
+.pound {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+    table{
+        @apply self-center w-11/12 my-6;
+
+        th {
+            @apply font-medium text-sm underline underline-offset-2 pb-8;
+        }
+    }
     .options-btn {
         @apply rounded-full bg-[var(--light-grey)]  px-4 py-2 font-gotham transition-all;
         &:disabled {
