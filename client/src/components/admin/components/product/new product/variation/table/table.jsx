@@ -1,11 +1,17 @@
 import Row from './row';
-import { useState } from 'react';
-function Table({ variations }) {
+import { useEffect, useState } from 'react';
+function Table({ variations, setSelected, selected }) {
     const [checkAll, setCheckAll] = useState(false);
+  
+useEffect(() => {
+const count = variations[0].options.length;
+if(selected != count){
+    setCheckAll(false)
+}else {
+    setCheckAll(true) 
+}
 
-    const selectAllOff = () => {
-        setCheckAll(false);
-    };
+}, [selected])
     return (
         <table className="result-table w-full">
             <colgroup>
@@ -31,7 +37,7 @@ function Table({ variations }) {
                 <th className="!text-right">Visible </th>
             </tr>
             {variations[0].options.map(({ variation }) => {
-                return <Row variation={variation} checkAll={checkAll} selectAllOff={selectAllOff} />;
+                return <Row variation={variation} variations={variations} checkAll={checkAll} setSelected={setSelected} selected={selected} />;
             })}
         </table>
     );

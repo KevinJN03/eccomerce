@@ -2,7 +2,7 @@ import Switch from '../switch';
 import { useEffect, useRef, useState } from 'react';
 import { useClickAway } from '@uidotdev/usehooks';
 import OptionError from '../optionError';
-function Row({ variation, checkAll, selectAllOff }) {
+function Row({ variation, checkAll, setSelected, selected, variations }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [state, setState] = useState(true);
     const [check, setCheck] = useState(false);
@@ -10,9 +10,22 @@ function Row({ variation, checkAll, selectAllOff }) {
     const [stock, setStock] = useState();
 
     useEffect(() => {
-setCheck(checkAll)
-    },[checkAll])
+        const count = variations[0].options.length;
+        if(checkAll) {
+           setCheck(checkAll); 
+        }else if(!checkAll && selected == count) {
+            setCheck(checkAll); 
+        }
+        
+    }, [checkAll]);
 
+    useEffect(() => {
+        if (check) {
+            return setSelected((prevState) => prevState + 1);
+        } else if (selected > 0) {
+            return setSelected((prevState) => prevState - 1);
+        }
+    }, [check]);
     const priceRef = useClickAway(() => {
         formatData(price, 2, setPrice);
     });
@@ -22,12 +35,10 @@ setCheck(checkAll)
     });
 
     const formatData = (data, num, setState) => {
-        console.log('data', data);
         try {
             let newData = parseFloat(data).toFixed(num);
 
             if (newData != data) {
-                console.log('new Update', newData);
                 setState(newData);
             }
         } catch (error) {
@@ -70,10 +81,8 @@ setCheck(checkAll)
     };
 
     const handleCheck = () => {
-        setCheck(!check)
-        selectAllOff()
-    }
-
+        setCheck(!check);
+    };
 
     return (
         <tr
@@ -92,7 +101,7 @@ setCheck(checkAll)
 
             <td
                 className={`pl-4 ${
-                    ( !error.stock  && !error.price) && '!align-middle' 
+                    !error.stock && !error.price && '!align-middle'
                 } `}
             >
                 {variation}
@@ -106,7 +115,7 @@ setCheck(checkAll)
                         ref={priceRef}
                         type="number"
                         step=".01"
-                        className={`price-input input-number input input-lg w-full rounded-lg px-4 ${
+                        className={`price-input input-number input input-lg w-full rounded-lg px-4 py-4 ${
                             error.price && 'border-red-300 bg-red-200'
                         }`}
                         onChange={(e) => handlePrice(e.target.value)}
@@ -124,7 +133,7 @@ setCheck(checkAll)
                     onChange={(e) => handleStock(e.target.value)}
                     value={stock}
                     type="number"
-                    className={`input-number input input-lg w-full  rounded-lg px-2 ${
+                    className={`input-number input input-lg w-full rounded-lg  px-2 py-4 ${
                         error.stock && 'border-red-300 bg-red-200'
                     }`}
                 />
