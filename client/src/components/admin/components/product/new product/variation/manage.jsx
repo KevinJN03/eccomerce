@@ -5,8 +5,8 @@ import Empty from './Empty';
 import ToggleSwitch from './toggleSwitch';
 import { useState } from 'react';
 import { useVariation } from '../../../../../../context/variationContext';
-function Manage({ toggle }) {
-    const { dispatch, variations, setVariations } = useVariation();
+function Manage({ }) {
+    const { dispatch, variations  , setVariations, setCheck} = useVariation();
     const [price, setPrice] = useState(false);
     const [quantity, setQuantity] = useState(false);
 
@@ -71,7 +71,7 @@ function Manage({ toggle }) {
                 <button
                     type="button"
                     className="cancel-btn rounded-full px-3 py-2"
-                    onClick={toggle}
+                    onClick={() => setCheck(false)}
                 >
                     Cancel
                 </button>

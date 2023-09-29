@@ -14,6 +14,7 @@ function Modal({
     className,
     back,
     selection,
+
 }) {
     const handleDelete = () => {
         if (selection && selection.length > 1) {

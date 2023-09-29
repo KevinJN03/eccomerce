@@ -19,17 +19,16 @@ import {
     variationReducer,
     VariationProvider,
 } from '../../../../../../context/variationContext';
+import VariationList from './variationList';
 
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
     const [content, dispatch] = useReducer(variationReducer, {
-        type: 'manage',
+        type: 'main',
     });
 
-    const [variations, setVariations] = useState([
-        { id: 1, name: 'Colour', options: [...generateVariation('Colour')] },
-    ]);
+    const [variations, setVariations] = useState([{id: 1, name: 'Colour', options: generateVariation('Colour') },{id: 1, name: 'Size', options: generateVariation('Size') } ]);
 
     const toggle = () => {
         setCheck(!check);
@@ -44,14 +43,22 @@ function Variation() {
         setVariations,
     };
 
+    useEffect(() => {
+if (variations.length < 1) {
+    console.log(variations)
+    console.log('clean up', variations.length );
+            return dispatch({ type: 'main' });
+        } else {
+           return  dispatch({ type:  'manage' });
+        }
+    }, [check])
+
+  
+
     return (
-        
         <VariationProvider value={value}>
-            <section className="new-product-wrapper relative variations">
-                <section
-             
-                    className="relative z-[5] flex w-full flex-row justify-between"
-                >
+            <section className="new-product-wrapper variations relative">
+                <section className="relative z-[5] flex w-full flex-row justify-between flex-wrap">
                     <New_Product_Header
                         title={'Variations'}
                         text={
@@ -61,14 +68,16 @@ function Variation() {
                     <button
                         type="button"
                         onClick={toggle}
-                        className="rounded-full border-2 border-black px-3 py-2"
+                        className="rounded-full border-2 border-black px-3 py-2 "
                     >
                         <AddRoundedIcon />
                         <span>Add Variations</span>
                     </button>
+                    <VariationList/>
                 </section>
                 {check && (
                     <Modal
+                     
                         check={check}
                         setCheck={setCheck}
                         ModalContent={
@@ -82,10 +91,7 @@ function Variation() {
                                 />
                             ) : (
                                 content.type == 'manage' && (
-                                    <Manage
-                                        toggle={toggle}
-                                   
-                                    />
+                                    <Manage />
                                 )
                             )
                         }
@@ -95,7 +101,6 @@ function Variation() {
                     />
                 )}
             </section>
-           
         </VariationProvider>
     );
 }

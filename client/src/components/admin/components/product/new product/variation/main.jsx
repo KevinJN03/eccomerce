@@ -2,13 +2,21 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 import SelectVariation from './selectVariation';
 import { useVariation } from '../../../../../../context/variationContext';
-export default function Main({ toggle }) {
+export default function Main({toggle }) {
     const { dispatch, variations } = useVariation();
     const findVariation = (name) => {
         const result =  variations.some((item) => item.name == name);
-        debugger
+      
         return result
     };
+
+    const exit = () => {
+        if (variations.length >= 1){
+            return dispatch({type: 'manage'})
+        }
+
+        return toggle()
+    }
     return (
         <section className="variation-main relative h-full">
             <h1 className="mb-2">What type of variation is it?</h1>
@@ -48,7 +56,7 @@ export default function Main({ toggle }) {
             </div>
 
             <footer className="variation-footer">
-                <button type="button" onClick={toggle} className="cancel-btn">
+                <button type="button" onClick={exit} className="cancel-btn">
                     Cancel
                 </button>
             </footer>
