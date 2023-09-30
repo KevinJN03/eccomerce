@@ -16,10 +16,14 @@ function ToggleSwitch({ label, state, setState }) {
     }, [state]);
 
 
+    const handleToggle = () => {
+        setState(!state)
+    }
+
     return (
         <section className="flex flex-row gap-x-4 items-center h-12">
             <div className=" flex flex-row items-center gap-3">
-              <Switch state={state} setState={setState}/>
+              <Switch state={state} toggle={handleToggle}/>
 
                 <label>
                     <span className="font-semibold">{label} </span> vary{' '}

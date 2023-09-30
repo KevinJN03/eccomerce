@@ -132,7 +132,7 @@ p {
 .variations {
     .result-table {
         .checkbox {
-            @apply border-gray-600 rounded-md
+            @apply rounded-md border-gray-600;
         }
     }
     .pound {
@@ -153,15 +153,15 @@ p {
     table {
         @apply my-6  self-center;
         width: 95%;
-        table-layout: fixed;    
+        table-layout: fixed;
         td {
-            @apply px-4 py-4 align-top text-left w-full; 
-          }
+            @apply w-full px-4 py-4 text-left align-top;
+        }
 
         th {
-            @apply px-4 pb-5 text-sm font-medium underline underline-offset-2 text-left;
+            @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
         }
-     }
+    }
     .options-btn {
         @apply rounded-full bg-[var(--light-grey)]  px-4 py-2 font-gotham transition-all;
         &:disabled {
@@ -196,6 +196,26 @@ p {
             &:hover {
                 @apply bg-[var(--light-grey)];
             }
+        }
+
+        .apply-btn {
+            @apply rounded-full bg-black px-3 py-2 text-white disabled:opacity-40 relative;
+
+            &::after, &::before {
+                content: "";
+              
+                background: inherit;
+            }
+            &:hover {
+                
+                background-color: rgba(0, 0, 0, 0.821)
+            }
+
+            
+
+            // &:hover {
+            //     @apply opacity-80 scale-105
+            // }
         }
     }
 
@@ -237,7 +257,7 @@ p {
 .modal-content {
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
-    @apply h-full max-h-[550px];
+    @apply max-h-[550px];
 }
 
 .dropdown-menu {

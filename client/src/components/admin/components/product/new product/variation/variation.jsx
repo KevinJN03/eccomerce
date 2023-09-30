@@ -1,18 +1,11 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import New_Product_Header from '../header';
 import Modal from '../../../modal/modal';
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useReducer,
-    useState,
-} from 'react';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useEffect, useReducer, useState } from 'react';
+
 import SelectVariation from './selectVariation';
 import Manage from './manage';
-import { useContent } from '../../../../../../context/ContentContext';
+
 import Main from './main';
 import { colorList, generateVariation } from './variationData';
 import {
@@ -20,18 +13,30 @@ import {
     VariationProvider,
 } from '../../../../../../context/variationContext';
 import VariationList from './variationList';
+import Update from './update';
 
+const views = {
+    manage: <Manage />,
+    select: <SelectVariation />,
+    main: <Main />,
+    update: <Update />,
+};
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
+    const [selected, setSelected] = useState(0);
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
 
-    const [variations, setVariations] = useState([{id: 1, name: 'Colour', options: generateVariation('Colour') },{id: 1, name: 'Size', options: generateVariation('Size') } ]);
+    const [variations, setVariations] = useState([
+        { id: 1, name: 'Colour', options: generateVariation('Colour') },
+        { id: 2, name: 'Size', options: generateVariation('Size') },
+    ]);
 
     const toggle = () => {
         setCheck(!check);
+        dispatch({ type: 'manage' })
     };
 
     const value = {
@@ -41,24 +46,26 @@ function Variation() {
         dispatch,
         variations,
         setVariations,
+        setSelected,
+        selected,
     };
 
     useEffect(() => {
-if (variations.length < 1) {
-    console.log(variations)
-    console.log('clean up', variations.length );
+        if (content.type == 'update') return;
+
+        if (variations.length < 1) {
+            console.log(variations);
+            console.log('clean up', variations.length);
             return dispatch({ type: 'main' });
         } else {
-           return  dispatch({ type:  'manage' });
+            return dispatch({ type: 'manage' });
         }
-    }, [check])
-
-  
+    }, [check]);
 
     return (
         <VariationProvider value={value}>
             <section className="new-product-wrapper variations relative">
-                <section className="relative z-[5] flex w-full flex-row justify-between flex-wrap">
+                <section className="relative z-[5] flex w-full flex-row flex-wrap justify-between">
                     <New_Product_Header
                         title={'Variations'}
                         text={
@@ -69,32 +76,18 @@ if (variations.length < 1) {
                         type="button"
                         onClick={toggle}
                         className="rounded-full border-2 border-black px-3 py-2 "
+                       
                     >
                         <AddRoundedIcon />
                         <span>Add Variations</span>
                     </button>
-                    <VariationList/>
+                    <VariationList />
                 </section>
                 {check && (
                     <Modal
-                     
                         check={check}
                         setCheck={setCheck}
-                        ModalContent={
-                            content.type == 'main' ? (
-                                <Main toggle={toggle} />
-                            ) : content.type == 'select' ? (
-                                <SelectVariation
-                                    title={content.title}
-                                    setAllVariations={setVariations}
-                                    allVariations={variations}
-                                />
-                            ) : (
-                                content.type == 'manage' && (
-                                    <Manage />
-                                )
-                            )
-                        }
+                        ModalContent={views[content.type]}
                         loading={loading}
                         setLoading={setLoading}
                         className={' w-full max-w-[600px]  !rounded-3xl'}

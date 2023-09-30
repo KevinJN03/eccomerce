@@ -13,10 +13,14 @@ export const useVariation = () => {
 };
 
 export const variationReducer = (state, action) => {
-    if (action.type == 'main' || action.type == 'manage') {
-        return { ...state, type: action.type,  currentVariation: null };
+    if(action.type == 'update' ) {
+        return { ...state, type: action.type, category: action.category };
     }
 
+    if (action.type == 'main' || action.type == 'manage' || action.type) {
+        return { ...state, type: action.type,  currentVariation: null,  };
+    }
+   
     if (action.type == 'select') {
         return {
             ...state,
@@ -25,7 +29,8 @@ export const variationReducer = (state, action) => {
             title: action.title
         };
     }
-    return new Error('Invalid type for Variation Reducer');
+
+     throw new Error('Invalid type for Variation Reducer');
 };
 
 export function VariationProvider({ children, value }) {

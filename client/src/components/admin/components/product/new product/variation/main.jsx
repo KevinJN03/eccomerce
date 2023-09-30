@@ -2,8 +2,8 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 import SelectVariation from './selectVariation';
 import { useVariation } from '../../../../../../context/variationContext';
-export default function Main({toggle }) {
-    const { dispatch, variations } = useVariation();
+export default function Main() {
+    const { dispatch, variations, setCheck } = useVariation();
     const findVariation = (name) => {
         const result =  variations.some((item) => item.name == name);
       
@@ -15,7 +15,7 @@ export default function Main({toggle }) {
             return dispatch({type: 'manage'})
         }
 
-        return toggle()
+        return setCheck(false)
     }
     return (
         <section className="variation-main relative h-full">

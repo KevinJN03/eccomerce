@@ -1,11 +1,11 @@
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { useEffect, useRef, useState } from 'react';
-function Switch({state, setState}) {
+function Switch({state, toggle}) {
     return (
         <div
             className={`relative flex h-full max-w-fit cursor-pointer flex-row items-center`}
-            onClick={() => setState(!state)}
+            onClick={toggle}
         >
             <input
                 type="checkbox"

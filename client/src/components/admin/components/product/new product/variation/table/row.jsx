@@ -2,49 +2,90 @@ import Switch from '../switch';
 import { useEffect, useRef, useState } from 'react';
 import { useClickAway } from '@uidotdev/usehooks';
 import OptionError from '../optionError';
-function Row({ variation, checkAll, setSelected, selected, variations }) {
+import formatData from '../formatData';
+import ErrorAlert from '../errorAlert';
+import { useVariation } from '../../../../../../../context/variationContext';
+function Row({
+    variation,
+    checkAll,
+    setSelected,
+    setCheckAll,
+    selected,
+    variations,
+    variationId,
+}) {
     const [error, setError] = useState({ price: null, stock: null });
     const [state, setState] = useState(true);
     const [check, setCheck] = useState(false);
     const [price, setPrice] = useState();
+
+    const { setVariations } = useVariation();
     const [stock, setStock] = useState();
-
-    useEffect(() => {
-        const count = variations[0].options.length;
-        if(checkAll) {
-           setCheck(checkAll); 
-        }else if(!checkAll && selected == count) {
-            setCheck(checkAll); 
-        }
-        
-    }, [checkAll]);
-
-    useEffect(() => {
-        if (check) {
-            return setSelected((prevState) => prevState + 1);
-        } else if (selected > 0) {
-            return setSelected((prevState) => prevState - 1);
-        }
-    }, [check]);
     const priceRef = useClickAway(() => {
         formatData(price, 2, setPrice);
     });
-
     const stockRef = useClickAway(() => {
         formatData(stock, 0, setStock);
     });
 
-    const formatData = (data, num, setState) => {
-        try {
-            let newData = parseFloat(data).toFixed(num);
+    let count = 0
+    variations.forEach(element => {
+        count += element.options.length 
+    });
 
-            if (newData != data) {
-                setState(newData);
-            }
-        } catch (error) {
-            console.log('error', error);
+    useEffect(() => {
+
+        const newVariations = [...variations];
+        const findVariations = newVariations.find(
+            (item) => item.id == variationId
+        );
+
+        if (findVariations) {
+            const { options } = findVariations;
+            const newOptions = options.map((item) => {
+                if (item.id ==variation.id) {
+                    return {
+                        ...item,
+                        disabled: !state,
+                        price: price,
+                        stock: stock,
+                    };
+                }
+                return item;
+            });
+
+            console.log({ newOptions });
+
+            setVariations(
+                variations.map((item) => {
+                    if (item.id == variationId) {
+                        return { ...item, options: newOptions };
+                    }
+                    return item;
+                })
+            );
         }
-    };
+
+    }, [state, stock, price]);
+
+    useEffect(() => {
+ 
+            
+        if(checkAll || selected == count) {
+            setCheck(checkAll)
+        }
+    }, [checkAll]);
+
+    useEffect(() => {
+
+
+        if (check  && selected <= count) {
+            return setSelected((prevState) => prevState + 1);
+        } else if (selected > 0) {
+            setCheckAll(false)
+            return setSelected((prevState) => prevState - 1);
+        }
+    }, [check]);
 
     const handlePrice = (value) => {
         if (!value) {
@@ -84,29 +125,43 @@ function Row({ variation, checkAll, setSelected, selected, variations }) {
         setCheck(!check);
     };
 
+ 
+
+    const handleVisibility = () => {
+        setState(!state);
+
+        console.log('here');
+    };
     return (
         <tr
             className={`h-full max-h-28 hover:bg-[var(--light-grey)] ${
-                check && 'bg-gray-200'
+                check && !variation.disabled && 'bg-gray-200'
             }`}
         >
-            <td>
+            <td
+                className={` ${
+                    (error.price || error.stock) && '!align-top'
+                } align-middle`}
+            >
                 <input
                     type="checkbox"
-                    className="checkbox"
-                    checked={check}
+                    className={`checkbox`}
+                    checked={check && !variation.disabled}
                     onChange={handleCheck}
+                    disabled={variation.disabled}
                 />
             </td>
 
             <td
                 className={`pl-4 ${
                     !error.stock && !error.price && '!align-middle'
-                } `}
+                } 
+                
+                ${!state && '!opacity-60 '}`}
             >
-                {variation}
+                {variation.variation}
             </td>
-            <td>
+            <td className={`relative ${!state && 'opacity-0'}`}>
                 <div className="relative">
                     <span className="pound absolute left-2 top-2/4 translate-y-[-50%] font-medium">
                         £
@@ -120,14 +175,15 @@ function Row({ variation, checkAll, setSelected, selected, variations }) {
                         }`}
                         onChange={(e) => handlePrice(e.target.value)}
                         value={price}
+                        disabled={!state}
                     />
                 </div>
 
-                {error.price && (
+                {error.price && state && (
                     <OptionError msg={error.price} className={'w-full'} />
                 )}
             </td>
-            <td>
+            <td className={`relative ${!state && 'opacity-0'}`}>
                 <input
                     ref={stockRef}
                     onChange={(e) => handleStock(e.target.value)}
@@ -136,8 +192,9 @@ function Row({ variation, checkAll, setSelected, selected, variations }) {
                     className={`input-number input input-lg w-full rounded-lg  px-2 py-4 ${
                         error.stock && 'border-red-300 bg-red-200'
                     }`}
+                    disabled={!state}
                 />
-                {error.stock && <OptionError msg={error.stock} />}
+                {error.stock && state && <OptionError msg={error.stock} />}
             </td>
             <td className="flex !h-16 items-center justify-end ">
                 {soldOut() && (
@@ -145,7 +202,7 @@ function Row({ variation, checkAll, setSelected, selected, variations }) {
                         Sold out
                     </span>
                 )}
-                <Switch state={state} setState={setState} />
+                <Switch state={state} toggle={handleVisibility} />
             </td>
         </tr>
     );
