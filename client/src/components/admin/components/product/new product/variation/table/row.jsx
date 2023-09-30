@@ -5,22 +5,14 @@ import OptionError from '../optionError';
 import formatData from '../formatData';
 import ErrorAlert from '../errorAlert';
 import { useVariation } from '../../../../../../../context/variationContext';
-function Row({
-    variation,
-    checkAll,
-    setSelected,
-    setCheckAll,
-    selected,
-    variations,
-    variationId,
-}) {
+function Row({ variation, checkAll, setCheckAll, variations, variationId }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [state, setState] = useState(true);
     const [check, setCheck] = useState(false);
-    const [price, setPrice] = useState();
+    const [price, setPrice] = useState('');
+    const [stock, setStock] = useState('');
+    const { setVariations, selected, setSelected, update } = useVariation();
 
-    const { setVariations } = useVariation();
-    const [stock, setStock] = useState();
     const priceRef = useClickAway(() => {
         formatData(price, 2, setPrice);
     });
@@ -28,13 +20,12 @@ function Row({
         formatData(stock, 0, setStock);
     });
 
-    let count = 0
-    variations.forEach(element => {
-        count += element.options.length 
+    let count = 0;
+    variations.forEach((element) => {
+        count += element.options.length;
     });
 
     useEffect(() => {
-
         const newVariations = [...variations];
         const findVariations = newVariations.find(
             (item) => item.id == variationId
@@ -43,7 +34,7 @@ function Row({
         if (findVariations) {
             const { options } = findVariations;
             const newOptions = options.map((item) => {
-                if (item.id ==variation.id) {
+                if (item.id == variation.id) {
                     return {
                         ...item,
                         disabled: !state,
@@ -54,8 +45,6 @@ function Row({
                 return item;
             });
 
-            console.log({ newOptions });
-
             setVariations(
                 variations.map((item) => {
                     if (item.id == variationId) {
@@ -65,27 +54,34 @@ function Row({
                 })
             );
         }
-
     }, [state, stock, price]);
 
     useEffect(() => {
- 
-            
-        if(checkAll || selected == count) {
-            setCheck(checkAll)
+        if (selected.length == 0 || selected.length == count || checkAll) {
+            return setCheck(checkAll);
         }
     }, [checkAll]);
 
+    // once update is apply, update input field
     useEffect(() => {
-
-
-        if (check  && selected <= count) {
-            return setSelected((prevState) => prevState + 1);
-        } else if (selected > 0) {
-            setCheckAll(false)
-            return setSelected((prevState) => prevState - 1);
+        const findItemInSelect = selected.some(
+            (item) => item.id == variation.id
+        );
+        if (update.quantity != stock && findItemInSelect) {
+            return setStock(update.quantity);
         }
-    }, [check]);
+        
+    }, [update.quantity]);
+
+    useEffect(() => {
+        const findItemInSelect = selected.some(
+            (item) => item.id == variation.id
+        );
+        if (update.price != price && findItemInSelect) {
+        
+            return setPrice(update.price);
+        }
+    }, [update.price]);
 
     const handlePrice = (value) => {
         if (!value) {
@@ -123,20 +119,24 @@ function Row({
 
     const handleCheck = () => {
         setCheck(!check);
+        if (!check) {
+            return setSelected([...selected, variation]);
+        } else {
+            setCheckAll(false);
+            return setSelected(
+                selected.filter((item) => item.id != variation.id)
+            );
+        }
     };
-
- 
 
     const handleVisibility = () => {
         setState(!state);
-
-        console.log('here');
     };
     return (
         <tr
-            className={`h-full max-h-28 hover:bg-[var(--light-grey)] ${
-                check && !variation.disabled && 'bg-gray-200'
-            }`}
+            className={`h-full max-h-28 ${
+                !variation.disabled && 'hover:bg-[var(--light-grey)]'
+            } ${check && !variation.disabled && 'bg-gray-200'}`}
         >
             <td
                 className={` ${
@@ -196,13 +196,18 @@ function Row({
                 />
                 {error.stock && state && <OptionError msg={error.stock} />}
             </td>
-            <td className="flex !h-16 items-center justify-end ">
-                {soldOut() && (
-                    <span className="mr-4 h-5 rounded-full bg-black px-2 text-s text-white">
+            <td className={` ${
+                    !error.stock && !error.price && '!align-middle'
+                }  !text-right`}>
+                <div className='flex h-auto items-center justify-end'>
+                     {soldOut() && (
+                    <span className={`mr-4 h-5 rounded-full bg-black px-2 py-2 text-s flex justify-center items-center text-white ${!state && '!opacity-0'}`}>
                         Sold out
                     </span>
                 )}
-                <Switch state={state} toggle={handleVisibility} />
+                <Switch state={state} toggle={handleVisibility} /> 
+                </div>
+              
             </td>
         </tr>
     );

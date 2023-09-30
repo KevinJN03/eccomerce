@@ -21,10 +21,12 @@ const views = {
     main: <Main />,
     update: <Update />,
 };
+
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-    const [selected, setSelected] = useState(0);
+    const [selected, setSelected] = useState([]);
+    const [update, setUpdate] = useState({ price: null, quantity: null });
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
@@ -36,7 +38,7 @@ function Variation() {
 
     const toggle = () => {
         setCheck(!check);
-        dispatch({ type: 'manage' })
+        dispatch({ type: 'manage' });
     };
 
     const value = {
@@ -48,14 +50,13 @@ function Variation() {
         setVariations,
         setSelected,
         selected,
+        update, setUpdate
     };
 
     useEffect(() => {
         if (content.type == 'update') return;
 
         if (variations.length < 1) {
-            console.log(variations);
-            console.log('clean up', variations.length);
             return dispatch({ type: 'main' });
         } else {
             return dispatch({ type: 'manage' });
@@ -65,7 +66,7 @@ function Variation() {
     return (
         <VariationProvider value={value}>
             <section className="new-product-wrapper variations relative">
-                <section className="relative z-[5] flex w-full flex-row flex-wrap justify-between">
+                <section className="relative flex w-full flex-row flex-wrap justify-between p-4">
                     <New_Product_Header
                         title={'Variations'}
                         text={
@@ -75,8 +76,7 @@ function Variation() {
                     <button
                         type="button"
                         onClick={toggle}
-                        className="rounded-full border-2 border-black px-3 py-2 "
-                       
+                        className="theme-btn"
                     >
                         <AddRoundedIcon />
                         <span>Add Variations</span>

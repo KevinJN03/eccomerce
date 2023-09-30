@@ -127,7 +127,7 @@ p {
 }
 
 .theme-btn {
-    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all hover:scale-105;
+    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all hover:scale-105 hover:shadow-lg;
 }
 .variations {
     .result-table {
@@ -152,7 +152,7 @@ p {
 
     table {
         @apply my-6  self-center;
-        width: 95%;
+        width: 100%;
         table-layout: fixed;
         td {
             @apply w-full px-4 py-4 text-left align-top;

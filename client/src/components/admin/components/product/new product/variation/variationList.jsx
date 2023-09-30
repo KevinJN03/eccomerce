@@ -6,6 +6,7 @@ function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
     const { selected } = useVariation();
 
+
     const handleUpdate = (category) => {
         setCheck(true);
         dispatch({ type: 'update', category : category });
@@ -24,7 +25,7 @@ function VariationList({}) {
                     }`}</p>
                 </div>
                 <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
-                    <p>{selected} selected</p>
+                    <p>{selected.length} selected</p>
                     <button
                         type="button"
                         className="theme-btn"
@@ -41,7 +42,7 @@ function VariationList({}) {
                     </button>
                 </span>
             </section>
-            <Table variations={variations} />
+            <Table variations={variations}  />
         </section>
     );
 }

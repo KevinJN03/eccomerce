@@ -7,10 +7,9 @@ import formatData from './formatData';
 function Update() {
     const [error, setError] = useState('');
     const [value, setValue] = useState('');
-    const { selected, setCheck, content } = useVariation();
+    const { selected, setCheck, content, setUpdate, update } = useVariation();
     const { category } = content;
     const num = category == 'price' ? 2 : 0;
-
 
     const ref = useClickAway(() => {
         formatData(value, num, setValue);
@@ -31,18 +30,19 @@ function Update() {
     };
 
     const apply = () => {
-
-        const timeout = setTimeout(() => {
-            setCheck(false);
-        }, 500);
-        return () => {
-            clearTimeout(timeout);
-        };
+        try {
+            setTimeout(() => {
+                setUpdate({ ...update, [`${category}`]: value });
+                setCheck(false);
+            }, 200);
+        } catch (error) {
+            console.log('error at apply', error);
+        }
     };
     return (
         <section className="update flex w-full flex-col">
             <h1 className="font-semibold tracking-wide">
-                Update {category} for {selected} variants
+                Update {category} for {selected.length} { selected.length > 1 ? 'variants' : 'variant'}
             </h1>
             <p className="mb-4 mt-1 text-sm">Current price: Mixed</p>
             <div className="my-4">
@@ -56,13 +56,13 @@ function Update() {
                         onChange={(e) => handleOnchange(e.target.value)}
                         type="number"
                         ref={ref}
-                        className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md px-4 ${
+                        className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md ${ category == 'price' ? '!px-6' :' px-2'} ${
                             error && 'border-red-400 bg-red-100'
                         }`}
                     />
-                    <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
+                   { category == 'price' && <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
                         £
-                    </span>
+                    </span>}
                 </span>
 
                 {error && (
@@ -88,7 +88,7 @@ function Update() {
                         type="button"
                         className="apply-btn"
                         onClick={apply}
-                        disabled={error && true}
+                        disabled={error && true || !value}
                     >
                         Apply
                     </button>

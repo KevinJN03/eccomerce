@@ -1,25 +1,42 @@
 import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
 import { useEffect, useState } from 'react';
-function Table({ variations, }) {
+function Table({ variations}) {
     const [checkAll, setCheckAll] = useState(false);
-  const { setSelected, selected} = useVariation()
-  let count = 0
-    variations.forEach(element => {
-        count += element.options.length 
+    const { selected, setSelected } = useVariation();
+    let count = 0;
+    variations.forEach((element) => {
+        count += element.options.length;
     });
 
-useEffect(() => {
+    useEffect(() => {
+        if (checkAll) {
+           
+
+                const newList = variations.map((item) => {
+                    const { options } = item;
+
+                   const arr = options.map((obj) => {
+                        return obj
+                    });
+
+                    return arr
+                });
+
     
 
-    setCheckAll(checkAll)
+                const spreadList =  [...newList[0], ...newList[1]];
+               
+                setSelected(spreadList)
+            
+        } else if (!checkAll && selected.length == count)  {
+            setSelected([])
+        }
+    }, [checkAll]);
 
-
-}, [selected])
-
-const handleCheckAll = () => {
-    setCheckAll(!checkAll)
-}
+    const handleCheckAll = () => {
+        setCheckAll(!checkAll);
+    };
     return (
         <table className="result-table w-full">
             <colgroup>
@@ -44,14 +61,20 @@ const handleCheckAll = () => {
                 <th>Quantity</th>
                 <th className="!text-right">Visible </th>
             </tr>
-            {
-                variations.map((list)=> {
-                    return list.options.map((item) => {
-                        return <Row setCheckAll = {setCheckAll} variation={item} variationId={list.id} variations={variations} checkAll={checkAll} setSelected={setSelected} selected={selected} />;
-                    })
-                })
-            }
-         
+            {variations.map((list) => {
+                return list.options.map((item) => {
+                    return (
+                        <Row
+                            setCheckAll={setCheckAll}
+                            checkAll={checkAll}
+                            variation={item}
+                            variationId={list.id}
+                            variations={variations}
+                           
+                        />
+                    );
+                });
+            })}
         </table>
     );
 }
