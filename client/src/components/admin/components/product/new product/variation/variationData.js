@@ -21,8 +21,6 @@ export const sizeList = [
     'Double Extra Large (XXL)',
 ];
 
-
-
 export const defaultMap = new Map();
 
 defaultMap.set('Colour', {
@@ -41,7 +39,7 @@ export const resetDefaultMap = () => {
     }
 };
 
-export const updatedDefaultMap = (name,id, boolean) => {
+export const updatedDefaultMap = (name, id, boolean) => {
     if (defaultMap.has(name)) {
         const result = defaultMap.get(name);
 
@@ -49,7 +47,6 @@ export const updatedDefaultMap = (name,id, boolean) => {
             const newObj = { ...result, disabled: boolean };
             defaultMap.set(name, newObj);
         }
-
     }
 };
 

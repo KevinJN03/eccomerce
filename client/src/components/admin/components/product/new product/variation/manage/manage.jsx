@@ -10,7 +10,7 @@ import { defaultMap, updatedDefaultMap } from '../variationData.js';
 function Manage({}) {
     const {
         dispatch,
-        variations,
+      
         setVariations,
         setCheck,
         deleteList,
@@ -23,34 +23,35 @@ function Manage({}) {
     const [price, setPrice] = useState(false);
     const [quantity, setQuantity] = useState(false);
 
-    // useEffect(()=>{
-    // }, [])
+    useEffect(() => {
+        // setTemporaryVariation(variations)
+    }, []);
 
-    const deleteVariation = ({ id, name }, type) => {
+    const deleteVariation = ({ id, name }) => {
         updatedDefaultMap(name, id, false);
 
-        if (type == 'main') {
-            let newArr = [...variations];
+        let newArr = [...temporaryVariation];
 
-            let update = newArr.map((item) => {
-                if (item.id == id) {
-                    return { ...item, disabled: true };
-                }
-                return item;
-            });
-            setVariations(update);
-        } else if (type == 'temporary') {
-            const newArr = [...temporaryVariation];
+        let update = newArr.map((item) => {
+            if (item.id == id) {
+                return { ...item, disabled: true };
+            }
+            return item;
+        });
+        setTemporaryVariation(update);
 
-            const update = newArr.map((item) => {
-                if (item.id == id) {
-                    return { ...item, disabled: true };
-                }
-                return item;
-            });
+        // else if (type == 'temporary') {
+        //     const newArr = [...temporaryVariation];
 
-            setTemporaryVariation(update);
-        }
+        //     const update = newArr.map((item) => {
+        //         if (item.id == id) {
+        //             return { ...item, disabled: true };
+        //         }
+        //         return item;
+        //     });
+
+        //     setTemporaryVariation(update);
+        // }
     };
 
     const editVariation = (item) => {
@@ -60,35 +61,39 @@ function Manage({}) {
     };
 
     const apply = () => {
-        if (deleteList.length > 0) {
-            const newVariation = [...variations];
-            const filteredVariation = newVariation.filter(
-                ({ id }) => !deleteList.includes(id)
-            );
+        // if (deleteList.length > 0) {
+        //     const newVariation = [...variations];
+        //     const filteredVariation = newVariation.filter(
+        //         ({ id }) => !deleteList.includes(id)
+        //     );
 
-            console.log(filteredVariation);
-            setVariations(filteredVariation);
+        //     console.log(filteredVariation);
+        //     setVariations(filteredVariation);
 
-            setCheck(false);
-            return;
-        }
+        //     setCheck(false);
+        //     return;
+        // }
+        const newArr = [...temporaryVariation];
+        const filterArr = newArr.filter((item) => item.disabled != true);
+
+        setVariations(filterArr);
+        // setTemporaryVariation([]);
+        setCheck(false);
     };
+
+    const cancel = () => {
+       setCheck(false)
+    }
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">
             <h2 className="mb-2 text-left text-2xl font-semibold">
                 Manage variations
             </h2>
-            <VariationItem
-                deleteVariation={deleteVariation}
-                editVariation={editVariation}
-                variations={variations}
-                type="main"
-            />
+          
             <VariationItem
                 deleteVariation={deleteVariation}
                 editVariation={editVariation}
                 variations={temporaryVariation}
-                type="temporary"
             />
             {/* (temporaryVariation < 2 && temporaryDeleteList >= 1) */}
             {
@@ -103,10 +108,8 @@ function Manage({}) {
                 </button>
             }
             <section className="manage-body mb-10 flex h-full w-full flex-col items-center gap-y-3">
-                {(variations.length == deleteList.length ||
-                    variations.length < 1) && <Empty />}
-                {variations.length > 0 &&
-                    variations.length != deleteList.length && (
+                { temporaryVariation.every(item => item.disabled == true) && <Empty />}
+                {!temporaryVariation.every(item => item.disabled == true) && (
                         <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
                             <ToggleSwitch
                                 label={'Prices'}
@@ -127,7 +130,7 @@ function Manage({}) {
                 <button
                     type="button"
                     className="cancel-btn rounded-full px-3 py-2"
-                    onClick={() => setCheck(false)}
+                    onClick={cancel}
                 >
                     Cancel
                 </button>

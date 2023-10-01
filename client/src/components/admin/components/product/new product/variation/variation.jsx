@@ -36,27 +36,36 @@ function Variation() {
 
     const [temporaryDeleteList, setTemporaryDeleteList] = useState([]);
     const [update, setUpdate] = useState({ price: null, quantity: null });
-    const [temporaryVariation, setTemporaryVariation] = useState([]);
+
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
 
     const [variations, setVariations] = useState([
-        { id: 1, name: 'Colour', options: generateVariation('Colour') },
-        { id: 2, name: 'Size', options: generateVariation('Size') },
+        {
+            id: 1,
+            name: 'Colour',
+            options: generateVariation('Colour'),
+            disabled: false,
+            default: true, 
+        },
+        {
+            id: 2,
+            name: 'Size',
+            options: generateVariation('Size'),
+            disabled: false,
+            default: true, 
+        },
     ]);
-
+    const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
         setCheck(!check);
         dispatch({ type: 'manage' });
     };
 
     useEffect(() => {
-        variations.map(({ id, name }) => {
-            //    return { id, name};
-            updatedDefaultMap(name, id, true);
-        });
-    }, []);
+        setTemporaryVariation(variations);
+    }, [check]);
 
     useEffect(() => {
         if (content.type == 'update') return;
@@ -68,24 +77,18 @@ function Variation() {
         }
     }, [check]);
 
-    // useEffect(() => {
-    //     return () => {
-    //         setDeleteList([]);
-    //     };
-    // }, [variations]);
-
     const cleanup = () => {
         setDeleteList([]);
-        setTemporaryVariation([]);
+        // setTemporaryVariation([]);
 
-        const newArr = [...variations];
-        const updateDisabled = newArr.map((item) => {
-            return { ...item, disabled: false };
-        });
+        // const newArr = [...temporaryVariation];
+        // const updateDisabled = newArr.map((item) => {
+        //     return { ...item, disabled: false };
+        // });
 
         resetDefaultMap();
 
-        setVariations(updateDisabled);
+        // setVariations(updateDisabled);
     };
 
     const value = {

@@ -4,18 +4,18 @@ import SelectVariation from './selectVariation';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useEffect, useState } from 'react';
 export default function Main() {
-    const { dispatch, variations, setCheck, deleteList, setDeleteList } =
+    const { dispatch, temporaryVariation,  setCheck, deleteList, setDeleteList } =
         useVariation();
     const [defaultVariations, setDefaultVariations] = useState([]);
     const findVariation = (option) => {
-        const result = variations.some((item) => item.disabled);
+        const result = temporaryVariation.some((item) => item.disabled);
 
         console.log({ option });
         return result;
     };
 
     const exit = () => {
-        if (variations.length >= 1) {
+        if (temporaryVariation.length >= 1) {
             setDeleteList([]);
             return dispatch({ type: 'manage' });
         }
@@ -37,18 +37,18 @@ export default function Main() {
     useEffect(() => {
         checkEntries();
 
-        let newArr = [...variations];
+        let newArr = [...temporaryVariation];
 
         const checkBoolean = newArr.every((item) => item.disabled == false);
-        debugger
+
         if (checkBoolean) {
             newArr.map(({ id, name }) => {
-                debugger;
+               
                 return updatedDefaultMap(name, id, true);
             });
         }
 
-        // debugger;
+
     }, []);
 
     /* 
@@ -69,7 +69,7 @@ export default function Main() {
             <div className="variation-main-wrapper h-full">
                 <div className="mb-2 mt-5 flex flex-row flex-wrap gap-3">
                     {defaultVariations.map((option) => {
-                        debugger;
+                     
                         return (
                             <button
                                 type="button"

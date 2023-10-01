@@ -20,7 +20,7 @@ const {deleteList} = useVariation()
                             <SingleVariation
                                 key={variation.id}
                                 singleVariation={variation}
-                                deleteVariation={() => deleteVariation(variation, type)}
+                                deleteVariation={() => deleteVariation(variation)}
                                 editVariation={() => editVariation(variation)}
                             />
                         );

@@ -26,7 +26,7 @@ function VariationList({}) {
                                 variations.length > 1 ? 'variants' : 'variant'
                             }`}</p>
                         </div>
-                        <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
+                       { selected.length > 0 &&  <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
                             <p>{selected.length} selected</p>
                             <button
                                 type="button"
@@ -42,7 +42,7 @@ function VariationList({}) {
                             >
                                 Update Quantity
                             </button>
-                        </span>
+                        </span>}
                     </section>
                     <Table  />
                 </section>

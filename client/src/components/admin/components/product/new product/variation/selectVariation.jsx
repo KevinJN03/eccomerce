@@ -105,12 +105,17 @@ function SelectVariation({}) {
 
     const deleteVariation = () => {
         try {
-            // if (content.currentVariation) {
-            //     const newVariation = temporaryVariation.filter((item) => {
-            //         return item.id != content.currentVariation.id;
-            //     });
-            //     setTemporaryVariation(newVariation);
-            // }
+            if (content.currentVariation) {
+                const newArr = [...temporaryVariation];
+                const updateArr = newArr.map((item) => {
+                    if (item.id === content.currentVariation.id) {
+                        return { ...item, disabled: true };
+                    }
+                    return item;
+                });
+                setTemporaryVariation(updateArr);
+            }
+
             return dispatch({ type: 'manage' });
         } catch (error) {
             console.log(error);
@@ -138,28 +143,17 @@ function SelectVariation({}) {
                         }
                     })
                 );
-            } else if (deleteList.length > 0) {
-                // add new Variation to temporaryVariation from variation list
-                // const newVariations = [...temporaryVariation]
-                // const filteredVariation = newVariations.filter((item) => !deleteList.includes(item.id))
-
-                // console.log({filteredVariation})
-
-                const newVariation = {
-                    temporary: true, 
-                    name,
-                    options: option,
-                    id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
-                    default: defaultVariation,
-                };
-
-                setTemporaryVariation([...temporaryVariation, newVariation]);
-              
             } else {
-                console.log('deleteList: ', deleteList);
-                const findName = temporaryVariation.some(
-                    (item) => item.name.toLowerCase() == name.toLowerCase()
-                );
+                const findName = temporaryVariation.some((item) => {
+                    if (
+                        item.name.toLowerCase() == name.toLowerCase() &&
+                        item.disabled == false
+                    ) {
+                        return true;
+                    }
+                    return false;
+                });
+
                 if (findName)
                     throw new Error(
                         'Variation name already exists. Please try again.'
@@ -169,6 +163,7 @@ function SelectVariation({}) {
                     options: option,
                     id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
                     default: defaultVariation,
+                    disabled: false,
                 };
 
                 setTemporaryVariation((prevState) => [
