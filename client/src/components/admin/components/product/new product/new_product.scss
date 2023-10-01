@@ -1,16 +1,16 @@
 :root {
     --about-primary: #4d6bc6;
-   
 }
 
-
-
 .format {
-    @apply m-4 w-7/12 rounded-xl p-6;
+    @apply m-4 w-7/12 rounded-xl;
 }
 .new-product {
     @apply flex w-full;
 
+    .new-product-wrapper {
+        @apply rounded-xl  p-6;
+    }
     .new-product-container {
         flex: 6;
 
@@ -34,7 +34,6 @@
     }
 
     #delivery {
-        @apply format;
         border-radius: 10px;
     }
 }
@@ -119,12 +118,6 @@ p {
     width: 50%;
 }
 
-.new-product-footer {
-    button {
-        @apply rounded-full border-2  border-black px-4 py-3 text-base transition-all hover:scale-105;
-    }
-}
-
 .new-product-wrapper section {
     @apply bg-white;
 }
@@ -133,83 +126,146 @@ p {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.cancel-btn {
-    // animation: circle-in-hesitate 2s ease-in-out;
-    transition: background-color 0.2s linear;
-
-    &:hover {
-        @apply bg-[var(--light-grey)];
-       
-    }
+.theme-btn {
+    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all hover:scale-105 hover:shadow-lg;
 }
-
-
-#variations {
-    .variation-footer {
-        @apply sticky bottom-[-24px] left-0 px-0 py-5 flex  flex-row justify-between w-full bg-white;
+.variations {
+    .result-table {
+        .checkbox {
+            @apply rounded-md border-gray-600;
+        }
     }
- 
+    .pound {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 
-    
+    .input-number::-webkit-outer-spin-button,
+    .input-number::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
-.toggle {
-    --tglbg: white;
-}
+    table {
+        @apply my-6  self-center;
+        width: 100%;
+        table-layout: fixed;
+        td {
+            @apply w-full px-4 py-4 text-left align-top;
+        }
 
-    .single-variation {
+        th {
+            @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
+        }
+    }
+    .options-btn {
+        @apply rounded-full bg-[var(--light-grey)]  px-4 py-2 font-gotham transition-all;
+        &:disabled {
+            @apply opacity-40;
 
-        .single-variation-btn{
-        @apply bg-[var(--light-grey)] h-10 w-10 p-3 rounded-full;
+            &::before {
+                content: '';
+                display: block;
+                background: url('../../../../../assets/icons/tick.png');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                width: 20px;
+                height: 100%;
+                float: left;
+                margin: 0 6px 0 0;
+            }
+        }
 
         &:hover {
-            @apply bg-gray-300 transition-all scale-105;
+            @apply bg-gray-200;
         }
+    }
+
+    .variation-footer {
+        @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // bottom: -4px !important;
+
+        .cancel-btn {
+            transition: background-color 0.2s linear;
+            @apply rounded-full px-3 py-2;
+            &:hover {
+                @apply bg-[var(--light-grey)];
+            }
+        }
+
+        .apply-btn {
+            @apply rounded-full bg-black px-3 py-2 text-white disabled:opacity-40 relative;
+
+            &::after, &::before {
+                content: "";
+              
+                background: inherit;
+            }
+            &:hover {
+                
+                background-color: rgba(0, 0, 0, 0.821)
+            }
+
+            
+
+            // &:hover {
+            //     @apply opacity-80 scale-105
+            // }
+        }
+    }
+
+    .single-variation {
+        .single-variation-btn {
+            @apply h-10 w-10 rounded-full bg-[var(--light-grey)] p-3;
+
+            &:hover {
+                @apply scale-105 bg-gray-300 transition-all;
+            }
         }
 
         .single-variation-options {
-        
             @apply relative;
-            
-            }
+        }
 
-            .single-variation-options::after {
-                content: "";
-                position: absolute;
-                z-index: 1;
-                bottom: 0;
-                left: 0;
-                pointer-events: none;
-                background-image: linear-gradient(to right, rgba(255,255,255,0) 80%, rgba(255,255,255, 1) 100%);
-                width: 100%;
-                // height: 4em;
-                @apply h-full
-               
-                
-                }
-
+        .single-variation-options::after {
+            content: '';
+            position: absolute;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 80%,
+                rgba(255, 255, 255, 1) 100%
+            );
+            width: 100%;
+            // height: 4em;
+            @apply h-full;
+        }
     }
-
-   
- 
-
 }
 .asterisk {
-    @apply text-red-800
+    @apply text-red-800;
 }
 
-
 .modal-content {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
-    @apply h-full max-h-[550px]
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+    @apply max-h-[550px];
 }
 
 .dropdown-menu {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
-
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
 }
 
-.modal-content::-webkit-scrollbar, .dropdown-menu::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+.modal-content::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
 }

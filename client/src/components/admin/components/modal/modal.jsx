@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import axios from '../../../../api/axios';
 function Modal({
     id,
+
     setCheck,
     check,
     loading,
@@ -14,7 +15,13 @@ function Modal({
     className,
     back,
     selection,
+    cleanup,
 }) {
+    useEffect(() => {
+        return () => {
+            cleanup && cleanup();
+        };
+    }, []);
     const handleDelete = () => {
         if (selection && selection.length > 1) {
             axios
@@ -50,7 +57,7 @@ function Modal({
 
     console.log(deleteType);
     return (
-        <section >
+        <section>
             <input
                 className="modal-state "
                 id="modal-3"

@@ -6,7 +6,23 @@ import fileFilter from '../Upload/fileFilter.js';
 import sharpify from '../Upload/sharpify.js';
 import bcrypt from 'bcryptjs';
 import s3Upload from '../s3Service.js';
-import sharp from 'sharp';
+
+const handleProfilePhoto = async (file, id) => {
+  if (file) {
+    const compressImg = await sharpify(file, 'profile');
+    compressImg.id = id;
+    await s3Upload([compressImg], 'profile');
+    const profileImg = `https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/user/${id}.${compressImg.format}`;
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      { profileImg },
+      { upsert: true, new: true },
+    );
+
+    console.log(updateUser);
+  }
+};
+
 export const get_all_users = asyncHandler(async (req, res, next) => {
   const users = await User.find();
   res.status(200).send(users);
@@ -105,22 +121,8 @@ export const create_user = [
     });
 
     const { id } = user;
-    let compressImg;
 
-    if (file) {
-      compressImg = await sharpify(file, 'profile');
-      compressImg.id = id;
-      await s3Upload([compressImg], 'profile');
-      const profileImg = `https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/user/${id}.${compressImg.format}`;
-      const updateUser = await User.findByIdAndUpdate(
-        id,
-        { profileImg },
-        { upsert: true, new: true },
-      );
-
-      console.log(updateUser);
-    }
-
+    await handleProfilePhoto(file, id);
     res.status(201).send(user);
   }),
 ];
@@ -136,3 +138,21 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
     res.status(200).send(user);
   }
 });
+
+export const update_single = [
+  upload.single('file'),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { file } = req;
+
+    console.log(req.body);
+    const user = await User.updateOne({ _id: id }, req.body, {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    });
+    await handleProfilePhoto(file, id);
+
+    res.status(200).send(user);
+  }),
+];

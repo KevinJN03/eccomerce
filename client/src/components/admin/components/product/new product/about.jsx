@@ -4,6 +4,8 @@ import New_Product_Header from './header';
 
 function About() {
     return (
+        <section className='new-product-wrapper'>
+
         <div className="about">
             <New_Product_Header
                 title={'About'}
@@ -45,6 +47,8 @@ function About() {
                 ></textarea>
             </form>
         </div>
+        
+        </section>
     );
 }
 

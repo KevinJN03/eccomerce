@@ -1,6 +1,6 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import OptionError from './optionError';
-
+import {v4 as uuidv4} from 'uuid'
 function VariationResults({
     variation,
     searchText,
@@ -9,7 +9,6 @@ function VariationResults({
     handleCustom,
     option,
 }) {
-console.log({searchText})
     
     return (
         <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
@@ -23,7 +22,7 @@ console.log({searchText})
                         searchTextStr
                     ) {
                         return (
-                            <li
+                            <li key={uuidv4()}
                                 className="flex flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
                                 onClick={() => addOption(item)}
                             >
@@ -49,14 +48,14 @@ console.log({searchText})
                     </li>
                 )}
 
-                {searchText.length > 1 &&
+                {   (searchText.length > 0) &&( searchText.length < 20) &&
                     !variation.some(
                         (item) =>
                             item.variation.toLowerCase() ===
                             searchText.toLowerCase()
                     ) &&
                    !option.some((item) => 
-                        item.variation.toLowerCase() != searchText.toLowerCase()
+                        item.variation.toLowerCase() === searchText.toLowerCase()
                     ) && (
                         <li
                             onClick={handleCustom}

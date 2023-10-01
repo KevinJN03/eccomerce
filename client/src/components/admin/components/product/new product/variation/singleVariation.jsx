@@ -9,12 +9,12 @@ function SingleVariation({ singleVariation, deleteVariation, editVariation }) {
         <section className="single-variation border-1 rounded-lg py-2 px-3 flex flex-col gap-1 mb-2">
             <h2 className='font-medium text-sm'>{name}</h2>
             <p className='text-xs'>
-                {options.length} {options.length > 1 ? 'options' : 'option'}
+                { options && options.length} {options && options.length > 1 ? 'options' : 'option'}
             </p>
 
             <div className="flex flex-row justify-between w-full items-center">
                 <span className="flex flex-row gap-2 w-full flex-nowrap overflow-hidden single-variation-options">
-                    {options.length > 0 &&
+                    { options && options.length > 0 &&
                         options.map(({ variation, id }) => {
                             return (
                                 <p

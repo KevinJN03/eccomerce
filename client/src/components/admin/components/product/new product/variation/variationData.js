@@ -21,32 +21,56 @@ export const sizeList = [
     'Double Extra Large (XXL)',
 ];
 
-const list = { Colour: colorList, Size: sizeList };
+export const defaultMap = new Map();
+
+defaultMap.set('Colour', {
+    id: 1,
+    defaultVariations: colorList,
+    disabled: false,
+});
+defaultMap.set('Size', { id: 2, defaultVariations: sizeList, disabled: false });
+
+export const resetDefaultMap = () => {
+    for (const item of defaultMap.entries()) {
+        const [key, value] = item;
+        let newObj = { ...value, disabled: false };
+
+        defaultMap.set(key, newObj);
+    }
+};
+
+export const updatedDefaultMap = (name, id, boolean) => {
+    if (defaultMap.has(name)) {
+        const result = defaultMap.get(name);
+
+        if (result.id == id) {
+            const newObj = { ...result, disabled: boolean };
+            defaultMap.set(name, newObj);
+        }
+    }
+};
 
 export const generateVariation = (name) => {
-    const catergoryList = list[`${name}`];
+    const categoryList = defaultMap.get(name);
 
-    if (catergoryList) {
-        const generatedList = catergoryList.map((item) => {
+    if (categoryList) {
+        const generatedList = categoryList.defaultVariations.map((item) => {
             return { variation: item, id: uuidv4() };
         });
         return generatedList;
     }
 
-         return [];
-   
-
-   
+    return [];
 };
 
 export const filteredVariation = (name, options) => {
     let generatedList = generateVariation(name);
     console.log({ generatedList, options });
     if (generatedList.length > 0 && options.length > 0) {
-        console.log('filter stage');
+        let newOptions = options.map(({ variation }) => variation);
+
         let filterArr = generatedList.filter(
-            (item) =>
-                !options.some((item2) => item2.variation === item.variation)
+            (item) => !newOptions.includes(item.variation)
         );
         console.log({ filterArr });
         return filterArr;
