@@ -4,10 +4,16 @@ import Modal from '../../../modal/modal';
 import { useEffect, useReducer, useState } from 'react';
 
 import SelectVariation from './selectVariation';
-import Manage from './manage';
+import Manage from './manage/manage';
 
 import Main from './main';
-import { colorList, generateVariation } from './variationData';
+import {
+    colorList,
+    defaultMap,
+    generateVariation,
+    resetDefaultMap,
+    updatedDefaultMap,
+} from './variationData';
 import {
     variationReducer,
     VariationProvider,
@@ -26,7 +32,11 @@ function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
     const [selected, setSelected] = useState([]);
+    const [deleteList, setDeleteList] = useState([]);
+
+    const [temporaryDeleteList, setTemporaryDeleteList] = useState([]);
     const [update, setUpdate] = useState({ price: null, quantity: null });
+    const [temporaryVariation, setTemporaryVariation] = useState([]);
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
@@ -41,17 +51,12 @@ function Variation() {
         dispatch({ type: 'manage' });
     };
 
-    const value = {
-        check,
-        setCheck,
-        content,
-        dispatch,
-        variations,
-        setVariations,
-        setSelected,
-        selected,
-        update, setUpdate
-    };
+    useEffect(() => {
+        variations.map(({ id, name }) => {
+            //    return { id, name};
+            updatedDefaultMap(name, id, true);
+        });
+    }, []);
 
     useEffect(() => {
         if (content.type == 'update') return;
@@ -62,6 +67,45 @@ function Variation() {
             return dispatch({ type: 'manage' });
         }
     }, [check]);
+
+    // useEffect(() => {
+    //     return () => {
+    //         setDeleteList([]);
+    //     };
+    // }, [variations]);
+
+    const cleanup = () => {
+        setDeleteList([]);
+        setTemporaryVariation([]);
+
+        const newArr = [...variations];
+        const updateDisabled = newArr.map((item) => {
+            return { ...item, disabled: false };
+        });
+
+        resetDefaultMap();
+
+        setVariations(updateDisabled);
+    };
+
+    const value = {
+        check,
+        setCheck,
+        content,
+        dispatch,
+        variations,
+        setVariations,
+        setSelected,
+        selected,
+        update,
+        setUpdate,
+        deleteList,
+        setDeleteList,
+        temporaryVariation,
+        setTemporaryVariation,
+        temporaryDeleteList,
+        setTemporaryDeleteList,
+    };
 
     return (
         <VariationProvider value={value}>
@@ -85,12 +129,15 @@ function Variation() {
                 </section>
                 {check && (
                     <Modal
+                        cleanup={cleanup}
                         check={check}
                         setCheck={setCheck}
                         ModalContent={views[content.type]}
                         loading={loading}
                         setLoading={setLoading}
-                        className={' w-full max-w-[600px]  !rounded-3xl'}
+                        className={
+                            ' w-full max-w-[600px]  !rounded-3xl px-7 pt-8'
+                        }
                     />
                 )}
             </section>

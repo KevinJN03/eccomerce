@@ -2,7 +2,7 @@ import layer_icon from '../../../../../../assets/icons/layers.png';
 function Empty({}){
   return (
    
- <div className='w-full flex flex-col h-full items-center justify-center'>
+ <div className='w-full flex flex-col h-full items-center justify-center my-20'>
  <div className="flex h-28 w-28 self-center rounded-full !bg-[var(--light-grey)] p-4">
                     <img
                         src={layer_icon}

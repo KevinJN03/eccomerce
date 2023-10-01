@@ -4,11 +4,12 @@ import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import Manage from './manage';
+import Manage from './manage/manage';
 import {
     generateVariation,
     generateCustomVariation,
     filteredVariation,
+    defaultMap,
 } from './variationData';
 import ErrorAlert from './errorAlert';
 import VariationResults from './searchResults';
@@ -16,44 +17,46 @@ import { useVariation } from '../../../../../../context/variationContext';
 import OptionError from './optionError';
 
 function SelectVariation({}) {
-    const { content, dispatch, setVariations, variations } = useVariation();
-    const [option, setOption] = useState([]);
+    const {
+        content,
+        dispatch,
+        setTemporaryVariation,
+        temporaryVariation,
+        deleteList,
+    } = useVariation();
+    const currentVariation = content.currentVariation;
+    const [option, setOption] = useState(
+        currentVariation ? currentVariation.options : []
+    );
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [name, setName] = useState(content.title || '');
-    const [defaultVariation, setDefaultVariation] = useState(false);
+    const [defaultVariation, setDefaultVariation] = useState(
+        content.default ? true : false
+    );
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
 
     useEffect(() => {
-        if (content.currentVariation != null) {
-            const currentVariation = content.currentVariation;
+        try {
+            if (currentVariation) {
+                const result = filteredVariation(name, option);
+                setDefaultVariation(currentVariation.default);
+                setVariation(result);
+                return;
+            } else if (defaultVariation) {
+                let list = generateVariation(name);
 
-            const { name, options } = currentVariation;
-            console.log({ name, options });
-
-            const result = filteredVariation(name, options);
-            console.log('result', result);
-            setOption(options);
-            setVariation(result);
-
-            if (name == 'Colour' || name == 'Size') {
-                setDefaultVariation(true);
+                setVariation(list);
             }
-        } else {
-            if (name == 'Colour' || name == 'Size') {
-                console.log('else Block');
-                const generatedVariations = generateVariation(name, option);
-                console.log('generateOptions', option);
-                setDefaultVariation(true);
-                setVariation(generatedVariations);
-            }
+        } catch (error) {
+            console.log('error at select: ', error);
         }
     }, []);
 
     const onNameChange = (value) => {
         setName(value);
-        const newArr = [...variations];
+        const newArr = [...temporaryVariation];
         const variationExist = newArr.some(
             ({ name }) => name.toLowerCase() == value.toLowerCase()
         );
@@ -102,14 +105,13 @@ function SelectVariation({}) {
 
     const deleteVariation = () => {
         try {
-            if (content.currentVariation) {
-                const newVariation = variations.filter((item) => {
-                    return item.id != content.currentVariation.id;
-                });
-                setVariations(newVariation);
-              
-            }
-            return   dispatch({ type: 'manage' });
+            // if (content.currentVariation) {
+            //     const newVariation = temporaryVariation.filter((item) => {
+            //         return item.id != content.currentVariation.id;
+            //     });
+            //     setTemporaryVariation(newVariation);
+            // }
+            return dispatch({ type: 'manage' });
         } catch (error) {
             console.log(error);
             setError('Fail to delete variation. Please try again.');
@@ -126,9 +128,9 @@ function SelectVariation({}) {
         try {
             if (content.currentVariation) {
                 const { id } = content.currentVariation;
-                console.log('here');
-                setVariations(
-                    variations.map((item) => {
+
+                setTemporaryVariation(
+                    temporaryVariation.map((item) => {
                         if (item.id == id) {
                             return { ...item, options: option, name: name };
                         } else {
@@ -136,17 +138,43 @@ function SelectVariation({}) {
                         }
                     })
                 );
-            } else {
+            } else if (deleteList.length > 0) {
+                // add new Variation to temporaryVariation from variation list
+                // const newVariations = [...temporaryVariation]
+                // const filteredVariation = newVariations.filter((item) => !deleteList.includes(item.id))
 
-                const findName = variations.some((item) => item.name.toLowerCase() == name.toLowerCase())
-                if(findName) throw new Error('Variation name already exists. Please try again.')
+                // console.log({filteredVariation})
+
+                const newVariation = {
+                    temporary: true, 
+                    name,
+                    options: option,
+                    id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
+                    default: defaultVariation,
+                };
+
+                setTemporaryVariation([...temporaryVariation, newVariation]);
+              
+            } else {
+                console.log('deleteList: ', deleteList);
+                const findName = temporaryVariation.some(
+                    (item) => item.name.toLowerCase() == name.toLowerCase()
+                );
+                if (findName)
+                    throw new Error(
+                        'Variation name already exists. Please try again.'
+                    );
                 const newVariation = {
                     name,
                     options: option,
-                    id: uuidv4(),
+                    id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
+                    default: defaultVariation,
                 };
 
-                setVariations((prevState) => [...prevState, newVariation]);
+                setTemporaryVariation((prevState) => [
+                    ...prevState,
+                    newVariation,
+                ]);
             }
 
             dispatch({ type: 'manage' });
@@ -160,7 +188,7 @@ function SelectVariation({}) {
     };
 
     return (
-        <section className="select-variation max-h-full w-full">
+        <section className="select-variation relative h-[550px] w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}
             <header className="flex w-full flex-col border-b-2 pb-4 !text-left">
                 <h1 className=" font-semibold">
@@ -188,7 +216,7 @@ function SelectVariation({}) {
                 )}
             </header>
 
-            <section className="options my-4 min-h-full">
+            <section className="options my-4  flex h-auto min-h-full flex-grow flex-col">
                 <div className="mb-6">
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
@@ -247,8 +275,9 @@ function SelectVariation({}) {
                     />
                 </section>
 
-                <div className="options-wrapper mt-3 flex flex-col gap-y-2 ">
-                    {option.length > 0 &&
+                <div className="options-wrapper mt-3 flex basis-full flex-col gap-y-2 ">
+                    {option &&
+                        option.length > 0 &&
                         option.map((item) => {
                             const { variation, id } = item;
                             return (
@@ -274,8 +303,8 @@ function SelectVariation({}) {
                         })}
                 </div>
             </section>
-
-            <section className="variation-footer !bottom-[-25px] py-4 ">
+            {/* //variation-footer !mt-auto !bottom-[-25px] py-4 */}
+            <section className="variation-footer !bottom-[-25px] !mt-auto py-4">
                 <button
                     onClick={deleteVariation}
                     type="button"
@@ -293,14 +322,19 @@ function SelectVariation({}) {
                         (name.length < 1 && (
                             <ErrorMessage message={'Enter a variation name'} />
                         )) ||
-                        (option.length < 1 && (
+                        (option && option.length < 1 && (
                             <ErrorMessage message={'Add at least 1 option'} />
                         ))}
 
                     <button
                         type="button"
                         className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
-                        disabled={option.length < 1 || name.length < 1 || exist}
+                        disabled={
+                            (option && option.length < 1) ||
+                            name.length < 1 ||
+                            exist ||
+                            error
+                        }
                         onClick={createVariation}
                     >
                         Done
