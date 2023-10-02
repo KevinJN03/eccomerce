@@ -63,6 +63,7 @@ function Modal({
                 id="modal-3"
                 type="checkbox"
                 checked={check}
+                readOnly
             />
             <div className={`modal`}>
                 <label

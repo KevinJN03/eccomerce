@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import OptionError from './optionError';
+import OptionError from './error/optionError';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './formatData';
@@ -42,7 +42,8 @@ function Update() {
     return (
         <section className="update flex w-full flex-col">
             <h1 className="font-semibold tracking-wide">
-                Update {category} for {selected.length} { selected.length > 1 ? 'variants' : 'variant'}
+                Update {category} for {selected.length}{' '}
+                {selected.length > 1 ? 'variants' : 'variant'}
             </h1>
             <p className="mb-4 mt-1 text-sm">Current price: Mixed</p>
             <div className="my-4">
@@ -56,13 +57,15 @@ function Update() {
                         onChange={(e) => handleOnchange(e.target.value)}
                         type="number"
                         ref={ref}
-                        className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md ${ category == 'price' ? '!px-6' :' px-2'} ${
-                            error && 'border-red-400 bg-red-100'
-                        }`}
+                        className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md ${
+                            category == 'price' ? '!px-6' : ' px-2'
+                        } ${error && 'border-red-400 bg-red-100'}`}
                     />
-                   { category == 'price' && <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
-                        £
-                    </span>}
+                    {category == 'price' && (
+                        <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
+                            £
+                        </span>
+                    )}
                 </span>
 
                 {error && (
@@ -88,7 +91,7 @@ function Update() {
                         type="button"
                         className="apply-btn"
                         onClick={apply}
-                        disabled={error && true || !value}
+                        disabled={(error && true) || !value}
                     >
                         Apply
                     </button>

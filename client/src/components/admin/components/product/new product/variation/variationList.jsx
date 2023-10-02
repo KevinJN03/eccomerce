@@ -1,6 +1,6 @@
 import { useVariation } from '../../../../../../context/variationContext';
 import { useState } from 'react';
-import Switch from './switch';
+import Switch from './toggleSwitch/switch';
 import Table from './table/table.jsx';
 function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
@@ -26,25 +26,27 @@ function VariationList({}) {
                                 variations.length > 1 ? 'variants' : 'variant'
                             }`}</p>
                         </div>
-                       { selected.length > 0 &&  <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
-                            <p>{selected.length} selected</p>
-                            <button
-                                type="button"
-                                className="theme-btn"
-                                onClick={() => handleUpdate('price')}
-                            >
-                                Update price
-                            </button>
-                            <button
-                                type="button"
-                                className="theme-btn"
-                                onClick={() => handleUpdate('quantity')}
-                            >
-                                Update Quantity
-                            </button>
-                        </span>}
+                        {selected.length > 0 && (
+                            <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
+                                <p>{selected.length} selected</p>
+                                <button
+                                    type="button"
+                                    className="theme-btn"
+                                    onClick={() => handleUpdate('price')}
+                                >
+                                    Update price
+                                </button>
+                                <button
+                                    type="button"
+                                    className="theme-btn"
+                                    onClick={() => handleUpdate('quantity')}
+                                >
+                                    Update Quantity
+                                </button>
+                            </span>
+                        )}
                     </section>
-                    <Table  />
+                    <Table />
                 </section>
             )}
         </>

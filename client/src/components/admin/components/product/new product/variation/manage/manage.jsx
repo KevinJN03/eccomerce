@@ -1,25 +1,37 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-
-import SingleVariation from '../singleVariation.jsx';
 import Empty from '../Empty';
-import ToggleSwitch from '../toggleSwitch';
+import ToggleSwitch from '../toggleSwitch/toggleSwitch';
 import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
-import { defaultMap, updatedDefaultMap } from '../variationData.js';
 function Manage({}) {
     const {
         dispatch,
-
         setVariations,
         setCheck,
-        deleteList,
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
-    const [price, setPrice] = useState(false);
-    const [quantity, setQuantity] = useState(false);
 
+    const [priceSelect, setPriceSelect] = useState('');
+    const [quantitySelect, setQuantitySelect] = useState('');
+    const [priceState, setPriceState] = useState(
+        checkHeader('priceHeader') || false
+    );
+    const [quantityState, setQuantityState] = useState(
+        checkHeader('quantityHeader') || false
+    );
+
+    function checkHeader(property) {
+        const newTemporaryVariation = [...temporaryVariation];
+        return newTemporaryVariation.some((item) => {
+            if (item[property].on == true) {
+             
+                return true;
+            }
+            return false;
+        });
+    }
     const deleteVariation = ({ id, name }) => {
         // updatedDefaultMap(name, id, true);
 
@@ -53,12 +65,36 @@ function Manage({}) {
         setCheck(false);
     };
 
-    let notDisabled = 0
+    let notDisabled = 0;
     temporaryVariation.map((item) => {
-        if(item.disabled == false){
-            notDisabled += 1
+        if (item.disabled == false) {
+            notDisabled += 1;
         }
-    })
+    });
+
+    const toggleHeader = (state, property) => {
+        const newTemporaryVariations = [...temporaryVariation];
+        let updated;
+        if (state == false) {
+            updated = newTemporaryVariations.map((item) => {
+                return { ...item, [property]: { on: false } };
+            });
+        } else if (state) {
+            updated = newTemporaryVariations.map((item) => {
+                return { ...item, [property]: { on: true } };
+            });
+        }
+
+        setTemporaryVariation(updated);
+    };
+
+    useEffect(() => {
+        toggleHeader(priceState, 'priceHeader');
+    }, [priceState]);
+
+    useEffect(() => {
+        toggleHeader(quantityState, 'quantityHeader');
+    }, [quantityState]);
 
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">
@@ -71,8 +107,7 @@ function Manage({}) {
                 editVariation={editVariation}
                 variations={temporaryVariation}
             />
-            {/* (temporaryVariation < 2 && temporaryDeleteList >= 1) */}
-            { notDisabled < 2 && 
+            {notDisabled < 2 && (
                 <button
                     onClick={() => dispatch({ type: 'main' })}
                     className="border-1 mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-black px-2 py-2 transition-all ease-in-out hover:!px-[12.5px]"
@@ -82,7 +117,7 @@ function Manage({}) {
                         Add a variation
                     </span>
                 </button>
-            }
+            )}
             <section className="manage-body mb-10 flex h-full w-full flex-col items-center gap-y-3">
                 {temporaryVariation.every((item) => item.disabled == true) && (
                     <Empty />
@@ -90,15 +125,21 @@ function Manage({}) {
                 {!temporaryVariation.every((item) => item.disabled == true) && (
                     <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
                         <ToggleSwitch
+                            property={'priceHeader'}
                             label={'Prices'}
-                            state={price}
-                            setState={setPrice}
+                            select={priceSelect}
+                            state={priceState}
+                            setState={setPriceState}
                             notDisabled={notDisabled}
+                            setSelect={setPriceSelect}
                         />
                         <ToggleSwitch
+                            property={'quantityHeader'}
                             label="Quantities"
-                            state={quantity}
-                            setState={setQuantity}
+                            select={quantitySelect}
+                            setSelect={setQuantitySelect}
+                            state={quantityState}
+                            setState={setQuantityState}
                             notDisabled={notDisabled}
                         />
                     </div>

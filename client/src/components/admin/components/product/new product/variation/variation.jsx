@@ -20,6 +20,7 @@ import {
 } from '../../../../../../context/variationContext';
 import VariationList from './variationList';
 import Update from './update';
+import TestVariationList from './testVariationList';
 
 const views = {
     manage: <Manage />,
@@ -42,20 +43,24 @@ function Variation() {
     });
 
     const [variations, setVariations] = useState([
-        // {
-        //     id: 1,
-        //     name: 'Colour',
-        //     options: generateVariation('Colour'),
-        //     disabled: false,
-        //     default: true, 
-        // },
-        // {
-        //     id: 2,
-        //     name: 'Size',
-        //     options: generateVariation('Size'),
-        //     disabled: false,
-        //     default: true, 
-        // },
+        {
+            id: 1,
+            name: 'Colour',
+            options: generateVariation('Colour'),
+            disabled: false,
+            default: true,
+            quantityHeader: { on: false },
+            priceHeader: { on: false },
+        },
+        {
+            id: 2,
+            name: 'Size',
+            options: generateVariation('Size'),
+            disabled: false,
+            default: true,
+            quantityHeader: { on: false },
+            priceHeader: { on: false },
+        },
     ]);
     const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
@@ -128,7 +133,8 @@ function Variation() {
                         <AddRoundedIcon />
                         <span>Add Variations</span>
                     </button>
-                    <VariationList />
+                    {/* <VariationList/> */}
+                    <TestVariationList />
                 </section>
                 {check && (
                     <Modal

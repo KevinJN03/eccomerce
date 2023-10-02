@@ -11,10 +11,10 @@ import {
     filteredVariation,
     defaultMap,
 } from './variationData';
-import ErrorAlert from './errorAlert';
+import ErrorAlert from './error/errorAlert';
 import VariationResults from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
-import OptionError from './optionError';
+import OptionError from './error/optionError';
 
 function SelectVariation({}) {
     const {
@@ -164,6 +164,8 @@ function SelectVariation({}) {
                     id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
                     default: defaultVariation,
                     disabled: false,
+                    quantityHeader: { on: false },
+                    priceHeader: { on: false },
                 };
 
                 setTemporaryVariation((prevState) => [

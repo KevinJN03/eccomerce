@@ -1,30 +1,29 @@
 import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
 import { useEffect, useState } from 'react';
-function Table({}) {
+function Table({ variationList }) {
     const [checkAll, setCheckAll] = useState(false);
     const { selected, setSelected } = useVariation();
     const { variations } = useVariation();
 
     useEffect(() => {
         let count = 0;
-            variations.forEach((element) => {
-                count += element.options.length;
-            });
+        variations.forEach((element) => {
+            count += element.options.length;
+        });
 
         if (checkAll) {
-            const newList = variations.map((item) => {
+            const spreadList = [];
+            variations.map((item) => {
                 const { options } = item;
 
                 const arr = options.map((obj) => {
                     return obj;
                 });
-
-                return arr;
+                spreadList.push(...arr);
+                return;
             });
-
-            const spreadList = [...newList[0], ...newList[1]];
-
+            debugger;
             setSelected(spreadList);
         } else if (!checkAll && selected.length == count) {
             setSelected([]);
@@ -45,32 +44,37 @@ function Table({}) {
             </colgroup>
             <tr>
                 <th>
-                    <input
-                        type="checkbox"
-                        className="checkbox"
-                        defaultChecked={checkAll}
-                        checked={checkAll}
-                        onChange={handleCheckAll}
-                    />
+                    {(variationList.priceHeader.on ||
+                        variationList.quantityHeader.on) && (
+                        <input
+                            type="checkbox"
+                            className="checkbox"
+                            defaultChecked={checkAll}
+                            checked={checkAll}
+                            onChange={handleCheckAll}
+                        />
+                    )}
                 </th>
-                <th>{variations[0].name}</th>
-                <th className="">Price</th>
-                <th>Quantity</th>
-                <th className="!text-right">Visible </th>
+                <th>{variationList.name}</th>
+                 <th className="">{ variationList.priceHeader.on && 'Price'}</th>
+                <th>{ variationList.quantityHeader.on && 'Quantity'}</th>
+                <th className="!text-right ">Visible </th>
             </tr>
             {variations.length > 0 &&
-                variations.map((list) => {
-                    return list.options.map((item) => {
-                        return (
-                            <Row
-                                setCheckAll={setCheckAll}
-                                checkAll={checkAll}
-                                variation={item}
-                                variationId={list.id}
-                                variations={variations}
-                            />
-                        );
-                    });
+                variationList.options.map((item) => {
+                    // return list.options.map((item) => {
+                    return (
+                        <Row
+                            setCheckAll={setCheckAll}
+                            checkAll={checkAll}
+                            variation={item}
+                            // variationId={list.id}
+                            variationList={variationList}
+                            priceOn={variationList.priceHeader.on}
+                            quantityOn={variationList.quantityHeader.on}
+                        />
+                    );
+                    // });
                 })}
         </table>
     );
