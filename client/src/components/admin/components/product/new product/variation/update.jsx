@@ -4,11 +4,11 @@ import { useVariation } from '../../../../../../context/variationContext';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './formatData';
 
-function Update() {
+function Update({}) {
     const [error, setError] = useState('');
     const [value, setValue] = useState('');
-    const { selected, setCheck, content, setUpdate, update } = useVariation();
-    const { category } = content;
+    const { setCheck, content } = useVariation();
+    const { category, selected, setUpdate, update } = content;
     const num = category == 'price' ? 2 : 0;
 
     const ref = useClickAway(() => {

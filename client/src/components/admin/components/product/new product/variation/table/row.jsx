@@ -13,13 +13,15 @@ function Row({
     variationId,
     quantityOn,
     priceOn,
+    selected, setSelected,
+    update
 }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [state, setState] = useState(true);
     const [check, setCheck] = useState(false);
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
-    const { setVariations, selected, setSelected, update } = useVariation();
+    const { setVariations } = useVariation();
 
     const priceRef = useClickAway(() => {
         formatData(price, 2, setPrice);
@@ -28,10 +30,8 @@ function Row({
         formatData(stock, 0, setStock);
     });
 
-    let count = 0;
-    // variationList.forEach((element) => {
-    //     count += element.options.length;
-    // });
+    let count = variationList.options.length;
+
 
     useEffect(() => {
         // const newVariations = [...variationList];

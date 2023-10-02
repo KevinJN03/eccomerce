@@ -22,7 +22,7 @@ function SelectVariation({}) {
         dispatch,
         setTemporaryVariation,
         temporaryVariation,
-        deleteList,
+     
     } = useVariation();
     const currentVariation = content.currentVariation;
     const [option, setOption] = useState(

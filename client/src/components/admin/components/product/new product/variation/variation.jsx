@@ -32,10 +32,7 @@ const views = {
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-    const [selected, setSelected] = useState([]);
-    const [deleteList, setDeleteList] = useState([]);
-
-    const [temporaryDeleteList, setTemporaryDeleteList] = useState([]);
+  
     const [update, setUpdate] = useState({ price: null, quantity: null });
 
     const [content, dispatch] = useReducer(variationReducer, {
@@ -49,8 +46,8 @@ function Variation() {
             options: generateVariation('Colour'),
             disabled: false,
             default: true,
-            quantityHeader: { on: false },
-            priceHeader: { on: false },
+            quantityHeader: { on: true },
+            priceHeader: { on: true },
         },
         {
             id: 2,
@@ -59,7 +56,7 @@ function Variation() {
             disabled: false,
             default: true,
             quantityHeader: { on: false },
-            priceHeader: { on: false },
+            priceHeader: { on: true },
         },
     ]);
     const [temporaryVariation, setTemporaryVariation] = useState([]);
@@ -83,7 +80,7 @@ function Variation() {
     }, [check]);
 
     const cleanup = () => {
-        setDeleteList([]);
+      
         // setTemporaryVariation([]);
 
         // const newArr = [...temporaryVariation];
@@ -103,16 +100,13 @@ function Variation() {
         dispatch,
         variations,
         setVariations,
-        setSelected,
-        selected,
+        
         update,
         setUpdate,
-        deleteList,
-        setDeleteList,
+      
         temporaryVariation,
         setTemporaryVariation,
-        temporaryDeleteList,
-        setTemporaryDeleteList,
+       
     };
 
     return (

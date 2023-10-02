@@ -5,7 +5,7 @@ import { useVariation } from '../../../../../../context/variationContext';
 import { useEffect, useState } from 'react';
 export default function Main() {
     const [defaultVariations, setDefaultVariations] = useState([]);
-    const { dispatch, temporaryVariation, setCheck, setDeleteList } =
+    const { dispatch, temporaryVariation, setCheck,  } =
         useVariation();
 
     const [disabled, setDisabled] = useState({});
@@ -18,7 +18,7 @@ export default function Main() {
 
     const exit = () => {
         if (temporaryVariation.length >= 1) {
-            setDeleteList([]);
+           
             return dispatch({ type: 'manage' });
         }
 

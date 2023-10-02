@@ -1,37 +1,25 @@
 import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
 import { useEffect, useState } from 'react';
-function Table({ variationList }) {
+function Table({ variationList, selected, setSelected, update }) {
     const [checkAll, setCheckAll] = useState(false);
-    const { selected, setSelected } = useVariation();
-    const { variations } = useVariation();
 
     useEffect(() => {
-        let count = 0;
-        variations.forEach((element) => {
-            count += element.options.length;
-        });
+        let count = variationList.options.length;
 
         if (checkAll) {
-            const spreadList = [];
-            variations.map((item) => {
-                const { options } = item;
-
-                const arr = options.map((obj) => {
-                    return obj;
-                });
-                spreadList.push(...arr);
-                return;
-            });
-            debugger;
-            setSelected(spreadList);
-        } else if (!checkAll && selected.length == count) {
+            setSelected(variationList.options);
+        }
+         else if (!checkAll && selected.length == count) {
             setSelected([]);
         }
     }, [checkAll]);
 
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
+
+
+        debugger
     };
     return (
         <table className="result-table w-full">
@@ -56,11 +44,11 @@ function Table({ variationList }) {
                     )}
                 </th>
                 <th>{variationList.name}</th>
-                 <th className="">{ variationList.priceHeader.on && 'Price'}</th>
-                <th>{ variationList.quantityHeader.on && 'Quantity'}</th>
+                <th className="">{variationList.priceHeader.on && 'Price'}</th>
+                <th>{variationList.quantityHeader.on && 'Quantity'}</th>
                 <th className="!text-right ">Visible </th>
             </tr>
-            {variations.length > 0 &&
+            {variationList &&
                 variationList.options.map((item) => {
                     // return list.options.map((item) => {
                     return (
@@ -68,10 +56,13 @@ function Table({ variationList }) {
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
                             variation={item}
-                            // variationId={list.id}
+
                             variationList={variationList}
                             priceOn={variationList.priceHeader.on}
                             quantityOn={variationList.quantityHeader.on}
+                            selected={selected}
+                            setSelected={setSelected}
+                            update = {update}
                         />
                     );
                     // });
