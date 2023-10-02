@@ -4,9 +4,11 @@ import SelectVariation from './selectVariation';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useEffect, useState } from 'react';
 export default function Main() {
-    const { dispatch, temporaryVariation,  setCheck, deleteList, setDeleteList } =
-        useVariation();
     const [defaultVariations, setDefaultVariations] = useState([]);
+    const { dispatch, temporaryVariation, setCheck, setDeleteList } =
+        useVariation();
+
+    const [disabled, setDisabled] = useState({});
     const findVariation = (option) => {
         const result = temporaryVariation.some((item) => item.disabled);
 
@@ -31,31 +33,50 @@ export default function Main() {
             const { id, disabled } = value;
             entriesData.push({ category: key, id, disabled });
         }
-        setDefaultVariations(entriesData);
+        // setDefaultVariations(entriesData);
+
+        return entriesData;
     };
 
     useEffect(() => {
-        checkEntries();
+        let newTemporaryVariation = [...temporaryVariation];
+        console.log('mount here');
+        const newDefaultVariations = checkEntries();
+        /* disable default variation button if the variation exists already */
 
-        let newArr = [...temporaryVariation];
+        if (temporaryVariation.length > 0) {
+            const updateDefaultDisabled = [];
 
-        const checkBoolean = newArr.every((item) => item.disabled == false);
+            newDefaultVariations.map((variation) => {
+                const { category } = variation;
 
-        if (checkBoolean) {
-            newArr.map(({ id, name }) => {
-               
-                return updatedDefaultMap(name, id, true);
+                newTemporaryVariation.map((item) => {
+                    const { name, id, disabled } = item;
+                    if (name == category && item.default == true) {
+                        if (disabled == false) {
+                            variation.disabled = true;
+                            // let obj = { ...variation, disabled: true };
+                            // updateDefaultDisabled.push(obj);
+                            // return;
+                        } else if (disabled == true) {
+                            // let obj = { ...variation, disabled: false };
+                            variation.disabled = false;
+                            // updateDefaultDisabled.push(obj);
+                            // return;
+                        }
+                    }
+                });
+
+                updateDefaultDisabled.push(variation);
+                return;
+                debugger;
             });
+            setDefaultVariations(updateDefaultDisabled);
+            return;
         }
 
-
+        return setDefaultVariations(newDefaultVariations);
     }, []);
-
-    /* 
-    
-    if in delete list, i want reenable the variation category and then when i create a new variation, that variation is then deleted
-    
-    */
 
     console.log('defaultMap: ', defaultMap);
     return (
@@ -69,14 +90,11 @@ export default function Main() {
             <div className="variation-main-wrapper h-full">
                 <div className="mb-2 mt-5 flex flex-row flex-wrap gap-3">
                     {defaultVariations.map((option) => {
-                     
                         return (
                             <button
                                 type="button"
                                 className="options-btn"
-                                disabled={
-                                    defaultMap.get(option.category).disabled
-                                }
+                                disabled={option.disabled}
                                 onClick={() =>
                                     dispatch({
                                         type: 'select',

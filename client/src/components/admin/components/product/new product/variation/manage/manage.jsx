@@ -10,25 +10,18 @@ import { defaultMap, updatedDefaultMap } from '../variationData.js';
 function Manage({}) {
     const {
         dispatch,
-      
+
         setVariations,
         setCheck,
         deleteList,
-        setDeleteList,
-        temporaryDeleteList,
-        setTemporaryDeleteList,
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
     const [price, setPrice] = useState(false);
     const [quantity, setQuantity] = useState(false);
 
-    useEffect(() => {
-        // setTemporaryVariation(variations)
-    }, []);
-
     const deleteVariation = ({ id, name }) => {
-        updatedDefaultMap(name, id, false);
+        // updatedDefaultMap(name, id, true);
 
         let newArr = [...temporaryVariation];
 
@@ -39,19 +32,6 @@ function Manage({}) {
             return item;
         });
         setTemporaryVariation(update);
-
-        // else if (type == 'temporary') {
-        //     const newArr = [...temporaryVariation];
-
-        //     const update = newArr.map((item) => {
-        //         if (item.id == id) {
-        //             return { ...item, disabled: true };
-        //         }
-        //         return item;
-        //     });
-
-        //     setTemporaryVariation(update);
-        // }
     };
 
     const editVariation = (item) => {
@@ -61,42 +41,38 @@ function Manage({}) {
     };
 
     const apply = () => {
-        // if (deleteList.length > 0) {
-        //     const newVariation = [...variations];
-        //     const filteredVariation = newVariation.filter(
-        //         ({ id }) => !deleteList.includes(id)
-        //     );
-
-        //     console.log(filteredVariation);
-        //     setVariations(filteredVariation);
-
-        //     setCheck(false);
-        //     return;
-        // }
         const newArr = [...temporaryVariation];
         const filterArr = newArr.filter((item) => item.disabled != true);
 
         setVariations(filterArr);
-        // setTemporaryVariation([]);
+
         setCheck(false);
     };
 
     const cancel = () => {
-       setCheck(false)
-    }
+        setCheck(false);
+    };
+
+    let notDisabled = 0
+    temporaryVariation.map((item) => {
+        if(item.disabled == false){
+            notDisabled += 1
+        }
+    })
+
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">
             <h2 className="mb-2 text-left text-2xl font-semibold">
                 Manage variations
             </h2>
-          
+
             <VariationItem
                 deleteVariation={deleteVariation}
                 editVariation={editVariation}
                 variations={temporaryVariation}
             />
             {/* (temporaryVariation < 2 && temporaryDeleteList >= 1) */}
-            {
+            { notDisabled < 2 && 
                 <button
                     onClick={() => dispatch({ type: 'main' })}
                     className="border-1 mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-black px-2 py-2 transition-all ease-in-out hover:!px-[12.5px]"
@@ -108,23 +84,25 @@ function Manage({}) {
                 </button>
             }
             <section className="manage-body mb-10 flex h-full w-full flex-col items-center gap-y-3">
-                { temporaryVariation.every(item => item.disabled == true) && <Empty />}
-                {!temporaryVariation.every(item => item.disabled == true) && (
-                        <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
-                            <ToggleSwitch
-                                label={'Prices'}
-                                state={price}
-                                setState={setPrice}
-                                deleteList={deleteList}
-                            />
-                            <ToggleSwitch
-                                label="Quantities"
-                                state={quantity}
-                                setState={setQuantity}
-                                deleteList={deleteList}
-                            />
-                        </div>
-                    )}
+                {temporaryVariation.every((item) => item.disabled == true) && (
+                    <Empty />
+                )}
+                {!temporaryVariation.every((item) => item.disabled == true) && (
+                    <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
+                        <ToggleSwitch
+                            label={'Prices'}
+                            state={price}
+                            setState={setPrice}
+                            notDisabled={notDisabled}
+                        />
+                        <ToggleSwitch
+                            label="Quantities"
+                            state={quantity}
+                            setState={setQuantity}
+                            notDisabled={notDisabled}
+                        />
+                    </div>
+                )}
             </section>
             <footer className="variation-footer">
                 <button

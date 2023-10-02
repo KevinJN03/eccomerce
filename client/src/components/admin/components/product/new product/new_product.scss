@@ -163,7 +163,7 @@ p {
         }
     }
     .options-btn {
-        @apply rounded-full bg-[var(--light-grey)]  px-4 py-2 font-gotham transition-all;
+        @apply rounded-full bg-[var(--light-grey)]  px-5 py-3 font-gotham transition-all text-center ;
         &:disabled {
             @apply opacity-40;
 
@@ -182,7 +182,7 @@ p {
         }
 
         &:hover {
-            @apply bg-gray-200;
+            @apply bg-gray-300 shadow-lg ;
         }
     }
 

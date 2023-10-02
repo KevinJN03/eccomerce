@@ -42,20 +42,20 @@ function Variation() {
     });
 
     const [variations, setVariations] = useState([
-        {
-            id: 1,
-            name: 'Colour',
-            options: generateVariation('Colour'),
-            disabled: false,
-            default: true, 
-        },
-        {
-            id: 2,
-            name: 'Size',
-            options: generateVariation('Size'),
-            disabled: false,
-            default: true, 
-        },
+        // {
+        //     id: 1,
+        //     name: 'Colour',
+        //     options: generateVariation('Colour'),
+        //     disabled: false,
+        //     default: true, 
+        // },
+        // {
+        //     id: 2,
+        //     name: 'Size',
+        //     options: generateVariation('Size'),
+        //     disabled: false,
+        //     default: true, 
+        // },
     ]);
     const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
