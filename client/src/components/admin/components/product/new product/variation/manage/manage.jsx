@@ -48,7 +48,7 @@ function Manage({}) {
 
     const editVariation = (item) => {
         const { name } = item;
-        // debugger
+  
         dispatch({ type: 'select', currentVariation: item, title: name });
     };
 

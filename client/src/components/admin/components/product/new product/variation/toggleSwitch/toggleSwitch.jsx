@@ -58,7 +58,7 @@ function ToggleSwitch({
                 return { ...item, [property]: { on: false } };
             });
         }
-        debugger;
+     
         setTemporaryVariation(update);
         setSelect(value);
     };

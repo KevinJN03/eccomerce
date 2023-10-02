@@ -69,7 +69,7 @@ export default function Main() {
 
                 updateDefaultDisabled.push(variation);
                 return;
-                debugger;
+               
             });
             setDefaultVariations(updateDefaultDisabled);
             return;

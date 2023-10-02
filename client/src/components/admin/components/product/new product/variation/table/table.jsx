@@ -19,7 +19,7 @@ function Table({ variationList, selected, setSelected, update }) {
         setCheckAll(!checkAll);
 
 
-        debugger
+      
     };
     return (
         <table className="result-table w-full">

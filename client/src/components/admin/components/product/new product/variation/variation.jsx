@@ -32,7 +32,7 @@ const views = {
 function Variation() {
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-  
+
     const [update, setUpdate] = useState({ price: null, quantity: null });
 
     const [content, dispatch] = useReducer(variationReducer, {
@@ -80,7 +80,6 @@ function Variation() {
     }, [check]);
 
     const cleanup = () => {
-      
         // setTemporaryVariation([]);
 
         // const newArr = [...temporaryVariation];
@@ -100,13 +99,12 @@ function Variation() {
         dispatch,
         variations,
         setVariations,
-        
+
         update,
         setUpdate,
-      
+
         temporaryVariation,
         setTemporaryVariation,
-       
     };
 
     return (
@@ -124,8 +122,14 @@ function Variation() {
                         onClick={toggle}
                         className="theme-btn"
                     >
-                        <AddRoundedIcon />
-                        <span>Add Variations</span>
+                        {temporaryVariation.length == 0 ? (
+                            <>
+                                <AddRoundedIcon />
+                                <span>Add Variations</span>
+                            </>
+                        ) : (
+                            'Manage Variations'
+                        )}
                     </button>
                     {/* <VariationList/> */}
                     <TestVariationList />
