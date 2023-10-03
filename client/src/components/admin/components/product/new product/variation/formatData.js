@@ -1,4 +1,4 @@
-export default (data, num, setState) => {
+export default (data, num) => {
     try {
 
         if (data == null || data == undefined) {
@@ -6,12 +6,10 @@ export default (data, num, setState) => {
             return 
         };
 
-   console.log('try format');
+//    console.log('try format');
         let newData = parseFloat(data).toFixed(num);
 
-        if (newData != data) {
-            setState(newData);
-        }
+       return newData
     } catch (error) {
         console.log('error formatting', error);
     }

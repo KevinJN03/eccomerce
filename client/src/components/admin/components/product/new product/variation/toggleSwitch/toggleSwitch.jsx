@@ -10,39 +10,45 @@ function ToggleSwitch({
     state,
     setState,
     notDisabled,
+    notDisabledVariation,
     setSelect,
     select,
     property,
 }) {
     const { temporaryVariation, setTemporaryVariation } = useVariation();
-    const inputRef = useRef(null);
 
     useEffect(() => {
         const checkSelect = () => {
-            const newTemporary = [...temporaryVariation];
+            const newTemporary = [...temporaryVariation].filter(
+                (item) => item.disabled == false
+            );
             let value = '';
             let count = 0;
             newTemporary.map((item) => {
                 if (item[property].on == true) {
-                    value = item.name;
-                    count += 1 
+                    if (value.length < 1) {
+                        value += item.name;
+                    } else {
+                        value += ` and ${item.name}`;
+                    }
+
+                    count += 1;
                 }
             });
-
-            if(count > 1) {
-                return ''
-            }
             return value;
         };
 
-        let check =  checkSelect();
-        setSelect(check)
-
-       
+        let check = checkSelect();
+        setSelect(check);
     }, []);
+
     const handleSelect = (value, both) => {
+
+        console.log('handleSelect triggered')
         console.log('both', both);
-        const newTemporaryVariation = [...temporaryVariation];
+        const newTemporaryVariation = [...temporaryVariation].filter(
+            (item) => item.disabled !== true
+        );
 
         let update;
         if (both == 'true') {
@@ -51,19 +57,19 @@ function ToggleSwitch({
             });
         } else {
             update = newTemporaryVariation.map((item) => {
-                if (item.disabled == false && item.name == value) {
+                if (item.name == value) {
                     return { ...item, [property]: { on: true } };
                 }
 
                 return { ...item, [property]: { on: false } };
             });
         }
-     
+
         setTemporaryVariation(update);
         setSelect(value);
     };
 
-    useEffect(() => {}, [state]);
+ 
 
     const handleToggle = () => {
         setState(!state);
@@ -81,7 +87,11 @@ function ToggleSwitch({
             </div>
 
             {notDisabled > 1 && state && (
-                <SelectOptions handleSelect={handleSelect} select={select} />
+                <SelectOptions
+                    handleSelect={handleSelect}
+                    select={select}
+                    setSelect={setSelect}
+                />
             )}
         </section>
     );

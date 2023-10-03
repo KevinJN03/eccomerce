@@ -4,6 +4,7 @@ import ToggleSwitch from '../toggleSwitch/toggleSwitch';
 import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
+import OptionError from '../error/optionError';
 function Manage({}) {
     const {
         dispatch,
@@ -26,7 +27,6 @@ function Manage({}) {
         const newTemporaryVariation = [...temporaryVariation];
         return newTemporaryVariation.some((item) => {
             if (item[property].on == true) {
-             
                 return true;
             }
             return false;
@@ -48,54 +48,69 @@ function Manage({}) {
 
     const editVariation = (item) => {
         const { name } = item;
-  
+
         dispatch({ type: 'select', currentVariation: item, title: name });
-    };
-
-    const apply = () => {
-        const newArr = [...temporaryVariation];
-        const filterArr = newArr.filter((item) => item.disabled != true);
-
-        setVariations(filterArr);
-
-        setCheck(false);
     };
 
     const cancel = () => {
         setCheck(false);
     };
 
-    let notDisabled = 0;
-    temporaryVariation.map((item) => {
-        if (item.disabled == false) {
-            notDisabled += 1;
-        }
-    });
+    const notDisableVariations = () => {
+        let countPriceHeader = 0;
+        let countQuantityHeader = 0;
+        const filtered = temporaryVariation.filter((item) => {
+            if (item.disabled == false) {
+                if (item.priceHeader.on) {
+                    countPriceHeader++;
+                }
 
-    const toggleHeader = (state, property) => {
-        const newTemporaryVariations = [...temporaryVariation];
-        let updated;
-        if (state == false) {
-            updated = newTemporaryVariations.map((item) => {
-                return { ...item, [property]: { on: false } };
-            });
-        } else if (state) {
-            updated = newTemporaryVariations.map((item) => {
-                return { ...item, [property]: { on: true } };
-            });
-        }
+                if (item.quantityHeader.on) {
+                    countQuantityHeader++;
+                }
+                return item;
+            }
+        });
 
-        setTemporaryVariation(updated);
+        let newObj = {
+            countPriceHeader,
+            countQuantityHeader,
+            arr: filtered,
+        };
+        return newObj;
     };
 
-    useEffect(() => {
-        toggleHeader(priceState, 'priceHeader');
-    }, [priceState]);
+    const notDisableVariation = notDisableVariations();
+    const { countPriceHeader, countQuantityHeader, arr } = notDisableVariation;
+    const notDisabled = arr.length;
 
-    useEffect(() => {
-        toggleHeader(quantityState, 'quantityHeader');
-    }, [quantityState]);
+    const apply = () => {
+        const newArr = [...arr];
+console.log({countPriceHeader, countQuantityHeader})
+        if (
+            (countPriceHeader > 1 || countQuantityHeader > 1) 
+        ) {
+            const update = newArr.map((item) => {
+                return {
+                    ...item,
+                    priceHeader: { on: true },
+                    quantityHeader: { on: true },
+                    combine: true,
+                };
+            });
 
+            setVariations(update);
+            setCheck(false);
+            return
+        } else {
+            const newUpdate = newArr.map((item) => {
+                return { ...item, combine: false };
+            });
+            setVariations(newUpdate);
+            setCheck(false);
+            return
+        }
+    };
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">
             <h2 className="mb-2 text-left text-2xl font-semibold">
@@ -118,7 +133,7 @@ function Manage({}) {
                     </span>
                 </button>
             )}
-            <section className="manage-body mb-10 flex h-full w-full flex-col items-center gap-y-3">
+            <section className="manage-body mb-10 flex min-h-full w-full flex-col items-center gap-y-3">
                 {temporaryVariation.every((item) => item.disabled == true) && (
                     <Empty />
                 )}
@@ -132,6 +147,7 @@ function Manage({}) {
                             setState={setPriceState}
                             notDisabled={notDisabled}
                             setSelect={setPriceSelect}
+                            notDisabledVariation={notDisableVariation.arr}
                         />
                         <ToggleSwitch
                             property={'quantityHeader'}
@@ -141,11 +157,41 @@ function Manage({}) {
                             state={quantityState}
                             setState={setQuantityState}
                             notDisabled={notDisabled}
+                            notDisabledVariation={notDisableVariation.arr}
                         />
                     </div>
                 )}
+                {notDisabled > 1 &&
+                    (countPriceHeader > 1 || countQuantityHeader > 1) && (
+                        <div className="border-1 mt-2 flex items-center gap-x-4 rounded-md border-slate-300 bg-[var(--light-grey)] p-3 ">
+                            <span className="rounded-full bg-white p-1">
+                                <img
+                                    width="60"
+                                    height="60"
+                                    src="https://img.icons8.com/ios-glyphs/30/information.png"
+                                    alt="information"
+                                />
+                            </span>
+
+                            <p className="mr-8 text-sm ">
+                                Because you are varying for each{' '}
+                                <span className="font-semibold">
+                                    {`${notDisableVariation.arr[0].name} and ${notDisableVariation.arr[1].name} `}
+                                </span>
+                                in at least one area,
+                                <span className="font-semibold">
+                                    {' '}
+                                    {notDisableVariation.arr[0].options.length *
+                                        notDisableVariation.arr[1].options
+                                            .length}{' '}
+                                    option combinations
+                                </span>
+                                will be created automatically.
+                            </p>
+                        </div>
+                    )}
             </section>
-            <footer className="variation-footer">
+            <footer className="variation-footer ">
                 <button
                     type="button"
                     className="cancel-btn rounded-full px-3 py-2"

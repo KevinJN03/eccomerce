@@ -1,75 +1,111 @@
 import Switch from '../toggleSwitch/switch';
 import { useEffect, useRef, useState } from 'react';
-import { useClickAway } from '@uidotdev/usehooks';
 import OptionError from '../error/optionError';
 import formatData from '../formatData';
 import ErrorAlert from '../error/errorAlert';
-import { useVariation } from '../../../../../../../context/variationContext';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 function Row({
     variation,
     checkAll,
     setCheckAll,
     variationList,
-    variationId,
+
     quantityOn,
     priceOn,
     selected,
     setSelected,
     update,
+    combine,
 }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [state, setState] = useState(true);
     const [check, setCheck] = useState(false);
-    const [price, setPrice] = useState('');
-    const [stock, setStock] = useState('');
-    const { setVariations, variations } = useVariation();
-
+    const [price, setPrice] = useState();
+    const [stock, setStock] = useState();
     const onClickAway = () => {
-        
-        if (variation.price == price || (isNaN(price))){
-         
-            return
-        }
-            formatData(price, 2, setPrice);
-        formatData(stock, 0, setStock);
+//         console.log('clickaway');
+//         if (isNaN(price) && isNaN(stock)) {
+//             return;
+//         } else {
+//             console.log('clickaway change State');
+//             const newPrice = formatData(price, 2);
+//             const newStock = formatData(stock, 0);
+//   console.table({previousPrice, previousStock, newPrice, price})
+          
+//             setPrice(newPrice);
+//             setStock(newStock);
+
+          
+//         }
     };
 
-    let count = variationList.options.length;
+
+
+    // useEffect(() => {
+    //     // const newVariation
+
+    //     const { options } = variationList;
+
+    //     const newOptions = options.map((item) => {
+    //         if (item.id == variation.id) {
+    //             return {
+    //                 ...item,
+    //                 disabled: !state,
+    //                 price: parseFloat(price).toFixed(2),
+    //                 stock: parseInt(stock),
+    //             };
+    //         }
+    //         return item;
+    //     });
+
+    //     setVariations(
+    //         variations.map((item) => {
+    //             if (item.id == variationList.id) {
+    //                 return { ...item, options: newOptions };
+    //             }
+    //             return item;
+    //         })
+    //     );
+    // },
+    // [updater]
+    // //  [state, stock, price]
+    // );
 
     useEffect(() => {
-        // const newVariation
-
-        const { options } = variationList;
+        const count = variationList.options.length;
+        console.log({ checkAll, selected:  selected.length, count});
        
-        console.log('update state, stock, price');
-        const newOptions = options.map((item) => {
-            if (item.id == variation.id) {
-                return {
-                    ...item,
-                    disabled: !state,
-                    price: parseFloat(price).toFixed(2),
-                    stock: parseInt(stock),
-                };
-            }
-            return item;
-        });
-        console.log(newOptions);
-        setVariations(
-            variations.map((item) => {
-                if (item.id == variationList.id) {
-                    return { ...item, options: newOptions };
-                }
-                return item;
-            })
-        );
-    }, [state, stock, price]);
-
-    useEffect(() => {
-        if (selected.length == 0 || selected.length == count || checkAll) {
-            return setCheck(checkAll);
+        if (checkAll == true) {
+            // debugger
+            setCheck(true);
+        } else if (checkAll == false ) {
+            setCheck(false);
         }
     }, [checkAll]);
+
+
+        useEffect(() => {
+        const count = variationList.options.length;
+  if (check == true && selected.length == count) {
+    setCheckAll(true)
+    // console.log('itis true')
+            // setSelected([...selected, variation]);
+        } else {
+            setCheckAll(null);
+             setSelected(
+                selected.filter((item) => item.id != variation.id)
+            );
+        }
+   
+
+
+    }, [check])
+    const handleCheck = () => {
+        setSelected([...selected, variation]);
+        setCheck(!check)
+ 
+      
+    };
 
     // once update is apply, update input field
 
@@ -132,28 +168,19 @@ function Row({
         }
     };
 
-    const handleCheck = () => {
-        setCheck(!check);
-        if (!check) {
-            return setSelected([...selected, variation]);
-        } else {
-            setCheckAll(false);
-            return setSelected(
-                selected.filter((item) => item.id != variation.id)
-            );
-        }
-    };
+
+
 
     const handleVisibility = () => {
         setState(!state);
     };
     return (
-        <ClickAwayListener onClickAway={onClickAway}>
+        // <ClickAwayListener onClickAway={onClickAway}>
             <tr
                 role="presentation"
                 className={`h-full max-h-28 w-full min-w-full ${
-                    !variation.disabled && 'hover:bg-[var(--light-grey)]'
-                } ${check && !variation.disabled && 'bg-gray-200'}`}
+                    state && 'hover:bg-[var(--light-grey)]'
+                } ${check && state && 'bg-gray-200'}`}
             >
                 <td
                     className={` ${
@@ -163,10 +190,11 @@ function Row({
                     {(priceOn || quantityOn) && (
                         <input
                             type="checkbox"
-                            className={`checkbox`}
-                            checked={check && !variation.disabled}
+                            className={`checkbox no-animation !rounded-[3px]`}
+                            /* check && !variation.disabled */
+                            checked={check && state}
                             onChange={handleCheck}
-                            disabled={variation.disabled}
+                            disabled={!state}
                         />
                     )}
                 </td>
@@ -180,6 +208,18 @@ function Row({
                 >
                     {variation.variation}
                 </td>
+
+                {combine && (
+                    <td
+                        className={`pl-4 ${
+                            !error.stock && !error.price && '!align-middle'
+                        } 
+                
+                ${!state && '!opacity-60 '}`}
+                    >
+                        {variation.variation2}
+                    </td>
+                )}
 
                 <td className={`relative ${!state && 'opacity-0'}`}>
                     {priceOn && (
@@ -260,7 +300,7 @@ function Row({
                     </div>
                 </td>
             </tr>
-        </ClickAwayListener>
+        // </ClickAwayListener>
     );
 }
 

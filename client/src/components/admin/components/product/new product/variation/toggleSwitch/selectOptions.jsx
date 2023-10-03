@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { v4 as uuidv4 } from 'uuid';
-function SelectOptions({ handleSelect, select }) {
-    const { temporaryVariation } = useVariation();
-    const bothVariations = `${temporaryVariation[0].name} and ${temporaryVariation[1].name}`;
+function SelectOptions({ handleSelect, select, setSelect }) {
+    const { variations } = useVariation();
+
+
+    let bothVariations;
+    if(variations.length >= 2){
+         bothVariations = `${variations[0].name} and ${variations[1].name}`;
+    }
+    
     useEffect(() => {
-        if (!select) {
-            handleSelect(bothVariations, 'true');
-        }
+        console.log('mount')
     }, []);
     return (
         <select
@@ -27,8 +31,8 @@ function SelectOptions({ handleSelect, select }) {
                 {bothVariations}
             </option>
 
-            {temporaryVariation &&
-                temporaryVariation.map((variation) => {
+            {variations &&
+                variations.map((variation) => {
                     if (variation.disabled == false) {
                         return (
                             <option
