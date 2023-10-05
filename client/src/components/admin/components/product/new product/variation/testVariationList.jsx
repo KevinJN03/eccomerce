@@ -6,16 +6,16 @@ import SingleList from './singleList';
 
 function TestVariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
-    const [combine, setCombine] = useState({id: uuidV4(), options: []});
-    const handleUpdate = (category, selected, setUpdate, update) => {
+    const [combine, setCombine] = useState({ id: uuidV4(), options: [] });
+    const handleUpdate = (category, selected, setUpdate, update, setCheckAll) => {
         setCheck(true);
-        dispatch({ type: 'update', category, selected, setUpdate, update });
+        dispatch({ type: 'update', category, selected, setUpdate, update,setCheckAll });
     };
 
     useEffect(() => {
         console.log('variationList mount');
         const everyVariation = variations.every((item) => item.combine == true);
-        if (everyVariation) {
+        if (everyVariation && variations.length > 1) {
             console.log('variationList combine');
             const onlyOptions = [...variations].map(({ options }) => {
                 console.log({ options });
@@ -30,9 +30,12 @@ function TestVariationList({}) {
             for (const variationItem of firstOptions) {
                 for (const item of secondOptions) {
                     const { variation } = item;
-                   
 
-                    const newObj = {id: uuidV4(), variation: variationItem.variation, variation2: variation }
+                    const newObj = {
+                        id: uuidV4(),
+                        variation: variationItem.variation,
+                        variation2: variation,
+                    };
                     newOptions.push(newObj);
                 }
             }
@@ -40,25 +43,32 @@ function TestVariationList({}) {
             console.log('newOptions: ', newOptions);
 
             const newVariation = {
-            ...combine,
+                ...combine,
                 options: newOptions,
                 name: variations[0].name,
                 name2: variations[1].name,
-                quantityHeader: {on:true},
-                priceHeader: {on: true}
+                quantityHeader: { on: true },
+                priceHeader: { on: true },
             };
 
             setCombine(newVariation);
-        }else {
-            setCombine({...combine , options: []})
+        } else {
+            setCombine({ ...combine, options: [] });
         }
     }, [variations]);
 
     return (
         <>
-
-        { combine.options.length > 0 && <SingleList variation={combine} key={combine.id} handleUpdate={handleUpdate} combine={true}/>}
-            { combine.options.length <  1 && variations.length > 0 &&
+            {combine.options.length > 0 && (
+                <SingleList
+                    variation={combine}
+                    key={combine.id}
+                    handleUpdate={handleUpdate}
+                    combine={true}
+                />
+            )}
+            {combine.options.length < 1 &&
+                variations.length > 0 &&
                 variations.map((variation) => {
                     return (
                         <>

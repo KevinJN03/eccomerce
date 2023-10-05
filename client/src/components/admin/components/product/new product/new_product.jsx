@@ -12,10 +12,16 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Variation from './variation/variation';
 import { Modal } from '@mui/material';
+
+
+import { NewProductProvider } from '../../../../../context/newProductContext';
 function New_Product() {
     let navigate = useNavigate();
 
+
     return (
+        <NewProductProvider>
+
         <section className="new-product">
             <SideBar />
             <div className="new-product-container">
@@ -57,6 +63,7 @@ function New_Product() {
                 </div>
             </div>
         </section>
+        </NewProductProvider>
     );
 }
 

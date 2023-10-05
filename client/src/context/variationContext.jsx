@@ -29,8 +29,9 @@ export const variationReducer = (state, action) => {
             type: action.type,
             category: action.category,
             selected: action.selected,
-            setUpdate : action.setUpdate,
-            update: action.update
+            setUpdate: action.setUpdate,
+            update: action.update,
+            setCheckAll: action.setCheckAll,
         };
     }
 

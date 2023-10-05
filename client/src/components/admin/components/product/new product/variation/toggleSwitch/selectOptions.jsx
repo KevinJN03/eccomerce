@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { v4 as uuidv4 } from 'uuid';
 function SelectOptions({ handleSelect, select, setSelect }) {
-    const { variations } = useVariation();
+    const { temporaryVariation } = useVariation();
 
 
     let bothVariations;
-    if(variations.length >= 2){
-         bothVariations = `${variations[0].name} and ${variations[1].name}`;
+
+    const filterDisabled = [...temporaryVariation].filter(item => item.disabled == false)
+    if(filterDisabled.length >= 2){
+         bothVariations = `${filterDisabled[0].name} and ${filterDisabled[1].name}`;
     }
     
     useEffect(() => {
@@ -31,8 +33,8 @@ function SelectOptions({ handleSelect, select, setSelect }) {
                 {bothVariations}
             </option>
 
-            {variations &&
-                variations.map((variation) => {
+            {temporaryVariation &&
+                temporaryVariation.map((variation) => {
                     if (variation.disabled == false) {
                         return (
                             <option

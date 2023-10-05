@@ -32,6 +32,9 @@ function Manage({}) {
             return false;
         });
     }
+
+
+    
     const deleteVariation = ({ id, name }) => {
         // updatedDefaultMap(name, id, true);
 
@@ -88,8 +91,9 @@ function Manage({}) {
         const newArr = [...arr];
 console.log({countPriceHeader, countQuantityHeader})
         if (
-            (countPriceHeader > 1 || countQuantityHeader > 1) 
+            (countPriceHeader > 0 && countQuantityHeader > 0 ) 
         ) {
+            debugger
             const update = newArr.map((item) => {
                 return {
                     ...item,
@@ -186,7 +190,7 @@ console.log({countPriceHeader, countQuantityHeader})
                                             .length}{' '}
                                     option combinations
                                 </span>
-                                will be created automatically.
+                                {' '}will be created automatically.
                             </p>
                         </div>
                     )}

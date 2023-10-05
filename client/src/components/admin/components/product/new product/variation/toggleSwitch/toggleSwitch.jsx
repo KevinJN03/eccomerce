@@ -18,6 +18,23 @@ function ToggleSwitch({
     const { temporaryVariation, setTemporaryVariation } = useVariation();
 
     useEffect(() => {
+        let newArr;
+
+        if (state == false) {
+            debugger;
+            newArr = [...temporaryVariation].map((item) => {
+                return { ...item, [property]: { on: false } };
+            });
+        } else if (state == true) {
+            newArr = [...temporaryVariation].map((item) => {
+                return { ...item, [property]: { on: true } };
+            });
+        }
+
+        setTemporaryVariation(newArr);
+    }, [state]);
+
+    useEffect(() => {
         const checkSelect = () => {
             const newTemporary = [...temporaryVariation].filter(
                 (item) => item.disabled == false
@@ -43,8 +60,7 @@ function ToggleSwitch({
     }, []);
 
     const handleSelect = (value, both) => {
-
-        console.log('handleSelect triggered')
+        console.log('handleSelect triggered');
         console.log('both', both);
         const newTemporaryVariation = [...temporaryVariation].filter(
             (item) => item.disabled !== true
@@ -68,8 +84,6 @@ function ToggleSwitch({
         setTemporaryVariation(update);
         setSelect(value);
     };
-
- 
 
     const handleToggle = () => {
         setState(!state);

@@ -3,9 +3,12 @@ import { useState, useRef } from 'react';
 // import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
+import { useNewProduct } from '../../../../../context/newProductContext';
 function DragDropFile() {
     console.log('dragDrop mounted');
-    const [files, setFiles] = useState();
+    // const [files, setFiles] = useState();
+
+    const { files, setFiles } = useNewProduct();
     console.log('files', files);
     const inputRef = useRef();
     const handleDragOver = (e) => {
@@ -47,23 +50,17 @@ function DragDropFile() {
         setFiles(filesImg);
     };
 
-    if (files)
-        return (
-            <>
-                {console.log('files before going to upload', files)}
-                <Upload files={files} setFiles={setFiles} />
-            </>
-        );
-
     return (
         <section>
-            {!files && (
+            {files.length == 0 && (
                 <div
                     className="dropzone"
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                 >
-                    <h1>Drag and Drop Files to Upload</h1>
+                    <h1 className="text-center text-2xl">
+                        Drag and Drop Files to Upload
+                    </h1>
                     <input
                         type="file"
                         multiple
@@ -81,7 +78,12 @@ function DragDropFile() {
                     </button>
                 </div>
             )}
-         
+            {files.length >  0 && (
+                <>
+                {console.log('files before going to upload', files)}
+                <Upload />
+            </>
+            )}
         </section>
     );
 }

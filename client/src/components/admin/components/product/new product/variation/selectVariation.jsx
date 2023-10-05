@@ -185,7 +185,7 @@ function SelectVariation({}) {
     };
 
     return (
-        <section className="select-variation relative h-[550px] w-full">
+        <section className="select-variation relative  h-full w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}
             <header className="flex w-full flex-col border-b-2 pb-4 !text-left">
                 <h1 className=" font-semibold">
@@ -213,7 +213,7 @@ function SelectVariation({}) {
                 )}
             </header>
 
-            <section className="options my-4  flex h-auto min-h-full flex-grow flex-col">
+            <section className="options my-4  flex !min-h-full flex-grow flex-col">
                 <div className="mb-6">
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
@@ -234,7 +234,7 @@ function SelectVariation({}) {
                     } w-[400px] border-none`}
                 >
                     <div
-                        className="searchOption relative flex !w-full flex-row items-center"
+                        className="searchOption relative flex !w-full  flex-row items-center"
                         tabIndex={0}
                     >
                         <input
@@ -272,7 +272,7 @@ function SelectVariation({}) {
                     />
                 </section>
 
-                <div className="options-wrapper mt-3 flex basis-full flex-col gap-y-2 ">
+                <div className="options-wrapper mt-3 flex basis-full flex-col gap-y-2 min-h-[200px]  ">
                     {option &&
                         option.length > 0 &&
                         option.map((item) => {
@@ -301,7 +301,7 @@ function SelectVariation({}) {
                 </div>
             </section>
             {/* //variation-footer !mt-auto !bottom-[-25px] py-4 */}
-            <section className="variation-footer !bottom-[-25px] !mt-auto py-4">
+            <section className="variation-footer !bottom-[-25px] !mt-auto pt-4">
                 <button
                     onClick={deleteVariation}
                     type="button"

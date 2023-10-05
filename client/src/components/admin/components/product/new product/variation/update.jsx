@@ -8,7 +8,7 @@ function Update({}) {
     const [error, setError] = useState('');
     const [value, setValue] = useState('');
     const { setCheck, content } = useVariation();
-    const { category, selected, setUpdate, update } = content;
+    const { category, selected, setUpdate, update, setCheckAll} = content;
     const num = category == 'price' ? 2 : 0;
 
     const ref = useClickAway(() => {
@@ -32,20 +32,48 @@ function Update({}) {
     const apply = () => {
         try {
             setTimeout(() => {
-                setUpdate({ ...update, [`${category}`]: value });
+                setUpdate({ ...update, [`${category}`]: value, bool: !update.bool });
                 setCheck(false);
+               setCheckAll('clear')
             }, 200);
+
+            // setTimeout(() => {
+            //     setSelected([])
+            // }, 1000)
         } catch (error) {
             console.log('error at apply', error);
         }
     };
+
+    const checkValue = () => {
+        let newCategory = category;
+
+        if (newCategory == 'quantity') {
+            newCategory = 'stock';
+        }
+        console.log(newCategory);
+        const newArr = [...selected].map((item) => item[newCategory]);
+        const checkEvery = newArr.every((item) => item == newArr[0] && item);
+        return { amount: newArr[0], check: checkEvery };
+    };
+
+    console.log({ value: checkValue() });
+
+    const current = checkValue();
     return (
         <section className="update flex w-full flex-col">
             <h1 className="font-semibold tracking-wide">
                 Update {category} for {selected.length}{' '}
                 {selected.length > 1 ? 'variants' : 'variant'}
             </h1>
-            <p className="mb-4 mt-1 text-sm">Current price: Mixed</p>
+            <p className="mb-4 mt-1 text-sm">
+                Current {category}:{' '}
+                {current.check && category == 'price'
+                    ? `£ ${current.amount}`
+                    : current.check == true
+                    ? current.amount
+                    : 'Mixed'}{' '}
+            </p>
             <div className="my-4">
                 <label className="mb-2 font-medium">
                     New {category}

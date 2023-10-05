@@ -59,15 +59,15 @@ function Modal({
     return (
         <section >
             <input
-                className="modal-state "
+                className="modal-state  "
                 id="modal-3"
                 type="checkbox"
                 checked={check}
                 readOnly
             />
-            <div className={`modal`}>
+            <div className={` modal  `}>
                 <label
-                    className={`modal-overlay bg-transparent `}
+                    className={`modal-overlay bg-transparent  `}
                     htmlFor="modal-3"
                     onClick={() => setCheck(false)}
                 ></label>

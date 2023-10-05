@@ -4,6 +4,14 @@ import OptionError from '../error/optionError';
 import formatData from '../formatData';
 import ErrorAlert from '../error/errorAlert';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+
+import {
+    motion,
+    AnimatePresence,
+    easeIn,
+    easeOut,
+    easeInOut,
+} from 'framer-motion';
 function Row({
     variation,
     checkAll,
@@ -22,24 +30,20 @@ function Row({
     const [check, setCheck] = useState(false);
     const [price, setPrice] = useState();
     const [stock, setStock] = useState();
+    const [trigger, setTrigger] = useState(false);
     const onClickAway = () => {
-//         console.log('clickaway');
-//         if (isNaN(price) && isNaN(stock)) {
-//             return;
-//         } else {
-//             console.log('clickaway change State');
-//             const newPrice = formatData(price, 2);
-//             const newStock = formatData(stock, 0);
-//   console.table({previousPrice, previousStock, newPrice, price})
-          
-//             setPrice(newPrice);
-//             setStock(newStock);
-
-          
-//         }
+        //         console.log('clickaway');
+        //         if (isNaN(price) && isNaN(stock)) {
+        //             return;
+        //         } else {
+        //             console.log('clickaway change State');
+        //             const newPrice = formatData(price, 2);
+        //             const newStock = formatData(stock, 0);
+        //   console.table({previousPrice, previousStock, newPrice, price})
+        //             setPrice(newPrice);
+        //             setStock(newStock);
+        //         }
     };
-
-
 
     // useEffect(() => {
     //     // const newVariation
@@ -73,38 +77,38 @@ function Row({
 
     useEffect(() => {
         const count = variationList.options.length;
-        console.log({ checkAll, selected:  selected.length, count});
-       
+
+        if (checkAll == 'clear') {
+            setCheck(false);
+            return;
+        }
         if (checkAll == true) {
             // debugger
             setCheck(true);
-        } else if (checkAll == false ) {
+        } else if (checkAll == false) {
             setCheck(false);
         }
     }, [checkAll]);
 
-
-        useEffect(() => {
+    useEffect(() => {
         const count = variationList.options.length;
-  if (check == true && selected.length == count) {
-    setCheckAll(true)
-    // console.log('itis true')
-            // setSelected([...selected, variation]);
-        } else {
+
+        if (check == true) {
+            setSelected((prevState) => [
+                ...prevState,
+                { ...variation, price, stock },
+            ]);
+        } else if (check == false) {
             setCheckAll(null);
-             setSelected(
-                selected.filter((item) => item.id != variation.id)
-            );
+            setSelected((prevState) => {
+                return [...prevState].filter((item) => item.id != variation.id);
+            });
         }
-   
-
-
-    }, [check])
-    const handleCheck = () => {
-        setSelected([...selected, variation]);
-        setCheck(!check)
- 
-      
+    }, [check]);
+    const handleCheck = (e) => {
+        console.log('handleCheck');
+        e.stopPropagation();
+        setCheck(!check);
     };
 
     // once update is apply, update input field
@@ -118,23 +122,31 @@ function Row({
         const findItemInSelect = selected.some(
             (item) => item.id == variation.id
         );
-        if (update.quantity != stock && findItemInSelect) {
-            setError(clearError('stock'));
-            return setStock(update.quantity);
+        if (findItemInSelect) {
+            setTrigger(!trigger);
         }
+        if (update.quantity != stock && findItemInSelect) {
+            setStock(update.quantity);
+        }
+        setError(clearError('stock'));
     }, [update.quantity]);
 
     useEffect(() => {
         const findItemInSelect = selected.some(
             (item) => item.id == variation.id
         );
-        if (update.price != price && findItemInSelect) {
-            setError(clearError('price'));
-            return setPrice(update.price);
+        if (findItemInSelect) {
+            setTrigger(!trigger);
         }
+        if (update.price != price && findItemInSelect) {
+            setPrice(update.price);
+        }
+        setError(clearError('price'));
     }, [update.price]);
 
-    const handlePrice = (value) => {
+    const handlePrice = (e) => {
+        e.stopPropagation();
+        const value = e.target.value;
         if (!value) {
             setError({ ...error, price: 'Please enter a valid price.' });
         } else if (value == 0) {
@@ -149,7 +161,9 @@ function Row({
         setPrice(value);
     };
 
-    const handleStock = (value) => {
+    const handleStock = (e) => {
+        e.stopPropagation();
+        const value = e.target.value;
         if (!value) {
             setError({ ...error, stock: 'Please enter a valid quantity.' });
         } else {
@@ -168,27 +182,83 @@ function Row({
         }
     };
 
-
-
-
-    const handleVisibility = () => {
+    const handleVisibility = (e) => {
+        console.log('e', e);
         setState(!state);
+    };
+
+    const checkInSelect = selected.some((item) => item.id == variation.id);
+
+    // className={`h-full max-h-28 w-full min-w-full ${
+    //     state && '!hover:bg-[var(--light-grey)]'
+    // } ${check && state && '!bg-gray-200'}`}
+    // exit={{ background:  '#fffff', }}
+    // role="presentation"
+    const tableRowVariants = {
+        initial: {
+            opacity: 1,
+            y: '0%',
+            backgroundColor: '#FFFFFF',
+        },
+
+        animate: {
+            opacity: 1,
+            y: '0%',
+            backgroundColor: ['#dcf8d2', '#FFFFFF'],
+            transition: {
+                duration: 2,
+                ease: easeInOut,
+                backgroundColor: { delay: 2 },
+            },
+        },
+        // hover: {
+        //       backgroundColor: state ? '#eee' : '#FFFFFF',
+        //     //   scale: state ? 1.01 : 1,
+        //       transition:{type: 'spring', stiffness: 30, duration: 0  }
+        // },
+
+        // exit: {backgroundColor: '#FFFFFF'}
+    };
+
+    const inputVariant = {
+        check: {
+            opacity: 1,
+            backgroundColor: '#dcf8d2',
+            transition: { checked:{ duration: 2} },
+        },
+        uncheck: {
+            opacity: 0.8,
+            transition: {  checked:{ duration: 2} },
+        },
     };
     return (
         // <ClickAwayListener onClickAway={onClickAway}>
-            <tr
-                role="presentation"
-                className={`h-full max-h-28 w-full min-w-full ${
-                    state && 'hover:bg-[var(--light-grey)]'
-                } ${check && state && 'bg-gray-200'}`}
+        <AnimatePresence>
+            <motion.tr
+                className={`h-full max-h-28 w-full min-w-full  ${
+                    check && state && '!bg-gray-200'
+                }`}
+                key={trigger}
+                variants={tableRowVariants}
+                initial="initial"
+                animate="animate"
+                whileHover="hover"
+                exit="exit"
             >
-                <td
-                    className={` ${
-                        (error.price || error.stock) && '!align-top'
-                    } align-middle`}
-                >
-                    {(priceOn || quantityOn) && (
-                        <input
+                {(priceOn || quantityOn) && (
+                    <td
+                        className={` ${
+                            (error.price || error.stock) && '!align-top'
+                        } align-middle`}
+                    >
+                        <motion.input
+                            key={check}
+                            onAnimationComplete={definition => {
+                                console.log('Completed animating', definition, this.definition)}}
+                            variants={inputVariant}
+                            animate={check ? 'check' : 'uncheck'}
+                            initial={false}
+                          
                             type="checkbox"
                             className={`checkbox no-animation !rounded-[3px]`}
                             /* check && !variation.disabled */
@@ -196,34 +266,34 @@ function Row({
                             onChange={handleCheck}
                             disabled={!state}
                         />
-                    )}
-                </td>
+                    </td>
+                )}
 
                 <td
-                    className={`pl-4 ${
-                        !error.stock && !error.price && '!align-middle'
-                    } 
-                
-                ${!state && '!opacity-60 '}`}
+                    className={`pl-4   ${
+                        (error.price || error.stock) && '!align-top'
+                    } align-middle
+                ${!state && '!opacity-60 '}
+                `}
                 >
                     {variation.variation}
                 </td>
 
                 {combine && (
                     <td
-                        className={`pl-4 ${
-                            !error.stock && !error.price && '!align-middle'
-                        } 
-                
-                ${!state && '!opacity-60 '}`}
+                        className={`  ${
+                            (error.price || error.stock) && '!align-top'
+                        } align-middle
+                ${!state && '!opacity-60 '}
+                `}
                     >
                         {variation.variation2}
                     </td>
                 )}
 
-                <td className={`relative ${!state && 'opacity-0'}`}>
-                    {priceOn && (
-                        <>
+                {priceOn && (
+                    <>
+                        <td className={`relative ${!state && 'opacity-0'}`}>
                             <div className="relative">
                                 <span className="pound absolute left-2 top-2/4 translate-y-[-50%] font-medium">
                                     £
@@ -235,9 +305,7 @@ function Row({
                                         error.price &&
                                         'border-red-300 bg-red-200'
                                     }`}
-                                    onChange={(e) =>
-                                        handlePrice(e.target.value)
-                                    }
+                                    onChange={(e) => handlePrice(e)}
                                     value={price}
                                     disabled={!state}
                                 />
@@ -249,36 +317,32 @@ function Row({
                                     className={'!items-start'}
                                 />
                             )}
-                        </>
-                    )}
-                </td>
+                        </td>
+                    </>
+                )}
 
-                {
-                    <td className={`relative ${!state && 'opacity-0'}`}>
-                        {quantityOn && (
-                            <>
-                                <input
-                                    onChange={(e) =>
-                                        handleStock(e.target.value)
-                                    }
-                                    value={stock}
-                                    type="number"
-                                    className={`input-number input input-lg w-full rounded-lg  px-2 py-4 ${
-                                        error.stock &&
-                                        'border-red-300 bg-red-200'
-                                    }`}
-                                    disabled={!state}
+                {quantityOn && (
+                    <>
+                        <td className={`relative ${!state && 'opacity-0'}`}>
+                            <input
+                                onChange={(e) => handleStock(e)}
+                                value={stock}
+                                type="number"
+                                className={`input-number input input-lg w-full rounded-lg  px-2 py-4 ${
+                                    error.stock && 'border-red-300 bg-red-200'
+                                }`}
+                                disabled={!state}
+                            />
+                            {error.stock && state && (
+                                <OptionError
+                                    msg={error.stock}
+                                    className={'!items-start'}
                                 />
-                                {error.stock && state && (
-                                    <OptionError
-                                        msg={error.stock}
-                                        className={'!items-start'}
-                                    />
-                                )}
-                            </>
-                        )}
-                    </td>
-                }
+                            )}
+                        </td>
+                    </>
+                )}
+
                 <td
                     className={` ${
                         !error.stock &&
@@ -299,7 +363,9 @@ function Row({
                         <Switch state={state} toggle={handleVisibility} />
                     </div>
                 </td>
-            </tr>
+            </motion.tr>
+        </AnimatePresence>
+
         // </ClickAwayListener>
     );
 }

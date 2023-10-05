@@ -1,12 +1,12 @@
 #upload-section {
-    min-width: 500px;
-}
+  @apply min-w-[200px];
+
 
 #upload {
-    @apply flex w-full flex-row gap-1;
+    @apply flex w-full flex-row gap-1 ;
 
     height: 300px;
-    min-width: 500px;
+    // min-width: 500px;
 
     .img-container,
     .add-img-container {
@@ -18,16 +18,14 @@
 
     .main-img {
         flex: 1;
-        height: 100%;
-        @apply flex flex-col;
+        
+       
+        @apply flex flex-col h-full w-full ;
         gap: 4px;
 
         .img-container {
-            // height: calc(100% / 2);
-            height: 50%;
-            width: 100%;
-            min-height: 100px;
-            min-width: 150px;
+        
+            flex: 1;
             position: relative;
 
             &:nth-of-type(1)::before {
@@ -36,36 +34,31 @@
                 position: absolute;
                 top: 5px;
                 right: 5px;
-              
+              z-index: 3;
                 @apply m-1 rounded-xl px-2 py-1 text-xs bg-green-200 ;
             }
         }
     }
 
     .additional-img {
-        flex: 1;
-        height: 50%;
-        width: 100%;
-        display: grid;
-        // flex-wrap: wrap;
-        grid-template-columns: 50% 50%;
-        grid-template-rows: 100% 100%;
-        min-width: 50px;
-        min-height: 100px;
-        gap: 4px;
+    
+        flex: 1 ;
+;
+      @apply grid grid-cols-2 grid-rows-2 h-full w-full gap-1;
 
         .add-img-container {
-            width: 100%;
-            height: 100%;
-            // flex: 40%;
-            // display: flex
+          
+            @apply w-full h-full;
+         
+    
         }
     }
 
     img {
-        @apply h-full w-full object-cover object-center;
+        @apply h-full w-full object-cover object-center ;
         border-radius: inherit;
     }
 }
 
 
+}

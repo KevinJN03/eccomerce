@@ -21,6 +21,7 @@ import {
 import VariationList from './variationList';
 import Update from './update';
 import TestVariationList from './testVariationList';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 
 const views = {
     manage: <Manage />,
@@ -30,6 +31,8 @@ const views = {
 };
 
 function Variation() {
+
+    const {variations, setVariations} = useNewProduct()
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
 
@@ -39,26 +42,7 @@ function Variation() {
         type: 'main',
     });
 
-    const [variations, setVariations] = useState([
-        {
-            id: 1,
-            name: 'Colour',
-            options: generateVariation('Colour'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: true },
-            priceHeader: { on: true },
-        },
-        {
-            id: 2,
-            name: 'Size',
-            options: generateVariation('Size'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: false },
-            priceHeader: { on: true },
-        },
-    ]);
+    
     const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
         setCheck(!check);
@@ -109,7 +93,7 @@ function Variation() {
 
     return (
         <VariationProvider value={value}>
-            <section className="new-product-wrapper variations relative">
+            <section id='variations' className="new-product-wrapper variations relative">
                 <section className="relative flex w-full flex-row flex-wrap justify-between p-4">
                     <New_Product_Header
                         title={'Variations'}
@@ -142,9 +126,6 @@ function Variation() {
                         ModalContent={views[content.type]}
                         loading={loading}
                         setLoading={setLoading}
-                        className={
-                            ' w-full max-w-[600px]  !rounded-3xl px-7 pt-8'
-                        }
                     />
                 )}
             </section>

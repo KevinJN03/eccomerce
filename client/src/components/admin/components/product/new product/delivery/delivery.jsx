@@ -37,7 +37,9 @@ const back = () => {
                 { profile.length == 0  && <button onClick={() => setModalCheck(true)}>
                     Choose Profile
                 </button>}
-                {modalCheck && (
+              
+            </div>
+            {modalCheck && (
                     <Modal
                         button_text="Select Profile"
                         ModalContent={content}
@@ -48,7 +50,6 @@ const back = () => {
                        back={back}
                     />
                 )}
-            </div>
         </section>
         </section>
     );

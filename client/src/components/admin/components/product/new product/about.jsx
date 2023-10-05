@@ -1,8 +1,11 @@
 import DragDropFile from './dragDropFile';
 import { useState, useRef } from 'react';
 import New_Product_Header from './header';
+import { useNewProduct } from '../../../../../context/newProductContext';
 
 function About() {
+
+    const {title, setTitle} = useNewProduct()
     return (
         <section className='new-product-wrapper'>
 
@@ -19,7 +22,7 @@ function About() {
                     Include keywords that buyers would use to search for this
                     item.
                 </p>
-                <input type="text" id="title" max={140} min={1} />
+                <input type="text" id="title" max={140} min={1} value={title} onChange={(e) => setTitle(e.target.value)} />
             </form>
 
             <form className='mb-4'>

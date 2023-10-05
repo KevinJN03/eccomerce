@@ -252,11 +252,13 @@ p {
     }
 }
 .asterisk {
-    @apply text-red-800;
+    @apply text-red-800 ml-[2px];
 }
 
 .modal-content {
+    @apply w-full max-w-[600px]  rounded-3xl px-7 pt-8;
     -ms-overflow-style: none; /* Internet Explorer 10+ */
+   
     scrollbar-width: none; /* Firefox */
     // @apply max-h-[550px];
 }

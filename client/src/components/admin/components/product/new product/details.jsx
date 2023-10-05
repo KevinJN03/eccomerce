@@ -39,18 +39,7 @@ function Details() {
                     />
                     <CategorySelect options={['Men', 'Women']} title="Gender" />
 
-                    <CategorySelect
-                        options={[
-                            'Red',
-                            'Yellow',
-                            'Blue',
-                            'Green',
-                            'Orange',
-                            'Black',
-                            'White',
-                        ]}
-                        title="Primary Color"
-                    />
+                
                 </div>
             </section>
         </section>
