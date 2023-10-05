@@ -1,23 +1,15 @@
 import './new_product.scss';
-
 import SideBar from '../../sidebar/sidebar';
 import Navbar from '../../navbar/navbar';
 import About from './about.jsx';
 import Price_Inventory from './price-inventory';
 import Details from './details';
 import Delivery from './delivery/delivery';
-import DragDropFile from './dragDropFile';
-import { ContentProvider } from '../../../../../context/ContentContext';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Variation from './variation/variation';
-import { Modal } from '@mui/material';
-
-
 import { NewProductProvider } from '../../../../../context/newProductContext';
 function New_Product() {
     let navigate = useNavigate();
-
 
     return (
         <NewProductProvider>

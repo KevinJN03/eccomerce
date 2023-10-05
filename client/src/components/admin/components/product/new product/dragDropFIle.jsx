@@ -1,13 +1,9 @@
-import { useState, useRef } from 'react';
-// import dragImage from './dragtest/dragtest';
-// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useRef } from 'react';
 import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
 import { useNewProduct } from '../../../../../context/newProductContext';
 function DragDropFile() {
     console.log('dragDrop mounted');
-    // const [files, setFiles] = useState();
-
     const { files, setFiles } = useNewProduct();
     console.log('files', files);
     const inputRef = useRef();
@@ -65,7 +61,6 @@ function DragDropFile() {
                         type="file"
                         multiple
                         onChange={(e) => handleInput(e)}
-                        // onChange={(e) => console.log(e.target)}
                         hidden
                         accept="image/png, image/jpeg"
                         ref={inputRef}
@@ -78,11 +73,11 @@ function DragDropFile() {
                     </button>
                 </div>
             )}
-            {files.length >  0 && (
+            {files.length > 0 && (
                 <>
-                {console.log('files before going to upload', files)}
-                <Upload />
-            </>
+                    {console.log('files before going to upload', files)}
+                    <Upload />
+                </>
             )}
         </section>
     );

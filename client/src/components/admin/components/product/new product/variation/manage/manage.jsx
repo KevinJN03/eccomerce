@@ -1,10 +1,9 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Empty from '../Empty';
 import ToggleSwitch from '../toggleSwitch/toggleSwitch';
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
-import OptionError from '../error/optionError';
 function Manage({}) {
     const {
         dispatch,

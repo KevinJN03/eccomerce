@@ -29,14 +29,17 @@ export const NewProductProvider = ({ children }) => {
     ]);
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const value = {
         variations,
         setVariations,
         title,
         setTitle,
         files,
-        setFiles
+        setFiles,
+        description, setDescription
     };
+
     return (
         <newProductContext.Provider value={value}>
             {children}

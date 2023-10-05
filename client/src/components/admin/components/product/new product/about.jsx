@@ -1,5 +1,4 @@
 import DragDropFile from './dragDropFile';
-import { useState, useRef } from 'react';
 import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
 
