@@ -7,16 +7,29 @@ import New from './New';
 import { useEffect, useState } from 'react';
 
 import MainContent from './Main';
+
+const views = {
+    Main: <MainContent/>,
+    New: <New/>,
+    Edit: <New/>
+}
 import {
     ContentProvider,
     useContent,
 } from '../../../../../../context/ContentContext';
+import Edit from './edit';
+import { useNewProduct } from '../../../../../../context/newProductContext';
+
+
 export default function Delivery() {
   
-    const { content, setContent, modalCheck, setModalCheck, profile, loading, setLoading, dispatch } = useContent();
+    const { content, setContent, modalCheck, setModalCheck, loading, setLoading, dispatch } = useContent();
+
+    const { profile} = useNewProduct()
 const back = () => {
     dispatch({ type: 'Main' })
 }
+console.log({content})
     return (
         <section className='new-product-wrapper'>
         <section id="delivery">
@@ -29,7 +42,7 @@ const back = () => {
                 {profile.length > 0  && <button onClick={() => setModalCheck(true)}>
                     <>
                     {profile.map((item) => {
-                        return <p>{item.name}</p>
+                        return <p key={item._id}>{item.name}</p>
                     })}
                     </>
                     
@@ -42,7 +55,7 @@ const back = () => {
             {modalCheck && (
                     <Modal
                         button_text="Select Profile"
-                        ModalContent={content}
+                        ModalContent={views[content.type]}
                         check={modalCheck}
                         setCheck={setModalCheck}
                        loading={loading}

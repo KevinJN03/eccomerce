@@ -15,13 +15,9 @@ function Modal({
     className,
     back,
     selection,
-    cleanup,
+  
 }) {
-    useEffect(() => {
-        return () => {
-            cleanup && cleanup();
-        };
-    }, []);
+   
     const handleDelete = () => {
         if (selection && selection.length > 1) {
             axios

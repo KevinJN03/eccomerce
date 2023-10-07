@@ -88,9 +88,9 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-console.log({countPriceHeader, countQuantityHeader})
+
         if (
-            (countPriceHeader > 0 && countQuantityHeader > 0 ) 
+            (countPriceHeader > 1 || countQuantityHeader > 1 ) 
         ) {
             debugger
             const update = newArr.map((item) => {

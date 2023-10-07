@@ -9,9 +9,13 @@ import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
 
 import handleError, { closeError } from '../../../../../common/handleError';
-function New({ profile, close, setLoadingState }) {
+function New({ close, setLoadingState }) {
+
+
     console.log('New Render');
-    const { content, dispatch, setLoading, loading } = useContent();
+    const {  dispatch, content, setLoading } = useContent();
+
+    const {profile} = content
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState();
     const [cost, setCost] = useState();
@@ -24,7 +28,9 @@ function New({ profile, close, setLoadingState }) {
     };
 
     useEffect(() => {
+        console.log({profile})
         if (profile) {
+            debugger
             setFetchRoute('update');
             console.log(profile);
             console.log('cost', profile.cost);

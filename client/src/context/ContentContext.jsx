@@ -12,18 +12,18 @@ export const useContent = () => {
     return useContext(ContentContext);
 };
 const reducer = (state, action) => {
-    if (action.type === 'Main') {
-        return (state = <Main />);
-    }
-    if (action.type === 'New') {
-        return (state = <New />);
-    }
+
     if (action.type === 'Edit') {
-        return (state = <New profile={action.profile} />);
+        return { ...state, type: action.type, profile: action.profile };
     }
+
+    if (action.type === 'Main' || action.type === 'New') {
+        return { ...state, type: action.type,  profile: null };
+    }
+    
 };
 export function ContentProvider({ children }) {
-    const [content, dispatch] = useReducer(reducer, <Main />);
+    const [content, dispatch] = useReducer(reducer, { type: 'Main' });
     const [modalCheck, setModalCheck] = useState(false);
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(false);

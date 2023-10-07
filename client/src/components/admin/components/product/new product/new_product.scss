@@ -15,11 +15,11 @@
         flex: 6;
 
         .product-listing {
-            @apply m-6 p-6;
+            @apply m-6 p-6  max-w-[1366px] w-full;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
             .subheader {
-                @apply flex w-8/12 flex-row flex-nowrap justify-around;
+                @apply flex flex-row flex-nowrap gap-x-10 max-w-[1366px];
 
                 a {
                     height: 30px;
@@ -119,7 +119,11 @@ p {
 }
 
 .new-product-wrapper section {
-    @apply bg-white;
+    @apply bg-white max-w-[1366px];
+}
+
+.new-product-footer {
+    @apply max-w-[1366px];
 }
 
 .searchBody {

@@ -7,18 +7,12 @@ import SelectVariation from './selectVariation';
 import Manage from './manage/manage';
 
 import Main from './main';
-import {
-    colorList,
-    defaultMap,
-    generateVariation,
-    resetDefaultMap,
-    updatedDefaultMap,
-} from './variationData';
+import { resetDefaultMap } from './variationData';
 import {
     variationReducer,
     VariationProvider,
 } from '../../../../../../context/variationContext';
-import VariationList from './variationList';
+
 import Update from './update';
 import TestVariationList from './testVariationList';
 import { useNewProduct } from '../../../../../../context/newProductContext';
@@ -31,18 +25,16 @@ const views = {
 };
 
 function Variation() {
-
-    const {variations, setVariations} = useNewProduct()
+    const { variations, setVariations } = useNewProduct();
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
 
-    const [update, setUpdate] = useState({ price: null, quantity: null });
+    // const [update, setUpdate] = useState({ price: null, quantity: null });
 
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
 
-    
     const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
         setCheck(!check);
@@ -65,14 +57,11 @@ function Variation() {
 
     const cleanup = () => {
         // setTemporaryVariation([]);
-
         // const newArr = [...temporaryVariation];
         // const updateDisabled = newArr.map((item) => {
         //     return { ...item, disabled: false };
         // });
-
-        resetDefaultMap();
-
+        // resetDefaultMap();
         // setVariations(updateDisabled);
     };
 
@@ -83,17 +72,22 @@ function Variation() {
         dispatch,
         variations,
         setVariations,
-
-        update,
-        setUpdate,
-
         temporaryVariation,
         setTemporaryVariation,
     };
 
+    useEffect(() => {
+        if (check == false) {
+            resetDefaultMap();
+        }
+    }, [check]);
+
     return (
         <VariationProvider value={value}>
-            <section id='variations' className="new-product-wrapper variations relative">
+            <section
+                id="variations"
+                className="new-product-wrapper variations relative"
+            >
                 <section className="relative flex w-full flex-row flex-wrap justify-between p-4">
                     <New_Product_Header
                         title={'Variations'}
@@ -120,7 +114,6 @@ function Variation() {
                 </section>
                 {check && (
                     <Modal
-                        cleanup={cleanup}
                         check={check}
                         setCheck={setCheck}
                         ModalContent={views[content.type]}

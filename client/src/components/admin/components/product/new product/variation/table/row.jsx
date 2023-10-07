@@ -12,6 +12,7 @@ import {
     easeOut,
     easeInOut,
 } from 'framer-motion';
+import { useNewProduct } from '../../../../../../../context/newProductContext';
 function Row({
     variation,
     checkAll,
@@ -31,6 +32,8 @@ function Row({
     const [price, setPrice] = useState();
     const [stock, setStock] = useState();
     const [trigger, setTrigger] = useState(false);
+
+    const { globalUpdate, setGlobalUpdate } = useNewProduct();
     const onClickAway = () => {
         //         console.log('clickaway');
         //         if (isNaN(price) && isNaN(stock)) {
@@ -144,6 +147,17 @@ function Row({
         setError(clearError('price'));
     }, [update.price]);
 
+    useEffect(() => {
+        if (globalUpdate.price != price) {
+            setPrice(globalUpdate.price);
+            
+        }
+
+        if (globalUpdate.stock != stock) {
+            setStock(globalUpdate.stock);
+            
+        }
+    }, [globalUpdate.price, globalUpdate.stock]);
     const handlePrice = (e) => {
         e.stopPropagation();
         const value = e.target.value;
@@ -224,11 +238,11 @@ function Row({
         check: {
             opacity: 1,
             backgroundColor: '#dcf8d2',
-            transition: { checked:{ duration: 2} },
+            transition: { checked: { duration: 2 } },
         },
         uncheck: {
             opacity: 0.8,
-            transition: {  checked:{ duration: 2} },
+            transition: { checked: { duration: 2 } },
         },
     };
     return (
@@ -253,12 +267,16 @@ function Row({
                     >
                         <motion.input
                             key={check}
-                            onAnimationComplete={definition => {
-                                console.log('Completed animating', definition, this.definition)}}
+                            onAnimationComplete={(definition) => {
+                                console.log(
+                                    'Completed animating',
+                                    definition,
+                                    this.definition
+                                );
+                            }}
                             variants={inputVariant}
                             animate={check ? 'check' : 'uncheck'}
                             initial={false}
-                          
                             type="checkbox"
                             className={`checkbox no-animation !rounded-[3px]`}
                             /* check && !variation.disabled */

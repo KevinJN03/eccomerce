@@ -1,0 +1,32 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    ul, ol {
+      list-style: revert;
+
+  
+    }
+  }
+
+    .richText-Editor{
+        @apply min-h-[200px] border-[1px] mt-4 rounded-lg border-black ; 
+
+        .richText-Editor-header {
+            @apply border-b-2 mb-2 py-1 px-3 flex items-center gap-x-4;
+
+        
+        }
+
+        .DraftEditor-root {
+            @apply px-4
+        }
+
+        ul {
+            @apply pl-4;
+        }
+    }
+   
+    

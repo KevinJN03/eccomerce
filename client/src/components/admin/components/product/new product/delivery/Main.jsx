@@ -10,17 +10,11 @@ import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
 import fetchProfile from './fetchDeliveryProfile';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function MainContent() {
-    const {
-        content,
-        dispatch,
-        setModalCheck,
-        setProfile,
-        profile,
-        loading,
-        setLoading,
-    } = useContent();
+    const { dispatch, setModalCheck, loading, setLoading } = useContent();
+    const { setProfile, profile } = useNewProduct();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
     const [profileReplacement, setProfileReplacement] = useState(profile);
     useEffect(() => {
@@ -57,7 +51,7 @@ function MainContent() {
                 className="mb-2 flex items-center justify-center self-end rounded-full bg-slate-100 p-1 hover:bg-slate-300"
                 onClick={() => setModalCheck(false)}
             >
-                <CloseRoundedIcon  className='bg-transparent'/>
+                <CloseRoundedIcon className="bg-transparent" />
             </span>
             <div className="modal-header flex items-center justify-between">
                 <h2 className="font-gotham text-xl font-bold">
@@ -127,11 +121,13 @@ function MainContent() {
                                                 />
                                             )}
 
-                                            {!findProfile && <AddCircleOutlineRoundedIcon
-                                                onClick={() =>
-                                                    handleClick(delivery)
-                                                }
-                                            />}
+                                            {!findProfile && (
+                                                <AddCircleOutlineRoundedIcon
+                                                    onClick={() =>
+                                                        handleClick(delivery)
+                                                    }
+                                                />
+                                            )}
 
                                             <Edit profile={delivery} />
                                             <Delete id={delivery._id} />

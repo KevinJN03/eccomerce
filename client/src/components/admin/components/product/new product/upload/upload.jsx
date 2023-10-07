@@ -6,9 +6,9 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import DragItem from './dragItem';
 function Upload({}) {
     const { files, setFiles } = useNewProduct();
-    console.log('files at upload', files);
+
     const handleOnDragEnd = (result) => {
-        console.log(result);
+
         if (!result.destination) return;
 
         const items = Array.from(files);
@@ -21,7 +21,7 @@ function Upload({}) {
     };
 
     const handleAddPhoto = (e, newfiles) => {
-        console.log('you clicked on', newfiles);
+      
 
         const images = Array.from(e.target.files, (file) =>
             URL.createObjectURL(file)
@@ -30,14 +30,14 @@ function Upload({}) {
         setFiles(
             files.map((file) => {
                 if (file.isDragDisabled == true && images[counter] != null) {
-                    console.log('image counter', images);
+                
                     const newFile = {
                         ...file,
                         img: images[counter],
                         isDragDisabled: false,
                     };
                     counter += 1;
-                    console.log('newFile after adding', newFile);
+           
                     return newFile;
                 }
 
@@ -70,6 +70,7 @@ function Upload({}) {
                             return (
                                 <DragItem
                                     id={item}
+                                    key={item}
                                     droppableId={`main-${item}`}
                                     className="img-container"
                                     handleAddPhoto={handleAddPhoto}
@@ -83,6 +84,7 @@ function Upload({}) {
                             return (
                                 <DragItem
                                     id={item}
+                                    key={item}
                                     droppableId={`additional-${idx}`}
                                     className="add-img-container"
                                     handleAddPhoto={handleAddPhoto}

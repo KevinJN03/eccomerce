@@ -3,16 +3,16 @@ import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
 import { useNewProduct } from '../../../../../context/newProductContext';
 function DragDropFile() {
-    console.log('dragDrop mounted');
+    
     const { files, setFiles } = useNewProduct();
-    console.log('files', files);
+   
     const inputRef = useRef();
     const handleDragOver = (e) => {
         e.preventDefault();
     };
     const handleDrop = (e) => {
         e.preventDefault();
-        console.log('e.dataTransfer.files', e.dataTransfer.files);
+  
         const filesImg = Array.from(e.dataTransfer.files, (file) => ({
             id: uuidv4(),
             img: URL.createObjectURL(file),
@@ -22,7 +22,7 @@ function DragDropFile() {
             for (let i = filesImg.length; i < 6; i++) {
                 let obj = { id: uuidv4(), isDragDisabled: true };
                 filesImg.push(obj);
-                console.log('filesImg while iterating:', filesImg);
+               
             }
             setFiles(filesImg);
         }
@@ -39,10 +39,10 @@ function DragDropFile() {
             for (let i = filesImg.length; i < 6; i++) {
                 let obj = { id: uuidv4(), isDragDisabled: true };
                 filesImg.push(obj);
-                console.log('filesImg while iterating:', filesImg);
+               
             }
         }
-        console.log('filesImg ', filesImg);
+ 
         setFiles(filesImg);
     };
 
@@ -54,7 +54,7 @@ function DragDropFile() {
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                 >
-                    <h1 className="text-center text-2xl">
+                    <h1 className="text-center text-2xl font-semibold">
                         Drag and Drop Files to Upload
                     </h1>
                     <input
@@ -73,12 +73,7 @@ function DragDropFile() {
                     </button>
                 </div>
             )}
-            {files.length > 0 && (
-                <>
-                    {console.log('files before going to upload', files)}
-                    <Upload />
-                </>
-            )}
+            {files.length > 0 && <Upload />}
         </section>
     );
 }

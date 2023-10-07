@@ -70,7 +70,7 @@ function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) 
                                         />
                                         <img
                                             src={wiredIcon}
-                                            className="!h-20 !w-20"
+                                            className=" !object-contain !max-h-[80px] !max-w-[80px]"
                                         />
                                     </div>
                                 )}

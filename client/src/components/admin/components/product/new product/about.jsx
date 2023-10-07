@@ -2,9 +2,13 @@ import DragDropFile from './dragDropFile';
 import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
 
+
+import { useState } from 'react';
+import Description from './description';
 function About() {
 
     const {title, setTitle} = useNewProduct()
+
     return (
         <section className='new-product-wrapper'>
 
@@ -33,21 +37,7 @@ function About() {
 
             </form>
             
-            <form>
-                <label htmlFor="#description" className="text-lg font-medium">
-                    Description<span className="asterisk">*</span>
-                </label>
-                <p>
-                    What makes your item special? Buyers will only see the first
-                    few lines unless they expand the description.
-                </p>
-                <textarea
-                    name="description"
-                    id="description"
-                    className='!min-h-[200px]'
-                
-                ></textarea>
-            </form>
+            <Description/>
         </div>
         
         </section>

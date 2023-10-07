@@ -21,9 +21,9 @@ function ToggleSwitch({
         let newArr;
 
         if (state == false) {
-            debugger;
+      
             newArr = [...temporaryVariation].map((item) => {
-                return { ...item, [property]: { on: false } };
+                return { ...item, [property]: { on: false }, combine: false };
             });
         } else if (state == true) {
             newArr = [...temporaryVariation].map((item) => {
