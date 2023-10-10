@@ -1,11 +1,19 @@
-import { Droppable, Draggable } from "react-beautiful-dnd";
-import { useNewProduct } from "../../../../../../context/newProductContext";
-import { useRef } from "react";
+import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { useNewProduct } from '../../../../../../context/newProductContext';
+import { useRef } from 'react';
 import wiredIcon from '../../../../../../assets/icons/wired-outline-49-plus-circle.webp';
 import close from '../../../../../../assets/icons/close.png';
-function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) {
+function DragItem({
+    id,
+    droppableId,
+    className,
+    handleAddPhoto,
+    deletePhoto,
+    
+}) {
     const addInputRef = useRef();
-    const {files} = useNewProduct()
+    const { files } = useNewProduct();
+   
     return (
         <Droppable
             droppableId={droppableId}
@@ -31,11 +39,11 @@ function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) 
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
                             >
-                                {files[id].img ? (
+                                {files[id].file ? (
                                     <>
                                         <button
                                             type="button"
-                                            className="delete-btn absolute bottom-2 right-3 h-8 w-8 rounded-full bg-slate-100 p-2"
+                                            className="delete-btn absolute bottom-2 right-3 h-8 w-8 rounded-full bg-slate-100 p-2 hover:bg-slate-200 transition-all"
                                             onClick={() =>
                                                 deletePhoto(files[id])
                                             }
@@ -47,7 +55,9 @@ function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) 
                                         </button>
                                         <img
                                             loading="lazy"
-                                            src={files[id]?.img}
+                                            src={URL.createObjectURL(
+                                                files[id]?.file
+                                            )}
                                             className="!object-contain object-cover"
                                         />
                                     </>
@@ -70,12 +80,10 @@ function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) 
                                         />
                                         <img
                                             src={wiredIcon}
-                                            className=" !object-contain !max-h-[80px] !max-w-[80px]"
+                                            className=" !max-h-[80px] !max-w-[80px] !object-contain"
                                         />
                                     </div>
                                 )}
-
-                                
                             </div>
                         )}
                     </Draggable>
@@ -86,4 +94,4 @@ function DragItem({ id, droppableId, className,  handleAddPhoto, deletePhoto }) 
     );
 }
 
-export default DragItem
+export default DragItem;

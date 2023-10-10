@@ -260,7 +260,7 @@ function SelectVariation({}) {
                         )}
                     </div>
                     {!defaultVariation && searchText.length > 20 && (
-                        <OptionError />
+                        <OptionError msg={'Option Name must be between 1 and 20 characters.'}/>
                     )}
                     <VariationResults
                         addRemainingColors={addRemainingColors}

@@ -6,32 +6,54 @@ import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
 import formatData from './variation/formatData';
 import { useState } from 'react';
+import OptionError from './variation/error/optionError';
+import { useEffect } from 'react';
+import useNewProductError from '../../../../../useNewProductError';
 export default function Price_Inventory() {
-    const { globalUpdate, setGlobalUpdate } = useNewProduct();
-    const [priceValue, setPriceValue] = useState('');
-    const [stockValue, setStockValue] = useState('');
+    const {
+        globalUpdate,
+        setGlobalUpdate,
+        publishError,
+        priceValue,
+        setPriceValue,
+        stockValue,
+        setStockValue,
+    } = useNewProduct();
+
     const { variations } = useNewProduct();
     const checkPrice = variations.some((item) => item.priceHeader.on == true);
+    const [priceError, setPriceError] = useState('');
+    const [stockError, setStockError] = useState('');
 
+    useNewProductError('price', setPriceError);
+    useNewProductError('stock', setStockError);
 
+    useEffect(() => {
+        setPriceError('');
+    }, [priceValue]);
+
+    useEffect(() => {
+        setStockError('');
+    }, [stockValue]);
     const onStockClickAway = () => {
-    
+        if (!stockValue) return;
+        const formatStock = formatData(stockValue, 0);
 
-        if(!stockValue ) return
-        const formatStock = formatData(stockValue,0)
-
-        setStockValue(formatStock)
-        setGlobalUpdate((prev) =>  {return {...prev, stock: formatStock}})
-    }
+        setStockValue(formatStock);
+        setGlobalUpdate((prev) => {
+            return { ...prev, stock: formatStock };
+        });
+    };
 
     const onPriceClickAway = () => {
-     
-        if(!priceValue ) return
-        const formatPrice = formatData(priceValue,2)
+        if (!priceValue) return;
+        const formatPrice = formatData(priceValue, 2);
 
-        setPriceValue(formatPrice)
-        setGlobalUpdate((prev) =>  {return {...prev, price: formatPrice}})
-    }
+        setPriceValue(formatPrice);
+        setGlobalUpdate((prev) => {
+            return { ...prev, price: formatPrice };
+        });
+    };
     const checkQuantity = variations.some(
         (item) => item.quantityHeader.on == true
     );
@@ -53,19 +75,25 @@ export default function Price_Inventory() {
 
                 {checkPrice == false ? (
                     <Input label={'Price'}>
-                        <ClickAwayListener onClickAway={onPriceClickAway}>
-                            <section className='relative flex mt-3 mb-4 items-center'>
-                             <span className='absolute left-3 text-xl top-1/2 translate-y-[-50%] font-medium'>£</span>
-                            <input
-                                type="text"
-                                className={'price-input !m-0 !px-7 text-lg'}
-                                onChange={handlePriceChange}
-                                value={priceValue}
-
+                        {priceError && (
+                            <OptionError
+                                msg={priceError}
+                                className={'px-0 py-1 pb-0'}
                             />
+                        )}
+                        <ClickAwayListener onClickAway={onPriceClickAway}>
+                            <section className="relative mb-4 mt-3 flex items-center">
+                                <span className="absolute left-3 top-1/2 translate-y-[-50%] text-xl font-medium">
+                                    £
+                                </span>
+                                <input
+                                    type="text"
+                                    className={'price-input !m-0 !px-7 text-lg'}
+                                    onChange={handlePriceChange}
+                                    value={priceValue}
+                                />
                             </section>
-                           
-                        </ClickAwayListener >
+                        </ClickAwayListener>
                     </Input>
                 ) : (
                     <DisableInput text={'Price'} />
@@ -73,6 +101,12 @@ export default function Price_Inventory() {
 
                 {checkQuantity == false ? (
                     <Input label={'Quantity'}>
+                        {stockError && (
+                            <OptionError
+                                msg={stockError}
+                                className={'px-0 py-1 pb-0'}
+                            />
+                        )}
                         <ClickAwayListener onClickAway={onStockClickAway}>
                             <input
                                 type="text"

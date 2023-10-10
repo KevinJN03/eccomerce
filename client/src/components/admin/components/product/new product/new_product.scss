@@ -52,31 +52,6 @@ p {
         @apply outline;
     }
 
-    .dropzone {
-        @apply flex flex-col items-center justify-center gap-12;
-        height: 300px;
-        outline: 2px dashed black;
-        border-radius: 12px;
-    }
-
-    .uploads {
-        height: fit-content;
-        .img-grid {
-            // max-width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-
-            gap: 5px;
-            // grid-auto-flow: column;
-
-            li {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
-    }
 }
 
 .outline {
@@ -166,29 +141,6 @@ p {
             @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
         }
     }
-    .options-btn {
-        @apply rounded-full bg-[var(--light-grey)]  px-5 py-3 font-gotham transition-all text-center ;
-        &:disabled {
-            @apply opacity-40;
-
-            &::before {
-                content: '';
-                display: block;
-                background: url('../../../../../assets/icons/tick.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: contain;
-                width: 20px;
-                height: 100%;
-                float: left;
-                margin: 0 6px 0 0;
-            }
-        }
-
-        &:hover {
-            @apply bg-gray-300 shadow-lg ;
-        }
-    }
 
     .variation-footer {
         // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
@@ -260,7 +212,7 @@ p {
 }
 
 .modal-content {
-    @apply w-full max-w-[600px]  rounded-3xl px-7 pt-8;
+    @apply w-full max-w-[600px]  rounded-3xl px-7 pt-8 #{!important};
     -ms-overflow-style: none; /* Internet Explorer 10+ */
    
     scrollbar-width: none; /* Firefox */
@@ -275,4 +227,30 @@ p {
 .modal-content::-webkit-scrollbar,
 .dropdown-menu::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
+}
+
+.options-btn {
+    @apply rounded-full px-5 py-3 font-gotham transition-all text-center ;
+
+    background-color: var(--light-grey) !important;
+    &:disabled {
+        @apply opacity-40;
+
+        &::before {
+            content: '';
+            display: block;
+            background: url('../../../../../assets/icons/tick.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            width: 20px;
+            height: 100%;
+            float: left;
+            margin: 0 6px 0 0;
+        }
+    }
+
+    &:hover {
+        @apply bg-gray-300 shadow-lg #{!important};
+    }
 }

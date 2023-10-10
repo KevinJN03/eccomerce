@@ -1,6 +1,9 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import Category from '../Models/category.js';
+
+import { body, validationResult } from 'express-validator';
+import category from '../Models/category.js';
 // eslint-disable-next-line import/prefer-default-export
 
 export const get_all_products = asyncHandler(async (req, res) => {
@@ -78,3 +81,43 @@ export const delete_product = asyncHandler(async (req, res, next) => {
     product,
   });
 });
+
+export const create_new_product = [
+  body('title', 'Please add a title.').trim().escape().notEmpty(),
+  body('files', 'Please add some photos.').trim().escape().isArray({ min: 1 }),
+  body('category', 'Please select from one of the categories.').trim().escape().notEmpty(),
+  body('gender', 'Please select from one of the genders.').trim().escape().notEmpty(),
+  body('price', 'Please enter a valid price.').trim().escape().notEmpty(),
+  body('stock', 'Please enter a valid stock.')
+    .trim()
+    .escape()
+    .notEmpty()
+    .isNumeric(),
+  body('detail', 'Please add some details.')
+    .trim()
+    .escape()
+    .isArray({ min: 1 })
+    .custom(async (value) => {
+      const everyValue = value.every((item) => item === '\n' || item === '');
+      console.log({ value, everyValue });
+      if (everyValue === true) {
+        throw new Error();
+      }
+    }),
+  body('delivery', 'Please add some delivery profiles.')
+    .trim()
+    .escape()
+    .isArray({ min: 1 }),
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      console.log(result.errors);
+      res.status(400).send(result.errors);
+      return;
+    }
+
+    console.log(req.body);
+    res.send('ok');
+  }),
+];

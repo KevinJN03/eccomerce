@@ -9,9 +9,24 @@ import OptionError from './variation/error/optionError';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import restart from '../../../../../assets/icons/restart.png';
 import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
+import useNewProductError from '../../../../../useNewProductError';
 function Details() {
-    const { category, setCategory , gender, setGender} = useNewProduct();
-    const [error, setError] = useState('');
+    const { category, setCategory, gender, setGender, publishError } =
+        useNewProduct();
+    const [genderError, setGenderError] = useState('');
+
+    const [categoryError, setCategoryError] = useState('');
+    useNewProductError('category', setCategoryError);
+    useNewProductError('gender', setGenderError);
+
+    useEffect(() => {
+        setGenderError('');
+    }, [gender]);
+
+    useEffect(() => {
+        setCategoryError('');
+    }, [category]);
+
     const [allCategory, setAllCategory] = useState([]);
 
     const fetchData = async (route) => {
@@ -19,12 +34,14 @@ function Details() {
             const result = await axios.get(route);
             const status = result.status;
             if (status == 200) {
-                setError('');
+                setCategoryError('');
                 return result.data;
             }
         } catch (error) {
-            setError('Failed to fetch Categories. Please try again');
-            console.log({ error });
+            setCategoryError({
+                msg: 'Failed to fetch Categories. Please try again',
+                restart: true,
+            });
             return [];
         }
     };
@@ -57,15 +74,14 @@ function Details() {
 
         exit: {
             opacity: 0,
-            duration: 2
+            duration: 2,
         },
 
         animate: {
             transition: {
                 ease: 'easeInOut',
-            
-            }
-        }
+            },
+        },
     };
 
     return (
@@ -81,43 +97,49 @@ function Details() {
 
                     <div className="my-3 flex flex-col gap-y-8">
                         <span className="flex h-full  flex-col ">
-                            {error && (
+                            {categoryError && (
                                 <OptionError
-                                    msg={error}
+                                    msg={categoryError?.msg || categoryError}
                                     className={'mb-2 px-0 pb-0'}
                                 />
                             )}
-                            <span className="flex flex-nowrap items-center gap-2 !h-full">
+                            <span className="flex !h-full flex-nowrap items-center gap-2">
                                 <CategorySelect
-                                 setState={setCategory}
+                                    setState={setCategory}
+                                    state={category}
                                     options={allCategory?.map((item) =>
                                         item?.name.toUpperCase()
                                     )}
                                     title="Category"
                                 />
-                                {error && (
-                                    
-                                        <motion.button
-                                            onClick={handleFetchCategory}
-                                            className="popover-trigger flex h-full"
-                                            variants={restartVariants}
+                                {categoryError?.restart && (
+                                    <motion.button
+                                        onClick={handleFetchCategory}
+                                        className="popover-trigger flex h-full"
+                                        variants={restartVariants}
                                         animate="animate"
-                                        exit='exit'
+                                        exit="exit"
                                         whileHover="hover"
-                                        
-                                        >
-                                            <LoopRoundedIcon />
-                                        </motion.button>
-
-                                       
+                                    >
+                                        <LoopRoundedIcon />
+                                    </motion.button>
                                 )}
                             </span>
                         </span>
-                        <CategorySelect
-                            options={['Men', 'Women']}
-                            title="Gender"
-                            setState={setGender}
-                        />
+                        <div>
+                            {genderError && (
+                                <OptionError
+                                    msg={genderError}
+                                    className={'mb-2 px-0 !pt-0 pb-0'}
+                                />
+                            )}
+                            <CategorySelect
+                                options={['Men', 'Women']}
+                                title="Gender"
+                                setState={setGender}
+                                state={gender}
+                            />
+                        </div>
                     </div>
                 </section>
             </motion.section>

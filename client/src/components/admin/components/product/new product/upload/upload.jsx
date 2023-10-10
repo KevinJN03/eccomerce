@@ -8,11 +8,10 @@ function Upload({}) {
     const { files, setFiles } = useNewProduct();
 
     const handleOnDragEnd = (result) => {
-
         if (!result.destination) return;
 
         const items = Array.from(files);
-        if (items[result.destination.index].isDragDisabled == true) return;
+        // if (items[result.destination.index].isDragDisabled == true) return;
         const [reorderedItems] = items.splice(result.source.index, 1);
 
         // check if the destination index isdisabled true, it should return to the original place
@@ -21,23 +20,22 @@ function Upload({}) {
     };
 
     const handleAddPhoto = (e, newfiles) => {
-      
+        // const images = Array.from(e.target.files, (file) =>
+        //     URL.createObjectURL(file)
+        // );
 
-        const images = Array.from(e.target.files, (file) =>
-            URL.createObjectURL(file)
-        );
+        const images = Array.from(e.target.files);
         let counter = 0;
         setFiles(
             files.map((file) => {
                 if (file.isDragDisabled == true && images[counter] != null) {
-                
                     const newFile = {
                         ...file,
-                        img: images[counter],
+                        file: images[counter],
                         isDragDisabled: false,
                     };
                     counter += 1;
-           
+
                     return newFile;
                 }
 
@@ -48,17 +46,22 @@ function Upload({}) {
 
     const deletePhoto = (oldFile) => {
         let updateFile = { ...oldFile };
-        delete updateFile.img;
+        delete updateFile.file;
         updateFile.isDragDisabled = true;
-
-        setFiles(
-            files.map((item) => {
-                if (item.id == oldFile.id) {
-                    return updateFile;
-                }
-                return item;
-            })
-        );
+        const newFiles = [...files]
+        const findIndex = files.findIndex((item) => item.id == oldFile.id)
+        newFiles.splice(findIndex, 1)
+        newFiles.push(updateFile)
+        setFiles(newFiles)
+// debugger
+        // setFiles(
+        //     files.map((item) => {
+        //         if (item.id == oldFile.id) {
+        //             return updateFile;
+        //         }
+        //         return item;
+        //     })
+        // );
     };
 
     return (
@@ -75,6 +78,7 @@ function Upload({}) {
                                     className="img-container"
                                     handleAddPhoto={handleAddPhoto}
                                     deletePhoto={deletePhoto}
+                            
                                 />
                             );
                         })}

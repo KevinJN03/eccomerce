@@ -29,6 +29,7 @@ const productSchema = new Schema({
   size: { type: Schema.Types.Array, default: [] },
   images: { type: Schema.Types.Array, default: [] },
   reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
+  delivery: [{ type: Schema.Types.ObjectId, ref: 'deliveryProfile' }],
 });
 
 export default mongoose.model('product', productSchema);

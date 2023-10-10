@@ -31,14 +31,19 @@ export const NewProductProvider = ({ children }) => {
     ]);
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState(() => EditorState.createEmpty());
+    const [description, setDescription] = useState(() =>
+        EditorState.createEmpty()
+    );
     const [profile, setProfile] = useState([]);
     const [globalUpdate, setGlobalUpdate] = useState({
         price: null,
         quantity: null,
     });
     const [category, setCategory] = useState();
-const [delivery, setDelivery] = useState()
+    const [publishError, setPublishError] = useState([]);
+    const [priceValue, setPriceValue] = useState('');
+    const [stockValue, setStockValue] = useState('');
+    const [delivery, setDelivery] = useState();
     const [gender, setGender] = useState();
     const value = {
         variations,
@@ -55,7 +60,14 @@ const [delivery, setDelivery] = useState()
         setGender,
         profile,
         setProfile,
-        globalUpdate, setGlobalUpdate
+        globalUpdate,
+        setGlobalUpdate,
+        publishError,
+        setPublishError,
+        priceValue,
+        setPriceValue,
+        stockValue,
+        setStockValue,
     };
 
     return (
