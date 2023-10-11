@@ -2,7 +2,11 @@ import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import Category from '../Models/category.js';
 
-import { body, validationResult } from 'express-validator';
+import { body, check, validationResult } from 'express-validator';
+
+import sharpify from '../Upload/sharpify.js';
+import multer from 'multer';
+import fileFilter from '../Upload/fileFilter.js';
 import category from '../Models/category.js';
 // eslint-disable-next-line import/prefer-default-export
 
@@ -82,24 +86,57 @@ export const delete_product = asyncHandler(async (req, res, next) => {
   });
 });
 
-export const create_new_product = [
+// create a new Product
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 1000000000, files: 6 },
+});
+
+const validator = [
+  check('files').custom((value, { req }) => {
+    console.log({ value });
+    if (req.files.length < 1) {
+      throw new Error('Please add a photo.');
+    }
+
+    return true;
+  }),
   body('title', 'Please add a title.').trim().escape().notEmpty(),
-  body('files', 'Please add some photos.').trim().escape().isArray({ min: 1 }),
-  body('category', 'Please select from one of the categories.').trim().escape().notEmpty(),
-  body('gender', 'Please select from one of the genders.').trim().escape().notEmpty(),
-  body('price', 'Please enter a valid price.').trim().escape().notEmpty(),
-  body('stock', 'Please enter a valid stock.')
+
+  body('category', 'Please select from one of the categories.')
     .trim()
     .escape()
     .notEmpty()
-    .isNumeric(),
+    .custom((value) => {
+      if (value === 'undefined') {
+        throw new Error();
+      }
+
+      return true;
+    }),
+  body('gender', 'Please select from one of the genders.')
+    .trim()
+    .escape()
+    .notEmpty()
+    .custom((value) => {
+      if (value === 'undefined') {
+        throw new Error();
+      }
+
+      return true;
+    }),
+  body('price', 'Please enter a valid price.').trim().escape().notEmpty(),
+  body('stock', 'Please enter a valid stock.').isNumeric().trim().escape(),
+  // .notEmpty(),
   body('detail', 'Please add some details.')
     .trim()
     .escape()
     .isArray({ min: 1 })
     .custom(async (value) => {
       const everyValue = value.every((item) => item === '\n' || item === '');
-      console.log({ value, everyValue });
+
       if (everyValue === true) {
         throw new Error();
       }
@@ -108,16 +145,26 @@ export const create_new_product = [
     .trim()
     .escape()
     .isArray({ min: 1 }),
-  asyncHandler(async (req, res, next) => {
-    const result = validationResult(req);
+];
 
+export const create_new_product = [
+  upload.array('files', 6),
+  validator,
+  asyncHandler(async (req, res, next) => {
+    console.log('body: ', req.body.delivery[0]);
+    console.log({ files: req.files });
+    const result = validationResult(req);
     if (!result.isEmpty()) {
-      console.log(result.errors);
       res.status(400).send(result.errors);
       return;
     }
+    const { files } = req;
 
-    console.log(req.body);
-    res.send('ok');
+    const newFiles = req.files.map(async (item) => {
+      const sharpen = await sharpify(item);
+      return sharpen;
+    });
+
+    return res.status(201).send(newFiles);
   }),
 ];
