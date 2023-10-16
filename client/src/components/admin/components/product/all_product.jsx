@@ -14,6 +14,8 @@ function All_Products() {
             setProducts(res.data)
         });
     }, [loading]);
+
+    console.log({products})
     return (
         <section className="product">
             <SideBar />

@@ -1,9 +1,15 @@
 import '../new_product.scss';
 
 import { v4 as uuidV4 } from 'uuid';
-export default function CategorySelect({ options, title, setState, state}) {
+export default function CategorySelect({
+    options,
+    title,
+    setState,
+    state,
+    isCategory,
+}) {
     const handleChange = (e) => {
-        console.log({e: e.target.value})
+        console.log({ e: e.target.value });
         setState(e.target.value);
     };
     return (
@@ -19,8 +25,11 @@ export default function CategorySelect({ options, title, setState, state}) {
             {options.map((option, index) => {
                 // console.log("index: ", index)
                 return (
-                    <option key={index} value={option}  >
-                        {option}
+                    <option
+                        key={index}
+                        value={isCategory ? option._id : option.toLowerCase()}
+                    >
+                        {isCategory ? option.name.toUpperCase() : option}
                     </option>
                 );
             })}

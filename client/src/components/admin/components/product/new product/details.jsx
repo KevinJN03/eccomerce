@@ -105,11 +105,10 @@ function Details() {
                             )}
                             <span className="flex !h-full flex-nowrap items-center gap-2">
                                 <CategorySelect
+                               isCategory={true}
                                     setState={setCategory}
                                     state={category}
-                                    options={allCategory?.map((item) =>
-                                        item?.name.toUpperCase()
-                                    )}
+                                    options={allCategory}
                                     title="Category"
                                 />
                                 {categoryError?.restart && (

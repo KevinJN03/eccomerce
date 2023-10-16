@@ -4,10 +4,16 @@ import { DragDropContext } from 'react-beautiful-dnd';
 
 import { useNewProduct } from '../../../../../../context/newProductContext';
 import DragItem from './dragItem';
+
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 function Upload({}) {
     const { files, setFiles } = useNewProduct();
+ 
 
     const handleOnDragEnd = (result) => {
+      
+ 
         if (!result.destination) return;
 
         const items = Array.from(files);
@@ -19,11 +25,7 @@ function Upload({}) {
         setFiles(items);
     };
 
-    const handleAddPhoto = (e, newfiles) => {
-        // const images = Array.from(e.target.files, (file) =>
-        //     URL.createObjectURL(file)
-        // );
-
+    const handleAddPhoto = (e) => {
         const images = Array.from(e.target.files);
         let counter = 0;
         setFiles(
@@ -48,57 +50,56 @@ function Upload({}) {
         let updateFile = { ...oldFile };
         delete updateFile.file;
         updateFile.isDragDisabled = true;
-        const newFiles = [...files]
-        const findIndex = files.findIndex((item) => item.id == oldFile.id)
-        newFiles.splice(findIndex, 1)
-        newFiles.push(updateFile)
-        setFiles(newFiles)
-// debugger
-        // setFiles(
-        //     files.map((item) => {
-        //         if (item.id == oldFile.id) {
-        //             return updateFile;
-        //         }
-        //         return item;
-        //     })
-        // );
+        const newFiles = [...files];
+        const findIndex = files.findIndex((item) => item.id == oldFile.id);
+        newFiles.splice(findIndex, 1);
+        newFiles.push(updateFile);
+        setFiles(newFiles);
     };
+
+
 
     return (
         <section id="upload-section">
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-                <section id="upload">
-                    <section className="main-img">
-                        {[0, 1].map((item) => {
-                            return (
-                                <DragItem
-                                    id={item}
-                                    key={item}
-                                    droppableId={`main-${item}`}
-                                    className="img-container"
-                                    handleAddPhoto={handleAddPhoto}
-                                    deletePhoto={deletePhoto}
-                            
-                                />
-                            );
-                        })}
+            <AnimatePresence>
+                <DragDropContext
+                    onDragEnd={handleOnDragEnd}
+                   
+                >
+                    <section id="upload">
+                        <section className="main-img">
+                            {[0, 1].map((item) => {
+                                return (
+                                    <DragItem
+                                        id={item}
+                                        key={item}
+                                        droppableId={`main-${item}`}
+                                        className="img-container"
+                                        handleAddPhoto={handleAddPhoto}
+                                        deletePhoto={deletePhoto}
+                                    
+                                    />
+                                );
+                            })}
+                        </section>
+                        <section className="additional-img">
+                            {[2, 3, 4, 5].map((item, idx) => {
+                                return (
+                                    <DragItem
+                                        id={item}
+                                        key={item}
+                                        droppableId={`additional-${idx}`}
+                                        className="add-img-container"
+                                        handleAddPhoto={handleAddPhoto}
+                                        deletePhoto={deletePhoto}
+                                       
+                                    />
+                                );
+                            })}
+                        </section>
                     </section>
-                    <section className="additional-img">
-                        {[2, 3, 4, 5].map((item, idx) => {
-                            return (
-                                <DragItem
-                                    id={item}
-                                    key={item}
-                                    droppableId={`additional-${idx}`}
-                                    className="add-img-container"
-                                    handleAddPhoto={handleAddPhoto}
-                                    deletePhoto={deletePhoto}
-                                />
-                            );
-                        })}
-                    </section>
-                </section>
-            </DragDropContext>
+                </DragDropContext>
+            </AnimatePresence>
         </section>
     );
 }

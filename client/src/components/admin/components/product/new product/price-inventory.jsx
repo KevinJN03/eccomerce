@@ -35,6 +35,13 @@ export default function Price_Inventory() {
     useEffect(() => {
         setStockError('');
     }, [stockValue]);
+
+    useEffect(() => {
+return() => {
+    setPriceValue('')
+    setPriceValue('')
+}
+    }, [])
     const onStockClickAway = () => {
         if (!stockValue) return;
         const formatStock = formatData(stockValue, 0);

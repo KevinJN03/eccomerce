@@ -13,7 +13,7 @@ function Description({}) {
     const { description, setDescription, publishError } = useNewProduct();
     const [descriptionError, setDescriptionError] = useState('');
 
-    // useNewProductError('detail', setDescriptionError);
+    useNewProductError('detail', setDescriptionError);
 
     useEffect(() => {
         setDescriptionError('');

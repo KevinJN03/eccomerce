@@ -92,7 +92,7 @@ function Manage({}) {
         if (
             (countPriceHeader > 1 || countQuantityHeader > 1 ) 
         ) {
-            debugger
+          
             const update = newArr.map((item) => {
                 return {
                     ...item,

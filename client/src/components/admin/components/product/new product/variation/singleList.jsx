@@ -3,7 +3,7 @@ import Table from './table/table';
 import { motion, AnimatePresence, easeIn, easeOut } from 'framer-motion';
 function SingleList({ variation, handleUpdate, combine }) {
     const { name, options, priceHeader, quantityHeader } = variation;
-    const [selected, setSelected] = useState([]);
+    const [selected, setSelected] = useState(new Set());
 
     const [update, setUpdate] = useState({
         price: null,
@@ -54,7 +54,7 @@ function SingleList({ variation, handleUpdate, combine }) {
                     }`}</p>
                 </div>
                 <AnimatePresence>
-                    {selected.length > 0 && (
+                    {selected.size > 0 && (
                         <motion.div
                             className="flex-no-wrap variations-center flex flex-row gap-x-3 py-2"
                             variants={variants}
@@ -63,12 +63,12 @@ function SingleList({ variation, handleUpdate, combine }) {
                             exit='exit'
                         >
                             <motion.p
-                                key={selected.length}
+                                key={selected.size}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 className="self-center"
                             >
-                                {`${selected.length} selected`}{' '}
+                                {`${selected.size} selected`}{' '}
                             </motion.p>
                             {priceHeader.on && (
                                 <button

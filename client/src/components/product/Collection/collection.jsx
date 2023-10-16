@@ -1,24 +1,22 @@
 import Item from './item';
 
-function Collection({products}) {
-
+function Collection({ products }) {
     return (
         <section id="collection-section">
-
-        {products && products.map(product=> {
-            return (
-                <Item 
-            key={product._id}
-                image={product.images[0]}
-                price={product.price.current.toFixed(2)}
-                title={product.title}
-                url={product._id}
-            /> 
-            )
-           
-        }) }
-            
-            
+            {products &&
+                products.map((product) => {
+                    return (
+                        <Item
+                            key={product._id}
+                            image={product.images[0]}
+                            price={parseFloat(product?.price?.current).toFixed(
+                                2
+                            )}
+                            title={product.title}
+                            url={product._id}
+                        />
+                    );
+                })}
         </section>
     );
 }

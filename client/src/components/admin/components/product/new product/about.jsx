@@ -11,8 +11,8 @@ function About() {
     const [titleError, setTitleError] = useState('');
     const [filesError, setFilesError] = useState('');
 
-    // useNewProductError('title', setTitleError);
-    // useNewProductError('files', setFilesError);
+    useNewProductError('title', setTitleError);
+    useNewProductError('files', setFilesError);
 
     useEffect(() => {
         setTitleError('');

@@ -12,9 +12,12 @@ function Footer({}) {
         gender,
         profile,
         setPublishError,
-        priceValue, stockValue
+        priceValue,
+        stockValue,
     } = useNewProduct();
-    const filteredFiles = files.filter((item) => item.isDragDisabled == false);
+    const filteredFiles = files
+        .filter((item) => item.isDragDisabled == false)
+        .map((item) => item.file);
     const { blocks } = convertToRaw(description.getCurrentContent());
     const mappedBlocks = blocks.map(
         (block) => (!block.text.trim() && '\n') || block.text
@@ -38,13 +41,41 @@ function Footer({}) {
         gender,
         delivery: profile.map((item) => item._id),
         price: priceValue,
-        stock: stockValue
+        stock: stockValue,
     };
 
     const publish = async () => {
-        console.log({values})
+        const formData = new FormData();
+
+        for (const item of filteredFiles) {
+            formData.append('files', item);
+        }
+        for (const { _id } of profile) {
+            formData.append('delivery[]', _id);
+        }
+
+        for (const item of mappedBlocks) {
+            formData.append('detail[]', item);
+        }
+        // for (const item of variations) {
+        //     formData.append('variations[]', JSON.stringify(item));
+        // }
+
+        formData.append('variations', JSON.stringify(variations));
+        formData.append('title', title), formData.append('category', category);
+        formData.append('gender', gender);
+
+        formData.append('price', priceValue);
+        formData.append('stock', stockValue);
+
         try {
-            const result = await adminAxios.post('/product/create', values);
+            console.log(values);
+            await adminAxios({
+                method: 'post',
+                url: '/product/create',
+                data: formData,
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
         } catch (error) {
             const errorData = error.response.data;
             console.log('error', errorData);

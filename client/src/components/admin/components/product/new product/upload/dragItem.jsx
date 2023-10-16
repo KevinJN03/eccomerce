@@ -3,17 +3,25 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import { useRef } from 'react';
 import wiredIcon from '../../../../../../assets/icons/wired-outline-49-plus-circle.webp';
 import close from '../../../../../../assets/icons/close.png';
-function DragItem({
-    id,
-    droppableId,
-    className,
-    handleAddPhoto,
-    deletePhoto,
-    
-}) {
+
+import { motion, easeInOut } from 'framer-motion';
+function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
     const addInputRef = useRef();
     const { files } = useNewProduct();
-   
+
+    const variants = {
+        initial: { opacity: 0 },
+        animate: {
+            opacity: 1,
+            transition: {
+                ease: 'easeInOut',
+                duration: 0.9,
+            },
+        },
+        exit: {
+            opacity: 0,
+        },
+    };
     return (
         <Droppable
             droppableId={droppableId}
@@ -29,10 +37,10 @@ function DragItem({
                     <Draggable
                         key={files[id]?.id}
                         index={id}
-                        draggableId={files[id]?.id}
-                        isDragDisabled={files[id]?.isDragDisabled}
+                        draggableId={files[id].id}
+                        isDragDisabled={files[id].isDragDisabled}
                     >
-                        {(provided) => (
+                        {(provided, snapshot) => (
                             <div
                                 className="relative h-full w-full rounded-inherit"
                                 {...provided.draggableProps}
@@ -41,19 +49,35 @@ function DragItem({
                             >
                                 {files[id].file ? (
                                     <>
-                                        <button
-                                            type="button"
-                                            className="delete-btn absolute bottom-2 right-3 h-8 w-8 rounded-full bg-slate-100 p-2 hover:bg-slate-200 transition-all"
-                                            onClick={() =>
-                                                deletePhoto(files[id])
-                                            }
-                                        >
-                                            <img
-                                                className="h-full w-full"
-                                                src={close}
-                                            />
-                                        </button>
-                                        <img
+                                        {console.log(
+                                            'snapshot.isDragging: ',
+                                            snapshot.isDragging
+                                        )}
+                                        {!snapshot.isDragging && (
+                                            <motion.button
+                                            // key={snapshot.isDragging}
+                                                variants={variants}
+                                                initial="initial"
+                                                animate="animate"
+                                                exit="exit"
+                                                type="button"
+                                                className="delete-btn absolute bottom-2 right-3 h-8 w-8 rounded-full bg-slate-100 p-2 transition-all hover:bg-slate-200"
+                                                onClick={() =>
+                                                    deletePhoto(files[id])
+                                                }
+                                            >
+                                                <img
+                                                    className="h-full w-full"
+                                                    src={close}
+                                                />
+                                            </motion.button>
+                                        )}
+                                        <motion.img
+                                            // key={snapshot.isDragging}
+                                             variants={variants}
+                                             initial="initial"
+                                             animate="animate"
+                                             exit="exit"
                                             loading="lazy"
                                             src={URL.createObjectURL(
                                                 files[id]?.file

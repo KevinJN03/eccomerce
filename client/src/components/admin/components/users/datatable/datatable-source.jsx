@@ -55,7 +55,7 @@ export const userColumn = [
 ];
 
 export const productColumn = [
-    { field: '_id', headerName: 'ID', width: 70 },
+    { field: '_id', headerName: 'ID', width: 120 },
     {
         field: 'title',
         headerName: 'Product',
@@ -77,7 +77,11 @@ export const productColumn = [
         },
     },
     { field: 'gender', headerName: 'Gender', width: 100 },
-    { field: 'category', headerName: 'Category', width: 200 },
+    { field: 'category', headerName: 'Category', width: 140, renderCell: (params) => {
+        return (
+            params.row.category.name.toUpperCase()
+        )
+    } },
     {
         field: 'size',
         headerName: 'Size',

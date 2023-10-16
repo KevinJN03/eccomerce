@@ -14,18 +14,18 @@ function Table({
 }) {
     const count = variationList.options.length;
     useEffect(() => {
-        if (checkAll == false && selected.length == count) {
-            setSelected([]);
+        if (checkAll == false && selected.size == count) {
+            setSelected((prevState) => prevState = new Set());
         }
     }, [checkAll]);
     useEffect(() => {
         console.log('selected', selected);
 
-        if (selected.length == count) {
+        if (selected.size == count) {
             setCheckAll(true);
         }
 
-        if (selected.length == 0) {
+        if (selected.size == 0) {
             setCheckAll(false);
         }
     }, [selected]);
@@ -33,14 +33,10 @@ function Table({
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
     };
-    
+
     return (
         <table className="result-table w-full !bg-white">
-            <colgroup>
-                
-
-                {tableLayout[layout]}
-            </colgroup>
+            <colgroup>{tableLayout[layout]}</colgroup>
             <tr className="!w-full ">
                 {(variationList.priceHeader.on ||
                     variationList.quantityHeader.on) && (
@@ -48,7 +44,7 @@ function Table({
                         <input
                             type="checkbox"
                             className="checkbox no-animation !rounded-[3px]"
-                            defaultChecked={checkAll}
+                            // defaultChecked={checkAll}
                             checked={checkAll}
                             onChange={handleCheckAll}
                         />
@@ -64,11 +60,16 @@ function Table({
             {variationList &&
                 variationList.options.map((item) => {
                     // return list.options.map((item) => {
+
+                    const [singleVariation, setSingleVariation] =
+                        useState(item);
                     return (
                         <Row
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
-                            variation={item}
+                            singleVariation={singleVariation}
+                            setSingleVariation={setSingleVariation}
+                            setSingleVariation={setSingleVariation}
                             variationList={variationList}
                             priceOn={variationList.priceHeader.on}
                             quantityOn={variationList.quantityHeader.on}
@@ -76,7 +77,6 @@ function Table({
                             setSelected={setSelected}
                             update={update}
                             combine={combine}
-                            
                         />
                     );
                     // });
