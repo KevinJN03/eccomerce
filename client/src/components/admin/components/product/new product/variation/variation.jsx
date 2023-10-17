@@ -14,8 +14,9 @@ import {
 } from '../../../../../../context/variationContext';
 
 import Update from './update';
-import TestVariationList from './testVariationList';
+
 import { useNewProduct } from '../../../../../../context/newProductContext';
+import VariationList from './variationList';
 
 const views = {
     manage: <Manage />,
@@ -109,8 +110,8 @@ function Variation() {
                             'Manage Variations'
                         )}
                     </button>
-                    {/* <VariationList/> */}
-                    <TestVariationList />
+                    <VariationList/>
+            
                 </section>
                 {check && (
                     <Modal

@@ -2,6 +2,7 @@ import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
 import { useEffect, useState } from 'react';
 import { tableLayout } from './tableLayout';
+import { getValuesFromMap } from '../variationData';
 function Table({
     variationList,
     selected,
@@ -13,9 +14,21 @@ function Table({
     layout,
 }) {
     const count = variationList.options.length;
+
+    const [variationOptions, setVariationOptions] = useState([]);
+
+    
+
+    useEffect(() => {
+    const result = getValuesFromMap(variationList.options)
+
+    setVariationOptions(result)
+    }, [])
+
+
     useEffect(() => {
         if (checkAll == false && selected.size == count) {
-            setSelected((prevState) => prevState = new Set());
+            setSelected((prevState) => (prevState = new Set()));
         }
     }, [checkAll]);
     useEffect(() => {
@@ -33,6 +46,8 @@ function Table({
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
     };
+
+
 
     return (
         <table className="result-table w-full !bg-white">
@@ -57,19 +72,19 @@ function Table({
                 {variationList.quantityHeader.on && <th>Quantity</th>}
                 <th className=" !text-right ">Visible </th>
             </tr>
-            {variationList &&
-                variationList.options.map((item) => {
+            {variationOptions &&
+               variationOptions.map((item) => {
                     // return list.options.map((item) => {
 
-                    const [singleVariation, setSingleVariation] =
-                        useState(item);
+                    // const [singleVariation, setSingleVariation] =
+                    //     useState(item);
                     return (
                         <Row
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
-                            singleVariation={singleVariation}
-                            setSingleVariation={setSingleVariation}
-                            setSingleVariation={setSingleVariation}
+                            singleVariation={item}
+                            // setSingleVariation={setSingleVariation}
+                         
                             variationList={variationList}
                             priceOn={variationList.priceHeader.on}
                             quantityOn={variationList.quantityHeader.on}

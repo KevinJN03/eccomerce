@@ -49,8 +49,8 @@ function SingleList({ variation, handleUpdate, combine }) {
                     <h3 className="text-lg font-semibold tracking-wide">
                         {name}
                     </h3>
-                    <p>{`${options.length} ${
-                        options.length > 1 ? 'variants' : 'variant'
+                    <p>{`${options.size} ${
+                        options.size > 1 ? 'variants' : 'variant'
                     }`}</p>
                 </div>
                 <AnimatePresence>

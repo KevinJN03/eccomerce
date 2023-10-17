@@ -10,23 +10,19 @@ import {
     generateCustomVariation,
     filteredVariation,
     defaultMap,
+    getValuesFromMap,
 } from './variationData';
 import ErrorAlert from './error/errorAlert';
-import VariationResults from './searchResults';
+import SearchResult from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
 import OptionError from './error/optionError';
 
 function SelectVariation({}) {
-    const {
-        content,
-        dispatch,
-        setTemporaryVariation,
-        temporaryVariation,
-     
-    } = useVariation();
+    const { content, dispatch, setTemporaryVariation, temporaryVariation } =
+        useVariation();
     const currentVariation = content.currentVariation;
     const [option, setOption] = useState(
-        currentVariation ? currentVariation.options : []
+        currentVariation ? currentVariation.options : new Map()
     );
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -36,7 +32,11 @@ function SelectVariation({}) {
     );
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
-
+    const [optionArray, setOptionArray] = useState([]);
+    useEffect(() => {
+        const result = getValuesFromMap(option);
+        setOptionArray(result);
+    }, [option]);
     useEffect(() => {
         try {
             if (currentVariation) {
@@ -49,9 +49,7 @@ function SelectVariation({}) {
 
                 setVariation(list);
             }
-        } catch (error) {
-            console.log('error at select: ', error);
-        }
+        } catch (error) {}
     }, []);
 
     const onNameChange = (value) => {
@@ -61,7 +59,6 @@ function SelectVariation({}) {
             ({ name }) => name.toLowerCase() == value.toLowerCase()
         );
         if (variationExist) {
-            console.log('exist:', value);
             return setExist(true);
         }
 
@@ -78,16 +75,20 @@ function SelectVariation({}) {
         if (searchText.length > 0) {
             setSearchText('');
         }
-        setOption([...option, variationOption]);
+        setOption((prevState) => {
+            return new Map(prevState).set(variationOption.id, variationOption);
+        });
         filterColor(variationOption.id);
     };
 
     const deleteColor = (variationOption) => {
-        const newArr = [...option];
-        const filterOption = newArr.filter(
-            (item) => item.id != variationOption.id
-        );
-        setOption(filterOption);
+        // const filterOption = newArr.filter(
+        //     (item) => item.id != variationOption.id
+        // );
+
+        debugger;
+        option.delete(variationOption.id);
+        setOption((prevState) => new Map(option));
 
         // if(newArr.find((item) => item.id == variationOption.id) == false){
 
@@ -99,7 +100,13 @@ function SelectVariation({}) {
     };
 
     const addRemainingColors = () => {
-        setOption([...option, ...variation]);
+        setOption((prevState) => {
+            const newMap = new Map(prevState);
+            variation.map((item) => {
+                newMap.set(item.id, item);
+            });
+            return newMap;
+        });
         setVariation([]);
     };
 
@@ -118,14 +125,15 @@ function SelectVariation({}) {
 
             return dispatch({ type: 'manage' });
         } catch (error) {
-            console.log(error);
             setError('Fail to delete variation. Please try again.');
         }
     };
 
     const handleCustom = () => {
         const customVariation = generateCustomVariation(searchText);
-        setOption([...option, customVariation]);
+        setOption((prevState) =>
+            new Map(prevState).set(customVariation.id, customVariation)
+        );
         setSearchText('');
     };
 
@@ -176,7 +184,6 @@ function SelectVariation({}) {
 
             dispatch({ type: 'manage' });
         } catch (error) {
-            console.log('error at singleVariation:', error.message);
             setError(error.message);
         }
     };
@@ -218,7 +225,7 @@ function SelectVariation({}) {
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
                         <span className="ml-1 flex h-4 items-center rounded-full bg-black px-2 text-xxs text-white">
-                            {option.length}
+                            {option.size}
                         </span>
                     </h2>
                     <p className="text-s">
@@ -260,22 +267,25 @@ function SelectVariation({}) {
                         )}
                     </div>
                     {!defaultVariation && searchText.length > 20 && (
-                        <OptionError msg={'Option Name must be between 1 and 20 characters.'}/>
+                        <OptionError
+                            msg={
+                                'Option Name must be between 1 and 20 characters.'
+                            }
+                        />
                     )}
-                    <VariationResults
+                    <SearchResult
                         addRemainingColors={addRemainingColors}
                         searchText={searchText}
                         variation={variation}
                         addOption={addOption}
                         handleCustom={handleCustom}
-                        option={option}
+                        option={optionArray}
                     />
                 </section>
 
-                <div className="options-wrapper mt-3 flex basis-full flex-col gap-y-2 min-h-[200px]  ">
-                    {option &&
-                        option.length > 0 &&
-                        option.map((item) => {
+                <div className="options-wrapper mt-3 flex min-h-[200px] basis-full flex-col gap-y-2  ">
+                    {option.size > 0 &&
+                        optionArray.map((item) => {
                             const { variation, id } = item;
                             return (
                                 <div
@@ -327,7 +337,7 @@ function SelectVariation({}) {
                         type="button"
                         className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
                         disabled={
-                            (option && option.length < 1) ||
+                            ( option.size < 1) ||
                             name.length < 1 ||
                             exist ||
                             error

@@ -1,56 +1,87 @@
 import { useVariation } from '../../../../../../context/variationContext';
-import { useState } from 'react';
-import Switch from './toggleSwitch/switch';
+import { useEffect, useState } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 import Table from './table/table.jsx';
+import SingleList from './singleList';
+
 function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
-    const { selected } = useVariation();
-
-    const handleUpdate = (category) => {
+    const [combine, setCombine] = useState({ id: uuidV4(), options: [] });
+    const handleUpdate = (category, selected, setUpdate, update, setCheckAll) => {
         setCheck(true);
-        dispatch({ type: 'update', category: category });
+        dispatch({ type: 'update', category, selected, setUpdate, update,setCheckAll });
     };
+
+    useEffect(() => {
+        console.log('variationList mount');
+        const everyVariation = variations.every((item) => item.combine == true);
+        if (everyVariation && variations.length > 1) {
+            console.log('variationList combine');
+            const onlyOptions = [...variations].map(({ options }) => {
+                console.log({ options });
+                return options;
+            });
+
+            console.log('onlyOptions: ', onlyOptions);
+            /* {variation: 'Small (S)', id: '3e257f61-c557-45e4-8b20-479fd7eb5fb6'} */
+            const [firstOptions, secondOptions] = onlyOptions;
+
+            const newOptions = [];
+            for (const variationItem of firstOptions) {
+                for (const item of secondOptions) {
+                    const { variation } = item;
+
+                    const newObj = {
+                        id: uuidV4(),
+                        variation: variationItem.variation,
+                        variation2: variation,
+                    };
+                    newOptions.push(newObj);
+                }
+            }
+
+            console.log('newOptions: ', newOptions);
+
+            const newVariation = {
+                ...combine,
+                options: newOptions,
+                name: variations[0].name,
+                name2: variations[1].name,
+                quantityHeader: { on: true },
+                priceHeader: { on: true },
+            };
+
+            setCombine(newVariation);
+        } else {
+            setCombine({ ...combine, options: [] });
+        }
+    }, [variations]);
 
     return (
         <>
-            {variations.length > 0 && (
-                <section className="mt-12 flex basis-full flex-col">
-                    <section className="flex w-full flex-row justify-between">
-                        <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold tracking-wide">
-                                {variations.length <= 1 && variations[0].name}
-                                {variations.length > 1 &&
-                                    `${variations[0].name} and ${variations[1].name} `}
-                            </h3>
-                            <p>{`${variations.length} ${
-                                variations.length > 1 ? 'variants' : 'variant'
-                            }`}</p>
-                        </div>
-                        {selected.length > 0 && (
-                            <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
-                                <p>{selected.length} selected</p>
-                                <button
-                                    type="button"
-                                    className="theme-btn"
-                                    onClick={() => handleUpdate('price')}
-                                >
-                                    Update price
-                                </button>
-                                <button
-                                    type="button"
-                                    className="theme-btn"
-                                    onClick={() => handleUpdate('quantity')}
-                                >
-                                    Update Quantity
-                                </button>
-                            </span>
-                        )}
-                    </section>
-                    <Table />
-                </section>
+            {combine.options.length > 0 && (
+                <SingleList
+                    variation={combine}
+                    key={combine.id}
+                    handleUpdate={handleUpdate}
+                    combine={true}
+                />
             )}
+            {combine.options.length < 1 &&
+                variations.length > 0 &&
+                variations.map((variation) => {
+                    return (
+                        <>
+                            <SingleList
+                                variation={variation}
+                                key={variation.id}
+                                handleUpdate={handleUpdate}
+                                combine={false}
+                            />
+                        </>
+                    );
+                })}
         </>
     );
 }
-
 export default VariationList;

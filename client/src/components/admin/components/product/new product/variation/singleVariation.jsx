@@ -1,8 +1,11 @@
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
-
+import { getValuesFromMap } from './variationData';
+import { useState } from 'react';
 function SingleVariation({ singleVariation, deleteVariation, editVariation }) {
-    const { id, name, options } = singleVariation;
+    const { id, name } = singleVariation;
+
+    const [options, setOptions] = useState(getValuesFromMap(singleVariation.options))
 
    
     return (

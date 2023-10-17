@@ -24,7 +24,7 @@ function Row({
     setSelected,
     update,
     combine,
-    setSingleVariation,
+    // setSingleVariation,
 }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [visible, setVisible] = useState(singleVariation?.visible || true);
@@ -75,9 +75,9 @@ function Row({
         // );
 
 
-        setSingleVariation((prevState) => {
-            return {...prevState, visible, price, stock}
-        } )
+        // setSingleVariation((prevState) => {
+        //     return {...prevState, visible, price, stock}
+        // } )
     },
     [visible, stock, price]
     //  [state, stock, price]
