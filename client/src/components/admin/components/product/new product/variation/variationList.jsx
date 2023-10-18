@@ -6,15 +6,29 @@ import SingleList from './singleList';
 
 function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
-    const [combine, setCombine] = useState({ id: uuidV4(), options: [] });
-    const handleUpdate = (category, selected, setUpdate, update, setCheckAll) => {
+    const [combine, setCombine] = useState({ id: uuidV4() , options: new Map()});
+    const handleUpdate = (
+        category,
+        selected,
+        setUpdate,
+        update,
+        setCheckAll
+    ) => {
         setCheck(true);
-        dispatch({ type: 'update', category, selected, setUpdate, update,setCheckAll });
+        dispatch({
+            type: 'update',
+            category,
+            selected,
+            setUpdate,
+            update,
+            setCheckAll,
+        });
     };
 
     useEffect(() => {
         console.log('variationList mount');
         const everyVariation = variations.every((item) => item.combine == true);
+        debugger
         if (everyVariation && variations.length > 1) {
             console.log('variationList combine');
             const onlyOptions = [...variations].map(({ options }) => {
@@ -26,17 +40,18 @@ function VariationList({}) {
             /* {variation: 'Small (S)', id: '3e257f61-c557-45e4-8b20-479fd7eb5fb6'} */
             const [firstOptions, secondOptions] = onlyOptions;
 
-            const newOptions = [];
-            for (const variationItem of firstOptions) {
-                for (const item of secondOptions) {
+            const newOptions = new Map();
+            for (const variationItem of firstOptions.values()) {
+                for (const item of secondOptions.values()) {
                     const { variation } = item;
-
+                    const id = uuidV4();
                     const newObj = {
-                        id: uuidV4(),
+                        id,
                         variation: variationItem.variation,
                         variation2: variation,
                     };
-                    newOptions.push(newObj);
+
+                    newOptions.set(id, newObj);
                 }
             }
 
@@ -52,31 +67,39 @@ function VariationList({}) {
             };
 
             setCombine(newVariation);
-        } else {
-            setCombine({ ...combine, options: [] });
-        }
+        }else {
+            setCombine((prevState) => {return {...prevState, options: new Map()}})
+        } 
     }, [variations]);
 
     return (
         <>
-            {combine.options.length > 0 && (
+            {combine?.options.size >= 1 && (
                 <SingleList
                     variation={combine}
                     key={combine.id}
                     handleUpdate={handleUpdate}
-                    combine={true}
+                    combine={combine}
+                    isCombine={true}
+                    setCombine={setCombine}
                 />
-            )}
-            {combine.options.length < 1 &&
+            )
+            }
+            {
+            
+            combine?.options.size < 1 &&
                 variations.length > 0 &&
-                variations.map((variation) => {
+                variations.map((variation, idx) => {
                     return (
                         <>
                             <SingleList
+                            variationIndex = {idx}
                                 variation={variation}
                                 key={variation.id}
                                 handleUpdate={handleUpdate}
-                                combine={false}
+                                isCombine={false}
+                                combine={combine}
+                                setCombine={setCombine}
                             />
                         </>
                     );

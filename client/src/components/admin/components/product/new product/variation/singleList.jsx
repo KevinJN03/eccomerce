@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Table from './table/table';
 import { motion, AnimatePresence, easeIn, easeOut } from 'framer-motion';
-function SingleList({ variation, handleUpdate, combine }) {
+function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, variationIndex }) {
     const { name, options, priceHeader, quantityHeader } = variation;
-    const [selected, setSelected] = useState(new Set());
+    const [selected, setSelected] = useState(new Map());
 
     const [update, setUpdate] = useState({
         price: null,
@@ -13,7 +13,7 @@ function SingleList({ variation, handleUpdate, combine }) {
     const [checkAll, setCheckAll] = useState(false);
 
     const determineLayout = () => {
-        if (combine) {
+        if (isCombine) {
             return 'combine';
         }
         if (variation.priceHeader.on && variation.quantityHeader.on) {
@@ -49,8 +49,8 @@ function SingleList({ variation, handleUpdate, combine }) {
                     <h3 className="text-lg font-semibold tracking-wide">
                         {name}
                     </h3>
-                    <p>{`${options.size} ${
-                        options.size > 1 ? 'variants' : 'variant'
+                    <p>{`${options.size || options.length} ${
+                        options.size || options.length > 1 ? 'variants' : 'variant'
                     }`}</p>
                 </div>
                 <AnimatePresence>
@@ -109,14 +109,17 @@ function SingleList({ variation, handleUpdate, combine }) {
                 </AnimatePresence>
             </section>
             <Table
+            variationIndex ={variationIndex }
                 variationList={variation}
                 setSelected={setSelected}
                 selected={selected}
                 update={update}
                 combine={combine}
+                isCombine={isCombine}
                 setCheckAll={setCheckAll}
                 checkAll={checkAll}
                 layout={layout}
+                setCombine={setCombine}
             />
         </section>
     );

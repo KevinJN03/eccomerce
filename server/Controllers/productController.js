@@ -3,7 +3,7 @@ import Product from '../Models/product.js';
 import Category from '../Models/category.js';
 
 import { body, check, validationResult } from 'express-validator';
-
+import productValidator from '../utils/productValidator.js';
 import sharpify from '../Upload/sharpify.js';
 import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
@@ -107,84 +107,10 @@ const upload = multer({
   limits: { fileSize: 1000000000, files: 6 },
 });
 
-const customVariationValidator = (value, { req, next }) => {
-  const { variations } = req.body;
-  const parseVariation = JSON.parse(variations);
-  console.log({ value });
-  if (parseVariation.length > 0) {
-    return true;
-  }
-
-  if (value) {
-    return true;
-  } else {
-    return false;
-  }
-};
-const validator = [
-  check('files').custom((value, { req }) => {
-    if (req.files.length < 1) {
-      throw new Error('Please add a photo.');
-    }
-
-    return true;
-  }),
-  body('title', 'Please add a title.').trim().escape().notEmpty(),
-
-  body('category', 'Please select from one of the categories.')
-    .trim()
-    .escape()
-    .notEmpty()
-    .custom((value) => {
-      if (value === 'undefined') {
-        throw new Error();
-      }
-
-      return true;
-    }),
-  body('gender', 'Please select from one of the genders.')
-    .trim()
-    .escape()
-    .notEmpty()
-    .custom((value) => {
-      if (value === 'undefined') {
-        throw new Error();
-      }
-
-      return true;
-    }),
-  body('price', 'Please enter a valid price.')
-    .trim()
-    .escape()
-    .custom(customVariationValidator),
-
-  // .notEmpty(),
-  body('stock', 'Please enter a valid stock.')
-    .trim()
-    .escape()
-    .custom(customVariationValidator),
-
-  // .notEmpty(),
-  body('detail', 'Please add some details.')
-    .trim()
-    .escape()
-    .isArray({ min: 1 })
-    .custom(async (value) => {
-      const everyValue = value.every((item) => item === '\n' || item === '');
-
-      if (everyValue === true) {
-        throw new Error();
-      }
-    }),
-  body('delivery', 'Please add some delivery profiles.')
-    .trim()
-    .escape()
-    .isArray({ min: 1 }),
-];
-
+// work on adding variations
 export const create_new_product = [
   upload.array('files', 6),
-  validator,
+  //productValidator ,
   asyncHandler(async (req, res, next) => {
     let counter = 0;
     const imageArr = [];
@@ -192,14 +118,21 @@ export const create_new_product = [
     const result = validationResult(req);
     const { files } = req;
     const { variations } = req.body;
-    const parseVariations = JSON.parse(variations);
 
+    const parseVariations = variations.map((item) => {
+      const data = JSON.parse(item);
+
+       data.options = new Map(data.options);
+      return data
+    });
+    // const parseVariations = variations;
     // validate price and quantity only if variations is empty;
     if (!result.isEmpty()) {
       console.log('errorList:', result.errors);
       res.status(400).send(result.errors);
       return;
     }
+
     const { title, delivery, gender, price, stock, category, detail } =
       req.body;
 
@@ -217,6 +150,9 @@ export const create_new_product = [
       newProduct.variations = parseVariations;
     }
 
+    console.clear();
+    console.log("--------------------------------\r\n",'parseVariations: ', parseVariations[1].options);
+
     const newFiles = files.map(async (item) => {
       const sharpen = await sharpify(item);
       sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
@@ -230,14 +166,14 @@ export const create_new_product = [
     const sharpResult = await Promise.all(newFiles);
     newProduct.images = imageArr;
 
-    const uploadResult = await s3Upload(sharpResult, false, newProduct.id);
-    console.log('newProduct: ', newProduct);
-    newProduct.save();
+    // const uploadResult = await s3Upload(sharpResult, false, newProduct.id);
+    // console.log('newProduct: ', newProduct);
+    // newProduct.save();
 
-    await Category.updateOne(
-      { _id: category },
-      { $push: { [gender]: newProduct.id } },
-    );
+    // await Category.updateOne(
+    //   { _id: category },
+    //   { $push: { [gender]: newProduct.id } },
+    // );
     return res.status(201).send(newFiles);
   }),
 ];

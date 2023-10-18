@@ -88,7 +88,7 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-
+ debugger
         if (
             (countPriceHeader > 1 || countQuantityHeader > 1 ) 
         ) {
@@ -103,6 +103,7 @@ function Manage({}) {
             });
 
             setVariations(update);
+           
             setCheck(false);
             return
         } else {
@@ -184,9 +185,9 @@ function Manage({}) {
                                 in at least one area,
                                 <span className="font-semibold">
                                     {' '}
-                                    {notDisableVariation.arr[0].options.length *
+                                    {notDisableVariation.arr[0].options.size *
                                         notDisableVariation.arr[1].options
-                                            .length}{' '}
+                                            .size}{' '}
                                     option combinations
                                 </span>
                                 {' '}will be created automatically.

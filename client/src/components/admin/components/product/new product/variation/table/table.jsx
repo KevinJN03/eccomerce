@@ -8,31 +8,31 @@ function Table({
     selected,
     setSelected,
     update,
+    isCombine,
     combine,
     setCheckAll,
     checkAll,
     layout,
+    setCombine,
+    variationIndex 
 }) {
-    const count = variationList.options.length;
+    const count = variationList.options.size;
 
     const [variationOptions, setVariationOptions] = useState([]);
 
-    
-
     useEffect(() => {
-    const result = getValuesFromMap(variationList.options)
+        const result = getValuesFromMap(variationList.options);
 
-    setVariationOptions(result)
-    }, [])
-
+        setVariationOptions(result);
+    }, [variationList]);
 
     useEffect(() => {
         if (checkAll == false && selected.size == count) {
-            setSelected((prevState) => (prevState = new Set()));
+            setSelected(new Map());
         }
     }, [checkAll]);
     useEffect(() => {
-        console.log('selected', selected);
+        console.log({ selected: selected.size, count });
 
         if (selected.size == count) {
             setCheckAll(true);
@@ -46,8 +46,6 @@ function Table({
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
     };
-
-
 
     return (
         <table className="result-table w-full !bg-white">
@@ -67,31 +65,28 @@ function Table({
                 )}
 
                 <th className="">{variationList.name}</th>
-                {combine == true && <th>{variationList.name2}</th>}
+                {isCombine == true && <th>{variationList.name2}</th>}
                 {variationList.priceHeader.on && <th>Price</th>}
                 {variationList.quantityHeader.on && <th>Quantity</th>}
                 <th className=" !text-right ">Visible </th>
             </tr>
             {variationOptions &&
-               variationOptions.map((item) => {
-                    // return list.options.map((item) => {
-
-                    // const [singleVariation, setSingleVariation] =
-                    //     useState(item);
+                variationOptions.map((item) => {
                     return (
                         <Row
+                        variationIndex ={variationIndex }
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
                             singleVariation={item}
-                            // setSingleVariation={setSingleVariation}
-                         
                             variationList={variationList}
-                            priceOn={variationList.priceHeader.on}
-                            quantityOn={variationList.quantityHeader.on}
+                            isQuantityHeaderOn={variationList.quantityHeader.on}
+                            isPriceHeaderOn={variationList.priceHeader.on}
                             selected={selected}
                             setSelected={setSelected}
                             update={update}
-                            combine={combine}
+                           
+                            isCombine={isCombine}
+                            setCombine={setCombine}
                         />
                     );
                     // });

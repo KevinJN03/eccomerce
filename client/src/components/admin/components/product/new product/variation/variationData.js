@@ -50,24 +50,21 @@ export const updatedDefaultMap = (name, id, boolean) => {
     }
 };
 
-export const generateVariation = (name) => {
+export const generateVariation = (name, option) => {
     const categoryList = defaultMap.get(name);
-const listMap = new Map()
+
+    let arr = [];
+    const listMap = new Map();
     if (categoryList) {
         const generatedList = categoryList.defaultVariations.map((item) => {
-
-            const id = uuidv4()
-
-            listMap.set(id, { variation: item, id } )
-            // return { variation: item, id: uuidv4() };
+            const id = uuidv4();
+            option?.array
+                ? arr.push({ variation: item, id })
+                : listMap.set(id, { variation: item, id });
         });
-  
-
-    
-        // return listMap;
     }
 
-    return listMap;
+    return option?.array ? arr : listMap;
 };
 
 export const filteredVariation = (name, options) => {
@@ -100,6 +97,6 @@ export const getValuesFromMap = (options) => {
     for (const value of options.values()) {
         arr.push(value);
     }
-return arr
+    return arr;
     // setVariationOptions(arr);
 };

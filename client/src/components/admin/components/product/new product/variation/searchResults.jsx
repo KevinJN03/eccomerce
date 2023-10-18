@@ -12,7 +12,7 @@ function VariationResults({
     return (
         <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
             <ul className="rounded-inherit border-2">
-                {variation.map((item) => {
+                {variation.length > 0 && variation.map((item) => {
                     const { variation } = item;
                     let variationStr = variation.toLowerCase();
                     let searchTextStr = searchText.toLowerCase();

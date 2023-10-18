@@ -45,10 +45,15 @@ function SelectVariation({}) {
                 setVariation(result);
                 return;
             } else if (defaultVariation) {
-                let list = generateVariation(name);
+                let list = generateVariation(name, {array: true});
+console.log('here')
+
 
                 setVariation(list);
             }
+
+           
+
         } catch (error) {}
     }, []);
 

@@ -14,6 +14,7 @@ function Footer({}) {
         setPublishError,
         priceValue,
         stockValue,
+        TriggerGlobalUpdate_Dispatch
     } = useNewProduct();
     const filteredFiles = files
         .filter((item) => item.isDragDisabled == false)
@@ -44,7 +45,9 @@ function Footer({}) {
         stock: stockValue,
     };
 
-    const publish = async () => {
+    const publish = () => {
+
+        TriggerGlobalUpdate_Dispatch('trigger')
         const formData = new FormData();
 
         for (const item of filteredFiles) {
@@ -61,26 +64,29 @@ function Footer({}) {
         //     formData.append('variations[]', JSON.stringify(item));
         // }
 
-        formData.append('variations', JSON.stringify(variations));
+        for (const item of [...variations]) {
+const { options } = item;
+            let arr = Array.from(options.entries());
+            const newObj = {...item, options: arr};
+                const stringObj = JSON.stringify(newObj)
+            formData.append('variations[]', JSON.stringify(newObj));
+        }
         formData.append('title', title), formData.append('category', category);
         formData.append('gender', gender);
 
         formData.append('price', priceValue);
         formData.append('stock', stockValue);
 
-        try {
-            console.log(values);
-            await adminAxios({
-                method: 'post',
-                url: '/product/create',
-                data: formData,
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-        } catch (error) {
+        adminAxios({
+            method: 'post',
+            url: '/product/create',
+            data: formData,
+            headers: { 'Content-Type': 'multipart/form-data' },
+        }).catch((error) => {
             const errorData = error.response.data;
             console.log('error', errorData);
             setPublishError(errorData);
-        }
+        });
     };
     return (
         <div className="new-product-footer flex gap-2 p-6 font-medium">

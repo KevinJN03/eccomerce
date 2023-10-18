@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useReducer, useState } from 'react';
 import { generateVariation } from '../components/admin/components/product/new product/variation/variationData';
 
 import { EditorState, ContentState } from 'draft-js';
@@ -29,10 +29,7 @@ export const NewProductProvider = ({ children }) => {
             priceHeader: { on: true },
         },
     ]);
-    const [files, setFiles] = useState([
-       
-        
-    ]);
+    const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('test');
     const [description, setDescription] = useState(() =>
         EditorState.createWithContent(ContentState.createFromText('test'))
@@ -47,6 +44,7 @@ export const NewProductProvider = ({ children }) => {
     const [priceValue, setPriceValue] = useState('');
     const [stockValue, setStockValue] = useState('');
     const [delivery, setDelivery] = useState();
+    const [triggerGlobalUpdate, TriggerGlobalUpdate_Dispatch] = useReducer(globalUpdateTrigger_Reducer, false);
     const [gender, setGender] = useState();
     const value = {
         variations,
@@ -71,6 +69,8 @@ export const NewProductProvider = ({ children }) => {
         setPriceValue,
         stockValue,
         setStockValue,
+        triggerGlobalUpdate,
+        TriggerGlobalUpdate_Dispatch,
     };
 
     return (
@@ -79,3 +79,14 @@ export const NewProductProvider = ({ children }) => {
         </newProductContext.Provider>
     );
 };
+
+
+function globalUpdateTrigger_Reducer(state, action) {
+
+    if(action == 'trigger'){
+        return !state
+    } else {
+        throw new Error('invalid action for global trigger')
+    }
+
+}

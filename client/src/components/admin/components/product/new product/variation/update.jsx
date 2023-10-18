@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import OptionError from './error/optionError';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useClickAway } from '@uidotdev/usehooks';
@@ -8,11 +8,24 @@ function Update({}) {
     const [error, setError] = useState('');
     const [value, setValue] = useState('');
     const { setCheck, content } = useVariation();
-    const { category, selected, setUpdate, update, setCheckAll} = content;
+    const { category, selected, setUpdate, update, setCheckAll } = content;
+
+    const [current, setCurrent] = useState({});
     const num = category == 'price' ? 2 : 0;
 
+
+    useEffect(() => {
+
+        const value = checkValue()
+        setCurrent(value)
+    }, [])
     const ref = useClickAway(() => {
-        formatData(value, num, setValue);
+       
+if(value) {
+     const newValue = formatData(value, num, );
+     setValue((prev) => newValue )
+}
+        
     });
 
     const handleOnchange = (value) => {
@@ -32,9 +45,13 @@ function Update({}) {
     const apply = () => {
         try {
             setTimeout(() => {
-                setUpdate({ ...update, [`${category}`]: value, bool: !update.bool });
+                setUpdate({
+                    ...update,
+                    [`${category}`]: value,
+                    bool: !update.bool,
+                });
                 setCheck(false);
-               setCheckAll('clear')
+                setCheckAll('clear');
             }, 200);
 
             // setTimeout(() => {
@@ -45,21 +62,36 @@ function Update({}) {
         }
     };
 
-    const checkValue = () => {
+    function checkValue() {
         let newCategory = category;
 
-        if (newCategory == 'quantity') {
-            newCategory = 'stock';
+        if (newCategory == 'quantity') newCategory = 'stock';
+       
+        let isAllValueSame = true;
+
+        let firstSelectItemValue = selected.entries().next().value[1][
+            newCategory
+        ]
+
+        for (const value of selected.values()) {
+           
+            const newValue = value[newCategory]?.toString();
+            console.log({newValue})
+            if (newValue != firstSelectItemValue?.toString()) {
+                isAllValueSame = false;
+                break;
+            }
         }
-        console.log(newCategory);
-        const newArr = [...selected].map((item) => item[newCategory]);
-        const checkEvery = newArr.every((item) => item == newArr[0] && item);
-        return { amount: newArr[0], check: checkEvery };
-    };
+        if (!firstSelectItemValue && isAllValueSame == true) {
+            
+            firstSelectItemValue = 0;
+           
+        }
+    
+        console.log('heres', { amount: firstSelectItemValue, check: isAllValueSame })
+        return { amount: firstSelectItemValue, check: isAllValueSame };
+    }
 
-    console.log({ value: checkValue() });
-
-    const current = checkValue();
     return (
         <section className="update flex w-full flex-col">
             <h1 className="font-semibold tracking-wide">
@@ -68,11 +100,11 @@ function Update({}) {
             </h1>
             <p className="mb-4 mt-1 text-sm">
                 Current {category}:{' '}
-                {current.check && category == 'price'
-                    ? `£ ${current.amount}`
-                    : current.check == true
+                {current?.check && category == 'price'
+                    ? `£ ${parseFloat(current.amount).toFixed(2)}`
+                    : current?.check
                     ? current.amount
-                    : 'Mixed'}{' '}
+                    : 'Mixed'}
             </p>
             <div className="my-4">
                 <label className="mb-2 font-medium">
