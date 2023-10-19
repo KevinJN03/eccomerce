@@ -55,17 +55,6 @@ function Variation() {
             return dispatch({ type: 'manage' });
         }
     }, [check]);
-
-    const cleanup = () => {
-        // setTemporaryVariation([]);
-        // const newArr = [...temporaryVariation];
-        // const updateDisabled = newArr.map((item) => {
-        //     return { ...item, disabled: false };
-        // });
-        // resetDefaultMap();
-        // setVariations(updateDisabled);
-    };
-
     const value = {
         check,
         setCheck,

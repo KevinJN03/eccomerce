@@ -2,12 +2,31 @@
     --about-primary: #4d6bc6;
 }
 
+
+.input {
+    &:focus {
+        border: 1px solid black !important;
+        outline-color: var(--about-primary) !important
+    }
+}
+.spinner-dot-pulse {
+    --white : 255 255 255
+     
+    }
+
+
 .format {
     @apply m-4 w-7/12 rounded-xl;
 }
 .new-product {
     @apply flex w-full;
 
+    .input-number::-webkit-outer-spin-button,
+    .input-number::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
     .new-product-wrapper {
         @apply rounded-xl  p-6;
     }
@@ -45,29 +64,21 @@ p {
     @apply text-s;
 }
 
-.about {
+.about,#description, #details {
     @apply format bg-white;
 
     input {
-        @apply outline;
+        @apply outline mb-8 mt-3 min-w-full;
     }
 
 }
 
 .outline {
-    @apply mb-8 mt-3  w-full rounded-md p-3;
-    height: 50px;
-    border: 1px solid black;
-    outline-offset: 2px;
-
-    &:focus {
-        outline: 2px solid var(--about-primary);
-    }
+    // mb-8 mt-3 
+    @apply rounded-md p-3 input;
+    height: 48px;
 }
 
-#description {
-    @apply outline;
-}
 
 // Price & Inventory Section
 
@@ -75,18 +86,20 @@ p {
     @apply format;
 
     input {
-        @apply outline;
+        @apply outline w-64 #{!important};
+        
     }
+    
+    
+    
 
     .price-input,
     .quantity-input {
         // width: 30px !important;
         width: 50%;
     }
-}
+   
 
-#details {
-    @apply format;
 }
 
 .category-select {
@@ -99,6 +112,7 @@ p {
 
 .new-product-footer {
     @apply max-w-[1366px];
+
 }
 
 .searchBody {
@@ -123,11 +137,7 @@ p {
         user-select: none;
     }
 
-    .input-number::-webkit-outer-spin-button,
-    .input-number::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+    
 
     table {
         @apply my-6  self-center;

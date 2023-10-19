@@ -2,7 +2,13 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import { convertToRaw } from 'draft-js';
 
 import { adminAxios } from '../../../../../../api/axios';
+import { useEffect, useState } from 'react';
+import publishData from '../utils/publishData';
+import formatFormData from '../utils/formatFormData';
+
 function Footer({}) {
+    const [publish, setPublish] = useState(true);
+
     const {
         description,
         title,
@@ -14,80 +20,49 @@ function Footer({}) {
         setPublishError,
         priceValue,
         stockValue,
-        TriggerGlobalUpdate_Dispatch
+        triggerGlobalUpdate,
+        TriggerGlobalUpdate_Dispatch,
     } = useNewProduct();
-    const filteredFiles = files
-        .filter((item) => item.isDragDisabled == false)
-        .map((item) => item.file);
-    const { blocks } = convertToRaw(description.getCurrentContent());
-    const mappedBlocks = blocks.map(
-        (block) => (!block.text.trim() && '\n') || block.text
-    );
-    // if block type is unordered list, make it into an individual list
-    // else connect blocks
 
-    mappedBlocks.reduce((acc, block) => {
-        let returned = acc;
-        if (block === '\n') returned += block;
-        else returned += `${block}\n`;
-        return returned;
-    }, '');
+    const publishProduct = () => {
+        setPublish(true);
+        setTimeout(() => {
+            const value = {
+                description,
+                title,
+                variations,
+                files,
+                category,
+                gender,
+                profile,
+                setPublishError,
+                priceValue,
+                stockValue,
+            };
+            const formData = formatFormData(value);
+            publishData(formData);
+            setPublish(false);
+        }, 2000);
 
-    const values = {
-        detail: mappedBlocks,
-        title,
-        variations,
-        files: filteredFiles,
-        category,
-        gender,
-        delivery: profile.map((item) => item._id),
-        price: priceValue,
-        stock: stockValue,
+        // }, 0)
     };
 
-    const publish = () => {
+    // function publishData(formData) {
+    //     try {
+    //             adminAxios({
+    //                 method: 'post',
+    //                 url: '/product/create',
+    //                 data: formData,
+    //                 headers: { 'Content-Type': 'multipart/form-data' },
+    //             });
 
-        TriggerGlobalUpdate_Dispatch('trigger')
-        const formData = new FormData();
+    //     } catch (error) {
+    //         const errorData = error.response.data;
+    //         console.log('error', errorData);
+    //         setPublishError(errorData);
+    //     }
+    // }
 
-        for (const item of filteredFiles) {
-            formData.append('files', item);
-        }
-        for (const { _id } of profile) {
-            formData.append('delivery[]', _id);
-        }
-
-        for (const item of mappedBlocks) {
-            formData.append('detail[]', item);
-        }
-        // for (const item of variations) {
-        //     formData.append('variations[]', JSON.stringify(item));
-        // }
-
-        for (const item of [...variations]) {
-const { options } = item;
-            let arr = Array.from(options.entries());
-            const newObj = {...item, options: arr};
-                const stringObj = JSON.stringify(newObj)
-            formData.append('variations[]', JSON.stringify(newObj));
-        }
-        formData.append('title', title), formData.append('category', category);
-        formData.append('gender', gender);
-
-        formData.append('price', priceValue);
-        formData.append('stock', stockValue);
-
-        adminAxios({
-            method: 'post',
-            url: '/product/create',
-            data: formData,
-            headers: { 'Content-Type': 'multipart/form-data' },
-        }).catch((error) => {
-            const errorData = error.response.data;
-            console.log('error', errorData);
-            setPublishError(errorData);
-        });
-    };
     return (
         <div className="new-product-footer flex gap-2 p-6 font-medium">
             <button
@@ -98,11 +73,17 @@ const { options } = item;
             </button>
             <button className="theme-btn ml-auto">Preview</button>
             <button className="theme-btn">Save as draft</button>
-            <button className="theme-btn bg-black text-white" onClick={publish}>
-                Publish
+            <button className="theme-btn  bg-black w-24 flex justify-center items-center" onClick={publishProduct}>
+                {!publish && <span className="text-white">Publish</span>}
+                {publish && (
+                    <>
+                        <div className="spinner-dot-pulse [--spinner-color:var(--white)] spinner-sm">
+                            <div className="spinner-pulse-dot "></div>
+                        </div>
+                    </>
+                )}
             </button>
         </div>
     );
 }
-
 export default Footer;

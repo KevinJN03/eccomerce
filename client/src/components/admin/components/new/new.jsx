@@ -10,7 +10,6 @@ import { Save } from '@mui/icons-material';
 import axios, { adminAxios } from '../../../../api/axios';
 import handleError, { closeError } from '../../../common/handleError';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-
 import { v4 as uuidv4 } from 'uuid';
 import ErrorList from './errorList';
 import Success from './success';
@@ -61,7 +60,6 @@ function New({ type, title }) {
                 setMobile(data.mobile);
                 setInterest(data.interest);
                 setEmail(data.email);
-                
 
                 setDob(dayjs(data.dob));
                 {
@@ -72,7 +70,7 @@ function New({ type, title }) {
     const handleFile = (e) => {
         let fileType = e.target.files[0].type;
         if (fileType.includes('image')) {
-            setGenerateUrl(true)
+            setGenerateUrl(true);
             setFile(e.target.files[0]);
         } else {
             setError([
@@ -114,16 +112,13 @@ function New({ type, title }) {
         };
         if (generateUrl) {
             body.file = file;
-           
         }
 
-        if(type == 'new'){
+        if (type == 'new') {
             body.password = password;
         }
         console.log('body', body);
-        let option =
-            type == 'new' ? 'create' : `update/${id}`;
-
+        let option = type == 'new' ? 'create' : `update/${id}`;
 
         adminAxios
             .postForm(`/user/${option}`, body)
@@ -161,7 +156,12 @@ function New({ type, title }) {
 
                     <div className="bottom">
                         {success && (
-                            <Success setSuccess={setSuccess} userId={userId} type={type} id={id}/>
+                            <Success
+                                setSuccess={setSuccess}
+                                userId={userId}
+                                type={type}
+                                id={id}
+                            />
                         )}
                         {!success && (
                             <>
@@ -195,7 +195,7 @@ function New({ type, title }) {
                                 </div>
 
                                 <div className="right">
-                                    <form action>
+                                    <section>
                                         <div className="formInput">
                                             <label htmlFor="file">
                                                 Image:
@@ -212,7 +212,7 @@ function New({ type, title }) {
                                         </div>
 
                                         <User_Form states={value} type={type} />
-                                    </form>
+                                    </section>
                                 </div>
                             </>
                         )}

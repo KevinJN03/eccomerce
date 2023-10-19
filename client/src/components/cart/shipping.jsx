@@ -1,7 +1,7 @@
 function Shipping({}) {
     return (
         <span className="shipping">
-            <select name="shipping" className="shipping-select">
+            <select id='shipping' name="shipping" className="shipping-select">
                 <option value="Standard Shipping">
                     Standard Shipping (Free)
                 </option>

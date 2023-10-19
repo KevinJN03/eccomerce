@@ -10,24 +10,24 @@ export const useNewProduct = () => {
 
 export const NewProductProvider = ({ children }) => {
     const [variations, setVariations] = useState([
-        {
-            id: 1,
-            name: 'Colour',
-            options: generateVariation('Colour'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: true },
-            priceHeader: { on: true },
-        },
-        {
-            id: 2,
-            name: 'Size',
-            options: generateVariation('Size'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: false },
-            priceHeader: { on: true },
-        },
+        // {
+        //     id: 1,
+        //     name: 'Colour',
+        //     options: generateVariation('Colour'),
+        //     disabled: false,
+        //     default: true,
+        //     quantityHeader: { on: true },
+        //     priceHeader: { on: true },
+        // },
+        // {
+        //     id: 2,
+        //     name: 'Size',
+        //     options: generateVariation('Size'),
+        //     disabled: false,
+        //     default: true,
+        //     quantityHeader: { on: false },
+        //     priceHeader: { on: true },
+        // },
     ]);
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('test');

@@ -14,7 +14,7 @@ function Switch({state, toggle}) {
                 } */`}
                 readOnly
                 checked={state}
-                defaultChecked={state}
+           
             />
             <span className="absolute right-[5px] flex items-center justify-center bg-transparent">
                 <CheckRoundedIcon

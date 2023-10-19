@@ -1,34 +1,19 @@
 import { useVariation } from '../../../../../../context/variationContext';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import Table from './table/table.jsx';
 import SingleList from './singleList';
 
 function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
-    const [combine, setCombine] = useState({ id: uuidV4() , options: new Map()});
-    const handleUpdate = (
-        category,
-        selected,
-        setUpdate,
-        update,
-        setCheckAll
-    ) => {
-        setCheck(true);
-        dispatch({
-            type: 'update',
-            category,
-            selected,
-            setUpdate,
-            update,
-            setCheckAll,
-        });
-    };
+    const [combine, setCombine] = useState({
+        id: uuidV4(),
+        options: new Map(),
+    });
 
     useEffect(() => {
-        console.log('variationList mount');
         const everyVariation = variations.every((item) => item.combine == true);
-        debugger
+
         if (everyVariation && variations.length > 1) {
             console.log('variationList combine');
             const onlyOptions = [...variations].map(({ options }) => {
@@ -67,36 +52,32 @@ function VariationList({}) {
             };
 
             setCombine(newVariation);
-        }else {
-            setCombine((prevState) => {return {...prevState, options: new Map()}})
-        } 
+        } else {
+            setCombine((prevState) => {
+                return { ...prevState, options: new Map() };
+            });
+        }
     }, [variations]);
 
     return (
         <>
             {combine?.options.size >= 1 && (
                 <SingleList
-                    variation={combine}
                     key={combine.id}
-                    handleUpdate={handleUpdate}
+                    variation={combine}
                     combine={combine}
                     isCombine={true}
                     setCombine={setCombine}
                 />
-            )
-            }
-            {
-            
-            combine?.options.size < 1 &&
+            )}
+            {combine?.options.size < 1 &&
                 variations.length > 0 &&
-                variations.map((variation, idx) => {
+                variations.map((variation) => {
                     return (
                         <>
                             <SingleList
-                            variationIndex = {idx}
-                                variation={variation}
                                 key={variation.id}
-                                handleUpdate={handleUpdate}
+                                variation={variation}
                                 isCombine={false}
                                 combine={combine}
                                 setCombine={setCombine}

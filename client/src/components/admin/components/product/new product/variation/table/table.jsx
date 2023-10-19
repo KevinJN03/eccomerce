@@ -32,7 +32,7 @@ function Table({
         }
     }, [checkAll]);
     useEffect(() => {
-        console.log({ selected: selected.size, count });
+    
 
         if (selected.size == count) {
             setCheckAll(true);
@@ -74,7 +74,7 @@ function Table({
                 variationOptions.map((item) => {
                     return (
                         <Row
-                        variationIndex ={variationIndex }
+                        key={item.id}
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
                             singleVariation={item}
@@ -84,7 +84,6 @@ function Table({
                             selected={selected}
                             setSelected={setSelected}
                             update={update}
-                           
                             isCombine={isCombine}
                             setCombine={setCombine}
                         />

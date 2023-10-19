@@ -59,9 +59,9 @@ function Description({}) {
     };
     return (
         <section id="Description">
-            <label htmlFor="#description" className="text-lg font-medium">
+            <p className="text-lg font-medium">
                 Description<span className="asterisk">*</span>
-            </label>
+            </p>
             <p>
                 What makes your item special? Buyers will only see the first few
                 lines unless they expand the description.
@@ -75,7 +75,7 @@ function Description({}) {
             )}
             <section className="richText-Editor ">
                 <div className="richText-Editor-header">
-                    <select className=" !z-10 my-1 h-[20px] !min-h-[20px] max-w-[60px] rounded-none border-none bg-white text-sm  ">
+                    <select id='descriptionOption' name='descriptionOption' className=" !z-10 my-1 h-[20px] !min-h-[20px] max-w-[60px] rounded-none border-none bg-white text-sm">
                         {Object.keys(customStyleMap).map((item) => {
                             return (
                                 <option key={item} value={item}>

@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
 import Table from './table/table';
 import { motion, AnimatePresence, easeIn, easeOut } from 'framer-motion';
-function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, variationIndex }) {
+import { useVariation } from '../../../../../../context/variationContext';
+
+import { v4 as uuidv4 } from 'uuid';
+function SingleList({
+    variation,
+    isCombine,
+    setCombine,
+    combine,
+
+    variationIndex,
+}) {
     const { name, options, priceHeader, quantityHeader } = variation;
     const [selected, setSelected] = useState(new Map());
-
+    const { dispatch, setCheck } = useVariation();
     const [update, setUpdate] = useState({
         price: null,
         stock: null,
@@ -24,11 +34,21 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
             return 'noHeader';
         }
     };
+    const handleUpdate = (category) => {
+        setCheck(true);
+
+        dispatch({
+            type: 'update',
+            category,
+            selected,
+            setUpdate,
+            update,
+            setCheckAll,
+        });
+        console.log('update modal open');
+    };
 
     const layout = determineLayout();
-
-    console.log('layout', layout);
-
     const variants = {
         initial: {
             opacity: 0,
@@ -39,18 +59,20 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
         },
         exit: {
             opacity: 0,
-            transition: { duration: 0.1, ease: easeOut, opacity: {delay: 0} },
+            transition: { duration: 0.1, ease: easeOut, opacity: { delay: 0 } },
         },
     };
     return (
-        <section className="mt-12 flex basis-full flex-col">
+        <section className="mt-12 flex basis-full flex-col" key={variation.id}>
             <section className="flex w-full flex-row justify-between">
                 <div className="flex flex-col">
                     <h3 className="text-lg font-semibold tracking-wide">
                         {name}
                     </h3>
                     <p>{`${options.size || options.length} ${
-                        options.size || options.length > 1 ? 'variants' : 'variant'
+                        options.size || options.length > 1
+                            ? 'variants'
+                            : 'variant'
                     }`}</p>
                 </div>
                 <AnimatePresence>
@@ -58,9 +80,9 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
                         <motion.div
                             className="flex-no-wrap variations-center flex flex-row gap-x-3 py-2"
                             variants={variants}
-                            initial='initial'
-                            animate='animate'
-                            exit='exit'
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
                         >
                             <motion.p
                                 key={selected.size}
@@ -74,15 +96,7 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
                                 <button
                                     type="button"
                                     className="theme-btn"
-                                    onClick={() =>
-                                        handleUpdate(
-                                            'price',
-                                            selected,
-                                            setUpdate,
-                                            update,
-                                            setCheckAll
-                                        )
-                                    }
+                                    onClick={() => handleUpdate('price')}
                                 >
                                     Update price
                                 </button>
@@ -91,15 +105,7 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
                                 <button
                                     type="button"
                                     className="theme-btn"
-                                    onClick={() =>
-                                        handleUpdate(
-                                            'quantity',
-                                            selected,
-                                            setUpdate,
-                                            update,
-                                            setCheckAll
-                                        )
-                                    }
+                                    onClick={() => handleUpdate('quantity')}
                                 >
                                     Update Quantity
                                 </button>
@@ -109,7 +115,7 @@ function SingleList({ variation, handleUpdate, isCombine, setCombine , combine, 
                 </AnimatePresence>
             </section>
             <Table
-            variationIndex ={variationIndex }
+                key={variation.id}
                 variationList={variation}
                 setSelected={setSelected}
                 selected={selected}

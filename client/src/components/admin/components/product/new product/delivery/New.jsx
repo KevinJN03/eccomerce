@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useContent } from '../../../../../../context/ContentContext';
-import Input from '../input';
+// import InputLabel from '../inputLabel';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CustomTime from './customTime';
 import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
@@ -186,6 +186,8 @@ function New({ close, setLoadingState }) {
             <div className="flex flex-row flex-wrap items-center justify-between">
                 <label htmlFor="processing-time">Processing Time</label>
                 <select
+                id='options'
+                name='options'
                     key={uuidv4()}
                     className="!border-1 select max-w-[50%] appearance-none  rounded-none"
                     onChange={(e) => handleOnchange(e, e.target.options)}

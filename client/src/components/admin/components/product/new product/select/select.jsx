@@ -14,6 +14,8 @@ export default function CategorySelect({
     };
     return (
         <select
+        id='options'
+        name='options'
             className="category-select select my-0 !min-w-[160px] outline"
             defaultValue={title}
             value={state}

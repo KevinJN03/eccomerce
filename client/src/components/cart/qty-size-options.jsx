@@ -5,7 +5,10 @@ function QTY_SIZE_OPTION({ options, label, type, selectSize }) {
     return (
         <span id="qty-size-option">
             <label htmlFor="qty-size-select">{label}</label>
-            <select name="quantity-select" id="qty-size-select">
+            <select
+                name="quantity-select"
+                id="qty-size-select"
+            >
                 {options.map((num, index) => {
                     return (
                         <option

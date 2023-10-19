@@ -17,6 +17,8 @@ function SelectOptions({ handleSelect, select, setSelect }) {
     }, []);
     return (
         <select
+        id='options'
+        name='options'
             className=" select max-h-min max-w-[200px]"
             onChange={(e) =>
                 handleSelect(

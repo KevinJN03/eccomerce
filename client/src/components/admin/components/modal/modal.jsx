@@ -51,7 +51,7 @@ function Modal({
         };
     }, [loading]);
 
-    console.log(deleteType);
+
     return (
         <section >
             <input

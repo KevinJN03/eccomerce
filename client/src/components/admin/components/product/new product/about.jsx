@@ -29,8 +29,8 @@ function About() {
                     title={'About'}
                     text="Tell the world all about your item and why they’ll love it."
                 />
-                <form id="about-form" className="mt-6">
-                    <label htmlFor="#title" className="text-lg font-medium">
+                <section id="about-form" className="mt-6">
+                    <label htmlFor="title" className="text-lg font-medium">
                         Title<span className="asterisk">*</span>
                     </label>
                     <p>
@@ -48,16 +48,17 @@ function About() {
                         id="title"
                         max={140}
                         min={1}
+                       
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         className={titleError && 'bg-red-100'}
                     />
-                </form>
+                </section>
 
-                <form className="mb-4">
-                    <label htmlFor="#photo" className="text-lg font-medium">
+                <section className="mb-4">
+                    <p className="text-lg font-medium">
                         Photo<span className="asterisk">*</span>
-                    </label>
+                    </p>
                     <p className="mb-2">Add up to 6 photos</p>
                     {filesError && (
                         <OptionError
@@ -66,7 +67,7 @@ function About() {
                         />
                     )}
                     <DragDropFile filesError={filesError} />
-                </form>
+                </section>
 
                 <Description />
             </div>

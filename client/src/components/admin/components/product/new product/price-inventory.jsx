@@ -1,6 +1,8 @@
 import { useNewProduct } from '../../../../../context/newProductContext';
 import New_Product_Header from './header';
-import Input from './input';
+import InputLabel from './inputLabel.jsx';
+
+import { Input as InventoryInput } from './variation/table/row';
 import './new_product.scss';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
@@ -18,15 +20,17 @@ export default function Price_Inventory() {
         setPriceValue,
         stockValue,
         setStockValue,
+        publish,
     } = useNewProduct();
 
     const { variations } = useNewProduct();
     const checkPrice = variations.some((item) => item.priceHeader.on == true);
+    const [error, setError] = useState({ price: null, stock: null });
     const [priceError, setPriceError] = useState('');
     const [stockError, setStockError] = useState('');
 
-    useNewProductError('price', setPriceError);
-    useNewProductError('stock', setStockError);
+    // useNewProductError('price', setPriceError);
+    // useNewProductError('stock', setStockError);
 
     useEffect(() => {
         setPriceError('');
@@ -37,11 +41,11 @@ export default function Price_Inventory() {
     }, [stockValue]);
 
     useEffect(() => {
-return() => {
-    setPriceValue('')
-    setPriceValue('')
-}
-    }, [])
+        return () => {
+            setPriceValue('');
+            setPriceValue('');
+        };
+    }, []);
     const onStockClickAway = () => {
         if (!stockValue) return;
         const formatStock = formatData(stockValue, 0);
@@ -72,6 +76,27 @@ return() => {
     const handleStockChange = (e) => {
         setStockValue(e.target.value);
     };
+
+    const priceInputProps = {
+        label: 'Price',
+        checker: checkPrice,
+        visible: true,
+        property: 'price',
+        value: priceValue,
+        handleOnchange: handlePriceChange,
+        error,
+    };
+
+    const stockInputProps = {
+        label: 'Quantity',
+        checker: checkQuantity,
+        visible: true,
+        property: 'stock',
+        value: stockValue,
+        handleOnchange: handleStockChange,
+        error,
+    };
+
     return (
         <section className="new-product-wrapper">
             <section id="price-inventory" className="flex flex-col">
@@ -79,53 +104,25 @@ return() => {
                     title="Price & Inventory"
                     text="Set a price for your item and indicate how many are available for sale."
                 />
+                {[priceInputProps, stockInputProps].map((item)=> {
 
-                {checkPrice == false ? (
-                    <Input label={'Price'}>
-                        {priceError && (
-                            <OptionError
-                                msg={priceError}
-                                className={'px-0 py-1 pb-0'}
-                            />
+                    const {checker, label} = item
+                    return (
+                        <>
+                        {!checker ? (
+                            <>
+                              <InputLabel label={label} id={label.toLowerCase()} />
+                                <ClickAwayListener onClickAway={onPriceClickAway}>
+                                    <InventoryInput {...item} />
+                                </ClickAwayListener>
+                            </>
+                        ) : (
+                            <DisableInput text={'Price'} />
                         )}
-                        <ClickAwayListener onClickAway={onPriceClickAway}>
-                            <section className="relative mb-4 mt-3 flex items-center">
-                                <span className="absolute left-3 top-1/2 translate-y-[-50%] text-xl font-medium">
-                                    £
-                                </span>
-                                <input
-                                    type="text"
-                                    className={'price-input !m-0 !px-7 text-lg'}
-                                    onChange={handlePriceChange}
-                                    value={priceValue}
-                                />
-                            </section>
-                        </ClickAwayListener>
-                    </Input>
-                ) : (
-                    <DisableInput text={'Price'} />
-                )}
-
-                {checkQuantity == false ? (
-                    <Input label={'Quantity'}>
-                        {stockError && (
-                            <OptionError
-                                msg={stockError}
-                                className={'px-0 py-1 pb-0'}
-                            />
-                        )}
-                        <ClickAwayListener onClickAway={onStockClickAway}>
-                            <input
-                                type="text"
-                                className="quantity-input"
-                                value={stockValue}
-                                onChange={handleStockChange}
-                            />
-                        </ClickAwayListener>
-                    </Input>
-                ) : (
-                    <DisableInput text={'Quantity'} />
-                )}
+                        </>
+                    )
+  
+                })}
             </section>
         </section>
     );

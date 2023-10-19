@@ -1,18 +1,14 @@
 import Switch from '../toggleSwitch/switch';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import OptionError from '../error/optionError';
 import formatData from '../formatData';
-import ErrorAlert from '../error/errorAlert';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import handleValue from '../utils/handleValue';
-import {
-    motion,
-    AnimatePresence,
-    easeIn,
-    easeOut,
-    easeInOut,
-} from 'framer-motion';
+import { useClickAway } from '@uidotdev/usehooks';
+import '../../new_product.scss'
+import { ClickAwayListener } from '@mui/material';
+import handleValue from '../../utils/handleValue';
+import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
+import { useVariation } from '../../../../../../../context/variationContext';
 function Row({
     singleVariation,
     checkAll,
@@ -25,93 +21,61 @@ function Row({
     update,
     isCombine,
     setCombine,
-    variationIndex,
     // setSingleVariation,
 }) {
     const [error, setError] = useState({ price: null, stock: null });
     const [visible, setVisible] = useState(singleVariation?.visible || true);
-    const [check, setCheck] = useState(false);
-    const [price, setPrice] = useState(singleVariation?.price || NaN);
-    const [stock, setStock] = useState(singleVariation?.stock || NaN);
+    const [inputCheck, setInputCheck] = useState(false);
+
+    const { check } = useVariation();
+    const [price, setPrice] = useState(singleVariation?.price || '');
+    const [stock, setStock] = useState(singleVariation?.stock || '');
     const [trigger, setTrigger] = useState(false);
-    const [updater, setUpdater] = useState(false);
-    const {
-        globalUpdate,
-        setGlobalUpdate,
-        setVariations,
-        variations,
-        triggerGlobalUpdate,
-    } = useNewProduct();
 
-    const updateList = () => {
-        console.log('update');
-        const { options } = variationList;
-        // get the variation, then update variation
-        const newObj = options.get(singleVariation.id);
-        newObj.price = price;
-        newObj.stock = stock;
-        newObj.visible = visible;
-        const newOptions = new Map(options).set(singleVariation.id, newObj);
-        if (!isCombine) {
-            setVariations((prevState) => {
-                return prevState.map((item) => {
-                    if (item.id == variationList.id) {
-                        return { ...item, options: newOptions };
-                    }
-                    return item;
-                });
-            });
-        } else {
-            setCombine((prevState) => {
-                return { ...prevState, options: newOptions };
-            });
-        }
-    };
-
-    const onClickAway = () => {
-        if (!price && !stock) {
-            return;
-        }
-        const newPrice = formatData(price, 2);
-        const newStock = formatData(stock, 0);
-        setPrice(() => newPrice);
-        setStock(() => newStock);
-        setUpdater((prevState) => !prevState);
-    };
+    const { globalUpdate, setVariations } = useNewProduct();
 
     useEffect(() => {
-        updateList();
-    }, [updater]);
+        if (check == true) {
+            console.log('onclickAway trigger');
+            onClickAway();
+        }
+
+        // updateList(price, stock)
+    }, [check]);
+
+    // useEffect(() => {
+    //     updateList();
+    // }, [updater]);
     useEffect(() => {
         if (checkAll == 'clear') {
-            setCheck(false);
+            setInputCheck(() => false);
             return;
         }
         if (checkAll == true) {
             // debugger
-            setCheck(true);
+            setInputCheck(() => true);
         } else if (checkAll == false) {
-            setCheck(false);
+            setInputCheck(() => false);
         }
     }, [checkAll]);
 
     useEffect(() => {
         const count = variationList.options.length;
 
-        if (check == true) {
+        if (inputCheck == true) {
             selected.set(singleVariation.id, singleVariation);
-        } else if (check == false) {
-            setCheckAll(null);
+        } else if (inputCheck == false) {
+            // setCheckAll(null);
 
             selected.delete(singleVariation.id);
         }
 
         setSelected((prevState) => new Map(selected));
-    }, [check]);
+    }, [inputCheck]);
     const handleCheck = (e) => {
         console.log('handleCheck');
         e.stopPropagation();
-        setCheck(!check);
+        setInputCheck(!inputCheck);
     };
 
     // once update is apply, update input field
@@ -119,18 +83,22 @@ function Row({
     useEffect(() => {
         let timeout;
         const findItemInSelect = selected.has(singleVariation.id);
-        if (findItemInSelect) {
-            setTrigger(!trigger);
-        }
 
+        if (findItemInSelect == false) return;
+        setTrigger(!trigger);
+        updateList(update.price, update.quantity);
         setTimeout(() => {
             if (update.price != price && findItemInSelect) {
                 setPrice(update.price);
-                setError(clearError('price'));
+                setError((prevState) => {
+                    return { ...prevState, price: null };
+                });
             }
             if (update.quantity != stock && findItemInSelect) {
                 setStock(update.quantity);
-                setError(clearError('stock'));
+                setError((prevState) => {
+                    return { ...prevState, stock: null };
+                });
             }
         }, 150);
         return () => {
@@ -166,6 +134,50 @@ function Row({
 
         handleValue(options);
     };
+
+    function onClickAway() {
+        if (
+            (!price && !stock) ||
+            (singleVariation.price == price &&
+                singleVariation.stock == stock &&
+                singleVariation.visible == visible)
+        ) {
+            return;
+        }
+        console.log({ singleVariation, price, stock });
+        console.log('clickaway pass');
+        const newPrice = formatData(price, 2);
+        const newStock = formatData(stock, 0);
+        setPrice(() => newPrice);
+        setStock(() => newStock);
+        updateList(newPrice, newStock);
+        // setUpdater((prevState) => !prevState);
+    }
+
+    function updateList(priceState, stockState) {
+        console.log('update row');
+        const { options } = variationList;
+        // get the variation, then update variation
+        const newObj = options.get(singleVariation.id);
+        newObj.price = priceState;
+        newObj.stock = stockState;
+        newObj.visible = visible;
+        const newOptions = new Map(options).set(singleVariation.id, newObj);
+        if (!isCombine) {
+            setVariations((prevState) => {
+                return prevState.map((item) => {
+                    if (item.id == variationList.id) {
+                        return { ...item, options: newOptions };
+                    }
+                    return item;
+                });
+            });
+        } else {
+            setCombine((prevState) => {
+                return { ...prevState, options: newOptions };
+            });
+        }
+    }
     const handleStock = (e) => {
         e.stopPropagation();
         const value = e.target.value;
@@ -187,20 +199,12 @@ function Row({
     const soldOut = () => {
         const newArr = Array.from(String(stock));
         if (newArr.length > 0) {
-            let check = newArr.every((item) => item == '0');
-            return check;
+            let inputCheck = newArr.every((item) => item == '0');
+            return inputCheck;
         } else {
             return null;
         }
     };
-
-    // const checkInSelect = selected.some((item) => item.id == variation.id);
-
-    // className={`h-full max-h-28 w-full min-w-full ${
-    //     state && '!hover:bg-[var(--light-grey)]'
-    // } ${check && state && '!bg-gray-200'}`}
-    // exit={{ background:  '#fffff', }}
-    // role="presentation"
     const tableRowVariants = {
         initial: {
             opacity: 1,
@@ -228,7 +232,7 @@ function Row({
     };
 
     const inputVariant = {
-        check: {
+        inputCheck: {
             opacity: 1,
             backgroundColor: '#dcf8d2',
             transition: { checked: { duration: 2 } },
@@ -238,12 +242,28 @@ function Row({
             transition: { checked: { duration: 2 } },
         },
     };
+
+    const inputPriceProps = {
+        value: price,
+        property: 'price',
+        handleOnchange: handlePrice,
+        error,
+        visible,
+    };
+
+    const inputStockProps = {
+        value: stock,
+        property: 'stock',
+        handleOnchange: handleStock,
+        error,
+        visible,
+    };
     return (
         <AnimatePresence>
             <ClickAwayListener onClickAway={onClickAway}>
                 <motion.tr
                     className={`h-full max-h-28 w-full min-w-full  ${
-                        check && visible && '!bg-gray-200'
+                        inputCheck && visible && '!bg-gray-200'
                     }`}
                     key={trigger}
                     variants={tableRowVariants}
@@ -259,7 +279,9 @@ function Row({
                             } align-middle`}
                         >
                             <motion.input
-                                key={check}
+                                id={`check-${singleVariation.id}`}
+                                name={`check-${singleVariation.id}`}
+                                key={inputCheck}
                                 // onAnimationComplete={(definition) => {
                                 //     console.log(
                                 //         'Completed animating',
@@ -268,12 +290,12 @@ function Row({
                                 //     );
                                 // }}
                                 variants={inputVariant}
-                                animate={check ? 'check' : 'uncheck'}
+                                animate={inputCheck ? 'inputCheck' : 'uncheck'}
                                 initial={false}
                                 type="checkbox"
                                 className={`checkbox no-animation !rounded-[3px]`}
-                                /* check && !variation.disabled */
-                                checked={check && visible}
+                                /* inputCheck && !variation.disabled */
+                                checked={inputCheck && visible}
                                 onChange={handleCheck}
                                 disabled={!visible}
                             />
@@ -302,50 +324,16 @@ function Row({
                         </td>
                     )}
 
-                    {isPriceHeaderOn && (
-                        <>
-                            <td
-                                className={`relative ${
-                                    !visible && 'opacity-0'
-                                }`}
-                            >
-                                <div className="relative">
-                                    <span className="pound absolute left-2 top-2/4 translate-y-[-50%] font-medium">
-                                        £
-                                    </span>
-                                    <input
-                                        min={'0.99'}
-                                        type="number"
-                                        step=".01"
-                                        className={`price-input input-number input input-lg w-full rounded-lg px-4 py-4 ${
-                                            error.price &&
-                                            'border-red-300 bg-red-200'
-                                        }`}
-                                        onChange={(e) => handlePrice(e)}
-                                        value={price}
-                                        disabled={!visible}
-                                    />
-                                </div>
-
-                                {error.price && visible && (
-                                    <OptionError
-                                        msg={error.price}
-                                        className={'!items-start'}
-                                    />
-                                )}
-                            </td>
-                        </>
-                    )}
+                    {isPriceHeaderOn && <RowInput {...inputPriceProps} />}
 
                     {isQuantityHeaderOn && (
-                        <Input
-                            value={stock}
-                            property={'stock'}
-                            handleOnchange={handleStock}
-                            error={error}
-                            visible={visible}
+                        <RowInput
+                          {
+                           ...inputStockProps
+                          }
+                                
+                            
                         />
-                    
                     )}
 
                     <td
@@ -377,23 +365,48 @@ function Row({
     );
 }
 
-function Input({ visible, value, error, property, handleOnchange }) {
+export function RowInput(props) {
+    const { visible, error, property } = props;
+
+  
+
+ 
     return (
         <td className={`relative ${!visible && 'opacity-0'}`}>
-            <input
-                onChange={handleOnchange}
-                value={value}
-                type="number"
-                className={`input-number input input-lg w-full rounded-lg  px-2 py-4 ${
-                    error[property] && 'border-red-300 bg-red-200'
-                }`}
-                disabled={!visible}
-            />
-            {error.stock && visible && (
-                <OptionError msg={error[property]} className={'!items-start'} />
+            <Input {...props} />
+            {error?.[property] && visible && (
+                <OptionError
+                    msg={error?.[property]}
+                    className={'!items-start !pl-0'}
+                />
             )}
         </td>
     );
 }
 
+export function Input(props) {
+    const { visible, value, error, property, handleOnchange, } = props;
+
+    return (
+        <div className="relative flex items-center !h-fit">
+            {property == 'price' && (
+                <span className="pound absolute left-2 top-2/4 translate-y-[-50%] items-center !my-auto font-medium">
+                    £
+                </span>
+            )}
+            <input
+                id={property}
+                name={property}
+                onChange={handleOnchange}
+                autocomplete="off"
+                value={value}
+                type="number"
+                className={`input input-number w-full rounded-lg ${
+                    property == 'price' ? 'px-4' : 'px-2'
+                }  py-4 ${error?.[property] && 'border-red-300 bg-red-200'}`}
+                disabled={!visible}
+            />
+        </div>
+    );
+}
 export default Row;

@@ -13,19 +13,15 @@ function Update({}) {
     const [current, setCurrent] = useState({});
     const num = category == 'price' ? 2 : 0;
 
-
     useEffect(() => {
-
-        const value = checkValue()
-        setCurrent(value)
-    }, [])
+        const value = checkValue();
+        setCurrent(value);
+    }, []);
     const ref = useClickAway(() => {
-       
-if(value) {
-     const newValue = formatData(value, num, );
-     setValue((prev) => newValue )
-}
-        
+        if (value) {
+            const newValue = formatData(value, num);
+            setValue((prev) => newValue);
+        }
     });
 
     const handleOnchange = (value) => {
@@ -64,31 +60,21 @@ if(value) {
 
     function checkValue() {
         let newCategory = category;
-
         if (newCategory == 'quantity') newCategory = 'stock';
-       
         let isAllValueSame = true;
-
         let firstSelectItemValue = selected.entries().next().value[1][
             newCategory
-        ]
-
+        ];
         for (const value of selected.values()) {
-           
             const newValue = value[newCategory]?.toString();
-            console.log({newValue})
             if (newValue != firstSelectItemValue?.toString()) {
                 isAllValueSame = false;
                 break;
             }
         }
         if (!firstSelectItemValue && isAllValueSame == true) {
-            
             firstSelectItemValue = 0;
-           
         }
-    
-        console.log('heres', { amount: firstSelectItemValue, check: isAllValueSame })
         return { amount: firstSelectItemValue, check: isAllValueSame };
     }
 
