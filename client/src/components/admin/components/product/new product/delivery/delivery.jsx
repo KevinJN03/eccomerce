@@ -14,10 +14,8 @@ const views = {
     Edit: <New />,
 };
 import {
-    ContentProvider,
     useContent,
 } from '../../../../../../context/ContentContext';
-import Edit from './edit';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 import OptionError from '../variation/error/optionError';
 import useNewProductError from '../../../../../../useNewProductError';
@@ -31,14 +29,14 @@ export default function Delivery() {
         loading,
         setLoading,
         dispatch,
-        publishError,
+        
     } = useContent();
-    const { profile } = useNewProduct();
+    const { profile, publishErrorDispatch, publishError } = useNewProduct();
     const [deliveryError, setDeliveryError] = useState('');
-
-    useNewProductError('delivery', setDeliveryError);
+useNewProductError('delivery', setDeliveryError)
     useEffect(() => {
 setDeliveryError('')
+publishErrorDispatch({type: 'clear', path: 'delivery'})
     },[profile])
     
     const back = () => {

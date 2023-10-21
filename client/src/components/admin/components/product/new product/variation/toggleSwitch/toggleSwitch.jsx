@@ -10,10 +10,10 @@ function ToggleSwitch({
     state,
     setState,
     notDisabled,
-    notDisabledVariation,
-    setSelect,
-    select,
+    setDisableApply,
     property,
+    selection,
+    setSelection,
 }) {
     const { temporaryVariation, setTemporaryVariation } = useVariation();
 
@@ -21,7 +21,6 @@ function ToggleSwitch({
         let newArr;
 
         if (state == false) {
-      
             newArr = [...temporaryVariation].map((item) => {
                 return { ...item, [property]: { on: false }, combine: false };
             });
@@ -31,7 +30,7 @@ function ToggleSwitch({
             });
         }
 
-        setTemporaryVariation(newArr);
+        setTemporaryVariation(() => newArr);
     }, [state]);
 
     useEffect(() => {
@@ -39,51 +38,25 @@ function ToggleSwitch({
             const newTemporary = [...temporaryVariation].filter(
                 (item) => item.disabled == false
             );
-            let value = '';
-            let count = 0;
+            let value = {};
+
             newTemporary.map((item) => {
                 if (item[property].on == true) {
+                    // add the values to the select array
+
                     if (value.length < 1) {
                         value += item.name;
                     } else {
                         value += ` and ${item.name}`;
                     }
-
-                    count += 1;
                 }
             });
+
             return value;
         };
 
-        let check = checkSelect();
-        setSelect(check);
+        // let check = checkSelect();
     }, []);
-
-    const handleSelect = (value, both) => {
-        console.log('handleSelect triggered');
-        console.log('both', both);
-        const newTemporaryVariation = [...temporaryVariation].filter(
-            (item) => item.disabled !== true
-        );
-
-        let update;
-        if (both == 'true') {
-            update = newTemporaryVariation.map((item) => {
-                return { ...item, [property]: { on: true } };
-            });
-        } else {
-            update = newTemporaryVariation.map((item) => {
-                if (item.name == value) {
-                    return { ...item, [property]: { on: true } };
-                }
-
-                return { ...item, [property]: { on: false } };
-            });
-        }
-
-        setTemporaryVariation(update);
-        setSelect(value);
-    };
 
     const handleToggle = () => {
         setState(!state);
@@ -102,9 +75,10 @@ function ToggleSwitch({
 
             {notDisabled > 1 && state && (
                 <SelectOptions
-                    handleSelect={handleSelect}
-                    select={select}
-                    setSelect={setSelect}
+                    property={property}
+                    setDisableApply={setDisableApply}
+                    selection={selection}
+                    setSelection={setSelection}
                 />
             )}
         </section>

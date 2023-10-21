@@ -7,7 +7,7 @@ function Delete({ id }) {
     const { loading, setLoading } = useContent();
     return (
         <section id="Delete">
-            <DeleteForeverSharpIcon onClick={() => setCheck(true)} />
+            <DeleteForeverSharpIcon onClick={() => setCheck(true)} className='hover:bg-slate-100 box-content p-1 rounded-full' />
             <div className={'!fixed !z-[2000] !min-h-[2000px]'}>
                 <Modal
                     setCheck={setCheck}

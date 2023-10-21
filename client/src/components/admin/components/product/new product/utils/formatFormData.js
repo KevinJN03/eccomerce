@@ -1,6 +1,4 @@
 import { convertToRaw } from 'draft-js';
-
-import { useNewProduct } from '../../../../../../context/newProductContext';
 export default function formatFormData(value) {
     const {
         description,
@@ -34,7 +32,12 @@ export default function formatFormData(value) {
 
     // TriggerGlobalUpdate_Dispatch('trigger');
     const formData = new FormData();
-
+    formData.append('title', title);
+    formData.append('category', category);
+    formData.append('gender', gender);
+    variations.length > 0 && formData.append('price', JSON.stringify(priceValue));
+  
+    variations.length > 0 && formData.append('stock', JSON.stringify(stockValue))
     for (const item of filteredFiles) {
         formData.append('files', item);
     }
@@ -55,12 +58,6 @@ export default function formatFormData(value) {
         const newObj = { ...item, options: arr };
         const stringObj = JSON.stringify(newObj);
         formData.append('variations[]', JSON.stringify(newObj));
-
-        formData.append('title', title), formData.append('category', category);
-        formData.append('gender', gender);
-
-        formData.append('price', priceValue);
-        formData.append('stock', stockValue);
     }
 
     return formData;

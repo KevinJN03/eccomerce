@@ -10,13 +10,15 @@ import { useEffect, useState } from 'react';
 import useNewProductError from '../../../../../useNewProductError';
 import OptionError from './variation/error/optionError';
 function Description({}) {
-    const { description, setDescription, publishError } = useNewProduct();
+    const { description, setDescription,  publishErrorDispatch } = useNewProduct();
     const [descriptionError, setDescriptionError] = useState('');
 
     useNewProductError('detail', setDescriptionError);
 
     useEffect(() => {
         setDescriptionError('');
+
+        publishErrorDispatch({ type: 'clear', path: 'detail' });
     }, [description]);
 
     const boldClick = () => {

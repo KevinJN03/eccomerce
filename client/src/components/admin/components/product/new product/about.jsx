@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import Description from './description';
 import OptionError from './variation/error/optionError';
 function About() {
-    const { title, setTitle, publishError, files } = useNewProduct();
+    const { title, setTitle, publishError, files, publishErrorDispatch } =
+        useNewProduct();
     const [titleError, setTitleError] = useState('');
     const [filesError, setFilesError] = useState('');
 
@@ -16,10 +17,12 @@ function About() {
 
     useEffect(() => {
         setTitleError('');
+        publishErrorDispatch({ type: 'clear', path: 'title' });
     }, [title]);
 
     useEffect(() => {
         setFilesError('');
+        publishErrorDispatch({ type: 'clear', path: 'files' });
     }, [files]);
 
     return (
@@ -48,7 +51,6 @@ function About() {
                         id="title"
                         max={140}
                         min={1}
-                       
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         className={titleError && 'bg-red-100'}

@@ -154,7 +154,8 @@ p {
 
     .variation-footer {
         // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
-        @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // sticky
+        @apply bottom-0 flex w-full flex-row justify-between bg-white;
         // bottom: -4px !important;
 
         .cancel-btn {
@@ -222,11 +223,12 @@ p {
 }
 
 .modal-content {
-    @apply w-full max-w-[600px]  rounded-3xl px-7 pt-8 #{!important};
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    @apply w-full max-w-[600px] min-h-fit rounded-3xl px-7 pt-8 #{!important};
+
+    // -ms-overflow-style: none; /* Internet Explorer 10+ */
    
-    scrollbar-width: none; /* Firefox */
-    // @apply max-h-[550px];
+    // scrollbar-width: none; 
+   
 }
 
 .dropdown-menu {

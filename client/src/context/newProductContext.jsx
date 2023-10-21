@@ -10,24 +10,24 @@ export const useNewProduct = () => {
 
 export const NewProductProvider = ({ children }) => {
     const [variations, setVariations] = useState([
-        // {
-        //     id: 1,
-        //     name: 'Colour',
-        //     options: generateVariation('Colour'),
-        //     disabled: false,
-        //     default: true,
-        //     quantityHeader: { on: true },
-        //     priceHeader: { on: true },
-        // },
-        // {
-        //     id: 2,
-        //     name: 'Size',
-        //     options: generateVariation('Size'),
-        //     disabled: false,
-        //     default: true,
-        //     quantityHeader: { on: false },
-        //     priceHeader: { on: true },
-        // },
+        {
+            id: 1,
+            name: 'Colour',
+            options: generateVariation('Colour'),
+            disabled: false,
+            default: true,
+            quantityHeader: { on: true },
+            priceHeader: { on: true },
+        },
+        {
+            id: 2,
+            name: 'Size',
+            options: generateVariation('Size'),
+            disabled: false,
+            default: true,
+            quantityHeader: { on: false },
+            priceHeader: { on: true },
+        },
     ]);
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('test');
@@ -40,11 +40,17 @@ export const NewProductProvider = ({ children }) => {
         quantity: null,
     });
     const [category, setCategory] = useState();
-    const [publishError, setPublishError] = useState([]);
-    const [priceValue, setPriceValue] = useState('');
-    const [stockValue, setStockValue] = useState('');
+    const [publishError, publishErrorDispatch] = useReducer(
+        publishError_Reducer,
+        new Map()
+    );
+    const [priceValue, setPriceValue] = useState({ value: null, on: false });
+    const [stockValue, setStockValue] = useState({ value: null, on: false });
     const [delivery, setDelivery] = useState();
-    const [triggerGlobalUpdate, TriggerGlobalUpdate_Dispatch] = useReducer(globalUpdateTrigger_Reducer, false);
+    const [triggerGlobalUpdate, TriggerGlobalUpdate_Dispatch] = useReducer(
+        globalUpdateTrigger_Reducer,
+        false
+    );
     const [gender, setGender] = useState();
     const value = {
         variations,
@@ -64,7 +70,7 @@ export const NewProductProvider = ({ children }) => {
         globalUpdate,
         setGlobalUpdate,
         publishError,
-        setPublishError,
+        publishErrorDispatch,
         priceValue,
         setPriceValue,
         stockValue,
@@ -80,13 +86,29 @@ export const NewProductProvider = ({ children }) => {
     );
 };
 
-
 function globalUpdateTrigger_Reducer(state, action) {
-
-    if(action == 'trigger'){
-        return !state
+    if (action == 'trigger') {
+        return !state;
     } else {
-        throw new Error('invalid action for global trigger')
+        throw new Error('invalid action for global trigger');
     }
+}
 
+function publishError_Reducer(state, action) {
+    if (action.type == 'set') {
+        const map = new Map();
+        action.data.forEach((element) => {
+            const { path } = element;
+            map.set(path, element);
+        });
+
+        return map;
+    }
+    if (action.type == 'clear') {
+        const newMap = new Map(state);
+
+        newMap.delete(action.path);
+
+        return newMap;
+    }
 }

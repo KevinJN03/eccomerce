@@ -9,7 +9,7 @@ const handleEdit = ( ) => {
 }
     return (
         <section className="edit-delivery">
-            <button className= '' onClick={handleEdit}>
+            <button className='hover:bg-slate-100 box-content p-1 rounded-full' onClick={handleEdit}>
                 <ModeEditOutlineOutlinedIcon />
             </button>
         </section>

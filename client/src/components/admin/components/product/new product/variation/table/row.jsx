@@ -2,13 +2,14 @@ import Switch from '../toggleSwitch/switch';
 import { useEffect, useState } from 'react';
 import OptionError from '../error/optionError';
 import formatData from '../formatData';
-import { useClickAway } from '@uidotdev/usehooks';
-import '../../new_product.scss'
+import { Input } from '../../utils/Input';
+import '../../new_product.scss';
 import { ClickAwayListener } from '@mui/material';
 import handleValue from '../../utils/handleValue';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
 import { useVariation } from '../../../../../../../context/variationContext';
+import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
 function Row({
     singleVariation,
     checkAll,
@@ -65,7 +66,7 @@ function Row({
         if (inputCheck == true) {
             selected.set(singleVariation.id, singleVariation);
         } else if (inputCheck == false) {
-            // setCheckAll(null);
+            setCheckAll(null);
 
             selected.delete(singleVariation.id);
         }
@@ -118,17 +119,11 @@ function Row({
     const handlePrice = (e) => {
         e.stopPropagation();
         const value = e.target.value;
-        const msg = 'Price must be between £0.17 and £42,933.20.';
-        const errorMessage = {
-            zero: msg,
-            underZero: msg,
-        };
+     
         const options = {
+            ...priceOptions,
             value,
             setValue: setPrice,
-            property: 'price',
-            text: 'price',
-            errorMessage,
             setError,
         };
 
@@ -136,6 +131,7 @@ function Row({
     };
 
     function onClickAway() {
+
         if (
             (!price && !stock) ||
             (singleVariation.price == price &&
@@ -181,16 +177,10 @@ function Row({
     const handleStock = (e) => {
         e.stopPropagation();
         const value = e.target.value;
-        const errorMessage = {
-            zero: 'Total Inventory must be at least 1.',
-            underZero: 'Quantity must be between 0 and 999.',
-        };
         const options = {
+            ...quantityOptions,
             value,
             setValue: setStock,
-            property: 'stock',
-            text: 'quantity',
-            errorMessage,
             setError,
         };
         handleValue(options);
@@ -326,15 +316,7 @@ function Row({
 
                     {isPriceHeaderOn && <RowInput {...inputPriceProps} />}
 
-                    {isQuantityHeaderOn && (
-                        <RowInput
-                          {
-                           ...inputStockProps
-                          }
-                                
-                            
-                        />
-                    )}
+                    {isQuantityHeaderOn && <RowInput {...inputStockProps} />}
 
                     <td
                         className={` ${
@@ -368,45 +350,11 @@ function Row({
 export function RowInput(props) {
     const { visible, error, property } = props;
 
-  
-
- 
     return (
         <td className={`relative ${!visible && 'opacity-0'}`}>
             <Input {...props} />
-            {error?.[property] && visible && (
-                <OptionError
-                    msg={error?.[property]}
-                    className={'!items-start !pl-0'}
-                />
-            )}
         </td>
     );
 }
 
-export function Input(props) {
-    const { visible, value, error, property, handleOnchange, } = props;
-
-    return (
-        <div className="relative flex items-center !h-fit">
-            {property == 'price' && (
-                <span className="pound absolute left-2 top-2/4 translate-y-[-50%] items-center !my-auto font-medium">
-                    £
-                </span>
-            )}
-            <input
-                id={property}
-                name={property}
-                onChange={handleOnchange}
-                autocomplete="off"
-                value={value}
-                type="number"
-                className={`input input-number w-full rounded-lg ${
-                    property == 'price' ? 'px-4' : 'px-2'
-                }  py-4 ${error?.[property] && 'border-red-300 bg-red-200'}`}
-                disabled={!visible}
-            />
-        </div>
-    );
-}
 export default Row;

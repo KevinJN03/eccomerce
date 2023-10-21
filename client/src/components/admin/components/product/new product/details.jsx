@@ -11,7 +11,7 @@ import restart from '../../../../../assets/icons/restart.png';
 import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
 import useNewProductError from '../../../../../useNewProductError';
 function Details() {
-    const { category, setCategory, gender, setGender, publishError } =
+    const { category, setCategory, gender, setGender, publishError, publishErrorDispatch } =
         useNewProduct();
     const [genderError, setGenderError] = useState('');
 
@@ -21,10 +21,12 @@ function Details() {
 
     useEffect(() => {
         setGenderError('');
+        publishErrorDispatch({type: 'clear', path: 'gender'})
     }, [gender]);
 
     useEffect(() => {
         setCategoryError('');
+        publishErrorDispatch({type: 'clear', path: 'category'})
     }, [category]);
 
     const [allCategory, setAllCategory] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNewProduct } from '../../../../../context/newProductContext';
 
-function InputLabel({ label, id}) {
+function InputLabel({ label, id }) {
     // const { setPriceValue, setStockValue } = useNewProduct();
     // useEffect(() => {
     //     return () => {
@@ -13,12 +13,13 @@ function InputLabel({ label, id}) {
     // }, []);
 
     return (
-        <section className="mt-6 flex flex-col">
-            <label htmlFor={`#${id}`} className="text-lg font-medium">
-                {label}
-                <span className="asterisk">*</span>
-            </label>
-        </section>
+        <label
+            className="mt-6 mb-1 flex flex-nowrap text-lg font-medium"
+            htmlFor={`#${id}`}
+        >
+            {label}
+            <span className="asterisk">*</span>
+        </label>
     );
 }
 

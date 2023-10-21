@@ -1,20 +1,28 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Empty from '../Empty';
 import ToggleSwitch from '../toggleSwitch/toggleSwitch';
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
 function Manage({}) {
     const {
         dispatch,
+        variations,
         setVariations,
         setCheck,
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
 
-    const [priceSelect, setPriceSelect] = useState('');
-    const [quantitySelect, setQuantitySelect] = useState('');
+    const [priceSelection, setPriceSelection] = useState('');
+    const [quantitySelection, setQuantitySelection] = useState('');
+    const [disableApply, setDisableApply] = useState(true);
+    const [onMountPriceState, setOnMountPriceState] = useState(
+        checkHeader('priceHeader', variations)
+    );
+    const [onMountQuantityState, setOnMountQuantityState] = useState(
+        checkHeader('quantityHeader', variations)
+    );
     const [priceState, setPriceState] = useState(
         checkHeader('priceHeader') || false
     );
@@ -22,18 +30,32 @@ function Manage({}) {
         checkHeader('quantityHeader') || false
     );
 
-    function checkHeader(property) {
-        const newTemporaryVariation = [...temporaryVariation];
+    useEffect(() => {
+       
+            // setDisableApply(() => false);
+            if(JSON.stringify(variations) != JSON.stringify(temporaryVariation)){
+                console.log('not true')
+                setDisableApply(() => false);
+            }
+       
+    }, [temporaryVariation]);
+
+    function checkHeader(property, arr) {
+        let newTemporaryVariation;
+        if (arr) {
+            newTemporaryVariation = [...arr];
+        } else {
+            newTemporaryVariation = [...temporaryVariation];
+        }
+
         return newTemporaryVariation.some((item) => {
-            if (item[property].on == true) {
+            if (item?.[property].on == true) {
                 return true;
             }
             return false;
         });
     }
 
-
-    
     const deleteVariation = ({ id, name }) => {
         // updatedDefaultMap(name, id, true);
 
@@ -88,11 +110,8 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
- debugger
-        if (
-            (countPriceHeader > 1 || countQuantityHeader > 1 ) 
-        ) {
-          
+       
+        if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
                     ...item,
@@ -103,17 +122,39 @@ function Manage({}) {
             });
 
             setVariations(update);
-           
+
             setCheck(false);
-            return
+            return;
         } else {
             const newUpdate = newArr.map((item) => {
                 return { ...item, combine: false };
             });
             setVariations(newUpdate);
             setCheck(false);
-            return
+            return;
         }
+    };
+
+    const priceToggleProps = {
+        property: 'priceHeader',
+        label: 'Prices',
+        state: priceState,
+        setState: setPriceState,
+        notDisabled,
+        setDisableApply,
+
+        selection: priceSelection,
+        setSelection: setPriceSelection,
+    };
+    const quantityToggleProps = {
+        property: 'quantityHeader',
+        label: 'Quantities',
+        state: quantityState,
+        selection: quantitySelection,
+        setSelection: setQuantitySelection,
+        setState: setQuantityState,
+        notDisabled,
+        setDisableApply,
     };
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">
@@ -143,26 +184,8 @@ function Manage({}) {
                 )}
                 {!temporaryVariation.every((item) => item.disabled == true) && (
                     <div className="mt-2 flex h-full w-full flex-col gap-y-5 border-t-2 pt-10">
-                        <ToggleSwitch
-                            property={'priceHeader'}
-                            label={'Prices'}
-                            select={priceSelect}
-                            state={priceState}
-                            setState={setPriceState}
-                            notDisabled={notDisabled}
-                            setSelect={setPriceSelect}
-                            notDisabledVariation={notDisableVariation.arr}
-                        />
-                        <ToggleSwitch
-                            property={'quantityHeader'}
-                            label="Quantities"
-                            select={quantitySelect}
-                            setSelect={setQuantitySelect}
-                            state={quantityState}
-                            setState={setQuantityState}
-                            notDisabled={notDisabled}
-                            notDisabledVariation={notDisableVariation.arr}
-                        />
+                        <ToggleSwitch {...priceToggleProps} />
+                        <ToggleSwitch {...quantityToggleProps} />
                     </div>
                 )}
                 {notDisabled > 1 &&
@@ -189,8 +212,8 @@ function Manage({}) {
                                         notDisableVariation.arr[1].options
                                             .size}{' '}
                                     option combinations
-                                </span>
-                                {' '}will be created automatically.
+                                </span>{' '}
+                                will be created automatically.
                             </p>
                         </div>
                     )}
@@ -203,7 +226,12 @@ function Manage({}) {
                 >
                     Cancel
                 </button>
-                <button type="button" className="apply-btn" onClick={apply}>
+                <button
+                    type="button"
+                    className="apply-btn"
+                    onClick={apply}
+                    disabled={disableApply}
+                >
                     Apply
                 </button>
             </footer>

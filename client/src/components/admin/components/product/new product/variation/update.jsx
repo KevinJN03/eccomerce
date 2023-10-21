@@ -3,9 +3,12 @@ import OptionError from './error/optionError';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './formatData';
+import handleValue from '../utils/handleValue';
+import { priceOptions, quantityOptions } from '../utils/handleValueOptions';
+import { AnimatePresence } from 'framer-motion';
 
 function Update({}) {
-    const [error, setError] = useState('');
+    const [error, setError] = useState({ price: null, quantity: null });
     const [value, setValue] = useState('');
     const { setCheck, content } = useVariation();
     const { category, selected, setUpdate, update, setCheckAll } = content;
@@ -25,17 +28,33 @@ function Update({}) {
     });
 
     const handleOnchange = (value) => {
-        if (category == 'price') {
-            if (!value) {
-                setError(`Please enter a valid ${category}`);
-            } else if (value == 0) {
-                setError('Price must be between £0.99 and £42,977.48');
-            } else {
-                setError(null);
-            }
-        }
+        priceOptions;
 
-        setValue(value);
+        let options = {};
+
+        if (category == 'price') {
+            options = { ...priceOptions, setError, value, setValue };
+        } else if (category == 'quantity') {
+            options = {
+                ...quantityOptions,
+                property: category,
+                setError,
+                value,
+                setValue,
+            };
+        }
+        handleValue(options);
+        // if (category == 'price') {
+        //     if (!value) {
+        //         setError(`Please enter a valid ${category}`);
+        //     } else if (value == 0) {
+        //         setError('Price must be between £0.99 and £42,977.48');
+        //     } else {
+        //         setError(null);
+        //     }
+        // }
+
+        // setValue(value);
     };
 
     const apply = () => {
@@ -105,7 +124,7 @@ function Update({}) {
                         ref={ref}
                         className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md ${
                             category == 'price' ? '!px-6' : ' px-2'
-                        } ${error && 'border-red-400 bg-red-100'}`}
+                        } ${error?.[category] && 'border-red-400 bg-red-100'}`}
                     />
                     {category == 'price' && (
                         <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
@@ -113,10 +132,15 @@ function Update({}) {
                         </span>
                     )}
                 </span>
+<AnimatePresence>
 
-                {error && (
-                    <OptionError className={'!gap-1 !px-0 py-2'} msg={error} />
+                {error?.[category] && (
+                    <OptionError
+                        className={'!gap-1 !px-0 py-2'}
+                        msg={error?.[category]}
+                    />
                 )}
+</AnimatePresence>
             </div>
 
             <div className="variation-footer">
@@ -128,7 +152,7 @@ function Update({}) {
                     Cancel
                 </button>
                 <span className="flex flex-row items-center gap-3">
-                    {(error || value.length < 1) && (
+                    {(error?.[category] || value.length < 1) && (
                         <p className="text-sm opacity-60">
                             Enter valid {category}
                         </p>
@@ -137,7 +161,7 @@ function Update({}) {
                         type="button"
                         className="apply-btn"
                         onClick={apply}
-                        disabled={(error && true) || !value}
+                        disabled={(error?.[category] && true) || !value}
                     >
                         Apply
                     </button>
