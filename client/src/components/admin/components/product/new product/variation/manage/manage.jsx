@@ -4,6 +4,7 @@ import ToggleSwitch from '../toggleSwitch/toggleSwitch';
 import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
+import { useNewProduct } from '../../../../../../../context/newProductContext';
 function Manage({}) {
     const {
         dispatch,
@@ -13,16 +14,10 @@ function Manage({}) {
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
-
+    const { setPublish, publishErrorDispatch, setApply } = useNewProduct();
     const [priceSelection, setPriceSelection] = useState('');
     const [quantitySelection, setQuantitySelection] = useState('');
     const [disableApply, setDisableApply] = useState(true);
-    const [onMountPriceState, setOnMountPriceState] = useState(
-        checkHeader('priceHeader', variations)
-    );
-    const [onMountQuantityState, setOnMountQuantityState] = useState(
-        checkHeader('quantityHeader', variations)
-    );
     const [priceState, setPriceState] = useState(
         checkHeader('priceHeader') || false
     );
@@ -31,13 +26,11 @@ function Manage({}) {
     );
 
     useEffect(() => {
-       
-            // setDisableApply(() => false);
-            if(JSON.stringify(variations) != JSON.stringify(temporaryVariation)){
-                console.log('not true')
-                setDisableApply(() => false);
-            }
-       
+        // setDisableApply(() => false);
+        if (JSON.stringify(variations) != JSON.stringify(temporaryVariation)) {
+            console.log('not true');
+            setDisableApply(() => false);
+        }
     }, [temporaryVariation]);
 
     function checkHeader(property, arr) {
@@ -110,7 +103,7 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-       
+
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -124,15 +117,35 @@ function Manage({}) {
             setVariations(update);
 
             setCheck(false);
-            return;
         } else {
             const newUpdate = newArr.map((item) => {
-                return { ...item, combine: false };
+                const { options, quantityHeader, priceHeader } = item;
+
+                const newOptions = new Map();
+
+                for (const [key, value] of options.entries()) {
+               
+                    const newObj = { ...value };
+
+                    if (!quantityHeader.on) {
+                        delete newObj.stock;
+                    }
+                    if (!priceHeader.on) {
+                     
+                        delete newObj.price;
+                    }
+
+                    newOptions.set(key, newObj);
+                }
+
+                console.log({newOptions})
+                return { ...item, combine: false, options: newOptions };
             });
             setVariations(newUpdate);
             setCheck(false);
-            return;
         }
+        publishErrorDispatch('clearValidateInput');
+        setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
     };
 
     const priceToggleProps = {

@@ -327,7 +327,7 @@ console.log('here')
                         Delete variation
                     </span>
                 </button>
-                <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
+                <div className="flex min-h-full flex-row flex-nowrap items-center gap-x-4">
                     {(exist && (
                         <ErrorMessage message={'Variation already exist'} />
                     )) ||
@@ -340,7 +340,7 @@ console.log('here')
 
                     <button
                         type="button"
-                        className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
+                        className="apply-btn"
                         disabled={
                             ( option.size < 1) ||
                             name.length < 1 ||

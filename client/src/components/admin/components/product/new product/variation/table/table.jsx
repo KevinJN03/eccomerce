@@ -9,12 +9,10 @@ function Table({
     setSelected,
     update,
     isCombine,
-    combine,
     setCheckAll,
     checkAll,
     layout,
     setCombine,
-    variationIndex 
 }) {
     const count = variationList.options.size;
 
@@ -73,6 +71,7 @@ function Table({
             {variationOptions &&
                 variationOptions.map((item) => {
                     return (
+                      
                         <Row
                         key={item.id}
                             setCheckAll={setCheckAll}

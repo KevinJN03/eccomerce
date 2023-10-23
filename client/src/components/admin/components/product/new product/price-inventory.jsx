@@ -1,8 +1,8 @@
 import { useNewProduct } from '../../../../../context/newProductContext';
 import New_Product_Header from './header';
 import InputLabel from './inputLabel.jsx';
-import { ClickAwayListener } from '@mui/material';
-import { Input as InventoryInput } from './utils/Input';
+
+import { Input } from './utils/Input';
 import './new_product.scss';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './variation/formatData';
@@ -12,7 +12,9 @@ import { useEffect } from 'react';
 import useNewProductError from '../../../../../useNewProductError';
 import handleValue from './utils/handleValue';
 import { quantityOptions, priceOptions } from './utils/handleValueOptions';
+import { v4 as uuidv4 } from 'uuid';
 export default function Price_Inventory() {
+    console.log('rerender');
     const {
         globalUpdate,
         setGlobalUpdate,
@@ -23,62 +25,50 @@ export default function Price_Inventory() {
         setStockValue,
         publish,
         publishErrorDispatch,
+        variations,
     } = useNewProduct();
 
-    const { variations } = useNewProduct();
-    const checkPrice = variations.some((item) => item.priceHeader.on == true);
     const [error, setError] = useState({ price: null, stock: null });
-    useNewProductError('price', setError, {obj: true, property: 'price'});
-    useNewProductError('stock', setError, {obj: true, property: 'stock'});
+    useNewProductError('price', setError, { obj: true, property: 'price' });
+    useNewProductError('stock', setError, { obj: true, property: 'stock' });
 
     useEffect(() => {
-        console.log('priceValuechange')
+        console.log('priceValuechange');
         publishErrorDispatch({ type: 'clear', path: 'price' });
-    }, [priceValue]);
+    }, [priceValue.value]);
 
     useEffect(() => {
-    
+        console.log('stockValuechange');
         publishErrorDispatch({ type: 'clear', path: 'stock' });
-    }, [stockValue]);
+    }, [stockValue.value]);
 
-    useEffect(() => {
-        return () => {
-            setPriceValue({ value: null, on: false });
-            setStockValue({ value: null, on: false });
-        };
-    }, []);
-    const onStockClickAwayRef = useClickAway(() => {
-        if (!stockValue.value) return;
-        const formatStock = formatData(stockValue.value, 0);
 
-        setStockValue({ value: formatStock, on: true });
-        setGlobalUpdate((prev) => {
-            return { ...prev, stock: formatStock };
+        const onStockClickAwayRef = useClickAway(() => {
+            if (!stockValue.value) return;
+            const formatStock = formatData(stockValue.value, 0);
+    console.log('change here')
+            setStockValue({ value: formatStock, on: true });
+            // setGlobalUpdate((prev) => {
+            //     return { ...prev, stock: formatStock };
+            // });
         });
-    });
 
     const onPriceClickAwayRef = useClickAway(() => {
         if (!priceValue.value) return;
-
+        console.log('change here')
         const formatPrice = formatData(priceValue.value, 2);
 
         setPriceValue({ value: formatPrice, on: true });
-        setGlobalUpdate((prev) => {
-            return { ...prev, price: formatPrice };
-        });
+        // setGlobalUpdate((prev) => {
+        //     return { ...prev, price: formatPrice };
+        // });
     });
     const checkQuantity = variations.some(
         (item) => item.quantityHeader.on == true
     );
-
-    const handlePriceChange = (e) => {
-        e.stopPropagation();
-        const value = e.target.value;
-        const msg = 'Price must be between £0.17 and £42,933.20.';
-        const errorMessage = {
-            zero: msg,
-            underZero: msg,
-        };
+    const checkPrice = variations.some((item) => item.priceHeader.on == true);
+    const handlePriceChange = (value) => {
+        console.log('handlePriceChange');
         const options = {
             ...priceOptions,
             value,
@@ -89,9 +79,7 @@ export default function Price_Inventory() {
         handleValue(options);
     };
 
-    const handleStockChange = (e) => {
-        e.stopPropagation();
-        const value = e.target.value;
+    const handleStockChange = (value) => {
         const options = {
             ...quantityOptions,
             value,
@@ -103,6 +91,7 @@ export default function Price_Inventory() {
     };
 
     const priceInputProps = {
+        id: 1,
         label: 'Price',
         checker: checkPrice,
         visible: true,
@@ -112,12 +101,11 @@ export default function Price_Inventory() {
         error,
         setValue: setPriceValue,
         ref: onPriceClickAwayRef,
-      
     };
 
     const stockInputProps = {
+        id: 2,
         label: 'Quantity',
-       
         checker: checkQuantity,
         visible: true,
         property: 'stock',
@@ -127,6 +115,7 @@ export default function Price_Inventory() {
         setValue: setStockValue,
         ref: onStockClickAwayRef,
     };
+
     return (
         <section className="new-product-wrapper">
             <section id="price-inventory" className="flex flex-col">
@@ -135,17 +124,11 @@ export default function Price_Inventory() {
                     text="Set a price for your item and indicate how many are available for sale."
                 />
                 {[priceInputProps, stockInputProps].map((props) => {
-                    const { checker, label} = props;
+                    const { checker, label } = props;
                     return (
-                        <div className="w-fit">
+                        <div className="w-fit" key={props.id}>
                             {!checker ? (
                                 <>
-                                    {/* {publishError && (
-                                        <OptionError
-                                            className={'m-0 px-0 pb-0'}
-                                            msg={publishError}
-                                        />
-                                    )} */}
                                     <InputLabel
                                         label={label}
                                         id={label.toLowerCase()}
@@ -178,4 +161,20 @@ function DisableInput({ text }) {
             <p>Enter {text.toLowerCase()} in variations</p>
         </div>
     );
+}
+
+function InventoryInput(props) {
+    const { setValue, value } = props;
+
+    useEffect(() => {
+        console.log('IS MOUNTED', { value });
+        setValue((obj) => ({ ...obj, on: true }));
+
+        return () => {
+            console.log('IS UNMOUNTED');
+            setValue((obj) => ({ ...obj, on: false }));
+        };
+    }, []);
+
+    return <Input {...props} />;
 }

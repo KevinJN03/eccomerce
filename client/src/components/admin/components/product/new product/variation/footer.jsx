@@ -2,12 +2,10 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import { convertToRaw } from 'draft-js';
 
 import { adminAxios } from '../../../../../../api/axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import formatFormData from '../utils/formatFormData';
 
 function Footer({}) {
-    const [publish, setPublish] = useState(false);
-
     const {
         description,
         title,
@@ -17,32 +15,54 @@ function Footer({}) {
         gender,
         profile,
         publishErrorDispatch,
+        publishError,
         priceValue,
         stockValue,
-        triggerGlobalUpdate,
-        TriggerGlobalUpdate_Dispatch,
+        publish,
+        setPublish,
     } = useNewProduct();
 
-    const publishProduct = () => {
-        setPublish(true);
-        setTimeout(() => {
-            const value = {
-                description,
-                title,
-                variations,
-                files,
-                category,
-                gender,
-                profile,
-                priceValue,
-                stockValue,
-            };
-            const formData = formatFormData(value);
-            publishData(formData);
-            setPublish(false);
-        }, 2000);
+    const isAllInputValid = useRef(true);
 
-        // }, 0)
+    useEffect(() => {
+        publishErrorDispatch({
+            type: 'getValidateInput',
+            isAllInputValid,
+        });
+    }, [publish]);
+    const publishProduct = (e) => {
+        e.preventDefault();
+        try {
+            setPublish((prevState) => ({
+                ...prevState,
+                firstAttempt: true,
+                value: true,
+            }));
+
+            setTimeout(() => {
+                const value = {
+                    description,
+                    title,
+                    variations,
+                    files,
+                    category,
+                    gender,
+                    profile,
+                    priceValue,
+                    stockValue,
+                    publishError,
+                    publishErrorDispatch,
+                    isAllInputValid,
+                };
+                const formData = formatFormData(value);
+                publishData(formData);
+                setPublish((prevState) => {
+                    return { ...prevState, value: false };
+                });
+            }, 2000);
+        } catch (error) {
+            console.log('error while publish: ', error);
+        }
     };
 
     async function publishData(formData) {
@@ -56,8 +76,7 @@ function Footer({}) {
         } catch (error) {
             const errorData = error.response.data;
             console.log('error', errorData);
-            
-           
+
             publishErrorDispatch({ type: 'set', data: errorData });
         }
     }
@@ -73,11 +92,12 @@ function Footer({}) {
             <button className="theme-btn ml-auto">Preview</button>
             <button className="theme-btn">Save as draft</button>
             <button
-                className="theme-btn  flex w-24 items-center justify-center bg-black"
+                className={`theme-btn  flex w-24 items-center justify-center bg-black`}
+                // disabled={publishError?.size > 0}
                 onClick={publishProduct}
             >
-                {!publish && <span className="text-white">Publish</span>}
-                {publish && (
+                {!publish?.value && <span className="text-white">Publish</span>}
+                {publish?.value && (
                     <>
                         <div className="spinner-dot-pulse spinner-sm [--spinner-color:var(--white)]">
                             <div className="spinner-pulse-dot "></div>

@@ -151,6 +151,13 @@ function MainContent() {
 
                         {deliveryProfiles.length > 0 && (
                             <div className="flex w-full flex-row gap-x-2">
+                                 <button
+                                    type="button"
+                                    onClick={() => setModalCheck(false)}
+                                    className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-500"
+                                >
+                                    Cancel
+                                </button>
                                 <button
                                     type="button"
                                     onClick={confirm}
@@ -159,13 +166,7 @@ function MainContent() {
                                 >
                                     Confirm
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setModalCheck(false)}
-                                    className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-500"
-                                >
-                                    Cancel
-                                </button>
+                              
                             </div>
                         )}
                     </>

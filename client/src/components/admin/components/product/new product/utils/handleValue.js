@@ -9,8 +9,10 @@ export default function handleValue(options) {
         maxValue,
     } = options;
 
-    const minValue = options?.minValue || 0
+    let err = null;
+    const minValue = options?.minValue || 0;
     if (!value) {
+        err = `Please enter a valid ${text}.`;
         setError((prevState) => {
             return {
                 ...prevState,
@@ -18,10 +20,12 @@ export default function handleValue(options) {
             };
         });
     } else if (value == 0) {
+        err = errorMessage.zero;
         setError((prevState) => {
             return { ...prevState, [property]: errorMessage.zero };
         });
     } else if (value < minValue || value > maxValue) {
+        err = errorMessage.underZero;
         setError((prevState) => {
             return {
                 ...prevState,
@@ -36,5 +40,11 @@ export default function handleValue(options) {
             };
         });
     }
-    options?.isObject ? setValue((obj) => {return {...obj, value, on: true}}): setValue(() => value);
+
+    options?.isObject
+        ? setValue((obj) => {
+              return { ...obj, value, on: true };
+          })
+        : setValue(() => value);
+    return err;
 }

@@ -1,4 +1,10 @@
-import { createContext, useContext, useReducer, useState } from 'react';
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useReducer,
+    useState,
+} from 'react';
 import { generateVariation } from '../components/admin/components/product/new product/variation/variationData';
 
 import { EditorState, ContentState } from 'draft-js';
@@ -17,7 +23,7 @@ export const NewProductProvider = ({ children }) => {
             disabled: false,
             default: true,
             quantityHeader: { on: true },
-            priceHeader: { on: true },
+            priceHeader: { on: false },
         },
         {
             id: 2,
@@ -44,14 +50,21 @@ export const NewProductProvider = ({ children }) => {
         publishError_Reducer,
         new Map()
     );
-    const [priceValue, setPriceValue] = useState({ value: null, on: false });
-    const [stockValue, setStockValue] = useState({ value: null, on: false });
-    const [delivery, setDelivery] = useState();
+    const [priceValue, setPriceValue] = useState({ value: '', on: false });
+    const [stockValue, setStockValue] = useState({ value: '', on: false });
+    const [publish, setPublish] = useState({
+        firstAttempt: false,
+        value: false,
+        count: 0,
+    });
+
+    // const [delivery, setDelivery] = useState();
     const [triggerGlobalUpdate, TriggerGlobalUpdate_Dispatch] = useReducer(
         globalUpdateTrigger_Reducer,
         false
     );
     const [gender, setGender] = useState();
+
     const value = {
         variations,
         setVariations,
@@ -77,6 +90,8 @@ export const NewProductProvider = ({ children }) => {
         setStockValue,
         triggerGlobalUpdate,
         TriggerGlobalUpdate_Dispatch,
+        publish,
+        setPublish,
     };
 
     return (
@@ -95,9 +110,72 @@ function globalUpdateTrigger_Reducer(state, action) {
 }
 
 function publishError_Reducer(state, action) {
+    if (action.type === 'getValidateInput') {
+        const size = state.get('validateInput')?.size;
+
+        console.log('sizeee: ', size);
+        
+
+        if (size > 0) {
+            console.log('update state because size is greater')
+            action.isAllInputValid.current = false
+        }else {
+            action.isAllInputValid.current = true  
+        }
+
+        return state;
+    }
+    if (action == 'clearValidateInput') {
+        const newMap = new Map(state);
+        newMap.delete('validateInput');
+        return newMap;
+    }
+
+    if (action.type == 'addToValidateInput2') {
+        return action.map;
+    }
+
+    if (action.type == 'addToValidateInput') {
+        if (!state.has('validateInput')) {
+            const map = new Map(state);
+            return map.set(
+                'validateInput',
+                new Map([[action.path, action.error]])
+            );
+        }
+        const getMap = state.get('validateInput');
+
+        if (!getMap.has(action.path)) {
+            const map = new Map(getMap);
+            map.set(action.path, action.error);
+
+            const newMap = new Map(state).set('validateInput', map);
+            return newMap;
+        } else {
+            return state;
+        }
+    }
+    if (action.type == 'deleteValidateInput') {
+        const newMap = new Map(state.get('validateInput'));
+        if (newMap.has(action.path)) {
+            newMap.delete(action.path);
+            const map = new Map(state);
+
+            if (newMap.size <= 1) {
+                map.delete('validateInput');
+            } else {
+                map.set('validateInput', newMap);
+            }
+
+            return map;
+        } else {
+            return state;
+        }
+    }
+
     if (action.type == 'set') {
-        const map = new Map();
-        action.data.forEach((element) => {
+        const map = new Map(state);
+        action?.data.forEach((element) => {
             const { path } = element;
             map.set(path, element);
         });
@@ -111,4 +189,6 @@ function publishError_Reducer(state, action) {
 
         return newMap;
     }
+
+    throw new Error(`please enter a valid action. ${action} is not valid.`);
 }

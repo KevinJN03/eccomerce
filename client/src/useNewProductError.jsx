@@ -5,7 +5,7 @@ export default function useNewProductError(path, setState, options) {
     const { publishError } = useNewProduct();
 
     useEffect(() => {
-        if (publishError.has(path)) {
+        if (publishError?.has(path)) {
             options?.obj
                 ? setState((obj) => {
                       return {

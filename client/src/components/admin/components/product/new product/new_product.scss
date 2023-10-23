@@ -2,18 +2,25 @@
     --about-primary: #4d6bc6;
 }
 
-
 .input {
+
+    @apply rounded-lg;
+
+    border-width: 1px !important;
+    border-color: transparent;
+    box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
+    transition: all 0.4s ease-in-out;
+    &:hover {
+        border-color: black;
+    }
     &:focus {
         border: 1px solid black !important;
-        outline-color: var(--about-primary) !important
+        outline-color: var(--about-primary) !important;
     }
 }
 .spinner-dot-pulse {
-    --white : 255 255 255
-     
-    }
-
+    --white: 255 255 255;
+}
 
 .format {
     @apply m-4 w-7/12 rounded-xl;
@@ -26,7 +33,7 @@
         -webkit-appearance: none;
         margin: 0;
     }
-    
+
     .new-product-wrapper {
         @apply rounded-xl  p-6;
     }
@@ -34,11 +41,11 @@
         flex: 6;
 
         .product-listing {
-            @apply m-6 p-6  max-w-[1366px] w-full;
+            @apply m-6 w-full  max-w-[1366px] p-6;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
             .subheader {
-                @apply flex flex-row flex-nowrap gap-x-10 max-w-[1366px];
+                @apply flex max-w-[1366px] flex-row flex-nowrap gap-x-10;
 
                 a {
                     height: 30px;
@@ -64,21 +71,21 @@ p {
     @apply text-s;
 }
 
-.about,#description, #details {
+.about,
+#description,
+#details {
     @apply format bg-white;
 
     input {
-        @apply outline mb-8 mt-3 min-w-full;
+        @apply mb-8 mt-3 min-w-full outline;
     }
-
 }
 
 .outline {
-    // mb-8 mt-3 
-    @apply rounded-md p-3 input;
+    // mb-8 mt-3
+    @apply input rounded-md p-3;
     height: 48px;
 }
-
 
 // Price & Inventory Section
 
@@ -86,20 +93,15 @@ p {
     @apply format;
 
     input {
-        @apply outline w-64 #{!important};
+        @apply w-64 outline #{!important};
         
     }
-    
-    
-    
 
     .price-input,
     .quantity-input {
         // width: 30px !important;
         width: 50%;
     }
-   
-
 }
 
 .category-select {
@@ -107,12 +109,11 @@ p {
 }
 
 .new-product-wrapper section {
-    @apply bg-white max-w-[1366px];
+    @apply max-w-[1366px] bg-white;
 }
 
 .new-product-footer {
     @apply max-w-[1366px];
-
 }
 
 .searchBody {
@@ -120,7 +121,7 @@ p {
 }
 
 .theme-btn {
-    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all hover:scale-105 hover:shadow-lg;
+    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all enabled:hover:scale-105 enabled:hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50;
 }
 .variations {
     .result-table {
@@ -136,8 +137,6 @@ p {
         -ms-user-select: none;
         user-select: none;
     }
-
-    
 
     table {
         @apply my-6  self-center;
@@ -167,19 +166,17 @@ p {
         }
 
         .apply-btn {
-            @apply rounded-full bg-black px-3 py-2 text-white disabled:opacity-40 relative;
+            @apply relative flex justify-center items-center rounded-full bg-black px-3 py-2 h-full text-white disabled:cursor-not-allowed disabled:opacity-50;
 
-            &::after, &::before {
-                content: "";
-              
+            &::after,
+            &::before {
+                content: '';
+
                 background: inherit;
             }
             &:hover {
-                
-                background-color: rgba(0, 0, 0, 0.821)
+                background-color: rgba(0, 0, 0, 0.821);
             }
-
-            
 
             // &:hover {
             //     @apply opacity-80 scale-105
@@ -219,16 +216,15 @@ p {
     }
 }
 .asterisk {
-    @apply text-red-800 ml-[2px];
+    @apply ml-[2px] text-red-800;
 }
 
 .modal-content {
-    @apply w-full max-w-[600px] min-h-fit rounded-3xl px-7 pt-8 #{!important};
+    @apply min-h-fit w-full max-w-[600px] rounded-3xl px-7 pt-8 #{!important};
 
     // -ms-overflow-style: none; /* Internet Explorer 10+ */
-   
-    // scrollbar-width: none; 
-   
+
+    // scrollbar-width: none;
 }
 
 .dropdown-menu {
@@ -242,7 +238,7 @@ p {
 }
 
 .options-btn {
-    @apply rounded-full px-5 py-3 font-gotham transition-all text-center ;
+    @apply rounded-full px-5 py-3 text-center font-gotham transition-all;
 
     background-color: var(--light-grey) !important;
     &:disabled {

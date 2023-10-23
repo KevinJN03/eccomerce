@@ -15,9 +15,7 @@ function Modal({
     className,
     back,
     selection,
-  
 }) {
-   
     const handleDelete = () => {
         if (selection && selection.length > 1) {
             axios
@@ -36,24 +34,8 @@ function Modal({
         }
     };
 
-    useEffect(() => {
-        let timeout;
-
-        if (loading == true) {
-            timeout = setTimeout(() => {
-                setLoading(false);
-                back ? back() : setCheck(false);
-            }, 2000);
-        }
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [loading]);
-
-
     return (
-        <section >
+        <section>
             <input
                 className="modal-state  "
                 id="modal-3"

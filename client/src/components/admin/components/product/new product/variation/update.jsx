@@ -61,7 +61,6 @@ function Update({}) {
         try {
             setTimeout(() => {
                 setUpdate({
-                    ...update,
                     [`${category}`]: value,
                     bool: !update.bool,
                 });

@@ -17,7 +17,7 @@ function SingleList({
     const { dispatch, setCheck } = useVariation();
     const [update, setUpdate] = useState({
         price: null,
-        stock: null,
+        quantity: null,
         bool: false,
     });
     const [checkAll, setCheckAll] = useState(false);

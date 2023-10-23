@@ -21,7 +21,6 @@ function Footer() {
                     <div className="item">
                         <FontAwesomeIcon icon={faInstagram} />
                     </div>
-                    {/* <div className="item"><FontAwesomeIcon icon={faSnapchat} className="snapchat" style={{color: "#ffffff"}}/></div> */}
                     <div className="item">
                         <img
                             className="snapchat"

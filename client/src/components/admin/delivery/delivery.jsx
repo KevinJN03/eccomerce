@@ -16,6 +16,7 @@ export default function Delivery() {
     // const { dispatch, setModalCheck, content, modalCheck } = useContent();
 
     const [modalCheck, setModalCheck] = useState(false);
+
     useEffect(() => {
         fetchProfile(setProfiles);
     }, []);
@@ -36,9 +37,7 @@ export default function Delivery() {
         setDeliveryProfile(findProfile);
         setModalCheck(true);
     };
-    const close = () => {
-        setModalCheck(false);
-    };
+    
 
     return (
         <section className="delivery flex">
@@ -58,11 +57,9 @@ export default function Delivery() {
                     <Modal
                         ModalContent={
                             <New
-                                close={close}
+                                
                                 profile={deliveryProfile}
                                 setProfile={setDeliveryProfile}
-                                setLoadingState={setLoading}
-                                loadingState={loading}
                             />
                         }
                         button_text="Select Profile"

@@ -1,21 +1,39 @@
 import { AnimatePresence } from 'framer-motion';
 import OptionError from '../variation/error/optionError';
 
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 export const Input = forwardRef(function Input(props, ref) {
-    const { visible, value, error, property, handleOnchange } = props;
-    useEffect(() => {
-        props?.setValue &&
-            props.setValue((obj) => {
-                return { value: null, on: true };
-            });
-        return () => {
-            props?.setValue &&
-                props.setValue((obj) => {
-                    return { value: null, on: false };
-                });
-        };
-    }, []);
+         const { visible, value, error, property, handleOnchange } = props;
+//     const { publish, publishErrorDispatch, publishError } = useNewProduct();
+
+//     useEffect(() => {
+//         if (publishError.has('validateInput') && props?.id) {
+// const isPresent = publishError.get('validateInput').has(props?.id)
+//             if(isPresent){
+             
+//               publishErrorDispatch({
+//                 type: 'deleteValidateInput',
+//                 path: props?.id,
+//             });   
+//             }
+           
+//         }
+//     }, [value]);
+//     useEffect(() => {
+//         if (publish.firstAttempt) {
+//             handleOnchange(value);
+
+//             if (error[property]) {
+//                 console.log(props?.id, error[property]);
+//                 publishErrorDispatch({
+//                     type: 'addToValidateInput',
+//                     path: props?.id,
+//                     error: error[property],
+//                 });
+//             }
+//         }
+//     }, [publish]);
     return (
         <section className="bg-transparent">
             <div className="relative flex !h-fit items-center">
@@ -28,7 +46,7 @@ export const Input = forwardRef(function Input(props, ref) {
                     ref={ref}
                     id={property}
                     name={property}
-                    onChange={handleOnchange}
+                    onChange={(e) => handleOnchange(e.target.value)}
                     autoComplete="off"
                     value={value}
                     type="number"

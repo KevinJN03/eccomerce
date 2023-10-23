@@ -4,18 +4,21 @@ import {motion,AnimatePresence  } from 'framer-motion'
 
 const variants = {
 initial: {
-    opacity: 0
+    opacity: 0,
+
 },
 animate: {
     opacity: 1,
-    duration: 2,
+
     transition: {
-        ease: 'easeInOut',
+       
+        opacity: {delay: 0, duration: 0.4, ease: 'easeInOut'}
     
     }
 },
 exit: {
     opacity: 0,
+    
 }
 }
 function OptionError({ msg, className }) {
