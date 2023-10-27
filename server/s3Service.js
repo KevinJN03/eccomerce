@@ -3,6 +3,7 @@ import {
   PutObjectCommand,
   ListObjectsCommand,
   DeleteObjectCommand,
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,11 +40,11 @@ const s3Upload = async (files, isProfile, folderId = uuidv4()) => {
   return results;
 };
 
-export const s3Delete = async (id) => {
+export const s3Delete = async (prefix, id) => {
   const client = new S3Client({});
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Prefix: `products/${id}`,
+    Prefix: `${prefix}/${id}`,
   };
   const listCommand = new ListObjectsCommand(params);
   const response = await client.send(listCommand);
@@ -63,5 +64,34 @@ export const s3Delete = async (id) => {
       return client.send(deleteCommand);
     }),
   );
+};
+
+export const s3Get = async (id) => {
+  const client = new S3Client();
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Prefix: `products/${id}`,
+  };
+  const listCommand = new ListObjectsCommand(params);
+  const response = await client.send(listCommand);
+  if (!response?.Contents > 0) return;
+
+  const keys = response.Contents.map((item) => item.Key);
+
+  const result = await Promise.all(
+    keys.map((item) => {
+      const newParams = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: item,
+      };
+
+      const getCommand = new GetObjectCommand(newParams);
+      const getResponse = client.send(getCommand);
+
+      return getResponse;
+    }),
+  );
+  console.log(result);
+  return result;
 };
 export default s3Upload;

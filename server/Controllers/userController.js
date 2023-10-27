@@ -5,7 +5,7 @@ import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
 import sharpify from '../Upload/sharpify.js';
 import bcrypt from 'bcryptjs';
-import s3Upload from '../s3Service.js';
+import s3Upload, { s3Delete } from '../s3Service.js';
 import 'dotenv/config';
 const handleProfilePhoto = async (file, id) => {
   if (file) {
@@ -71,7 +71,7 @@ export const dummy_data = asyncHandler(async (req, res, next) => {
 export const delete_user = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findByIdAndDelete(id);
-
+  await s3Delete('user', id);
   res.status(200).json({
     msg: 'user Deleted',
     user,
@@ -80,8 +80,15 @@ export const delete_user = asyncHandler(async (req, res, next) => {
 export const delete_many_user = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const idArr = id.split(',');
-  const user = await User.deleteMany({ _id: idArr });
-  res.send(user);
+  const deleteUserImage = idArr.map((item) => {
+    s3Delete('user', item);
+  });
+
+  const result = await Promise.all([
+    User.deleteMany({ _id: idArr }),
+    deleteUserImage,
+  ]);
+  res.status(200).send(result);
 });
 
 const storage = multer.memoryStorage();

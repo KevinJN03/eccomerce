@@ -1,19 +1,16 @@
 import { body, check, validationResult } from 'express-validator';
 
-const customVariationValidator = (value, { req, next }) => {
-  const { variations } = req.body;
-  const parseVariation = JSON.parse(variations);
-  console.log({ value });
-  if (parseVariation.length > 0) {
-    return true;
-  }
+function customVariationValidator({ value, minValue, maxValue, msg }) {
 
-  if (value) {
-    return true;
-  }
+  const parseValue = JSON.parse(value.replace(/&quot;/g, '"'));
 
-  return false;
-};
+  if (!parseValue.on) return true;
+  if (parseValue.on && !parseValue.value) return false;
+  if (parseValue.value < minValue || parseValue.value > maxValue)
+    throw new Error(msg);
+
+  return true;
+}
 
 const productValidator = [
   check('files').custom((value, { req }) => {
@@ -42,6 +39,7 @@ const productValidator = [
     .notEmpty()
     .custom((value) => {
       if (value === 'undefined') {
+     
         throw new Error();
       }
 
@@ -50,13 +48,35 @@ const productValidator = [
   body('price', 'Please enter a valid price.')
     .trim()
     .escape()
-    .custom(customVariationValidator),
+    .custom((value) =>
+      customVariationValidator({
+        value,
+        minValue: 0.17,
+        maxValue: 42933.2,
+        msg: 'Price must be between £0.17 and £42,933.20.',
+      }),
+    ),
 
-  // .notEmpty(),
+  body('isAllInputValid', 'Please enter a value in all inputs.').custom(
+    (value) => {
+      const parseValue = JSON.parse(value);
+  
+      // if (value) return true;
+      // return false;
+      return parseValue;
+    },
+  ),
   body('stock', 'Please enter a valid stock.')
     .trim()
     .escape()
-    .custom(customVariationValidator),
+    .custom((value) =>
+      customVariationValidator({
+        value,
+        minValue: 0,
+        maxValue: 999,
+        msg: 'Quantity must be between 0 and 999.',
+      }),
+    ),
 
   // .notEmpty(),
   body('detail', 'Please add some details.')
