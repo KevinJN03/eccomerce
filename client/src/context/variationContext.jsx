@@ -5,6 +5,7 @@ import {
     useContext,
     createContext,
 } from 'react';
+import { useNewProduct } from './newProductContext';
 
 const VariationContext = createContext(null);
 
@@ -42,7 +43,33 @@ export const variationReducer = (state, action) => {
     throw new Error('Invalid type for Variation Reducer');
 };
 
-export function VariationProvider({ children, value }) {
+export function VariationProvider({ children }) {
+    const { variations, setVariations, modalCheck } = useNewProduct();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [content, dispatch] = useReducer(variationReducer, {
+        type: 'main',
+    });
+
+    const [temporaryVariation, setTemporaryVariation] = useState([]);
+
+
+    useEffect(() => {
+        setTemporaryVariation(() => variations);
+    }, [modalCheck]);
+
+    const value = {
+        content,
+        dispatch,
+        variations,
+        setVariations,
+        temporaryVariation,
+        setTemporaryVariation,
+        loading,
+        setLoading,
+        error,
+        setError,
+    };
     return (
         <VariationContext.Provider value={value}>
             {children}

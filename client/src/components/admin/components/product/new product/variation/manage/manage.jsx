@@ -7,14 +7,15 @@ import VariationItem from './variationItem.jsx';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
 function Manage({}) {
     const {
-        dispatch,
+       
         variations,
         setVariations,
-        setCheck,
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
-    const { setPublish, publishErrorDispatch, setApply } = useNewProduct();
+
+
+    const { setPublish, publishErrorDispatch, setApply, combineDispatch, contentDispatch, setModalCheck } = useNewProduct();
     const [priceSelection, setPriceSelection] = useState('');
     const [quantitySelection, setQuantitySelection] = useState('');
     const [disableApply, setDisableApply] = useState(true);
@@ -66,11 +67,11 @@ function Manage({}) {
     const editVariation = (item) => {
         const { name } = item;
 
-        dispatch({ type: 'select', currentVariation: item, title: name });
+        contentDispatch({ type: 'select', currentVariation: item, title: name });
     };
 
     const cancel = () => {
-        setCheck(false);
+        setModalCheck(() => false);
     };
 
     const notDisableVariations = () => {
@@ -114,10 +115,12 @@ function Manage({}) {
                 };
             });
 
-            setVariations(update);
-
-            setCheck(false);
+            setVariations(() => update);
+            combineDispatch({type: 'combineVariations', variations});
+            setModalCheck(() => false);
         } else {
+
+            combineDispatch('clear')
             const newUpdate = newArr.map((item) => {
                 const { options, quantityHeader, priceHeader } = item;
 
@@ -138,11 +141,12 @@ function Manage({}) {
                     newOptions.set(key, newObj);
                 }
 
-                console.log({newOptions})
+                
                 return { ...item, combine: false, options: newOptions };
             });
-            setVariations(newUpdate);
-            setCheck(false);
+            setVariations(() => newUpdate);
+
+            setModalCheck(() => false);
         }
         publishErrorDispatch('clearValidateInput');
         setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
@@ -182,7 +186,7 @@ function Manage({}) {
             />
             {notDisabled < 2 && (
                 <button
-                    onClick={() => dispatch({ type: 'main' })}
+                    onClick={() => contentDispatch({ type: 'main' })}
                     className="border-1 mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-black px-2 py-2 transition-all ease-in-out hover:!px-[12.5px]"
                 >
                     <AddRoundedIcon className="bg-transparent" />

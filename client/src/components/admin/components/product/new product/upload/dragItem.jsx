@@ -49,10 +49,7 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
                             >
                                 {files[id].file ? (
                                     <>
-                                        {console.log(
-                                            'snapshot.isDragging: ',
-                                            snapshot.isDragging
-                                        )}
+                                    
                                         {!snapshot.isDragging && (
                                             <motion.button
                                             // key={snapshot.isDragging}
@@ -79,9 +76,8 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
                                              animate="animate"
                                              exit="exit"
                                             loading="lazy"
-                                            src={URL.createObjectURL(
-                                                files[id]?.file
-                                            )}
+                                            src={files[id]?.img
+                                            }
                                             className="!object-contain object-cover"
                                         />
                                     </>

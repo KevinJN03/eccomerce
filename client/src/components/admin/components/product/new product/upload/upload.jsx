@@ -34,6 +34,7 @@ function Upload({}) {
                     const newFile = {
                         ...file,
                         file: images[counter],
+                        img: URL.createObjectURL(images[counter]),
                         isDragDisabled: false,
                     };
                     counter += 1;
@@ -49,12 +50,16 @@ function Upload({}) {
     const deletePhoto = (oldFile) => {
         let updateFile = { ...oldFile };
         delete updateFile.file;
+        delete updateFile.img
+
+       
         updateFile.isDragDisabled = true;
         const newFiles = [...files];
         const findIndex = files.findIndex((item) => item.id == oldFile.id);
         newFiles.splice(findIndex, 1);
         newFiles.push(updateFile);
         setFiles(newFiles);
+        console.log({updateFile})
     };
 
 

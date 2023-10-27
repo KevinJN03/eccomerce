@@ -6,24 +6,28 @@ import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios';
 import { productColumn } from '../users/datatable/datatable-source';
 function All_Products() {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
         axios.get('/product').then((res) => {
-            setProducts(res.data)
+            setProducts(res.data);
+        }).catch((error) => {
+console.log('error: ' , error)
         });
     }, [loading]);
 
-    console.log({products})
+    console.log({ products });
     return (
-        <section className="product">
-            <SideBar />
-            <div className="productContainer">
-                <Navbar />
-                <Datatable type="product" loading={loading} setLoading={setLoading} column={productColumn} row={products}/>
-            </div>
-        </section>
+        <>
+            <Datatable
+                type="product"
+                loading={loading}
+                setLoading={setLoading}
+                column={productColumn}
+                row={products}
+            />
+        </>
     );
 }
 

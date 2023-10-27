@@ -8,16 +8,35 @@ import Delivery from './delivery/delivery';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Variation from './variation/variation';
-import { NewProductProvider } from '../../../../../context/newProductContext';
+import {
+    NewProductProvider,
+    useNewProduct,
+} from '../../../../../context/newProductContext';
 import Footer from './variation/footer';
-function New_Product() {
+import { VariationProvider } from '../../../../../context/variationContext';
+import Modal from '../../modal/modal';
+import Manage from './variation/manage/manage';
+import SelectVariation from './variation/selectVariation';
+import Main from './variation/main';
+import Update from './variation/update';
+
+
+const views = {
+    manage: <Manage />,
+    select: <SelectVariation />,
+    main: <Main />,
+    update: <Update />,
+};
+
+function New_Product({ Content }) {
     let navigate = useNavigate();
+
+    const { modalContent, modalCheck, setModalCheck, loading, setLoading } =
+        useNewProduct();
     return (
-        <NewProductProvider>
+        <VariationProvider>
             <section className="new-product">
-                <SideBar />
                 <div className="new-product-container">
-                    <Navbar />
                     <section className="flex justify-center">
                         <div className="product-listing">
                             <div className=" mb-6 ml-4 font-gotham text-3xl font-bold tracking-wider">
@@ -34,10 +53,11 @@ function New_Product() {
 
                             <section className="new-product-wrapper mx-[-24px] flex flex-col gap-y-3 !rounded-none bg-[var(--light-grey)] py-4 pl-6">
                                 <About />
-                                <Price_Inventory
-                                  
-                                />
-                                <Variation />
+                                <Price_Inventory />
+                               
+                                    <Variation />
+                                
+
                                 <Details />
 
                                 <Delivery />
@@ -47,8 +67,17 @@ function New_Product() {
                         </div>
                     </section>
                 </div>
+                {modalCheck && (
+                    <Modal
+                        check={modalCheck}
+                        setCheck={setModalCheck}
+                        ModalContent={views[modalContent.type]}
+                        loading={loading}
+                        setLoading={setLoading}
+                    />
+                )}
             </section>
-        </NewProductProvider>
+        </VariationProvider>
     );
 }
 

@@ -19,6 +19,7 @@ function Footer({}) {
         priceValue,
         stockValue,
         publish,
+        combine,
         setPublish,
     } = useNewProduct();
 
@@ -41,6 +42,7 @@ function Footer({}) {
 
             setTimeout(() => {
                 const value = {
+                    combine,
                     description,
                     title,
                     variations,
@@ -77,7 +79,7 @@ function Footer({}) {
             const errorData = error.response.data;
             console.log('error', errorData);
 
-            publishErrorDispatch({ type: 'set', data: errorData });
+            // publishErrorDispatch({ type: 'set', data: errorData });
         }
     }
 
@@ -93,7 +95,7 @@ function Footer({}) {
             <button className="theme-btn">Save as draft</button>
             <button
                 className={`theme-btn  flex w-24 items-center justify-center bg-black`}
-                // disabled={publishError?.size > 0}
+                disabled={publishError?.size > 0}
                 onClick={publishProduct}
             >
                 {!publish?.value && <span className="text-white">Publish</span>}

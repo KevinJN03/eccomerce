@@ -4,17 +4,14 @@ import { motion, AnimatePresence, easeIn, easeOut } from 'framer-motion';
 import { useVariation } from '../../../../../../context/variationContext';
 
 import { v4 as uuidv4 } from 'uuid';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 function SingleList({
     variation,
     isCombine,
-    setCombine,
-    combine,
-
-    variationIndex,
 }) {
     const { name, options, priceHeader, quantityHeader } = variation;
     const [selected, setSelected] = useState(new Map());
-    const { dispatch, setCheck } = useVariation();
+    const { contentDispatch, setModalCheck } = useNewProduct();
     const [update, setUpdate] = useState({
         price: null,
         quantity: null,
@@ -35,9 +32,9 @@ function SingleList({
         }
     };
     const handleUpdate = (category) => {
-        setCheck(true);
+        setModalCheck(true);
 
-        dispatch({
+        contentDispatch({
             type: 'update',
             category,
             selected,
@@ -69,8 +66,8 @@ function SingleList({
                     <h3 className="text-lg font-semibold tracking-wide">
                         {name}
                     </h3>
-                    <p>{`${options.size || options.length} ${
-                        options.size || options.length > 1
+                    <p>{`${options?.size || options?.length} ${
+                        options?.size || options?.length > 1
                             ? 'variants'
                             : 'variant'
                     }`}</p>
@@ -120,12 +117,11 @@ function SingleList({
                 setSelected={setSelected}
                 selected={selected}
                 update={update}
-                combine={combine}
                 isCombine={isCombine}
                 setCheckAll={setCheckAll}
                 checkAll={checkAll}
                 layout={layout}
-                setCombine={setCombine}
+               
             />
         </section>
     );

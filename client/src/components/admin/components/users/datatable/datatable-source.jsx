@@ -106,7 +106,7 @@ export const productColumn = [
         margin: '10',
         headerAlign: 'center',
         renderCell: (params) => {
-            return <p>£ {params.row.price.current}</p>;
+            return <p>£ {params.row?.price?.current}</p>;
         },
     },
     {

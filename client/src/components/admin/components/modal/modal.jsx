@@ -23,12 +23,20 @@ function Modal({
                 .then((res) => {
                     if (res.status === 200) {
                         setLoading(true);
+                      setTimeout(() => {
+                        setLoading(false);
+                        setCheck(false)
+                      }, 1000)
                     }
                 });
         } else {
             axios.delete(`/admin/delete/${deleteType}/${id}`).then((res) => {
                 if (res.status === 200) {
                     setLoading(true);
+                    setTimeout(() => {
+                        setLoading(false);
+                        setCheck(false)
+                      }, 1000)
                 }
             });
         }
