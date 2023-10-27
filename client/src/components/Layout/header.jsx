@@ -1,5 +1,5 @@
 import logo from '../../assets/glamo.png';
-
+import '../../CSS/App.css'
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
 import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
@@ -27,7 +27,7 @@ function Header() {
     };
 
     return (
-        <section className="header-section flex w-full max-w-full flex-col justify-center bg-[var(--primary)]">
+        <section className="header-section flex w-full max-w-full flex-col justify-center">
             <section id="header-wrapper">
                 <header className="header">
                     <section className="header-left">

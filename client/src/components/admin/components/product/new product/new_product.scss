@@ -2,11 +2,37 @@
     --about-primary: #4d6bc6;
 }
 
+.input {
+
+    @apply rounded-lg;
+
+    border-width: 1px !important;
+    border-color: transparent;
+    box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
+    transition: all 0.4s ease-in-out;
+    &:hover {
+        border-color: black;
+    }
+    &:focus {
+        border: 1px solid black !important;
+        outline-color: var(--about-primary) !important;
+    }
+}
+.spinner-dot-pulse {
+    --white: 255 255 255;
+}
+
 .format {
     @apply m-4 w-7/12 rounded-xl;
 }
 .new-product {
     @apply flex w-full;
+
+    .input-number::-webkit-outer-spin-button,
+    .input-number::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
     .new-product-wrapper {
         @apply rounded-xl  p-6;
@@ -15,11 +41,11 @@
         flex: 6;
 
         .product-listing {
-            @apply m-6 p-6;
+            @apply m-6 w-full  max-w-[1366px] p-6;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
             .subheader {
-                @apply flex w-8/12 flex-row flex-nowrap justify-around;
+                @apply flex max-w-[1366px] flex-row flex-nowrap gap-x-10;
 
                 a {
                     height: 30px;
@@ -45,53 +71,20 @@ p {
     @apply text-s;
 }
 
-.about {
+.about,
+#description,
+#details {
     @apply format bg-white;
 
     input {
-        @apply outline;
-    }
-
-    .dropzone {
-        @apply flex flex-col items-center justify-center gap-12;
-        height: 300px;
-        outline: 2px dashed black;
-        border-radius: 12px;
-    }
-
-    .uploads {
-        height: fit-content;
-        .img-grid {
-            // max-width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-
-            gap: 5px;
-            // grid-auto-flow: column;
-
-            li {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-        }
+        @apply mb-8 mt-3 min-w-full outline;
     }
 }
 
 .outline {
-    @apply mb-8 mt-3  w-full rounded-md p-3;
-    height: 50px;
-    border: 1px solid black;
-    outline-offset: 2px;
-
-    &:focus {
-        outline: 2px solid var(--about-primary);
-    }
-}
-
-#description {
-    @apply outline;
+    // mb-8 mt-3
+    @apply input rounded-md p-3;
+    height: 48px;
 }
 
 // Price & Inventory Section
@@ -100,7 +93,8 @@ p {
     @apply format;
 
     input {
-        @apply outline;
+        @apply w-64 outline #{!important};
+        
     }
 
     .price-input,
@@ -110,16 +104,16 @@ p {
     }
 }
 
-#details {
-    @apply format;
-}
-
 .category-select {
     width: 50%;
 }
 
 .new-product-wrapper section {
-    @apply bg-white;
+    @apply max-w-[1366px] bg-white;
+}
+
+.new-product-footer {
+    @apply max-w-[1366px];
 }
 
 .searchBody {
@@ -127,7 +121,7 @@ p {
 }
 
 .theme-btn {
-    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all hover:scale-105 hover:shadow-lg;
+    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all enabled:hover:scale-105 enabled:hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50;
 }
 .variations {
     .result-table {
@@ -144,12 +138,6 @@ p {
         user-select: none;
     }
 
-    .input-number::-webkit-outer-spin-button,
-    .input-number::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
     table {
         @apply my-6  self-center;
         width: 100%;
@@ -162,32 +150,11 @@ p {
             @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
         }
     }
-    .options-btn {
-        @apply rounded-full bg-[var(--light-grey)]  px-4 py-2 font-gotham transition-all;
-        &:disabled {
-            @apply opacity-40;
-
-            &::before {
-                content: '';
-                display: block;
-                background: url('../../../../../assets/icons/tick.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: contain;
-                width: 20px;
-                height: 100%;
-                float: left;
-                margin: 0 6px 0 0;
-            }
-        }
-
-        &:hover {
-            @apply bg-gray-200;
-        }
-    }
 
     .variation-footer {
-        @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // sticky
+        @apply bottom-0 flex w-full flex-row justify-between bg-white;
         // bottom: -4px !important;
 
         .cancel-btn {
@@ -199,19 +166,17 @@ p {
         }
 
         .apply-btn {
-            @apply rounded-full bg-black px-3 py-2 text-white disabled:opacity-40 relative;
+            @apply relative flex justify-center items-center rounded-full bg-black px-3 py-2 h-full text-white disabled:cursor-not-allowed disabled:opacity-50;
 
-            &::after, &::before {
-                content: "";
-              
+            &::after,
+            &::before {
+                content: '';
+
                 background: inherit;
             }
             &:hover {
-                
-                background-color: rgba(0, 0, 0, 0.821)
+                background-color: rgba(0, 0, 0, 0.821);
             }
-
-            
 
             // &:hover {
             //     @apply opacity-80 scale-105
@@ -251,13 +216,15 @@ p {
     }
 }
 .asterisk {
-    @apply text-red-800;
+    @apply ml-[2px] text-red-800;
 }
 
 .modal-content {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-    @apply max-h-[550px];
+    @apply min-h-fit w-full max-w-[600px] rounded-3xl px-7 pt-8 #{!important};
+
+    // -ms-overflow-style: none; /* Internet Explorer 10+ */
+
+    // scrollbar-width: none;
 }
 
 .dropdown-menu {
@@ -268,4 +235,30 @@ p {
 .modal-content::-webkit-scrollbar,
 .dropdown-menu::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
+}
+
+.options-btn {
+    @apply rounded-full px-5 py-3 text-center font-gotham transition-all;
+
+    background-color: var(--light-grey) !important;
+    &:disabled {
+        @apply opacity-40;
+
+        &::before {
+            content: '';
+            display: block;
+            background: url('../../../../../assets/icons/tick.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            width: 20px;
+            height: 100%;
+            float: left;
+            margin: 0 6px 0 0;
+        }
+    }
+
+    &:hover {
+        @apply bg-gray-300 shadow-lg #{!important};
+    }
 }

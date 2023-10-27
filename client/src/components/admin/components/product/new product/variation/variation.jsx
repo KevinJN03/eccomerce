@@ -7,19 +7,16 @@ import SelectVariation from './selectVariation';
 import Manage from './manage/manage';
 
 import Main from './main';
-import {
-    colorList,
-    defaultMap,
-    generateVariation,
-    resetDefaultMap,
-    updatedDefaultMap,
-} from './variationData';
+import { resetDefaultMap } from './variationData';
 import {
     variationReducer,
     VariationProvider,
 } from '../../../../../../context/variationContext';
-import VariationList from './variationList';
+
 import Update from './update';
+
+import { useNewProduct } from '../../../../../../context/newProductContext';
+import VariationList from './variationList';
 
 const views = {
     manage: <Manage />,
@@ -29,34 +26,16 @@ const views = {
 };
 
 function Variation() {
+    const { variations, setVariations } = useNewProduct();
     const [loading, setLoading] = useState(false);
     const [check, setCheck] = useState(false);
-    const [selected, setSelected] = useState([]);
-    const [deleteList, setDeleteList] = useState([]);
 
-    const [temporaryDeleteList, setTemporaryDeleteList] = useState([]);
-    const [update, setUpdate] = useState({ price: null, quantity: null });
+    // const [update, setUpdate] = useState({ price: null, quantity: null });
 
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
 
-    const [variations, setVariations] = useState([
-        {
-            id: 1,
-            name: 'Colour',
-            options: generateVariation('Colour'),
-            disabled: false,
-            default: true, 
-        },
-        {
-            id: 2,
-            name: 'Size',
-            options: generateVariation('Size'),
-            disabled: false,
-            default: true, 
-        },
-    ]);
     const [temporaryVariation, setTemporaryVariation] = useState([]);
     const toggle = () => {
         setCheck(!check);
@@ -76,21 +55,6 @@ function Variation() {
             return dispatch({ type: 'manage' });
         }
     }, [check]);
-
-    const cleanup = () => {
-        setDeleteList([]);
-        // setTemporaryVariation([]);
-
-        // const newArr = [...temporaryVariation];
-        // const updateDisabled = newArr.map((item) => {
-        //     return { ...item, disabled: false };
-        // });
-
-        resetDefaultMap();
-
-        // setVariations(updateDisabled);
-    };
-
     const value = {
         check,
         setCheck,
@@ -98,21 +62,22 @@ function Variation() {
         dispatch,
         variations,
         setVariations,
-        setSelected,
-        selected,
-        update,
-        setUpdate,
-        deleteList,
-        setDeleteList,
         temporaryVariation,
         setTemporaryVariation,
-        temporaryDeleteList,
-        setTemporaryDeleteList,
     };
+
+    useEffect(() => {
+        if (check == false) {
+            resetDefaultMap();
+        }
+    }, [check]);
 
     return (
         <VariationProvider value={value}>
-            <section className="new-product-wrapper variations relative">
+            <section
+                id="variations"
+                className="new-product-wrapper variations relative"
+            >
                 <section className="relative flex w-full flex-row flex-wrap justify-between p-4">
                     <New_Product_Header
                         title={'Variations'}
@@ -125,22 +90,25 @@ function Variation() {
                         onClick={toggle}
                         className="theme-btn"
                     >
-                        <AddRoundedIcon />
-                        <span>Add Variations</span>
+                        {temporaryVariation.length == 0 ? (
+                            <>
+                                <AddRoundedIcon />
+                                <span>Add Variations</span>
+                            </>
+                        ) : (
+                            'Manage Variations'
+                        )}
                     </button>
-                    <VariationList />
+                    <VariationList/>
+            
                 </section>
                 {check && (
                     <Modal
-                        cleanup={cleanup}
                         check={check}
                         setCheck={setCheck}
                         ModalContent={views[content.type]}
                         loading={loading}
                         setLoading={setLoading}
-                        className={
-                            ' w-full max-w-[600px]  !rounded-3xl px-7 pt-8'
-                        }
                     />
                 )}
             </section>

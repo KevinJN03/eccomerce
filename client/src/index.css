@@ -5,19 +5,6 @@
     font-family: 'Gotham';
     src: url('./assets/fonts/Gotham Bold.otf');
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins';
-    color: black;
-}
-
 :root {
     --primary: #2d2d2d;
     --white: white;
@@ -29,6 +16,20 @@
     --primary-2: #525050;
     --green: #018849;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins';
+    color: black;
+}
+
+
 
 html {
     max-width: 100%;

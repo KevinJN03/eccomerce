@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useContent } from '../../../../../../context/ContentContext';
-import Input from '../input';
+// import InputLabel from '../inputLabel';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CustomTime from './customTime';
 import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
@@ -9,64 +9,51 @@ import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
 
 import handleError, { closeError } from '../../../../../common/handleError';
-function New({ profile, close, setLoadingState }) {
-    console.log('New Render');
-    const { content, dispatch, setLoading, loading } = useContent();
+function New() {
+    const { dispatch, content } = useContent();
+    const [disable, setDisable] = useState();
+    const { profile } = content;
     const [customRange, setCustomRange] = useState(false);
-    const [name, setName] = useState();
-    const [cost, setCost] = useState();
-    const [processingTime, setProcessingTime] = useState();
+    const [name, setName] = useState(profile?.name || '');
+    const [cost, setCost] = useState(profile?.cost || 0);
+    const [processingTime, setProcessingTime] = useState(
+        defaultTimes[1].processingTime
+    );
     const [selected, setSelected] = useState();
     const [error, setError] = useState([]);
     const [fetchRoute, setFetchRoute] = useState('create');
-    const back = () => {
-        close ? close() : dispatch({ type: 'Main' });
-    };
 
     useEffect(() => {
+        setDisable(() => true);
+        console.log({ profile });
         if (profile) {
-            setFetchRoute('update');
-            console.log(profile);
-            console.log('cost', profile.cost);
-            setCost((prev) => (prev = profile.cost));
+            setFetchRoute(() => 'update');
             const newArr = defaultTimes.slice(1, 4);
-            console.log({ newArr });
-            const findTime = newArr.find((time) => {
-                const { start, end, type } = time.processingTime;
-
+            const findTime = newArr.find(({ start, end, type }) => {
                 if (
-                    time.processingTime &&
-                    start == profile.processingTime.start &&
-                    end == profile.processingTime.end &&
-                    type == profile.processingTime.type
+                    // time.processingTime &&
+                    start == profile?.processingTime.start &&
+                    end == profile?.processingTime.end &&
+                    type == profile?.processingTime.type
                 ) {
                     profile.processingTime.start == start;
                     console.log(profile.processingTime.start);
-                    console.log('timestart ', time);
                     return time;
                 }
             });
-            console.log('findTime', findTime);
+
             if (findTime) {
-                console.log('contains');
-                setSelected(findTime.name);
+                setSelected(() => findTime.name);
             } else {
-                // if its a custom range, set the selected type to custom
-                setSelected('Custom range');
-                setCustomRange(true);
+                setSelected(() => 'Custom range');
+                setCustomRange(() => true);
             }
 
-            setProcessingTime(profile.processingTime);
-        } else {
-            // if a new profile is being created set the default processing time to 0
-            setCost(0);
-            setProcessingTime(defaultTimes[1].processingTime);
+            setProcessingTime(() => profile.processingTime);
         }
     }, []);
 
     const handleCost = (value) => {
-        console.log('handleCost triggered');
-
         const newValue = parseFloat(value).toFixed(2);
         setCost(newValue);
     };
@@ -80,7 +67,7 @@ function New({ profile, close, setLoadingState }) {
         };
         const axiosThen = (res) => {
             if (res.status == 200 || 201) {
-                setLoadingState ? setLoadingState(true) : setLoading(true);
+                dispatch({ type: 'Main' });
             }
         };
         const axiosCatch = (error) => {
@@ -103,7 +90,7 @@ function New({ profile, close, setLoadingState }) {
 
     const handleOnchange = (e, value) => {
         console.log('onchange triggered');
-        const fetchProfile = value[event.target.selectedIndex].dataset.profile;
+        const fetchProfile = value[e.target.selectedIndex].dataset.profile;
         const profileToJson = JSON.parse(fetchProfile);
 
         if (profileToJson.name === 'Custom range') {
@@ -117,13 +104,6 @@ function New({ profile, close, setLoadingState }) {
 
         setSelected(profileToJson.name);
     };
-
-    // const closeError = (id,setState) => {
-    //     const newErrors = [...error];
-    //     const filter = newErrors.filter((item) => item.id != id);
-
-    //     setState(filter);
-    // };
     return (
         <section className="new-delivery flex w-full flex-col gap-3">
             <div className="error">
@@ -156,14 +136,6 @@ function New({ profile, close, setLoadingState }) {
                         );
                     })}
             </div>
-
-            <span
-                className="mb-2 flex items-center justify-center self-end rounded-full bg-slate-100 p-1 hover:bg-slate-300"
-                onClick={back}
-            >
-                {' '}
-                <CloseRoundedIcon />{' '}
-            </span>
             <h3 className="text-center font-gotham text-lg">
                 {profile
                     ? 'EDIT A DELIVERY PROFILE'
@@ -173,16 +145,24 @@ function New({ profile, close, setLoadingState }) {
                 className="font-poppins border-1 w-full border-black p-2 text-sm font-light"
                 type="text"
                 placeholder="Name Your Delivery Profile"
-                onChange={(e) => setName(e.target.value)}
-                defaultValue={profile ? profile.name : ''}
+                onChange={(e) => {
+                    setName(e.target.value);
+                    setDisable(() => false);
+                }}
+                value={name}
             />
 
             <div className="flex flex-row flex-wrap items-center justify-between">
                 <label htmlFor="processing-time">Processing Time</label>
                 <select
+                    id="options"
+                    name="options"
                     key={uuidv4()}
                     className="!border-1 select max-w-[50%] appearance-none  rounded-none"
-                    onChange={(e) => handleOnchange(e, e.target.options)}
+                    onChange={(e) => {
+                        handleOnchange(e, e.target.options);
+                        setDisable(() => false);
+                    }}
                 >
                     {defaultTimes.map((time, idx) => {
                         return (
@@ -205,6 +185,7 @@ function New({ profile, close, setLoadingState }) {
                     <CustomTime
                         setProcessingTime={setProcessingTime}
                         processingTime={processingTime}
+                        setDisable={setDisable}
                     />
                 )}
             </div>
@@ -216,7 +197,10 @@ function New({ profile, close, setLoadingState }) {
                         id="cost-input"
                         min="0"
                         defaultValue={cost}
-                        onChange={(e) => handleCost(e.target.value)}
+                        onChange={(e) => {
+                            handleCost(e.target.value);
+                            setDisable(() => false);
+                        }}
                         className="border-1 cost-input relative py-2 pl-7 pr-4"
                         step=".01"
                     />
@@ -227,12 +211,22 @@ function New({ profile, close, setLoadingState }) {
                 </span>
             </span>
 
-            <button
-                onClick={save}
-                className="bg-green-300 py-2 hover:bg-green-400"
-            >
-                Save
-            </button>
+            <section className="flex flex-row gap-x-2">
+                <button
+                    onClick={() => dispatch({ type: 'Main' })}
+                    className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-400"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    onClick={save}
+                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-400 disabled:bg-slate-100"
+                    disabled={disable}
+                >
+                    Save
+                </button>
+            </section>
         </section>
     );
 }

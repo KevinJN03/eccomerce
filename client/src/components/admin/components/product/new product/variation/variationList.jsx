@@ -1,54 +1,91 @@
 import { useVariation } from '../../../../../../context/variationContext';
-import { useState } from 'react';
-import Switch from './switch';
+import { Fragment, useEffect, useState } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 import Table from './table/table.jsx';
+import SingleList from './singleList';
+
 function VariationList({}) {
     const { variations, dispatch, setCheck } = useVariation();
-    const { selected } = useVariation();
+    const [combine, setCombine] = useState({
+        id: uuidV4(),
+        options: new Map(),
+    });
 
-    const handleUpdate = (category) => {
-        setCheck(true);
-        dispatch({ type: 'update', category: category });
-    };
+    useEffect(() => {
+        const everyVariation = variations.every((item) => item.combine == true);
+
+        if (everyVariation && variations.length > 1) {
+            console.log('variationList combine');
+            const onlyOptions = [...variations].map(({ options }) => {
+                console.log({ options });
+                return options;
+            });
+
+            console.log('onlyOptions: ', onlyOptions);
+            /* {variation: 'Small (S)', id: '3e257f61-c557-45e4-8b20-479fd7eb5fb6'} */
+            const [firstOptions, secondOptions] = onlyOptions;
+
+            const newOptions = new Map();
+            for (const variationItem of firstOptions.values()) {
+                for (const item of secondOptions.values()) {
+                    const { variation } = item;
+                    const id = uuidV4();
+                    const newObj = {
+                        id,
+                        variation: variationItem.variation,
+                        variation2: variation,
+                    };
+
+                    newOptions.set(id, newObj);
+                }
+            }
+
+            console.log('newOptions: ', newOptions);
+
+            const newVariation = {
+                ...combine,
+                options: newOptions,
+                name: variations[0].name,
+                name2: variations[1].name,
+                quantityHeader: { on: true },
+                priceHeader: { on: true },
+            };
+
+            setCombine(newVariation);
+        } else {
+            setCombine((prevState) => {
+                return { ...prevState, options: new Map() };
+            });
+        }
+    }, [variations]);
 
     return (
         <>
-            {variations.length > 0 && (
-                <section className="mt-12 flex basis-full flex-col">
-                    <section className="flex w-full flex-row justify-between">
-                        <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold tracking-wide">
-                                {variations.length <= 1 && variations[0].name}
-                                {variations.length > 1 &&
-                                    `${variations[0].name} and ${variations[1].name} `}
-                            </h3>
-                            <p>{`${variations.length} ${
-                                variations.length > 1 ? 'variants' : 'variant'
-                            }`}</p>
-                        </div>
-                       { selected.length > 0 &&  <span className="flex-no-wrap flex flex-row items-center gap-x-3 py-2">
-                            <p>{selected.length} selected</p>
-                            <button
-                                type="button"
-                                className="theme-btn"
-                                onClick={() => handleUpdate('price')}
-                            >
-                                Update price
-                            </button>
-                            <button
-                                type="button"
-                                className="theme-btn"
-                                onClick={() => handleUpdate('quantity')}
-                            >
-                                Update Quantity
-                            </button>
-                        </span>}
-                    </section>
-                    <Table  />
-                </section>
+            {combine?.options.size >= 1 && (
+                <SingleList
+                    key={combine.id}
+                    variation={combine}
+                    combine={combine}
+                    isCombine={true}
+                    setCombine={setCombine}
+                />
             )}
+            {combine?.options.size < 1 &&
+                variations.length > 0 &&
+                variations.map((variation) => {
+                    return (
+                        <>
+                            <SingleList
+                                key={variation.id}
+                                variation={variation}
+                                isCombine={false}
+                                combine={combine}
+                                setCombine={setCombine}
+                            />
+                        </>
+                    );
+                })}
         </>
     );
 }
-
 export default VariationList;

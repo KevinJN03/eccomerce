@@ -6,13 +6,13 @@ import fileFilter from '../Upload/fileFilter.js';
 import sharpify from '../Upload/sharpify.js';
 import bcrypt from 'bcryptjs';
 import s3Upload from '../s3Service.js';
-
+import 'dotenv/config';
 const handleProfilePhoto = async (file, id) => {
   if (file) {
     const compressImg = await sharpify(file, 'profile');
     compressImg.id = id;
-    await s3Upload([compressImg], 'profile');
-    const profileImg = `https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/user/${id}.${compressImg.format}`;
+    await s3Upload([compressImg], true);
+    const profileImg = `${process.env.UPLOAD_URL}/user/${id}.${compressImg.format}`;
     const updateUser = await User.findByIdAndUpdate(
       id,
       { profileImg },

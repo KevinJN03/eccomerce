@@ -1,76 +1,93 @@
 import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
 import { useEffect, useState } from 'react';
-function Table({}) {
-    const [checkAll, setCheckAll] = useState(false);
-    const { selected, setSelected } = useVariation();
-    const { variations } = useVariation();
+import { tableLayout } from './tableLayout';
+import { getValuesFromMap } from '../variationData';
+function Table({
+    variationList,
+    selected,
+    setSelected,
+    update,
+    isCombine,
+    setCheckAll,
+    checkAll,
+    layout,
+    setCombine,
+}) {
+    const count = variationList.options.size;
+
+    const [variationOptions, setVariationOptions] = useState([]);
 
     useEffect(() => {
-        let count = 0;
-            variations.forEach((element) => {
-                count += element.options.length;
-            });
+        const result = getValuesFromMap(variationList.options);
 
-        if (checkAll) {
-            const newList = variations.map((item) => {
-                const { options } = item;
+        setVariationOptions(result);
+    }, [variationList]);
 
-                const arr = options.map((obj) => {
-                    return obj;
-                });
-
-                return arr;
-            });
-
-            const spreadList = [...newList[0], ...newList[1]];
-
-            setSelected(spreadList);
-        } else if (!checkAll && selected.length == count) {
-            setSelected([]);
+    useEffect(() => {
+        if (checkAll == false && selected.size == count) {
+            setSelected(new Map());
         }
     }, [checkAll]);
+    useEffect(() => {
+    
+
+        if (selected.size == count) {
+            setCheckAll(true);
+        }
+
+        if (selected.size == 0) {
+            setCheckAll(false);
+        }
+    }, [selected]);
 
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
     };
+
     return (
-        <table className="result-table w-full">
-            <colgroup>
-                <col span="1" width={'10%'} />
-                <col span="1" width={'15%'} />
-                <col span="1" width={'25%'} />
-                <col span="1" width={'25%'} />
-                <col span="1" width={'25%'} />
-            </colgroup>
-            <tr>
-                <th>
-                    <input
-                        type="checkbox"
-                        className="checkbox"
-                        defaultChecked={checkAll}
-                        checked={checkAll}
-                        onChange={handleCheckAll}
-                    />
-                </th>
-                <th>{variations[0].name}</th>
-                <th className="">Price</th>
-                <th>Quantity</th>
-                <th className="!text-right">Visible </th>
+        <table className="result-table w-full !bg-white">
+            <colgroup>{tableLayout[layout]}</colgroup>
+            <tr className="!w-full ">
+                {(variationList.priceHeader.on ||
+                    variationList.quantityHeader.on) && (
+                    <th>
+                        <input
+                            type="checkbox"
+                            className="checkbox no-animation !rounded-[3px]"
+                            // defaultChecked={checkAll}
+                            checked={checkAll}
+                            onChange={handleCheckAll}
+                        />
+                    </th>
+                )}
+
+                <th className="">{variationList.name}</th>
+                {isCombine == true && <th>{variationList.name2}</th>}
+                {variationList.priceHeader.on && <th>Price</th>}
+                {variationList.quantityHeader.on && <th>Quantity</th>}
+                <th className=" !text-right ">Visible </th>
             </tr>
-            {variations.length > 0 &&
-                variations.map((list) => {
-                    return list.options.map((item) => {
-                        return (
-                            <Row
-                                setCheckAll={setCheckAll}
-                                checkAll={checkAll}
-                                variation={item}
-                                variationId={list.id}
-                                variations={variations}
-                            />
-                        );
-                    });
+            {variationOptions &&
+                variationOptions.map((item) => {
+                    return (
+                      
+                        <Row
+                        key={item.id}
+                            setCheckAll={setCheckAll}
+                            checkAll={checkAll}
+                            singleVariation={item}
+                            variationList={variationList}
+                            isQuantityHeaderOn={variationList.quantityHeader.on}
+                            isPriceHeaderOn={variationList.priceHeader.on}
+                            selected={selected}
+                            setSelected={setSelected}
+                            update={update}
+                            isCombine={isCombine}
+                            setCombine={setCombine}
+                        />
+                    );
+                    // });
                 })}
         </table>
     );

@@ -1,196 +1,105 @@
 import './upload.scss';
-import add_image from './add-image.png';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import wiredIcon from '../../../../../../assets/icons/wired-outline-49-plus-circle.webp'
-import { v4 as uuidv4 } from 'uuid';
-import { useRef } from 'react';
-import close from '../../../../../../assets/icons/close.png';
-function Upload({ files, setFiles }) {
-    console.log('files at upload', files);
-    const addInputRef = useRef();
+
+import { DragDropContext } from 'react-beautiful-dnd';
+
+import { useNewProduct } from '../../../../../../context/newProductContext';
+import DragItem from './dragItem';
+
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+function Upload({}) {
+    const { files, setFiles } = useNewProduct();
+ 
+
     const handleOnDragEnd = (result) => {
-        console.log(result);
+      
+ 
         if (!result.destination) return;
 
         const items = Array.from(files);
-        if (items[result.destination.index].isDragDisabled == true) return;
+        // if (items[result.destination.index].isDragDisabled == true) return;
         const [reorderedItems] = items.splice(result.source.index, 1);
 
-        // check i f the destination index isdisabled true, it should return to the original place
+        // check if the destination index isdisabled true, it should return to the original place
         items.splice(result.destination.index, 0, reorderedItems);
         setFiles(items);
     };
 
-    const handleAddphoto = (e, newfiles) => {
-        console.log('you clicked on', newfiles);
-
-        const images = Array.from(e.target.files, (file) =>
-            URL.createObjectURL(file)
-        );
-
-        const findFile = files.find((item) => item.isDragDisabled == true);
+    const handleAddPhoto = (e) => {
+        const images = Array.from(e.target.files);
         let counter = 0;
         setFiles(
             files.map((file) => {
-                // if (file.id === findFile.id) {
-
                 if (file.isDragDisabled == true && images[counter] != null) {
-                    console.log("image counter", images)
                     const newFile = {
                         ...file,
-                        img: images[counter],
+                        file: images[counter],
                         isDragDisabled: false,
                     };
                     counter += 1;
-                    console.log("newFile after adding", newFile)
-                    return newFile
+
+                    return newFile;
                 }
 
-                // }
                 return file;
             })
         );
-
-        // console.log('files after update', files);
     };
 
-    const deletePhoto = (oldfile) => {
-        let newfile = oldfile;
-        delete newfile.img;
-        newfile.isDragDisabled = true;
-
-        setFiles(
-            files.map((item) => {
-                if (item.id == oldfile.id) {
-                    return newfile;
-                }
-                return item;
-            })
-        );
+    const deletePhoto = (oldFile) => {
+        let updateFile = { ...oldFile };
+        delete updateFile.file;
+        updateFile.isDragDisabled = true;
+        const newFiles = [...files];
+        const findIndex = files.findIndex((item) => item.id == oldFile.id);
+        newFiles.splice(findIndex, 1);
+        newFiles.push(updateFile);
+        setFiles(newFiles);
     };
 
-    function DragItem({ id, droppableId, className }) {
-        return (
-            <Droppable
-                droppableId={droppableId}
-                direction={'vertical'}
-                isDropDisabled={files[id].isDragDisabled}
-            >
-                {(provided) => (
-                    <div
-                        className={className}
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                    >
-                        <Draggable
-                            key={files[id].id}
-                            index={id}
-                            draggableId={files[id].id}
-                            isDragDisabled={files[id].isDragDisabled}
-                        >
-                            {(provided) => (
-                                <div
-                                    className="relative h-full w-full rounded-inherit"
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    ref={provided.innerRef}
-                                >
-                                    {files[id].img ? (
-                                        <>
-                                            <button
-                                                type="button"
-                                                className="delete-btn absolute right-3 bottom-2 h-8 w-8 bg-slate-100 rounded-full p-2"
-                                                onClick={() =>
-                                                    deletePhoto(files[id])
-                                                }
-                                            >
-                                                <img
-                                                    className="h-full w-full"
-                                                    src={close}
-                                                />
-                                            </button>
-                                            <img
-                                                loading="lazy"
-                                                src={files[id].img}
-                                                className="!object-contain object-cover"
-                                            />
-                                        </>
-                                    ) : (
-                                        <div
-                                            className="flex h-full w-full items-center justify-center"
-                                            onClick={() =>
-                                                addInputRef.current.click()
-                                            }
-                                        >
-                                            <input
-                                                type="file"
-                                                ref={addInputRef}
-                                                onChange={(e) =>
-                                                    handleAddphoto(e, files[id])
-                                                }
-                                                accept="image/jpeg,image/x-png"
-                                                hidden
-                                                multiple
-                                            />
-                                            <img
-                                                src={wiredIcon}
-                                                className="!w-20 !h-20"
-                                            />
-                                       
-                                        </div>
-                                    )}
 
-                                    {/* when ever there isnt an image youcan update it with the  */}
-                                </div>
-                            )}
-                        </Draggable>
-                        {provided.placeholder}
-                    </div>
-                )}
-            </Droppable>
-        );
-    }
 
     return (
         <section id="upload-section">
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-                <section id="upload">
-                    <section className="main-img">
-                        <DragItem
-                            id={0}
-                            droppableId={'main-0'}
-                            className="img-container"
-                        />
-                        <DragItem
-                            id={1}
-                            droppableId={'main-1'}
-                            className="img-container"
-                        />
+            <AnimatePresence>
+                <DragDropContext
+                    onDragEnd={handleOnDragEnd}
+                   
+                >
+                    <section id="upload">
+                        <section className="main-img">
+                            {[0, 1].map((item) => {
+                                return (
+                                    <DragItem
+                                        id={item}
+                                        key={item}
+                                        droppableId={`main-${item}`}
+                                        className="img-container"
+                                        handleAddPhoto={handleAddPhoto}
+                                        deletePhoto={deletePhoto}
+                                    
+                                    />
+                                );
+                            })}
+                        </section>
+                        <section className="additional-img">
+                            {[2, 3, 4, 5].map((item, idx) => {
+                                return (
+                                    <DragItem
+                                        id={item}
+                                        key={item}
+                                        droppableId={`additional-${idx}`}
+                                        className="add-img-container"
+                                        handleAddPhoto={handleAddPhoto}
+                                        deletePhoto={deletePhoto}
+                                       
+                                    />
+                                );
+                            })}
+                        </section>
                     </section>
-                    <section className="additional-img">
-                        <DragItem
-                            id={2}
-                            droppableId={'additional-1'}
-                            className="add-img-container"
-                        />
-                        <DragItem
-                            id={3}
-                            droppableId={'additional-2'}
-                            className="add-img-container"
-                        />
-                        <DragItem
-                            id={4}
-                            droppableId={'additional-3'}
-                            className="add-img-container"
-                        />
-                        <DragItem
-                            id={5}
-                            droppableId={'additional-4'}
-                            className="add-img-container"
-                        />
-                    </section>
-                </section>
-            </DragDropContext>
+                </DragDropContext>
+            </AnimatePresence>
         </section>
     );
 }

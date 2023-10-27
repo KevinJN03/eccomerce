@@ -10,22 +10,27 @@ import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
 import fetchProfile from './fetchDeliveryProfile';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function MainContent() {
-    const {
-        content,
-        dispatch,
-        setModalCheck,
-        setProfile,
-        profile,
-        loading,
-        setLoading,
-    } = useContent();
+    const { dispatch, setModalCheck, loading, setLoading } = useContent();
+    const { setProfile, profile } = useNewProduct();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
-    const [profileReplacement, setProfileReplacement] = useState(profile);
+    const [profileReplacement, setProfileReplacement] = useState(
+        JSON.parse(JSON.stringify(profile))
+    );
+    const [disable, setDisable] = useState(true);
     useEffect(() => {
         fetchProfile(setDeliveryProfiles);
     }, []);
+
+    useEffect(() => {
+
+        if(JSON.stringify(profile) != JSON.stringify(profileReplacement)){
+          setDisable(false);  
+        }
+        
+    }, [profileReplacement]);
 
     useEffect(() => {
         fetchProfile(setDeliveryProfiles);
@@ -53,19 +58,14 @@ function MainContent() {
     };
     return (
         <div className="delivery-profile flex w-full flex-col">
-            <span
-                className="mb-2 flex items-center justify-center self-end rounded-full bg-slate-100 p-1 hover:bg-slate-300"
-                onClick={() => setModalCheck(false)}
-            >
-                <CloseRoundedIcon  className='bg-transparent'/>
-            </span>
+            
             <div className="modal-header flex items-center justify-between">
                 <h2 className="font-gotham text-xl font-bold">
                     DELIVERY PROFILES
                 </h2>
                 <button
                     onClick={() => dispatch({ type: 'New' })}
-                    className="flex items-center justify-center gap-1 rounded-2xl border-2 px-2 py-1 font-medium"
+                    className="flex items-center justify-center gap-1 rounded-2xl border-2 px-2 py-1 font-medium transition-all hover:!px-6"
                 >
                     <span className="text-3xl">+</span> Create New
                 </button>
@@ -117,21 +117,23 @@ function MainContent() {
                                             id="profile-btn"
                                             className="flex items-center justify-center gap-2"
                                         >
-                                            {findProfile && (
+                                            {findProfile ? (
                                                 <RemoveCircleOutlineRoundedIcon
+                                                    className="box-content rounded-full p-1 hover:bg-slate-100"
                                                     onClick={() =>
                                                         removeProfile(
                                                             delivery._id
                                                         )
                                                     }
                                                 />
+                                            ) : (
+                                                <AddCircleOutlineRoundedIcon
+                                                    className="box-content rounded-full p-1 hover:bg-slate-100"
+                                                    onClick={() =>
+                                                        handleClick(delivery)
+                                                    }
+                                                />
                                             )}
-
-                                            {!findProfile && <AddCircleOutlineRoundedIcon
-                                                onClick={() =>
-                                                    handleClick(delivery)
-                                                }
-                                            />}
 
                                             <Edit profile={delivery} />
                                             <Delete id={delivery._id} />
@@ -148,15 +150,24 @@ function MainContent() {
                         )}
 
                         {deliveryProfiles.length > 0 && (
-                            <>
+                            <div className="flex w-full flex-row gap-x-2">
+                                 <button
+                                    type="button"
+                                    onClick={() => setModalCheck(false)}
+                                    className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-500"
+                                >
+                                    Cancel
+                                </button>
                                 <button
                                     type="button"
                                     onClick={confirm}
-                                    className="bg-green-300 py-2 hover:bg-green-500"
+                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:bg-slate-100"
+                                    disabled={disable}
                                 >
                                     Confirm
                                 </button>
-                            </>
+                              
+                            </div>
                         )}
                     </>
                 )}

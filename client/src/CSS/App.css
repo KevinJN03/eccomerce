@@ -15,6 +15,9 @@
    
 }
 
+.header-section{
+background-color: #2d2d2d
+}
 #header-wrapper {
     display: flex;
     flex-direction: column;

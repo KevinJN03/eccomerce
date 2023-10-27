@@ -15,13 +15,7 @@ function Modal({
     className,
     back,
     selection,
-    cleanup,
 }) {
-    useEffect(() => {
-        return () => {
-            cleanup && cleanup();
-        };
-    }, []);
     const handleDelete = () => {
         if (selection && selection.length > 1) {
             axios
@@ -40,38 +34,23 @@ function Modal({
         }
     };
 
-    useEffect(() => {
-        let timeout;
-
-        if (loading == true) {
-            timeout = setTimeout(() => {
-                setLoading(false);
-                back ? back() : setCheck(false);
-            }, 2000);
-        }
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [loading]);
-
-    console.log(deleteType);
     return (
         <section>
             <input
-                className="modal-state "
+                className="modal-state  "
                 id="modal-3"
                 type="checkbox"
                 checked={check}
+                readOnly
             />
-            <div className={`modal`}>
+            <div className={` modal  `}>
                 <label
-                    className={`modal-overlay bg-transparent `}
+                    className={`modal-overlay bg-transparent  `}
                     htmlFor="modal-3"
                     onClick={() => setCheck(false)}
                 ></label>
                 <div
-                    className={`modal-content flex flex-col items-center gap-4 rounded-none border-none ${className}`}
+                    className={`modal-content flex flex-col items-center gap-4 rounded-none border-none ${className} !bg-white`}
                 >
                     {loading ? (
                         <div class="spinner-circle [--spinner-color:var(--gray-9)]"></div>

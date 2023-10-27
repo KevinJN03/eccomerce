@@ -1,9 +1,10 @@
-export default function CustomTime({ setProcessingTime, processingTime }) {
+export default function CustomTime({ setProcessingTime, processingTime, setDisable }) {
 
     const updateType = (type) => {
         setProcessingTime((prevstate) => {
             return { ...prevstate, type: type };
         });
+        setDisable(() => false);
     };
 
     const handleTime = (value, property) => {
@@ -20,9 +21,11 @@ export default function CustomTime({ setProcessingTime, processingTime }) {
 
     const handleStart = (value) => {
         handleTime(value, 'start')
+        setDisable(() => false);
     }
     const handleEnd = (value) => {
         handleTime(value, 'end')
+        setDisable(() => false);
     };
 
     return (

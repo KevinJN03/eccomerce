@@ -1,87 +1,88 @@
-import { useState, useRef } from 'react';
-// import dragImage from './dragtest/dragtest';
-// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useEffect, useRef, useState } from 'react';
 import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
-function DragDropFile() {
-    console.log('dragDrop mounted');
-    const [files, setFiles] = useState();
-    console.log('files', files);
+import { useNewProduct } from '../../../../../context/newProductContext';
+import AddSharpIcon from '@mui/icons-material/AddSharp';
+
+function DragDropFile({filesError}) {
+    const { files, setFiles, publishError } = useNewProduct();
+
+   
+
     const inputRef = useRef();
     const handleDragOver = (e) => {
         e.preventDefault();
     };
-    const handleDrop = (e) => {
-        e.preventDefault();
-        console.log('e.dataTransfer.files', e.dataTransfer.files);
-        const filesImg = Array.from(e.dataTransfer.files, (file) => ({
+
+  
+
+    const convertToArray = (files) => {
+        const convert = Array.from(files, (file) => ({
             id: uuidv4(),
-            img: URL.createObjectURL(file),
+            file: file,
             isDragDisabled: false,
         }));
-        if (filesImg.length < 6) {
-            for (let i = filesImg.length; i < 6; i++) {
+
+        return convert.slice(0, 6);
+    };
+    const handleDrop = (e) => {
+        e.preventDefault();
+
+        const newFiles = convertToArray(e.dataTransfer.files);
+
+        if (newFiles.length < 6) {
+            for (let i = newFiles.length; i < 6; i++) {
                 let obj = { id: uuidv4(), isDragDisabled: true };
-                filesImg.push(obj);
-                console.log('filesImg while iterating:', filesImg);
+                newFiles.push(obj);
             }
-            setFiles(filesImg);
+            setFiles(newFiles);
         }
     };
     const handleInput = (e) => {
         e.preventDefault();
-
-        const filesImg = Array.from(e.target.files, (file) => ({
-            id: uuidv4(),
-            img: URL.createObjectURL(file),
-            isDragDisabled: false,
-        }));
-        if (filesImg.length < 6) {
-            for (let i = filesImg.length; i < 6; i++) {
+        const newFiles = convertToArray(e.target.files);
+        if (newFiles.length < 6) {
+            for (let i = newFiles.length; i < 6; i++) {
                 let obj = { id: uuidv4(), isDragDisabled: true };
-                filesImg.push(obj);
-                console.log('filesImg while iterating:', filesImg);
+                newFiles.push(obj);
             }
         }
-        console.log('filesImg ', filesImg);
-        setFiles(filesImg);
+
+        setFiles(newFiles);
     };
 
-    if (files)
-        return (
-            <>
-                {console.log('files before going to upload', files)}
-                <Upload files={files} setFiles={setFiles} />
-            </>
-        );
-
     return (
-        <section>
-            {!files && (
+        <section className={filesError && '!bg-red-100'}>
+            {files.length == 0 && (
                 <div
                     className="dropzone"
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
                 >
-                    <h1>Drag and Drop Files to Upload</h1>
+                    <h1 className="text-center text-lg font-medium">
+                        Drag and Drop Files to Upload
+                    </h1>
                     <input
                         type="file"
                         multiple
                         onChange={(e) => handleInput(e)}
-                        // onChange={(e) => console.log(e.target)}
                         hidden
                         accept="image/png, image/jpeg"
                         ref={inputRef}
                     />
                     <button
+                        className="options-btn"
                         type="button"
                         onClick={() => inputRef.current.click()}
                     >
-                        Select Photo
+                        <span>
+                            <AddSharpIcon />
+                        </span>{' '}
+                        Add up to 6 photos
                     </button>
                 </div>
             )}
-         
+            {files.length > 0 && <Upload />}
         </section>
     );
 }

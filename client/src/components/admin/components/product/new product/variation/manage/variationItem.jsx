@@ -3,7 +3,7 @@ import SingleVariation from "../singleVariation";
 
 
 function VariationItem({deleteVariation, editVariation, variations, type}) {
-const {deleteList} = useVariation()
+
     
     return (
         <>
@@ -11,9 +11,7 @@ const {deleteList} = useVariation()
                 variations.map((variation) => {
                     const { id } = variation;
 
-                    const findInDeleteList = deleteList.some(
-                        (item) => item == id
-                    );
+                    
 
                     if (!variation.disabled ) {
                         return (

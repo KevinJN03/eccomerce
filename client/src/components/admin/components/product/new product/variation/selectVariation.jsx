@@ -10,23 +10,19 @@ import {
     generateCustomVariation,
     filteredVariation,
     defaultMap,
+    getValuesFromMap,
 } from './variationData';
-import ErrorAlert from './errorAlert';
-import VariationResults from './searchResults';
+import ErrorAlert from './error/errorAlert';
+import SearchResult from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
-import OptionError from './optionError';
+import OptionError from './error/optionError';
 
 function SelectVariation({}) {
-    const {
-        content,
-        dispatch,
-        setTemporaryVariation,
-        temporaryVariation,
-        deleteList,
-    } = useVariation();
+    const { content, dispatch, setTemporaryVariation, temporaryVariation } =
+        useVariation();
     const currentVariation = content.currentVariation;
     const [option, setOption] = useState(
-        currentVariation ? currentVariation.options : []
+        currentVariation ? currentVariation.options : new Map()
     );
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -36,7 +32,11 @@ function SelectVariation({}) {
     );
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
-
+    const [optionArray, setOptionArray] = useState([]);
+    useEffect(() => {
+        const result = getValuesFromMap(option);
+        setOptionArray(result);
+    }, [option]);
     useEffect(() => {
         try {
             if (currentVariation) {
@@ -45,13 +45,16 @@ function SelectVariation({}) {
                 setVariation(result);
                 return;
             } else if (defaultVariation) {
-                let list = generateVariation(name);
+                let list = generateVariation(name, {array: true});
+console.log('here')
+
 
                 setVariation(list);
             }
-        } catch (error) {
-            console.log('error at select: ', error);
-        }
+
+           
+
+        } catch (error) {}
     }, []);
 
     const onNameChange = (value) => {
@@ -61,7 +64,6 @@ function SelectVariation({}) {
             ({ name }) => name.toLowerCase() == value.toLowerCase()
         );
         if (variationExist) {
-            console.log('exist:', value);
             return setExist(true);
         }
 
@@ -78,16 +80,20 @@ function SelectVariation({}) {
         if (searchText.length > 0) {
             setSearchText('');
         }
-        setOption([...option, variationOption]);
+        setOption((prevState) => {
+            return new Map(prevState).set(variationOption.id, variationOption);
+        });
         filterColor(variationOption.id);
     };
 
     const deleteColor = (variationOption) => {
-        const newArr = [...option];
-        const filterOption = newArr.filter(
-            (item) => item.id != variationOption.id
-        );
-        setOption(filterOption);
+        // const filterOption = newArr.filter(
+        //     (item) => item.id != variationOption.id
+        // );
+
+        debugger;
+        option.delete(variationOption.id);
+        setOption((prevState) => new Map(option));
 
         // if(newArr.find((item) => item.id == variationOption.id) == false){
 
@@ -99,7 +105,13 @@ function SelectVariation({}) {
     };
 
     const addRemainingColors = () => {
-        setOption([...option, ...variation]);
+        setOption((prevState) => {
+            const newMap = new Map(prevState);
+            variation.map((item) => {
+                newMap.set(item.id, item);
+            });
+            return newMap;
+        });
         setVariation([]);
     };
 
@@ -118,14 +130,15 @@ function SelectVariation({}) {
 
             return dispatch({ type: 'manage' });
         } catch (error) {
-            console.log(error);
             setError('Fail to delete variation. Please try again.');
         }
     };
 
     const handleCustom = () => {
         const customVariation = generateCustomVariation(searchText);
-        setOption([...option, customVariation]);
+        setOption((prevState) =>
+            new Map(prevState).set(customVariation.id, customVariation)
+        );
         setSearchText('');
     };
 
@@ -164,6 +177,8 @@ function SelectVariation({}) {
                     id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
                     default: defaultVariation,
                     disabled: false,
+                    quantityHeader: { on: false },
+                    priceHeader: { on: false },
                 };
 
                 setTemporaryVariation((prevState) => [
@@ -174,7 +189,6 @@ function SelectVariation({}) {
 
             dispatch({ type: 'manage' });
         } catch (error) {
-            console.log('error at singleVariation:', error.message);
             setError(error.message);
         }
     };
@@ -183,7 +197,7 @@ function SelectVariation({}) {
     };
 
     return (
-        <section className="select-variation relative h-[550px] w-full">
+        <section className="select-variation relative  h-full w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}
             <header className="flex w-full flex-col border-b-2 pb-4 !text-left">
                 <h1 className=" font-semibold">
@@ -211,12 +225,12 @@ function SelectVariation({}) {
                 )}
             </header>
 
-            <section className="options my-4  flex h-auto min-h-full flex-grow flex-col">
+            <section className="options my-4  flex !min-h-full flex-grow flex-col">
                 <div className="mb-6">
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
                         <span className="ml-1 flex h-4 items-center rounded-full bg-black px-2 text-xxs text-white">
-                            {option.length}
+                            {option.size}
                         </span>
                     </h2>
                     <p className="text-s">
@@ -232,7 +246,7 @@ function SelectVariation({}) {
                     } w-[400px] border-none`}
                 >
                     <div
-                        className="searchOption relative flex !w-full flex-row items-center"
+                        className="searchOption relative flex !w-full  flex-row items-center"
                         tabIndex={0}
                     >
                         <input
@@ -258,22 +272,25 @@ function SelectVariation({}) {
                         )}
                     </div>
                     {!defaultVariation && searchText.length > 20 && (
-                        <OptionError />
+                        <OptionError
+                            msg={
+                                'Option Name must be between 1 and 20 characters.'
+                            }
+                        />
                     )}
-                    <VariationResults
+                    <SearchResult
                         addRemainingColors={addRemainingColors}
                         searchText={searchText}
                         variation={variation}
                         addOption={addOption}
                         handleCustom={handleCustom}
-                        option={option}
+                        option={optionArray}
                     />
                 </section>
 
-                <div className="options-wrapper mt-3 flex basis-full flex-col gap-y-2 ">
-                    {option &&
-                        option.length > 0 &&
-                        option.map((item) => {
+                <div className="options-wrapper mt-3 flex min-h-[200px] basis-full flex-col gap-y-2  ">
+                    {option.size > 0 &&
+                        optionArray.map((item) => {
                             const { variation, id } = item;
                             return (
                                 <div
@@ -299,7 +316,7 @@ function SelectVariation({}) {
                 </div>
             </section>
             {/* //variation-footer !mt-auto !bottom-[-25px] py-4 */}
-            <section className="variation-footer !bottom-[-25px] !mt-auto py-4">
+            <section className="variation-footer !bottom-[-25px] !mt-auto pt-4">
                 <button
                     onClick={deleteVariation}
                     type="button"
@@ -310,7 +327,7 @@ function SelectVariation({}) {
                         Delete variation
                     </span>
                 </button>
-                <div className="flex h-full flex-row flex-nowrap items-center gap-x-4">
+                <div className="flex min-h-full flex-row flex-nowrap items-center gap-x-4">
                     {(exist && (
                         <ErrorMessage message={'Variation already exist'} />
                     )) ||
@@ -323,9 +340,9 @@ function SelectVariation({}) {
 
                     <button
                         type="button"
-                        className=" rounded-full !bg-black px-3 py-[10px]  text-white disabled:opacity-40"
+                        className="apply-btn"
                         disabled={
-                            (option && option.length < 1) ||
+                            ( option.size < 1) ||
                             name.length < 1 ||
                             exist ||
                             error

@@ -1,6 +1,6 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import OptionError from './optionError';
-import {v4 as uuidv4} from 'uuid'
+import OptionError from './error/optionError';
+import { v4 as uuidv4 } from 'uuid';
 function VariationResults({
     variation,
     searchText,
@@ -9,11 +9,10 @@ function VariationResults({
     handleCustom,
     option,
 }) {
-    
     return (
         <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
             <ul className="rounded-inherit border-2">
-                {variation.map((item) => {
+                {variation.length > 0 && variation.map((item) => {
                     const { variation } = item;
                     let variationStr = variation.toLowerCase();
                     let searchTextStr = searchText.toLowerCase();
@@ -22,7 +21,8 @@ function VariationResults({
                         searchTextStr
                     ) {
                         return (
-                            <li key={uuidv4()}
+                            <li
+                                key={uuidv4()}
                                 className="flex flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
                                 onClick={() => addOption(item)}
                             >
@@ -48,20 +48,23 @@ function VariationResults({
                     </li>
                 )}
 
-                {   (searchText.length > 0) &&( searchText.length < 20) &&
+                {searchText.length > 0 &&
+                    searchText.length < 20 &&
                     !variation.some(
                         (item) =>
                             item.variation.toLowerCase() ===
                             searchText.toLowerCase()
                     ) &&
-                   !option.some((item) => 
-                        item.variation.toLowerCase() === searchText.toLowerCase()
+                    !option.some(
+                        (item) =>
+                            item.variation.toLowerCase() ===
+                            searchText.toLowerCase()
                     ) && (
                         <li
                             onClick={handleCustom}
                             className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
                         >
-                            <p className="bg-transparent text-sm max-w-full ">
+                            <p className="max-w-full bg-transparent text-sm ">
                                 Custom Option:{' '}
                                 <span className="bg-transparent font-medium">
                                     {searchText}
@@ -70,9 +73,7 @@ function VariationResults({
                             <AddRoundedIcon className="bg-transparent" />
                         </li>
                     )}
-                    {
-                        searchText.length > 20 && <OptionError/>
-                    }
+                {searchText.length > 20 && <OptionError />}
             </ul>
         </div>
     );

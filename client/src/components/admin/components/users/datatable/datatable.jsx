@@ -20,7 +20,7 @@ function Datatable({
     const [id, setId] = useState(null);
     const headerTitle = type[0].toUpperCase() + type.substring(1);
     const deleteButtonClick = (type, id) => {
-        // setDeleteType(type);
+        
         setId(id);
         setModalCheck(true);
         // setCheckBox(false)
