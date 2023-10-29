@@ -75,6 +75,8 @@ export const NewProductProvider = (props) => {
         setStockValue,
         combineDispatch,
         contentDispatch,
+
+        setDescription
     });
     const value = {
         variations,

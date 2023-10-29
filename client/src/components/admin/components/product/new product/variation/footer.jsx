@@ -78,7 +78,7 @@ function Footer({ type }) {
             type == 'update' ? `/product/${type}/${id}` : '/product/create';
 
         try {
-            adminAxios({
+            await adminAxios({
                 method: type == 'update' ? 'put' : 'post',
                 url: url,
                 data: formData,

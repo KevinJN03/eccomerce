@@ -18,7 +18,7 @@ function DragDropFile({ filesError }) {
             file: file,
             img: URL.createObjectURL(file),
             isDragDisabled: false,
-        }));
+        })).reverse();
 
         return convert.slice(0, 6);
     };

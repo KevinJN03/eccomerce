@@ -25,7 +25,7 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
     return (
         <Droppable
             droppableId={droppableId}
-            direction={'vertical'}
+            // direction={'horizontal'}
             isDropDisabled={files[id]?.isDragDisabled}
         >
             {(provided) => (
@@ -35,10 +35,10 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
                     ref={provided.innerRef}
                 >
                     <Draggable
-                        key={files[id]?.id}
+                        key={files[id].id}
                         index={id}
                         draggableId={files[id].id}
-                        isDragDisabled={files[id].isDragDisabled}
+                        isDragDisabled={files[id]?.isDragDisabled}
                     >
                         {(provided, snapshot) => (
                             <div
@@ -47,7 +47,7 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
                             >
-                                {files[id].file ? (
+                                {files[id]?.file ? (
                                     <>
                                     
                                         {!snapshot.isDragging && (

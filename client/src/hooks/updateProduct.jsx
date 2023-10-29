@@ -1,5 +1,13 @@
 import { useEffect } from 'react';
 import { v4 as uuidV4 } from 'uuid';
+import {
+    EditorState,
+    ContentState,
+    ContentBlock,
+    convertFromRaw,
+    genKey,
+    characterList,
+} from 'draft-js';
 function UpdateProduct(props, value) {
     const {
         setTitle,
@@ -12,6 +20,7 @@ function UpdateProduct(props, value) {
         setStockValue,
         combineDispatch,
         contentDispatch,
+        setDescription,
     } = value;
     props?.singleValue &&
         useEffect(() => {
@@ -90,6 +99,25 @@ function UpdateProduct(props, value) {
 
                 setFiles(() => data);
             };
+
+            const detail = singleValue?.detail || [];
+
+            const newDetails = detail.map((text) => {
+                return new ContentBlock({
+                    key: genKey(),
+                    text: text,
+                    type: 'unstyled',
+                    characterList: characterList,
+                    depth: 0,
+                });
+            });
+            debugger;
+
+            setDescription(() =>
+                EditorState.createWithContent(
+                    ContentState.createFromBlockArray(newDetails)
+                )
+            );
 
             createFiles();
         }, [props?.singleValue]);
