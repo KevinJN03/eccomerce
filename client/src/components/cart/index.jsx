@@ -19,7 +19,7 @@ function Cart({}) {
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
 
-    const cartTotal = calculateTotal()
+    const cartTotal = 'calculateTotal()'
     // const [cart, setCart] = useState(null)
     const [cart, dispatch] = useCart();   
     const handleRemove = (id) => {
@@ -63,7 +63,7 @@ function Cart({}) {
                     </div>
                     <div className="product-cart-wrapper">
                         {cart.length > 0 && cart.map((item => {
-                           return ( <Cart_Item key={item._id} product={item}/>)
+                           return ( <Cart_Item key={item.cartId} product={item}/>)
                         }))}
                     </div>
                 </div>

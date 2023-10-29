@@ -1,44 +1,39 @@
+import { v4 as uuidV4 } from 'uuid';
+
 import {
     createContext,
     useContext,
     useEffect,
     useReducer,
     useState,
+    useRef
 } from 'react';
 import { generateVariation } from '../components/admin/components/product/new product/variation/variationData';
 
 import { EditorState, ContentState } from 'draft-js';
+import UpdateProduct from '../hooks/updateProduct';
+import combineReducer from '../hooks/combineReducer';
+import { contentReducer } from '../hooks/contentReducer';
 export const newProductContext = createContext(null);
 
 export const useNewProduct = () => {
     return useContext(newProductContext);
 };
 
-export const NewProductProvider = ({ children }) => {
-    const [variations, setVariations] = useState([
-        {
-            id: 1,
-            name: 'Colour',
-            options: generateVariation('Colour'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: true },
-            priceHeader: { on: false },
-        },
-        {
-            id: 2,
-            name: 'Size',
-            options: generateVariation('Size'),
-            disabled: false,
-            default: true,
-            quantityHeader: { on: false },
-            priceHeader: { on: true },
-        },
-    ]);
+export const NewProductProvider = (props) => {
+   
+
+    const [variations, setVariations] = useState([]);
+
+    const [combine, combineDispatch] = useReducer(combineReducer, {
+        id: uuidV4(),
+        on: false,
+        options: new Map(),
+    });
     const [files, setFiles] = useState([]);
-    const [title, setTitle] = useState('test');
+    const [title, setTitle] = useState('');
     const [description, setDescription] = useState(() =>
-        EditorState.createWithContent(ContentState.createFromText('test'))
+        EditorState.createWithContent(ContentState.createFromText('yest'))
     );
     const [profile, setProfile] = useState([]);
     const [globalUpdate, setGlobalUpdate] = useState({
@@ -50,7 +45,11 @@ export const NewProductProvider = ({ children }) => {
         publishError_Reducer,
         new Map()
     );
-    const [priceValue, setPriceValue] = useState({ value: '', on: false });
+
+    const [priceValue, setPriceValue] = useState({
+        value: '',
+        on: false,
+    });
     const [stockValue, setStockValue] = useState({ value: '', on: false });
     const [publish, setPublish] = useState({
         firstAttempt: false,
@@ -58,13 +57,27 @@ export const NewProductProvider = ({ children }) => {
         count: 0,
     });
 
-    // const [delivery, setDelivery] = useState();
-    const [triggerGlobalUpdate, TriggerGlobalUpdate_Dispatch] = useReducer(
-        globalUpdateTrigger_Reducer,
-        false
-    );
     const [gender, setGender] = useState();
+    const isAllInputValid = useRef(true);
 
+    const [modalCheck, setModalCheck] = useState(false);
+    const [modalContent, contentDispatch] = useReducer(contentReducer, {
+        type: 'main',
+    });
+    UpdateProduct(props, {
+        setTitle,
+        setCategory,
+        setFiles,
+        setGender,
+        setProfile,
+        setVariations,
+        setPriceValue,
+        setStockValue,
+        combineDispatch,
+        contentDispatch,
+
+        setDescription
+    });
     const value = {
         variations,
         setVariations,
@@ -88,39 +101,36 @@ export const NewProductProvider = ({ children }) => {
         setPriceValue,
         stockValue,
         setStockValue,
-        triggerGlobalUpdate,
-        TriggerGlobalUpdate_Dispatch,
+        isAllInputValid ,
         publish,
         setPublish,
+        combine,
+        combineDispatch,
+        modalCheck,
+        setModalCheck,
+        modalContent,
+        contentDispatch,
     };
 
     return (
         <newProductContext.Provider value={value}>
-            {children}
+            {props.children}
         </newProductContext.Provider>
     );
 };
 
-function globalUpdateTrigger_Reducer(state, action) {
-    if (action == 'trigger') {
-        return !state;
-    } else {
-        throw new Error('invalid action for global trigger');
-    }
-}
-
 function publishError_Reducer(state, action) {
+    if (action.type == 'default') {
+        const map = new Map(state).set('default', action.data.msg[0]);
+        return map;
+    }
     if (action.type === 'getValidateInput') {
         const size = state.get('validateInput')?.size;
 
-        console.log('sizeee: ', size);
-        
-
         if (size > 0) {
-            console.log('update state because size is greater')
-            action.isAllInputValid.current = false
-        }else {
-            action.isAllInputValid.current = true  
+            action.isAllInputValid.current = false;
+        } else {
+            action.isAllInputValid.current = true;
         }
 
         return state;
@@ -156,26 +166,23 @@ function publishError_Reducer(state, action) {
         }
     }
     if (action.type == 'deleteValidateInput') {
-        const newMap = new Map(state.get('validateInput'));
+        const map = new Map(state);
+        const newMap = map.get('validateInput');
         if (newMap.has(action.path)) {
-            newMap.delete(action.path);
-            const map = new Map(state);
-
             if (newMap.size <= 1) {
                 map.delete('validateInput');
+                map.delete('isAllInputValid');
             } else {
+                newMap.delete(action.path);
                 map.set('validateInput', newMap);
             }
-
-            return map;
-        } else {
-            return state;
         }
+        return map;
     }
 
     if (action.type == 'set') {
         const map = new Map(state);
-        action?.data.forEach((element) => {
+        action?.data?.forEach((element) => {
             const { path } = element;
             map.set(path, element);
         });
@@ -188,6 +195,10 @@ function publishError_Reducer(state, action) {
         newMap.delete(action.path);
 
         return newMap;
+    }
+
+    if (action == 'clearAll') {
+        return new Map();
     }
 
     throw new Error(`please enter a valid action. ${action} is not valid.`);

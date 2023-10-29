@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/cartContext';
 
-function QTY_SIZE_OPTION({ options, label, type, selectSize }) {
+function QTY_SIZE_OPTION({ options, label, type, select, setSelect }) {
     return (
         <span id="qty-size-option">
             <label htmlFor="qty-size-select">{label}</label>
             <select
+                onChange={(e) => setSelect(e.target.value)}
                 name="quantity-select"
                 id="qty-size-select"
+                className="!max-w-[120px] "
             >
                 {options.map((num, index) => {
                     return (
                         <option
                             key={index}
                             value={type == 'size' ? num.size : num}
-                            selected={num.size == selectSize}
+                            selected={type == 'size' ? num.size == select : num == select}
                         >
                             {type == 'size' ? num.size : num}
                         </option>

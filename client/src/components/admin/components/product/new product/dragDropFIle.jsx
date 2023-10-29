@@ -4,24 +4,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 
-function DragDropFile({filesError}) {
+function DragDropFile({ filesError }) {
     const { files, setFiles, publishError } = useNewProduct();
-
-   
 
     const inputRef = useRef();
     const handleDragOver = (e) => {
         e.preventDefault();
     };
 
-  
-
     const convertToArray = (files) => {
         const convert = Array.from(files, (file) => ({
             id: uuidv4(),
             file: file,
+            img: URL.createObjectURL(file),
             isDragDisabled: false,
-        }));
+        })).reverse();
 
         return convert.slice(0, 6);
     };

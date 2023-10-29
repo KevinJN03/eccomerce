@@ -10,18 +10,17 @@
     width: 100%;
     max-width: 1366px;
     background-color: white;
-    @apply /*
-    display: flex; */ lg:mx-5;
+    @apply flex flex-col lg:mx-5;
 }
 .item-section {
-    @apply mb-10 mt-3 flex justify-center sm+md:flex-col;
+    @apply mb-10 mt-3 flex w-10/12 justify-center self-center sm+md:flex-col;
     max-height: max-content;
-    width: 100%;
 }
 
 #item-list-section {
-    @apply mr-1 sm+md:!hidden;
     flex: 0.5;
+    @apply mr-1;
+    @apply sm+md:hidden #{!important};
 }
 
 #item-list-wrapper {
@@ -32,23 +31,25 @@
     */ /* width: 100px;
     */ /* @apply gap-1;
 
-    */ mr-3 grid grid-cols-2 gap-1;
+    */ mr-3 grid grid-cols-1 gap-1;
 }
 .photo-wrapper {
     width: 100%;
     height: 100%;
+    @apply max-h-16;
 }
 
 .list-image {
-    @apply h-full w-full object-scale-down;
+    @apply h-full w-full object-cover object-scale-down;
 }
 
 #main_image {
     width: 100%;
     width: 100%;
     display: flex;
-    flex: 3;
-    @apply flex sm:h-[300px] md:max-h-[600px] sm+md:!flex-row sm+md:gap-x-1 sm+md:overflow-x-scroll lg:!h-[900px];
+    flex: 2;
+    @apply flex sm:h-[300px] md:max-h-[600px] sm+md:gap-x-1 sm+md:overflow-x-scroll;
+    @apply sm+md:flex-row lg:h-[600px] #{!important};
 }
 
 /* Size Section */
@@ -73,25 +74,38 @@
 }
 
 .adddtocart-wishlist {
-    display: grid;
-    grid-template-columns: 80% 20%;
-    column-gap: 10px;
-    @apply sm:mx-4;
+    @apply flex h-full max-h-14  min-h-[50px] flex-row flex-nowrap items-center gap-x-4 sm:mx-4;
 }
 
 /* wishlist */
 
 .wishlist {
-    @apply h-16 w-16 flex-[0.5] md:mx-auto;
+    // @apply h-16 w-16 flex-[0.5] md:mx-auto;
+    flex: 0.5;
+    @apply flex h-full w-full items-center justify-center rounded-full bg-slate-200 cursor-pointer;
+
+    #wishlist-btn {
+        @apply bg-contain bg-no-repeat h-full w-full flex items-center justify-center;
+        background-position: center;
+        background-size: 30px 30px;
+        background-image: url('../assets/icons/empty-heart.png');
+        &:hover {
+            background-image: url('../assets/icons/fill-heart.png');
+            stroke: black;
+            stroke-width: 20%;
+        }
+    }
 }
 
 /* Add to cart button */
 
 #add-to-cart {
+    flex: 3;
     color: var(--white);
     background-color: var(--black);
+    height: 100% !important;
     /* border-radius: 32px; */
-    @apply bg-[var(--green)] font-bold tracking-wide sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
+    @apply bg-[var(--green)] font-bold tracking-wide hover:opacity-80 sm+md:h-11 sm+md:text-xs sm+md:font-semibold;
 }
 
 /* Shipping */
@@ -107,35 +121,36 @@
 
 .styles-image-wrapper {
     display: grid;
-    grid-template-columns: repeat(4, minMax(100px, 1fr));
+    grid-template-columns: repeat(4, minMax(80px, 1fr));
     gap: 5px;
     width: 100%;
-    @apply mb-4 sm+md:grid-cols-4;
+    @apply mb-2 cursor-pointer sm+md:grid-cols-4;
 }
 
 .similar_styles {
     max-width: 100%;
 }
 
-#Product_info {
-    flex: 2.5;
+#product-info {
+    flex: 1;
     @apply flex flex-col sm:mx-4 md:mx-8 sm+md:mt-4 lg:pl-14;
-}
-#Product_info > .card-info:nth-of-type(1) {
-    @apply mb-4 flex sm:gap-1 md:gap-2 lg:gap-3;
-}
-#Product_info .card-info:nth-of-type(1) p {
-    @apply text-lg sm+md:text-lg;
-}
 
-#Product_info .card-info:nth-of-type(1) h2 {
-    @apply text-xl;
-}
-#similar-btn {
-    @apply !self-end whitespace-nowrap bg-[var(--primary)] px-9 font-bold text-white sm+md:self-start sm+md:px-8 sm+md:py-2 sm+md:text-sm sm+md:font-semibold  lg:h-10;
-}
-.style-with-card {
-    @apply grid grid-cols-3 gap-1;
+    .card-info:nth-of-type(1) {
+        @apply mb-4 flex sm:gap-1 md:gap-2 lg:gap-3;
+    }
+    .card-info:nth-of-type(1) p {
+        @apply text-lg sm+md:text-lg;
+    }
+    .card-info:nth-of-type(1) h2 {
+        @apply text-xl;
+    }
+
+    .style-with-card {
+        @apply grid grid-cols-3 gap-1;
+    }
+    #similar-btn {
+        @apply min-h-full self-end whitespace-nowrap  rounded-full px-4 text-s  font-bold text-white sm+md:self-start sm+md:py-2 sm+md:font-semibold #{!important};
+    }
 }
 
 /* Reviews */
@@ -156,13 +171,13 @@
     @apply relative bottom-0 mt-2 flex h-20 flex-col sm+md:mx-0;
 }
 .style-with-card .card-info p {
-    @apply !text-sm sm:!text-xs;
+    @apply text-sm sm:text-xs #{!important};
 }
 .style-with-card .card-info-price {
     @apply mt-auto flex flex-col;
 }
 .style-with-card .card-info h2 {
-    @apply mt-auto sm:!text-sm;
+    @apply mt-auto sm:text-sm #{!important};
 }
 
 #Recommended .card-info {
@@ -174,4 +189,10 @@
 }
 #product-detail .section-title {
     @apply md+lg:mb-0;
+}
+
+.item-select {
+    &:focus {
+        box-shadow: rgba(33, 101, 228, 0.628) 0px 5px 15px;
+    }
 }

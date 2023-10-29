@@ -21,6 +21,8 @@ import OptionError from '../variation/error/optionError';
 import useNewProductError from '../../../../../../useNewProductError';
 
 export default function Delivery() {
+
+    console.log('delivery mount')
     const {
         content,
   

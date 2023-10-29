@@ -18,6 +18,13 @@ animate: {
 },
 exit: {
     opacity: 0,
+    opacity: 1,
+
+    transition: {
+       
+        opacity: {delay: 0, duration: 0}
+    
+    }
     
 }
 }

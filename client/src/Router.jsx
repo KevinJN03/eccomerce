@@ -25,6 +25,7 @@ import New_Product from './components/admin/components/product/new product/new_p
 import Error from './components/error/error';
 import Layout from './components/Layout/layout';
 import Delivery from './components/admin/delivery/delivery';
+import { NewProductProvider } from './context/newProductContext';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -114,9 +115,6 @@ function Router({ Header, Footer }) {
                                 {
                                     path: ':id/',
                                     element: <Single_User />,
-                                    
-    
-                                
                                 },
                                 {
                                     path: 'new',
@@ -126,8 +124,10 @@ function Router({ Header, Footer }) {
                                 },
                                 {
                                     path: ':id/edit',
-                                    element: <New type="edit" title="Edit User" /> 
-                                }
+                                    element: (
+                                        <New type="edit" title="Edit User" />
+                                    ),
+                                },
                             ],
                         },
                         {
@@ -142,11 +142,15 @@ function Router({ Header, Footer }) {
                                 {
                                     path: 'new',
                                     // element: <New type="Product" title="Add New Product"/>
-                                    element: <New_Product />,
+                                    element: (
+                                        <NewProductProvider>
+                                            <New_Product />
+                                        </NewProductProvider>
+                                    ),
                                 },
 
                                 {
-                                    path: ':id',
+                                    path: 'edit/:id',
                                     element: <Product_Single />,
                                 },
                             ],

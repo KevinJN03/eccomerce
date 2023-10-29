@@ -9,24 +9,28 @@ import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 function Upload({}) {
     const { files, setFiles } = useNewProduct();
- 
 
     const handleOnDragEnd = (result) => {
-      
- 
-        if (!result.destination) return;
-
-        const items = Array.from(files);
-        // if (items[result.destination.index].isDragDisabled == true) return;
-        const [reorderedItems] = items.splice(result.source.index, 1);
-
-        // check if the destination index isdisabled true, it should return to the original place
-        items.splice(result.destination.index, 0, reorderedItems);
-        setFiles(items);
+        try {
+            if (!result.destination || !result.source) return;
+            const items = Array.from(files);
+            const reorderedItems = items[result.source.index];
+            const nextReorderItem = items[result.destination.index];
+      console.log({result})
+            // items.splice(result.destination.index, 1, reorderedItems);
+            // items.splice(result.source.index, 1, nextReorderItem);
+items[result.destination.index] = reorderedItems
+items[result.source.index] = nextReorderItem
+            console.log({ items });
+            setFiles(() => items);
+        } catch (error) {
+            console.log('error while dragging product photo: ', error);
+            setFiles(() => files);
+        }
     };
 
     const handleAddPhoto = (e) => {
-        const images = Array.from(e.target.files);
+        const images = Array.from(e.target.files).reverse();
         let counter = 0;
         setFiles(
             files.map((file) => {
@@ -34,6 +38,7 @@ function Upload({}) {
                     const newFile = {
                         ...file,
                         file: images[counter],
+                        img: URL.createObjectURL(images[counter]),
                         isDragDisabled: false,
                     };
                     counter += 1;
@@ -49,23 +54,21 @@ function Upload({}) {
     const deletePhoto = (oldFile) => {
         let updateFile = { ...oldFile };
         delete updateFile.file;
+        delete updateFile.img;
+
         updateFile.isDragDisabled = true;
         const newFiles = [...files];
         const findIndex = files.findIndex((item) => item.id == oldFile.id);
         newFiles.splice(findIndex, 1);
         newFiles.push(updateFile);
         setFiles(newFiles);
+        console.log({ updateFile });
     };
-
-
 
     return (
         <section id="upload-section">
             <AnimatePresence>
-                <DragDropContext
-                    onDragEnd={handleOnDragEnd}
-                   
-                >
+                <DragDropContext onDragEnd={handleOnDragEnd}>
                     <section id="upload">
                         <section className="main-img">
                             {[0, 1].map((item) => {
@@ -77,7 +80,6 @@ function Upload({}) {
                                         className="img-container"
                                         handleAddPhoto={handleAddPhoto}
                                         deletePhoto={deletePhoto}
-                                    
                                     />
                                 );
                             })}
@@ -88,11 +90,10 @@ function Upload({}) {
                                     <DragItem
                                         id={item}
                                         key={item}
-                                        droppableId={`additional-${idx}`}
+                                        droppableId={`additional-${item}`}
                                         className="add-img-container"
                                         handleAddPhoto={handleAddPhoto}
                                         deletePhoto={deletePhoto}
-                                       
                                     />
                                 );
                             })}

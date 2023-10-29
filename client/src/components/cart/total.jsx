@@ -6,6 +6,8 @@ import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
 
 const Total = forwardRef(function ({}, ref) {
+
+    
     const totalAmount = calculateTotal()
     const [products, dispatch] = useCart();
     return (

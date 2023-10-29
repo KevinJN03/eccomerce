@@ -18,9 +18,9 @@ function Checkout_Item({ product }) {
                     <p id="product-title" className="text-xs">
                         {product.title}
                     </p>
-                    <span className="flex flex-row gap-4 font-bold ">
-                        <p>{product.color}</p>
-                        <p>{product.selectedSize}</p>
+                    <span className="flex flex-row gap-x-3 font-bold ">
+                       {product?.color &&  <p>{product.color}</p>}
+                        {product?.selectSize && <p>{product.selectSize}</p>}
                     </span>
                     <p>
                         Qty:{' '}

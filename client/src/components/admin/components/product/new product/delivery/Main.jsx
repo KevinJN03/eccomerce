@@ -161,7 +161,7 @@ function MainContent() {
                                 <button
                                     type="button"
                                     onClick={confirm}
-                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:bg-slate-100"
+                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
                                     disabled={disable}
                                 >
                                     Confirm

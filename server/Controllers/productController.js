@@ -8,7 +8,7 @@ import sharpify from '../Upload/sharpify.js';
 import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
 import category from '../Models/category.js';
-import s3Upload, { s3Delete } from '../s3Service.js';
+import s3Upload, { s3Delete, s3Get } from '../s3Service.js';
 // eslint-disable-next-line import/prefer-default-export
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
@@ -26,6 +26,22 @@ export const get_all_products = asyncHandler(async (req, res) => {
 //     res.send(category);
 //   }
 // });
+
+export const get_single_admin_product = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const product = await Product.findOne({ _id: id })
+    .populate([{ path: 'delivery' }, { path: 'category' }])
+    .exec();
+
+  if (!product) {
+    return res.status(404).send('product not found');
+  }
+
+  // await s3Get(id);
+
+  return res.status(200).send(product);
+});
 
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -47,6 +63,10 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
       ],
     })
     .exec();
+
+  if (!product) {
+    return res.status(404).send('product not found');
+  }
 
   const {
     title,
@@ -73,7 +93,6 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     category: category.name,
     also_like: { men: category.men, women: category.women },
   };
-  console.log(product.id);
 
   return res.send(newData);
 });
@@ -92,11 +111,25 @@ export const delete_product = asyncHandler(async (req, res, next) => {
       $pull: { [gender]: id },
     },
   );
-  await s3Delete(id);
+  await s3Delete('products', id);
   res.status(200).json({
     msg: 'Product deleted.',
     product,
   });
+});
+
+export const delete_many_product = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const idArr = id.split(',');
+  const deleteProductsImages = idArr.map((item) => {
+    return s3Delete('products', item);
+  });
+
+  const result = await Promise.all([
+    Product.deleteMany({ _id: idArr }),
+    deleteProductsImages,
+  ]);
+  res.status(200).send(result);
 });
 
 // create a new Product
@@ -110,70 +143,94 @@ const upload = multer({
 // work on adding variations
 export const create_new_product = [
   upload.array('files', 6),
-  //productValidator ,
+  productValidator,
   asyncHandler(async (req, res, next) => {
-    let counter = 0;
-    const imageArr = [];
-    const url = `${process.env.UPLOAD_URL}/products`;
-    const result = validationResult(req);
-    const { files } = req;
-    const { variations } = req.body;
+    try {
+      let counter = 0;
+      const imageArr = [];
+      const url = `${process.env.UPLOAD_URL}/products`;
+      const result = validationResult(req);
+      const { files } = req;
+      const { variations } = req.body;
 
-    const parseVariations = variations.map((item) => {
-      const data = JSON.parse(item);
+      const parseVariations = variations?.map((item) => {
+        const data = JSON.parse(item);
+        delete data.id;
+        data.options = new Map(data.options);
 
-       data.options = new Map(data.options);
-      return data
-    });
-    // const parseVariations = variations;
-    // validate price and quantity only if variations is empty;
-    if (!result.isEmpty()) {
-      console.log('errorList:', result.errors);
-      res.status(400).send(result.errors);
-      return;
-    }
+        return data;
+      });
+      // const parseVariations = variations;
+      // validate price and quantity only if variations is empty;
+      if (!result.isEmpty()) {
+        console.log('errorList:', result.errors);
+        res.status(400).send(result.errors);
+        return;
+      }
 
-    const { title, delivery, gender, price, stock, category, detail } =
-      req.body;
+      const { title, delivery, gender, price, stock, category, detail } =
+        req.body;
 
-    const newProduct = new Product({
-      title,
-      delivery,
-      gender,
-      price: { current: parseFloat(price) },
-      stock,
-      category,
-      detail,
-    });
+      const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
+      const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
+      const newProduct = new Product({
+        title,
+        delivery,
+        gender,
+        category,
+        detail,
+      });
 
-    if (parseVariations.length > 0) {
       newProduct.variations = parseVariations;
-    }
 
-    console.clear();
-    console.log("--------------------------------\r\n",'parseVariations: ', parseVariations[1].options);
+      if (newStock.on) {
+        newProduct.stock = newStock.value;
+      }
 
-    const newFiles = files.map(async (item) => {
-      const sharpen = await sharpify(item);
-      sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-      imageArr.push(
-        `${url}/${newProduct.id}/${sharpen.fileName}.${sharpen.format}`,
+      if (newPrice.on) {
+        newProduct.price = { current: newPrice.value };
+      }
+
+      const newFiles = files.map(async (item) => {
+        const sharpen = await sharpify(item);
+        sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+        imageArr.push(
+          `${url}/${newProduct.id}/${sharpen.fileName}.${sharpen.format}`,
+        );
+        counter += 1;
+        return sharpen;
+      });
+
+      const sharpResult = await Promise.all(newFiles);
+      newProduct.images = imageArr;
+
+      const uploadResult = await s3Upload(sharpResult, false, newProduct.id);
+
+      await Category.updateOne(
+        { _id: category },
+        { $push: { [gender]: newProduct.id } },
       );
-      counter += 1;
-      return sharpen;
-    });
 
-    const sharpResult = await Promise.all(newFiles);
-    newProduct.images = imageArr;
-
-    // const uploadResult = await s3Upload(sharpResult, false, newProduct.id);
-    // console.log('newProduct: ', newProduct);
-    // newProduct.save();
-
-    // await Category.updateOne(
-    //   { _id: category },
-    //   { $push: { [gender]: newProduct.id } },
-    // );
-    return res.status(201).send(newFiles);
+      console.log(
+        '--------------------------------\r\n',
+        'newProduct: ',
+        newProduct,
+      );
+      newProduct.save();
+      return res.status(201).send(newFiles);
+    } catch (error) {
+      console.log('error: ', error);
+      next(error);
+    }
   }),
 ];
+
+export const getVariations = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  const variation = product.variations[0].options.get(
+    '67bec3e8-7010-4e96-b77e-cea2c38b2955',
+  );
+
+  res.send(variation);
+});

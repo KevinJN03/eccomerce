@@ -3,10 +3,14 @@ import { defaultMap, updatedDefaultMap } from './variationData';
 import SelectVariation from './selectVariation';
 import { useVariation } from '../../../../../../context/variationContext';
 import { useEffect, useState } from 'react';
+import { useAdminContext } from '../../../../../../context/adminContext';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 export default function Main() {
     const [defaultVariations, setDefaultVariations] = useState([]);
-    const { dispatch, temporaryVariation, setCheck,  } =
+    const { temporaryVariation  } =
         useVariation();
+
+        const { contentDispatch, setModalCheck} = useNewProduct()
 
     const [disabled, setDisabled] = useState({});
     const findVariation = (option) => {
@@ -19,10 +23,10 @@ export default function Main() {
     const exit = () => {
         if (temporaryVariation.length >= 1) {
            
-            return dispatch({ type: 'manage' });
+            contentDispatch({ type: 'manage' });
         }
 
-        return setCheck(false);
+        return setModalCheck(false);
     };
 
     const checkEntries = () => {
@@ -96,7 +100,7 @@ export default function Main() {
                                 className="options-btn"
                                 disabled={option.disabled}
                                 onClick={() =>
-                                    dispatch({
+                                    contentDispatch({
                                         type: 'select',
                                         title: option.category,
                                         default: true,
@@ -111,7 +115,7 @@ export default function Main() {
                 <button
                     type="button"
                     className="mb-14 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"
-                    onClick={() => dispatch({ type: 'select' })}
+                    onClick={() => contentDispatch({ type: 'select' })}
                 >
                     <AddRoundedIcon className="bg-transparent" />
                     <span className="bg-transparent">Create your Own</span>

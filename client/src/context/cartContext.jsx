@@ -5,13 +5,51 @@ export const useCart = () => {
 };
 
 const reducer = (cart, action) => {
-  // JSON.parse(cart)
+    // JSON.parse(cart)
+
+    let isProductInCart = false;
+
+    const {product} = action
+
+    console.log({product})
     if (action.type == 'add') {
-        return [...cart, action.product];
-    } else if (action.type == 'remove') {
+        const foundItemInCart = cart.map((item) => {
+            if (item.id == product.id && item.color == product.color && item.selectSize == product.selectSize) {
+                isProductInCart = true;
+                return { ...item, quantity: item.quantity + 1 };
+            }
+
+            return item
+        });
+
+        if (isProductInCart) {
+            return foundItemInCart;
+        } else {
+            return [...cart, action.product];
+        }
+    }
+
+    if (action.type == 'remove') {
         return cart.filter((product) => product.cartId !== action.cartId);
-    } 
-    else {
+    }
+
+    if (action.type == 'edit item') {
+        const newCart = cart.map((item) => {
+            if (item.cartId === action.cartId) {
+                console.log('found item');
+                const newItem = {
+                    ...item,
+                    quantity: action.quantity,
+                    selectSize: action.size,
+                };
+
+                return newItem;
+            }
+            return item;
+        });
+
+        return newCart;
+    } else {
         throw new Error(
             `${action.type} is not valid, please use either add or remove`
         );
@@ -29,7 +67,7 @@ export function CartProvider({ children }) {
             'https://images.asos-media.com/products/asos-design-knitted-oversized-v-neck-jumper-in-cheetah-print-in-multi/205013257-3?$n_640w$&wid=513&fit=constrain',
             'https://images.asos-media.com/products/asos-design-knitted-oversized-v-neck-jumper-in-cheetah-print-in-multi/205013257-4?$n_640w$&wid=513&fit=constrain',
         ],
-        price:{ current:  35},
+        price: { current: 35 },
         selectedSize: 'S',
         size: [
             { size: '2XS - Chest 34', stock: 9 },
@@ -50,11 +88,11 @@ export function CartProvider({ children }) {
         ],
         url: 'https://www.asos.com/asos-design/asos-design-knitted-oversized-v-neck-jumper-in-cheetah-print-in-multi/prd/205013257?clr=grey&colourWayId=205013307&cid=27110',
     };
-    const [state, dispatch] = useReducer(reducer, cartFromLocalStorage );
+    const [state, dispatch] = useReducer(reducer, cartFromLocalStorage);
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(state));
-        console.log("state updated")
+        console.log('state updated');
     }, [state]);
 
     const value = [state, dispatch];

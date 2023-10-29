@@ -9,7 +9,7 @@ import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
 
 import handleError, { closeError } from '../../../../../common/handleError';
-function New() {
+function New({ setModalState }) {
     const { dispatch, content } = useContent();
     const [disable, setDisable] = useState();
     const { profile } = content;
@@ -67,7 +67,9 @@ function New() {
         };
         const axiosThen = (res) => {
             if (res.status == 200 || 201) {
-                dispatch({ type: 'Main' });
+                setModalState
+                    ? setModalState(() => false)
+                    : dispatch({ type: 'Main' });
             }
         };
         const axiosCatch = (error) => {
@@ -213,7 +215,11 @@ function New() {
 
             <section className="flex flex-row gap-x-2">
                 <button
-                    onClick={() => dispatch({ type: 'Main' })}
+                    onClick={() => {
+                        setModalState
+                            ? setModalState(() => false)
+                            : dispatch({ type: 'Main' });
+                    }}
                     className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-400"
                 >
                     Cancel

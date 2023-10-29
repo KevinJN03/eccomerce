@@ -1,6 +1,6 @@
 import { useVariation } from '../../../../../../../context/variationContext';
 import Row from './row';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { tableLayout } from './tableLayout';
 import { getValuesFromMap } from '../variationData';
 function Table({
@@ -12,17 +12,16 @@ function Table({
     setCheckAll,
     checkAll,
     layout,
-    setCombine,
 }) {
-    const count = variationList.options.size;
+    const count = variationList.options?.size;
 
-    const [variationOptions, setVariationOptions] = useState([]);
+    const variationOptions = getValuesFromMap(variationList.options);
 
-    useEffect(() => {
-        const result = getValuesFromMap(variationList.options);
+    // useEffect(() => {
+    //     const result = getValuesFromMap(variationList.options);
 
-        setVariationOptions(result);
-    }, [variationList]);
+    //     setVariationOptions(result);
+    // }, [variationList]);
 
     useEffect(() => {
         if (checkAll == false && selected.size == count) {
@@ -30,8 +29,6 @@ function Table({
         }
     }, [checkAll]);
     useEffect(() => {
-    
-
         if (selected.size == count) {
             setCheckAll(true);
         }
@@ -68,12 +65,11 @@ function Table({
                 {variationList.quantityHeader.on && <th>Quantity</th>}
                 <th className=" !text-right ">Visible </th>
             </tr>
-            {variationOptions &&
+            {variationOptions.length > 0 &&
                 variationOptions.map((item) => {
                     return (
-                      
                         <Row
-                        key={item.id}
+                            key={item.id}
                             setCheckAll={setCheckAll}
                             checkAll={checkAll}
                             singleVariation={item}
@@ -84,7 +80,6 @@ function Table({
                             setSelected={setSelected}
                             update={update}
                             isCombine={isCombine}
-                            setCombine={setCombine}
                         />
                     );
                     // });

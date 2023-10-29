@@ -1,6 +1,11 @@
 import express from 'express';
 import { count_all } from '../Controllers/adminController.js';
-import { create_new_product } from '../Controllers/productController.js';
+import {
+  create_new_product,
+  get_single_admin_product,
+  getVariations,
+  delete_many_product,
+} from '../Controllers/productController.js';
 import {
   create_user,
   delete_user,
@@ -17,10 +22,13 @@ import {
   update_single_delivery_profile,
 } from '../Controllers/deliveryProfieController.js';
 const router = express.Router();
+router.get('/product/:id', get_single_admin_product);
+router.get('/product/:id/variation', getVariations);
 
 router.get('/count', count_all);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:id', delete_product);
+router.delete('/delete/product/many/:id', delete_many_product);
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);

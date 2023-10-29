@@ -30,6 +30,7 @@ export default function CategorySelect({
                     <option
                         key={index}
                         value={isCategory ? option._id : option.toLowerCase()}
+                   
                     >
                         {isCategory ? option.name.toUpperCase() : option}
                     </option>

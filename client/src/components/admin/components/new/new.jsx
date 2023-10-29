@@ -141,85 +141,78 @@ function New({ type, title }) {
         setGenerateUrl(true);
     };
     return (
-        <div className="new">
-            <SideBar />
-            <div className="newContainer">
-                <Navbar />
-
-                <section className="m-5">
-                    <div className="top">
-                        <h1 className="title">{title}</h1>
-                    </div>
-                    <section className="errors-wrapper mt-3">
-                        <ErrorList error={error} setError={setError} />
-                    </section>
-
-                    <div className="bottom">
-                        {success && (
-                            <Success
-                                setSuccess={setSuccess}
-                                userId={userId}
-                                type={type}
-                                id={id}
-                            />
-                        )}
-                        {!success && (
-                            <>
-                                <div className="left">
-                                    <div className="relative">
-                                        <img
-                                            src={
-                                                file && generateUrl
-                                                    ? URL.createObjectURL(file)
-                                                    : !generateUrl
-                                                    ? file
-                                                    : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
-                                            }
-                                            alt=""
-                                        />
-                                        {file && (
-                                            <DeleteRoundedIcon
-                                                className="absolute bottom-0 right-0"
-                                                onClick={handleDelete}
-                                            />
-                                        )}
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        className="mb-4 bg-green-500 p-2 text-white hover:bg-[var(--green)]"
-                                        onClick={save}
-                                    >
-                                        Create {type}
-                                    </button>
-                                </div>
-
-                                <div className="right">
-                                    <section>
-                                        <div className="formInput">
-                                            <label htmlFor="file">
-                                                Image:
-                                                <DriveFolderUploadIcon className="icon" />
-                                            </label>
-                                            <input
-                                                type="file"
-                                                placeholder="Choose File"
-                                                accept="image/*"
-                                                id="file"
-                                                className="hidden"
-                                                onChange={(e) => handleFile(e)}
-                                            />
-                                        </div>
-
-                                        <User_Form states={value} type={type} />
-                                    </section>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </section>
+        <section className="m-5">
+            <div className="top">
+                <h1 className="title">{title}</h1>
             </div>
-        </div>
+            <section className="errors-wrapper mt-3">
+                <ErrorList error={error} setError={setError} />
+            </section>
+
+            <div className="bottom">
+                {success && (
+                    <Success
+                        setSuccess={setSuccess}
+                        userId={userId}
+                        type={type}
+                        id={id}
+                    />
+                )}
+                {!success && (
+                    <>
+                        <div className="left">
+                            <div className="relative">
+                                <img
+                                    src={
+                                        file && generateUrl
+                                            ? URL.createObjectURL(file)
+                                            : !generateUrl
+                                            ? file
+                                            : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
+                                    }
+                                    alt=""
+                                />
+                                {file && (
+                                    <DeleteRoundedIcon
+                                        className="absolute bottom-0 right-0"
+                                        onClick={handleDelete}
+                                    />
+                                )}
+                            </div>
+
+                            <button
+                                type="button"
+                                className="mb-4 bg-green-500 p-2 text-white hover:bg-[var(--green)]"
+                                onClick={save}
+                            >
+                                Create {type}
+                            </button>
+                        </div>
+
+                        <div className="right">
+                            <section>
+                                <div className="formInput">
+                                    <label htmlFor="file">
+                                        Image:
+                                        <DriveFolderUploadIcon className="icon" />
+                                    </label>
+                                    <input
+                                        type="file"
+                                        placeholder="Choose File"
+                                        accept="image/*"
+                                        id="file"
+                                        className="hidden"
+                                        onChange={(e) => handleFile(e)}
+                                    />
+                                </div>
+
+                                <User_Form states={value} type={type} />
+                            </section>
+                        </div>
+                    </>
+                )}
+            </div>
+        </section>
     );
 }
 

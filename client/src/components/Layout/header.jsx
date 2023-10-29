@@ -17,6 +17,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Search from './search';
+import { useCart } from '../../context/cartContext';
 function Header() {
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
@@ -25,6 +26,8 @@ function Header() {
     const search = (e) => {
         console.log(e);
     };
+
+    const [cart] = useCart()
 
     return (
         <section className="header-section flex w-full max-w-full flex-col justify-center">
@@ -93,11 +96,13 @@ function Header() {
                             <FavoriteBorderSharpIcon className="img-icon" />
                         </a>
 
-                        <Link to="/cart" className="header-icons">
+                        <Link to="/cart" className="header-icons relative">
                             <LocalMallOutlinedIcon
                                 className="img-icon"
                                 fontSize="large"
                             />
+
+                           { cart.length > 0 && <span className='bg-white absolute h-0 w-0 p-[10px] flex items-center justify-center rounded-full bottom-[-8px] right-[-3px] text-s font-medium'>{cart.length}</span>}
                         </Link>
                     </section>
                 </header>

@@ -8,7 +8,7 @@ import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios.js';
 import { userColumn } from './datatable/datatable-source.jsx';
-function List() {
+function All_Users() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selection, setSelection] = useState([]);
@@ -26,22 +26,14 @@ function List() {
             });
     }, [loading]);
     return (
-        <>
-            <div className="user-list">
-                <SideBar />
-                <div className="user-listContainer">
-                    <Navbar />
-                    <Datatable
-                        type="user"
-                        setLoading={setLoading}
-                        loading={loading}
-                        column={userColumn}
-                        row={users}
-                    />
-                </div>
-            </div>
-        </>
+        <Datatable
+            type="user"
+            setLoading={setLoading}
+            loading={loading}
+            column={userColumn}
+            row={users}
+        />
     );
 }
 
-export default List;
+export default All_Users;

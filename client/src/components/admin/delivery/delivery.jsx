@@ -40,11 +40,9 @@ export default function Delivery() {
     
 
     return (
-        <section className="delivery flex">
-            <SideBar />
-            <section className="delivery-container w-full flex-[6]">
-                <Navbar />
-                <Datatable
+       
+               <>
+               <Datatable
                     type="delivery"
                     column={deliveryColumn}
                     row={profiles}
@@ -60,6 +58,8 @@ export default function Delivery() {
                                 
                                 profile={deliveryProfile}
                                 setProfile={setDeliveryProfile}
+
+                                setModalState={setModalCheck}
                             />
                         }
                         button_text="Select Profile"
@@ -70,7 +70,8 @@ export default function Delivery() {
                 
                     />
                 )}
-            </section>
-        </section>
+               </>
+                
+           
     );
 }

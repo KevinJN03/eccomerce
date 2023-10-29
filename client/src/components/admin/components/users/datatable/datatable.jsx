@@ -2,7 +2,7 @@ import './datable.scss';
 
 import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../../modal/modal';
 import axios from '../../../../../api/axios';
 function Datatable({
@@ -46,7 +46,7 @@ function Datatable({
                                 View
                             </button>
                         ) : (
-                            <Link to={params.row._id}>
+                            <Link to={`edit/${params.row._id}`}>
                                 <div className="viewButton">View</div>
                             </Link>
                         )}

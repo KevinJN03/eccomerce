@@ -1,4 +1,4 @@
-import '../../CSS/item_page.css';
+import '../../CSS/item_page.scss';
 function Item_List({ images, handleImgChange }) {
     return (
         <section id="item-list-section">

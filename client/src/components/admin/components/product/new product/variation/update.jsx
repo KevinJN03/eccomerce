@@ -6,12 +6,13 @@ import formatData from './formatData';
 import handleValue from '../utils/handleValue';
 import { priceOptions, quantityOptions } from '../utils/handleValueOptions';
 import { AnimatePresence } from 'framer-motion';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function Update({}) {
     const [error, setError] = useState({ price: null, quantity: null });
     const [value, setValue] = useState('');
-    const { setCheck, content } = useVariation();
-    const { category, selected, setUpdate, update, setCheckAll } = content;
+    const { contentDispatch, setModalCheck, modalContent } = useNewProduct();
+    const { category, selected, setUpdate, update, setCheckAll } = modalContent;
 
     const [current, setCurrent] = useState({});
     const num = category == 'price' ? 2 : 0;
@@ -60,12 +61,12 @@ function Update({}) {
     const apply = () => {
         try {
             setTimeout(() => {
-                setUpdate({
-                    [`${category}`]: value,
+                setUpdate((prevState)=> ({...prevState,
+                    [category]: value,
                     bool: !update.bool,
-                });
-                setCheck(false);
-                setCheckAll('clear');
+                }));
+                setModalCheck(() => false);
+                setCheckAll(() => 'clear');
             }, 200);
 
             // setTimeout(() => {
@@ -146,7 +147,7 @@ function Update({}) {
                 <button
                     type="button"
                     className="cancel-btn"
-                    onClick={() => setCheck(false)}
+                    onClick={() => setModalCheck(false)}
                 >
                     Cancel
                 </button>

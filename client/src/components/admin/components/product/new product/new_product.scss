@@ -3,7 +3,6 @@
 }
 
 .input {
-
     @apply rounded-lg;
 
     border-width: 1px !important;
@@ -26,6 +25,7 @@
     @apply m-4 w-7/12 rounded-xl;
 }
 .new-product {
+   
     @apply flex w-full;
 
     .input-number::-webkit-outer-spin-button,
@@ -62,14 +62,40 @@
     #delivery {
         border-radius: 10px;
     }
-}
 
-.title {
-    @apply text-xl font-medium;
-}
-p {
-    @apply text-s;
-}
+    .variation-footer {
+        // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // sticky
+        @apply bottom-0 flex w-full flex-row justify-between bg-white;
+        // bottom: -4px !important;
+    
+        .cancel-btn {
+            transition: background-color 0.2s linear;
+            @apply rounded-full px-3 py-2;
+            &:hover {
+                @apply bg-[var(--light-grey)];
+            }
+        }
+    
+        .apply-btn {
+            @apply relative flex h-full items-center justify-center rounded-full bg-black px-3 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50;
+    
+            &::after,
+            &::before {
+                content: '';
+    
+                background: inherit;
+            }
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.821);
+            }
+    
+            // &:hover {
+            //     @apply opacity-80 scale-105
+            // }
+        }
+    }
+
 
 .about,
 #description,
@@ -81,20 +107,11 @@ p {
     }
 }
 
-.outline {
-    // mb-8 mt-3
-    @apply input rounded-md p-3;
-    height: 48px;
-}
-
-// Price & Inventory Section
-
 #price-inventory {
     @apply format;
 
     input {
         @apply w-64 outline #{!important};
-        
     }
 
     .price-input,
@@ -151,70 +168,9 @@ p {
         }
     }
 
-    .variation-footer {
-        // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
-        // sticky
-        @apply bottom-0 flex w-full flex-row justify-between bg-white;
-        // bottom: -4px !important;
-
-        .cancel-btn {
-            transition: background-color 0.2s linear;
-            @apply rounded-full px-3 py-2;
-            &:hover {
-                @apply bg-[var(--light-grey)];
-            }
-        }
-
-        .apply-btn {
-            @apply relative flex justify-center items-center rounded-full bg-black px-3 py-2 h-full text-white disabled:cursor-not-allowed disabled:opacity-50;
-
-            &::after,
-            &::before {
-                content: '';
-
-                background: inherit;
-            }
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.821);
-            }
-
-            // &:hover {
-            //     @apply opacity-80 scale-105
-            // }
-        }
-    }
-
-    .single-variation {
-        .single-variation-btn {
-            @apply h-10 w-10 rounded-full bg-[var(--light-grey)] p-3;
-
-            &:hover {
-                @apply scale-105 bg-gray-300 transition-all;
-            }
-        }
-
-        .single-variation-options {
-            @apply relative;
-        }
-
-        .single-variation-options::after {
-            content: '';
-            position: absolute;
-            z-index: 1;
-            bottom: 0;
-            left: 0;
-            pointer-events: none;
-            background-image: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 80%,
-                rgba(255, 255, 255, 1) 100%
-            );
-            width: 100%;
-            // height: 4em;
-            @apply h-full;
-        }
-    }
+   
 }
+
 .asterisk {
     @apply ml-[2px] text-red-800;
 }
@@ -261,4 +217,57 @@ p {
     &:hover {
         @apply bg-gray-300 shadow-lg #{!important};
     }
+};
+
+.single-variation {
+    .single-variation-btn {
+        @apply h-10 w-10 rounded-full bg-[var(--light-grey)] p-3;
+
+        &:hover {
+            @apply scale-105 bg-gray-300 transition-all;
+        }
+    }
+
+    .single-variation-options {
+        @apply relative;
+    }
+
+    .single-variation-options::after {
+        content: '';
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0) 80%,
+            rgba(255, 255, 255, 1) 100%
+        ) !important;
+        width: 100%;
+        // height: 4em;
+        @apply h-full;
+    }
+}
+
+}
+
+.outline {
+
+    @apply  input rounded-md p-3;
+   height: 48px;
+}
+
+
+
+// Price & Inventory Section
+
+
+
+
+.title {
+    @apply text-xl font-medium;
+}
+p {
+    @apply text-s;
 }

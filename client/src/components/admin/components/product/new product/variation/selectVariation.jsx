@@ -16,19 +16,22 @@ import ErrorAlert from './error/errorAlert';
 import SearchResult from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
 import OptionError from './error/optionError';
+import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function SelectVariation({}) {
-    const { content, dispatch, setTemporaryVariation, temporaryVariation } =
+    const { setTemporaryVariation, temporaryVariation } =
         useVariation();
-    const currentVariation = content.currentVariation;
+
+        const { setModalCheck, contentDispatch, modalContent} = useNewProduct()
+    const currentVariation = modalContent.currentVariation;
     const [option, setOption] = useState(
         currentVariation ? currentVariation.options : new Map()
     );
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
-    const [name, setName] = useState(content.title || '');
+    const [name, setName] = useState(modalContent.title || '');
     const [defaultVariation, setDefaultVariation] = useState(
-        content.default ? true : false
+        modalContent.default ? true : false
     );
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
@@ -117,10 +120,10 @@ console.log('here')
 
     const deleteVariation = () => {
         try {
-            if (content.currentVariation) {
+            if (modalContent.currentVariation) {
                 const newArr = [...temporaryVariation];
                 const updateArr = newArr.map((item) => {
-                    if (item.id === content.currentVariation.id) {
+                    if (item.id === modalContent.currentVariation.id) {
                         return { ...item, disabled: true };
                     }
                     return item;
@@ -128,7 +131,7 @@ console.log('here')
                 setTemporaryVariation(updateArr);
             }
 
-            return dispatch({ type: 'manage' });
+            return contentDispatch({ type: 'manage' });
         } catch (error) {
             setError('Fail to delete variation. Please try again.');
         }
@@ -144,8 +147,8 @@ console.log('here')
 
     const createVariation = () => {
         try {
-            if (content.currentVariation) {
-                const { id } = content.currentVariation;
+            if (modalContent.currentVariation) {
+                const { id } = modalContent.currentVariation;
 
                 setTemporaryVariation(
                     temporaryVariation.map((item) => {
@@ -187,7 +190,7 @@ console.log('here')
                 ]);
             }
 
-            dispatch({ type: 'manage' });
+            contentDispatch({ type: 'manage' });
         } catch (error) {
             setError(error.message);
         }
