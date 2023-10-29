@@ -1,3 +1,5 @@
+import { s3Delete } from './s3Service.js';
+
 const customValidationError = (error) => {
   const values = Object.values(error.errors).map((err) => err.message);
   // return Object.values(error).map(err => err.message)
@@ -5,7 +7,7 @@ const customValidationError = (error) => {
   return values;
 };
 
-export default function errorHandler(error, req, res, next) {
+export default async function errorHandler(error, req, res, next) {
   error.statusCode = error.statusCode || 500;
   error.status = error.status || 'error';
 
@@ -24,7 +26,12 @@ export default function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-  console.log(error);
+
+  if (error.name == 'MulterError') {
+    console.log(error + 'here???????????????????????????');
+    error.message =
+      'Error occurs while adding or deleting images. Please contact Administrator for asssistance.';
+  }
   res.status(error.statusCode).json({
     // if js an array is ann object
     msg: typeof error.message === 'object' ? error.message : [error.message],
