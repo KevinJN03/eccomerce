@@ -37,7 +37,7 @@ function Product_Single({}) {
             ) : (
                 // </section>
 
-                <New_Product  />
+                <New_Product  type={'update'}/>
             )}
         </NewProductProvider>
     );

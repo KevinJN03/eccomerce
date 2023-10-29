@@ -1,8 +1,18 @@
 import { useEffect } from 'react';
-import {v4 as uuidV4} from 'uuid'
+import { v4 as uuidV4 } from 'uuid';
 function UpdateProduct(props, value) {
-
-    const { setTitle, setCategory, setFiles, setGender, setProfile, setVariations,setPriceValue, setStockValue, combineDispatch, contentDispatch } = value
+    const {
+        setTitle,
+        setCategory,
+        setFiles,
+        setGender,
+        setProfile,
+        setVariations,
+        setPriceValue,
+        setStockValue,
+        combineDispatch,
+        contentDispatch,
+    } = value;
     props?.singleValue &&
         useEffect(() => {
             const { singleValue } = props;
@@ -37,7 +47,7 @@ function UpdateProduct(props, value) {
                     combine: newVariations.slice(2)[0],
                 });
                 console.log('combine', newVariations[2]);
-                contentDispatch({type: 'manage'})
+                contentDispatch({ type: 'manage' });
             }
             setVariations(() => newVariations.slice(0, 2));
 
@@ -45,29 +55,29 @@ function UpdateProduct(props, value) {
                 return url.split(/[#?]/)[0].split('.').pop().trim();
             };
 
-            const onimageedit = async (imgurl) => {
+            const onimageedit = async (imgurl, counter) => {
                 var imgext = geturlextension(imgurl);
 
                 const response = await fetch(imgurl);
                 const blob = await response.blob();
-                const file = new File([blob], 'profileimage.' + imgext, {
+                const file = new File([blob], `image-${counter}.` + imgext, {
                     type: blob.type,
                 });
 
                 return file;
             };
-
+            let counter = 0;
             const createFiles = async () => {
                 const newFiles = (singleValue?.images || []).map(
                     async (item) => {
-                        const result = await onimageedit(item);
+                        counter += 1;
+                        const result = await onimageedit(item, counter);
                         const newObj = {
                             file: result,
                             img: URL.createObjectURL(result),
                             isDragDisabled: false,
                             id: uuidV4(),
                         };
-
                         return newObj;
                     }
                 );

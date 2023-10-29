@@ -16,8 +16,6 @@ export default function formatFormData(value) {
     } = value;
 
     const formData = new FormData();
-
-    console.log('isAllInputValid', isAllInputValid.current);
     formData.append('isAllInputValid', isAllInputValid.current);
     const filteredFiles = files
         .filter((item) => item.isDragDisabled == false)
@@ -37,12 +35,12 @@ export default function formatFormData(value) {
         return returned;
     }, '');
 
-
     formData.append('title', title);
     formData.append('category', category);
     formData.append('gender', gender);
     formData.append('price', JSON.stringify(priceValue));
     formData.append('stock', JSON.stringify(stockValue));
+  
     for (const item of filteredFiles) {
         formData.append('files', item);
     }

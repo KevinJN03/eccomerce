@@ -6,6 +6,7 @@ import {
     useEffect,
     useReducer,
     useState,
+    useRef
 } from 'react';
 import { generateVariation } from '../components/admin/components/product/new product/variation/variationData';
 
@@ -19,10 +20,8 @@ export const useNewProduct = () => {
     return useContext(newProductContext);
 };
 
-
-
 export const NewProductProvider = (props) => {
-    console.log('in context');
+   
 
     const [variations, setVariations] = useState([]);
 
@@ -59,6 +58,7 @@ export const NewProductProvider = (props) => {
     });
 
     const [gender, setGender] = useState();
+    const isAllInputValid = useRef(true);
 
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
@@ -74,7 +74,7 @@ export const NewProductProvider = (props) => {
         setPriceValue,
         setStockValue,
         combineDispatch,
-        contentDispatch
+        contentDispatch,
     });
     const value = {
         variations,
@@ -99,7 +99,7 @@ export const NewProductProvider = (props) => {
         setPriceValue,
         stockValue,
         setStockValue,
-
+        isAllInputValid ,
         publish,
         setPublish,
         combine,
@@ -118,6 +118,10 @@ export const NewProductProvider = (props) => {
 };
 
 function publishError_Reducer(state, action) {
+    if (action.type == 'default') {
+        const map = new Map(state).set('default', action.data.msg[0]);
+        return map;
+    }
     if (action.type === 'getValidateInput') {
         const size = state.get('validateInput')?.size;
 

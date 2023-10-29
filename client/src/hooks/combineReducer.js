@@ -11,10 +11,12 @@ export default function combineReducer(state, action) {
     }
 
     if (action?.type == 'update') {
-        const newOptionsMap = new Map(state.options).set(action.id, action.newObj);
-        console.log({newOptionsMap})
-        // return { ...state, options: newOptionsMap };
-        return state
+        const newOptionsMap = new Map(state.options).set(
+            action.id,
+            action.newObj
+        );
+
+        return { ...state, options: newOptionsMap };
     }
     if (action.type == 'combineVariations') {
         try {
@@ -56,5 +58,5 @@ export default function combineReducer(state, action) {
         }
     }
 
-    throw new Error('Invalid action in combineReducer');
+    throw new Error(`Invalid action in combineReducer ${action.type}`);
 }

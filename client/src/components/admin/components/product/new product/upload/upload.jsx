@@ -9,19 +9,18 @@ import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 function Upload({}) {
     const { files, setFiles } = useNewProduct();
- 
 
     const handleOnDragEnd = (result) => {
-      
- 
         if (!result.destination) return;
-
-        const items = Array.from(files);
+        console.log({ result });
+        // const items = Array.from(files);
+        const items = JSON.parse(JSON.stringify(files));
         // if (items[result.destination.index].isDragDisabled == true) return;
         const [reorderedItems] = items.splice(result.source.index, 1);
-
+        const [nextReorderItem] = items.splice(result.destination.index, 1);
         // check if the destination index isdisabled true, it should return to the original place
         items.splice(result.destination.index, 0, reorderedItems);
+        items.splice(result.source.index, 0, nextReorderItem);
         setFiles(items);
     };
 
@@ -50,27 +49,21 @@ function Upload({}) {
     const deletePhoto = (oldFile) => {
         let updateFile = { ...oldFile };
         delete updateFile.file;
-        delete updateFile.img
+        delete updateFile.img;
 
-       
         updateFile.isDragDisabled = true;
         const newFiles = [...files];
         const findIndex = files.findIndex((item) => item.id == oldFile.id);
         newFiles.splice(findIndex, 1);
         newFiles.push(updateFile);
         setFiles(newFiles);
-        console.log({updateFile})
+        console.log({ updateFile });
     };
-
-
 
     return (
         <section id="upload-section">
             <AnimatePresence>
-                <DragDropContext
-                    onDragEnd={handleOnDragEnd}
-                   
-                >
+                <DragDropContext onDragEnd={handleOnDragEnd}>
                     <section id="upload">
                         <section className="main-img">
                             {[0, 1].map((item) => {
@@ -82,7 +75,6 @@ function Upload({}) {
                                         className="img-container"
                                         handleAddPhoto={handleAddPhoto}
                                         deletePhoto={deletePhoto}
-                                    
                                     />
                                 );
                             })}
@@ -93,11 +85,10 @@ function Upload({}) {
                                     <DragItem
                                         id={item}
                                         key={item}
-                                        droppableId={`additional-${idx}`}
+                                        droppableId={`additional-${idx + 1}`}
                                         className="add-img-container"
                                         handleAddPhoto={handleAddPhoto}
                                         deletePhoto={deletePhoto}
-                                       
                                     />
                                 );
                             })}

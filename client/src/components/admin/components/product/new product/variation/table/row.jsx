@@ -26,12 +26,12 @@ function Row({
     setSelected,
     update,
     isCombine,
-    setCombine,
-    // setSingleVariation,
 }) {
-    
     const [error, setError] = useState({ price: null, stock: null });
-    const [visible, setVisible] = useState(singleVariation?.visible || true);
+
+    const [visible, setVisible] = useState(
+        singleVariation.visible == false ? false : true
+    );
     const [inputCheck, setInputCheck] = useState(false);
 
     const { check } = useVariation();
@@ -41,7 +41,7 @@ function Row({
     const [trigger, setTrigger] = useState(false);
 
     const { setVariations, combineDispatch } = useNewProduct();
-    // console.log({ singleVariation });
+
     useEffect(() => {
         if (check == true) {
             onClickAway();
@@ -86,28 +86,31 @@ function Row({
 
         if (findItemInSelect == false) return;
 
-        setPrice(update.price);
+        setPrice(() => update.price);
         setError((prevState) => {
             return { ...prevState, price: null };
         });
 
         setTrigger(() => !trigger);
-        // updateList(update.price, stock);
+        updateList(update.price, stock);
     }, [update.price]);
 
     useEffect(() => {
         const findItemInSelect = selected.has(singleVariation.id);
         if (findItemInSelect == false) return;
 
-        
-            setStock(update.quantity);
-            setError((prevState) => {
-                return { ...prevState, stock: null };
-            });
-        
+        setStock(() => update.quantity);
+        setError((prevState) => {
+            return { ...prevState, stock: null };
+        });
+        setTrigger(() => !trigger);
 
-        // updateList(price, update.quantity);
+        updateList(price, update.quantity);
     }, [update.quantity]);
+
+    // useEffect(() => {
+    //     updateList(price, stock);
+    // }, [visible]);
 
     const handlePrice = (value) => {
         const options = {
@@ -117,7 +120,7 @@ function Row({
             setError,
         };
 
-        handleValue(options);
+        return handleValue(options);
     };
 
     const handleStock = (value) => {
@@ -131,6 +134,7 @@ function Row({
     };
 
     function onClickAway() {
+        console.log('clickaway');
         if (
             (!price && !stock) ||
             (singleVariation.price == price &&
@@ -320,7 +324,9 @@ function Row({
                             )}
                             <Switch
                                 state={visible}
-                                toggle={() => setVisible(!visible)}
+                                toggle={() =>
+                                    setVisible((prevState) => !prevState)
+                                }
                             />
                         </div>
                     </td>
@@ -332,7 +338,8 @@ function Row({
 
 export function RowInput(props) {
     const { visible, value, error, property, handleOnchange } = props;
-    const { publish, publishErrorDispatch, publishError } = useNewProduct();
+    const { publish, publishErrorDispatch, publishError, isAllInputValid } =
+        useNewProduct();
 
     const addToValidateError = (err) => {
         if (err || error[property]) {
@@ -347,11 +354,11 @@ export function RowInput(props) {
         // console.log('trying', publishError);
     };
     useEffect(() => {
-        console.log('here in row', value);
         if (publishError.has('validateInput') && props?.id) {
             const isPresent = publishError.get('validateInput').has(props?.id);
 
             if ((isPresent && !error[property]) || !visible) {
+                console.log('deleting here');
                 publishErrorDispatch({
                     type: 'deleteValidateInput',
                     path: props?.id,
@@ -360,15 +367,23 @@ export function RowInput(props) {
                 return;
             }
         }
-
-        addToValidateError();
+        if (visible) {
+            addToValidateError();
+        }
     }, [value, visible]);
     useEffect(() => {
         if (publish.firstAttempt) {
             const err = handleOnchange(value);
-            addToValidateError(err);
+            if (visible && err) {
+                console.log('run useEffect for publish.firstattempt');
+                addToValidateError(err);
+                // isAllInputValid.current = false;
+
+                return 
+            }
+            // isAllInputValid.current = true;
         }
-    }, [publish.firstAttempt]);
+    }, [publish]);
 
     return (
         <td className={`relative ${!visible && 'opacity-0'}`}>

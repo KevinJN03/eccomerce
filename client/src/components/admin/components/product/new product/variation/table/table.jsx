@@ -23,20 +23,20 @@ function Table({
     //     setVariationOptions(result);
     // }, [variationList]);
 
-    // useEffect(() => {
-    //     if (checkAll == false && selected.size == count) {
-    //         setSelected(new Map());
-    //     }
-    // }, [checkAll]);
-    // useEffect(() => {
-    //     if (selected.size == count) {
-    //         setCheckAll(true);
-    //     }
+    useEffect(() => {
+        if (checkAll == false && selected.size == count) {
+            setSelected(new Map());
+        }
+    }, [checkAll]);
+    useEffect(() => {
+        if (selected.size == count) {
+            setCheckAll(true);
+        }
 
-    //     if (selected.size == 0) {
-    //         setCheckAll(false);
-    //     }
-    // }, [selected]);
+        if (selected.size == 0) {
+            setCheckAll(false);
+        }
+    }, [selected]);
 
     const handleCheckAll = () => {
         setCheckAll(!checkAll);

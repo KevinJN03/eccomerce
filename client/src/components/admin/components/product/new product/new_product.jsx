@@ -20,7 +20,6 @@ import SelectVariation from './variation/selectVariation';
 import Main from './variation/main';
 import Update from './variation/update';
 
-
 const views = {
     manage: <Manage />,
     select: <SelectVariation />,
@@ -28,11 +27,18 @@ const views = {
     update: <Update />,
 };
 
-function New_Product({ Content }) {
+function New_Product({ Content, type }) {
     let navigate = useNavigate();
 
-    const { modalContent, modalCheck, setModalCheck, loading, setLoading } =
-        useNewProduct();
+    const {
+        modalContent,
+        modalCheck,
+        setModalCheck,
+        loading,
+        setLoading,
+        publishError,
+        publishErrorDispatch
+    } = useNewProduct();
     return (
         <VariationProvider>
             <section className="new-product">
@@ -52,18 +58,38 @@ function New_Product({ Content }) {
                             </div>
 
                             <section className="new-product-wrapper mx-[-24px] flex flex-col gap-y-3 !rounded-none bg-[var(--light-grey)] py-4 pl-6">
+                                {publishError.get('default') && (
+                                    <div className="alert alert-error">
+                                        <svg
+                                        onClick={() => publishErrorDispatch({type: 'clear', path: 'default'})}
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-6 w-6 shrink-0 stroke-current cursor-pointer hover:scale-110 transition-all"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                            />
+                                        </svg>
+                                        <span>
+                                            {publishError.get('default')}
+                                        </span>
+                                    </div>
+                                )}
                                 <About />
                                 <Price_Inventory />
-                               
-                                    <Variation />
-                                
+
+                                <Variation />
 
                                 <Details />
 
                                 <Delivery />
                             </section>
 
-                            <Footer />
+                            <Footer type={type ? type : ''} />
                         </div>
                     </section>
                 </div>

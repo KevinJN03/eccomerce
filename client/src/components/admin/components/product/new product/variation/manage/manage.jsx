@@ -116,7 +116,7 @@ function Manage({}) {
             });
 
             setVariations(() => update);
-            combineDispatch({type: 'combineVariations', variations});
+            combineDispatch({type: 'combineVariations', variations: update});
             setModalCheck(() => false);
         } else {
 
