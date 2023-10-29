@@ -1,4 +1,4 @@
-import '../../CSS/item_page.css';
+import '../../CSS/item_page.scss';
 import Main_Image from './Main_image';
 import Item_List from './image_list';
 import Product_info from './product_info';
@@ -85,6 +85,7 @@ function ItemPage() {
                                 size={product.size}
                                 details={product.detail}
                                 images={example.similar_styles_images}
+                                color={product.color}
                                 style_it_with_image={
                                     example.style_it_with_image
                                 }

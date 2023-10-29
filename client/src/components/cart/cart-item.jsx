@@ -1,7 +1,7 @@
 import heart from '../../assets/heart.png';
 import QTY_SIZE_OPTION from './qty-size-options';
 import close from '../../assets/icons/close.png';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
 const arrayRange = (start, stop, step) =>
@@ -12,15 +12,22 @@ const arrayRange = (start, stop, step) =>
 
 function Cart_Item({ product }) {
     const heart_icon_ref = useRef();
+
+    const [quantity, setQuantity] = useState(product?.quantity);
+    const [size, setSize] = useState(product?.selectSize);
     let quantityArr = arrayRange(1, 10, 1);
     const [state, dispatch] = useCart();
-    console.log('cartProduct', product);
 
+    useEffect(() => {
+        console.log('update item')
+dispatch({type: 'edit item', quantity, size, cartId: product.cartId})
+    }, [quantity, size])
 
     const handleRemove = (id) => {
-        console.log("Id:", id)
-            dispatch({type: 'remove', cartId: product.cartId})
-        }
+        console.log('Id:', id);
+        dispatch({ type: 'remove', cartId: product.cartId });
+    };
+
 
     return (
         <div id="cart-product">
@@ -43,17 +50,29 @@ function Cart_Item({ product }) {
                 </p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
-                    {/* <span>{product.color}</span> */}
+                    {product?.color && (
+                        <span className="border-r-[1px] pr-2">
+                            {product?.color}
+                        </span>
+                    )}
                     {product.size.length > 0 && (
-                        <QTY_SIZE_OPTION
-                            options={product.size}
-                            selectSize={product.selectSize}
-                            type="size"
-                        />
+                        <div className="border-r-[1px] pr-2">
+                            <QTY_SIZE_OPTION
+                                options={product.size}
+                                select={size}
+                                setSelect={setSize}
+                                type="size"
+                            />
+                            <div className="border-r-2 pr-2"></div>
+                        </div>
                     )}
                     <div>
                         <p>Qty</p>
-                        <QTY_SIZE_OPTION options={quantityArr} />
+                        <QTY_SIZE_OPTION
+                            options={quantityArr}
+                            select={quantity}
+                            setSelect={setQuantity}
+                        />
                     </div>
                 </div>
                 <button type="button" id="save-later-btn">

@@ -6,9 +6,11 @@ const calculateTotal = () => {
     let total = 0;
 
     for ( let item of products){
-       total += item.price.current
+       total += item.price.current * item.quantity
     }
-return total.toFixed(2)
+
+   
+return parseFloat(total).toFixed(2)
     
 }
 
