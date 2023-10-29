@@ -6,13 +6,13 @@ function Country_Picker({}) {
     const screenSize = useWindowSize();
     const [select, setSelect] = useState('Gb');
     const [showOption, setShowOption] = useState(false);
-    const onSelect = (code) => setSelect(code);
+    const onSelect = (code) => setSelect(() => code);
 
     const handleShowOption = () => {
-        setShowOption(true);
+        setShowOption(() => true);
     };
     const handleCloseOption = () => {
-        setShowOption(false);
+        setShowOption(() => false);
     };
     // A use effect that will run wenever a select is changed
     useEffect(() => {
@@ -44,7 +44,11 @@ function Country_Picker({}) {
                             onSelect={onSelect}
                             selectedSize={screenSize > 480 ? 20 : 14}
                         />
-                        <button type="button" onClick={handleCloseOption}  id='checkout-change-btn'>
+                        <button
+                            type="button"
+                            onClick={handleCloseOption}
+                            id="checkout-change-btn"
+                        >
                             Cancel
                         </button>
                     </>

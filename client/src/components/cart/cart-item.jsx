@@ -16,6 +16,9 @@ function Cart_Item({ product }) {
     const [quantity, setQuantity] = useState(product?.quantity);
     const [size, setSize] = useState(product?.selectSize);
     let quantityArr = arrayRange(1, 10, 1);
+
+    const qtyRef = useRef(null)
+    const sizeRef = useRef(null)
     const [state, dispatch] = useCart();
 
     useEffect(() => {
@@ -69,7 +72,7 @@ function Cart_Item({ product }) {
                         </span>
                     )}
                     {product.size.length > 0 && (
-                        <div className="border-r-[1px] pr-2">
+                        <div className="cursor-pointer border-r-[1px] pr-2">
                             <QTY_SIZE_OPTION
                                 options={product.size}
                                 select={size}
@@ -79,12 +82,16 @@ function Cart_Item({ product }) {
                             <div className="border-r-2 pr-2"></div>
                         </div>
                     )}
-                    <div className='flex flex-nowrap gap-x-2'>
+                    <div
+                        className="flex cursor-pointer flex-nowrap  gap-x-2"
+                        onClick={() => console.log(qtyRef.current.click())}
+                    >
                         <p>Qty</p>
                         <QTY_SIZE_OPTION
                             options={quantityArr}
                             select={quantity}
                             setSelect={setQuantity}
+                            ref={qtyRef}
                         />
                     </div>
                 </div>
