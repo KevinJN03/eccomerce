@@ -1,4 +1,5 @@
 import Info from '../common/info';
+import Select from './Select';
 import Size from './Size';
 import WishList from './Wishlist';
 import AddToCart from './addToCart';
@@ -8,7 +9,7 @@ import Shipping from './shipping';
 import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function Product_info({
     title,
@@ -25,68 +26,47 @@ function Product_info({
         product.size.length == 1 ? product.size[0].size : null
     );
 
-    const [colorSelect, setColorSelect] = useState( product.color.length == 1 ? product.color[0] : null);
+    const [colorSelect, setColorSelect] = useState(
+        product.color.length == 1 ? product.color[0] : null
+    );
+    const [error, setError] = useState(false);
 
-    const handleClick = (e) => {
-        console.log(e.target.value);
-        setSelect(e.target.value);
-    };
+    useEffect(() => {
+        if (error) {
+            setError(() => false);
+        }
+    }, [sizeSelect, colorSelect]);
     return (
         <section id="product-info">
             <Info title={title} price={price} text={text} />
             {/* <Size size={size} select={select} handleClick={handleClick} /> */}
 
-            {color?.length == 1 && (
-                <p className="mb-2 text-sm">
-                    {' '}
-                    <span className="text-s font-bold  tracking-wide">
-                        COLOUR:{' '}
-                    </span>
-                    {color.join(', ')}
-                </p>
-            )}
 
-            {color?.length > 1 && (
-                <section>
-                    <p className="mb-2 text-s font-bold tracking-wide">
-                        COLOUR:
-                    </p>
-                    <select
-                        onChange={(e) => setColorSelect(e.target.value)}
-                        className="item-select select mb-3 min-h-0  min-w-full rounded-none border-[1px] border-black !outline-none focus:!drop-shadow-2xl"
-                    >
-                        <option value={null}>Please Select</option>
-                        {color.map((item, index) => {
-                            return (
-                                <option value={item} key={index}>
-                                    {item}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </section>
+            <Select
+                array={color}
+                text={'COLOUR'}
+                single={color[0]}
+                setSelect={setColorSelect}
+            />
+            <Select
+                array={product.size}
+                property={'size'}
+                text={'SIZE'}
+                single={product.size[0].size}
+                setSelect={setSizeSelect}
+            />
+
+            {error && (
+                <div className="error-box mb-4 bg-red-100 px-3 py-2 text-sm">
+                    Please select from the available colour and size options.
+                </div>
             )}
-            <section>
-                <p className="mb-2 text-s font-bold tracking-wider"> SIZE: </p>
-                <select
-                    onChange={(e) => setSizeSelect(e.target.value)}
-                    className="item-select select mb-4 min-h-0  min-w-full rounded-none border-[1px] border-black !outline-none focus:!drop-shadow-2xl"
-                >
-                    <option value={null}>Please Select</option>
-                    {size.map((item, index) => {
-                        return (
-                            <option value={item.size} key={index}>
-                                {item.size}
-                            </option>
-                        );
-                    })}
-                </select>
-            </section>
             <div className="adddtocart-wishlist">
                 <AddToCart
                     product={product}
                     sizeSelect={sizeSelect}
                     colorSelect={colorSelect}
+                    setError={setError}
                 />
                 <WishList />
             </div>

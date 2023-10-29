@@ -1,9 +1,16 @@
 import { useCart } from '../../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
-function AddToCart({ product, sizeSelect, colorSelect }) {
+function AddToCart({ product, sizeSelect, colorSelect, setError }) {
     const [state, dispatch] = useCart();
 
     const handleClick = () => {
+debugger
+
+        if(sizeSelect == null || colorSelect == null) {
+
+            setError(() => true)
+            return
+        }
         const newProduct = { ...product };
         newProduct.selectSize = sizeSelect;
         newProduct.cartId = uuidv4();

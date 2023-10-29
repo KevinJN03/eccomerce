@@ -33,6 +33,7 @@ function Cart_Item({ product }) {
             <button
                 type="button"
                 id="cart-close"
+                className="h-full w-full hover:bg-slate-100"
                 onClick={() => handleRemove(product.cartId)}
             >
                 <img loading="lazy" src={close} />{' '}
@@ -44,11 +45,20 @@ function Cart_Item({ product }) {
                 ></img>
             </Link>
             <section id="cart-info">
-                <p className="text-sm font-bold tracking-wider text-[var(--primary-2)] flex gap-x-3">
-                    <span  className={product.price?.previous > product.price.current && 'text-red-600'} >£{product.price.current}</span>
+                <p className="flex gap-x-3 text-sm font-bold tracking-wider text-[var(--primary-2)]">
+                    <span
+                        className={
+                            product.price?.previous > product.price.current &&
+                            'text-red-600'
+                        }
+                    >
+                        £{product.price.current}
+                    </span>
                     {product.price?.previous &&
                         product.price?.previous > product.price.current && (
-                            <span className='text-[12px] font-medium line-through text-[var(--grey)]'>£{product.price?.previous}</span>
+                            <span className="text-[12px] font-medium text-[var(--grey)] line-through">
+                                £{product.price?.previous}
+                            </span>
                         )}
                 </p>
                 <p className="">{product.title}</p>
@@ -69,7 +79,7 @@ function Cart_Item({ product }) {
                             <div className="border-r-2 pr-2"></div>
                         </div>
                     )}
-                    <div>
+                    <div className='flex flex-nowrap gap-x-2'>
                         <p>Qty</p>
                         <QTY_SIZE_OPTION
                             options={quantityArr}
