@@ -54,16 +54,20 @@
     /* position: absolute;
     right:30px;
     font-family: "Gotham"; */
-    @apply absolute right-6  flex h-4 w-4 items-center justify-center text-xl;
+    // @apply absolute right-6  flex h-4 w-4 items-center justify-center text-xl;
+
+    @apply absolute right-6 flex h-6 w-6 items-center justify-center p-[6px] transition-all ;
     font-family: 'Roboto', sans-serif;
     border-radius: 50%;
-}
 
-#cart-close img {
-    width: 100%;
-    height: 100%;
-    object-position: center;
-    object-fit: contain;
+    img {
+
+    
+        width: 100%;
+        height: 100%;
+        object-position: center;
+        object-fit: contain;
+    }
 }
 
 .product-cart-wrapper {

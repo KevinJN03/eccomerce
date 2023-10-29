@@ -44,10 +44,10 @@ function Input({ header, button_text, handleClick, setText, error, setError }) {
                 </button>
                 {error.bool && (
                     <div className="promo-error border-1 relative relative top-[-5px] flex w-full border-red-500 bg-red-100 p-2">
-                        <span className="triangle absolute left-10 top-[-23px] h-0 w-0 border-b-[15px] border-l-[10px] border-r-[10px] border-b-red-500 border-l-transparent border-r-transparent">
-                            <span className="inner-triangle relative right-2  top-[-6px] h-0  w-0 border-b-[12px] border-l-[8px] border-r-[8px] border-b-red-100 border-l-transparent border-r-transparent"></span>
+                        <span className="triangle absolute left-10 top-[-23px] h-0 w-0 border-b-[15px] border-l-[10px] border-r-[10px] border-b-red-500 border-l-transparent border-r-transparent !z-[1]">
+                            <span className="inner-triangle relative right-2  top-[-6px] h-0  w-0 border-b-[12px] border-l-[8px] border-r-[8px] border-b-red-100 border-l-transparent border-r-transparent  "></span>
                         </span>
-                        <p className="!w-full  font-light tracking-wider">
+                        <p className="!w-full  font-light tracking-wider ">
                             {msg[error.msg]}
                         </p>
                     </div>
