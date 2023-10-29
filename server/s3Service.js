@@ -1,7 +1,7 @@
 import {
   S3Client,
   PutObjectCommand,
-  ListObjectsCommand,
+  ListObjectsV2Command as ListObjectsCommand,
   DeleteObjectCommand,
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
@@ -48,7 +48,8 @@ export const s3Delete = async (prefix, id) => {
   };
   const listCommand = new ListObjectsCommand(params);
   const response = await client.send(listCommand);
-  if (!response.Contents) return;
+  if (!response.Contents) return 'empty response Content or Keys';
+
   const listParams = response.Contents.map(({ Key }) => {
     return {
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -56,14 +57,13 @@ export const s3Delete = async (prefix, id) => {
     };
   });
 
-  console.log(listParams);
-
   const result = await Promise.all(
     listParams.map((param) => {
       const deleteCommand = new DeleteObjectCommand(param);
       return client.send(deleteCommand);
     }),
   );
+  return result;
 };
 
 export const s3Get = async (id) => {

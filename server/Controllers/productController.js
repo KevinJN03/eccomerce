@@ -1,14 +1,14 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import Category from '../Models/category.js';
-
-import { body, check, validationResult } from 'express-validator';
+import mongoose from 'mongoose';
+import { validationResult } from 'express-validator';
+const url = `${process.env.UPLOAD_URL}/products`;
 import productValidator from '../utils/productValidator.js';
 import sharpify from '../Upload/sharpify.js';
 import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
-import category from '../Models/category.js';
-import s3Upload, { s3Delete, s3Get } from '../s3Service.js';
+import s3Upload, { s3Delete } from '../s3Service.js';
 // eslint-disable-next-line import/prefer-default-export
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
@@ -94,6 +94,26 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     also_like: { men: category.men, women: category.women },
   };
 
+  console.log(product.variations);
+
+  product?.variations.map((variation) => {
+    if (variation.name == 'Size' && !variation.name2) {
+      const sizeArr = [];
+      for (const [key, value] of variation?.options) {
+        sizeArr.push({ size: value.variation });
+      }
+      newData.size = sizeArr;
+    }
+
+    if (variation.name == 'Colour' && !variation.name2) {
+      const colorArr = [];
+      for (const [key, value] of variation?.options) {
+        colorArr.push(value.variation);
+      }
+      newData.color = colorArr;
+    }
+  });
+
   return res.send(newData);
 });
 
@@ -111,7 +131,7 @@ export const delete_product = asyncHandler(async (req, res, next) => {
       $pull: { [gender]: id },
     },
   );
-  await s3Delete('products', id);
+  await await ('products', id);
   res.status(200).json({
     msg: 'Product deleted.',
     product,
@@ -141,87 +161,152 @@ const upload = multer({
 });
 
 // work on adding variations
+
+async function generateProduct(req, id) {
+  let counter = 0;
+  const imageArr = [];
+  const { files } = req;
+
+  const { variations } = req.body;
+  const { title, delivery, gender, price, stock, category, detail } = req.body;
+
+  console.log({ detail });
+  const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
+  const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
+  const parseVariations = variations?.map((item) => {
+    const data = JSON.parse(item);
+    delete data.id;
+    data.options = new Map(data.options);
+
+    return data;
+  });
+
+  const productData = {
+    title,
+    delivery,
+    gender,
+    category,
+    detail,
+    variations: parseVariations,
+    images: imageArr,
+  };
+  if (newStock.on) {
+    productData.stock = newStock.value;
+  }
+
+  if (newPrice.on) {
+    productData.price = { current: newPrice.value };
+  }
+
+  // const newFiles = files.map(async (item) => {
+  //   const sharpen = await sharpify(item);
+  //   sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+  //   imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+  //   counter += 1;
+  //   return sharpen;
+  // });
+  const sharpResult = [];
+  for (const item of files) {
+    const sharpen = await sharpify(item);
+    sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+    imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+    counter += 1;
+    sharpResult.push(sharpen);
+  }
+
+  // const sharpResult = await Promise.all(newFiles);
+  return { productData, sharpResult };
+}
 export const create_new_product = [
   upload.array('files', 6),
   productValidator,
-  asyncHandler(async (req, res, next) => {
+  async function (req, res, next) {
+    const resultValidation = validationResult(req);
+    if (!resultValidation.isEmpty()) {
+      console.log('errorList:', resultValidation.errors);
+      res.status(400).send(resultValidation.errors);
+      return;
+    }
+    const { gender, category } = req.body;
+    const newProduct = new Product();
+
+    console.log({ id: newProduct.id });
+    const { productData, sharpResult } = await generateProduct(
+      req,
+      newProduct.id,
+    );
+
+    Object.assign(newProduct, productData);
+
+    // console.log(
+    //   '--------------------------------\r\n',
+    //   'newProduct: ',
+    //   newProduct,
+    // );
     try {
-      let counter = 0;
-      const imageArr = [];
-      const url = `${process.env.UPLOAD_URL}/products`;
-      const result = validationResult(req);
-      const { files } = req;
-      const { variations } = req.body;
-
-      const parseVariations = variations?.map((item) => {
-        const data = JSON.parse(item);
-        delete data.id;
-        data.options = new Map(data.options);
-
-        return data;
-      });
-      // const parseVariations = variations;
-      // validate price and quantity only if variations is empty;
-      if (!result.isEmpty()) {
-        console.log('errorList:', result.errors);
-        res.status(400).send(result.errors);
-        return;
-      }
-
-      const { title, delivery, gender, price, stock, category, detail } =
-        req.body;
-
-      const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
-      const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
-      const newProduct = new Product({
-        title,
-        delivery,
-        gender,
-        category,
-        detail,
-      });
-
-      newProduct.variations = parseVariations;
-
-      if (newStock.on) {
-        newProduct.stock = newStock.value;
-      }
-
-      if (newPrice.on) {
-        newProduct.price = { current: newPrice.value };
-      }
-
-      const newFiles = files.map(async (item) => {
-        const sharpen = await sharpify(item);
-        sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-        imageArr.push(
-          `${url}/${newProduct.id}/${sharpen.fileName}.${sharpen.format}`,
-        );
-        counter += 1;
-        return sharpen;
-      });
-
-      const sharpResult = await Promise.all(newFiles);
-      newProduct.images = imageArr;
-
-      const uploadResult = await s3Upload(sharpResult, false, newProduct.id);
-
       await Category.updateOne(
         { _id: category },
         { $push: { [gender]: newProduct.id } },
       );
 
-      console.log(
-        '--------------------------------\r\n',
-        'newProduct: ',
-        newProduct,
-      );
-      newProduct.save();
-      return res.status(201).send(newFiles);
+      await s3Upload(sharpResult, false, newProduct.id);
+
+      await newProduct.save();
+      return res.status(201).send('Product successfully created!!!');
     } catch (error) {
-      console.log('error: ', error);
+      const deleteId = newProduct.id;
+
+      const deleteResult = await s3Delete('products', deleteId);
+      console.log({ deleteResult });
+
       next(error);
     }
+  },
+];
+export const update_product = [
+  upload.array('files', 6),
+
+  productValidator,
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      console.log('errorList:', result.errors);
+      res.status(400).send(result.errors);
+      return;
+    }
+
+    const { id } = req.params;
+    const { gender, category } = req.body;
+    const { productData, sharpResult } = await generateProduct(req, id);
+    const oldProduct = await Product.findById(id, {
+      category: 1,
+      gender: 1,
+    }).populate('category');
+
+    await s3Delete('products', id);
+    await s3Upload(sharpResult, false, id);
+    if (category !== oldProduct.category.id || gender !== oldProduct.gender) {
+      console.log('not same');
+      console.log({
+        category,
+        oldCategory: oldProduct.category.id,
+        gender,
+        oldGender: oldProduct.gender,
+      });
+
+      productData.price.previous = oldProduct.price.current;
+      await Category.updateOne(
+        { _id: oldProduct.category },
+        { $pull: { [oldProduct.gender]: id } },
+      );
+
+      await Category.updateOne({ _id: category }, { $push: { [gender]: id } });
+    }
+
+    await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
+
+    res.status(200).send('Procduct successfully updated.');
   }),
 ];
 

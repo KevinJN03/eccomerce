@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon app.js",
+    "server": "clear && nodemon app.js",
     "scrape": "cd ProductScrape && node productScraper.js",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --fix .",
@@ -16,12 +16,12 @@
     "createProduct": "cd populate && node createProducts.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "ISC",  
   "devDependencies": {
     "eslint": "^8.48.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-import": "^2.28.1", 
     "eslint-plugin-prettier": "^5.0.0",
     "jsonfile": "^6.1.0",
     "morgan": "^1.10.0",
@@ -39,11 +39,11 @@
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.17.3",
-    "express-validator": "^7.0.1",
+    "express-validator": "^7.0.1", 
     "mongoose": "^7.5.0",
     "multer": "^1.4.5-lts.1",
     "passport-jwt": "^4.0.1",
     "sharp": "^0.32.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0" 
   }
 }
