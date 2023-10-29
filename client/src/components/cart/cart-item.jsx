@@ -19,15 +19,14 @@ function Cart_Item({ product }) {
     const [state, dispatch] = useCart();
 
     useEffect(() => {
-        console.log('update item')
-dispatch({type: 'edit item', quantity, size, cartId: product.cartId})
-    }, [quantity, size])
+        console.log('update item');
+        dispatch({ type: 'edit item', quantity, size, cartId: product.cartId });
+    }, [quantity, size]);
 
     const handleRemove = (id) => {
         console.log('Id:', id);
         dispatch({ type: 'remove', cartId: product.cartId });
     };
-
 
     return (
         <div id="cart-product">
@@ -45,8 +44,12 @@ dispatch({type: 'edit item', quantity, size, cartId: product.cartId})
                 ></img>
             </Link>
             <section id="cart-info">
-                <p className="text-sm font-bold tracking-wider text-[var(--primary-2)]">
-                    £{product.price.current}
+                <p className="text-sm font-bold tracking-wider text-[var(--primary-2)] flex gap-x-3">
+                    <span  className={product.price?.previous > product.price.current && 'text-red-600'} >£{product.price.current}</span>
+                    {product.price?.previous &&
+                        product.price?.previous > product.price.current && (
+                            <span className='text-[12px] font-medium line-through text-[var(--grey)]'>£{product.price?.previous}</span>
+                        )}
                 </p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
