@@ -1,4 +1,6 @@
 import { useState } from 'react';
+
+import '../../index.css'
 function Input({ header, button_text, handleClick, setText, error, setError }) {
     const msg = {
         invalidCoupon:
@@ -28,14 +30,14 @@ function Input({ header, button_text, handleClick, setText, error, setError }) {
                     type="text"
                     id="promo"
                     onChange={(e) => handleOnChange(e)}
-                    className={`${error.bool && '!border-red-400'}`}
+                    className={`!border-2 !border-black ${error.bool && '!border-red-400'}`}
                     onKeyDown={(e) => onKeyDown(e)}
                     tabIndex='0'
                 ></input>
 
                 <button
                     type="button"
-                    className="font-gotham font-bold tracking-wider text-white"
+                    className="font-gotham font-bold tracking-wider text-white !bg-[var(--primary-2)] hover:!bg-black transition-all"
                     onClick={handleClick}
                 
                    

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './CSS/App.css';
+import './index.css'
 // import Layout from './components/Layout/layout'
 import Body from './components/Body';
 import Router from './Router';

@@ -26,7 +26,7 @@ function Checkout() {
             const timeout = setTimeout(() => {
                 navigate('/home');
                 setLoading(false);
-            }, 3000);
+            }, 5000);
             return () => {
                 clearTimeout(timeout);
             };

@@ -26,7 +26,7 @@ export default async function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-
+console.log(error)
   if (error.name == 'MulterError') {
     console.log(error + 'here???????????????????????????');
     error.message =
