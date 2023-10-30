@@ -1,7 +1,8 @@
+/* eslint-disable */
 import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import Category from '../Models/category.js';
-import mongoose from 'mongoose';
+
 import { validationResult } from 'express-validator';
 const url = `${process.env.UPLOAD_URL}/products`;
 import productValidator from '../utils/productValidator.js';
@@ -94,13 +95,20 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     also_like: { men: category.men, women: category.women },
   };
 
-  console.log(product.variations);
-
   product?.variations.map((variation) => {
     if (variation.name == 'Size' && !variation.name2) {
       const sizeArr = [];
       for (const [key, value] of variation?.options) {
-        sizeArr.push({ size: value.variation });
+        const obj = { size: value.variation };
+        if (value.hasOwnProperty('price')) {
+          obj.price = value.price;
+        }
+
+        if (value.hasOwnProperty('stock')) {
+          obj.stock = value.stock;
+        }
+
+        sizeArr.push(obj);
       }
       newData.size = sizeArr;
     }
@@ -108,9 +116,61 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     if (variation.name == 'Colour' && !variation.name2) {
       const colorArr = [];
       for (const [key, value] of variation?.options) {
-        colorArr.push(value.variation);
+        const obj = { color: value.variation };
+
+        if (value.hasOwnProperty('price')) {
+          obj.price = value.price;
+        }
+
+        if (value.hasOwnProperty('stock')) {
+          obj.stock = value.stock;
+        }
+        colorArr.push(obj);
       }
       newData.color = colorArr;
+    }
+    if (variation?.name2) {
+      console.log('is combine');
+
+      const arr = [];
+      const testObj = {};
+      const map = new Map();
+      //   const arr2 = [];
+
+      //   // create 2 arrays 1 for size, 1 for color
+      //   //
+      for (const [key, value] of variation?.options) {
+        const newObj = {
+          size: value.variation2,
+          price: value.price,
+          stock: value.stock,
+        };
+
+        if (!map.has(value.variation)) {
+          const newArr = [newObj];
+          const obj = { color: value.variation, size: newArr };
+          arr.push(obj);
+          testObj[value.variation] = newArr;
+          map.set(value.variation, newArr);
+        } else {
+          const getItemFromMap = map.get(value.variation);
+          getItemFromMap.push(newObj);
+
+          map.set(value.variation, getItemFromMap);
+        }
+        // if (value?.price) {
+        //   obj.price = value.price;
+        // }
+
+        // if (value.stock) {
+        //   obj.stock = value.stock;
+        // }
+        // colorArr.push(value.variation);
+      }
+      newData.isVariationCombine = true;
+      // newData.combineVariation = arr;
+      newData.combineVariation = testObj
+      newData.testObj = testObj;
     }
   });
 
@@ -170,7 +230,6 @@ async function generateProduct(req, id) {
   const { variations } = req.body;
   const { title, delivery, gender, price, stock, category, detail } = req.body;
 
-  console.log({ detail });
   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
   const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
   const parseVariations = variations?.map((item) => {
@@ -230,7 +289,6 @@ export const create_new_product = [
     const { gender, category } = req.body;
     const newProduct = new Product();
 
-    console.log({ id: newProduct.id });
     const { productData, sharpResult } = await generateProduct(
       req,
       newProduct.id,
@@ -257,7 +315,6 @@ export const create_new_product = [
       const deleteId = newProduct.id;
 
       const deleteResult = await s3Delete('products', deleteId);
-      console.log({ deleteResult });
 
       next(error);
     }
@@ -287,14 +344,6 @@ export const update_product = [
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
     if (category !== oldProduct.category.id || gender !== oldProduct.gender) {
-      console.log('not same');
-      console.log({
-        category,
-        oldCategory: oldProduct.category.id,
-        gender,
-        oldGender: oldProduct.gender,
-      });
-
       productData.price.previous = oldProduct.price.current;
       await Category.updateOne(
         { _id: oldProduct.category },
@@ -306,7 +355,7 @@ export const update_product = [
 
     await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
 
-    res.status(200).send('Procduct successfully updated.');
+    res.status(200).send('Product successfully updated.');
   }),
 ];
 
