@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/cartContext';
 import { forwardRef } from 'react';
+
+
 const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
     { options, label, type, select, setSelect },
     ref
@@ -14,6 +16,7 @@ const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
                 id="qty-size-select"
                 className="!max-w-[120px] "
                 ref={ref}
+                tabIndex={'0'}
             >
                 {options.map((num, index) => {
                     return (

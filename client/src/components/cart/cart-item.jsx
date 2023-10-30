@@ -17,8 +17,8 @@ function Cart_Item({ product }) {
     const [size, setSize] = useState(product?.selectSize);
     let quantityArr = arrayRange(1, 10, 1);
 
-    const qtyRef = useRef(null)
-    const sizeRef = useRef(null)
+    const qtyRef = useRef(null);
+    const sizeRef = useRef(null);
     const [state, dispatch] = useCart();
 
     useEffect(() => {
@@ -31,6 +31,10 @@ function Cart_Item({ product }) {
         dispatch({ type: 'remove', cartId: product.cartId });
     };
 
+    const onClick = () => {
+        qtyRef.current.focus();
+    
+    };
     return (
         <div id="cart-product">
             <button
@@ -83,8 +87,9 @@ function Cart_Item({ product }) {
                         </div>
                     )}
                     <div
-                        className="flex cursor-pointer flex-nowrap  gap-x-2"
-                        onClick={() => console.log(qtyRef.current.click())}
+                        className="flex !cursor-pointer flex-nowrap  gap-x-2"
+                        onClick={onClick}
+        
                     >
                         <p>Qty</p>
                         <QTY_SIZE_OPTION
