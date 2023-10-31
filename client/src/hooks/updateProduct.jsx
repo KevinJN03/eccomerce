@@ -111,7 +111,7 @@ function UpdateProduct(props, value) {
                     depth: 0,
                 });
             });
-            debugger;
+           
 
             setDescription(() =>
                 EditorState.createWithContent(
