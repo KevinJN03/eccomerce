@@ -9,7 +9,7 @@ import Shipping from './shipping';
 import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function Product_info({
     title,
@@ -22,38 +22,77 @@ function Product_info({
     product,
     color,
 }) {
+    const [priceState, setPriceState] = useState(product.price?.current);
+    
+
+   
+
+
     const [sizeSelect, setSizeSelect] = useState(
         product.size.length == 1 ? product.size[0].size : null
     );
-
+    const sizeRef = useRef();
     const [colorSelect, setColorSelect] = useState(
-        product.color.length == 1 ? product.color[0] : null
+        product.color.length == 1 ? product.color[0].color : null
     );
     const [error, setError] = useState(false);
-
+    const [isOutOfStock, setOutOfStock] = useState(false);
     useEffect(() => {
+        const refStock =
+            sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.stock;
+            const refPrice = sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.price;
+
+            if( refPrice) {
+                setPriceState(() => refPrice )
+            }
+        if (refStock == 0) {
+            setOutOfStock(() => true);
+        } else {
+            setOutOfStock(() => false);
+        }
         if (error) {
             setError(() => false);
         }
     }, [sizeSelect, colorSelect]);
+
+    //     useEffect(() => {
+    // setOutOfStock(() => false)
+    //     }, [colorSelect])
+
     return (
         <section id="product-info">
-            <Info title={title} price={price} text={text} />
+            <Info title={title} price={priceState} text={text} />
             {/* <Size size={size} select={select} handleClick={handleClick} /> */}
-
 
             <Select
                 array={color}
                 text={'COLOUR'}
-                single={color[0]}
+                single={color[0].color}
+                property={'color'}
                 setSelect={setColorSelect}
+                setOutOfStock={setOutOfStock}
+                setPrice={setPriceState}
+                ref={null}
+                isSecond={false}
             />
+
             <Select
-                array={product.size}
+                array={
+                    (product.isVariationCombine &&
+                        colorSelect &&
+                        product.combineVariation[colorSelect]) ||
+                    // :
+
+                    product.size
+                }
                 property={'size'}
                 text={'SIZE'}
-                single={product.size[0].size}
+                single={product.size[0]?.size}
                 setSelect={setSizeSelect}
+                setOutOfStock={setOutOfStock}
+                setPrice={setPriceState}
+                ref={sizeRef}
+                isSecond={true}
             />
 
             {error && (
@@ -64,9 +103,11 @@ function Product_info({
             <div className="adddtocart-wishlist">
                 <AddToCart
                     product={product}
+                    price={priceState}
                     sizeSelect={sizeSelect}
                     colorSelect={colorSelect}
                     setError={setError}
+                    isOutOfStock={isOutOfStock}
                 />
                 <WishList />
             </div>

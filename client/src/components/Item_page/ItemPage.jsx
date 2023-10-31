@@ -13,7 +13,7 @@ import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';
 
 import axios from '../../api/axios';
-console.log(import.meta.env.VITE_BASE_URL);
+
 
 function ItemPage() {
     const [product, setProduct] = useState();
@@ -28,12 +28,12 @@ function ItemPage() {
             axios
                 .get(`/product/${id}`)
                 .then((res) => {
-                    console.log(res.data);
+                 
                     setProduct(res.data);
                     setLoading(false);
                     const gender = state.gender;
                     setAlsoLike(res.data.also_like[gender])
-                    console.log('also_like', res.data.also_like[gender])
+                  
                 })
                 .catch((error) => {
                     console.log('Error fetching data, not found', error);

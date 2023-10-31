@@ -1,31 +1,47 @@
 import { useCart } from '../../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
-function AddToCart({ product, sizeSelect, colorSelect, setError }) {
+import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
+function AddToCart({
+    product,
+    sizeSelect,
+    colorSelect,
+    setError,
+    isOutOfStock,
+    price,
+}) {
     const [state, dispatch] = useCart();
 
     const handleClick = () => {
-debugger
-
-        if(sizeSelect == null || colorSelect == null) {
-
-            setError(() => true)
-            return
+        if (
+            (sizeSelect == null && product.size.length > 1) ||
+            (colorSelect == null && product.color.length > 1)
+        ) {
+            setError(() => true);
+            return;
         }
         const newProduct = { ...product };
         newProduct.selectSize = sizeSelect;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
-        newProduct.price.current = parseFloat(newProduct.price.current);
+        newProduct.price.current = price;
         newProduct.color = colorSelect;
         dispatch({ type: 'add', product: newProduct });
-
-        console.log({ newProduct });
     };
-    console.log('state:', state);
     return (
-        <button id="add-to-cart" onClick={handleClick}>
-            Add to bag
-        </button>
+        <>
+            {!isOutOfStock ? (
+                <button id="add-to-cart" onClick={handleClick}>
+                    Add to bag
+                </button>
+            ) : (
+                <button className="flex h-full w-full flex-[3] items-center justify-center !bg-primary px-3 opacity-95 transition-all hover:opacity-100">
+                    <MailOutlineSharpIcon className="!text-3xl  invert" />
+                    <p className="w-full !text-center text-sm font-semibold tracking-wider text-white">
+                        NOTIFY ME
+                    </p>
+                </button>
+            )}
+        </>
     );
 }
 

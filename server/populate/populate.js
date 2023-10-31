@@ -8,9 +8,14 @@ import createMainSubCategory from './createMain_SubCategory.js';
 import getProductData from '../ProductScrape/productScraper.js';
 import createBulkCategories from './createBulkCategories.js';
 import createProduct from './createProducts.js';
-import dataMen from '../ProductScrape/temporaryDataMen.js';
-import dataWomen from '../ProductScrape/temporaryDataWomen.js';
+// import dataMen from '../ProductScrape/temporaryDataMen.js';
+// import dataWomen from '../ProductScrape/temporaryDataWomen.js';
+import dataMen from '../ProductScrape/temporyDataMen.json' assert { type: 'json' };
+import dataWomen from '../ProductScrape/temporyDataWomen.json' assert { type: 'json' };
 import Coupon from '../Models/coupon.js';
+import createDeliveryProfile from './createDeliveryProfiles.js';
+import Product from '../Models/product.js';
+import Category from '../Models/Category.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,10 +29,41 @@ async function populate() {
       console.log(`error: ${error}`);
     });
     await dropCollection(mongoose);
-    const categories = await createBulkCategories();
-    await createProduct(dataMen, 'men', categories);
-    await createProduct(dataWomen, 'women', categories);
-    await Coupon.create({ code: 'SUPRISE', amount: 10 });
+    const categoryMap = await createBulkCategories();
+
+    const deliveryProfiles = await createDeliveryProfile();
+
+    const menProductResult = await createProduct(
+      dataMen,
+      'men',
+      categoryMap,
+      deliveryProfiles,
+    );
+    const womenProductResult = await createProduct(
+      dataWomen,
+      'women',
+      categoryMap,
+      deliveryProfiles,
+    );
+
+    const productResult = menProductResult.concat(womenProductResult);
+
+    // console.log(productResult);
+
+    await Product.insertMany(productResult);
+    const bulkCategoryArray = [];
+    for (const [key, value] of categoryMap.entries()) {
+      bulkCategoryArray.push(value);
+    }
+
+    console.log({ bulkCategoryArray });
+
+    await Category.insertMany(bulkCategoryArray);
+
+    await Coupon.insertMany(
+      { code: 'SUPRISE', amount: 10 },
+      { code: 'NEW', amount: 15 },
+    );
     mongoose.connection.close();
     console.log('connection closed');
   } catch (error) {
