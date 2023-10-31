@@ -12,10 +12,15 @@ function AddToCart({
     const [state, dispatch] = useCart();
 
     const handleClick = () => {
+        console.log({sizeSelect, colorSelect, isSizePresent: product.isSizePresent, isColorPresent: product.isColorPresent})
+
+        console.log('isnull: ', sizeSelect == null)
         if (
-            (sizeSelect == null && product.size.length > 1) ||
-            (colorSelect == null && product.color.length > 1)
+            (sizeSelect == 'null' && product.isSizePresent) ||
+            (colorSelect == 'null' && product.isColorPresent)
         ) {
+
+            console.log('enter error')
             setError(() => true);
             return;
         }

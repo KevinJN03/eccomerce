@@ -76,29 +76,34 @@ export const productColumn = [
             );
         },
     },
-    { field: 'gender', headerName: 'Gender', width: 100 },
+    { field: 'gender', headerName: 'Gender', width: 100, renderCell: (params) => {
+
+       const gender = params.row.gender[0].toUpperCase() + params.row.gender.slice(1)
+       return gender
+       
+    }},
     { field: 'category', headerName: 'Category', width: 140, renderCell: (params) => {
         return (
             params.row.category.name.toUpperCase()
         )
     } },
-    {
-        field: 'size',
-        headerName: 'Size',
-        width: 130,
-        renderCell: (params) => {
-            return (
-                <>
-                    {params.row.size.map((elem, idx) => {
-                        if (idx != params.row.size.length - 1) {
-                            return elem.size + ', ';
-                        }
-                        return elem.size;
-                    })}
-                </>
-            );
-        },
-    },
+    // {
+    //     field: 'size',
+    //     headerName: 'Size',
+    //     width: 130,
+    //     renderCell: (params) => {
+    //         return (
+    //             <>
+    //                 {params.row.size.map((elem, idx) => {
+    //                     if (idx != params.row.size.length - 1) {
+    //                         return elem.size + ', ';
+    //                     }
+    //                     return elem.size;
+    //                 })}
+    //             </>
+    //         );
+    //     },
+    // },
     {
         field: 'price',
         headerName: 'Price',
@@ -114,13 +119,13 @@ export const productColumn = [
         headerName: 'Stock',
         type: 'number',
         width: 90,
-        renderCell: (params) => {
-            let total = 0;
-            params.row.size.map((elem) => {
-                total += elem.stock;
-            });
-            return <>{total}</>;
-        },
+        // renderCell: (params) => {
+        //     let total = 0;
+        //     params.row.size.map((elem) => {
+        //         total += elem.stock;
+        //     });
+        //     return <>{total}</>;
+        // },
     },
 ];
 

@@ -23,17 +23,15 @@ function Product_info({
     color,
 }) {
     const [priceState, setPriceState] = useState(product.price?.current);
-    
-
-   
+    console.log('render product info')
 
 
     const [sizeSelect, setSizeSelect] = useState(
-        product.size.length == 1 ? product.size[0].size : null
+        product?.size?.length == 1 ? product.size[0].size : 'null'
     );
     const sizeRef = useRef();
     const [colorSelect, setColorSelect] = useState(
-        product.color.length == 1 ? product.color[0].color : null
+        product.color.length == 1 ? product.color[0].color : 'null'
     );
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
@@ -64,7 +62,7 @@ function Product_info({
             <Info title={title} price={priceState} text={text} />
             {/* <Size size={size} select={select} handleClick={handleClick} /> */}
 
-            <Select
+            { product.isColorPresent && <Select
                 array={color}
                 text={'COLOUR'}
                 single={color[0].color}
@@ -74,9 +72,9 @@ function Product_info({
                 setPrice={setPriceState}
                 ref={null}
                 isSecond={false}
-            />
+            />}
 
-            <Select
+           {product.isSizePresent &&  <Select
                 array={
                     (product.isVariationCombine &&
                         colorSelect &&
@@ -87,13 +85,13 @@ function Product_info({
                 }
                 property={'size'}
                 text={'SIZE'}
-                single={product.size[0]?.size}
+                single={product?.size?.[0]?.size}
                 setSelect={setSizeSelect}
                 setOutOfStock={setOutOfStock}
                 setPrice={setPriceState}
                 ref={sizeRef}
                 isSecond={true}
-            />
+            />}
 
             {error && (
                 <div className="error-box mb-4 bg-red-100 px-3 py-2 text-sm">
@@ -105,6 +103,7 @@ function Product_info({
                     product={product}
                     price={priceState}
                     sizeSelect={sizeSelect}
+
                     colorSelect={colorSelect}
                     setError={setError}
                     isOutOfStock={isOutOfStock}

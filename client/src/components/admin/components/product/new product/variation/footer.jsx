@@ -103,7 +103,7 @@ function Footer({ type }) {
     return (
         <div className="new-product-footer flex gap-2 p-6 font-medium">
             <button
-                className="border-none hover:bg-[var(--light-grey)]"
+                className="cancel-btn"
                 onClick={() => navigate('/admin/products')}
             >
                 Cancel

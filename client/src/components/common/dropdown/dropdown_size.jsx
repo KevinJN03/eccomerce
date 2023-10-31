@@ -24,7 +24,7 @@ function Dropdown_Size({ title, options }) {
                     />
                 </summary>
                 <ul className="menu dropdown-content rounded-box z-[1] w-52 bg-base-100 p-2 shadow">
-                    {options.map((option) => {
+                    {options?.map((option) => {
                         return (
                             <li>
                                 <option

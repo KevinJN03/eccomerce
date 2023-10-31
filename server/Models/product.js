@@ -63,4 +63,31 @@ const productSchema = new Schema(
 );
 
 productSchema.virtual('id');
+productSchema.virtual('isSizePresent').get(function () {
+  const variations = this.variations;
+
+  let isPresent = false;
+
+  variations.map((variation) => {
+    if (variation.name == 'Size') {
+      isPresent = true;
+    }
+  });
+
+  return isPresent;
+});
+
+productSchema.virtual('isColorPresent').get(function () {
+  const variations = this.variations;
+
+  let isPresent = false;
+
+  variations.map((variation) => {
+    if (variation.name == 'Colour') {
+      isPresent = true;
+    }
+  });
+
+  return isPresent;
+});
 export default mongoose.model('product', productSchema);

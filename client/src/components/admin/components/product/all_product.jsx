@@ -20,6 +20,7 @@ console.log('error: ' , error)
     console.log({ products });
     return (
         <>
+ 
             <Datatable
                 type="product"
                 loading={loading}
