@@ -1,0 +1,95 @@
+{
+  "gender": "Women",
+  "categoryResults": [
+    {
+      "category": "new in",
+      "products": [
+        {
+          "title": "Reclaimed Vintage drippy pearl necklace in black ",
+          "images": [],
+          "price": {
+            "current": 12.79,
+            "previous": 15.99
+          },
+          "detail": [
+            "Accessorising is the best part",
+            "Beaded chain",
+            "Drop style",
+            "Adjustable length",
+            "Lobster clasp"
+          ],
+          "url": "https://www.asos.com/reclaimed-vintage/reclaimed-vintage-drippy-pearl-necklace-in-black/prd/205475904#colourWayId-205475907",
+          "stock": 171,
+          "variations": [
+            {
+              "name": "Colour",
+              "default": true,
+              "quantityHeader": {
+                "on": false
+              },
+              "priceHeader": {
+                "on": false
+              },
+              "combine": false,
+              "options": [
+                [
+                  "1a0e87cd-5cfa-45aa-a78a-268be1b46618",
+                  {
+                    "id": "1a0e87cd-5cfa-45aa-a78a-268be1b46618",
+                    "variation": "BLACK"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "DesignB London wide curve hoop earrings in gold",
+          "images": [
+            "https://images.asos-media.com/products/designb-london-wide-curve-hoop-earrings-in-gold/205494475-1-gold?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/designb-london-wide-curve-hoop-earrings-in-gold/205494475-4?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/designb-london-wide-curve-hoop-earrings-in-gold/205494475-2?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/designb-london-wide-curve-hoop-earrings-in-gold/205494475-3?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/designb-london-wide-curve-hoop-earrings-in-gold/205494475-4?$n_640w$&wid=513&fit=constrain"
+          ],
+          "price": {
+            "current": 6.4,
+            "previous": 8
+          },
+          "detail": [
+            "A little something",
+            "Hoop style",
+            "Chunky band",
+            "Smooth finish",
+            "Bullet clutch back",
+            "Product is non-returnable for hygiene reasons"
+          ],
+          "url": "https://www.asos.com/designb-london/designb-london-wide-curve-hoop-earrings-in-gold/prd/205494475#colourWayId-205494476",
+          "stock": 165,
+          "variations": [
+            {
+              "name": "Colour",
+              "default": true,
+              "quantityHeader": {
+                "on": false
+              },
+              "priceHeader": {
+                "on": false
+              },
+              "combine": false,
+              "options": [
+                [
+                  "6e9c937f-3a9a-476e-ba7c-33b2d8abe28f",
+                  {
+                    "id": "6e9c937f-3a9a-476e-ba7c-33b2d8abe28f",
+                    "variation": "Gold"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

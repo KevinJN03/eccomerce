@@ -45,7 +45,7 @@ function UpdateProduct(props, value) {
                     );
 
                     data.options = new Map(optionArr);
-
+                    data.disabled = false;
                     return data;
                 }
             );
@@ -111,7 +111,6 @@ function UpdateProduct(props, value) {
                     depth: 0,
                 });
             });
-            debugger;
 
             setDescription(() =>
                 EditorState.createWithContent(

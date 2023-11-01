@@ -16,14 +16,32 @@ export default async function createBulkCategories() {
     'topshop',
   ];
   try {
-    const createCategory = await arr.map(async (name) => {
-      const newCategory = await Category.create({
-        name,
+    const createCategory = arr.map((name) => {
+      const newCategory = new Category({
+        name: name,
       });
       return newCategory;
     });
-    const promiseArr = await Promise.all(createCategory);
-    return promiseArr;
+
+    // const result = await Category.insertMany(createCategory, { ordered: true });
+    // const result = await Category.insertMany(createCategory, { ordered: true });
+
+    const result = createCategory;
+    const categoryMap = new Map();
+    // const promiseArr = await Promise.all(createCategory);
+    result.map((item) => {
+      if (!categoryMap.has(item.name)) {
+        categoryMap.set(item.name, {
+          _id: item._id,
+          id: item.id,
+          men: [],
+          women: [],
+          name: item.name,
+        });
+      }
+    });
+   
+    return categoryMap;
   } catch (error) {
     console.log('error', error);
   }

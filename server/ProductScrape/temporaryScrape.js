@@ -6,28 +6,44 @@ import fs from 'fs';
 import jsonfile from 'jsonfile';
 
 const fetchCategoryResults = async (gender, urls) => {
-  const result = { gender, categoryResults: [] };
-  const categories = urls.map(async (category) => {
-    return await getProductData(category.category, category.link);
-  });
-  const resultFromScrape = await Promise.all(categories);
-  await resultFromScrape.map((item) => result.categoryResults.push(item));
-  console.log(`${gender} results: `, await resultFromScrape);
-  const container = `const ${gender}Data = ${result}\r\n export default ${gender}Data`;
-  jsonfile.writeFile(
-    `temporyData${gender}.json`,
-    result,
-    { spaces: 2, EOL: '\r\n' },
-    (err) => {
-      if (err) throw err;
-      console.log('the file has been created successfully');
-    },
-  );
+  try {
+    const result = { gender, categoryResults: [] };
+    const categories = urls.map(async ({ category, link }) => {
+      const response = await getProductData(category, link);
+      return response;
+    });
+    // const categories = [];
+    // for (const { category, link } of urls) {
+    //   const response = await getProductData(category, link);
+
+    //   categories.push(response);
+    // }
+    // const resultFromScrape = await Promise.allSettled(categories);
+
+    console.log({categories})
+    const resultFromScrape = await Promise.all(categories);
+    await resultFromScrape.map((item) => result.categoryResults.push(item));
+    console.log(`${gender} results: `, await resultFromScrape);
+    const container = `const ${gender}Data = ${result}\r\n export default ${gender}Data`;
+    jsonfile.writeFile(
+      `temporyData${gender}.json`,
+      result,
+      { spaces: 2, EOL: '\r\n' },
+      (err) => {
+        if (err) throw err;
+        console.log('the file has been created successfully');
+      },
+    );
+  } catch (error) {
+    console.log('error at fetchCategoryResults: ', error);
+  }
 };
 export default (async function temporaryScrape() {
   await fetchCategoryResults('Men', menUrls).then(async () => {
     await fetchCategoryResults('Women', WomenUrls);
-  });
+  })
+
+ 
   // const arr = [];
   // const browser = await puppeteer.launch({
   //   headless: false,

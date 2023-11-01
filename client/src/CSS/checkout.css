@@ -212,15 +212,14 @@
 }
 
 .buy-now-btn {
-    @apply w-10/12 self-center py-4 font-gotham font-bold text-white;
-    background-color: var(--green);
-}
-.buy-now-btn-wrapper {
-    @apply mb-6 flex w-full justify-center;
+    @apply w-full self-center py-4 font-gotham font-bold text-white;
+    
 }
 
+
 .buy-now-btn:disabled {
-    opacity: 40%;
+background-color: #018849be;
+@apply cursor-not-allowed
 }
 
 /* Checkout Total */

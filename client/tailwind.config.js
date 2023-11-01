@@ -4,6 +4,11 @@ export default {
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
+
+            colors: {
+                'primary': '#2d2d2d',
+                'primary-green': '#018849',
+            },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
                 raleway: ['Raleway',' sans-serif']

@@ -5,6 +5,13 @@
     font-family: 'Gotham';
     src: url('./assets/fonts/Gotham Bold.otf');
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
 :root {
     --primary: #2d2d2d;
     --white: white;
@@ -16,9 +23,6 @@
     --primary-2: #525050;
     --green: #018849;
 }
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 
 * {

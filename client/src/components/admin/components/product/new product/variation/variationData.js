@@ -21,14 +21,24 @@ export const sizeList = [
     'Double Extra Large (XXL)',
 ];
 
-export const defaultMap = new Map();
+export const defaultMap = new Map([
+    [
+        'Colour',
+        {
+            id: 1,
+            defaultVariations: colorList,
+            disabled: false,
+        },
+    ],
+    ['Size', { id: 2, defaultVariations: sizeList, disabled: false }],
+]);
 
-defaultMap.set('Colour', {
-    id: 1,
-    defaultVariations: colorList,
-    disabled: false,
-});
-defaultMap.set('Size', { id: 2, defaultVariations: sizeList, disabled: false });
+// defaultMap.set('Colour', {
+//     id: 1,
+//     defaultVariations: colorList,
+//     disabled: false,
+// });
+// defaultMap.set('Size', { id: 2, defaultVariations: sizeList, disabled: false });
 
 export const resetDefaultMap = () => {
     for (const item of defaultMap.entries()) {
@@ -68,19 +78,32 @@ export const generateVariation = (name, option) => {
 };
 
 export const filteredVariation = (name, options) => {
-    let generatedList = generateVariation(name);
+    const newOptions = new Map(options);
+    let generatedList = generateVariation(name, { array: true });
     console.log({ generatedList, options });
-    if (generatedList.length > 0 && options.length > 0) {
-        let newOptions = options.map(({ variation }) => variation);
 
-        let filterArr = generatedList.filter(
-            (item) => !newOptions.includes(item.variation)
-        );
-        console.log({ filterArr });
-        return filterArr;
-    } else {
-        return [];
+    const valueSet = new Set();
+    for (const [key, value] of options.entries()) {
+        valueSet.add(value.variation);
+
+        // let newOptions = options.map(({ variation }) => variation);
+
+        // let filterArr = generatedList.filter(
+        //     (item) => !newOptions.includes(item.variation)
+        // );
+        // console.log({ filterArr });
+        // return filterArr;
     }
+    const newArr = generatedList.filter((item) => {
+        if (!valueSet.has(item.variation)) {
+            return true;
+        }else {
+         return false   
+        }
+        
+    });
+
+   return newArr
 };
 
 export const generateCustomVariation = (text) => {

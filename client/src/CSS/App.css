@@ -163,8 +163,11 @@ background-color: #2d2d2d
     /* min-width: calc(100% / 3); */
     height: 100%;
     width: 100%;
-    @apply flex items-center justify-center;
+    @apply flex items-center justify-center ;
+    /* display: none !important; */
 }
+
+
 
 .img-icon {
     /* object-fit: cover; */

@@ -75,7 +75,7 @@ function Cart_Item({ product }) {
                             {product?.color}
                         </span>
                     )}
-                    {product.size.length > 0 && (
+                    {product.isSizePresent && (
                         <div className="cursor-pointer border-r-[1px] pr-2">
                             <QTY_SIZE_OPTION
                                 options={product.size}

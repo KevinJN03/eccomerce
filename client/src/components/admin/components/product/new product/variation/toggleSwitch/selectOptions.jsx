@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { v4 as uuidv4 } from 'uuid';
-function SelectOptions({ property, setDisableApply, selection, setSelection }) {
+function SelectOptions({ property, selection, setSelection }) {
     const { temporaryVariation, setTemporaryVariation } =
         useVariation();
     const [bothName, setBothName] = useState('');

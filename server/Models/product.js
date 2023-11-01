@@ -49,8 +49,8 @@ const productSchema = new Schema(
       required: true,
       maxlength: [400, 'Details must be under 200 characters'],
     },
-    color: [{ type: Schema.Types.String }],
-    size: { type: Schema.Types.Array, default: [] },
+    // color: [{ type: Schema.Types.String }],
+    // size: { type: Schema.Types.Array, default: [] },
     variations: [variationSchema],
     images: { type: Schema.Types.Array, default: [] },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
@@ -63,4 +63,31 @@ const productSchema = new Schema(
 );
 
 productSchema.virtual('id');
+productSchema.virtual('isSizePresent').get(function () {
+  const variations = this.variations;
+
+  let isPresent = false;
+
+  variations.map((variation) => {
+    if (variation.name == 'Size') {
+      isPresent = true;
+    }
+  });
+
+  return isPresent;
+});
+
+productSchema.virtual('isColorPresent').get(function () {
+  const variations = this.variations;
+
+  let isPresent = false;
+
+  variations.map((variation) => {
+    if (variation.name == 'Colour') {
+      isPresent = true;
+    }
+  });
+
+  return isPresent;
+});
 export default mongoose.model('product', productSchema);

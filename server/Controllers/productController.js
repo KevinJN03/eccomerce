@@ -73,12 +73,12 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     title,
     price,
     detail,
-    color,
-    size,
     images,
     reviews,
     category,
     gender,
+    isSizePresent,
+    isColorPresent,
   } = product;
 
   const newData = {
@@ -87,94 +87,90 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     title,
     price,
     detail,
-    color,
-    size,
     images,
     reviews,
     category: category.name,
+    isSizePresent,
+    isColorPresent,
     also_like: { men: category.men, women: category.women },
   };
 
-  product?.variations.map((variation) => {
-    if (variation.name == 'Size' && !variation.name2) {
-      const sizeArr = [];
-      for (const [key, value] of variation?.options) {
-        const obj = { size: value.variation };
-        if (value.hasOwnProperty('price')) {
-          obj.price = value.price;
-        }
+  if ('variations' in product) {
+    product.variations.map((variation) => {
+      console.log('im maping');
+      if (variation.name == 'Size' && !variation.name2) {
+        const sizeArr = [];
+        for (const [key, value] of variation?.options) {
+          const obj = { size: value.variation };
+          if (value.hasOwnProperty('price')) {
+            obj.price = value.price;
+          }
 
-        if (value.hasOwnProperty('stock')) {
-          obj.stock = value.stock;
-        }
+          if (value.hasOwnProperty('stock')) {
+            obj.stock = value.stock;
+          }
 
-        sizeArr.push(obj);
+          sizeArr.push(obj);
+        }
+        newData.size = sizeArr;
       }
-      newData.size = sizeArr;
-    }
 
-    if (variation.name == 'Colour' && !variation.name2) {
-      const colorArr = [];
-      for (const [key, value] of variation?.options) {
-        const obj = { color: value.variation };
+      if (variation.name == 'Colour' && !variation.name2) {
+        console.log('im in color');
+        const colorArr = [];
+        for (const [key, value] of variation?.options) {
+          const obj = { color: value.variation };
 
-        if (value.hasOwnProperty('price')) {
-          obj.price = value.price;
+          if (value.hasOwnProperty('price')) {
+            obj.price = value.price;
+          }
+
+          if (value.hasOwnProperty('stock')) {
+            obj.stock = value.stock;
+          }
+          colorArr.push(obj);
         }
-
-        if (value.hasOwnProperty('stock')) {
-          obj.stock = value.stock;
-        }
-        colorArr.push(obj);
+        newData.color = colorArr;
       }
-      newData.color = colorArr;
-    }
-    if (variation?.name2) {
-      console.log('is combine');
+      if (variation?.name2) {
+        console.log('is combine');
 
-      const arr = [];
-      const testObj = {};
-      const map = new Map();
-      //   const arr2 = [];
+        const arr = [];
+        const testObj = {};
+        const map = new Map();
+        //   const arr2 = [];
 
-      //   // create 2 arrays 1 for size, 1 for color
-      //   //
-      for (const [key, value] of variation?.options) {
-        const newObj = {
-          size: value.variation2,
-          price: value.price,
-          stock: value.stock,
-        };
+        //   // create 2 arrays 1 for size, 1 for color
+        //   //
+        for (const [key, value] of variation?.options) {
+          const newObj = {
+            size: value.variation2,
+            price: value.price,
+            stock: value.stock,
+          };
 
-        if (!map.has(value.variation)) {
-          const newArr = [newObj];
-          const obj = { color: value.variation, size: newArr };
-          arr.push(obj);
-          testObj[value.variation] = newArr;
-          map.set(value.variation, newArr);
-        } else {
-          const getItemFromMap = map.get(value.variation);
-          getItemFromMap.push(newObj);
+          if (!map.has(value.variation)) {
+            const newArr = [newObj];
+            const obj = { color: value.variation, size: newArr };
+            arr.push(obj);
+            testObj[value.variation] = newArr;
+            map.set(value.variation, newArr);
+          } else {
+            const getItemFromMap = map.get(value.variation);
+            getItemFromMap.push(newObj);
 
-          map.set(value.variation, getItemFromMap);
+            map.set(value.variation, getItemFromMap);
+          }
         }
-        // if (value?.price) {
-        //   obj.price = value.price;
-        // }
-
-        // if (value.stock) {
-        //   obj.stock = value.stock;
-        // }
-        // colorArr.push(value.variation);
+        newData.isVariationCombine = true;
+        // newData.combineVariation = arr;
+        newData.combineVariation = testObj;
+        newData.testObj = testObj;
       }
-      newData.isVariationCombine = true;
-      // newData.combineVariation = arr;
-      newData.combineVariation = testObj
-      newData.testObj = testObj;
-    }
-  });
-
-  return res.send(newData);
+    });
+  }
+  console.log({ newData });
+  res.send(newData);
 });
 
 export const delete_product = asyncHandler(async (req, res, next) => {
@@ -339,12 +335,19 @@ export const update_product = [
     const oldProduct = await Product.findById(id, {
       category: 1,
       gender: 1,
+      price: 1,
     }).populate('category');
 
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
+    console.log({ price: productData.price });
+
+    const newPrice = {
+      current: productData?.price?.current,
+      previous: oldProduct.price.current,
+    };
+    productData.price = newPrice;
     if (category !== oldProduct.category.id || gender !== oldProduct.gender) {
-      productData.price.previous = oldProduct.price.current;
       await Category.updateOne(
         { _id: oldProduct.category },
         { $pull: { [oldProduct.gender]: id } },

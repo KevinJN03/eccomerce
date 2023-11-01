@@ -23,7 +23,6 @@ function Cart({}) {
     // const [cart, setCart] = useState(null)
     const [cart, dispatch] = useCart();
     const handleRemove = (id) => {
-        console.log('Id:', id);
         dispatch({ type: 'remove', cartId: id });
     };
     return (
@@ -44,12 +43,12 @@ function Cart({}) {
                             <p className="text-base font-semibold">
                                 BAG SUB-TOTAL
                             </p>
-                            <p className="text-sm">{cartTotal}</p>
+                            <p className="text-sm">£{cartTotal}</p>
                         </div>
                         <div className="right">
                             <Link
                                 to="/checkout"
-                                className="bg-[var(--green)] px-3 py-2 font-medium tracking-wider text-white "
+                                className="bg-[var(--green)] px-3 py-2 font-medium tracking-wider text-white checkout-btn"
                             >
                                 CHECKOUT
                             </Link>

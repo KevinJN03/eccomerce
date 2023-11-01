@@ -10,7 +10,7 @@ function ToggleSwitch({
     state,
     setState,
     notDisabled,
-    setDisableApply,
+
     property,
     selection,
     setSelection,
@@ -76,7 +76,7 @@ function ToggleSwitch({
             {notDisabled > 1 && state && (
                 <SelectOptions
                     property={property}
-                    setDisableApply={setDisableApply}
+                   
                     selection={selection}
                     setSelection={setSelection}
                 />

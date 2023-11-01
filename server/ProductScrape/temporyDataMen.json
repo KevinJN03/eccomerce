@@ -1,0 +1,97 @@
+{
+  "gender": "Men",
+  "categoryResults": [
+    {
+      "category": "new in",
+      "products": [
+        {
+          "title": "New Era 9forty NY cap in brown",
+          "images": [],
+          "price": {
+            "current": 16.5,
+            "previous": 19
+          },
+          "detail": [
+            "Let's take it from the top",
+            "Domed crown",
+            "Eyelets for ventilation",
+            "Logo embroidery",
+            "Curved peak",
+            "Adjustable buckle strap"
+          ],
+          "url": "https://www.asos.com/new-era/new-era-9forty-ny-cap-in-brown/prd/21903372#colourWayId-60308104",
+          "stock": 113,
+          "variations": [
+            {
+              "name": "Colour",
+              "default": true,
+              "quantityHeader": {
+                "on": false
+              },
+              "priceHeader": {
+                "on": false
+              },
+              "combine": false,
+              "options": [
+                [
+                  "db32e667-c71a-4bc7-a2d9-3d8ce08e0153",
+                  {
+                    "id": "db32e667-c71a-4bc7-a2d9-3d8ce08e0153",
+                    "variation": "Brown"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Reclaimed Vintage inspired leather look trench in chocolate",
+          "images": [
+            "https://images.asos-media.com/products/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/24560517-1-brown?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/24560517-4?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/24560517-2?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/24560517-3?$n_640w$&wid=513&fit=constrain",
+            "https://images.asos-media.com/products/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/24560517-4?$n_640w$&wid=513&fit=constrain"
+          ],
+          "price": {
+            "current": 56,
+            "previous": 69.99
+          },
+          "detail": [
+            "Exclusive to GLAMO",
+            "Spread collar",
+            "Press-stud placket",
+            "Tie waist",
+            "Functional pockets",
+            "Storm shield to reverse",
+            "Regular fit"
+          ],
+          "url": "https://www.asos.com/reclaimed-vintage/reclaimed-vintage-inspired-leather-look-trench-in-chocolate/prd/24560517#colourWayId-60606883",
+          "stock": 77,
+          "variations": [
+            {
+              "name": "Colour",
+              "default": true,
+              "quantityHeader": {
+                "on": false
+              },
+              "priceHeader": {
+                "on": false
+              },
+              "combine": false,
+              "options": [
+                [
+                  "369d4085-9b59-488d-9f8d-b5e52416bb62",
+                  {
+                    "id": "369d4085-9b59-488d-9f8d-b5e52416bb62",
+                    "variation": "Brown"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

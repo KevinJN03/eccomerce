@@ -35,9 +35,9 @@ function Checkout() {
     return (
         <PromoProvider>
             {loading && (
-                <div className="flex h-screen w-full flex-col items-center justify-center max-w-[400px] gap-y-4">
-                    <img src={RedirectImage}  className='w-28 h-28'/>
-                    <p className='text-lg text-center'>
+                <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
+                    <img src={RedirectImage} className="h-28 w-28" />
+                    <p className="text-center text-lg">
                         Your cart is Empty, you will get redirected to the Home
                         Page in a few seconds.
                     </p>
@@ -57,15 +57,14 @@ function Checkout() {
                                 <Address />
                                 <Delivery />
                                 <Payment />
-                                <div className="buy-now-btn-wrapper">
-                                    <button
-                                        className="buy-now-btn"
-                                        type="button"
-                                        disabled
-                                    >
-                                        BUY NOW
-                                    </button>
-                                </div>
+
+                                <button
+                                    className="buy-now-btn bg-primary-green mb-10 transition-all opacity-95 hover:opacity-100"
+                                    type="button"
+                                    disabled
+                                >
+                                    <span className="text-white">BUY NOW</span>
+                                </button>
                             </section>
 
                             <Checkout_Total />

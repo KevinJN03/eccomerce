@@ -1,24 +1,36 @@
-import { v4 as uuid } from 'uuid';
+// import { v4 } from 'uuid';
 
-async function checkProduct(product) {
-  const keyArr = await Object.keys(product);
-  console.log(keyArr);
+import crypto from 'crypto';
 
-  if (keyArr.length > 4) {
-    return product;
-  }
-  return null;
-}
 async function ScrapeIndividual(page) {
   try {
-    // page.waitForNavigation();
+    let isColorPresent = false;
+    let isSizePresent = false;
+    const variations = [];
+    const color = {
+      name: 'Colour',
+      default: true,
+      quantityHeader: { on: false },
+      priceHeader: { on: false },
+      combine: false,
+      options: [],
+    };
+    const size = {
+      name: 'Size',
+      default: true,
+      quantityHeader: { on: false },
+      priceHeader: { on: false },
+      combine: false,
+      options: [],
+    };
+
     const titleSelector = await page.waitForSelector('.jcdpl', {
       visible: true,
     });
 
     //   'span[data-testid="current-price"]',
     // );
-
+    console.log({ titleSelector });
     const title = await titleSelector.evaluate((el) =>
       el.textContent.replaceAll('ASOS', 'GLAMO'),
     );
@@ -49,7 +61,7 @@ async function ScrapeIndividual(page) {
     }
 
     if ((await page.$('span[data-testid="previous-price"]')) != null) {
-      const previousPriceresult = await page
+      const previousPriceResult = await page
         .$('span[data-testid="previous-price"]')
         .then((selector) =>
           selector.evaluate((item) => {
@@ -58,50 +70,82 @@ async function ScrapeIndividual(page) {
             );
           }),
         );
-      price.previous = previousPriceresult;
+      price.previous = previousPriceResult;
     }
-
-    let totalSize;
-
+    // console.log('here: ', size);
     if ((await page.$('#variantSelector')) != null) {
-      const size = await page.evaluate(async () => {
-        const sizes = Array.from(
+      // const colorResult = await page
+      //   .$('div[data-testid="productColour"] > p')
+      //   .then((selector) => selector.evaluate(async (text) => text.textContent));
+      // const test = await page.$('#variantSelector').then(async (selector) => {
+      //   const arr = Array.from(
+      //     document.querySelectorAll('#variantSelector > option'),
+      //   ).map((el) => el.textContent);
+
+      //   return arr
+      //   // await selector.$('option').evaluate((text) => text.textContent);
+      //   // return selector.evaluate(async (text) => text.textContent);
+      // });
+
+      const sizes = await page.evaluate(async () => {
+        const arr = Array.from(
           document.querySelectorAll('#variantSelector > option'),
-          (el) => {
-            let newTitle = el.textContent;
-            if (newTitle.includes('-')) {
-              const [beforeHypen] = newTitle.split('-');
-              console.log('beforeHypen', beforeHypen);
-              newTitle = beforeHypen.trim();
-            }
-
-            const newSize = {
-              size: newTitle,
-              stock: Math.floor(Math.random() * 20),
-            };
-            return newSize;
-          },
         );
-
-        const allOptionSize = [...sizes.slice(1)];
-        return allOptionSize;
+        console.log({ arr });
+        return arr;
       });
-      totalSize = size;
+      sizes.map((el) => {
+        let newTitle = el.textContent;
+        if (newTitle.includes('-')) {
+          const [beforeHypen] = newTitle.split('-');
+          console.log('beforeHypen', beforeHypen);
+          newTitle = beforeHypen.trim();
+        }
+
+        // const newSize = {
+        //   size: newTitle,
+        //   stock: Math.floor(Math.random() * 20),
+        // };
+
+        const newId = crypto.randomUUID();
+        console.log('size in forEch: ', size);
+        const { options } = size;
+
+        options.push([newId, { id: newId, variation: newTitle }]);
+        isSizePresent = true;
+        // return newSize;
+      });
+      // sizes.map((el) => {
+      //   let newTitle = el.textContent;
+      //   if (newTitle.includes('-')) {
+      //     const [beforeHypen] = newTitle.split('-');
+      //     console.log('beforeHypen', beforeHypen);
+      //     newTitle = beforeHypen.trim();
+      //   }
+
+      //   // const newSize = {
+      //   //   size: newTitle,
+      //   //   stock: Math.floor(Math.random() * 20),
+      //   // };
+
+      //   const newId = crypto.randomUUID();
+
+      //   const { options } = size;
+
+      //   options.push([newId, { id: newId, variation: newTitle }]);
+      //   // return newSize;
+      // });
+
+      // const allOptionSize = [...sizes.slice(1)];
+      // return allOptionSize;
+
+      // totalSize = size;
     } else if ((await page.$('[data-testid="productSize"]')) != null) {
       const singleProductSize = await page
         .$('[data-testid="productSize"]')
         .then((selector) => {
           return selector.evaluate((el) => el.textContent);
         });
-
-      totalSize = [
-        {
-          size: await singleProductSize,
-          stock: Math.floor(Math.random() * 20),
-        },
-      ];
-
-      // return totalSize;
     }
     let detail;
     if ((await page.$('.F_yfF')) != null) {
@@ -119,29 +163,43 @@ async function ScrapeIndividual(page) {
       console.log('this is the issue page:', page.url());
     }
 
-    let color = '';
     if ((await page.$('div[data-testid="productColour"]')) != null) {
       const colorResult = await page
         .$('div[data-testid="productColour"] > p')
         .then((selector) =>
           selector.evaluate(async (text) => text.textContent),
         );
-      color = colorResult;
+
+      // console.log({colorResult})
+
+      const { options } = color;
+      const newId = crypto.randomUUID();
+      options.push([newId, { id: newId, variation: colorResult }]);
+      // color.options.colorResult;
+
+      isColorPresent = true;
+    }
+
+    if (isColorPresent) {
+      variations.push(color);
+    }
+    if (isSizePresent) {
+      variations.push(size);
     }
 
     const product = await {
       title,
       images,
       price,
-      size: totalSize,
       detail,
       url: page.url(),
-      color,
+      stock: Math.floor(Math.random() * 200),
+      variations,
     };
 
-    return await product;
+    return product;
   } catch (error) {
-    /* eslint-disable no-console */
+    /*  eslint-disable no-console */
     console.log(`err at this prouct: ${page.url()}`);
     console.log(`error`, error);
     page.close();

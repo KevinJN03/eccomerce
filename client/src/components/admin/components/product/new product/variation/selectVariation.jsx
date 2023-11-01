@@ -19,10 +19,9 @@ import OptionError from './error/optionError';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function SelectVariation({}) {
-    const { setTemporaryVariation, temporaryVariation } =
-        useVariation();
+    const { setTemporaryVariation, temporaryVariation } = useVariation();
 
-        const { setModalCheck, contentDispatch, modalContent} = useNewProduct()
+    const { setModalCheck, contentDispatch, modalContent } = useNewProduct();
     const currentVariation = modalContent.currentVariation;
     const [option, setOption] = useState(
         currentVariation ? currentVariation.options : new Map()
@@ -43,20 +42,17 @@ function SelectVariation({}) {
     useEffect(() => {
         try {
             if (currentVariation) {
-                const result = filteredVariation(name, option);
-                setDefaultVariation(currentVariation.default);
-                setVariation(result);
-                return;
+                const result = filteredVariation(
+                    name,
+                    currentVariation.options
+                );
+                setDefaultVariation(() => currentVariation.default);
+                setVariation(() => result);
             } else if (defaultVariation) {
-                let list = generateVariation(name, {array: true});
-console.log('here')
+                let list = generateVariation(name, { array: true });
 
-
-                setVariation(list);
+                setVariation(() => list);
             }
-
-           
-
         } catch (error) {}
     }, []);
 
@@ -149,16 +145,16 @@ console.log('here')
         try {
             if (modalContent.currentVariation) {
                 const { id } = modalContent.currentVariation;
-
-                setTemporaryVariation(
-                    temporaryVariation.map((item) => {
+                const newTemporaryVariation = [...temporaryVariation].map(
+                    (item) => {
                         if (item.id == id) {
                             return { ...item, options: option, name: name };
                         } else {
                             return item;
                         }
-                    })
+                    }
                 );
+                setTemporaryVariation(() => newTemporaryVariation);
             } else {
                 const findName = temporaryVariation.some((item) => {
                     if (
@@ -345,10 +341,7 @@ console.log('here')
                         type="button"
                         className="apply-btn"
                         disabled={
-                            ( option.size < 1) ||
-                            name.length < 1 ||
-                            exist ||
-                            error
+                            option.size < 1 || name.length < 1 || exist || error
                         }
                         onClick={createVariation}
                     >
