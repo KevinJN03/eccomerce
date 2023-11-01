@@ -17,7 +17,7 @@ export const create_coupon = asyncHandler(async (req, res, next) => {
 export const get_single_coupon = asyncHandler(async (req, res, next) => {
   const { code } = req.query;
 
-  const coupon = await Coupon.findOne({ code });
+  const coupon = await Coupon.findOne({ code: code.toUpperCase() });
 
   if (coupon) {
     res.status(200).send(coupon);
