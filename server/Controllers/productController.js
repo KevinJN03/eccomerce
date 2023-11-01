@@ -69,7 +69,17 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     return res.status(404).send('product not found');
   }
 
-  const { title, price, detail, images, reviews, category, gender, isSizePresent, isColorPresent } = product;
+  const {
+    title,
+    price,
+    detail,
+    images,
+    reviews,
+    category,
+    gender,
+    isSizePresent,
+    isColorPresent,
+  } = product;
 
   const newData = {
     id: product.id,
@@ -80,14 +90,14 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     images,
     reviews,
     category: category.name,
-    isSizePresent, 
+    isSizePresent,
     isColorPresent,
     also_like: { men: category.men, women: category.women },
   };
 
   if ('variations' in product) {
     product.variations.map((variation) => {
-      console.log('im maping')
+      console.log('im maping');
       if (variation.name == 'Size' && !variation.name2) {
         const sizeArr = [];
         for (const [key, value] of variation?.options) {
@@ -106,7 +116,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
       }
 
       if (variation.name == 'Colour' && !variation.name2) {
-        console.log('im in color')
+        console.log('im in color');
         const colorArr = [];
         for (const [key, value] of variation?.options) {
           const obj = { color: value.variation };
@@ -156,8 +166,6 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
         // newData.combineVariation = arr;
         newData.combineVariation = testObj;
         newData.testObj = testObj;
-
-      
       }
     });
   }
@@ -332,9 +340,14 @@ export const update_product = [
 
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
-    productData.price.previous = oldProduct.price.current;
+    console.log({ price: productData.price });
+
+    const newPrice = {
+      current: productData?.price?.current,
+      previous: oldProduct.price.current,
+    };
+    productData.price = newPrice;
     if (category !== oldProduct.category.id || gender !== oldProduct.gender) {
-      
       await Category.updateOne(
         { _id: oldProduct.category },
         { $pull: { [oldProduct.gender]: id } },

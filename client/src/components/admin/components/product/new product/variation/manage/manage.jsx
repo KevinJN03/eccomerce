@@ -5,17 +5,24 @@ import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
+
+import _ from 'lodash';
 function Manage({}) {
     const {
-       
         variations,
         setVariations,
         temporaryVariation,
         setTemporaryVariation,
     } = useVariation();
 
-
-    const { setPublish, publishErrorDispatch, setApply, combineDispatch, contentDispatch, setModalCheck } = useNewProduct();
+    const {
+        setPublish,
+        publishErrorDispatch,
+        setApply,
+        combineDispatch,
+        contentDispatch,
+        setModalCheck,
+    } = useNewProduct();
     const [priceSelection, setPriceSelection] = useState('');
     const [quantitySelection, setQuantitySelection] = useState('');
     const [disableApply, setDisableApply] = useState(true);
@@ -27,8 +34,8 @@ function Manage({}) {
     );
 
     useEffect(() => {
-        // setDisableApply(() => false);
-        if (JSON.stringify(variations) != JSON.stringify(temporaryVariation)) {
+        const isEqual = _.isEqual(variations, temporaryVariation);
+        if (!isEqual) {
             console.log('not true');
             setDisableApply(() => false);
         }
@@ -67,7 +74,11 @@ function Manage({}) {
     const editVariation = (item) => {
         const { name } = item;
 
-        contentDispatch({ type: 'select', currentVariation: item, title: name });
+        contentDispatch({
+            type: 'select',
+            currentVariation: item,
+            title: name,
+        });
     };
 
     const cancel = () => {
@@ -104,7 +115,7 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-
+debugger
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -116,32 +127,28 @@ function Manage({}) {
             });
 
             setVariations(() => update);
-            combineDispatch({type: 'combineVariations', variations: update});
+            combineDispatch({ type: 'combineVariations', variations: update });
             setModalCheck(() => false);
         } else {
-
-            combineDispatch('clear')
+            combineDispatch('clear');
             const newUpdate = newArr.map((item) => {
                 const { options, quantityHeader, priceHeader } = item;
 
                 const newOptions = new Map();
 
                 for (const [key, value] of options.entries()) {
-               
                     const newObj = { ...value };
 
                     if (!quantityHeader.on) {
-                        delete newObj.stock;
+                        delete newObj?.stock;
                     }
                     if (!priceHeader.on) {
-                     
-                        delete newObj.price;
+                        delete newObj?.price;
                     }
 
                     newOptions.set(key, newObj);
                 }
 
-                
                 return { ...item, combine: false, options: newOptions };
             });
             setVariations(() => newUpdate);
@@ -158,7 +165,6 @@ function Manage({}) {
         state: priceState,
         setState: setPriceState,
         notDisabled,
-        setDisableApply,
 
         selection: priceSelection,
         setSelection: setPriceSelection,
@@ -171,7 +177,6 @@ function Manage({}) {
         setSelection: setQuantitySelection,
         setState: setQuantityState,
         notDisabled,
-        setDisableApply,
     };
     return (
         <section className="variation-manage relative flex min-h-full w-full flex-col">

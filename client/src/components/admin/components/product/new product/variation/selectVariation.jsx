@@ -41,21 +41,16 @@ function SelectVariation({}) {
     }, [option]);
     useEffect(() => {
         try {
-            debugger;
             if (currentVariation) {
-                console.log({ currentVariation });
                 const result = filteredVariation(
                     name,
                     currentVariation.options
                 );
                 setDefaultVariation(() => currentVariation.default);
                 setVariation(() => result);
-
-                console.log({ result });
             } else if (defaultVariation) {
                 let list = generateVariation(name, { array: true });
-                console.log('here');
-                console.log({ list });
+
                 setVariation(() => list);
             }
         } catch (error) {}
@@ -199,7 +194,7 @@ function SelectVariation({}) {
     const clearError = () => {
         setError(null);
     };
-    console.log({ defaultVariation });
+
     return (
         <section className="select-variation relative  h-full w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}

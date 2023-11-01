@@ -87,16 +87,11 @@ function Header() {
                             />
                         </a>
 
-                        <a href="/wishlist" className="header-icons">
-                            {/* <img
-                                    src={heart}
-                                    alt="heart icon"
-                                    className="img-icon p-1"
-                                ></img> */}
-                            <FavoriteBorderSharpIcon className="img-icon" />
+                        <a href="/wishlist" className="header-icons !cursor-pointer">
+                            <FavoriteBorderSharpIcon className="img-icon !cursor-not-allowed" />
                         </a>
 
-                        <Link to="/cart" className="header-icons relative">
+                        <Link to="/cart" className="header-icons relative ">
                             <LocalMallOutlinedIcon
                                 className="img-icon"
                                 fontSize="large"
