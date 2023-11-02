@@ -16,10 +16,11 @@
 
 #login-signup-option {
     /* @apply flex flex-row justify-between outline-dashed w-full */
-    display: grid;
+    @apply flex w-full justify-center;
+    /* display: grid;
     grid-template-columns: 1fr 0.5px 1fr;
     width: 95%;
-    margin-top: 20px;
+    margin-top: 20px; */
 }
 
 #midldle-border {
@@ -28,6 +29,7 @@
     width: 100%;
     height: 40% !important;
     display: flex;
+    flex: 0.1;
     align-self: center;
 }
 #login-signup-option span {
@@ -40,7 +42,7 @@
 }
 
 .input-container {
-    @apply mb-5 flex w-full flex-col;
+    @apply mb-5 flex w-full flex-col relative;
 }
 
 .input-container p {
@@ -58,11 +60,11 @@
     max-width: 380px;
 }
 .date-picker {
-    display: grid;
+ display: flex;
     width: 100%;
-    grid-template-columns: 30% 30% 30%;
+    /* grid-template-columns: 30% 30% 30%;
     gap: 10px;
-    grid-auto-flow: column;
+    grid-auto-flow: column;  */
 }
 
 #radio-wrapper {
@@ -89,8 +91,8 @@ input[type='radio'] {
 }
 
 .login-signup-btn {
-    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest;
-    background-color: var(--primary);
+    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 hover:opacity-100 transition-all disabled:opacity-40 disabled:cursor-not-allowed;
+     background-color: #2d2d2d !important;
     color: white;
     height: 25px;
     padding: 25px 0;
@@ -105,8 +107,12 @@ input[type='radio'] {
 }
 
 .active-option {
+    @apply whitespace-nowrap;
     border-bottom: 2px solid #0770cf;
+
+    flex: 1
 }
 .not-active-option {
     border-bottom: 2px solid var(--grey);
+    flex: 1
 }

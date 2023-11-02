@@ -74,26 +74,32 @@ function Admin({}) {
         modalContent,
         adminDispatch,
     };
+    const location = useLocation();
+console.log({location: location.pathname.split('/')})
     return (
         <AdminContextProvider value={value}>
             <section className={`admin ${darkMode ? 'dark' : ''}`}>
                 <ContentProvider>
-                    <section className="home">
-                        <SideBar />
-                        <div className="homeContainer">
-                            <Navbar />
-                            <Outlet />
-                            {modalCheck && (
-                                <Modal
-                                    check={modalCheck}
-                                    setCheck={setModalCheck}
-                                    ModalContent={views[modalContent.type]}
-                                    loading={loading}
-                                    setLoading={setLoading}
-                                />
-                            )}
-                        </div>
-                    </section>
+                    {location.pathname.split('/')[2]== 'login' ? (
+                        <Outlet />
+                    ) : (
+                        <section className="home">
+                            <SideBar />
+                            <div className="homeContainer">
+                                <Navbar />
+                                <Outlet />
+                                {modalCheck && (
+                                    <Modal
+                                        check={modalCheck}
+                                        setCheck={setModalCheck}
+                                        ModalContent={views[modalContent.type]}
+                                        loading={loading}
+                                        setLoading={setLoading}
+                                    />
+                                )}
+                            </div>
+                        </section>
+                    )}
                 </ContentProvider>
             </section>{' '}
         </AdminContextProvider>

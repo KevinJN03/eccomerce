@@ -26,6 +26,7 @@ import Error from './components/error/error';
 import Layout from './components/Layout/layout';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
+import AdminLogin from './components/admin/home/AdminLogin';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -96,6 +97,13 @@ function Router({ Header, Footer }) {
                     children: [
                         {
                             index: true,
+                            // element: <AdminLogin/>
+                            element: <Admin_Dashboard />,
+                        },
+
+                        { path: 'login', element: <AdminLogin /> },
+                        {
+                            path: 'dashboard/',
                             element: <Admin_Dashboard />,
                         },
                         {

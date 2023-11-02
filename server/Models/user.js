@@ -19,7 +19,7 @@ const UserSchema = new Schema({
     required: 'Email is required. Please enter your Email.',
     unique: true,
   },
-  password: { type: String, required: true },
+  password: { type: String, required: true, minlength: 10 },
   dob: {
     type: Date,
     required: 'DOB is required. Please enter your first Name.',
@@ -41,7 +41,7 @@ const UserSchema = new Schema({
   interest: {
     type: String,
     enum: {
-      values: ['Menswear', 'Womenswear'],
+      values: ['menswear', 'womenswear'],
       message:
         '{VALUE} is not support, only Menswear or Womenswear is allowed.',
     },
