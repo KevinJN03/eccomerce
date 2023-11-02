@@ -1,5 +1,7 @@
 import '../../CSS/login-signup.css';
 import glamo from '../../assets/icons/glamo-black-logo.svg';
+
+import adminLogo from '../../assets/icons/admin.png'
 // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -8,7 +10,7 @@ import Login from './Login';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-function LoginSignUp({ loginorSignup }) {
+function LoginSignUp({ loginorSignup, admin }) {
     const [option, setOption] = useState(loginorSignup);
     // useEffect(()=> {
     // setOption(loginorSignup)
@@ -25,11 +27,13 @@ function LoginSignUp({ loginorSignup }) {
                     id="login-signup-container"
                     className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
                 >
-                    <Link to="/" className="login-logo mt-10 w-40">
+                    <Link to={!admin && "/"} className="login-logo mt-10 w-40 flex flex-nowrap">
                         <img loading="lazy" src={glamo} />
+                       {admin && <img src={adminLogo} width={'50px'} height={'50px'} className='object-contain'/>}
                     </Link>
                     <div id="login-signup-option">
-                        <span
+                        {!admin && <>
+                            <span
                             onClick={() => setOption('signup')}
                             className={
                                 option == 'signup'
@@ -37,9 +41,10 @@ function LoginSignUp({ loginorSignup }) {
                                     : 'not-active-option'
                             }
                         >
-                            <Link to="/signup">Join</Link>
+                            <Link to={!admin && "/signup"}>Join</Link>
                         </span>
                         <span id="midldle-border"></span>
+                        </>  }
                         <span
                             onClick={() => setOption('login')}
                             className={
@@ -48,7 +53,7 @@ function LoginSignUp({ loginorSignup }) {
                                     : 'not-active-option'
                             }
                         >
-                            <Link to="/login">Sign In</Link>
+                            <Link to={ !admin && "/login"}>Sign In</Link>
                         </span>
                     </div>
                     <section id="form-container">
