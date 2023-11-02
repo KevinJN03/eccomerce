@@ -12,5 +12,4 @@ const ProductReviewSchema = new Schema({
   },
 });
 
-
-export default mongoose.model('product_review', ProductReviewSchema)
+export default mongoose.model('product_review', ProductReviewSchema);

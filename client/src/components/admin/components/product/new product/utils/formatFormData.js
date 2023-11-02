@@ -13,6 +13,7 @@ export default function formatFormData(value) {
 
         isAllInputValid,
         combine,
+        minVariationPrice,
     } = value;
 
     const formData = new FormData();
@@ -40,7 +41,7 @@ export default function formatFormData(value) {
     formData.append('gender', gender);
     formData.append('price', JSON.stringify(priceValue));
     formData.append('stock', JSON.stringify(stockValue));
-  
+    formData.append('minVariationPrice', minVariationPrice);
     for (const item of filteredFiles) {
         formData.append('files', item);
     }

@@ -13,7 +13,7 @@ const variationSchema = new Schema(
     on: Boolean,
     name2: String,
   },
-  { strict: false },
+  { strict: false, virtuals: true },
 );
 
 variationSchema.virtual('id').get(function () {
@@ -58,11 +58,32 @@ const productSchema = new Schema(
   },
   {
     strict: false,
-    virtuals: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
   },
 );
 
 productSchema.virtual('id');
+
+productSchema
+  .virtual('minVariationPrice', { localField: 'id', foreignField: 'id' })
+  .get(function () {
+    let minVariationPrice = 10000000;
+    const variations = this.variations;
+    variations.map((item) => {
+      if (item.priceHeader.on) {
+        const { options } = item;
+        for (const [key, value] of options) {
+          minVariationPrice = Math.min(minVariationPrice, value?.price);
+        }
+      }
+    });
+
+    if (minVariationPrice == 10000000) {
+      return null;
+    }
+    return parseFloat(minVariationPrice).toFixed(2);
+  });
 productSchema.virtual('isSizePresent').get(function () {
   const variations = this.variations;
 

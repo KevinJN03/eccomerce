@@ -79,8 +79,12 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     gender,
     isSizePresent,
     isColorPresent,
+    minVariationPrice,
   } = product;
 
+  if (!price.current) {
+    price.current = minVariationPrice;
+  }
   const newData = {
     id: product.id,
     gender,
@@ -93,8 +97,8 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     isSizePresent,
     isColorPresent,
     also_like: { men: category.men, women: category.women },
+    minVariationPrice,
   };
-
   if ('variations' in product) {
     product.variations.map((variation) => {
       console.log('im maping');
@@ -336,15 +340,19 @@ export const update_product = [
       category: 1,
       gender: 1,
       price: 1,
-    }).populate('category');
-
+      variations: 1,
+      // minVariationPrice: 0,
+    }).populate({
+      path: 'category',
+    });
+    console.log({ oldProduct });
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
     console.log({ price: productData.price });
 
     const newPrice = {
       current: productData?.price?.current,
-      previous: oldProduct.price.current,
+      previous: oldProduct.price?.current || oldProduct?.minVariationPrice,
     };
     productData.price = newPrice;
     if (category !== oldProduct.category.id || gender !== oldProduct.gender) {

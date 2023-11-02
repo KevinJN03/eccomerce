@@ -9,5 +9,3 @@ export const count_all = asyncHandler(async (req, res, next) => {
     userCount,
   });
 });
-
-

@@ -40,7 +40,8 @@ function Row({
     const [stock, setStock] = useState(singleVariation?.stock);
     const [trigger, setTrigger] = useState(false);
 
-    const { setVariations, combineDispatch } = useNewProduct();
+    const { setVariations, combineDispatch } =
+        useNewProduct();
 
     useEffect(() => {
         if (check == true) {
@@ -338,8 +339,13 @@ function Row({
 
 export function RowInput(props) {
     const { visible, value, error, property, handleOnchange } = props;
-    const { publish, publishErrorDispatch, publishError, isAllInputValid } =
-        useNewProduct();
+    const {
+        publish,
+        publishErrorDispatch,
+        publishError,
+        isAllInputValid,
+  
+    } = useNewProduct();
 
     const addToValidateError = (err) => {
         if (err || error[property]) {
@@ -354,6 +360,8 @@ export function RowInput(props) {
         // console.log('trying', publishError);
     };
     useEffect(() => {
+    
+
         if (publishError.has('validateInput') && props?.id) {
             const isPresent = publishError.get('validateInput').has(props?.id);
 
@@ -379,7 +387,7 @@ export function RowInput(props) {
                 addToValidateError(err);
                 // isAllInputValid.current = false;
 
-                return 
+                return;
             }
             // isAllInputValid.current = true;
         }

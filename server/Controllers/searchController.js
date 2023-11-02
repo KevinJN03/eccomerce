@@ -7,7 +7,7 @@ export const search_product = asyncHandler(async (req, res, next) => {
   const searchResult = await Product.aggregate([
     {
       $search: {
-        index: 'default',
+        index: 'searchProductIndex',
         autocomplete: {
           query: q,
           path: 'title',
@@ -31,6 +31,6 @@ export const search_product = asyncHandler(async (req, res, next) => {
     //   $limit: 5,
     // },
   ]);
-console.log({searchResult})
+  console.log({ searchResult });
   res.send(searchResult);
 });
