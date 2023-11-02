@@ -10,7 +10,7 @@ import Login from './Login';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-function LoginSignUp({ loginorSignup, admin }) {
+function LoginSignUp({ loginorSignup, admin , handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
     // useEffect(()=> {
     // setOption(loginorSignup)
@@ -27,7 +27,7 @@ function LoginSignUp({ loginorSignup, admin }) {
                     id="login-signup-container"
                     className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
                 >
-                    <Link to={!admin && "/"} className="login-logo mt-10 w-40 flex flex-nowrap">
+                    <Link to={!admin && "/"} className="login-logo mt-10 w-40 flex flex-nowrap items-center">
                         <img loading="lazy" src={glamo} />
                        {admin && <img src={adminLogo} width={'50px'} height={'50px'} className='object-contain'/>}
                     </Link>
@@ -57,7 +57,7 @@ function LoginSignUp({ loginorSignup, admin }) {
                         </span>
                     </div>
                     <section id="form-container">
-                        {loginorSignup == 'login' && <Login />}
+                        {loginorSignup == 'login' && <Login admin={admin } handleSubmit={handleSubmit}/>}
                         {loginorSignup == 'signup' && <SignUp />}
                     </section>
                 </section>

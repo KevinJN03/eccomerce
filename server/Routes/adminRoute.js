@@ -1,5 +1,5 @@
 import express from 'express';
-import { count_all } from '../Controllers/adminController.js';
+import { adminLogin, count_all } from '../Controllers/adminController.js';
 import {
   create_new_product,
   get_single_admin_product,
@@ -40,6 +40,6 @@ router.post('/user/update/:id', update_single);
 router.get('/user/:id', get_single_user);
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
-
+router.post('/login', adminLogin);
 router.put('/product/update/:id', update_product);
 export default router;

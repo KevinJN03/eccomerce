@@ -91,7 +91,7 @@ input[type='radio'] {
 }
 
 .login-signup-btn {
-    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 hover:opacity-100 transition-all;
+    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 hover:opacity-100 transition-all disabled:opacity-40 disabled:cursor-not-allowed;
      background-color: #2d2d2d !important;
     color: white;
     height: 25px;
