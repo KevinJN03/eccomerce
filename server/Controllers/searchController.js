@@ -31,6 +31,6 @@ export const search_product = asyncHandler(async (req, res, next) => {
     //   $limit: 5,
     // },
   ]);
-console.log({searchResult})
+  console.log({ searchResult });
   res.send(searchResult);
 });

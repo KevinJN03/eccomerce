@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useState } from 'react';
 
 const Select = forwardRef(function Select(
-    { text, single, array, setSelect, property, setOutOfStock, setPrice, isSecond},
+    { text, single, array, setSelect, property, setOutOfStock, setPrice },
     ref
 ) {
     const [stockState, setStockState] = useState();
@@ -17,8 +17,7 @@ const Select = forwardRef(function Select(
         const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
         const price = e.target.options[e.target.selectedIndex].dataset?.price;
 
-       
-        setSelect(() => e.target.value);
+        setSelect(() => JSON.parse(e.target.value));
 
         if (stock == 0 || stock) {
             setStockState(() => stock);
@@ -54,7 +53,11 @@ const Select = forwardRef(function Select(
                         {array.map((item, index) => {
                             return (
                                 <option
-                                    value={property ? item[property] : item}
+                                    value={
+                                        property
+                                            ? JSON.stringify(item[property])
+                                            : item
+                                    }
                                     key={index}
                                     data-price={item?.price}
                                     data-stock={item?.stock}

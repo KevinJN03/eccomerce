@@ -26,9 +26,8 @@ export default async function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-console.log(error)
+  console.log(error.message);
   if (error.name == 'MulterError') {
-    console.log(error + 'here???????????????????????????');
     error.message =
       'Error occurs while adding or deleting images. Please contact Administrator for asssistance.';
   }

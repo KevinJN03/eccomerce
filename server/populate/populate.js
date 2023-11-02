@@ -56,14 +56,12 @@ async function populate() {
       bulkCategoryArray.push(value);
     }
 
-    console.log({ bulkCategoryArray });
-
     await Category.insertMany(bulkCategoryArray);
 
-    await Coupon.insertMany(
-      { code: 'SUPRISE', amount: 10 },
+    const coupons = await Coupon.insertMany([
+      { code: 'SURPRISE', amount: 10 },
       { code: 'NEW', amount: 15 },
-    );
+    ]);
     mongoose.connection.close();
     console.log('connection closed');
   } catch (error) {

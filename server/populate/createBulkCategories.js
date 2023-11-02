@@ -40,7 +40,7 @@ export default async function createBulkCategories() {
         });
       }
     });
-   
+
     return categoryMap;
   } catch (error) {
     console.log('error', error);

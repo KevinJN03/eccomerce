@@ -9,9 +9,10 @@ function Collection({ products }) {
                         <Item
                             key={product._id}
                             image={product.images[0]}
-                            price={parseFloat(product?.price?.current).toFixed(
-                                2
-                            )}
+                            price={
+                                product?.price?.current ||
+                                product?.minVariationPrice
+                            }
                             title={product.title}
                             url={product._id}
                         />

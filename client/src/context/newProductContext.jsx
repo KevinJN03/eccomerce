@@ -6,7 +6,7 @@ import {
     useEffect,
     useReducer,
     useState,
-    useRef
+    useRef,
 } from 'react';
 import { generateVariation } from '../components/admin/components/product/new product/variation/variationData';
 
@@ -21,8 +21,6 @@ export const useNewProduct = () => {
 };
 
 export const NewProductProvider = (props) => {
-   
-
     const [variations, setVariations] = useState([]);
 
     const [combine, combineDispatch] = useReducer(combineReducer, {
@@ -46,6 +44,7 @@ export const NewProductProvider = (props) => {
         new Map()
     );
 
+    
     const [priceValue, setPriceValue] = useState({
         value: '',
         on: false,
@@ -76,9 +75,10 @@ export const NewProductProvider = (props) => {
         combineDispatch,
         contentDispatch,
 
-        setDescription
+        setDescription,
     });
     const value = {
+       
         variations,
         setVariations,
         title,
@@ -101,7 +101,7 @@ export const NewProductProvider = (props) => {
         setPriceValue,
         stockValue,
         setStockValue,
-        isAllInputValid ,
+        isAllInputValid,
         publish,
         setPublish,
         combine,

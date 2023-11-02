@@ -24,12 +24,12 @@ function Footer({ type }) {
         combine,
         setPublish,
         isAllInputValid,
+        minVariationPrice,
     } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         console.log('publish change');
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
-        
     }, [publish]);
 
     const publishProduct = (e) => {
@@ -57,10 +57,11 @@ function Footer({ type }) {
                     publishError,
                     publishErrorDispatch,
                     isAllInputValid,
+                    minVariationPrice,
                 };
                 const formData = formatFormData(value);
                 publishData(formData);
-            }, 2000);
+            }, 1000);
 
             console.log('isAllInputValid.current: ', isAllInputValid.current);
             if (publishError?.size > 0) {
