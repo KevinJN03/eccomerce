@@ -76,7 +76,7 @@ function Login({ handleSubmit, admin }) {
 
 export default Login;
 
-function ErrorMessage({ msg }) {
+export function ErrorMessage({ msg }) {
     return (
         <section className=" absolute !top-[-15px] right-0 !z-10 !max-w-[80%]">
             <div className="promo-error border-1 relative  flex w-full border-red-500 bg-red-100 p-2">

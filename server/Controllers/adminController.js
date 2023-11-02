@@ -15,7 +15,6 @@ export const count_all = asyncHandler(async (req, res, next) => {
 export const adminLogin = [
   check('email').custom(async (email) => {
     const findUser = await User.findOne({ email });
-    console.log({ findUser });
     if (!findUser) {
       throw new Error("User doesn't exists.");
     }
@@ -24,7 +23,6 @@ export const adminLogin = [
   }),
   asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
-    console.log({ email, password });
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -33,9 +31,13 @@ export const adminLogin = [
           [item.path]: item.msg,
         };
       });
-      console.log(...newResult);
       return res.status(404).send(...newResult);
     }
+
+    const user = await User.findOne({ email });
+    const match = await bcrypt.compare(password, user.password);
+
+    console.log('match', match);
 
     res.status(200).send('login in successfully');
   }),
