@@ -17,6 +17,8 @@ import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
 import userRoute from './Routes/userRoute.js';
 import adminRoute from './Routes/adminRoute.js';
+
+import deliveryRoute from './Routes/deliveryRoute.js';
 // import sharp from 'sharp';
 import fileFilter from './Upload/fileFilter.js';
 import sharpify from './Upload/sharpify.js';
@@ -51,6 +53,8 @@ app.use('/search', searchRoute);
 app.use('/giftcard', giftCardRoute);
 app.use('/user', userRoute);
 app.use('/admin', adminRoute);
+
+app.use('/delivery', deliveryRoute);
 const storage = multer.memoryStorage();
 
 // const fileFilter = (req, file, cb) => {

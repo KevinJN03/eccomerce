@@ -41,3 +41,15 @@ export const get_single_delivery_profile = asyncHandler(
     res.status(200).send(profile);
   },
 );
+
+export const get_many_delivery_profile = asyncHandler(
+  async (req, res, next) => {
+    const { id } = req.params;
+
+    const parseIdToArray = JSON.parse(id);
+
+    const profiles = await DeliveryProfile.find({ _id: parseIdToArray });
+
+    res.status(200).send(profiles);
+  },
+);
