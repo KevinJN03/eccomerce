@@ -80,6 +80,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     isSizePresent,
     isColorPresent,
     minVariationPrice,
+    delivery,
   } = product;
 
   if (!price.current) {
@@ -98,6 +99,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     isColorPresent,
     also_like: { men: category.men, women: category.women },
     minVariationPrice,
+    delivery,
   };
   if ('variations' in product) {
     product.variations.map((variation) => {

@@ -37,12 +37,6 @@ export const query_category_products_by_gender = AsyncHandler(
           path: 'minVariationPrice',
         },
       })
-      // .populate({
-      //   path: 'minVariationPrice',
-      //   // localField: gender.toLowerCase(),
-      //   // foreignField: '_id',
-      // })
-
       .exec();
 
     res.send(result);
