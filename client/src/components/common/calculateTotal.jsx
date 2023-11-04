@@ -21,7 +21,8 @@ const calculateTotal = () => {
 
         if (amount > withOutShipping) {
             amountOff = withOutShipping;
-        } else {
+        } else {    
+            
             amountOff = parseFloat(amount).toFixed(2);
         }
         const newTotal = withOutShipping - amountOff;
