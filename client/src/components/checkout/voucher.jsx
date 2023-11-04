@@ -2,14 +2,14 @@ import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 import { useState } from 'react';
 import axios from '../../api/axios';
-import { usePromo } from '../../hooks/promoContext.jsx';
 import ActivePromo from './active-promo';
 import { v4 as uuidv4 } from 'uuid';
+import { useCart } from '../../context/cartContext.jsx';
 
 function Voucher({ triggerClose, setDisplay, display }) {
     const [voucherText, setVoucherText] = useState();
     const [error, setError] = useState({ bool: false });
-    const { promo, setPromo } = usePromo();
+    const { promo, setPromo } = useCart();
     const handleClick = (e) => {
         if (voucherText) {
             axios

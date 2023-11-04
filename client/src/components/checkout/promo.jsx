@@ -3,15 +3,15 @@ import DropDown_Detail from '../common/dropdown/dropdown_detail';
 import Promo_Student from './promo-student';
 import Voucher from './voucher';
 import AppliedCoupon from './appliedCoupon';
-import { usePromo } from '../../hooks/promoContext';
 import MultiplePromo from './multiplePromo';
+import { useCart } from '../../context/cartContext';
 
 function Promo({}) {
     const [option, setOption] = useState('promo');
     // const [Promo, setPromo] = useState({ bool: false });
     const [openMultiple, setOpenMultiple] = useState(false);
     const [display, setDisplay] = useState(false);
-    const { promo, setPromo } = usePromo();
+    const { promo } = useCart();
 
     useEffect(() => {
         if (promo.length > 1) {
@@ -70,8 +70,8 @@ function Promo({}) {
                 className={` ${promo[0].bool && 'pb-4'} px-6`}
                 triggerClose={triggerClose}
                 setTriggerClose={setTriggerClose}
-                display={display }
-                setDisplay ={setDisplay }
+                display={display}
+                setDisplay={setDisplay}
             />
             {promo[0].bool && display && <AppliedCoupon />}
             <MultiplePromo setCheck={setOpenMultiple} check={openMultiple} />

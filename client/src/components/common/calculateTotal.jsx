@@ -1,17 +1,41 @@
-import { useCart } from "../../context/cartContext"
+import { useCart } from '../../context/cartContext';
+import calculatePromo from './calculatePromo';
 
 const calculateTotal = () => {
-
-    const [products] = useCart()
+    const { cart, deliveryOption, promo } = useCart();
+    const { amount, type } = promo[0];
     let total = 0;
-
-    for ( let item of products){
-       total += item.price.current * item.quantity
+    let savePercent;
+    let amountOff = 0;
+    let totalAfterPromo = 0;
+    for (let item of cart) {
+        total += item.price.current * item.quantity;
     }
 
-   
-return parseFloat(total).toFixed(2)
-    
-}
+    const withOutShipping = parseFloat(total).toFixed(2);
+    let withShipping = parseFloat(total).toFixed(2);
 
-export default calculateTotal
+    if (type == 'fixed') {
+        const newAmount = parseFloat(amount).toFixed(2);
+        savePercent = Math.ceil((newAmount * 100) / withOutShipping);
+
+        if (amount > withOutShipping) {
+            amountOff = withOutShipping;
+        } else {
+            amountOff = parseFloat(amount).toFixed(2);
+        }
+        const newTotal = withOutShipping - amountOff;
+        // setPromoAfterTotal(newTotal)
+
+        withShipping =  parseFloat(newTotal).toFixed(2);
+    }
+    withShipping = parseFloat(deliveryOption.cost + withShipping).toFixed(2);
+    return {
+        withOutShipping,
+        withShipping,
+        savePercent,
+        amountOff,
+    };
+};
+
+export default calculateTotal;

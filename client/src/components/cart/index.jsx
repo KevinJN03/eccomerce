@@ -18,10 +18,10 @@ function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
-
-    const cartTotal = calculateTotal();
+    const { withoutShipping } = calculateTotal();
+    const cartTotal = withoutShipping;
     // const [cart, setCart] = useState(null)
-    const [cart, dispatch] = useCart();
+    const { cart, dispatch } = useCart();
     const handleRemove = (id) => {
         dispatch({ type: 'remove', cartId: id });
     };
@@ -48,7 +48,7 @@ function Cart({}) {
                         <div className="right">
                             <Link
                                 to="/checkout"
-                                className="bg-[var(--green)] px-3 py-2 font-medium tracking-wider text-white checkout-btn"
+                                className="checkout-btn bg-[var(--green)] px-3 py-2 font-medium tracking-wider text-white"
                             >
                                 CHECKOUT
                             </Link>

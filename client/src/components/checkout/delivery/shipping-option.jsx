@@ -3,47 +3,20 @@ import { useCart } from '../../../context/cartContext';
 import axios from '../../../api/axios';
 
 import dayjs from 'dayjs';
+import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
 
-function Shipping_Option({}) {
-    const [cart] = useCart();
+function Shipping_Option({  }) {
+    const { cart ,setDeliveryOption} = useCart();
+    const today = dayjs();
 
     const [profiles, setProfiles] = useState([]);
 
-    useEffect(() => {
-        const deliveryMap = new Map();
-        const deliveryArray = [];
-        debugger;
-        cart.map((item) => {
-            item?.delivery.map((delivery) => {
-                if (!deliveryMap.has(delivery)) {
-                    deliveryMap.set(delivery);
-                    deliveryArray.push(delivery);
-                }
-            });
-        });
-        console.log(deliveryArray);
+    fetchDeliveryOptions(setProfiles);
 
-        const controller = new AbortController();
+    const handleDelivery = (e) => {
+        setDeliveryOption(() => JSON.parse(e.target.value));
+    };
 
-        axios
-            .get(`delivery/many/${JSON.stringify(deliveryArray)}`, {
-                signal: controller.signal,
-            })
-            .then(({ data }) => {
-                setProfiles(() => data);
-            })
-            .catch((error) => {
-                console.log('error at delivery: ', error);
-            });
-
-        return () => {
-            controller.abort();
-        };
-    }, []);
-
-    const today = dayjs();
-
-    console.log({ today });
     return (
         <>
             {profiles.map(({ name, cost, processingTime }) => {
@@ -61,7 +34,12 @@ function Shipping_Option({}) {
                                 {newDeliveryDate.format('dddd, D MMMM, YYYY')}
                             </p>
                         </div>
-                        <input type="radio" name="delivery"></input>
+                        <input
+                            type="radio"
+                            name="delivery"
+                            value={JSON.stringify({cost, name})}
+                            onChange={handleDelivery}
+                        ></input>
                     </div>
                 );
             })}

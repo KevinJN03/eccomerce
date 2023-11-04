@@ -1,13 +1,26 @@
-function Shipping({}) {
+import { useCart } from '../../context/cartContext';
+
+function Shipping({ options }) {
+    const { setDeliveryOption } = useCart();
+
+    const handleOnChange = (e) => {
+        setDeliveryOption(() => JSON.parse(e.target.value));
+    };
     return (
         <span className="shipping">
-            <select id='shipping' name="shipping" className="shipping-select">
-                <option value="Standard Shipping">
-                    Standard Shipping (Free)
-                </option>
-                <option value="Express Shipping">Express Shipping</option>
-                <option value="Standard Shipping">Standard Shipping</option>
-                <option value="Express Shipping">Express Shipping</option>
+            <select
+                id="shipping"
+                name="shipping"
+                className="shipping-select"
+                onChange={handleOnChange}
+            >
+                {options.map(({ name, cost }) => {
+                    return (
+                        <option value={JSON.stringify({ cost, name })}>
+                            {name}
+                        </option>
+                    );
+                })}
             </select>
         </span>
     );

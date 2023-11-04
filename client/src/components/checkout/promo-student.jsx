@@ -2,16 +2,17 @@ import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 import axios from '../../api/axios';
-import { usePromo } from '../../hooks/promoContext';
 import { useState } from 'react';
 import calculatePromo from '../common/calculatePromo';
 import {v4 as uuidv4 } from 'uuid'
 import ActivePromo from './active-promo';
+import { useCart } from '../../context/cartContext';
+import calculateTotal from '../common/calculateTotal';
 function Promo_Student({ triggerClose, display, setDisplay}) {
     const [promoText, setPromoText] = useState();
     const [error, setError] = useState({ bool: false });
-    const {savePercent, amountOff} = calculatePromo()
-    const {promo, setPromo} = usePromo()
+    const {savePercent, amountOff} = calculateTotal()
+    const {promo, setPromo} = useCart()
     const handleClick = () => {
         if (promoText) {
             axios

@@ -1,11 +1,12 @@
 import Promo_Voucher_header from './promo-voucher-header';
 
 import calculatePromo from '../common/calculatePromo';
-import { usePromo } from '../../hooks/promoContext';
+
 import PromoSavings from './promoSavings';
+import { useCart } from '../../context/cartContext';
 export default function ActivePromo({type }) {
     const {savePercent, amountOff} = calculatePromo()
-    const {promo, setPromo} = usePromo()
+    const {promo, setPromo} = useCart()
      return (
         <section className="mb-4 flex flex-col gap-4 border-b-[thin] pb-4">
             <Promo_Voucher_header

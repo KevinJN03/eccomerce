@@ -9,7 +9,7 @@ function AddToCart({
     isOutOfStock,
     price,
 }) {
-    const [state, dispatch] = useCart();
+    const { dispatch } = useCart();
 
     const handleClick = () => {
         console.log({
@@ -19,7 +19,7 @@ function AddToCart({
             isColorPresent: product.isColorPresent,
         });
 
-        console.log({sizeSelect})
+        console.log({ sizeSelect });
         if (
             (sizeSelect == null && product.isSizePresent) ||
             (colorSelect == null && product.isColorPresent)
