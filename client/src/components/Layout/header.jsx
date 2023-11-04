@@ -27,7 +27,7 @@ function Header() {
         console.log(e);
     };
 
-    const [cart] = useCart()
+    const {cart} = useCart()
 
     return (
         <section className="header-section flex w-full max-w-full flex-col justify-center">

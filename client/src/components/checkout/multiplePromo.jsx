@@ -1,10 +1,10 @@
-import { usePromo } from "../../hooks/promoContext";
+import { useCart } from "../../context/cartContext";
 import calculatePromo from "../common/calculatePromo";
 import PromoSavings from "./promoSavings";
 calculatePromo
 function MultiplePromo({setCheck,
     check}) {
-    const {promo, setPromo} = usePromo()
+    const {promo, setPromo} = useCart()
 
     
    

@@ -4,12 +4,16 @@ import Shipping from './shipping';
 import { forwardRef, useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
+import fetchDeliveryOptions from '../../hooks/fetchDeliveryOption';
 
 const Total = forwardRef(function ({}, ref) {
+    const { withOutShipping } = calculateTotal();
+    let totalAmount = withOutShipping;
+    debugger;
+    const [shippingOptions, setShippingOptions] = useState([]);
+    const { deliveryOption } = useCart();
 
-    
-    const totalAmount = calculateTotal()
-    const [products, dispatch] = useCart();
+    fetchDeliveryOptions(setShippingOptions);
     return (
         <section id="total-container">
             <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">
@@ -26,9 +30,13 @@ const Total = forwardRef(function ({}, ref) {
                     <p className="text-base font-semibold tracking-wide">
                         Delivery
                     </p>
-                    <p>£3.99</p>
+                    <p>
+                        {deliveryOption.cost
+                            ? `£${deliveryOption.cost}`
+                            : 'FREE'}
+                    </p>
                 </div>
-                <Shipping />
+                <Shipping options={shippingOptions} />
                 <p className="flex justify-center text-sm text-red-800">
                     Yay! You've saved £38.50
                 </p>

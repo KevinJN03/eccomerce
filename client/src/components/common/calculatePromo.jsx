@@ -1,17 +1,15 @@
+import { useCart } from '../../context/cartContext';
 import { usePromo } from '../../hooks/promoContext';
 import calculateTotal from './calculateTotal';
 import { useState } from 'react';
-const calculatePromo = (index = 0 ) => {
-    const totalBeforePromo = calculateTotal();
-    // const [totalAfterPromo, setPromoAfterTotal] = useState(0);
-
+const calculatePromo = (index = 0, totalBeforePromo) => {
     let totalAfterPromo = index;
-    const { promo } = usePromo();
+    const { promo } = useCart();
 
     const { amount, type } = promo[index];
 
     let savePercent;
-    let amountOff;
+    let amountOff = 0;
     if (type == 'fixed') {
         const newAmount = parseFloat(amount).toFixed(2);
         savePercent = Math.ceil((newAmount * 100) / totalBeforePromo);
@@ -21,8 +19,8 @@ const calculatePromo = (index = 0 ) => {
         // setPromoAfterTotal(newTotal)
         totalAfterPromo = newTotal.toFixed(2);
     }
-    console.log({ savePercent, amountOff, totalBeforePromo, totalAfterPromo });
-    return { savePercent, amountOff,totalAfterPromo };
+    console.log({ savePercent, amountOff });
+    return { savePercent, amountOff };
 };
 
 export default calculatePromo;

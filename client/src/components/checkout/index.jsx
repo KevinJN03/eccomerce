@@ -18,7 +18,8 @@ function Checkout() {
     disableLayout();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [cart] = useCart();
+
+    const { cart } = useCart();
     useEffect(() => {
         if (cart.length == 0) {
             setLoading(() => true);
@@ -33,7 +34,7 @@ function Checkout() {
         }
     }, [cart]);
     return (
-        <PromoProvider>
+        <>
             {loading && (
                 <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                     <img src={RedirectImage} className="h-28 w-28" />
@@ -59,7 +60,7 @@ function Checkout() {
                                 <Payment />
 
                                 <button
-                                    className="buy-now-btn bg-primary-green mb-10 transition-all opacity-95 hover:opacity-100"
+                                    className="buy-now-btn mb-10 bg-primary-green opacity-95 transition-all hover:opacity-100"
                                     type="button"
                                     disabled
                                 >
@@ -72,7 +73,7 @@ function Checkout() {
                     </section>
                 </section>
             )}
-        </PromoProvider>
+        </>
     );
 }
 

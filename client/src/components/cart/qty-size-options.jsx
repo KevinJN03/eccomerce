@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/cartContext';
+
 import { forwardRef } from 'react';
 
 

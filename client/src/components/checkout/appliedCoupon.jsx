@@ -1,10 +1,11 @@
 
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
-import { usePromo } from '../../hooks/promoContext';
+
 import calculatePromo from '../common/calculatePromo';
 import CardGiftcardRoundedIcon from '@mui/icons-material/CardGiftcardRounded';
+import { useCart } from '../../context/cartContext';
 function AppliedCoupon(){
-  const {promo, setPromo} = usePromo()
+  const {promo, setPromo} = useCart()
   const {savePercent, amountOff} = calculatePromo()
   // console.log(promo)
   return (

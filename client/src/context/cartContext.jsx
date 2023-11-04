@@ -1,4 +1,10 @@
-import { useReducer, createContext, useContext, useEffect } from 'react';
+import {
+    useReducer,
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 const cartFromLocalStorage = JSON.parse(localStorage.getItem('cart') || '[]');
 export const useCart = () => {
     return useContext(cartContext);
@@ -9,17 +15,21 @@ const reducer = (cart, action) => {
 
     let isProductInCart = false;
 
-    const {product} = action
+    const { product } = action;
 
-    console.log({product})
+    console.log({ product });
     if (action.type == 'add') {
         const foundItemInCart = cart.map((item) => {
-            if (item.id == product.id && item.color == product.color && item.selectSize == product.selectSize) {
+            if (
+                item.id == product.id &&
+                item.color == product.color &&
+                item.selectSize == product.selectSize
+            ) {
                 isProductInCart = true;
                 return { ...item, quantity: item.quantity + 1 };
             }
 
-            return item
+            return item;
         });
 
         if (isProductInCart) {
@@ -88,14 +98,17 @@ export function CartProvider({ children }) {
         ],
         url: 'https://www.asos.com/asos-design/asos-design-knitted-oversized-v-neck-jumper-in-cheetah-print-in-multi/prd/205013257?clr=grey&colourWayId=205013307&cid=27110',
     };
-    const [state, dispatch] = useReducer(reducer, cartFromLocalStorage);
+    const [cart, dispatch] = useReducer(reducer, cartFromLocalStorage);
+    const [promo, setPromo] = useState([{ bool: false }]);
+    const [deliveryOption, setDeliveryOption] = useState({ cost: 0.0 });
 
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(state));
+        localStorage.setItem('cart', JSON.stringify(cart));
         console.log('state updated');
-    }, [state]);
+    }, [cart]);
 
-    const value = [state, dispatch];
+    const value = { cart, dispatch, deliveryOption, setDeliveryOption , promo, setPromo};
+
     return (
         <cartContext.Provider value={value}>{children}</cartContext.Provider>
     );

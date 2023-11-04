@@ -19,7 +19,7 @@ function Cart_Item({ product }) {
 
     const qtyRef = useRef(null);
     const sizeRef = useRef(null);
-    const [state, dispatch] = useCart();
+    const { dispatch } = useCart();
 
     useEffect(() => {
         console.log('update item');
@@ -33,7 +33,6 @@ function Cart_Item({ product }) {
 
     const onClick = () => {
         qtyRef.current.focus();
-    
     };
     return (
         <div id="cart-product">
@@ -89,7 +88,6 @@ function Cart_Item({ product }) {
                     <div
                         className="flex !cursor-pointer flex-nowrap  gap-x-2"
                         onClick={onClick}
-        
                     >
                         <p>Qty</p>
                         <QTY_SIZE_OPTION
