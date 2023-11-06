@@ -24,7 +24,7 @@ function Checkout() {
     const [isOrderSubmit, setOrderSubmit] = useState(false);
 
     const [shippingAddress, setShippingAddress] = useState(exampleCustomerInfo);
-    const [billingAddress, setBillingAddress] = useState({});
+    const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
     const { cart } = useCart();
     useEffect(() => {
         if (cart.length == 0) {
@@ -74,7 +74,10 @@ function Checkout() {
                                     setShippingAddress={setShippingAddress}
                                 />
                                 <Delivery />
-                                <Payment />
+                                <Payment
+                                    billingAddress={billingAddress}
+                                    setBillingAddress={setBillingAddress}
+                                />
 
                                 <button
                                     className="buy-now-btn mb-10 bg-primary-green opacity-95 transition-all hover:opacity-100"
