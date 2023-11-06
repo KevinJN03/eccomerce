@@ -14,9 +14,9 @@ function Shipping({ options }) {
                 className="shipping-select"
                 onChange={handleOnChange}
             >
-                {options.map(({ name, cost }) => {
+                {options.map(({ name, cost, _id }) => {
                     return (
-                        <option value={JSON.stringify({ cost, name })}>
+                        <option value={JSON.stringify({ cost, name, id: _id })}>
                             {name}
                         </option>
                     );
