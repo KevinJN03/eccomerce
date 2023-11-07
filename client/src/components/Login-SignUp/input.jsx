@@ -8,6 +8,7 @@ function Input({
     label,
     setError,
     asterisk,
+    autoComplete,
 }) {
     return (
         <div className="input-container">
@@ -17,6 +18,7 @@ function Input({
                     {`${label}${asterisk ? ' *' : ''} :`}{' '}
                 </label>
                 <input
+                    autoComplete={autoComplete}
                     type={property}
                     name={property}
                     id={property}
