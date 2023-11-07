@@ -48,7 +48,7 @@ function Checkout() {
             .post('/order/create', {
                 billingAddress,
                 shippingAddress,
-                cart
+                cart,
             })
             .then((res) => {
                 console.log({ res });
@@ -57,8 +57,6 @@ function Checkout() {
                 }, 2000);
             })
             .catch((error) => {
-            
-
                 setTimeout(() => {
                     setOrderSubmit(() => false);
                 }, 2000);
@@ -81,7 +79,7 @@ function Checkout() {
             {!loading && (
                 <section id="checkout-page">
                     <section id="checkout">
-                        <Checkout_Header />
+                        <Checkout_Header text={'CHECKOUT'} />
                         <div className="checkout-body">
                             <section id="checkout-body-wrapper">
                                 <Country_Picker />
