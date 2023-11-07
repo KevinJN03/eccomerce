@@ -8,9 +8,21 @@
 
         &:before {
             content: '';
-       @apply bg-blue-500 absolute left-[-5px] h-full w-1;
+            @apply absolute left-[-5px] h-full w-1 bg-blue-500;
             margin: 0 !important;
             padding: 0 !important;
         }
+    }
+
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type='number'] {
+        -moz-appearance: textfield;
     }
 }

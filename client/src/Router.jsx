@@ -32,7 +32,7 @@ import Overview from './components/dashboard/Overview';
 import Returns from './components/dashboard/returns';
 import Details from './components/dashboard/details';
 import Addresses from './components/dashboard/address/addresses.jsx';
-import Payment_Methods from './components/dashboard/payment-methods.jsx';
+import Payment_Methods from './components/dashboard/payment-methods/payment-methods.jsx';
 import Contact_Preferences from './components/dashboard/contact-preferences.jsx';
 import Socials from './components/dashboard/socials.jsx';
 
@@ -40,6 +40,9 @@ import GiftCard_Voucher from './components/dashboard/gift-card-and-voucher.jsx';
 import Edit_Address from './components/dashboard/address/edit-address.jsx';
 import Address_Index from './components/dashboard/address/addres-index.jsx';
 import Add_Address from './components/dashboard/address/add-address.jsx';
+import Payment_Method_Index from './components/dashboard/payment-methods/payment-index.jsx';
+import Add_Payment_Method from './components/dashboard/payment-methods/add-payment-method.jsx';
+import Add_Card from './components/dashboard/payment-methods/add-card.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -126,7 +129,21 @@ function Router({ Header, Footer }) {
                         {
                             path: 'payment-methods',
 
-                            element: <Payment_Methods />,
+                            element: <Payment_Method_Index />,
+
+                            children: [
+                                { index: true, element: <Payment_Methods /> },
+                                {
+                                    path: 'add',
+                                    element: <Add_Payment_Method />,
+                                    children:[
+                                        {
+                                            path: 'card',
+                                            element: <Add_Card/>
+                                        }
+                                    ]
+                                },
+                            ],
                         },
                         {
                             path: 'contact-preferences',
