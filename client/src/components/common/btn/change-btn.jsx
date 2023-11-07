@@ -5,7 +5,7 @@ function Change_Btn({ setChange, change }) {
             id="checkout-change-btn"
             onClick={() => setChange(!change)}
         >
-            Change
+            CHANGE
         </button>
     );
 }

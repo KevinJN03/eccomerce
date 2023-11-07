@@ -13,24 +13,22 @@ const calculateTotal = () => {
     }
 
     const withOutShipping = parseFloat(total).toFixed(2);
-    let withShipping = parseFloat(total).toFixed(2);
 
-    if (type == 'fixed') {
+    if (type === 'fixed') {
         const newAmount = parseFloat(amount).toFixed(2);
         savePercent = Math.ceil((newAmount * 100) / withOutShipping);
 
         if (amount > withOutShipping) {
             amountOff = withOutShipping;
-        } else {    
-            
+        } else {
             amountOff = parseFloat(amount).toFixed(2);
         }
-        const newTotal = withOutShipping - amountOff;
-        // setPromoAfterTotal(newTotal)
-
-        withShipping =  parseFloat(newTotal).toFixed(2);
     }
-    withShipping = parseFloat(deliveryOption.cost + withShipping).toFixed(2);
+    const newTotal = parseFloat(
+        total + deliveryOption.cost - amountOff
+    ).toFixed(2);
+    const withShipping = newTotal;
+  
     return {
         withOutShipping,
         withShipping,

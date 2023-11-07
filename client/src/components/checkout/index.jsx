@@ -14,11 +14,18 @@ import { PromoProvider } from '../../hooks/promoContext';
 import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { useNavigate } from 'react-router-dom';
+
+import exampleCustomerInfo from './address form/example-customer-info.jsx';
+import axios from '../../api/axios.js';
 function Checkout() {
     disableLayout();
+
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [isOrderSubmit, setOrderSubmit] = useState(false);
 
+    const [shippingAddress, setShippingAddress] = useState(exampleCustomerInfo);
+    const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
     const { cart } = useCart();
     useEffect(() => {
         if (cart.length == 0) {
@@ -33,6 +40,31 @@ function Checkout() {
             };
         }
     }, [cart]);
+
+    const submitOrder = () => {
+        setOrderSubmit(() => true);
+
+        axios
+            .post('/order/create', {
+                billingAddress,
+                shippingAddress,
+                cart
+            })
+            .then((res) => {
+                console.log({ res });
+                setTimeout(() => {
+                    setOrderSubmit(() => false);
+                }, 2000);
+            })
+            .catch((error) => {
+            
+
+                setTimeout(() => {
+                    setOrderSubmit(() => false);
+                }, 2000);
+                console.log('error when creating order: ', error);
+            });
+    };
     return (
         <>
             {loading && (
@@ -55,16 +87,35 @@ function Checkout() {
                                 <Country_Picker />
                                 <Promo />
                                 <Email_address />
-                                <Address />
+                                <Address
+                                    shippingAddress={shippingAddress}
+                                    setShippingAddress={setShippingAddress}
+                                />
                                 <Delivery />
-                                <Payment />
+                                <Payment
+                                    billingAddress={billingAddress}
+                                    setBillingAddress={setBillingAddress}
+                                />
 
                                 <button
                                     className="buy-now-btn mb-10 bg-primary-green opacity-95 transition-all hover:opacity-100"
                                     type="button"
-                                    disabled
+                                    onClick={submitOrder}
+                                    // disabled
                                 >
-                                    <span className="text-white">BUY NOW</span>
+                                    {isOrderSubmit ? (
+                                        <svg
+                                            className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                                            viewBox="25 25 50 50"
+                                            strokeWidth="5"
+                                        >
+                                            <circle cx="50" cy="50" r="20" />
+                                        </svg>
+                                    ) : (
+                                        <span className="text-white">
+                                            BUY NOW
+                                        </span>
+                                    )}
                                 </button>
                             </section>
 

@@ -4,28 +4,22 @@ import Address_Form from './address form/address-form';
 import Customer_Info from './address form/customer-info';
 import Change_Btn from '../common/btn/change-btn';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import customerData from './address form/examplecustomerInfo.jsx';
+import customerData from './address form/example-customer-info.jsx';
 
-function Address({}) {
+function Address({ shippingAddress, setShippingAddress }) {
+    const [temporaryShippingAddress, setTemporaryShippingAddress] =
+        useState(shippingAddress);
     const [change, setChange] = useState(false);
-    const [customer, setCustomer] = useState(customerData);
 
-    const customerInfo = {
-        firstName: 'John',
-        lastName: 'Doe',
-        country: 'UK',
-        postCode: 'BR5 3QW',
-        mobile: '00000000000',
-        city: 'London',
-        county: 'Orpington',
-        address1: 'Unit 2',
-        address2: 'Faraday Way',
+    const cancel = () => {
+        setTemporaryShippingAddress(() => shippingAddress);
+        setChange(() => false);
     };
 
-    useEffect(() => {
-        setCustomer(customerInfo);
-    }, []);
-
+    const handleClick = () => {
+        setShippingAddress(() => temporaryShippingAddress);
+        setChange(() => false);
+    };
     return (
         <section id="address">
             <HelmetProvider>
@@ -46,12 +40,14 @@ function Address({}) {
                     {change ? (
                         <Address_Form
                             setChange={setChange}
-                            change={change}
-                            customer={customer}
+                            cancel={cancel}
+                            address={temporaryShippingAddress}
+                            setAddress={setTemporaryShippingAddress}
+                            handleClick={handleClick}
                         />
                     ) : (
                         <div className="adress-info-container flex flex-row items-baseline justify-between">
-                            <Customer_Info customer={customerInfo} />
+                            <Customer_Info customer={shippingAddress} />
                             {/* <button type="button" id="checkout-change-btn" onClick={()=> setChange(!change)}>Change</button> */}
                             <Change_Btn setChange={setChange} change={change} />
                         </div>

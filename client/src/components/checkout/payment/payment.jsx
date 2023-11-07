@@ -3,11 +3,22 @@ import Change_Btn from '../../common/btn/change-btn';
 import Customer_Info from '../address form/customer-info';
 import Payment_Type from './payment-type';
 import Address_Form from '../address form/address-form';
-import examplecustomerInfo from '../address form/examplecustomerInfo';
-function Payment({}) {
-    const [billingAddress, setBillingAddress] = useState(examplecustomerInfo);
+import examplecustomerInfo from '../address form/example-customer-info';
+function Payment({ billingAddress, setBillingAddress }) {
+    const [temporaryBillingAddress, setTemporaryBillingAddress] =
+        useState(billingAddress);
     const [change, setChange] = useState(false);
-   
+
+    const cancel = () => {
+        setTemporaryBillingAddress(() => billingAddress);
+        setChange(() => false);
+    };
+
+    const handleClick = () => {
+        setBillingAddress(() => temporaryBillingAddress);
+        setChange(() => false);
+    };
+
     return (
         <section id="payment">
             <h1 className="checkout-title">PAYMENT</h1>
@@ -28,8 +39,11 @@ function Payment({}) {
             {change && (
                 <Address_Form
                     setChange={setChange}
-                    customer={billingAddress}
-                    buttontext="SAVE BILLING ADDRESS"
+                    address={temporaryBillingAddress}
+                    setAddress={setTemporaryBillingAddress}
+                    buttontext={'SAVE BILLING ADDRESS'}
+                    handleClick={handleClick}
+                    cancel={cancel}
                 />
             )}
             <Payment_Type />

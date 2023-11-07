@@ -1,12 +1,34 @@
 import { PasswordSharp } from '@mui/icons-material';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from '../../api/axios';
 function Login({ handleSubmit, admin }) {
     const [email, setEmail] = useState('');
     const [error, setError] = useState({ email: null, password: null });
     const [password, setPassword] = useState('');
-    const onSubmit = () => {
-        console.log('user login');
+    const [loading, setLoading] = useState(false);
+    const onSubmit = (e) => {
+        e.preventDefault();
+        console.log('user login', e);
+
+        setLoading(true);
+
+        axios
+            .post('/user/login', { email, password })
+            .then((res) => {
+                setTimeout(() => {
+                    setLoading(() => false);
+                }, 1000);
+
+                console.log(res.data);
+            })
+            .catch((error) => {
+                setTimeout(() => {
+                    setLoading(() => false);
+                    setError(error.response.data);
+                }, 1000);
+                console.log('error at user login: ', error);
+            });
     };
     return (
         <>
@@ -16,6 +38,7 @@ function Login({ handleSubmit, admin }) {
                     <label htmlFor="email-address">EMAIL ADDRESS: </label>
                     <input
                         type="email"
+                        name="email"
                         id="email-address"
                         className="login-signup-input"
                         value={email}
@@ -37,7 +60,8 @@ function Login({ handleSubmit, admin }) {
 
                     <input
                         type="password"
-                        id="passworde"
+                        id="password"
+                        name="password"
                         className="login-signup-input"
                         value={password}
                         onChange={(e) => {
@@ -60,15 +84,24 @@ function Login({ handleSubmit, admin }) {
             <button
                 type="button"
                 className="login-signup-btn "
-
-                disabled={error.email || error.password}
-                onClick={() =>
+                disabled={error.email || error.password || loading}
+                onClick={(e) =>
                     admin
                         ? handleSubmit({ email, password }, setError)
-                        : onSubmit
+                        : onSubmit(e)
                 }
             >
-                SIGN IN
+                {loading ? (
+                    <svg
+                        className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                        viewBox="25 25 50 50"
+                        strokeWidth="5"
+                    >
+                        <circle cx="50" cy="50" r="20" />
+                    </svg>
+                ) : (
+                    <span className="text-white">SIGN IN</span>
+                )}
             </button>
         </>
     );

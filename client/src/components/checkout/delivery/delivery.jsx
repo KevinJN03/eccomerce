@@ -5,7 +5,6 @@ function Delivery(props) {
         <section id="delivery">
             <h1 className="checkout-title delivery-mb">DELIVERY OPTIONS</h1>
             <Shipping_Option {...props} />
-            {/* <Shipping_Option /> */}
         </section>
     );
 }

@@ -5,8 +5,8 @@ import axios from '../../../api/axios';
 import dayjs from 'dayjs';
 import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
 
-function Shipping_Option({  }) {
-    const { cart ,setDeliveryOption} = useCart();
+function Shipping_Option({}) {
+    const { cart, setDeliveryOption, deliveryOption } = useCart();
     const today = dayjs();
 
     const [profiles, setProfiles] = useState([]);
@@ -19,7 +19,7 @@ function Shipping_Option({  }) {
 
     return (
         <>
-            {profiles.map(({ name, cost, processingTime }) => {
+            {profiles.map(({ name, cost, processingTime, _id }, idx) => {
                 const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
                 const newDeliveryDate = today.add(processingTime.end, addUnit);
                 return (
@@ -37,7 +37,10 @@ function Shipping_Option({  }) {
                         <input
                             type="radio"
                             name="delivery"
-                            value={JSON.stringify({cost, name})}
+                            defaultChecked={
+                                deliveryOption.id == _id || idx == 0
+                            }
+                            value={JSON.stringify({ cost, name })}
                             onChange={handleDelivery}
                         ></input>
                     </div>
