@@ -8,6 +8,7 @@ import ErrorMessage from '../Login-SignUp/errorMessage.jsx';
 import { DatePicker } from '@mui/x-date-pickers';
 import Interest from '../Login-SignUp/intrest.jsx';
 import Button from '../Login-SignUp/button.jsx';
+import DobPicker from '../Login-SignUp/dobPicker.jsx';
 function Details({}) {
     const [error, setError] = useState({});
     const [firstName, setFistName] = useState('');
@@ -15,6 +16,8 @@ function Details({}) {
     const [email, setEmail] = useState('');
     const [interest, setInterest] = useState('womenswear');
     const [dob, setDob] = useState('');
+
+    const [disable, setDisble] = useState(true);
     const options = {
         error,
         setError,
@@ -51,32 +54,22 @@ function Details({}) {
                     label={'Email'}
                     {...options}
                 />
-                <div className="input-container">
-                    {error.dob && <ErrorMessage msg={error.dob} />}
-                    <label htmlFor="dob">DATE OF BIRTH: </label>
-                    <div className="date-picker">
-                        <DatePicker
-                            views={['day', 'month', 'year']}
-                            slotProps={{
-                                textField: { size: 'small', fullWidth: true },
-                            }}
-                            onChange={(e) => {
-                                setDob(e.format());
-                                setError((prevState) => ({
-                                    ...prevState,
-                                    dob: null,
-                                }));
-                            }}
-                        />
-                    </div>
-                </div>
+                <DobPicker
+                    showDescription={false}
+                    error={error}
+                    setError={setError}
+                    setDob={setDob}
+                />
 
                 <Interest setInterest={setInterest} />
 
                 <Button
-                    submit={() =>{ console.log('submit')}}
+                    submit={() => {
+                        console.log('submit');
+                    }}
                     text={'SAVE CHANGES'}
                     error={error}
+                    disable={disable}
                 />
             </div>
         </section>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-function Customer_Info({ className, customer }) {
+function Customer_Info({ className, customer, elementClass }) {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address1, setAddress1] = useState('');
@@ -36,15 +36,15 @@ function Customer_Info({ className, customer }) {
 
     return (
         <div id="customer-info" className={className ? className : null}>
-            <p>{`${firstName} ${lastName}`}</p>
-            <p>{`${address1} ${address2}`}</p>
-            <p>{county}</p>
-            <p>{city}</p>
-            <p>{postCode}</p>
-            <p>UK</p>
-            <p>{mobile}</p>
+            <p  className={elementClass}>{`${firstName} ${lastName}`}</p>
+            <p  className={elementClass}>{`${address1} ${address2}`}</p>
+            <p  className={elementClass}>{county}</p>
+            <p  className={elementClass}>{city}</p>
+            < p className={elementClass}>{postCode}</p>
+            <p  className={elementClass}>UK</p>
+            <p  className={elementClass}>{mobile}</p>
         </div>
-    );
+    ); 
 }
 
 export default Customer_Info;

@@ -8,6 +8,7 @@ export default {
             colors: {
                 'primary': '#2d2d2d',
                 'primary-green': '#018849',
+                'grey-100': ' #dddddd46;'
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],

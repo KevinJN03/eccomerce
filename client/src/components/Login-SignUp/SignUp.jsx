@@ -1,7 +1,7 @@
 import '../../CSS/login-signup.css';
 import glamo from '../../assets/icons/glamo-black-logo.svg';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 import { SetMealRounded } from '@mui/icons-material';
@@ -10,6 +10,7 @@ import axios from '../../api/axios';
 import ErrorMessage from './errorMessage';
 import Button from './button';
 import Interest from './intrest';
+import DobPicker from './dobPicker';
 function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -126,30 +127,7 @@ function SignUp() {
                 <p>Must be 10 or more characters</p>
             </div>
 
-            <div className="input-container">
-                {error.dob && <ErrorMessage msg={error.dob} />}
-                <label htmlFor="dob">DATE OF BIRTH: </label>
-                <div className="date-picker">
-                    <DatePicker
-                        views={['day', 'month', 'year']}
-                        slotProps={{
-                            textField: { size: 'small', fullWidth: true },
-                        }}
-                        onChange={(e) => {
-                            setDob(e.format());
-                            setError((prevState) => ({
-                                ...prevState,
-                                dob: null,
-                            }));
-                        }}
-                    />
-                </div>
-
-                <p>
-                    You need to be 18 or over to use{' '}
-                    <span className="tracking-wider">GLAMO</span>
-                </p>
-            </div>
+            <DobPicker error={error} setDob={setDob} showDescription={true} />
             <Interest setInterest={setInterest} />
 
             <Button

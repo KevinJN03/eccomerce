@@ -4,7 +4,6 @@ import Address_Form from './address form/address-form';
 import Customer_Info from './address form/customer-info';
 import Change_Btn from '../common/btn/change-btn';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import customerData from './address form/example-customer-info.jsx';
 
 function Address({ shippingAddress, setShippingAddress }) {
     const [temporaryShippingAddress, setTemporaryShippingAddress] =
