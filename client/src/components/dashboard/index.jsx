@@ -15,8 +15,8 @@ import duplicate_icon from '../../assets/icons/duplicate.png';
 import giftCard_icon from '../../assets/icons/gift-card.png';
 
 import '../../CSS/user-dashboard.scss';
-import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 const navOptions = [
     [{ text: 'Account overview', icon: person_icon, link: 'my-account' }],
     [
@@ -51,11 +51,17 @@ const navOptions = [
 ];
 function Dashboard() {
     disableLayout();
+    const location = useLocation();
 
-    const [selectOption, setSelectionOption] = useState(navOptions[0][0].text);
+    const currentRoute = location.pathname.split('/').pop();
+    const [selectOption, setSelectionOption] = useState(currentRoute);
+
+    useEffect(() => {
+        setSelectionOption(currentRoute);
+    }, [currentRoute]);
 
     return (
-        <section className="user-dashboard flex h-full w-screen flex-col !items-center bg-[var(--light-grey)] pb-10">
+        <section className="user-dashboard flex h-full min-h-screen w-screen flex-col !items-center bg-[var(--light-grey)] pb-10">
             <section className="dashboard-wrapper w-full max-w-4xl px-3">
                 <Checkout_Header text={'MY ACCOUNT'} />
                 <section className="dashboard-body mt-3 flex h-full flex-row gap-x-5">
@@ -105,9 +111,8 @@ function Option({ options, selectOption, setSelectionOption }) {
                                 ? `/${link}`
                                 : link && `/my-account/${link}`
                         }
-                        onClick={() => setSelectionOption(() => text)}
                         className={`no-wrap relative flex  h-14 flex-row items-center bg-white pl-3 ${
-                            selectOption == text ? 'active-btn' : ''
+                            selectOption == link ? 'active-btn' : ''
                         }`}
                     >
                         <img

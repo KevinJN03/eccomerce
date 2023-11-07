@@ -7,7 +7,9 @@ import { useState } from 'react';
 import { SetMealRounded } from '@mui/icons-material';
 import { async } from 'postcss-js';
 import axios from '../../api/axios';
-import { ErrorMessage } from './Login';
+import ErrorMessage from './errorMessage';
+import Button from './button';
+import Interest from './intrest';
 function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -16,7 +18,6 @@ function SignUp() {
     const [dob, setDob] = useState('');
     const [interest, setInterest] = useState('womenswear');
     const [error, setError] = useState({});
-
     const [visible, setVisible] = useState(false);
     const submit = async () => {
         try {
@@ -128,7 +129,6 @@ function SignUp() {
             <div className="input-container">
                 {error.dob && <ErrorMessage msg={error.dob} />}
                 <label htmlFor="dob">DATE OF BIRTH: </label>
-                {/* <input type="date" id="passworde" class="login-signup-input"/> */}
                 <div className="date-picker">
                     <DatePicker
                         views={['day', 'month', 'year']}
@@ -150,41 +150,14 @@ function SignUp() {
                     <span className="tracking-wider">GLAMO</span>
                 </p>
             </div>
-            <div className="input-container">
-                <label>MOSTLY INTERESTED IN:</label>
-                <div id="radio-wrapper">
-                    <div className="radio-containers">
-                        <input
-                            type="radio"
-                            name="interest"
-                            id="womenswear"
-                            value={'womenswear'}
-                            defaultChecked
-                            onChange={(e) => setInterest(e.target.value)}
-                        />
-                        <label htmlFor="womenswear">Womenswear</label>
-                    </div>
-                    <div className="radio-containers">
-                        <input
-                            type="radio"
-                            name="interest"
-                            id="menswear"
-                            value={'menswear'}
-                            onChange={(e) => setInterest(e.target.value)}
-                        />
-                        <label htmlFor="womenswear">Menswear</label>
-                    </div>
-                </div>
-            </div>
+            <Interest setInterest={setInterest} />
 
-            <button
-                type="button"
-                className="login-signup-btn"
-                onClick={submit}
-                disabled={Object.values(error).some((item) => item != null)}
-            >
-                JOIN GLAMO
-            </button>
+            <Button
+                text={'JOIN GLAMO'}
+                error={error}
+                submit={submit}
+                error={error}
+            />
         </>
     );
 }
