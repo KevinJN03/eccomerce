@@ -85,7 +85,7 @@ function Dashboard() {
                             );
                         })}
                     </div>
-                    <div className="right min-h-full flex-[2] bg-white">
+                    <div className="right min-h-full flex-[2]">
                         <Outlet />
                     </div>
                 </section>
