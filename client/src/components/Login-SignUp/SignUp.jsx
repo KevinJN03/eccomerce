@@ -1,13 +1,16 @@
 import '../../CSS/login-signup.css';
 import glamo from '../../assets/icons/glamo-black-logo.svg';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 import { SetMealRounded } from '@mui/icons-material';
 import { async } from 'postcss-js';
 import axios from '../../api/axios';
-import { ErrorMessage } from './Login';
+import ErrorMessage from './errorMessage';
+import Button from './button';
+import Interest from './intrest';
+import DobPicker from './dobPicker';
 function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -16,7 +19,6 @@ function SignUp() {
     const [dob, setDob] = useState('');
     const [interest, setInterest] = useState('womenswear');
     const [error, setError] = useState({});
-
     const [visible, setVisible] = useState(false);
     const submit = async () => {
         try {
@@ -125,66 +127,15 @@ function SignUp() {
                 <p>Must be 10 or more characters</p>
             </div>
 
-            <div className="input-container">
-                {error.dob && <ErrorMessage msg={error.dob} />}
-                <label htmlFor="dob">DATE OF BIRTH: </label>
-                {/* <input type="date" id="passworde" class="login-signup-input"/> */}
-                <div className="date-picker">
-                    <DatePicker
-                        views={['day', 'month', 'year']}
-                        slotProps={{
-                            textField: { size: 'small', fullWidth: true },
-                        }}
-                        onChange={(e) => {
-                            setDob(e.format());
-                            setError((prevState) => ({
-                                ...prevState,
-                                dob: null,
-                            }));
-                        }}
-                    />
-                </div>
+            <DobPicker error={error} setDob={setDob} showDescription={true} />
+            <Interest setInterest={setInterest} />
 
-                <p>
-                    You need to be 18 or over to use{' '}
-                    <span className="tracking-wider">GLAMO</span>
-                </p>
-            </div>
-            <div className="input-container">
-                <label>MOSTLY INTERESTED IN:</label>
-                <div id="radio-wrapper">
-                    <div className="radio-containers">
-                        <input
-                            type="radio"
-                            name="interest"
-                            id="womenswear"
-                            value={'womenswear'}
-                            defaultChecked
-                            onChange={(e) => setInterest(e.target.value)}
-                        />
-                        <label htmlFor="womenswear">Womenswear</label>
-                    </div>
-                    <div className="radio-containers">
-                        <input
-                            type="radio"
-                            name="interest"
-                            id="menswear"
-                            value={'menswear'}
-                            onChange={(e) => setInterest(e.target.value)}
-                        />
-                        <label htmlFor="womenswear">Menswear</label>
-                    </div>
-                </div>
-            </div>
-
-            <button
-                type="button"
-                className="login-signup-btn"
-                onClick={submit}
-                disabled={Object.values(error).some((item) => item != null)}
-            >
-                JOIN GLAMO
-            </button>
+            <Button
+                text={'JOIN GLAMO'}
+                error={error}
+                submit={submit}
+                error={error}
+            />
         </>
     );
 }

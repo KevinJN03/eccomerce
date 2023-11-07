@@ -1,7 +1,7 @@
 import glamo_logo from '../../assets/icons/glamo-black-logo.svg';
 import digicert_logo from '../../assets/icons/digicert.png';
 import { Link } from 'react-router-dom';
-function Checkout_Header({}) {
+function Checkout_Header({ text }) {
     return (
         <div className="checkout-header">
             <Link to="/" className="checkout-logo-wrapper">
@@ -12,7 +12,7 @@ function Checkout_Header({}) {
                 />
             </Link>
             <h1 className="mr-10 text-3xl font-semibold sm:text-xl md:text-2xl">
-                CHECKOUT
+                {text}
             </h1>
             <span className="sm+md:h-10 ">
                 <img

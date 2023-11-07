@@ -4,7 +4,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { useWindowSize } from '@uidotdev/usehooks';
 function Country_Picker({}) {
     const screenSize = useWindowSize();
-    const [select, setSelect] = useState('Gb');
+    const [select, setSelect] = useState('GB');
     const [showOption, setShowOption] = useState(false);
     const onSelect = (code) => setSelect(() => code);
 

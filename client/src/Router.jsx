@@ -27,6 +27,19 @@ import Layout from './components/Layout/layout';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
 import AdminLogin from './components/admin/home/AdminLogin';
+import My_Orders from './components/dashboard/my-orders';
+import Overview from './components/dashboard/Overview';
+import Returns from './components/dashboard/returns';
+import Details from './components/dashboard/details';
+import Addresses from './components/dashboard/address/addresses.jsx';
+import Payment_Methods from './components/dashboard/payment-methods.jsx';
+import Contact_Preferences from './components/dashboard/contact-preferences.jsx';
+import Socials from './components/dashboard/socials.jsx';
+
+import GiftCard_Voucher from './components/dashboard/gift-card-and-voucher.jsx';
+import Edit_Address from './components/dashboard/address/edit-address.jsx';
+import Address_Index from './components/dashboard/address/addres-index.jsx';
+import Add_Address from './components/dashboard/address/add-address.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -70,8 +83,67 @@ function Router({ Header, Footer }) {
                     element: <About />,
                 },
                 {
-                    path: '/dashboard',
+                    path: '/my-account',
                     element: <Dashboard />,
+
+                    children: [
+                        { index: true, element: <Overview /> },
+                        {
+                            path: 'orders',
+
+                            element: <My_Orders />,
+                        },
+                        {
+                            path: 'returns',
+
+                            element: <Returns />,
+                        },
+                        {
+                            path: 'my-details',
+
+                            element: <Details />,
+                        },
+                        {
+                            path: 'addresses',
+
+                            element: <Addresses />,
+
+                            children: [
+                                {
+                                    index: true,
+                                    element: <Address_Index />,
+                                },
+                                {
+                                    path: 'edit/:id',
+                                    element: <Edit_Address />,
+                                },
+                                {
+                                    path: 'add',
+                                    element: <Add_Address />,
+                                },
+                            ],
+                        },
+                        {
+                            path: 'payment-methods',
+
+                            element: <Payment_Methods />,
+                        },
+                        {
+                            path: 'contact-preferences',
+
+                            element: <Contact_Preferences />,
+                        },
+                        {
+                            path: 'social-accounts',
+
+                            element: <Socials />,
+                        },
+                        {
+                            path: 'gift-cards-and-vouchers',
+
+                            element: <GiftCard_Voucher />,
+                        },
+                    ],
                 },
                 {
                     path: '/login',
