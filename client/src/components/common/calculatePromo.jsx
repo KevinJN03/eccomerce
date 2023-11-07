@@ -19,7 +19,7 @@ const calculatePromo = (index = 0, totalBeforePromo) => {
         // setPromoAfterTotal(newTotal)
         totalAfterPromo = newTotal.toFixed(2);
     }
-    console.log({ savePercent, amountOff });
+ 
     return { savePercent, amountOff };
 };
 

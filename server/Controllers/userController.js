@@ -11,7 +11,7 @@ import { body, check, validationResult } from 'express-validator';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
-
+import passport from '../utils/passport.js';
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -159,6 +159,7 @@ export const signUp_user = [
     }),
 
   check('password', 'Password must be between 10 to 20 characters.')
+    .trim()
     .notEmpty()
     .escape()
     .trim()
@@ -235,3 +236,76 @@ export const update_single = [
     res.status(200).send(user);
   }),
 ];
+
+export const loginUser = [
+  check('email', 'Please enter a valid email address.')
+    .trim()
+    .isEmail()
+    .custom(async (email) => {
+      try {
+        const result = await User.findOne({ email });
+
+        if (!findUser) {
+          throw new Error('User does not exist.');
+        }
+
+        return true;
+      } catch (error) {}
+    }),
+  check(
+    'password',
+    'Please enter a valid password between 10 to 20 characters.',
+  )
+    .trim()
+    .notEmpty()
+    .escape()
+    .trim()
+    .isLength({ min: 10, max: 20 }),
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      const newResult = {};
+
+      result.errors.map(({ path, msg }) => {
+        newResult[path] = msg;
+      });
+      return res.status(400).send(newResult);
+    }
+    passport.authenticate('local', (err, user, info) => {
+      console.log({ user });
+      if (err) {
+        next(err);
+      }
+
+      if (!user) {
+        return res
+          .status(400)
+          .send({ password: 'The password is invalid. Please try again.' });
+      }
+
+      req.logIn(user, (error) => {
+        if (error) {
+          return next(err);
+        }
+
+        return res.status(200).redirect('/user/check');
+      });
+    })(req, res, next);
+  }),
+];
+
+export const userLogout = asyncHandler(async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    req.logout();
+  }
+
+  return res.status(200).redirect('/user/check');
+});
+
+export const checkUser = asyncHandler(async (req, res, next) => {
+
+  res
+    .status(200)
+    .send({ user: req.user, authenticated: req.isAuthenticated() });
+});

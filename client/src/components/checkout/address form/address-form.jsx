@@ -67,7 +67,7 @@ function Address_Form({
                     className="sm+md:absolute sm+md:right-0 sm+md:top-1"
                     id="checkout-change-btn"
                 >
-                    Cancel
+                    CANCEL
                 </button>
             </div>
         </section>

@@ -16,6 +16,7 @@ import { useCart } from '../../context/cartContext';
 import { useNavigate } from 'react-router-dom';
 
 import exampleCustomerInfo from './address form/example-customer-info.jsx';
+import axios from '../../api/axios.js';
 function Checkout() {
     disableLayout();
 
@@ -41,11 +42,28 @@ function Checkout() {
     }, [cart]);
 
     const submitOrder = () => {
-        setOrderSubmit(true);
-        setTimeout(() => {
-            console.log('hey');
-            setOrderSubmit(false);
-        }, 2000);
+        setOrderSubmit(() => true);
+
+        axios
+            .post('/order/create', {
+                billingAddress,
+                shippingAddress,
+                cart
+            })
+            .then((res) => {
+                console.log({ res });
+                setTimeout(() => {
+                    setOrderSubmit(() => false);
+                }, 2000);
+            })
+            .catch((error) => {
+            
+
+                setTimeout(() => {
+                    setOrderSubmit(() => false);
+                }, 2000);
+                console.log('error when creating order: ', error);
+            });
     };
     return (
         <>

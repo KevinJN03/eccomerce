@@ -28,7 +28,7 @@ const calculateTotal = () => {
         total + deliveryOption.cost - amountOff
     ).toFixed(2);
     const withShipping = newTotal;
-    console.log({ deliveryOption, withOutShipping, total });
+  
     return {
         withOutShipping,
         withShipping,
