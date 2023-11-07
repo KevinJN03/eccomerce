@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
-function Dropdown_Option({ option }) {
+function Dropdown_Option({ option , linkTo}) {
     return (
         <Link
-            to={`./${option.text.toLowerCase()}`}
+            to={`./${linkTo}`}
             className="dropdown-item my-3 flex h-12 w-full flex-row  items-center justify-start gap-3 px-3"
             tabIndex="-1"
         >

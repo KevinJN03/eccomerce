@@ -1,0 +1,16 @@
+.user-dashboard {
+    .active-btn {
+        @apply bg-gray-50 #{!important};
+
+        p {
+            @apply font-bold tracking-wide;
+        }
+
+        &:before {
+            content: '';
+       @apply bg-blue-500 absolute left-[-5px] h-full w-1;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    }
+}
