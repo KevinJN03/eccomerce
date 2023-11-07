@@ -2,6 +2,21 @@ import { useState } from 'react';
 import Input from '../../Login-SignUp/input';
 import '../../../CSS/user-dashboard.scss';
 import card_logo from '../../../assets/icons/credit-card.png';
+import visa_logo from '../../../assets/icons/payment-icons/visa.svg';
+import discover_logo from '../../../assets/icons/payment-icons/discover.svg';
+
+import maestro_logo from '../../../assets/icons/payment-icons/maestro.svg';
+import masterCard_logo from '../../../assets/icons/payment-icons/mastercard-alt.svg';
+
+import american_express_logo from '../../../assets/icons/payment-icons/american-express.svg';
+
+const paymentIconArray = [
+    american_express_logo,
+    visa_logo,
+    maestro_logo,
+    masterCard_logo,
+    discover_logo,
+];
 function Add_Card({}) {
     const [cardNumber, setCardNumber] = useState('');
     const [error, setError] = useState({});
@@ -57,6 +72,7 @@ function Add_Card({}) {
 
     const months = range(1, 12, 1, -2);
     const years = range(2023, 2033, 1, -4);
+
     return (
         <section className="add-card">
             <h2 className="mb-2 text-xl font-bold">{'ADD CARD'}</h2>
@@ -135,7 +151,14 @@ function Add_Card({}) {
                     SAVE CARD
                 </button>
             </div>
-            <div className="mt-2 border-t-2"></div>
+            <div className="mt-2 border-t-2 pt-4 flex flex-row items-center gap-x-3">
+                <p className="text-lg font-bold">WE ACCEPT: </p>
+                <div className='flex flex-row gap-x-2'>
+                    {paymentIconArray.map((icon)=> {
+                        return <img src={icon} className='w-10 h-10'/>
+                    })}
+                </div>
+            </div>
         </section>
     );
 }
