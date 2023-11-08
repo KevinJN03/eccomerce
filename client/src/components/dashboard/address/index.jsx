@@ -6,7 +6,7 @@ import Customer_Info from '../../checkout/address form/customer-info';
 import EditSharpIcon from '@mui/icons-material/EditSharp';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-function Address_Index({}) {
+function Index({}) {
     const [customerAddress, setCustomerAddress] = useState(exampleCustomerInfo);
 
     const navigate = useNavigate()
@@ -41,4 +41,4 @@ function Address_Index({}) {
     );
 }
 
-export default Address_Index;
+export default Index;

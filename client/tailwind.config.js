@@ -1,18 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
 
             colors: {
-                'primary': '#2d2d2d',
+                primary: '#2d2d2d',
                 'primary-green': '#018849',
-                'grey-100': ' #dddddd46;'
+                'grey-100': ' #dddddd46;',
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
-                raleway: ['Raleway',' sans-serif']
+                raleway: ['Raleway', ' sans-serif'],
             },
             letterSpacing: {
                 tightest: '-.099em',
@@ -49,5 +50,8 @@ export default {
         },
     },
     plugins: [require('daisyui'), require('rippleui')],
-    // plugins: [require("daisyui")],
+
+    daisyui: {
+        prefix: 'daisy-',
+    }
 };
