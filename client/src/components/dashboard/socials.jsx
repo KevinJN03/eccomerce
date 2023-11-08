@@ -49,7 +49,7 @@ function Socials({}) {
         {
             title: 'Google',
             icon: google_icon,
-            enable: true,
+            enable: false,
         },
         {
             title: 'Apple',

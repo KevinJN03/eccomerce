@@ -12,6 +12,7 @@ import contact_icon from '../../assets/icons/contact.png';
 import social_icon from '../../assets/icons/guardian.png';
 import card_icon from '../../assets/icons/credit-card.png';
 import duplicate_icon from '../../assets/icons/duplicate.png';
+import coming_soon_icon from '../../assets/icons/coming-soon.png';
 import giftCard_icon from '../../assets/icons/gift-card.png';
 import { Link } from 'react-router-dom';
 
@@ -31,7 +32,11 @@ export const navOptionsArray = [
             icon: chat_icon,
             link: 'contact-preferences',
         },
-        { text: 'Social accounts', icon: social_icon, link: 'social-accounts' },
+        {
+            text: 'Social accounts',
+            icon: social_icon,
+            link: 'social-accounts',
+        },
     ],
     [
         {
@@ -63,7 +68,7 @@ export default function NavOption({ selectOption, setSelectionOption }) {
                                             ? `/${link}`
                                             : link && `/my-account/${link}`
                                     }
-                                    className={`no-wrap relative flex  h-14 flex-row items-center bg-white pl-3 ${
+                                    className={`no-wrap relative flex  h-14 flex-row items-center bg-white px-3 ${
                                         selectOption == link ? 'active-btn' : ''
                                     }`}
                                 >
@@ -82,6 +87,11 @@ export default function NavOption({ selectOption, setSelectionOption }) {
                                     >
                                         {text}
                                     </p>
+
+                                    <img
+                                        src={coming_soon_icon}
+                                        className="h-9 w-9"
+                                    />
                                 </Link>
                             );
                         })}
