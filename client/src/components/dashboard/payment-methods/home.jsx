@@ -15,7 +15,7 @@ function Home({}) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
-    const { setModalCheck, setModalContent } = useUserDashboardContext();
+    const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
     useEffect(() => {
         setLoading(true);
         setTimeout(() => {
@@ -24,11 +24,11 @@ function Home({}) {
     }, [paymentMethods]);
 
     const handleDelete = (id) => {
-        // PaymentMethodsDispatch({
-        //     type: 'changeDefault',
-        //     id,
-        // })
-        setModalContent(() => 'deletePaymentMethod');
+        modalContentDispatch({
+            type: 'deletePaymentMethod',
+            id,
+            PaymentMethodsDispatch,
+        });
         setModalCheck(() => true);
     };
     return (

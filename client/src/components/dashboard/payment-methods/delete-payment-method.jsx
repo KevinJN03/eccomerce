@@ -1,10 +1,18 @@
 import close_icon from '../../../assets/icons/close.png';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useUserDashboardContext } from '../../../context/userContext';
 function DeletePaymentMethod({}) {
     const { setModalCheck } = useUserDashboardContext();
 
     const closeModal = () => {
         setModalCheck(false);
+    };
+
+    const { modalContent } = useUserDashboardContext();
+    const { PaymentMethodsDispatch } = usePaymentMethods();
+    const deleteMethod = () => {
+        closeModal();
+        PaymentMethodsDispatch({ type: 'delete', id: modalContent.id });
     };
     return (
         <section className="delete-payment-method flex w-full flex-col items-center justify-center gap-y-5 p-2">
@@ -23,7 +31,7 @@ function DeletePaymentMethod({}) {
                 </p>
             </div>
             <div className="bottom flex w-full flex-col gap-y-3">
-                <button className="!bg-primary py-[10px] font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100">
+                <button onClick={deleteMethod} className="!bg-primary py-[10px] font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100">
                     DELETE
                 </button>
                 <button

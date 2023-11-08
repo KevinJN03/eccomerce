@@ -27,7 +27,16 @@
     }
 
     .modal-content {
-    @apply w-[400px]
+        @apply w-[400px];
+    }
+
+    .daisy-checkbox {
+        --bc: 0, 0%, 100%;
+        --chkbg: 0, 0%, 100%;
+        --chkfg: 182, 87%, 39%;
+        &:checked {
+            // background-color: blue !important;
+            //  --chkbg: #FFFFF
+        }
     }
 }
-

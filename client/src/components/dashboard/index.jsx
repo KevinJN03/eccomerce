@@ -1,13 +1,14 @@
 import disableLayout from '../../hooks/disableLayout';
 import Checkout_Header from '../checkout/checkout_header.jsx';
 import '../../CSS/user-dashboard.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Modal from '../admin/components/modal/modal.jsx';
 
-import UserDashboardProvider from '../../context/userContext.jsx';
+import { UserDashboardProvider, reducer } from '../../context/userContext.jsx';
 import DeletePaymentMethod from './payment-methods/delete-payment-method.jsx';
 import NavOption from './navOptions.jsx';
+
 function Dashboard() {
     disableLayout();
     const location = useLocation();
@@ -19,11 +20,11 @@ function Dashboard() {
         setSelectionOption(currentRoute);
     }, [currentRoute]);
 
-    const [modalContent, setModalContent] = useState('');
+    const [modalContent, modalContentDispatch] = useReducer(reducer, {});
     const [modalCheck, setModalCheck] = useState(false);
     const value = {
         modalContent,
-        setModalContent,
+        modalContentDispatch,
         modalCheck,
         setModalCheck,
     };
