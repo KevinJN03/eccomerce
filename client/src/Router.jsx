@@ -38,9 +38,9 @@ import Socials from './components/dashboard/socials.jsx';
 
 import GiftCard_Voucher from './components/dashboard/gift-card-and-voucher.jsx';
 import Edit_Address from './components/dashboard/address/edit-address.jsx';
-import Address_Index from './components/dashboard/address/addres-index.jsx';
+import Address_Index from './components/dashboard/address/index.jsx';
 import Add_Address from './components/dashboard/address/add-address.jsx';
-import Payment_Method_Index from './components/dashboard/payment-methods/payment-index.jsx';
+import Payment_Method_Index from './components/dashboard/payment-methods/index.jsx';
 import Add_Payment_Method from './components/dashboard/payment-methods/add-payment-method.jsx';
 import Add_Card from './components/dashboard/payment-methods/add-card.jsx';
 function Router({ Header, Footer }) {
