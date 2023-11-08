@@ -43,6 +43,7 @@ import Add_Address from './components/dashboard/address/add-address.jsx';
 import Payment_Method_Index from './components/dashboard/payment-methods/index.jsx';
 import Add_Payment_Method from './components/dashboard/payment-methods/add-payment-method.jsx';
 import Add_Card from './components/dashboard/payment-methods/add-card.jsx';
+import Payment_Method_Home from './components/dashboard/payment-methods/home.jsx'
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -132,7 +133,7 @@ function Router({ Header, Footer }) {
                             element: <Payment_Method_Index />,
 
                             children: [
-                                { index: true, element: <Payment_Methods /> },
+                                { index: true, element: <Payment_Method_Home  /> },
                                 {
                                     path: 'add',
                                     element: <Add_Payment_Method />,
