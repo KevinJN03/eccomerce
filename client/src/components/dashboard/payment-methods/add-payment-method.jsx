@@ -4,12 +4,14 @@ import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
 import klarna_logo from '../../../assets/icons/payment-icons/klarna.svg';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
+import Divider from '../divider';
+import useCurrentLocation from '../../../hooks/useCurrentLocation';
 function Button({ text, icon, onClick, alt, description }) {
     return (
         <button
             onClick={onClick}
             type="button"
-            className="hover:bg-grey-100 transistion-all relative mt-3 flex h-14 w-4/6 flex-row items-center justify-center gap-x-3 border-2"
+            className="transistion-all relative mt-3 flex h-14 w-4/6 flex-row items-center justify-center gap-x-3 border-2 hover:bg-grey-100"
         >
             <img src={icon} alt={alt} className="absolute left-3 h-9 w-9" />
             <span className="flex flex-col justify-center">
@@ -23,25 +25,11 @@ function Button({ text, icon, onClick, alt, description }) {
 function Add_Payment_Method({}) {
     const navigate = useNavigate();
 
-    const { pathname } = useLocation();
+    const { currentLocation } = useCurrentLocation();
 
-    debugger;
-    const currentLocation = () => {
-        let result = '';
-        const locationArray = pathname.split('/');
-        if (locationArray[locationArray.length - 1]) {
-            result = locationArray[locationArray.length - 1];
-        } else {
-            result = locationArray[locationArray.length - 2];
-        }
-console.log({result})
-        return result;
-    };
-
-    console.log({ pathname, currentLocation });
     return (
         <section className="add-payment-method bg-white p-4">
-            {currentLocation() == 'add' ? (
+            {currentLocation == 'add' ? (
                 <>
                     {' '}
                     <h2 className="mb-2 text-xl font-bold">
@@ -66,11 +54,7 @@ console.log({result})
                             onClick={() => navigate('card')}
                         />
 
-                        <span className="mt-3 flex w-full flex-row items-center font-bold tracking-wider">
-                            <div className="w-full border-[1px] "></div>
-                            <p className="mx-2 text-base">OR</p>
-                            <div className="w-full border-[1px] "></div>
-                        </span>
+                        <Divider />
 
                         <Button
                             icon={paypal_icon}

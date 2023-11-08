@@ -36,14 +36,18 @@ import Payment_Methods from './components/dashboard/payment-methods/payment-meth
 import Contact_Preferences from './components/dashboard/contact-preferences.jsx';
 import Socials from './components/dashboard/socials.jsx';
 
-import GiftCard_Voucher from './components/dashboard/gift-card-and-voucher.jsx';
+import GiftCard_Home from './components/dashboard/gift-card-voucher/gift-card-and-voucher.jsx';
+import GiftCard_Index from './components/dashboard/gift-card-voucher/index.jsx';
 import Edit_Address from './components/dashboard/address/edit-address.jsx';
 import Address_Index from './components/dashboard/address/index.jsx';
 import Add_Address from './components/dashboard/address/add-address.jsx';
 import Payment_Method_Index from './components/dashboard/payment-methods/index.jsx';
 import Add_Payment_Method from './components/dashboard/payment-methods/add-payment-method.jsx';
 import Add_Card from './components/dashboard/payment-methods/add-card.jsx';
-import Payment_Method_Home from './components/dashboard/payment-methods/home.jsx'
+import Payment_Method_Home from './components/dashboard/payment-methods/home.jsx';
+import GiftCard_Add from './components/dashboard/gift-card-voucher/add.jsx';
+import Add_GiftCard from './components/dashboard/gift-card-voucher/card.jsx';
+import Add_Voucher from './components/dashboard/gift-card-voucher/voucher.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -133,16 +137,19 @@ function Router({ Header, Footer }) {
                             element: <Payment_Method_Index />,
 
                             children: [
-                                { index: true, element: <Payment_Method_Home  /> },
+                                {
+                                    index: true,
+                                    element: <Payment_Method_Home />,
+                                },
                                 {
                                     path: 'add',
                                     element: <Add_Payment_Method />,
-                                    children:[
+                                    children: [
                                         {
                                             path: 'card',
-                                            element: <Add_Card/>
-                                        }
-                                    ]
+                                            element: <Add_Card />,
+                                        },
+                                    ],
                                 },
                             ],
                         },
@@ -159,7 +166,29 @@ function Router({ Header, Footer }) {
                         {
                             path: 'gift-cards-and-vouchers',
 
-                            element: <GiftCard_Voucher />,
+                            element: <GiftCard_Index />,
+                            children: [
+                                {
+                                    index: true,
+                                    element: <GiftCard_Home />,
+                                },
+                                {
+                                    path: 'add',
+
+                                    element: <GiftCard_Add />,
+
+                                    children: [
+                                        {
+                                            path: 'card',
+                                            element: <Add_GiftCard />,
+                                        },
+                                        {
+                                            path: 'voucher',
+                                            element: <Add_Voucher />,
+                                        },
+                                    ],
+                                },
+                            ],
                         },
                     ],
                 },
