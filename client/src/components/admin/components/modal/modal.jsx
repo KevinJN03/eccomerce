@@ -13,7 +13,7 @@ function Modal({
     setLoading,
     ModalContent,
     className,
-    back,
+   
     selection,
 }) {
     const handleDelete = () => {

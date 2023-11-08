@@ -25,4 +25,9 @@
     input[type='number'] {
         -moz-appearance: textfield;
     }
+
+    .modal-content {
+    @apply w-[400px]
+    }
 }
+

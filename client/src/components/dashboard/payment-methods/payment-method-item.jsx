@@ -5,7 +5,7 @@ function PaymentMethodItem({
     isDefault,
     method,
     handleDefault,
-    id,
+
     handleDelete,
 }) {
     return (
@@ -24,7 +24,7 @@ function PaymentMethodItem({
                 <button
                     className={`bottom flex w-fit flex-[1.2] cursor-pointer items-center gap-x-2 self-start disabled:opacity-40`}
                     disabled={isDefault}
-                    onClick={() => handleDelete(id)}
+                    onClick={handleDelete}
                 >
                     <p className="font-bold tracking-widest !text-[var(--grey)]">
                         DELETE
@@ -44,7 +44,7 @@ function PaymentMethodItem({
             ) : (
                 <button
                     className="flex flex-row items-center gap-x-4"
-                    onClick={() => handleDefault(id)}
+                    onClick={handleDefault}
                 >
                     <div className="flex h-7 w-7 self-start border-[1px] border-black"></div>
                     <p className="w-fit text-sm">
@@ -56,5 +56,4 @@ function PaymentMethodItem({
     );
 }
 
-
-export default PaymentMethodItem
+export default PaymentMethodItem;

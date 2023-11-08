@@ -8,25 +8,28 @@ import PaymentMethodProvider, {
 } from '../../../context/paymentMethodContext.jsx';
 
 import PaymentMethodItem from './payment-method-item.jsx';
+import Modal from '../../admin/components/modal/modal.jsx';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 
 function Home({}) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
-
+    const { setModalCheck, setModalContent } = useUserDashboardContext();
     useEffect(() => {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
         }, 1000);
     }, [paymentMethods]);
-    const handleDelete = (id) => {
-        console.log('deleting id: ', id);
 
-        PaymentMethodsDispatch({ type: 'delete', id });
-    };
-    const handleDefault = (id) => {
-        PaymentMethodsDispatch({ type: 'changeDefault', id });
+    const handleDelete = (id) => {
+        // PaymentMethodsDispatch({
+        //     type: 'changeDefault',
+        //     id,
+        // })
+        setModalContent(() => 'deletePaymentMethod');
+        setModalCheck(() => true);
     };
     return (
         <section className="payment-method">
@@ -41,13 +44,17 @@ function Home({}) {
                     {paymentMethods.map(({ isDefault, method, id }) => {
                         return (
                             <PaymentMethodItem
-                                id={id}
                                 key={id}
                                 icon={card_icon}
                                 isDefault={isDefault}
                                 method={method}
-                                handleDefault={handleDefault}
-                                handleDelete={handleDelete}
+                                handleDefault={() =>
+                                    PaymentMethodsDispatch({
+                                        type: 'changeDefault',
+                                        id,
+                                    })
+                                }
+                                handleDelete={() => handleDelete(id)}
                             />
                         );
                     })}
@@ -57,7 +64,6 @@ function Home({}) {
                     <div className="spinner-circle"></div>
                 </div>
             )}
-            {/* <Outlet /> */}
         </section>
     );
 }
