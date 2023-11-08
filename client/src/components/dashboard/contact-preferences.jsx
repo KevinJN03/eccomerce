@@ -76,11 +76,11 @@ function Contact_Preferences({}) {
             stockCheck.email === discountCheck.email &&
             stockCheck.email === discountCheck.text
         ) {
-            setIsAllSelected((prevState) => stockCheck.email);
+            setIsAllSelected(() => stockCheck.email);
 
             console.log('all selected');
         } else {
-          setIsAllSelected((prevState) => false);
+            setIsAllSelected(() => false);
         }
     }, [stockCheck, discountCheck]);
 
@@ -92,15 +92,13 @@ function Contact_Preferences({}) {
         }));
 
         setStockCheck((prevState) => ({ ...prevState, email: value }));
-
-        // setIsAllSelected((prevState) => !prevState);
     };
 
     return (
         <section className="contact_preferences">
             <Header text={'CONTACT PREFERENCES'} icon={chat_icon} />
             <section className="mt-2 bg-white p-4">
-                <div className="top mb-8">
+                <div className="top mb-8 ">
                     <h2 className="mb-3 text-lg font-bold tracking-wide">
                         CONTENT TYPES
                     </h2>
@@ -111,7 +109,7 @@ function Contact_Preferences({}) {
                         </p>
                         <button
                             onClick={() => setAllCheck(!isAllSelected)}
-                            className="flex-[0.35] bg-[var(--light-grey)] font-bold tracking-wide"
+                            className="flex-[0.35] bg-[var(--light-grey)] font-bold tracking-wide transition-all hover:!bg-gray-200"
                         >
                             {isAllSelected ? 'CLEAR' : 'SELECT ALL'}
                         </button>
@@ -141,6 +139,19 @@ function Contact_Preferences({}) {
                     />
                 </div>
             </section>
+
+            <div className="mt-3 flex w-full flex-col items-center gap-y-8">
+                <p className="text-center text-s">
+                    Changes to your preferences may take up to seven days to
+                    take effect.
+                </p>
+                <button
+                    disabled={true}
+                    className="!bg-primary px-14 py-[12px] font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-40"
+                >
+                    CONFIRM PREFERENCES
+                </button>
+            </div>
         </section>
     );
 }
