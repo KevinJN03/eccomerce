@@ -2,8 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 function useCurrentLocation() {
     const location = useLocation();
-    console.log('location: ', location);
-    debugger;
+
     const pathname = location?.pathname;
     let currentLocation = '';
     const locationArray = pathname.split('/');

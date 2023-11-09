@@ -1,4 +1,4 @@
-import image from '../../assets/images/men-image.webp';
+import image from '../../assets/images/men-image.jpg';
 function Overview({}) {
     return (
         <section className="overview relative h-full">
@@ -16,3 +16,4 @@ function Overview({}) {
 }
 
 export default Overview;
+  
