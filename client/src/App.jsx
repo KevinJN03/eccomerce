@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './CSS/App.css';
-import './index.css'
+import './index.css';
 // import Layout from './components/Layout/layout'
 import Body from './components/Body';
 import Router from './Router';
@@ -14,13 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 function App() {
     return (
         <div id="App">
-            <LayoutProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DarkModeContextProvider>
-                        <Router />
-                    </DarkModeContextProvider>
-                </LocalizationProvider>
-            </LayoutProvider>
+            <Router />
         </div>
     );
 }
