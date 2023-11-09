@@ -11,14 +11,26 @@ import NavOption from './navOptions.jsx';
 
 function Dashboard() {
     disableLayout();
-    const location = useLocation();
+    const { pathname } = useLocation();
+    const getRoute = () => {
+        const routes = pathname.split('/');
+        const findIndexForMyAccount = routes.indexOf('my-account');
+        const routeIndex = findIndexForMyAccount + 1;
+        console.log({ routeIndex, findIndexForMyAccount });
+        const currentRoute = routes[routeIndex]
+            ? routes[routeIndex]
+            : routes[findIndexForMyAccount];
 
-    const currentRoute = location.pathname.split('/').pop();
-    const [selectOption, setSelectionOption] = useState(currentRoute);
+        return currentRoute;
+    };
+
+    const [selectOption, setSelectionOption] = useState(getRoute());
 
     useEffect(() => {
-        setSelectionOption(currentRoute);
-    }, [currentRoute]);
+        console.log('split: ', pathname.split('/'));
+
+        setSelectionOption(() => getRoute());
+    }, [pathname]);
 
     const [modalContent, modalContentDispatch] = useReducer(reducer, {});
     const [modalCheck, setModalCheck] = useState(false);

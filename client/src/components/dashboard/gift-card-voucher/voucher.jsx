@@ -4,10 +4,10 @@ import Input from '../../Login-SignUp/input';
 function Card() {
     return (
         <section className="voucher-card !p-4 mb-4 h-fit w-56 border-2 relative ">
-            <div className="top">
+            <div className="top mb-1">
                 <p className="font-bold tracking-wider">
-                    <span>FROM:</span>
-                    <span>@GLAMO.COM</span>
+                    <span className='text-[var(--grey)]'>FROM:</span>
+                    <span className='tracking-wider'> @GLAMO.COM</span>
                 </p>
             </div>
             <div className="bottom flex h-full flex-row gap-x-2">
