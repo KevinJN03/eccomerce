@@ -304,8 +304,19 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-
   res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
+});
+
+export const logoutUser = asyncHandler((req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.session.destroy();
+    return res.status(200).clearCookie('connect.sid').send({
+      msg: 'Successfully logout user.',
+    });
+  });
 });
