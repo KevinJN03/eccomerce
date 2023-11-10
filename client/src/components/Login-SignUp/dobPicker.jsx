@@ -1,23 +1,27 @@
 import ErrorMessage from './errorMessage';
 import { DatePicker } from '@mui/x-date-pickers';
-function DobPicker({ error, setDob, showDescription }) {
+import dayjs from 'dayjs';
+function DobPicker({ error, setDob, showDescription, value, setError }) {
     return (
         <div className="input-container">
             {error.dob && <ErrorMessage msg={error.dob} />}
             <label htmlFor="dob">DATE OF BIRTH: </label>
             <div className="date-picker">
                 <DatePicker
+                    inputFormat="DD-MM-YYYY"
                     views={['day', 'month', 'year']}
                     slotProps={{
                         textField: { size: 'small', fullWidth: true },
                     }}
                     onChange={(e) => {
-                        setDob(e.format());
+                        setDob(() => e.toISOString());
                         setError((prevState) => ({
                             ...prevState,
                             dob: null,
                         }));
                     }}
+                   defaultValue={dayjs(value)}
+           
                 />
             </div>
 

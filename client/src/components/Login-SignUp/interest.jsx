@@ -1,4 +1,4 @@
-function Interest({ setInterest }) {
+function Interest({ setInterest, interest }) {
     return (
         <div className="input-container">
             <label>MOSTLY INTERESTED IN:</label>
@@ -9,8 +9,8 @@ function Interest({ setInterest }) {
                         name="interest"
                         id="womenswear"
                         value={'womenswear'}
-                        defaultChecked
-                        onChange={(e) => setInterest(e.target.value)}
+                        checked={interest === 'womenswear'}
+                        onClick={(e) => setInterest(() => e.target.value)}
                     />
                     <label htmlFor="womenswear">Womenswear</label>
                 </div>
@@ -20,7 +20,8 @@ function Interest({ setInterest }) {
                         name="interest"
                         id="menswear"
                         value={'menswear'}
-                        onChange={(e) => setInterest(e.target.value)}
+                        checked={interest === 'menswear'}
+                        onClick={(e) => setInterest(() => e.target.value)}
                     />
                     <label htmlFor="womenswear">Menswear</label>
                 </div>

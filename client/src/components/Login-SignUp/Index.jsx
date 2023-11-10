@@ -1,25 +1,24 @@
 import '../../CSS/login-signup.css';
 import glamo from '../../assets/icons/glamo-black-logo.svg';
-
-import adminLogo from '../../assets/icons/admin.png'
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import adminLogo from '../../assets/icons/admin.png';
 import SignUp from './SignUp';
 import Login from './Login';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-function LoginSignUp({ loginorSignup, admin , handleSubmit }) {
+import { useAuth } from '../../hooks/useAuth';
+
+function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
-    // useEffect(()=> {
-    // setOption(loginorSignup)
 
-    // return()=> {
-    //     setOption("")
-    // }
-    // }, [])
-
+    const { authenticated } = useAuth();
+   
+    const navigate = useNavigate();
+    useEffect(() => {
+        console.log({ authenticated });
+        if (authenticated) {
+            navigate('/my-account');
+        }
+    }, []);
     return (
         <>
             <section className="login-signup-page ">
@@ -27,24 +26,36 @@ function LoginSignUp({ loginorSignup, admin , handleSubmit }) {
                     id="login-signup-container"
                     className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
                 >
-                    <Link to={!admin && "/"} className="login-logo mt-10 w-40 flex flex-nowrap items-center">
+                    <Link
+                        to={!admin && '/'}
+                        className="login-logo mt-10 flex w-40 flex-nowrap items-center"
+                    >
                         <img loading="lazy" src={glamo} />
-                       {admin && <img src={adminLogo} width={'50px'} height={'50px'} className='object-contain'/>}
+                        {admin && (
+                            <img
+                                src={adminLogo}
+                                width={'50px'}
+                                height={'50px'}
+                                className="object-contain"
+                            />
+                        )}
                     </Link>
                     <div id="login-signup-option">
-                        {!admin && <>
-                            <span
-                            onClick={() => setOption('signup')}
-                            className={
-                                option == 'signup'
-                                    ? 'active-option'
-                                    : 'not-active-option'
-                            }
-                        >
-                            <Link to={!admin && "/signup"}>Join</Link>
-                        </span>
-                        <span id="midldle-border"></span>
-                        </>  }
+                        {!admin && (
+                            <>
+                                <span
+                                    onClick={() => setOption('signup')}
+                                    className={
+                                        option == 'signup'
+                                            ? 'active-option'
+                                            : 'not-active-option'
+                                    }
+                                >
+                                    <Link to={!admin && '/signup'}>Join</Link>
+                                </span>
+                                <span id="midldle-border"></span>
+                            </>
+                        )}
                         <span
                             onClick={() => setOption('login')}
                             className={
@@ -53,11 +64,13 @@ function LoginSignUp({ loginorSignup, admin , handleSubmit }) {
                                     : 'not-active-option'
                             }
                         >
-                            <Link to={ !admin && "/login"}>Sign In</Link>
+                            <Link to={!admin && '/login'}>Sign In</Link>
                         </span>
                     </div>
                     <section id="form-container">
-                        {loginorSignup == 'login' && <Login admin={admin } handleSubmit={handleSubmit}/>}
+                        {loginorSignup == 'login' && (
+                            <Login admin={admin} handleSubmit={handleSubmit} />
+                        )}
                         {loginorSignup == 'signup' && <SignUp />}
                     </section>
                 </section>

@@ -9,7 +9,7 @@ import { async } from 'postcss-js';
 import axios from '../../api/axios';
 import ErrorMessage from './errorMessage';
 import Button from './button';
-import Interest from './intrest';
+import Interest from './interest';
 import DobPicker from './dobPicker';
 function SignUp() {
     const [firstName, setFirstName] = useState('');

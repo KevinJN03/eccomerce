@@ -38,8 +38,17 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (userId, cb) => {
   console.log({ userId });
   try {
-    const findUser = await User.findById(userId, { password: 0 });
-    return cb(null, findUser);
+    const findUser = await User.findById(userId, {
+      password: 0,
+      dob: 0,
+      address: 0,
+      __v: 0,
+    });
+
+    const newResult = findUser.toObject({ virtuals: false });
+
+    delete newResult._id;
+    return cb(null, newResult);
   } catch (error) {
     return cb(error);
   }

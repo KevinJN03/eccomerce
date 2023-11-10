@@ -17,8 +17,10 @@ export function UserDashboardProvider({ value, children }) {
 }
 
 export const reducer = (state, action) => {
-    if (action.type == 'deletePaymentMethod') {
-        const { PaymentMethodsDispatch } = action;
+    if (action.type == 'deletePaymentMethod' || action.type == 'deleteAddress') {
+
         return { ...state, ...action };
     }
+
+
 };

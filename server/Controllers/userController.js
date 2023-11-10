@@ -12,6 +12,9 @@ import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
 import passport from '../utils/passport.js';
+import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
+import Address from '../Models/address.js';
+
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -304,7 +307,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  res
+  return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
 });
@@ -317,6 +320,94 @@ export const logoutUser = asyncHandler((req, res, next) => {
     req.session.destroy();
     return res.status(200).clearCookie('connect.sid').send({
       msg: 'Successfully logout user.',
+      authenticated: false,
     });
   });
 });
+
+export const getAllUserData = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.session.passport.user, {
+      password: 0,
+    })
+      .populate('address')
+      .exec();
+    res.send({ user });
+  }),
+];
+
+export const changeDetails = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const body = req.body;
+
+    const user = await User.findByIdAndUpdate(req.session.passport.user, body, {
+      select: { password: 0 },
+      returnDocument: 'after',
+      runValidators: true,
+    });
+    res.redirect(303, '/user/check');
+  }),
+];
+
+export const addUserAddress = [
+  checkAuthenticated,
+  check('firstName', 'Please enter a name').trim().escape().notEmpty(),
+  check('lastName', 'Please enter a name').trim().escape().notEmpty(),
+  check('mobile', 'Please enter a mobile number').trim().escape().notEmpty(),
+  check('address_1', 'Please enter a address').trim().escape().notEmpty(),
+  check('city', 'Please enter a city').trim().escape().notEmpty(),
+  check('postCode', 'Please enter a postcode').trim().escape().notEmpty(),
+  check('county', 'Please enter a postcode').trim().escape().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      const newResult = {};
+      result.errors.forEach(({ path, msg }) => {
+        newResult[path] = msg;
+      });
+      return res.status(400).send(newResult);
+    }
+    const userId = req.session.passport.user;
+
+    const address = new Address({ ...req.body, userId });
+
+    const [newAddress, user] = await Promise.all([
+      address.save(),
+      User.findByIdAndUpdate(
+        userId,
+        { $push: { address: address._id } },
+        { runValidators: true, new: true, select: { password: 0 } },
+      )
+        .populate('address')
+        .exec(),
+    ]);
+
+    res.status(200).send({ success: true, address: user.address });
+  }),
+];
+
+export const deleteAddress = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    const userId = req.session.passport.user;
+    const [address, user] = await Promise.all([
+      Address.findByIdAndDelete(id),
+      User.findByIdAndUpdate(
+        userId,
+        { $pull: { address: id } },
+        { runValidators: true, new: true, select: { password: 0 } },
+      )
+        .populate('address')
+        .exec(),
+    ]);
+    console.log({ address: user.address });
+
+    console.log(id);
+    res.status(200).send({ success: true, address: user.address });
+  }),
+];

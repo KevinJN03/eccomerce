@@ -8,11 +8,15 @@ import LayoutProvider from './context/layoutContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DarkModeContextProvider } from './context/darkModeContext';
+import 'dayjs/locale/en-gb';
 ReactDOM.createRoot(document.getElementById('root')).render(
     /* <React.StrictMode>  */
     <AuthContextProvider>
         <LayoutProvider>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="en-gb"
+            >
                 <DarkModeContextProvider>
                     <App />
                 </DarkModeContextProvider>

@@ -2,16 +2,44 @@ import disableLayout from '../../hooks/disableLayout';
 import Checkout_Header from '../checkout/checkout_header.jsx';
 import '../../CSS/user-dashboard.scss';
 import { useEffect, useReducer, useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../admin/components/modal/modal.jsx';
-
+import signOut_icon from '../../assets/icons/signout-icon.png';
 import { UserDashboardProvider, reducer } from '../../context/userContext.jsx';
 import DeletePaymentMethod from './payment-methods/delete-payment-method.jsx';
 import NavOption from './navOptions.jsx';
-
+import { useAuth } from '../../hooks/useAuth.jsx';
+import axios from '../../api/axios.js';
+import dayjs from 'dayjs';
+import DeleteAddress from './address/deleteAddress.jsx';
 function Dashboard() {
     disableLayout();
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const { user, authDispatch } = useAuth();
+    const [firstName, setFirstName] = useState(user?.firstName || '');
+    const [lastName, setLastName] = useState(user?.lastName || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [interest, setInterest] = useState(user?.interest);
+    const [dob, setDob] = useState('');
+    const [address, setAddress] = useState([]);
+    useEffect(() => {
+        axios
+            .get('user/userData')
+            .then((res) => {
+                setDob(() => dayjs(res.data.user.dob).toISOString());
+
+                setAddress(() => res.data.user.address);
+            })
+            .catch((error) => {
+                console.log(
+                    'error while checking if user is authenticated: ',
+                    error
+                );
+                authDispatch({ type: 'LOGOUT' });
+                navigate('/login');
+            });
+    }, []);
     const getRoute = () => {
         const routes = pathname.split('/');
         const findIndexForMyAccount = routes.indexOf('my-account');
@@ -39,10 +67,34 @@ function Dashboard() {
         modalContentDispatch,
         modalCheck,
         setModalCheck,
+        firstName,
+        setFirstName,
+        email,
+        setEmail,
+        interest,
+        setInterest,
+        dob,
+        setDob,
+        lastName,
+        setLastName,
+        address,
+        setAddress,
     };
 
     const view = {
         deletePaymentMethod: <DeletePaymentMethod />,
+        deleteAddress: <DeleteAddress />,
+    };
+
+    const logout = async () => {
+        try {
+            await axios.get('user/logout');
+            authDispatch({ type: 'LOGOUT' });
+
+            navigate('/home');
+        } catch (error) {
+            console.log('error while loging out: ', error);
+        }
     };
     return (
         <UserDashboardProvider value={value}>
@@ -61,16 +113,28 @@ function Dashboard() {
                                     <span className="user-name">
                                         Hi,
                                         <span className="block font-gotham text-lg tracking-wider">
-                                            Kevin Jean
+                                            {`${user?.firstName} ${user?.lastName}`}
                                         </span>
                                     </span>
                                 </div>
                             </section>
 
-                            <NavOption
-                                selectOption={selectOption}
-                                setSelectionOption={setSelectionOption}
-                            />
+                            <NavOption selectOption={selectOption} />
+                            <button
+                                onClick={logout}
+                                className={`no-wrap relative flex  h-14 flex-row items-center bg-white px-3 `}
+                            >
+                                <img
+                                    className="mr-6 h-9 w-9"
+                                    src={signOut_icon}
+                                    alt="sign out outline icon with transparent background"
+                                />
+                                <p
+                                    className={`justify-left flex h-full w-full items-center text-s font-light underline-offset-2 hover:underline`}
+                                >
+                                    Sign Out
+                                </p>
+                            </button>
                         </div>
                         <div className="right min-h-full flex-[2]">
                             <Outlet />

@@ -9,6 +9,7 @@ function Input({
     setError,
     asterisk,
     autoComplete,
+    manyProperty,
 }) {
     return (
         <div className="input-container">
@@ -25,7 +26,12 @@ function Input({
                     className="login-signup-input"
                     value={value}
                     onChange={(e) => {
-                        setValue(e.target.value);
+                        manyProperty
+                            ? setValue((prevState) => ({
+                                  ...prevState,
+                                  [property]: e.target.value,
+                              }))
+                            : setValue(e.target.value);
 
                         setError((prevState) => ({
                             ...prevState,
