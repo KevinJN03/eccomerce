@@ -2,10 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { useUserDashboardContext } from '../../../context/userContext';
 import Address_Form from './form';
+import { useAuth } from '../../../hooks/useAuth';
 
 function Add_Address({}) {
     const { setAddress } = useUserDashboardContext();
-
+    const { authDispatch } = useAuth();
     const navigate = useNavigate();
     const handleClick = async ({
         firstName,
@@ -27,17 +28,23 @@ function Add_Address({}) {
 
             setTimeout(() => {
                 setAddress(() => result.data.address);
-              
+
                 setLoading(() => false);
                 navigate('/my-account/addresses');
             }, 1500);
         } catch (error) {
+            console.log('error when adding address: ', error);
             setTimeout(() => {
                 setLoading(() => false);
             }, 1500);
+
+            if (error.response.status == 401) {
+                authDispatch({ type: 'LOGOUT' });
+                return navigate('/login');
+            }
+           
             setError(() => error.response.data);
             setDisable(true);
-            console.log('error when adding address: ', error);
         }
     };
 

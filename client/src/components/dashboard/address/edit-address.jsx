@@ -3,17 +3,23 @@ import Input from '../../Login-SignUp/input';
 import ReactCountryFlag from 'react-country-flag';
 import ReactFlagsSelect from 'react-flags-select';
 import Address_Form from './form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useUserDashboardContext } from '../../../context/userContext';
 import sorry_logo from '../../../assets/icons/sorry.png';
 
 import notFound_logo from '../../../assets/icons/not-found.png';
+import axios from '../../../api/axios';
+import { useAuth } from '../../../hooks/useAuth';
 function Edit_Address({}) {
     const [notFound, setNotFound] = useState(false);
     const { id } = useParams();
     const [findAddress, setFindAddress] = useState({});
-    const { address } = useUserDashboardContext();
-    const [loading, setLoading] = useState(true);
+    const { address, setAddress } = useUserDashboardContext();
+    const [loadState, setLoadState] = useState(true);
+
+    const { authDispatch } = useAuth();
+
+    const navigate = useNavigate();
     useEffect(() => {
         debugger;
         if (address.length > 0) {
@@ -30,30 +36,64 @@ function Edit_Address({}) {
 
                 setFindAddress(() => findAddressItem);
                 setTimeout(() => {
-                    setLoading(() => false);
+                    setLoadState(() => false);
                 }, 1200);
             } else {
                 setTimeout(() => {
                     setNotFound(() => true);
-                    setLoading(() => false);
+                    setLoadState(() => false);
                 }, 1200);
             }
         }
     }, [address]);
 
-    const handleClick = ({
-        setDisable,
-        setLoading,
+    const handleClick = async ({
         firstName,
         lastName,
         mobile,
-
         address,
-    }) => {};
+        setError,
+        setDisable,
+        setLoading,
+    }) => {
+        try {
+            setLoading(() => true);
+            const result = await axios.put(`user/address/edit/${id}`, {
+                firstName,
+                lastName,
+                mobile,
+                ...address,
+            });
+
+            setTimeout(() => {
+                setAddress(() => result.data.user.address);
+                setLoading(() => false);
+                navigate('/my-account/addresses');
+            });
+        } catch (error) {
+            setTimeout(() => {
+                setLoading(() => false);
+                if (error.response.status == 404) {
+                    setNotFound(() => true);
+                }
+    
+                if (error.response.status == 401) {
+                    authDispatch({ type: 'LOGOUT' });
+                    return navigate('/login');
+                }
+            }, 1500);
+
+          
+
+            setError(() => error.response.data);
+            setDisable(true);
+            console.log('error when adding address: ', error);
+        }
+    };
 
     return (
         <section className="edit_address">
-            {loading ? (
+            {loadState ? (
                 <div className="flex h-[400px] w-full items-center justify-center">
                     <div className="spinner-circle [--spinner-color:var(--gray-9)]"></div>
                 </div>
