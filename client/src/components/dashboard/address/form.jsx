@@ -7,7 +7,7 @@ function Address_Form({ description, title, handleClick }) {
     const [error, setError] = useState({});
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-
+    const [loading, setLoading] = useState(false);
     const [mobile, setMobile] = useState('');
 
     const [disable, setDisable] = useState(true);
@@ -128,11 +128,22 @@ function Address_Form({ description, title, handleClick }) {
 
                 <button
                     disabled={disable}
-                    onClick={() => handleClick({ ...values, setError, setDisable })}
+                    onClick={() =>
+                        handleClick({
+                            ...values,
+                            setError,
+                            setDisable,
+                            setLoading,
+                        })
+                    }
                     type="button"
-                    className="w-full !bg-primary py-3 font-semibold tracking-wide text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-50"
+                    className=" flex w-full items-center justify-center !bg-primary py-3 font-semibold tracking-wide text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-50"
                 >
-                    SAVE ADDRESS
+                    {loading ? (
+                        <div class="spinner-circle [--spinner-color:var(--gray-9)] spinner-sm"></div>
+                    ) : (
+                        'SAVE ADDRESS'
+                    )}
                 </button>
                 <button
                     disabled={true}

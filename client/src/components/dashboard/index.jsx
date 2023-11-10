@@ -2,13 +2,7 @@ import disableLayout from '../../hooks/disableLayout';
 import Checkout_Header from '../checkout/checkout_header.jsx';
 import '../../CSS/user-dashboard.scss';
 import { useEffect, useReducer, useState } from 'react';
-import {
-    Link,
-    Outlet,
-    useLocation,
-    useNavigate,
-    redirect,
-} from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../admin/components/modal/modal.jsx';
 import signOut_icon from '../../assets/icons/signout-icon.png';
 import { UserDashboardProvider, reducer } from '../../context/userContext.jsx';
@@ -17,6 +11,7 @@ import NavOption from './navOptions.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import axios from '../../api/axios.js';
 import dayjs from 'dayjs';
+import DeleteAddress from './address/deleteAddress.jsx';
 function Dashboard() {
     disableLayout();
     const { pathname } = useLocation();
@@ -33,13 +28,15 @@ function Dashboard() {
             .get('user/userData')
             .then((res) => {
                 setDob(() => dayjs(res.data.user.dob).toISOString());
+
+                setAddress(() => res.data.user.address);
             })
             .catch((error) => {
                 console.log(
                     'error while checking if user is authenticated: ',
                     error
                 );
-                authDispatch({type: 'LOGOUT'});
+                authDispatch({ type: 'LOGOUT' });
                 navigate('/login');
             });
     }, []);
@@ -80,16 +77,24 @@ function Dashboard() {
         setDob,
         lastName,
         setLastName,
+        address,
+        setAddress,
     };
 
     const view = {
         deletePaymentMethod: <DeletePaymentMethod />,
+        deleteAddress: <DeleteAddress />,
     };
 
-    const logout = () => {
-        authDispatch({ type: 'LOGOUT' });
+    const logout = async () => {
+        try {
+            await axios.get('user/logout');
+            authDispatch({ type: 'LOGOUT' });
 
-        navigate('/home');
+            navigate('/home');
+        } catch (error) {
+            console.log('error while loging out: ', error);
+        }
     };
     return (
         <UserDashboardProvider value={value}>

@@ -46,7 +46,7 @@ const UserSchema = new Schema(
       required: 'Interest is required. Please enter your Interest.',
     },
     profileImg: String,
-    address: { type: Schema.Types.Array },
+    address: [{ type: Schema.Types.ObjectId, ref: 'address' }],
     mobile: { type: Schema.Types.String },
   },
   {

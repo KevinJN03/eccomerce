@@ -27,7 +27,6 @@ function Home({}) {
         modalContentDispatch({
             type: 'deletePaymentMethod',
             id,
-            PaymentMethodsDispatch,
         });
         setModalCheck(() => true);
     };
@@ -61,7 +60,7 @@ function Home({}) {
                 </div>
             ) : (
                 <div className="flex h-[400px] w-full items-center justify-center">
-                    <div className="spinner-circle"></div>
+                    <div className="spinner-circle [--spinner-color:var(--gray-9)]"></div>
                 </div>
             )}
         </section>

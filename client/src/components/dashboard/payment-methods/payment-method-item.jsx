@@ -1,4 +1,5 @@
-import delete_icon from '../../../assets/icons/delete-icon.png';
+
+import { DeleteButton } from '../delete-btn';
 
 function PaymentMethodItem({
     icon,
@@ -21,20 +22,11 @@ function PaymentMethodItem({
                         your order.
                     </p>
                 </div>
-                <button
-                    className={`bottom flex w-fit flex-[1.2] cursor-pointer items-center gap-x-2 self-start disabled:opacity-40`}
-                    disabled={isDefault}
-                    onClick={handleDelete}
-                >
-                    <p className="font-bold tracking-widest !text-[var(--grey)]">
-                        DELETE
-                    </p>
-                    <img
-                        src={delete_icon}
-                        alt="bin outline icon with transparent background"
-                        className="h-7 w-7"
-                    />
-                </button>
+
+                <DeleteButton
+                    isDefault={isDefault}
+                    handleDelete={handleDelete}
+                />
             </section>
 
             {isDefault ? (

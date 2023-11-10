@@ -330,7 +330,9 @@ export const getAllUserData = [
   asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.session.passport.user, {
       password: 0,
-    });
+    })
+      .populate('address')
+      .exec();
     res.send({ user });
   }),
 ];
@@ -370,7 +372,42 @@ export const addUserAddress = [
     }
     const userId = req.session.passport.user;
 
-    const address = new Address({ ...req.body });
-    res.status(200).send(address);
+    const address = new Address({ ...req.body, userId });
+
+    const [newAddress, user] = await Promise.all([
+      address.save(),
+      User.findByIdAndUpdate(
+        userId,
+        { $push: { address: address._id } },
+        { runValidators: true, new: true, select: { password: 0 } },
+      )
+        .populate('address')
+        .exec(),
+    ]);
+
+    res.status(200).send({ success: true, address: user.address });
+  }),
+];
+
+export const deleteAddress = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    const userId = req.session.passport.user;
+    const [address, user] = await Promise.all([
+      Address.findByIdAndDelete(id),
+      User.findByIdAndUpdate(
+        userId,
+        { $pull: { address: id } },
+        { runValidators: true, new: true, select: { password: 0 } },
+      )
+        .populate('address')
+        .exec(),
+    ]);
+    console.log({ address: user.address });
+
+    console.log(id);
+    res.status(200).send({ success: true, address: user.address });
   }),
 ];
