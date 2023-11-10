@@ -23,16 +23,13 @@ const UserSchema = new Schema(
     password: { type: String, required: true, minlength: 10 },
     dob: {
       type: Date,
-      required: 'DOB is required. Please enter your first Name.',
+      required: 'DOB is required. Please enter date of birth.',
       // max: '2003-09-09',
       validate: {
         validator(v) {
-          console.log({ v });
-          let today = dayjs();
-          console.log({ today });
+          const today = dayjs();
 
           const difference = today.diff(dayjs(v), 'year');
-          console.log({ difference });
 
           return difference >= 18;
         },

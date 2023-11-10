@@ -3,7 +3,6 @@ import contact_icon from '../../assets/icons/contact.png';
 
 import Input from '../Login-SignUp/input.jsx';
 import { useEffect, useState } from 'react';
-
 import ErrorMessage from '../Login-SignUp/errorMessage.jsx';
 import { DatePicker } from '@mui/x-date-pickers';
 import Interest from '../Login-SignUp/interest.jsx';
@@ -12,10 +11,17 @@ import DobPicker from '../Login-SignUp/dobPicker.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { useUserDashboardContext } from '../../context/userContext.jsx';
 import _ from 'lodash';
+import axios from '../../api/axios.js';
+import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import objectSupport from 'dayjs/plugin/objectSupport';
+dayjs.extend(objectSupport);
+dayjs.extend(utc);
 function Details({}) {
-    const { user, authenticated } = useAuth();
+    const { user, authDispatch } = useAuth();
     const [error, setError] = useState({});
-
+    const navigate = useNavigate();
     const {
         firstName,
         setFirstName,
@@ -58,14 +64,34 @@ function Details({}) {
         console.log({ isSame, onMountValue, newValues });
         if (!isSame) {
             setDisable(false);
-        }else {
-            setDisable(true);  
+        } else {
+            setDisable(true);
         }
     }, [firstName, lastName, email, interest, dob]);
 
     useEffect(() => {
         setFirstName(() => user?.firstName);
     }, []);
+
+    const onSubmit = async () => {
+        try {
+            const result = await axios.put('user/changedetails', {
+                firstName,
+                lastName,
+                email,
+                dob,
+                interest,
+            });
+
+            authDispatch({ type: 'LOGIN', payload: result.data });
+            setDisable(true);
+            return;
+        } catch (error) {
+            console.log('error here: ', error);
+            authDispatch({ type: 'LOGOUT' });
+            navigate('/login');
+        }
+    };
     return (
         <section className="Details bg-white">
             <Header
@@ -108,9 +134,7 @@ function Details({}) {
                 <Interest setInterest={setInterest} interest={interest} />
 
                 <Button
-                    submit={() => {
-                        console.log('submit');
-                    }}
+                    submit={onSubmit}
                     text={'SAVE CHANGES'}
                     error={error}
                     disable={disable}

@@ -9,7 +9,7 @@ function Interest({ setInterest, interest }) {
                         name="interest"
                         id="womenswear"
                         value={'womenswear'}
-                        defaultChecked={interest}
+                        checked={interest === 'womenswear'}
                         onClick={(e) => setInterest(() => e.target.value)}
                     />
                     <label htmlFor="womenswear">Womenswear</label>
@@ -20,7 +20,7 @@ function Interest({ setInterest, interest }) {
                         name="interest"
                         id="menswear"
                         value={'menswear'}
-                        defaultChecked={interest}
+                        checked={interest === 'menswear'}
                         onClick={(e) => setInterest(() => e.target.value)}
                     />
                     <label htmlFor="womenswear">Menswear</label>

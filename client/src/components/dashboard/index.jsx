@@ -25,20 +25,21 @@ function Dashboard() {
     const [firstName, setFirstName] = useState(user?.firstName || '');
     const [lastName, setLastName] = useState(user?.lastName || '');
     const [email, setEmail] = useState(user?.email || '');
-    const [interest, setInterest] = useState(user?.interest || 'womenswear');
+    const [interest, setInterest] = useState(user?.interest);
     const [dob, setDob] = useState('');
     const [address, setAddress] = useState([]);
     useEffect(() => {
         axios
             .get('user/userData')
             .then((res) => {
-                setDob(() => dayjs(res.data.user.dob).format('DD/MM/YYYY'));
+                setDob(() => dayjs(res.data.user.dob).toISOString());
             })
             .catch((error) => {
                 console.log(
                     'error while checking if user is authenticated: ',
                     error
                 );
+                authDispatch({type: 'LOGOUT'});
                 navigate('/login');
             });
     }, []);
@@ -86,14 +87,9 @@ function Dashboard() {
     };
 
     const logout = () => {
-        axios
-            .delete('user/logout')
-            .then(() => {
-                authDispatch({ type: 'LOGOUT' });
+        authDispatch({ type: 'LOGOUT' });
 
-                navigate('/home');
-            })
-            .catch((error) => console.log('error when logout: ', error));
+        navigate('/home');
     };
     return (
         <UserDashboardProvider value={value}>
@@ -112,7 +108,7 @@ function Dashboard() {
                                     <span className="user-name">
                                         Hi,
                                         <span className="block font-gotham text-lg tracking-wider">
-                                            {`${firstName} ${lastName}`}
+                                            {`${user?.firstName} ${user?.lastName}`}
                                         </span>
                                     </span>
                                 </div>

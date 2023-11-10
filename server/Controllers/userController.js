@@ -305,7 +305,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  res
+  return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
 });
@@ -318,6 +318,7 @@ export const logoutUser = asyncHandler((req, res, next) => {
     req.session.destroy();
     return res.status(200).clearCookie('connect.sid').send({
       msg: 'Successfully logout user.',
+      authenticated: false,
     });
   });
 });
@@ -325,7 +326,24 @@ export const logoutUser = asyncHandler((req, res, next) => {
 export const getAllUserData = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.session.passport.user, {password: 0});
+    const user = await User.findById(req.session.passport.user, {
+      password: 0,
+    });
     res.send({ user });
   }),
 ];
+
+export const changeDetails = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const body = req.body;
+
+    const user = await User.findByIdAndUpdate(req.session.passport.user, body, {
+      select: { password: 0 },
+      returnDocument: 'after',
+      runValidators: true,
+    });
+    res.redirect(303, '/user/check');
+  }),
+];
+ 

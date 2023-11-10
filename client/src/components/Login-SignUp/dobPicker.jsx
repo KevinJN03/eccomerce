@@ -8,19 +8,20 @@ function DobPicker({ error, setDob, showDescription, value, setError }) {
             <label htmlFor="dob">DATE OF BIRTH: </label>
             <div className="date-picker">
                 <DatePicker
-                    inputFormat="DD/MM/YYYY"
+                    inputFormat="DD-MM-YYYY"
                     views={['day', 'month', 'year']}
                     slotProps={{
                         textField: { size: 'small', fullWidth: true },
                     }}
                     onChange={(e) => {
-                        setDob(()=> e.format('DD/MM/YYYY'));
+                        setDob(() => e.toISOString());
                         setError((prevState) => ({
                             ...prevState,
                             dob: null,
                         }));
                     }}
-                    defaultValue={dayjs(value)}
+                   defaultValue={dayjs(value)}
+           
                 />
             </div>
 

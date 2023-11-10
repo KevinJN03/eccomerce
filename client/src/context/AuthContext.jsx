@@ -5,10 +5,6 @@ export const AuthContext = createContext();
 
 const authReducer = (state, action) => {
     switch (action.type) {
-        case 'ONMOUNT': {
-            return { ...action.payload };
-        }
-
         case 'LOGIN': {
             localStorage.setItem('user', JSON.stringify(action.payload));
             return { ...action.payload };
