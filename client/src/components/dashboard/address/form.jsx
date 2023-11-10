@@ -1,24 +1,49 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '../../Login-SignUp/input';
 import ReactCountryFlag from 'react-country-flag';
 import ReactFlagsSelect from 'react-flags-select';
-
-function Address_Form({ description, title }) {
+import _ from 'lodash';
+function Address_Form({ description, title, handleClick }) {
     const [error, setError] = useState({});
-    const [firstName, setFistName] = useState('');
+    const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [mobile, setMobile] = useState('');
-    const [dob, setDob] = useState('');
-    const [select, setSelect] = useState('GB');
 
-    const [address, setAddress] = useState({});
-    const onSelect = (code) => setSelect(() => code);
+    const [mobile, setMobile] = useState('');
+
+    const [disable, setDisable] = useState(true);
+    const [address, setAddress] = useState({ country: 'GB' });
+    const onSelect = (code) =>
+        setAddress((prevState) => ({ ...prevState, country: code }));
     const options = {
         error,
         setError,
         asterisk: false,
     };
+    const [onMount, setOnMount] = useState({
+        firstName,
+        lastName,
+        mobile,
+
+        address,
+    });
+
+    const values = {
+        firstName,
+        lastName,
+        mobile,
+
+        address,
+    };
+    useEffect(() => {
+        setDisable(false);
+
+        const isObjectSame = _.isEqual(onMount, values);
+        if (isObjectSame) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+    }, [firstName, address, lastName, mobile]);
     return (
         <section className=" bg-white p-4">
             <h2 className="mb-2 text-xl font-bold">{title}</h2>
@@ -26,7 +51,7 @@ function Address_Form({ description, title }) {
             <div className="mt-5 w-4/6 bg-white">
                 <Input
                     value={firstName}
-                    setValue={setFistName}
+                    setValue={setFirstName}
                     property={'firstName'}
                     label={'FIRST NAME'}
                     {...options}
@@ -50,7 +75,7 @@ function Address_Form({ description, title }) {
                     <label>COUNTRY: </label>
                     <div className=" flex flex-row items-center justify-start gap-x-4">
                         <ReactCountryFlag
-                            countryCode={select}
+                            countryCode={address.country}
                             svg
                             style={{
                                 width: '3em',
@@ -61,7 +86,7 @@ function Address_Form({ description, title }) {
                         />
 
                         <ReactFlagsSelect
-                            selected={select}
+                            selected={address.country}
                             onSelect={onSelect}
                             selectedSize={14}
                             className="!w-full"
@@ -69,13 +94,15 @@ function Address_Form({ description, title }) {
                     </div>
                 </section>
                 <Input
-                    value={address?.line1}
+                    manyProperty={true}
+                    value={address?.address_1}
                     setValue={setAddress}
-                    property={'line1'}
+                    property={'address_1'}
                     label={'ADDRESS'}
                     {...options}
                 />
                 <Input
+                    manyProperty={true}
                     value={address?.city}
                     setValue={setAddress}
                     property={'city'}
@@ -83,6 +110,7 @@ function Address_Form({ description, title }) {
                     {...options}
                 />
                 <Input
+                    manyProperty={true}
                     value={address?.county}
                     setValue={setAddress}
                     property={'county'}
@@ -90,6 +118,7 @@ function Address_Form({ description, title }) {
                     {...options}
                 />
                 <Input
+                    manyProperty={true}
                     value={address?.postCode}
                     setValue={setAddress}
                     property={'postCode'}
@@ -98,7 +127,8 @@ function Address_Form({ description, title }) {
                 />
 
                 <button
-                    disabled={true}
+                    disabled={disable}
+                    onClick={() => handleClick({ ...values, setError, setDisable })}
                     type="button"
                     className="w-full !bg-primary py-3 font-semibold tracking-wide text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-50"
                 >

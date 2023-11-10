@@ -13,6 +13,8 @@ import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
 import passport from '../utils/passport.js';
 import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
+import Address from '../Models/address.js';
+
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -346,4 +348,29 @@ export const changeDetails = [
     res.redirect(303, '/user/check');
   }),
 ];
- 
+
+export const addUserAddress = [
+  checkAuthenticated,
+  check('firstName', 'Please enter a name').trim().escape().notEmpty(),
+  check('lastName', 'Please enter a name').trim().escape().notEmpty(),
+  check('mobile', 'Please enter a mobile number').trim().escape().notEmpty(),
+  check('address_1', 'Please enter a address').trim().escape().notEmpty(),
+  check('city', 'Please enter a city').trim().escape().notEmpty(),
+  check('postCode', 'Please enter a postcode').trim().escape().notEmpty(),
+  check('county', 'Please enter a postcode').trim().escape().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      const newResult = {};
+      result.errors.forEach(({ path, msg }) => {
+        newResult[path] = msg;
+      });
+      return res.status(400).send(newResult);
+    }
+    const userId = req.session.passport.user;
+
+    const address = new Address({ ...req.body });
+    res.status(200).send(address);
+  }),
+];

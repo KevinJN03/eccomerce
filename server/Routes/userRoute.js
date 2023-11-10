@@ -8,6 +8,7 @@ import {
   logoutUser,
   getAllUserData,
   changeDetails,
+  addUserAddress,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -22,6 +23,7 @@ router.get('/logout', logoutUser);
 router.post('/signup', signUp_user);
 router.get('/check', checkUser);
 router.get('/userData', getAllUserData);
+router.post('/address/add', addUserAddress);
 
 router.put('/changedetails', changeDetails);
 export default router;
