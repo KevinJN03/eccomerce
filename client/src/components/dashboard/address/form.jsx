@@ -3,15 +3,15 @@ import Input from '../../Login-SignUp/input';
 import ReactCountryFlag from 'react-country-flag';
 import ReactFlagsSelect from 'react-flags-select';
 import _ from 'lodash';
-function Address_Form({ description, title, handleClick }) {
+function Address_Form({ description, title, handleClick, customer }) {
     const [error, setError] = useState({});
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [firstName, setFirstName] = useState(customer?.firstName || '');
+    const [lastName, setLastName] = useState(customer?.lastName || '');
     const [loading, setLoading] = useState(false);
-    const [mobile, setMobile] = useState('');
+    const [mobile, setMobile] = useState(customer?.mobile || '');
 
     const [disable, setDisable] = useState(true);
-    const [address, setAddress] = useState({ country: 'GB' });
+    const [address, setAddress] = useState(customer?.address || { country: 'GB' });
     const onSelect = (code) =>
         setAddress((prevState) => ({ ...prevState, country: code }));
     const options = {

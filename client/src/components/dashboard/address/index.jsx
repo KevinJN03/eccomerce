@@ -12,6 +12,7 @@ import EditButton from '../edit-btn';
 
 function Index({}) {
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     const { address, setModalCheck, modalContentDispatch } =
         useUserDashboardContext();
 
@@ -30,8 +31,11 @@ function Index({}) {
         setModalCheck(() => true);
     };
 
-    const handleEdit = () => {};
-    const navigate = useNavigate();
+    const handleEdit = (id) => {
+navigate(`edit/${id}`)
+     
+    };
+    
     return (
         <>
             <Header
@@ -61,7 +65,7 @@ function Index({}) {
                                         />
                                     </div>
                                     <div className="right flex flex-col gap-y-4">
-                                        <EditButton handleEdit={handleEdit} />
+                                        <EditButton handleEdit={() => handleEdit(addressItem._id)} />
 
                                         <DeleteButton
                                             handleDelete={() =>
