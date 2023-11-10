@@ -3,12 +3,16 @@ import dashboard_icon from '../../../../assets/icons/profile-icons/dashboard.png
 import return_icon from '../../../../assets/icons/profile-icons/delivery-status.png';
 import info_icon from '../../../../assets/icons/profile-icons/info.png';
 import order_icon from '../../../../assets/icons/profile-icons/package.png';
+import { useAuth } from '../../../../hooks/useAuth';
 import Dropdown_Option from './dropdown_option';
 function Profile_Dropdown({}) {
+    const { user, authenticated } = useAuth();
     return (
         <section id="profile_dropdown" className="m-0">
             <div className="signin-signup-btn-container bg-slate-300">
-                <a
+               {!authenticated ? 
+               <>
+               <a
                     href="/login"
                     type="button"
                     className="profile_dropdown-btn bg-white text-black"
@@ -22,6 +26,11 @@ function Profile_Dropdown({}) {
                 >
                     Sign Up
                 </a>
+               </> : 
+               <span className='flex gap-x-3'>
+                <p className='font-semibold text-base'>Hi, {user?.firstName}</p>
+                <button className='underline hover:text-blue-600 text-sm'>Sign out</button>
+                </span>}
             </div>
             <Dropdown_Option
                 option={{ src: dashboard_icon, text: 'Dashboard' }}

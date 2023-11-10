@@ -2,27 +2,70 @@ import Header from './header';
 import contact_icon from '../../assets/icons/contact.png';
 
 import Input from '../Login-SignUp/input.jsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ErrorMessage from '../Login-SignUp/errorMessage.jsx';
 import { DatePicker } from '@mui/x-date-pickers';
-import Interest from '../Login-SignUp/intrest.jsx';
+import Interest from '../Login-SignUp/interest.jsx';
 import Button from '../Login-SignUp/button.jsx';
 import DobPicker from '../Login-SignUp/dobPicker.jsx';
+import { useAuth } from '../../hooks/useAuth.jsx';
+import { useUserDashboardContext } from '../../context/userContext.jsx';
+import _ from 'lodash';
 function Details({}) {
+    const { user, authenticated } = useAuth();
     const [error, setError] = useState({});
-    const [firstName, setFistName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [interest, setInterest] = useState('womenswear');
-    const [dob, setDob] = useState('');
 
-    const [disable, setDisble] = useState(true);
+    const {
+        firstName,
+        setFirstName,
+        lastName,
+        setLastName,
+        email,
+        setEmail,
+        interest,
+        setInterest,
+        dob,
+        setDob,
+    } = useUserDashboardContext();
+
+    const [onMountValue, setOnMountValue] = useState({
+        firstName,
+        lastName,
+        email,
+        interest,
+        dob,
+    });
+    // const [lastName, setLastName] = useState(user?.lastName || '');
+
+    const [disable, setDisable] = useState(true);
     const options = {
         error,
         setError,
         asterisk: true,
     };
+
+    useEffect(() => {
+        const newValues = {
+            firstName,
+            lastName,
+            email,
+            interest,
+            dob,
+        };
+
+        const isSame = _.isEqual(onMountValue, newValues);
+        console.log({ isSame, onMountValue, newValues });
+        if (!isSame) {
+            setDisable(false);
+        }else {
+            setDisable(true);  
+        }
+    }, [firstName, lastName, email, interest, dob]);
+
+    useEffect(() => {
+        setFirstName(() => user?.firstName);
+    }, []);
     return (
         <section className="Details bg-white">
             <Header
@@ -35,7 +78,7 @@ function Details({}) {
             <div className="w-4/6 bg-white px-4 pb-4">
                 <Input
                     value={firstName}
-                    setValue={setFistName}
+                    setValue={setFirstName}
                     property={'firstName'}
                     label={'FIRST NAME'}
                     {...options}
@@ -57,11 +100,12 @@ function Details({}) {
                 <DobPicker
                     showDescription={false}
                     error={error}
+                    value={dob}
                     setError={setError}
                     setDob={setDob}
                 />
 
-                <Interest setInterest={setInterest} />
+                <Interest setInterest={setInterest} interest={interest} />
 
                 <Button
                     submit={() => {

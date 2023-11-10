@@ -53,7 +53,7 @@ export const navOptionsArray = [
     ],
 ];
 
-export default function NavOption({ selectOption, setSelectionOption }) {
+export default function NavOption({ selectOption }) {
     return (
         <>
             {' '}

@@ -12,6 +12,7 @@ import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
 import passport from '../utils/passport.js';
+import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -320,3 +321,11 @@ export const logoutUser = asyncHandler((req, res, next) => {
     });
   });
 });
+
+export const getAllUserData = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.session.passport.user, {password: 0});
+    res.send({ user });
+  }),
+];

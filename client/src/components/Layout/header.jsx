@@ -1,5 +1,5 @@
 import logo from '../../assets/glamo.png';
-import '../../CSS/App.css'
+import '../../CSS/App.css';
 import basket from '../../assets/basket.png';
 import profile from '../../assets/profile.png';
 import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
@@ -27,7 +27,7 @@ function Header() {
         console.log(e);
     };
 
-    const {cart} = useCart()
+    const { cart } = useCart();
 
     return (
         <section className="header-section flex w-full max-w-full flex-col justify-center">
@@ -76,18 +76,21 @@ function Header() {
                     </section>
 
                     <section className="header-middle">
-                       <Search/>
+                        <Search />
                     </section>
 
                     <section className="header-right h-full">
-                        <a href="/login">
-                            <Dropdown_Hover
-                                button={profile}
-                                dropdown_options={<Profile_Dropdown />}
-                            />
-                        </a>
+                        {/* <a href="/login"> */}
+                        <Dropdown_Hover
+                            button={profile}
+                            dropdown_options={<Profile_Dropdown />}
+                        />
+                        {/* </a> */}
 
-                        <a href="/wishlist" className="header-icons !cursor-pointer">
+                        <a
+                            href="/wishlist"
+                            className="header-icons !cursor-pointer"
+                        >
                             <FavoriteBorderSharpIcon className="img-icon !cursor-not-allowed" />
                         </a>
 
@@ -97,7 +100,11 @@ function Header() {
                                 fontSize="large"
                             />
 
-                           { cart.length > 0 && <span className='bg-white absolute h-0 w-0 p-[10px] flex items-center justify-center rounded-full bottom-[-8px] right-[-3px] text-s font-medium'>{cart.length}</span>}
+                            {cart.length > 0 && (
+                                <span className="absolute bottom-[-8px] right-[-3px] flex h-0 w-0 items-center justify-center rounded-full bg-white p-[10px] text-s font-medium">
+                                    {cart.length}
+                                </span>
+                            )}
                         </Link>
                     </section>
                 </header>
