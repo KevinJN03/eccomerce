@@ -24,7 +24,7 @@ function Add_Address({}) {
                 lastName,
                 mobile,
                 ...address,
-            });
+            });   
 
             setTimeout(() => {
                 setAddress(() => result.data.address);
@@ -36,15 +36,14 @@ function Add_Address({}) {
             console.log('error when adding address: ', error);
             setTimeout(() => {
                 setLoading(() => false);
-            }, 1500);
+                if (error.response.status == 401) {
+                    authDispatch({ type: 'LOGOUT' });
+                    return navigate('/login');
+                }
 
-            if (error.response.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                return navigate('/login');
-            }
-           
-            setError(() => error.response.data);
-            setDisable(true);
+                setError(() => error.response.data);
+                setDisable(true);
+            }, 1500);
         }
     };
 
