@@ -7,11 +7,14 @@ import axios from '../../../api/axios';
 import _ from 'lodash';
 import Alert_Item from './alert.item.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import { useAuth } from '../../../hooks/useAuth.jsx';
+import { useNavigate } from 'react-router-dom';
 function Contact_Preferences({}) {
     const { contact_preference, setContactPreference } =
         useUserDashboardContext();
 
     const [loading, setLoading] = useState(false);
+    const [confirmLoadState, setConfirmLoadState] = useState(false);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [discountCheck, setDiscountCheck] = useState(
         contact_preference?.discount_newDrops || {
@@ -27,6 +30,9 @@ function Contact_Preferences({}) {
         stockCheck,
     });
     const [disable, setDisable] = useState(true);
+
+    const { authDispatch } = useAuth();
+    const navigate = useNavigate();
     useEffect(() => {
         const newValue = {
             stockCheck,
@@ -62,7 +68,7 @@ function Contact_Preferences({}) {
     };
 
     const onConfirm = () => {
-        setLoading(() => true);
+        setConfirmLoadState(() => true);
         const data = {
             discount_newDrops: discountCheck,
             stockAlert: stockCheck,
@@ -76,16 +82,22 @@ function Contact_Preferences({}) {
                         return { stockCheck, discountCheck };
                     });
                     setDisable(() => true);
-                    setLoading(() => false);
+                    setConfirmLoadState(() => false);
                 }, 700);
             })
-            .catch((error) => console.log('error at preferences: ', error));
+            .catch((error) => {
+                if (error.response.status == 401) {
+                    authDispatch({ type: 'LOGOUT' });
+                    return navigate('/login');
+                }
+                console.log('error at preferences: ', error);
+            });
     };
     return (
         <section className="contact_preferences">
             <Header text={'CONTACT PREFERENCES'} icon={chat_icon} />
             <section className="relative mt-2 bg-white p-4">
-                {loading && (
+                {confirmLoadState && (
                     <div class="spinner-circle spinner-lg absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%]  [--spinner-color:var(--slate-12)]"></div>
                 )}
                 <div className="top mb-8 ">

@@ -14,8 +14,8 @@ import card_icon from '../../assets/icons/credit-card.png';
 import duplicate_icon from '../../assets/icons/duplicate.png';
 import coming_soon_icon from '../../assets/icons/coming-soon.png';
 import giftCard_icon from '../../assets/icons/gift-card.png';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import { easeInOut, motion } from 'framer-motion';
 export const navOptionsArray = [
     [{ text: 'Account overview', icon: person_icon, link: 'my-account' }],
     [
@@ -53,49 +53,82 @@ export const navOptionsArray = [
     ],
 ];
 
-export default function NavOption({ selectOption }) {
+export const variants = {
+    initial: {
+        opacity: 0.5,
+    },
+    animate: {
+        opacity: 1,
+
+        transition: { ease: 'easeInOut', duration: 0.6 },
+    },
+};
+export default function NavOption({ selectOption, loadingState }) {
+    const navigate = useNavigate();
     return (
         <>
-            {' '}
-            {navOptionsArray.map((options) => {
+            {navOptionsArray.map((options, index) => {
                 return (
-                    <div className="!m-0 !p-0">
+                    <motion.div className="!m-0 !p-0" key={index}>
                         {options.map(({ text, icon, link }, idx) => {
                             return (
-                                <Link
-                                    to={
-                                        link == 'my-account'
-                                            ? `/${link}`
-                                            : link && `/my-account/${link}`
+                                <button
+                                    disabled={loadingState}
+                                    onClick={() =>
+                                        navigate(
+                                            link == 'my-account'
+                                                ? `/${link}`
+                                                : link && `/my-account/${link}`
+                                        )
                                     }
-                                    className={`no-wrap relative flex  h-14 flex-row items-center bg-white px-3 ${
-                                        selectOption == link ? 'active-btn' : ''
+                                    className={`no-wrap relative flex  h-14 w-full flex-row items-center bg-white px-3 ${
+                                        selectOption == link && !loadingState
+                                            ? 'active-btn'
+                                            : ''
                                     }`}
                                 >
-                                    <img
-                                        className="mr-6 h-9 w-9"
-                                        src={icon}
-                                        alt={
-                                            text.replaceAll(' ', '-') + '-icon'
-                                        }
-                                    />
-                                    <p
-                                        className={`justify-left flex h-full w-full items-center text-s font-light underline-offset-2 hover:underline ${
+                                    <motion.div className="mr-6 h-full max-h-9 w-full max-w-[36px]">
+                                        {loadingState ? (
+                                            <motion.div className=" skeleton-pulse min-h-full min-w-full rounded-[50%] p-0 "></motion.div>
+                                        ) : (
+                                            <motion.img
+                                                key={loadingState}
+                                                variants={variants}
+                                                animate={'animate'}
+                                                initial={'initial'}
+                                                className="mr-6 h-9 w-9"
+                                                src={icon}
+                                                alt={
+                                                    text.replaceAll(' ', '-') +
+                                                    '-icon'
+                                                }
+                                            />
+                                        )}
+                                    </motion.div>
+
+                                    <div
+                                        className={`justify-left Item.text-s flex h-full max-h-9 w-full items-center font-light underline-offset-2 hover:underline ${
                                             options.length - 1 != idx &&
                                             'border-b-[1px]'
                                         }`}
                                     >
-                                        {text}
-                                    </p>
-
-                                    <img
-                                        src={coming_soon_icon}
-                                        className="h-9 w-9"
-                                    />
-                                </Link>
+                                        {loadingState ? (
+                                            <div className=" skeleton-pulse min-h-full min-w-full p-0 "></div>
+                                        ) : (
+                                            <motion.p
+                                                key={loadingState}
+                                                variants={variants}
+                                                animate={'animate'}
+                                                initial={'initial'}
+                                            >
+                                                {text}{' '}
+                                            </motion.p>
+                                        )}
+                                    </div>
+                                </button>
                             );
                         })}
-                    </div>
+                    </motion.div>
                 );
             })}
         </>
