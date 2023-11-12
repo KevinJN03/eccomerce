@@ -63,6 +63,12 @@ navigate(`edit/${id}`)
                                             customer={addressItem}
                                             elementClass={'text-base'}
                                         />
+                                        {
+                                            idx == 0 && <div className='mt-3 flex gap-y-3 flex-col'>
+                                                <p>This is your default delivery address</p>
+                                                <p>This is your default billing address</p>
+                                                </div>
+                                        }
                                     </div>
                                     <div className="right flex flex-col gap-y-4">
                                         <EditButton handleEdit={() => handleEdit(addressItem._id)} />

@@ -17,7 +17,7 @@ function Home({}) {
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
     useEffect(() => {
-        setLoading(true);
+        // setLoading(true);
         setTimeout(() => {
             setLoading(false);
         }, 1000);

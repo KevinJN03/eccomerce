@@ -10,30 +10,6 @@ function Customer_Info({ className, customer, elementClass }) {
     const [city, setCity] = useState(customer?.city|| '');
     const [mobile, setMobile] = useState(customer?.mobile|| '');
 
-    // useEffect(() => {
-    //     if (customer) {
-    //         const {
-    //             firstName,
-    //             lastName,
-    //             city,
-    //             county,
-    //             address1,
-    //             address2,
-    //             postCode,
-    //             mobile,
-    //         } = customer;
-
-    //         setFirstName(firstName);
-    //         setLastName(lastName);
-    //         setAddress1(address1);
-    //         setAddress2(address2);
-    //         setCounty(county);
-    //         setPostCode(postCode);
-    //         setCity(city);
-    //         setMobile(mobile);
-    //     }
-    // }, []);
-
     return (
         <div id="customer-info" className={className ? className : null}>
             <p  className={elementClass}>{`${firstName} ${lastName}`}</p>

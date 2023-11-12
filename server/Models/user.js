@@ -48,6 +48,15 @@ const UserSchema = new Schema(
     profileImg: String,
     address: [{ type: Schema.Types.ObjectId, ref: 'address' }],
     mobile: { type: Schema.Types.String },
+    contact_preferences: {
+      discount_newDrops: {
+        email: { type: Schema.Types.Boolean, default: false },
+        text: { type: Schema.Types.Boolean, default: false },
+      },
+      stockAlert: {
+        email: { type: Schema.Types.Boolean, default: false },
+      },
+    },
   },
   {
     toJSON: { virtuals: true },
