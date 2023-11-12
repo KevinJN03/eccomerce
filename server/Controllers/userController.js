@@ -14,6 +14,8 @@ import dayjs from 'dayjs';
 import passport from '../utils/passport.js';
 import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import Address from '../Models/address.js';
+import addressValidator from '../utils/addressValidator.js';
+import errorRegenerator from '../utils/errorRegenerator.js';
 
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
@@ -353,21 +355,12 @@ export const changeDetails = [
 
 export const addUserAddress = [
   checkAuthenticated,
-  check('firstName', 'Please enter a name').trim().escape().notEmpty(),
-  check('lastName', 'Please enter a name').trim().escape().notEmpty(),
-  check('mobile', 'Please enter a mobile number').trim().escape().notEmpty(),
-  check('address_1', 'Please enter a address').trim().escape().notEmpty(),
-  check('city', 'Please enter a city').trim().escape().notEmpty(),
-  check('postCode', 'Please enter a postcode').trim().escape().notEmpty(),
-  check('county', 'Please enter a postcode').trim().escape().notEmpty(),
+  addressValidator,
   asyncHandler(async (req, res, next) => {
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
-      const newResult = {};
-      result.errors.forEach(({ path, msg }) => {
-        newResult[path] = msg;
-      });
+      const newResult = errorRegenerator(result);
       return res.status(400).send(newResult);
     }
     const userId = req.session.passport.user;
@@ -409,5 +402,55 @@ export const deleteAddress = [
 
     console.log(id);
     res.status(200).send({ success: true, address: user.address });
+  }),
+];
+
+export const editAddress = [
+  checkAuthenticated,
+  addressValidator,
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    const { id } = req.params;
+    if (!result.isEmpty()) {
+      const newResult = errorRegenerator(result);
+      console.log(newResult);
+      return res.status(400).send(newResult);
+    }
+
+    const user = await User.findById(req.session.passport.user, { address: 1 });
+
+    const isUserAddress = user.address.some((item) => {
+      return item.toString() == id;
+    });
+
+    if (!isUserAddress) {
+      return res.status(404).send({ notFound: true });
+    }
+
+    if (isUserAddress) {
+      await Address.findByIdAndUpdate(id, { ...req.body }, { new: true });
+      return res.redirect(303, '/user/userData');
+    }
+  }),
+];
+
+export const updatePreferences = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        contact_preferences: req.body,
+      },
+      { new: true, upsert: true },
+    );
+
+    console.log({ user });
+    res
+      .status(200)
+      .send({ msg: 'User contact preferences successfully updates' });
   }),
 ];

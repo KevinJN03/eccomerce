@@ -33,7 +33,7 @@ import Returns from './components/dashboard/returns';
 import Details from './components/dashboard/details';
 import Addresses from './components/dashboard/address/addresses.jsx';
 import Payment_Methods from './components/dashboard/payment-methods/payment-methods.jsx';
-import Contact_Preferences from './components/dashboard/contact-preferences.jsx';
+import Contact_Preferences from './components/dashboard/contact-preferences/contact-preferences.jsx';
 import Socials from './components/dashboard/socials.jsx';
 
 import GiftCard_Home from './components/dashboard/gift-card-voucher/gift-card-and-voucher.jsx';

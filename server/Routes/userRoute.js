@@ -10,6 +10,8 @@ import {
   changeDetails,
   addUserAddress,
   deleteAddress,
+  editAddress,
+  updatePreferences,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -25,6 +27,9 @@ router.post('/signup', signUp_user);
 router.get('/check', checkUser);
 router.get('/userData', getAllUserData);
 router.post('/address/add', addUserAddress);
+router.put('/address/edit/:id', editAddress);
 router.delete('/address/delete/:id', deleteAddress);
 router.put('/changedetails', changeDetails);
+router.put('/changepreferences', updatePreferences);
+
 export default router;

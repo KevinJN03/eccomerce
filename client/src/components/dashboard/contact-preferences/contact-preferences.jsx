@@ -1,84 +1,51 @@
-import Header from './header';
-import chat_icon from '../../assets/icons/profile-icons/chat.png';
-import discount_icon from '../../assets/icons/discount.png';
-import alert_icon from '../../assets/icons/alert.png';
+import Header from '../header.jsx';
+import chat_icon from '../../../assets/icons/profile-icons/chat.png';
+import discount_icon from '../../../assets/icons/discount.png';
+import alert_icon from '../../../assets/icons/alert.png';
 import { useEffect, useState } from 'react';
-import { property } from 'lodash';
-
-const Input = ({ check, setCheck, text, property }) => {
-    return (
-        <div className="flex flex-row gap-x-2">
-            <input
-                type="checkbox"
-                checked={check[property]}
-                onChange={() =>
-                    setCheck((prevState) => ({
-                        ...prevState,
-                        [property]: !prevState[property],
-                    }))
-                }
-                className="daisy-checkbox  rounded-none border-[1px] border-black"
-            />
-            <p className="text-sm">{text}</p>
-        </div>
-    );
-};
-
-function Alert_Item({
-    icon,
-    title,
-    description,
-    textMessage,
-    check,
-    setCheck,
-}) {
-    return (
-        <section className="alert-item mb-3 ml-[-24px] flex h-36 flex-row border-t-2">
-            <div className="left flex flex-[1.5] items-center justify-center bg-[var(--light-grey)]">
-                <img
-                    src={icon}
-                    alt=""
-                    className="h-16 w-16 rounded-full bg-white p-2"
-                />
-            </div>
-            <div className="middle !m-0 flex h-full flex-[4] flex-col gap-y-3 px-3 py-4">
-                <h3 className="font-bold tracking-wide">{title}</h3>
-                <p className="text-sm">{description}</p>
-            </div>
-            <div className="right flex h-full flex-1 flex-col gap-y-6 py-4 ">
-                <Input
-                    text={'Email'}
-                    check={check}
-                    setCheck={setCheck}
-                    property={'email'}
-                />
-                {textMessage && (
-                    <Input
-                        text={'Text'}
-                        check={check}
-                        setCheck={setCheck}
-                        property={'text'}
-                    />
-                )}
-            </div>
-        </section>
-    );
-}
+import axios from '../../../api/axios';
+import _ from 'lodash';
+import Alert_Item from './alert.item.jsx';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 function Contact_Preferences({}) {
+    const { contact_preference, setContactPreference } =
+        useUserDashboardContext();
+
+    const [loading, setLoading] = useState(false);
     const [isAllSelected, setIsAllSelected] = useState(false);
-    const [discountCheck, setDiscountCheck] = useState({
-        email: false,
-        text: false,
+    const [discountCheck, setDiscountCheck] = useState(
+        contact_preference?.discount_newDrops || {
+            email: false,
+            text: false,
+        }
+    );
+    const [stockCheck, setStockCheck] = useState(
+        contact_preference?.stockAlert || { email: false }
+    );
+    const [onMountValue, setOnMountValue] = useState({
+        discountCheck,
+        stockCheck,
     });
-    const [stockCheck, setStockCheck] = useState({ text: false });
+    const [disable, setDisable] = useState(true);
     useEffect(() => {
+        const newValue = {
+            stockCheck,
+            discountCheck,
+        };
+
+        const isObjectSame = _.isEqual(newValue, onMountValue);
+
+        if (isObjectSame) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+
         if (
             stockCheck.email === discountCheck.email &&
             stockCheck.email === discountCheck.text
         ) {
             setIsAllSelected(() => stockCheck.email);
-
-            console.log('all selected');
         } else {
             setIsAllSelected(() => false);
         }
@@ -94,10 +61,33 @@ function Contact_Preferences({}) {
         setStockCheck((prevState) => ({ ...prevState, email: value }));
     };
 
+    const onConfirm = () => {
+        setLoading(() => true);
+        const data = {
+            discount_newDrops: discountCheck,
+            stockAlert: stockCheck,
+        };
+        axios
+            .put('user/changepreferences', data)
+            .then(() => {
+                setContactPreference(() => data);
+                setTimeout(() => {
+                    setOnMountValue(() => {
+                        return { stockCheck, discountCheck };
+                    });
+                    setDisable(() => true);
+                    setLoading(() => false);
+                }, 700);
+            })
+            .catch((error) => console.log('error at preferences: ', error));
+    };
     return (
         <section className="contact_preferences">
             <Header text={'CONTACT PREFERENCES'} icon={chat_icon} />
-            <section className="mt-2 bg-white p-4">
+            <section className="relative mt-2 bg-white p-4">
+                {loading && (
+                    <div class="spinner-circle spinner-lg absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%]  [--spinner-color:var(--slate-12)]"></div>
+                )}
                 <div className="top mb-8 ">
                     <h2 className="mb-3 text-lg font-bold tracking-wide">
                         CONTENT TYPES
@@ -146,7 +136,8 @@ function Contact_Preferences({}) {
                     take effect.
                 </p>
                 <button
-                    disabled={true}
+                    onClick={onConfirm}
+                    disabled={disable}
                     className="!bg-primary px-14 py-[12px] font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-40"
                 >
                     CONFIRM PREFERENCES

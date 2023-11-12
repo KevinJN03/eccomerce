@@ -23,12 +23,14 @@ function Dashboard() {
     const [interest, setInterest] = useState(user?.interest);
     const [dob, setDob] = useState('');
     const [address, setAddress] = useState([]);
+
+    const [contact_preference, setContactPreference] = useState({});
     useEffect(() => {
         axios
             .get('user/userData')
             .then((res) => {
                 setDob(() => dayjs(res.data.user.dob).toISOString());
-
+                setContactPreference(() => res.data.user.contact_preferences);
                 setAddress(() => res.data.user.address);
             })
             .catch((error) => {
@@ -79,6 +81,7 @@ function Dashboard() {
         setLastName,
         address,
         setAddress,
+        contact_preference, setContactPreference
     };
 
     const view = {
