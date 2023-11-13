@@ -27,6 +27,8 @@ function Dashboard() {
     const [address, setAddress] = useState([]);
     const [loadingState, setLoadingState] = useState(true);
     const [contact_preference, setContactPreference] = useState({});
+
+    const [defaultAddresses, setDefaultAddresses] = useState({});
     useEffect(() => {
         axios
             .get('user/userData')
@@ -37,6 +39,8 @@ function Dashboard() {
                 setTimeout(() => {
                     setLoadingState(false);
                 }, 1000);
+
+                setDefaultAddresses(() => res.data.user?.default_address);
             })
             .catch((error) => {
                 console.log(
@@ -89,6 +93,8 @@ function Dashboard() {
         contact_preference,
         setContactPreference,
         loadingState,
+        defaultAddresses,
+        setDefaultAddresses,
     };
 
     const view = {

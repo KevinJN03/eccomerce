@@ -9,11 +9,12 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useUserDashboardContext } from '../../../context/userContext';
 import { DeleteButton } from '../delete-btn';
 import EditButton from '../edit-btn';
+import Address_Item from './addressItem';
 
 function Index({}) {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const { address, setModalCheck, modalContentDispatch } =
+    const { address, setModalCheck, modalContentDispatch, defaultAddresses, } =
         useUserDashboardContext();
 
     useEffect(() => {
@@ -32,10 +33,9 @@ function Index({}) {
     };
 
     const handleEdit = (id) => {
-navigate(`edit/${id}`)
-     
+        navigate(`edit/${id}`);
     };
-    
+
     return (
         <>
             <Header
@@ -46,41 +46,41 @@ navigate(`edit/${id}`)
             />
             {loading ? (
                 <div className="flex h-[400px] w-full items-center justify-center">
-                    <div class="spinner-circle [--spinner-color:var(--gray-9)] "></div>
+                    <div className="spinner-circle [--spinner-color:var(--gray-9)] "></div>
                 </div>
             ) : (
                 <>
-                {console.log('address before', address)}
-                    {address &&
-                        address?.map((addressItem, idx) => {
-                            return (
-                                <section
-                                    key={addressItem._id}
-                                    className="mt-2 flex flex-row justify-between bg-white px-4 py-8"
-                                >
-                                    <div className="left">
-                                        <Customer_Info
-                                            customer={addressItem}
-                                            elementClass={'text-base'}
-                                        />
-                                        {
-                                            idx == 0 && <div className='mt-3 flex gap-y-3 flex-col'>
-                                                <p>This is your default delivery address</p>
-                                                <p>This is your default billing address</p>
-                                                </div>
-                                        }
-                                    </div>
-                                    <div className="right flex flex-col gap-y-4">
-                                        <EditButton handleEdit={() => handleEdit(addressItem._id)} />
+                    {address
+                        .sort((a, b) => {
+                            console.log('addressId: ', a._id);
+                            if (a._id == defaultAddresses?.shipping_address) {
+                                return -1;
+                            } else if (
+                                b._id == defaultAddresses?.shipping_address
+                            ) {
+                                return +1;
+                            }
 
-                                        <DeleteButton
-                                            handleDelete={() =>
-                                                handleDelete(addressItem._id)
-                                            }
-                                            isDefault={idx == 0}
-                                        />
-                                    </div>
-                                </section>
+                            return 0;
+                        })
+                        .map((addressItem, idx) => {
+                            return (
+                                <Address_Item
+                                    setLoading={setLoading}
+                                    isDefaultShippingAddress={
+                                        defaultAddresses?.shipping_address ==
+                                        addressItem._id
+                                    }
+                                    isDefaultBillingAddress={
+                                        defaultAddresses?.billing_address ==
+                                        addressItem._id
+                                    }
+                                    key={addressItem._id}
+                                    handleDelete={handleDelete}
+                                    handleEdit={handleEdit}
+                                    addressItem={addressItem}
+                                    idx={idx}
+                                />
                             );
                         })}
                 </>
