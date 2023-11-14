@@ -1,4 +1,3 @@
-
 import { DeleteButton } from '../delete-btn';
 
 function PaymentMethodItem({
@@ -6,9 +5,13 @@ function PaymentMethodItem({
     isDefault,
     method,
     handleDefault,
-
     handleDelete,
+    logo
 }) {
+    const requirements = {
+        klarna: 'You may be required to enter further personal details at checkout.',
+        paypal: "You'll need to enter your login details when you place your order.",
+    };
     return (
         <section className="flex flex-col  bg-white p-4">
             <section className="mb-3 flex flex-row">
@@ -17,16 +20,10 @@ function PaymentMethodItem({
                 </div>
                 <div className="middle flex-[5]">
                     <p className="mb-2 text-base font-medium">{method}</p>
-                    <p className="w-11/12">
-                        You'll need to enter your login details when you place
-                        your order.
-                    </p>
+                    <p className="w-11/12">{requirements[logo]}</p>
                 </div>
 
-                <DeleteButton
-                    isDefault={isDefault}
-                    handleDelete={handleDelete}
-                />
+                <DeleteButton isDefault={false} handleDelete={handleDelete} />
             </section>
 
             {isDefault ? (

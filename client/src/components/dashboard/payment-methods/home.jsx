@@ -1,6 +1,8 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../header.jsx';
 import card_icon from '../../../assets/icons/credit-card.png';
+import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
+import klarna_icon from '../../../assets/icons/payment-icons/klarna.svg';
 import delete_icon from '../../../assets/icons/delete-icon.png';
 import { createContext, useEffect, useReducer, useState } from 'react';
 import PaymentMethodProvider, {
@@ -10,17 +12,25 @@ import PaymentMethodProvider, {
 import PaymentMethodItem from './payment-method-item.jsx';
 import Modal from '../../admin/components/modal/modal.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import axios from '../../../api/axios.js';
 
 function Home({}) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
+
     useEffect(() => {
-        // setLoading(true);
-        setTimeout(() => {
+        if (paymentMethods.length < 1) navigate('add');
+
+        setLoading(true);
+        const timeout = setTimeout(() => {
             setLoading(false);
-        }, 1000);
+        }, 800);
+
+        return () => {
+            clearTimeout(timeout);
+        };
     }, [paymentMethods]);
 
     const handleDelete = (id) => {
@@ -29,6 +39,15 @@ function Home({}) {
             id,
         });
         setModalCheck(() => true);
+    };
+
+    const handleDefaultMethod = (id) => {
+        axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
+        PaymentMethodsDispatch({
+                type: 'set',
+                payload: res.data.payment_methods,
+            })
+        );
     };
     return (
         <section className="payment-method">
@@ -40,20 +59,21 @@ function Home({}) {
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.map(({ isDefault, method, id }) => {
+                    {paymentMethods.map(({ logo, text, description, _id }) => {
                         return (
                             <PaymentMethodItem
-                                key={id}
-                                icon={card_icon}
-                                isDefault={isDefault}
-                                method={method}
-                                handleDefault={() =>
-                                    PaymentMethodsDispatch({
-                                        type: 'changeDefault',
-                                        id,
-                                    })
+                                key={_id}
+                                icon={
+                                    logo === 'paypal'
+                                        ? paypal_icon
+                                        : logo === 'credit-card'
+                                        ? card_icon
+                                        : logo === 'klarna' && klarna_icon
                                 }
-                                handleDelete={() => handleDelete(id)}
+                                logo={logo}
+                                method={`${text} ${description}`}
+                                handleDefault={() => handleDefaultMethod(_id)}
+                                handleDelete={() => handleDelete(_id)}
                             />
                         );
                     })}

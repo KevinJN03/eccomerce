@@ -1,3 +1,4 @@
+import axios from '../../../api/axios';
 import close_icon from '../../../assets/icons/close.png';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useUserDashboardContext } from '../../../context/userContext';
@@ -13,7 +14,18 @@ function DeletePaymentMethod() {
     const { PaymentMethodsDispatch } = usePaymentMethods();
     const deleteMethod = () => {
         closeModal();
-        PaymentMethodsDispatch({ type: 'delete', id: modalContent.id });
+
+        axios
+            .delete(`user/payment-method/delete/${modalContent.id}`)
+            .then((res) => {
+                PaymentMethodsDispatch({
+                    type: 'set',
+                    payload: res.data.payment_methods,
+                });
+            })
+            .catch((error) => {
+                console.error('error while deleting: ', error);
+            });
     };
     return (
         <DeleteModalContent

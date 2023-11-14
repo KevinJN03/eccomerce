@@ -47,6 +47,19 @@ const UserSchema = new Schema(
     },
     profileImg: String,
     address: [{ type: Schema.Types.ObjectId, ref: 'address' }],
+
+    default_address: {
+      shipping_address: { type: Schema.Types.ObjectId, ref: 'address' },
+      billing_address: { type: Schema.Types.ObjectId, ref: 'address' },
+    },
+    payment_methods: [
+      {
+        logo: {type: Schema.Types.String},
+        alt: {type: Schema.Types.String},
+        description: {type: Schema.Types.String},
+        text: {type: Schema.Types.String},
+      }
+    ],
     mobile: { type: Schema.Types.String },
     contact_preferences: {
       discount_newDrops: {

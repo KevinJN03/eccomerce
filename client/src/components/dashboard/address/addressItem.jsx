@@ -18,14 +18,18 @@ function Address_Item({
     const [shippingCheck, setShippingCheck] = useState(false);
     const handleCheck = async (setState, { state, property }) => {
         try {
-            setLoading(true);
             setState(!state);
+        
+          setTimeout(()=> {
+    setLoading(true);
+          }, 500)
             const data = { [property]: addressItem._id };
 
             const result = await axios.put('user/address/changeDefault', data);
 
-            setDefaultAddresses(() => result.data.default_address);
+            
             setTimeout(() => {
+                setDefaultAddresses(() => result.data.default_address);
                 setLoading(false);
             }, 1000);
 
