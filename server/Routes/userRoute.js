@@ -12,6 +12,9 @@ import {
   deleteAddress,
   editAddress,
   updatePreferences,
+  updateDefaultAddress,
+  addPaymentMethod,
+  deletePaymentMethod,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -31,5 +34,9 @@ router.put('/address/edit/:id', editAddress);
 router.delete('/address/delete/:id', deleteAddress);
 router.put('/changedetails', changeDetails);
 router.put('/changepreferences', updatePreferences);
+router.put('/address/changeDefault', updateDefaultAddress);
 
+router.post('/payment-method/add', addPaymentMethod);
+
+router.delete('/payment-method/delete/:id', deletePaymentMethod);
 export default router;

@@ -1,6 +1,8 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../header.jsx';
 import card_icon from '../../../assets/icons/credit-card.png';
+import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
+import klarna_icon from '../../../assets/icons/payment-icons/klarna.svg';
 import delete_icon from '../../../assets/icons/delete-icon.png';
 import { createContext, useEffect, useReducer, useState } from 'react';
 import PaymentMethodProvider, {
@@ -16,6 +18,10 @@ function Home({}) {
     const [loading, setLoading] = useState(false);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
+
+    useEffect(()=> {
+if(paymentMethods.length < 1) navigate('add')
+    },[])
     useEffect(() => {
         // setLoading(true);
         setTimeout(() => {
@@ -40,20 +46,27 @@ function Home({}) {
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.map(({ isDefault, method, id }) => {
+                    {paymentMethods.map(({ logo, _id }) => {
+                        const icon =
+                            logo === 'paypal'
+                                ? paypal_icon
+                                : logo === 'credit-card'
+                                ? card_icon
+                                : (logo === 'klarna') && klarna_icon;
+                        console.log({icon, logo});
                         return (
                             <PaymentMethodItem
-                                key={id}
-                                icon={card_icon}
-                                isDefault={isDefault}
-                                method={method}
+                                key={_id}
+                                icon={icon}
+                                // isDefault={isDefault}
+                                method={logo}
                                 handleDefault={() =>
                                     PaymentMethodsDispatch({
                                         type: 'changeDefault',
-                                        id,
+                                        id: _id,
                                     })
                                 }
-                                handleDelete={() => handleDelete(id)}
+                                handleDelete={() => handleDelete(_id)}
                             />
                         );
                     })}

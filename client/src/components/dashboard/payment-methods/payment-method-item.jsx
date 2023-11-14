@@ -24,7 +24,7 @@ function PaymentMethodItem({
                 </div>
 
                 <DeleteButton
-                    isDefault={isDefault}
+                    isDefault={false}
                     handleDelete={handleDelete}
                 />
             </section>

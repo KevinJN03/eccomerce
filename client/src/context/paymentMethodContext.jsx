@@ -1,11 +1,17 @@
-import { createContext, useContext, useState, useReducer } from 'react';
+import {
+    createContext,
+    useContext,
+    useState,
+    useReducer,
+    useEffect,
+} from 'react';
 const PaymentMethodContext = createContext();
 
 export const usePaymentMethods = () => {
     return useContext(PaymentMethodContext);
 };
 
-const reducer = (state, action) => {
+export const reducer = (state, action) => {
     if (action.type == 'changeDefault') {
         const newStateArray = [...state];
 
@@ -23,30 +29,27 @@ const reducer = (state, action) => {
     }
 
     if (action.type == 'add') {
-        return;
+        return [...state, action.payload];
+    }
+
+    if (action.type == 'set') {
+        return action.payload;
     }
 
     throw new Error(
         `${action?.type || action} is not accepted please try again.`
     );
 };
-const testData = [
-    {
-        id: 1,
-        isDefault: true,
-        method: 'Paypal',
-    },
-    {
-        id: 2,
-        isDefault: false,
-        method: 'Paypal22',
-    },
-];
-export function PaymentMethodProvider({ children }) {
+
+export function PaymentMethodProvider({ children, userPaymentMethods }) {
     const [paymentMethods, PaymentMethodsDispatch] = useReducer(
         reducer,
-        testData
+        userPaymentMethods || []
     );
+
+    useEffect(() => {
+        PaymentMethodsDispatch({ type: 'set', payload: userPaymentMethods });
+    }, [userPaymentMethods]);
 
     return (
         <PaymentMethodContext.Provider

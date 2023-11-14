@@ -6,27 +6,69 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import Divider from '../divider';
 import useCurrentLocation from '../../../hooks/useCurrentLocation';
-function Button({ text, icon, onClick, alt, description }) {
-    return (
-        <button
-            onClick={onClick}
-            type="button"
-            className="transistion-all relative mt-3 flex h-14 w-4/6 flex-row items-center justify-center gap-x-3 border-2 hover:bg-grey-100"
-        >
-            <img src={icon} alt={alt} className="absolute left-3 h-9 w-9" />
-            <span className="flex flex-col justify-center">
-                <p className="text-center text-base font-bold">{text}</p>
-                {description && <p className="h-0 basis-full">{description}</p>}
-            </span>
-        </button>
-    );
-}
+import { Fragment } from 'react';
+import Button from './button';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
+import { useAuth } from '../../../hooks/useAuth';
+import axios from '../../../api/axios';
 
 function Add_Payment_Method({}) {
     const navigate = useNavigate();
 
     const { currentLocation } = useCurrentLocation();
+    const { authDispatch } = useAuth();
+    const { PaymentMethodsDispatch } = usePaymentMethods();
 
+    const addPaymentMethod = async (obj) => {
+        try {
+            console.log(obj);
+
+            const result = await axios.post('user/payment-method/add', obj);
+
+            PaymentMethodsDispatch({
+                type: 'set',
+                payload: result.data.payment_methods,
+            });
+            
+        } catch (error) {
+            console.log('error at payment methods: ', error);
+
+            if (error.response.status == 401) {
+                authDispatch({ type: 'LOGOUT' });
+                navigate('/login');
+            }
+        }
+    };
+    const buttonsArray = [
+        {
+            icon: card_icon,
+            logo: 'credit-card',
+            text: 'CREDIT/DEBIT CARD',
+            alt: 'black card icon with transparent background',
+            onClick: () => navigate('card'),
+        },
+        {
+            icon: paypal_icon,
+            logo: 'paypal',
+            text: 'PAYPAL',
+            alt: 'paypal icon',
+        },
+
+        {
+            icon: paypal_icon,
+            logo: 'paypal',
+            text: 'PAYPAL',
+            alt: 'paypal icon',
+            description: 'with PayPal Pay Later',
+        },
+        {
+            icon: klarna_logo,
+            logo: 'klarna',
+            text: 'PAY LATER',
+            alt: 'klarna logo',
+            description: 'with Klarna',
+        },
+    ];
     return (
         <section className="add-payment-method bg-white p-4">
             {currentLocation == 'add' ? (
@@ -47,33 +89,43 @@ function Add_Payment_Method({}) {
                         </p>
                     </span>
                     <div className="mt-4 flex flex-col !items-center">
-                        <Button
-                            icon={card_icon}
-                            text={'CREDIT/DEBIT CARD'}
-                            alt={'black card icon with transparent background'}
-                            onClick={() => navigate('card')}
-                        />
-
-                        <Divider />
-
-                        <Button
-                            icon={paypal_icon}
-                            text={'PAYPAL'}
-                            alt={'black card icon with transparent background'}
-                        />
-
-                        <Button
-                            icon={paypal_icon}
-                            text={'PAYPAL'}
-                            alt={'black card icon with transparent background'}
-                            description={'with PayPal Pay Later'}
-                        />
-                        <Button
-                            icon={klarna_logo}
-                            text={'PAY LATER'}
-                            alt={'black card icon with transparent background'}
-                            description={'with Klarna'}
-                        />
+                        {buttonsArray.map(
+                            (
+                                { icon, text, alt, onClick, description, logo },
+                                idx
+                            ) => {
+                                if (idx == 0) {
+                                    return (
+                                        <Fragment key={idx}>
+                                            <Button
+                                                icon={icon}
+                                                text={text}
+                                                alt={alt}
+                                                onClick={onClick}
+                                            />
+                                            <Divider />
+                                        </Fragment>
+                                    );
+                                }
+                                return (
+                                    <Button
+                                        key={idx}
+                                        icon={icon}
+                                        text={text}
+                                        alt={alt}
+                                        description={description}
+                                        onClick={() =>
+                                            addPaymentMethod({
+                                                text,
+                                                alt,
+                                                description,
+                                                logo,
+                                            })
+                                        }
+                                    />
+                                );
+                            }
+                        )}
                     </div>
                 </>
             ) : (

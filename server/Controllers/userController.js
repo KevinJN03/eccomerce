@@ -16,7 +16,9 @@ import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import Address from '../Models/address.js';
 import addressValidator from '../utils/addressValidator.js';
 import errorRegenerator from '../utils/errorRegenerator.js';
-
+import user from '../Models/user.js';
+import { v4 as uuidv4 } from 'uuid';
+import mongoose from 'mongoose';
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -448,9 +450,86 @@ export const updatePreferences = [
       { new: true, upsert: true },
     );
 
-    console.log({ user });
     res
       .status(200)
       .send({ msg: 'User contact preferences successfully updates' });
+  }),
+];
+
+export const updateDefaultAddress = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const body = req.body;
+    const property = Object.keys(body)[0];
+    const value = Object.values(body)[0];
+    const userId = req.session.passport.user;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: { [`default_address.${property}`]: value },
+      },
+      {
+        new: true,
+        upsert: true,
+        select: {
+          default_address: 1,
+        },
+      },
+    );
+
+    return res.status(200).send({
+      msg: `succussfully update user default ${property.replaceAll('_', ' ')}.`,
+      default_address: user.default_address,
+    });
+  }),
+];
+
+export const addPaymentMethod = [
+  checkAuthenticated,
+
+  check('logo').escape().trim(),
+  check('description').escape().trim(),
+  check('alt').escape().trim(),
+  check('text').escape().trim(),
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          payment_methods: { id: new mongoose.Types.ObjectId(), ...req.body },
+        },
+      },
+      { upsert: true, new: true, select: { payment_methods: 1 } },
+    );
+    console.log({ payment_methods: user.payment_methods });
+    res.status(200).send({
+      msg: 'payment method successfully added',
+      payment_methods: user.payment_methods,
+    });
+  }),
+];
+
+export const deletePaymentMethod = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.session.passport.user;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          payment_methods: { _id: id },
+        },
+      },
+      { upsert: true, new: true, select: { payment_methods: 1 } },
+    );
+    console.log({ payment_methods: user.payment_methods });
+    res.status(200).send({
+      msg: 'payment method successfully added',
+      payment_methods: user.payment_methods,
+    });
   }),
 ];

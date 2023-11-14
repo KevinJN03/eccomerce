@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import DeleteAddress from './address/deleteAddress.jsx';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import useCurrentLocation from '../../hooks/useCurrentLocation.jsx';
 function Dashboard() {
     disableLayout();
     const { pathname } = useLocation();
@@ -27,8 +28,9 @@ function Dashboard() {
     const [address, setAddress] = useState([]);
     const [loadingState, setLoadingState] = useState(true);
     const [contact_preference, setContactPreference] = useState({});
-
+    const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [defaultAddresses, setDefaultAddresses] = useState({});
+
     useEffect(() => {
         axios
             .get('user/userData')
@@ -40,6 +42,10 @@ function Dashboard() {
                     setLoadingState(false);
                 }, 1000);
 
+                console.log('pm: ', res.data.user?.payment_methods, )
+                setUserPaymentMethods(() => [
+                    ...res.data.user.payment_methods,
+                ]);
                 setDefaultAddresses(() => res.data.user?.default_address);
             })
             .catch((error) => {
@@ -55,7 +61,7 @@ function Dashboard() {
         const routes = pathname.split('/');
         const findIndexForMyAccount = routes.indexOf('my-account');
         const routeIndex = findIndexForMyAccount + 1;
-        console.log({ routeIndex, findIndexForMyAccount });
+
         const currentRoute = routes[routeIndex]
             ? routes[routeIndex]
             : routes[findIndexForMyAccount];
@@ -64,7 +70,6 @@ function Dashboard() {
     };
 
     const [selectOption, setSelectionOption] = useState(getRoute());
-
     useEffect(() => {
         console.log('split: ', pathname.split('/'));
 
@@ -95,6 +100,7 @@ function Dashboard() {
         loadingState,
         defaultAddresses,
         setDefaultAddresses,
+        userPaymentMethods
     };
 
     const view = {
@@ -125,7 +131,10 @@ function Dashboard() {
     };
 
     return (
-        <UserDashboardProvider value={value}>
+        <UserDashboardProvider
+            value={value}
+      
+        >
             <AnimatePresence>
                 <section className="user-dashboard flex h-full min-h-screen w-screen flex-col !items-center bg-[var(--light-grey)] pb-10">
                     <section className="dashboard-wrapper w-full max-w-4xl px-3">
