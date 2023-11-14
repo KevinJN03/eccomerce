@@ -12,6 +12,7 @@ import PaymentMethodProvider, {
 import PaymentMethodItem from './payment-method-item.jsx';
 import Modal from '../../admin/components/modal/modal.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import axios from '../../../api/axios.js';
 
 function Home({}) {
     const navigate = useNavigate();
@@ -19,14 +20,17 @@ function Home({}) {
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
 
-    useEffect(()=> {
-if(paymentMethods.length < 1) navigate('add')
-    },[])
     useEffect(() => {
-        // setLoading(true);
-        setTimeout(() => {
+        if (paymentMethods.length < 1) navigate('add');
+
+        setLoading(true);
+        const timeout = setTimeout(() => {
             setLoading(false);
-        }, 1000);
+        }, 800);
+
+        return () => {
+            clearTimeout(timeout);
+        };
     }, [paymentMethods]);
 
     const handleDelete = (id) => {
@@ -35,6 +39,15 @@ if(paymentMethods.length < 1) navigate('add')
             id,
         });
         setModalCheck(() => true);
+    };
+
+    const handleDefaultMethod = (id) => {
+        axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
+        PaymentMethodsDispatch({
+                type: 'set',
+                payload: res.data.payment_methods,
+            })
+        );
     };
     return (
         <section className="payment-method">
@@ -46,26 +59,20 @@ if(paymentMethods.length < 1) navigate('add')
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.map(({ logo, _id }) => {
-                        const icon =
-                            logo === 'paypal'
-                                ? paypal_icon
-                                : logo === 'credit-card'
-                                ? card_icon
-                                : (logo === 'klarna') && klarna_icon;
-                        console.log({icon, logo});
+                    {paymentMethods.map(({ logo, text, description, _id }) => {
                         return (
                             <PaymentMethodItem
                                 key={_id}
-                                icon={icon}
-                                // isDefault={isDefault}
-                                method={logo}
-                                handleDefault={() =>
-                                    PaymentMethodsDispatch({
-                                        type: 'changeDefault',
-                                        id: _id,
-                                    })
+                                icon={
+                                    logo === 'paypal'
+                                        ? paypal_icon
+                                        : logo === 'credit-card'
+                                        ? card_icon
+                                        : logo === 'klarna' && klarna_icon
                                 }
+                                logo={logo}
+                                method={`${text} ${description}`}
+                                handleDefault={() => handleDefaultMethod(_id)}
                                 handleDelete={() => handleDelete(_id)}
                             />
                         );
