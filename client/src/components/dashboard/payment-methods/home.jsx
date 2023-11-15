@@ -43,7 +43,7 @@ function Home({}) {
 
     const handleDefaultMethod = (id) => {
         axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
-        PaymentMethodsDispatch({
+            PaymentMethodsDispatch({
                 type: 'set',
                 payload: res.data.payment_methods,
             })
@@ -59,24 +59,32 @@ function Home({}) {
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.map(({ logo, text, description, _id }) => {
-                        return (
-                            <PaymentMethodItem
-                                key={_id}
-                                icon={
-                                    logo === 'paypal'
-                                        ? paypal_icon
-                                        : logo === 'credit-card'
-                                        ? card_icon
-                                        : logo === 'klarna' && klarna_icon
-                                }
-                                logo={logo}
-                                method={`${text} ${description}`}
-                                handleDefault={() => handleDefaultMethod(_id)}
-                                handleDelete={() => handleDelete(_id)}
-                            />
-                        );
-                    })}
+                    {paymentMethods.map(
+                        ({ logo, text, description, _id }, idx) => {
+                            return (
+                                <PaymentMethodItem
+                                    key={_id}
+                                    isDefault={
+                                        idx == 0
+                                    }
+                                    arrayLength={paymentMethods.length}
+                                    icon={
+                                        logo === 'paypal'
+                                            ? paypal_icon
+                                            : logo === 'credit-card'
+                                            ? card_icon
+                                            : logo === 'klarna' && klarna_icon
+                                    }
+                                    logo={logo}
+                                    method={`${text} ${description}`}
+                                    handleDefault={() =>
+                                        handleDefaultMethod(_id)
+                                    }
+                                    handleDelete={() => handleDelete(_id)}
+                                />
+                            );
+                        }
+                    )}
                 </div>
             ) : (
                 <div className="flex h-[400px] w-full items-center justify-center">

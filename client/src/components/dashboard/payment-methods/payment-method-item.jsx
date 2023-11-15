@@ -6,7 +6,8 @@ function PaymentMethodItem({
     method,
     handleDefault,
     handleDelete,
-    logo
+    logo,
+    arrayLength,
 }) {
     const requirements = {
         klarna: 'You may be required to enter further personal details at checkout.',
@@ -23,7 +24,10 @@ function PaymentMethodItem({
                     <p className="w-11/12">{requirements[logo]}</p>
                 </div>
 
-                <DeleteButton isDefault={false} handleDelete={handleDelete} />
+                <DeleteButton
+                    isDefault={isDefault && arrayLength > 1}
+                    handleDelete={handleDelete}
+                />
             </section>
 
             {isDefault ? (
