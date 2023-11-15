@@ -1,12 +1,15 @@
 import { DeleteButton } from '../delete-btn';
 
 function PaymentMethodItem({
+    check,
     icon,
     isDefault,
     method,
     handleDefault,
     handleDelete,
-    logo
+    logo,
+    arrayLength,
+    inputDisable,
 }) {
     const requirements = {
         klarna: 'You may be required to enter further personal details at checkout.',
@@ -23,7 +26,10 @@ function PaymentMethodItem({
                     <p className="w-11/12">{requirements[logo]}</p>
                 </div>
 
-                <DeleteButton isDefault={false} handleDelete={handleDelete} />
+                <DeleteButton
+                    isDefault={isDefault && arrayLength > 1}
+                    handleDelete={handleDelete}
+                />
             </section>
 
             {isDefault ? (
@@ -31,15 +37,28 @@ function PaymentMethodItem({
                     This is your default payment method
                 </p>
             ) : (
-                <button
-                    className="flex flex-row items-center gap-x-4"
-                    onClick={handleDefault}
-                >
-                    <div className="flex h-7 w-7 self-start border-[1px] border-black"></div>
+                <div className="flex items-center gap-x-3">
+                    <input
+                        disabled={inputDisable}
+                        type="checkbox"
+                        checked={check}
+                        className="daisy-checkbox rounded-none border-[1px] border-black"
+                        onChange={handleDefault}
+                    />
                     <p className="w-fit text-sm">
                         Set as default payment method
                     </p>
-                </button>
+                </div>
+
+                // <button
+                //     className="flex flex-row items-center gap-x-4"
+                //     onClick={handleDefault}
+                // >
+                //     <div className="flex h-7 w-7 self-start border-[1px] border-black"></div>
+                //     <p className="w-fit text-sm">
+                //         Set as default payment method
+                //     </p>
+                // </button>
             )}
         </section>
     );

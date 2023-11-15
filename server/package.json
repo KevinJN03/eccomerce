@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "clear && nodemon app.js",
+    "server": "nodemon app.js",
     "scrape": "cd ProductScrape && node productScraper.js",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint --fix .",
@@ -49,6 +49,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "sharp": "^0.32.5",
+    "stripe": "^14.4.0",
     "uuid": "^9.0.1"
   }
 }

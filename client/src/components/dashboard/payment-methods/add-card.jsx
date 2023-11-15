@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '../../Login-SignUp/input';
 import '../../../CSS/user-dashboard.scss';
 import card_logo from '../../../assets/icons/credit-card.png';
@@ -9,15 +9,36 @@ import maestro_logo from '../../../assets/icons/payment-icons/maestro.svg';
 import masterCard_logo from '../../../assets/icons/payment-icons/mastercard-alt.svg';
 
 import american_express_logo from '../../../assets/icons/payment-icons/american-express.svg';
-
-const paymentIconArray = [
-    american_express_logo,
-    visa_logo,
-    maestro_logo,
-    masterCard_logo,
-    discover_logo,
-];
+import axios from '../../../api/axios';
+import {
+    Elements,
+    PaymentElement,
+    useStripe,
+    useElements,
+} from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import AddCartForm from './addCartForm';
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
+// const paymentIconArray = [
+//     american_express_logo,
+//     visa_logo,
+//     maestro_logo,
+//     masterCard_logo,
+//     discover_logo,
+// ];
 function Add_Card({}) {
+    console.log('env: ', STRIPE_KEY);
+    const stripePromise = loadStripe(STRIPE_KEY);
+
+
+    const [loading, setLoading] = useState(true);
+    const [options, setOptions] = useState({
+        appeareance: {
+            variables: {
+                borderRadius: '0px',
+            },
+        },
+    });
     const [cardNumber, setCardNumber] = useState('');
     const [error, setError] = useState({});
     const [name, setName] = useState('');
@@ -73,6 +94,25 @@ function Add_Card({}) {
     const months = range(1, 12, 1, -2);
     const years = range(2023, 2033, 1, -4);
 
+    useEffect(() => {
+        axios
+            .get('user/payment-method/card/save')
+            .then((res) => {
+                console.log(res.data.client_secret);
+                setOptions((prevState) => ({
+                    ...prevState,
+                    clientSecret: res.data.client_secret,
+                }));
+
+                setLoading(() => false);
+            })
+            .catch((error) => {
+                console.logo('error while getting secret: ', error);
+                setLoading(() => false);
+            });
+    }, []);
+
+   
     return (
         <section className="add-card">
             <h2 className="mb-2 text-xl font-bold">{'ADD CARD'}</h2>
@@ -80,7 +120,20 @@ function Add_Card({}) {
                 Now please enter your card details exactly as they are printed.
             </p>
             <div className="mb-4 mt-4 w-4/6">
-                <div className="input-container">
+                {loading ? (
+                    <svg
+                        className="spinner-ring spinner-sm [--spinner-color:var(--slate-12)]"
+                        viewBox="25 25 50 50"
+                        strokeWidth="5"
+                    >
+                        <circle cx="50" cy="50" r="20" />
+                    </svg>
+                ) : (
+                    <Elements stripe={stripePromise} options={options}>
+                        <AddCartForm />
+                    </Elements>
+                )}
+                {/* <div className="input-container">
                     <div className="relative">
                         {error.cardNumber && (
                             <ErrorMessage msg={error.cardNumber} />
@@ -157,7 +210,7 @@ function Add_Card({}) {
                     {paymentIconArray.map((icon)=> {
                         return <img src={icon} className='w-10 h-10'/>
                     })}
-                </div>
+                </div> */}
             </div>
         </section>
     );
