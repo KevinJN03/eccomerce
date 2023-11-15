@@ -19,6 +19,9 @@ import errorRegenerator from '../utils/errorRegenerator.js';
 import user from '../Models/user.js';
 import { v4 as uuidv4 } from 'uuid';
 import mongoose from 'mongoose';
+import Stripe from 'stripe';
+
+const stripe = Stripe(process.env.STRIPE_KEY);
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -493,7 +496,7 @@ export const addPaymentMethod = [
   check('text').escape().trim(),
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-
+    console.log({ body: req.body });
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -504,6 +507,7 @@ export const addPaymentMethod = [
       { upsert: true, new: true, select: { payment_methods: 1 } },
     );
     console.log({ payment_methods: user.payment_methods });
+
     res.status(200).send({
       msg: 'payment method successfully added',
       payment_methods: user.payment_methods,
@@ -530,6 +534,86 @@ export const deletePaymentMethod = [
     res.status(200).send({
       msg: 'payment method successfully added',
       payment_methods: user.payment_methods,
+    });
+  }),
+];
+
+export const changeDefaultMethod = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.session.passport.user;
+    const user = await User.findById(userId, { payment_methods: 1 });
+    const payment_methods = [...user.payment_methods];
+    const index = payment_methods.findIndex((item) => item._id == id);
+
+    const findNewDefaultMethodObj = {};
+
+    const new_payment_method = [];
+    payment_methods.forEach((paymentMethodObj) => {
+      if (paymentMethodObj._id != id) {
+        new_payment_method.push(paymentMethodObj);
+      } else {
+        new_payment_method.unshift(paymentMethodObj);
+      }
+    });
+
+    user.payment_methods = new_payment_method;
+    await user.save();
+    console.log({ payment_methods, new_payment_method });
+    res.status(200).send({
+      msg: 'payment method successfully added',
+      payment_methods: new_payment_method,
+    });
+  }),
+];
+
+export const saveCustomerCard = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    const user = await User.findById(userId, { passport: 0 }).populate([
+      'address',
+      'default_address.shipping_address',
+    ]);
+
+    const new_shipping_address = {};
+    const shipping_address = user.default_address.shipping_address;
+
+    let mobileNumber = null;
+    if (shipping_address) {
+      const { mobile, address_1, address_2, city, county, postCode, country } =
+        shipping_address;
+
+      mobileNumber = mobile;
+      new_shipping_address.line1 = address_1;
+      new_shipping_address.line2 = address_2;
+      new_shipping_address.city = city;
+      new_shipping_address.state = county;
+      new_shipping_address.country = country;
+      new_shipping_address.postal_code = postCode;
+    }
+
+    const name = `${user.firstName} ${user.lastName}`;
+    // const customer = await stripe.customers.create({
+    //   id: userId,
+    //   email: user.email,
+    //   name,
+    //   address: new_shipping_address,
+    //   shipping: { address: new_shipping_address, name, phone: mobileNumber },
+    // });
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      customer: userId,
+      setup_future_usage: 'off_session',
+      amount: '100',
+      currency: 'gbp',
+    });
+
+    res.send({
+      success: true,
+
+      client_secret: paymentIntent.client_secret,
     });
   }),
 ];

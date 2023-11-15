@@ -54,11 +54,12 @@ const UserSchema = new Schema(
     },
     payment_methods: [
       {
-        logo: {type: Schema.Types.String},
-        alt: {type: Schema.Types.String},
-        description: {type: Schema.Types.String},
-        text: {type: Schema.Types.String},
-      }
+        logo: { type: Schema.Types.String },
+        alt: { type: Schema.Types.String },
+        description: { type: Schema.Types.String },
+        text: { type: Schema.Types.String },
+        index: { type: Schema.Types.Number },
+      },
     ],
     mobile: { type: Schema.Types.String },
     contact_preferences: {

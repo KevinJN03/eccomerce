@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '../../Login-SignUp/input';
 import '../../../CSS/user-dashboard.scss';
 import card_logo from '../../../assets/icons/credit-card.png';
@@ -9,7 +9,9 @@ import maestro_logo from '../../../assets/icons/payment-icons/maestro.svg';
 import masterCard_logo from '../../../assets/icons/payment-icons/mastercard-alt.svg';
 
 import american_express_logo from '../../../assets/icons/payment-icons/american-express.svg';
-
+import axios from '../../../api/axios';
+import {Elements, PaymentElement} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
 const paymentIconArray = [
     american_express_logo,
     visa_logo,
@@ -18,6 +20,7 @@ const paymentIconArray = [
     discover_logo,
 ];
 function Add_Card({}) {
+    const options = {}
     const [cardNumber, setCardNumber] = useState('');
     const [error, setError] = useState({});
     const [name, setName] = useState('');
@@ -73,9 +76,22 @@ function Add_Card({}) {
     const months = range(1, 12, 1, -2);
     const years = range(2023, 2033, 1, -4);
 
+
+    useEffect(()=> {
+        
+axios.get('user/payment-method/card/save').then((res)=> {
+console.log(res.data.client_secret)
+}).catch((error) => console.logo('error while getting secret: ', error))
+    }, [])
     return (
         <section className="add-card">
-            <h2 className="mb-2 text-xl font-bold">{'ADD CARD'}</h2>
+<Elements stripe={stripePromise} options={options}>
+    <PaymentElement/>
+    <button>Submit</button>
+</Elements>
+
+
+            {/* <h2 className="mb-2 text-xl font-bold">{'ADD CARD'}</h2>
             <p>
                 Now please enter your card details exactly as they are printed.
             </p>
@@ -158,7 +174,7 @@ function Add_Card({}) {
                         return <img src={icon} className='w-10 h-10'/>
                     })}
                 </div>
-            </div>
+            </div> */}
         </section>
     );
 }

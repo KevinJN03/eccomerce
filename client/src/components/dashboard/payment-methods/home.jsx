@@ -19,7 +19,7 @@ function Home({}) {
     const [loading, setLoading] = useState(false);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
-
+    const [defaultCheck, setDefaultCheck] = useState(null);
     useEffect(() => {
         if (paymentMethods.length < 1) navigate('add');
 
@@ -42,11 +42,15 @@ function Home({}) {
     };
 
     const handleDefaultMethod = (id) => {
+        setDefaultCheck(() => id);
         axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
-            PaymentMethodsDispatch({
-                type: 'set',
-                payload: res.data.payment_methods,
-            })
+            setTimeout(() => {
+                PaymentMethodsDispatch({
+                    type: 'set',
+                    payload: res.data.payment_methods,
+                });
+                setDefaultCheck(() => null);
+            }, 400)
         );
     };
     return (
@@ -63,10 +67,12 @@ function Home({}) {
                         ({ logo, text, description, _id }, idx) => {
                             return (
                                 <PaymentMethodItem
-                                    key={_id}
-                                    isDefault={
-                                        idx == 0
+                                    inputDisable={
+                                        defaultCheck && defaultCheck != _id
                                     }
+                                    check={defaultCheck == _id}
+                                    key={_id}
+                                    isDefault={idx == 0}
                                     arrayLength={paymentMethods.length}
                                     icon={
                                         logo === 'paypal'

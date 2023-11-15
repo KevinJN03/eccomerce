@@ -75,21 +75,26 @@ function Details({}) {
 
     const onSubmit = async () => {
         try {
-            const result = await axios.put('user/changedetails', {
+            const data = {
                 firstName,
                 lastName,
                 email,
                 dob,
                 interest,
-            });
+            };
+            const result = await axios.put('user/changedetails', data);
 
             authDispatch({ type: 'LOGIN', payload: result.data });
+            setOnMountValue(() => data);
             setDisable(true);
+
             return;
         } catch (error) {
             console.log('error here: ', error);
-            authDispatch({ type: 'LOGOUT' });
-            navigate('/login');
+            if (error.response.status == 401) {
+                authDispatch({ type: 'LOGOUT' });
+                navigate('/login');
+            }
         }
     };
     return (

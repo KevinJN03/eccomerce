@@ -15,6 +15,8 @@ import {
   updateDefaultAddress,
   addPaymentMethod,
   deletePaymentMethod,
+  changeDefaultMethod,
+  saveCustomerCard,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -35,8 +37,8 @@ router.delete('/address/delete/:id', deleteAddress);
 router.put('/changedetails', changeDetails);
 router.put('/changepreferences', updatePreferences);
 router.put('/address/changeDefault', updateDefaultAddress);
-
+router.get('/payment-method/card/save', saveCustomerCard);
 router.post('/payment-method/add', addPaymentMethod);
-
+router.post('/payment-method/changedefault/:id', changeDefaultMethod);
 router.delete('/payment-method/delete/:id', deletePaymentMethod);
 export default router;
