@@ -314,6 +314,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
+  console.log({ user: req.user, session: req.session });
   return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });

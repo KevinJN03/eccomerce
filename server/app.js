@@ -19,6 +19,13 @@ import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
 import errorHandler from './errorHandler.js';
 import passport from './utils/passport.js';
+import https from 'https';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 const { DBNAME, URL, SECRET } = process.env;
 const PORT = 3000;
 const db = () => {
@@ -71,6 +78,13 @@ app.use('/order', orderRoute);
 app.use('/delivery', deliveryRoute);
 app.use(errorHandler);
 
+// const sslServer = https.createServer(
+//   {
+//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem'), 'utf8'),
+//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'sslcert.pem'), 'utf8'),
+//   },
+//   app,
+// );
 app.listen(PORT, () => {
-  console.log(`listening on Port: ${PORT}`);
+  console.log(`Secure server🔑 listening on Port: ${PORT}`);
 });
