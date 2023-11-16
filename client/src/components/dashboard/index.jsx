@@ -34,27 +34,42 @@ function Dashboard() {
     useEffect(() => {
         axios
             .get('user/userData')
-            .then((res) => {
-                setDob(() => dayjs(res.data.user.dob).toISOString());
-                setContactPreference(() => res.data.user.contact_preferences);
-                setAddress(() => res.data.user.address);
-                setTimeout(() => {
-                    setLoadingState(false);
-                }, 1000);
+            .then(async (res) => {
+                try {
+                    const result = await axios.get('user/payment-method/all');
+                    setDob(() => dayjs(res.data.user.dob).toISOString());
+                    setContactPreference(
+                        () => res.data.user.contact_preferences
+                    );
+                    setAddress(() => res.data.user.address);
 
-                console.log('pm: ', res.data.user?.payment_methods, )
-                setUserPaymentMethods(() => [
-                    ...res.data.user.payment_methods,
-                ]);
-                setDefaultAddresses(() => res.data.user?.default_address);
+                    console.log('pm: ', res.data.user?.payment_methods);
+                    setUserPaymentMethods(() => [
+                        ...result.data.paymentMethods,
+                        ...res.data.user.payment_methods,
+                    ]);
+                    setDefaultAddresses(() => res.data.user?.default_address);
+
+                    setTimeout(() => {
+                        setLoadingState(false);
+                    }, 1000);
+                } catch (error) {
+                    console.log(
+                        'error while checking if user is authenticated: ',
+                        error
+                    );
+                }
             })
             .catch((error) => {
                 console.log(
                     'error while checking if user is authenticated: ',
                     error
                 );
-                authDispatch({ type: 'LOGOUT' });
-                navigate('/login');
+
+                if (error.response.status == 401) {
+                    authDispatch({ type: 'LOGOUT' });
+                    navigate('/login');
+                }
             });
     }, []);
     const getRoute = () => {
@@ -100,7 +115,7 @@ function Dashboard() {
         loadingState,
         defaultAddresses,
         setDefaultAddresses,
-        userPaymentMethods
+        userPaymentMethods,
     };
 
     const view = {
@@ -131,10 +146,7 @@ function Dashboard() {
     };
 
     return (
-        <UserDashboardProvider
-            value={value}
-      
-        >
+        <UserDashboardProvider value={value}>
             <AnimatePresence>
                 <section className="user-dashboard flex h-full min-h-screen w-screen flex-col !items-center bg-[var(--light-grey)] pb-10">
                     <section className="dashboard-wrapper w-full max-w-4xl px-3">

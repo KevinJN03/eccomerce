@@ -13,6 +13,7 @@ import PaymentMethodItem from './payment-method-item.jsx';
 import Modal from '../../admin/components/modal/modal.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import axios from '../../../api/axios.js';
+import logos from './logos.jsx';
 
 function Home({}) {
     const navigate = useNavigate();
@@ -64,9 +65,36 @@ function Home({}) {
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
                     {paymentMethods.map(
-                        ({ logo, text, description, _id }, idx) => {
+                        (
+                            {
+                                logo,
+                                text,
+                                description,
+                                _id,
+                                type,
+                                brand,
+                                exp_month,
+                                exp_year,
+                                last4,
+                                funding,
+                                name,
+                            },
+                            idx
+                        ) => {
+                            const cardData = {};
+                            if (name) {
+                                cardData.name = name;
+                                cardData.exp_month = exp_month;
+                                cardData.exp_year = exp_year;
+                                cardData.icon =
+                                    logos[
+                                        brand.toLowerCase().replaceAll(' ', '_')
+                                    ];
+                            }
+                            debugger;
                             return (
                                 <PaymentMethodItem
+                                    cardData={cardData}
                                     inputDisable={
                                         defaultCheck && defaultCheck != _id
                                     }
@@ -82,7 +110,11 @@ function Home({}) {
                                             : logo === 'klarna' && klarna_icon
                                     }
                                     logo={logo}
-                                    method={`${text} ${description}`}
+                                    method={
+                                        text
+                                            ? `${text} ${description}`
+                                            : `${funding} ${brand} (${last4})`
+                                    }
                                     handleDefault={() =>
                                         handleDefaultMethod(_id)
                                     }
