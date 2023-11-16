@@ -1,7 +1,9 @@
-export default function ErrorMessage({ msg }) {
+export default function ErrorMessage({ msg, className, }) {
     return (
-        <section className=" absolute !top-[-15px] right-0 !z-10 !max-w-[80%]">
-            <div className="promo-error border-1 relative  flex w-full border-red-500 bg-red-100 p-2">
+        <section
+            className={`${className} absolute top-[-15px] right-0 !z-10 !max-w-[80%]`}
+        >
+            <div className="promo-error border-1 relative  flex w-full border-red-500 bg-red-100 p-3">
                 <p className=" whitespace-[initial] w-full break-words font-light tracking-wider">
                     {msg}
                 </p>

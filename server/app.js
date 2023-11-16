@@ -23,6 +23,7 @@ import https from 'https';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
@@ -42,7 +43,8 @@ const db = () => {
 db();
 
 const app = express();
-
+// app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(
   session({
     secret: SECRET,
@@ -54,37 +56,42 @@ app.use(
       dbName: DBNAME,
       collectionName: 'sessions',
     }),
-    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false, httpOnly: true }, // 1 day
+    cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false, httpOnly: false }, // 1 day
   }),
 );
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(morgan('dev'));
-app.use(cors({ origin: true, credentials: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/server-status', (req, res) => {
+app.get('/api/server-status', (req, res) => {
   res.send('OK');
 });
-app.use('/product', productRoute);
-app.use('/coupon', couponRoute);
-app.use('/category', categoryRoute);
-app.use('/search', searchRoute);
-app.use('/giftcard', giftCardRoute);
-app.use('/user', userRoute);
-app.use('/admin', adminRoute);
-app.use('/order', orderRoute);
-app.use('/delivery', deliveryRoute);
+app.use('/api/product', productRoute);
+app.use('/api/coupon', couponRoute);
+app.use('/api/category', categoryRoute);
+app.use('/api/search', searchRoute);
+app.use('/api/giftcard', giftCardRoute);
+app.use('/api/user', userRoute);
+app.use('/api/admin', adminRoute);
+app.use('/api/order', orderRoute);
+app.use('/api/delivery', deliveryRoute);
+
 app.use(errorHandler);
 
-// const sslServer = https.createServer(
-//   {
-//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem'), 'utf8'),
-//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'sslcert.pem'), 'utf8'),
-//   },
-//   app,
-// );
-app.listen(PORT, () => {
+const httpOptions = {
+  key: fs.readFileSync('./mkcert/key.pem'),
+  cert: fs.readFileSync('./mkcert/cert.pem'),
+  requestCert: false,
+  rejectUnauthorized: process.env.NODE_ENV === 'production',
+};
+console.log({
+  NODE_ENV: process.env.NODE_ENV,
+  bool: process.env.NODE_ENV === 'production',
+});
+const sslServer = https.createServer(httpOptions, app);
+sslServer.listen(PORT, () => {
   console.log(`Secure server🔑 listening on Port: ${PORT}`);
 });

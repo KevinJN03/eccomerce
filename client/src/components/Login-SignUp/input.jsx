@@ -10,11 +10,12 @@ function Input({
     asterisk,
     autoComplete,
     manyProperty,
+    className,
 }) {
     return (
-        <div className="input-container">
+        <div className={`input-container`}>
             <div className="relative">
-                {error[property] && <ErrorMessage msg={error[property]} />}
+                {error?.[property] && <ErrorMessage msg={error[property]} />}
                 <label htmlFor={label.toLowerCase().replaceAll(' ', '-')}>
                     {`${label}${asterisk ? ' *' : ''} :`}{' '}
                 </label>
@@ -23,7 +24,7 @@ function Input({
                     type={property}
                     name={property}
                     id={property}
-                    className="login-signup-input"
+                    className="login-signup-input mt-2"
                     value={value}
                     onChange={(e) => {
                         manyProperty

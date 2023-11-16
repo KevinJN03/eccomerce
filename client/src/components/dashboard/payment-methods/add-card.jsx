@@ -19,17 +19,10 @@ import {
 import { loadStripe } from '@stripe/stripe-js';
 import AddCartForm from './addCartForm';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
-// const paymentIconArray = [
-//     american_express_logo,
-//     visa_logo,
-//     maestro_logo,
-//     masterCard_logo,
-//     discover_logo,
-// ];
+
 function Add_Card({}) {
     console.log('env: ', STRIPE_KEY);
     const stripePromise = loadStripe(STRIPE_KEY);
-
 
     const [loading, setLoading] = useState(true);
     const [options, setOptions] = useState({
@@ -86,14 +79,6 @@ function Add_Card({}) {
         }));
     };
 
-    const range = (start, stop, step, sliceStart) =>
-        Array.from({ length: (stop - start) / step + 1 }, (_, i) =>
-            ('0' + (start + i * step)).toString().slice(sliceStart)
-        );
-
-    const months = range(1, 12, 1, -2);
-    const years = range(2023, 2033, 1, -4);
-
     useEffect(() => {
         axios
             .get('user/payment-method/card/save')
@@ -104,22 +89,21 @@ function Add_Card({}) {
                     clientSecret: res.data.client_secret,
                 }));
 
-                setLoading(() => false);
+                 setLoading(() => false);
             })
             .catch((error) => {
                 console.logo('error while getting secret: ', error);
-                setLoading(() => false);
+                 setLoading(() => false);
             });
     }, []);
 
-   
     return (
         <section className="add-card">
             <h2 className="mb-2 text-xl font-bold">{'ADD CARD'}</h2>
             <p>
                 Now please enter your card details exactly as they are printed.
             </p>
-            <div className="mb-4 mt-4 w-4/6">
+            <div className="mb-4 mt-4 w-4/6 flex flex-col justify-center">
                 {loading ? (
                     <svg
                         className="spinner-ring spinner-sm [--spinner-color:var(--slate-12)]"
@@ -130,87 +114,9 @@ function Add_Card({}) {
                     </svg>
                 ) : (
                     <Elements stripe={stripePromise} options={options}>
-                        <AddCartForm />
+                        <AddCartForm clientSecret={options.clientSecret} />
                     </Elements>
                 )}
-                {/* <div className="input-container">
-                    <div className="relative">
-                        {error.cardNumber && (
-                            <ErrorMessage msg={error.cardNumber} />
-                        )}
-                        <label htmlFor={'card-number'}>CARD NUMBER:</label>
-                        <div className="relative">
-                            <input
-                                onPaste={(e) => e.preventDefault()}
-                                onCopy={(e) => e.preventDefault()}
-                                pattern="^[0-9]*$"
-                                inputMode="numeric"
-                                autoCorrect="off"
-                                spellCheck="false"
-                                autoComplete="cc-number"
-                                maxLength="23"
-                                type={'text'}
-                                name={'cardNumber'}
-                                id={'cardNumber'}
-                                className="login-signup-input cardNumber-input select-none pr-14"
-                                value={cardNumber}
-                                onChange={handleCardNumber}
-                                // onWheel={numberInputOnWheelPreventChange}
-                            />
-                            <img
-                                src={card_logo}
-                                alt={
-                                    'black credit card outline icon white transparent background'
-                                }
-                                className="absolute right-4 top-2/4 h-8 w-8 translate-y-[-50%]"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="expiry-date input-container w-3/4">
-                    <label htmlFor={'card-number'}>EXPIRY DATE: </label>
-                    <div className="flex flex-row gap-x-2">
-                        <select className="select !rounded-none border-[1px] !border-primary !outline-none">
-                            <option>Month</option>
-
-                            {months.map((item) => {
-                                return <option>{item}</option>;
-                            })}
-                        </select>
-                        <select className="select !rounded-none border-[1px] !border-primary !outline-none">
-                            <option>Year</option>
-
-                            {years.map((item) => {
-                                return <option>{item}</option>;
-                            })}
-                        </select>
-                    </div>
-                </div>
-
-                <Input
-                    value={name}
-                    setValue={setName}
-                    label={'NAME ON CARD'}
-                    property={'name'}
-                    autoComplete={'country'}
-                    {...errorProps}
-                />
-
-                <button
-                    type="button"
-                    className="w-full !bg-primary py-3 text-base font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
-                >
-                    SAVE CARD
-                </button>
-            </div>
-            <div className="mt-2 border-t-2 pt-4 flex flex-row items-center gap-x-3">
-                <p className="text-lg font-bold">WE ACCEPT: </p>
-                <div className='flex flex-row gap-x-2'>
-                    {paymentIconArray.map((icon)=> {
-                        return <img src={icon} className='w-10 h-10'/>
-                    })}
-                </div> */}
             </div>
         </section>
     );
