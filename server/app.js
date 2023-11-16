@@ -82,10 +82,6 @@ app.use('/api/delivery', deliveryRoute);
 app.use(errorHandler);
 
 const httpOptions = {
-  // key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem'), 'utf8'),
-  // cert: fs.readFileSync(path.join(__dirname, 'cert', 'sslcert.pem'), 'utf8'),
-  // key: fs.readFileSync(path.join(__dirname, 'mkcert', 'cert.key')),
-  // cert: fs.readFileSync(path.join(__dirname, 'mkcert', 'cert.crt')),
   key: fs.readFileSync('./mkcert/key.pem'),
   cert: fs.readFileSync('./mkcert/cert.pem'),
   requestCert: false,
@@ -94,7 +90,6 @@ const httpOptions = {
 console.log({
   NODE_ENV: process.env.NODE_ENV,
   bool: process.env.NODE_ENV === 'production',
-
 });
 const sslServer = https.createServer(httpOptions, app);
 sslServer.listen(PORT, () => {

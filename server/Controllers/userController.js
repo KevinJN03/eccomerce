@@ -604,17 +604,15 @@ export const saveCustomerCard = [
     //   shipping: { address: new_shipping_address, name, phone: mobileNumber },
     // });
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    const setupIntent = await stripe.setupIntents.create({
       customer: userId,
-      setup_future_usage: 'off_session',
-      amount: '100',
-      currency: 'gbp',
+      payment_method_types: ['card'],
     });
 
     res.send({
       success: true,
-
-      client_secret: paymentIntent.client_secret,
+      id: setupIntent.id,
+      client_secret: setupIntent.client_secret,
     });
   }),
 ];
