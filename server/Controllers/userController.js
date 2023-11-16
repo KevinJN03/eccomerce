@@ -299,7 +299,7 @@ export const loginUser = [
           return next(err);
         }
 
-        return res.status(200).redirect('/user/check');
+        return res.status(200).redirect('/api/user/check');
       });
     })(req, res, next);
   }),
@@ -310,7 +310,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
     req.logout();
   }
 
-  return res.status(200).redirect('/user/check');
+  return res.status(200).redirect('/api/user/check');
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
@@ -355,7 +355,7 @@ export const changeDetails = [
       returnDocument: 'after',
       runValidators: true,
     });
-    res.redirect(303, '/user/check');
+    res.redirect(303, '/api/user/check');
   }),
 ];
 
@@ -436,7 +436,7 @@ export const editAddress = [
 
     if (isUserAddress) {
       await Address.findByIdAndUpdate(id, { ...req.body }, { new: true });
-      return res.redirect(303, '/user/userData');
+      return res.redirect(303, '/api/user/userData');
     }
   }),
 ];

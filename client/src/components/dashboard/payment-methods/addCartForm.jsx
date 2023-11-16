@@ -60,13 +60,13 @@ export function AddCartForm({}) {
                         initial={'initial'}
                         animate={'animate'}
                         exit={'exit'}
-                        onClick={() => setError(() => null)}
                     >
                         <motion.svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 shrink-0 stroke-current"
+                            className="h-6 w-6 shrink-0 stroke-current hover:cursor-pointer hover:scale-110 transition-all"
                             fill="none"
                             viewBox="0 0 24 24"
+                            onClick={() => setError(() => null)}
                         >
                             <motion.path
                                 strokeLinecap="round"

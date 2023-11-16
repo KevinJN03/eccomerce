@@ -20,7 +20,7 @@ function Login({ handleSubmit, admin }) {
         setLoading(true);
 
         axios
-            .post('/user/login', { email, password })
+            .post('user/login', { email, password })
             .then((res) => {
                 setTimeout(() => {
                     setLoading(() => false);
