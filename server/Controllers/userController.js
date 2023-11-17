@@ -616,3 +616,30 @@ export const saveCustomerCard = [
     });
   }),
 ];
+
+export const getPaymentMethods = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: req.session.passport.user,
+      type: 'card',
+    });
+
+    const newMethodsArray = paymentMethods.data.map((method) => {
+      const { brand, exp_month, exp_year, last4, funding } = method?.card;
+      console.log(method.billing_details);
+      const newObj = {
+        brand: brand[0].toUpperCase() + brand.slice(1),
+        exp_month,
+        exp_year: exp_year,
+        last4,
+        type: 'card',
+        funding: funding[0].toUpperCase() + funding.slice(1),
+        name: method.billing_details.name,
+      };
+
+      return newObj;
+    });
+    res.status(200).send({ success: true, paymentMethods: newMethodsArray });
+  }),
+];
