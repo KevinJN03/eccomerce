@@ -47,6 +47,7 @@ import Payment_Method_Home from './components/dashboard/payment-methods/home.jsx
 import GiftCard_Add from './components/dashboard/gift-card-voucher/add.jsx';
 import Add_GiftCard from './components/dashboard/gift-card-voucher/card.jsx';
 import Add_Voucher from './components/dashboard/gift-card-voucher/voucher.jsx';
+import PayPalHome from './components/dashboard/payment-methods/Paypal/paypal-home.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -147,6 +148,10 @@ function Router({ Header, Footer }) {
                                         {
                                             path: 'card',
                                             element: <Add_Card />,
+                                        },
+                                        {
+                                            path: 'paypal',
+                                            element: <PayPalHome />,
                                         },
                                     ],
                                 },

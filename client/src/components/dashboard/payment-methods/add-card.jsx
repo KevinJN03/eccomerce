@@ -53,32 +53,6 @@ function Add_Card({}) {
         }, 0);
     };
 
-    const handleCardNumber = (e) => {
-        e.preventDefault();
-        const lastIndex = parseInt(e.target.value.slice(-1));
-        console.log({ lastIndex });
-        if (!lastIndex && e.target.value.length > cardNumber.length) {
-            return;
-        }
-        const parts = [];
-        let value = e.target.value.replaceAll(' ', '');
-
-        for (let i = 0; i < value.length; i += 4) {
-            parts.push(value.substring(i, i + 4));
-        }
-
-        if (parts.length) {
-            setCardNumber(() => parts.join(' '));
-        } else {
-            setCardNumber(() => value);
-        }
-
-        setError((prevState) => ({
-            ...prevState,
-            cardNumber: null,
-        }));
-    };
-
     useEffect(() => {
         axios
             .get('user/payment-method/card/save')
