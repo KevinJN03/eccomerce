@@ -197,7 +197,7 @@ export const signUp_user = [
     return true;
   }),
   asyncHandler(async (req, res, next) => {
-    const { firstName, email, password, interest, lastname, dob } = req.body;
+    const { firstName, email, password, lastName } = req.body;
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
@@ -208,11 +208,16 @@ export const signUp_user = [
       });
       return res.status(400).send(newResult);
     }
+
     const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
     console.log({ salt });
     const hashPassword = bcrypt.hashSync(password, salt);
     const user = await User.create({ ...req.body, password: hashPassword });
-
+    await stripe.customers.create({
+      id: user.id,
+      name: `${firstName} ${lastName}`,
+      email,
+    });
     res.status(200).send({ msg: 'user created', user });
   }),
 ];
@@ -497,7 +502,7 @@ export const addPaymentMethod = [
   check('text').escape().trim(),
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    console.log({ body: req.body });
+
     const user = await User.findByIdAndUpdate(
       userId,
       {
@@ -544,7 +549,7 @@ export const changeDefaultMethod = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
-    const user = await User.findById(userId, { payment_methods: 1 });
+    /*  const user = await User.findById(userId, { payment_methods: 1 });
     const payment_methods = [...user.payment_methods];
     const index = payment_methods.findIndex((item) => item._id == id);
 
@@ -560,11 +565,14 @@ export const changeDefaultMethod = [
     });
 
     user.payment_methods = new_payment_method;
-    await user.save();
-    console.log({ payment_methods, new_payment_method });
+    await user.save(); */
+
+    const customer = await stripe.customers.update(userId, {
+      invoice_settings: { default_payment_method: id },
+    });
+
     res.status(200).send({
-      msg: 'payment method successfully added',
-      payment_methods: new_payment_method,
+      msg: 'default method successfully changed',
     });
   }),
 ];
@@ -573,41 +581,29 @@ export const saveCustomerCard = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const user = await User.findById(userId, { passport: 0 }).populate([
-      'address',
-      'default_address.shipping_address',
-    ]);
 
-    const new_shipping_address = {};
-    const shipping_address = user.default_address.shipping_address;
+    const findCustomer = await stripe.customers.list();
 
-    let mobileNumber = null;
-    if (shipping_address) {
-      const { mobile, address_1, address_2, city, county, postCode, country } =
-        shipping_address;
-
-      mobileNumber = mobile;
-      new_shipping_address.line1 = address_1;
-      new_shipping_address.line2 = address_2;
-      new_shipping_address.city = city;
-      new_shipping_address.state = county;
-      new_shipping_address.country = country;
-      new_shipping_address.postal_code = postCode;
+    const allCustomers = findCustomer.data;
+    const checkExists = allCustomers.some((item) => item.id == userId);
+    console.log({ checkExists });
+    let setupIntent = null;
+    if (checkExists) {
+      setupIntent = await stripe.setupIntents.create({
+        customer: userId,
+        payment_method_types: ['card'],
+      });
+    } else {
+      const customer = await stripe.customers.create({
+        id: userId,
+        name: `${req.user.firstName} ${req.user.lastName}`,
+        email: req.user.email,
+      });
+      setupIntent = await stripe.setupIntents.create({
+        customer: userId,
+        payment_method_types: ['card'],
+      });
     }
-
-    const name = `${user.firstName} ${user.lastName}`;
-    // const customer = await stripe.customers.create({
-    //   id: userId,
-    //   email: user.email,
-    //   name,
-    //   address: new_shipping_address,
-    //   shipping: { address: new_shipping_address, name, phone: mobileNumber },
-    // });
-
-    const setupIntent = await stripe.setupIntents.create({
-      customer: userId,
-      payment_method_types: ['card'],
-    });
 
     res.send({
       success: true,
@@ -620,6 +616,9 @@ export const saveCustomerCard = [
 export const getPaymentMethods = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    const findCustomer = await stripe.customers.list();
+
     const paymentMethods = await stripe.paymentMethods.list({
       customer: req.session.passport.user,
       type: 'card',
@@ -627,7 +626,6 @@ export const getPaymentMethods = [
 
     const newMethodsArray = paymentMethods.data.map((method) => {
       const { brand, exp_month, exp_year, last4, funding } = method?.card;
-      console.log(method.billing_details);
       const newObj = {
         brand: brand[0].toUpperCase() + brand.slice(1),
         exp_month,
@@ -640,6 +638,35 @@ export const getPaymentMethods = [
 
       return newObj;
     });
-    res.status(200).send({ success: true, paymentMethods: newMethodsArray });
+
+    console.log({ newMethodsArray });
+    return res
+      .status(200)
+      .send({ success: true, paymentMethods: newMethodsArray });
+  }),
+];
+
+export const setUpPaypal = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    // const setupIntent = await stripe.setupIntents.create({
+    //   customer: userId,
+    //   payment_method_types: ['paypal'],
+    // });
+    // console.log({
+    //   id: setupIntent.id,
+    //   client_secret: setupIntent.client_secret,
+    // });
+    // res.status(200).send({
+    //   success: true,
+    //   id: setupIntent.id,
+    //   client_secret: setupIntent.client_secret,
+    // });
+
+
+    const session = await stripe.checkout.session.create({
+      
+    })
   }),
 ];

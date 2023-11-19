@@ -2,6 +2,17 @@ import ErrorMessage from './errorMessage';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 function DobPicker({ error, setDob, showDescription, value, setError }) {
+    const handleDateChange = (e) => {
+        try {
+            setDob(() => e.format());
+            setError((prevState) => ({
+                ...prevState,
+                dob: null,
+            }));
+        } catch (error) {
+            console.log('error changing date: ', error);
+        }
+    };
     return (
         <div className="input-container">
             {error.dob && <ErrorMessage msg={error.dob} />}
@@ -13,15 +24,8 @@ function DobPicker({ error, setDob, showDescription, value, setError }) {
                     slotProps={{
                         textField: { size: 'small', fullWidth: true },
                     }}
-                    onChange={(e) => {
-                        setDob(() => e.toISOString());
-                        setError((prevState) => ({
-                            ...prevState,
-                            dob: null,
-                        }));
-                    }}
-                   defaultValue={dayjs(value)}
-           
+                    onChange={handleDateChange}
+                    defaultValue={dayjs(value)}
                 />
             </div>
 

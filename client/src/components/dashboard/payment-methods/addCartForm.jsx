@@ -17,11 +17,13 @@ import Input from '../../Login-SignUp/input';
 import logos from './logos';
 import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../../api/axios';
 export function AddCartForm({ clientSecret }) {
     const [error, setError] = useState({});
-    const [check, setCheck] = useState(false);
+    const [isDefault, setDefault] = useState(false);
     const [btnLoad, setBtnLoad] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
+
     const [name, setName] = useState('');
     const [cvc, setCvc] = useState('');
     const stripe = useStripe();
@@ -54,7 +56,15 @@ export function AddCartForm({ clientSecret }) {
                 },
             }
         );
+        console.log({ setupIntent });
 
+        if (isDefault) {
+            axios
+                .post(
+                    `user/payment-method/changedefault/${setupIntent.payment_method}`
+                )
+                .then((res) => console.log(res));
+        }
         setTimeout(() => {
             if (error) {
                 console.log(error);
@@ -147,8 +157,8 @@ export function AddCartForm({ clientSecret }) {
             />
             <div className="my-8 flex items-center gap-x-3">
                 <input
-                    onChange={() => setCheck(!check)}
-                    checked={check}
+                    onChange={() => setDefault(!isDefault)}
+                    checked={isDefault}
                     type="checkbox"
                     className="daisy-checkbox rounded-none"
                 />
@@ -181,7 +191,6 @@ export function AddCartForm({ clientSecret }) {
                     })}
                 </div>
             </div>
-         
         </>
     );
 }

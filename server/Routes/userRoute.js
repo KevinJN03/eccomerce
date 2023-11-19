@@ -18,6 +18,7 @@ import {
   changeDefaultMethod,
   saveCustomerCard,
   getPaymentMethods,
+  setUpPaypal,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -39,6 +40,7 @@ router.put('/changedetails', changeDetails);
 router.put('/changepreferences', updatePreferences);
 router.put('/address/changeDefault', updateDefaultAddress);
 router.get('/payment-method/card/save', saveCustomerCard);
+router.get('/payment-method/paypal', setUpPaypal);
 router.post('/payment-method/add', addPaymentMethod);
 router.post('/payment-method/changedefault/:id', changeDefaultMethod);
 router.delete('/payment-method/delete/:id', deletePaymentMethod);
