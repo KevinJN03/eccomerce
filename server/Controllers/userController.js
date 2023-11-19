@@ -549,7 +549,7 @@ export const changeDefaultMethod = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
-    const user = await User.findById(userId, { payment_methods: 1 });
+    /*  const user = await User.findById(userId, { payment_methods: 1 });
     const payment_methods = [...user.payment_methods];
     const index = payment_methods.findIndex((item) => item._id == id);
 
@@ -565,11 +565,14 @@ export const changeDefaultMethod = [
     });
 
     user.payment_methods = new_payment_method;
-    await user.save();
-    console.log({ payment_methods, new_payment_method });
+    await user.save(); */
+
+    const customer = await stripe.customers.update(userId, {
+      invoice_settings: { default_payment_method: id },
+    });
+
     res.status(200).send({
-      msg: 'payment method successfully added',
-      payment_methods: new_payment_method,
+      msg: 'default method successfully changed',
     });
   }),
 ];
@@ -578,13 +581,7 @@ export const saveCustomerCard = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    // const customer = await stripe.customers.create({
-    //   id: userId,
-    //   email: user.email,
-    //   name,
-    //   address: new_shipping_address,
-    //   shipping: { address: new_shipping_address, name, phone: mobileNumber },
-    // });
+
     const findCustomer = await stripe.customers.list();
 
     const allCustomers = findCustomer.data;
@@ -599,6 +596,8 @@ export const saveCustomerCard = [
     } else {
       const customer = await stripe.customers.create({
         id: userId,
+        name: `${req.user.firstName} ${req.user.lastName}`,
+        email: req.user.email,
       });
       setupIntent = await stripe.setupIntents.create({
         customer: userId,
@@ -619,31 +618,55 @@ export const getPaymentMethods = [
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
     const findCustomer = await stripe.customers.list();
-    try {
-      const paymentMethods = await stripe.paymentMethods.list({
-        customer: req.session.passport.user,
+
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: req.session.passport.user,
+      type: 'card',
+    });
+
+    const newMethodsArray = paymentMethods.data.map((method) => {
+      const { brand, exp_month, exp_year, last4, funding } = method?.card;
+      const newObj = {
+        brand: brand[0].toUpperCase() + brand.slice(1),
+        exp_month,
+        exp_year: exp_year,
+        last4,
         type: 'card',
-      });
+        funding: funding[0].toUpperCase() + funding.slice(1),
+        name: method.billing_details.name,
+      };
 
-      const newMethodsArray = paymentMethods.data.map((method) => {
-        const { brand, exp_month, exp_year, last4, funding } = method?.card;
-        console.log(method.billing_details);
-        const newObj = {
-          brand: brand[0].toUpperCase() + brand.slice(1),
-          exp_month,
-          exp_year: exp_year,
-          last4,
-          type: 'card',
-          funding: funding[0].toUpperCase() + funding.slice(1),
-          name: method.billing_details.name,
-        };
+      return newObj;
+    });
 
-        return newObj;
-      });
-      res.status(200).send({ success: true, paymentMethods: newMethodsArray });
-    } catch (error) {
-      console.log('error here: ');
-      res.status(200).send({ success: true, paymentMethods: [] });
-    }
+    console.log({ newMethodsArray });
+    return res
+      .status(200)
+      .send({ success: true, paymentMethods: newMethodsArray });
+  }),
+];
+
+export const setUpPaypal = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    // const setupIntent = await stripe.setupIntents.create({
+    //   customer: userId,
+    //   payment_method_types: ['paypal'],
+    // });
+    // console.log({
+    //   id: setupIntent.id,
+    //   client_secret: setupIntent.client_secret,
+    // });
+    // res.status(200).send({
+    //   success: true,
+    //   id: setupIntent.id,
+    //   client_secret: setupIntent.client_secret,
+    // });
+
+
+    const session = await stripe.checkout.session.create({
+      
+    })
   }),
 ];
