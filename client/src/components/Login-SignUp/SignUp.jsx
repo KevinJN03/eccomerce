@@ -127,8 +127,13 @@ function SignUp() {
                 <p>Must be 10 or more characters</p>
             </div>
 
-            <DobPicker error={error} setDob={setDob} showDescription={true} />
-            <Interest setInterest={setInterest} />
+            <DobPicker
+                error={error}
+                setError={setError}
+                setDob={setDob}
+                showDescription={true}
+            />
+            <Interest setInterest={setInterest} interest={interest} />
 
             <Button
                 text={'JOIN GLAMO'}

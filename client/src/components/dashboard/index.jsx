@@ -31,47 +31,42 @@ function Dashboard() {
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [defaultAddresses, setDefaultAddresses] = useState({});
 
+    async function fetchResults() {
+        try {
+            const userResult = await axios.get('user/userData');
+            const paymentResult = await axios.get('user/payment-method/all');
+            const { user } = userResult.data;
+            setDob(() => dayjs(user.dob).toISOString());
+            setContactPreference(() => user?.contact_preferences);
+            setAddress(() => user?.address);
+            setUserPaymentMethods(() => [
+                ...paymentResult?.data?.paymentMethods,
+                ...user?.payment_methods,
+            ]);
+            setDefaultAddresses(() => user?.default_address);
+
+            return Promise.resolve('ok');
+        } catch (error) {
+            console.log(
+                'error while checking if user is authenticated: ',
+                error
+            );
+
+            if (error?.response?.status == 401) {
+                authDispatch({ type: 'LOGOUT' });
+                navigate('/login');
+            }
+        }
+    }
+
     useEffect(() => {
-        axios
-            .get('user/userData')
-            .then(async (res) => {
-                try {
-                    const result = await axios.get('user/payment-method/all');
-                    setDob(() => dayjs(res.data.user.dob).toISOString());
-                    setContactPreference(
-                        () => res.data.user.contact_preferences
-                    );
-                    setAddress(() => res.data.user.address);
-
-                    console.log('pm: ', res.data.user?.payment_methods);
-                    setUserPaymentMethods(() => [
-                        ...result.data.paymentMethods,
-                        ...res.data.user.payment_methods,
-                    ]);
-                    setDefaultAddresses(() => res.data.user?.default_address);
-
-                    setTimeout(() => {
-                        setLoadingState(false);
-                    }, 1000);
-                } catch (error) {
-                    console.log(
-                        'error while checking if user is authenticated: ',
-                        error
-                    );
-                }
-            })
-            .catch((error) => {
-                console.log(
-                    'error while checking if user is authenticated: ',
-                    error
-                );
-
-                if (error.response.status == 401) {
-                    authDispatch({ type: 'LOGOUT' });
-                    navigate('/login');
-                }
-            });
+        fetchResults().then(() => {
+            setTimeout(() => {
+                setLoadingState(false);
+            }, 1000);
+        });
     }, []);
+
     const getRoute = () => {
         const routes = pathname.split('/');
         const findIndexForMyAccount = routes.indexOf('my-account');
