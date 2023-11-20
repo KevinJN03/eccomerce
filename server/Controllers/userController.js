@@ -38,8 +38,6 @@ const handleProfilePhoto = async (file, id) => {
       { profileImg },
       { upsert: true, new: true },
     );
-
-
   }
 };
 
@@ -242,7 +240,6 @@ export const update_single = [
     const { id } = req.params;
     const { file } = req;
 
-    
     const user = await User.updateOne({ _id: id }, req.body, {
       new: true,
       upsert: true,
@@ -290,7 +287,6 @@ export const loginUser = [
       return res.status(400).send(newResult);
     }
     passport.authenticate('local', (err, user, info) => {
-   
       if (err) {
         next(err);
       }
@@ -321,7 +317,6 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  
   return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
@@ -411,9 +406,7 @@ export const deleteAddress = [
         .populate('address')
         .exec(),
     ]);
-    
 
-  
     res.status(200).send({ success: true, address: user.address });
   }),
 ];
@@ -427,7 +420,7 @@ export const editAddress = [
     const { id } = req.params;
     if (!result.isEmpty()) {
       const newResult = errorRegenerator(result);
-   
+
       return res.status(400).send(newResult);
     }
 
@@ -514,7 +507,6 @@ export const addPaymentMethod = [
       },
       { upsert: true, new: true, select: { payment_methods: 1 } },
     );
-   
 
     res.status(200).send({
       msg: 'payment method successfully added',
@@ -570,7 +562,7 @@ export const saveCustomerCard = [
 
     const allCustomers = findCustomer.data;
     const checkExists = allCustomers.some((item) => item.id == userId);
-   
+
     let setupIntent = null;
     if (checkExists) {
       setupIntent = await stripe.setupIntents.create({
@@ -612,10 +604,12 @@ export const getPaymentMethods = [
       .map((method) => {
         if (method.type === 'card') {
           const { brand, exp_month, exp_year, last4, funding } = method?.card;
+
+          const newMonth = '0' + exp_month;
           return {
             id: method.id,
             brand: brand[0].toUpperCase() + brand.slice(1),
-            exp_month,
+            exp_month: newMonth.slice(-2),
             exp_year: exp_year,
             last4,
             type: 'card',
@@ -666,8 +660,6 @@ export const setUpPaypal = [
       success_url: `${CLIENT_URL}/my-account/payment-methods/`,
       cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
     });
-
-   
 
     res.send({ success: true, url: session.url });
   }),
@@ -722,7 +714,6 @@ export const setUpKlarna = [
       //   },
       // },
     });
-
 
     const attachPaymentMethod = await stripe.paymentMethods.attach(
       paymentMethod.id,

@@ -35,7 +35,7 @@ function PaymentMethodItem({
                         <>
                             <p className="text-base font-[400]">
                                 Exp:{' '}
-                                {`${cardData?.exp_month}/${cardData.exp_year
+                                {`${cardData.exp_month}/${cardData.exp_year
                                     .toString()
                                     .slice(-2)}`}
                             </p>

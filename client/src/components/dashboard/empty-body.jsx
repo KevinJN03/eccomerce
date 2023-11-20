@@ -2,7 +2,7 @@ import CheckroomSharpIcon from '@mui/icons-material/CheckroomSharp';
 import { Link } from 'react-router-dom';
 function Empty_Body({ text, link, icon }) {
     return (
-        <section className="bottom mt-2 flex !w-full flex-col items-center justify-center bg-white py-5">
+        <section className="bottom mt-2  flex !w-full flex-col items-center justify-center bg-white pt-5 pb-8">
             {icon ? (
                 <img src={icon.image} alt={icon.alt} className="mb-7" />
             ) : (

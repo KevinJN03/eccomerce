@@ -14,9 +14,10 @@ import { PromoProvider } from '../../hooks/promoContext';
 import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { useNavigate } from 'react-router-dom';
-
+import { motion, AnimatePresence } from 'framer-motion';
 import exampleCustomerInfo from './address form/example-customer-info.jsx';
 import axios from '../../api/axios.js';
+
 function Checkout() {
     disableLayout();
 
@@ -63,8 +64,23 @@ function Checkout() {
                 console.log('error when creating order: ', error);
             });
     };
+
+    const variants = {
+        initial: {
+            opacity: 0,
+        },
+        animate: {
+            opacity: 1,
+          
+            transition: {duration: 0.9,}
+        },
+
+        exit: {
+            opacity: 0,
+        },
+    };
     return (
-        <>
+        <AnimatePresence>
             {loading && (
                 <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                     <img src={RedirectImage} className="h-28 w-28" />
@@ -77,8 +93,14 @@ function Checkout() {
             )}
 
             {!loading && (
-                <section id="checkout-page">
-                    <section id="checkout">
+                <motion.section id="checkout-page">
+                    <motion.section
+                        id="checkout"
+                        variants={variants}
+                        animate={'animate'}
+                        initial={'initial'}
+                        exit={'exit'}
+                    >
                         <Checkout_Header text={'CHECKOUT'} />
                         <div className="checkout-body">
                             <section id="checkout-body-wrapper">
@@ -119,10 +141,10 @@ function Checkout() {
 
                             <Checkout_Total />
                         </div>
-                    </section>
-                </section>
+                    </motion.section>
+                </motion.section>
             )}
-        </>
+        </AnimatePresence>
     );
 }
 

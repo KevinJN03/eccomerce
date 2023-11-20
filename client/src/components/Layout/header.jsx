@@ -18,6 +18,8 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Search from './search';
 import { useCart } from '../../context/cartContext';
+
+import { motion, AnimatePresence } from 'framer-motion';
 function Header() {
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
@@ -28,7 +30,21 @@ function Header() {
     };
 
     const { cart } = useCart();
+    const variants = {
+        initial: {
+            y: 10,
+            opacity: 0,
+        },
 
+        animate: {
+            opacity: 1,
+            y: 0,
+            duration: 2,
+        },
+        exit: {
+            opacity: 0,
+        },
+    };
     return (
         <section className="header-section flex w-full max-w-full flex-col justify-center">
             <section id="header-wrapper">
@@ -99,12 +115,20 @@ function Header() {
                                 className="img-icon"
                                 fontSize="large"
                             />
-
-                            {cart.length > 0 && (
-                                <span className="absolute bottom-[-8px] right-[-3px] flex h-0 w-0 items-center justify-center rounded-full bg-white p-[10px] text-s font-medium">
-                                    {cart.length}
-                                </span>
-                            )}
+                            <AnimatePresence>
+                                {cart.length > 0 && (
+                                    <motion.span
+                                        key={cart.length}
+                                        variants={variants}
+                                        animate={'animate'}
+                                        initial={'initial'}
+                                        exit={'exit'}
+                                        className="absolute bottom-[-8px] right-[-3px] flex h-0 w-0 items-center justify-center rounded-full bg-white p-[10px] text-s font-medium"
+                                    >
+                                        {cart.length}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
                         </Link>
                     </section>
                 </header>
