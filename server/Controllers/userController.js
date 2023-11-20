@@ -553,31 +553,11 @@ export const changeDefaultMethod = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
-    /*  const user = await User.findById(userId, { payment_methods: 1 });
-    const payment_methods = [...user.payment_methods];
-    const index = payment_methods.findIndex((item) => item._id == id);
-
-    const findNewDefaultMethodObj = {};
-
-    const new_payment_method = [];
-    payment_methods.forEach((paymentMethodObj) => {
-      if (paymentMethodObj._id != id) {
-        new_payment_method.push(paymentMethodObj);
-      } else {
-        new_payment_method.unshift(paymentMethodObj);
-      }
-    });
-
-    user.payment_methods = new_payment_method;
-    await user.save(); */
-
     const customer = await stripe.customers.update(userId, {
       invoice_settings: { default_payment_method: id },
     });
 
-    res.status(200).send({
-      msg: 'default method successfully changed',
-    });
+    res.redirect(303, '/api/user/payment-method/all');
   }),
 ];
 
@@ -651,6 +631,12 @@ export const getPaymentMethods = [
             text: 'PayPal',
           };
         }
+
+        return {
+          id: method.id,
+          type: method.type,
+          text: method.type,
+        };
       })
       .sort((a, b) => {
         if (a.id === defaultPaymentMethod) {
@@ -661,11 +647,10 @@ export const getPaymentMethods = [
         }
         return 0;
       });
-    console.log({ newMethodsArray, defaultPaymentMethod });
+
     return res.status(200).send({
       success: true,
       paymentMethods: newMethodsArray,
-      defaultPaymentMethod,
     });
   }),
 ];
@@ -674,20 +659,6 @@ export const setUpPaypal = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    // const setupIntent = await stripe.setupIntents.create({
-    //   customer: userId,
-    //   payment_method_types: ['paypal'],
-    // });
-    // console.log({
-    //   id: setupIntent.id,
-    //   client_secret: setupIntent.client_secret,
-    // });
-    // res.status(200).send({
-    //   success: true,
-    //   id: setupIntent.id,
-    //   client_secret: setupIntent.client_secret,
-    // });
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['paypal'],
       mode: 'setup',
@@ -699,5 +670,64 @@ export const setUpPaypal = [
     console.log({ session });
 
     res.send({ success: true, url: session.url });
+  }),
+];
+
+export const setUpKlarna = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    // const session = await stripe.checkout.sessions.create({
+    //   payment_method_types: ['klarna','afterpay_clearpay'],
+    //   shipping_address_collection: { allowed_countries: ['GB', 'US'] },
+    //   line_items: [
+    //     {
+    //       price_data: {
+    //         currency: 'gbp',
+    //         product_data: {
+    //           name: 'Setup Klarna For Future Use',
+    //         },
+    //          unit_amount:100,
+
+    //       },
+    //       quantity: 1,
+    //     },
+    //   ],
+    //   mode: 'payment',
+    //   customer: userId,
+    //   success_url: `${CLIENT_URL}/my-account/payment-methods/`,
+    //   cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
+    // });
+
+    // res.send({ success: true, url: session.url });
+    const { email, firstName, lastName } = req.user;
+    const name = `${firstName} ${lastName}`;
+
+    const paymentMethod = await stripe.paymentMethods.create({
+      type: 'afterpay_clearpay',
+      billing_details: {
+        address: {
+          line1: 'null',
+          country: 'GB',
+          postal_code: 'null',
+        },
+        name,
+        email,
+      },
+      // klarna: {
+      //   dob: {
+      //     day: 22,
+      //     month: 3,
+      //     year: 2002,
+      //   },
+      // },
+    });
+    console.log({ paymentMethod });
+
+    const attachPaymentMethod = await stripe.paymentMethods.attach(
+      paymentMethod.id,
+      { customer: userId },
+    );
+    res.status(200).send({ success: true });
   }),
 ];
