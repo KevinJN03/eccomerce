@@ -22,6 +22,8 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
+
+const CLIENT_URL = process.env.CLIENT_URL;
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -664,9 +666,16 @@ export const setUpPaypal = [
     //   client_secret: setupIntent.client_secret,
     // });
 
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['paypal'],
+      mode: 'setup',
+      customer: userId,
+      success_url: `${CLIENT_URL}/my-account/payment-methods/`,
+      cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel`,
+    });
 
-    const session = await stripe.checkout.session.create({
-      
-    })
+    console.log({ session });
+
+    res.send({ success: true, url: session.url });
   }),
 ];

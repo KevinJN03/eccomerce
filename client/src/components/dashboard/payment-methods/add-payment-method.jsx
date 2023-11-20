@@ -44,6 +44,19 @@ function Add_Payment_Method({}) {
             }
         }
     };
+
+    const handlePayPalClick = async () => {
+        try {
+            const result = await axios.get('user/payment-method/paypal');
+
+            const { url } = result.data;
+            console.log({ url });
+
+            window.open(url, '_self');
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const buttonsArray = [
         {
             index: 1,
@@ -59,6 +72,7 @@ function Add_Payment_Method({}) {
             logo: 'paypal',
             text: 'PayPal',
             alt: 'paypal icon',
+            onClick: handlePayPalClick,
         },
 
         {
@@ -68,6 +82,7 @@ function Add_Payment_Method({}) {
             text: 'Pay in 3',
             alt: 'paypal icon',
             description: 'with PayPal Pay Later',
+            onClick: handlePayPalClick,
         },
         {
             index: 4,
@@ -82,11 +97,14 @@ function Add_Payment_Method({}) {
         (item) => !paymentMethods.some((method) => item.index === method.index)
         // paymentMethods.some((method) => item.index == method?.index)
     );
-    useEffect(()=> {
-if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
-    navigate('card')
-}
-    }, [])
+    useEffect(() => {
+        if (
+            filteredButtonArray.length == 1 &&
+            filteredButtonArray[0].index == 1
+        ) {
+            navigate('card');
+        }
+    }, []);
 
     console.log('filteredButtonArray: ', filteredButtonArray);
     return (
@@ -147,6 +165,7 @@ if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
                                         description={description}
                                         loading={loadingBtnID == index}
                                         onClick={() =>
+                                            onClick() ||
                                             addPaymentMethod({
                                                 index,
                                                 text,
