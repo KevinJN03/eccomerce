@@ -70,7 +70,7 @@ function Home({}) {
                                 logo,
                                 text,
                                 description,
-                                _id,
+                                id,
                                 type,
                                 brand,
                                 exp_month,
@@ -82,7 +82,7 @@ function Home({}) {
                             idx
                         ) => {
                             const cardData = {};
-                            if (name) {
+                            if (type == 'card') {
                                 cardData.name = name;
                                 cardData.exp_month = exp_month;
                                 cardData.exp_year = exp_year;
@@ -91,34 +91,34 @@ function Home({}) {
                                         brand.toLowerCase().replaceAll(' ', '_')
                                     ];
                             }
-                            debugger;
+                            
                             return (
                                 <PaymentMethodItem
                                     cardData={cardData}
                                     inputDisable={
-                                        defaultCheck && defaultCheck != _id
+                                        defaultCheck && defaultCheck != id
                                     }
-                                    check={defaultCheck == _id}
-                                    key={_id}
+                                    check={defaultCheck == id}
+                                    key={id}
                                     isDefault={idx == 0}
                                     arrayLength={paymentMethods.length}
                                     icon={
-                                        logo === 'paypal'
+                                        type === 'paypal'
                                             ? paypal_icon
-                                            : logo === 'credit-card'
-                                            ? card_icon
-                                            : logo === 'klarna' && klarna_icon
+                                            : type === 'klarna' && klarna_icon
                                     }
-                                    logo={logo}
+                                    type={type}
                                     method={
                                         text
-                                            ? `${text} ${description}`
+                                            ? `${text} ${
+                                                  description ? description : ''
+                                              }`
                                             : `${funding} ${brand} (${last4})`
                                     }
                                     handleDefault={() =>
-                                        handleDefaultMethod(_id)
+                                        handleDefaultMethod(id)
                                     }
-                                    handleDelete={() => handleDelete(_id)}
+                                    handleDelete={() => handleDelete(id)}
                                 />
                             );
                         }

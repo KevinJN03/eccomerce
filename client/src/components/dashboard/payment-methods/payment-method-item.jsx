@@ -8,7 +8,7 @@ function PaymentMethodItem({
     method,
     handleDefault,
     handleDelete,
-    logo,
+    type,
     arrayLength,
     inputDisable,
     cardData,
@@ -26,8 +26,8 @@ function PaymentMethodItem({
                 </div>
                 <div className="middle h-full flex-[5]">
                     <p className="mb-2 text-base font-[400] ">{method}</p>
-                    {requirements[logo] && (
-                        <p className="w-11/12">{requirements[logo]}</p>
+                    {requirements[type] && (
+                        <p className="w-11/12">{requirements[type]}</p>
                     )}
 
                     {Object.keys(cardData).length > 1 && (

@@ -529,20 +529,22 @@ export const deletePaymentMethod = [
     const { id } = req.params;
     const userId = req.session.passport.user;
 
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        $pull: {
-          payment_methods: { _id: id },
-        },
-      },
-      { upsert: true, new: true, select: { payment_methods: 1 } },
-    );
-    console.log({ payment_methods: user.payment_methods });
-    res.status(200).send({
-      msg: 'payment method successfully added',
-      payment_methods: user.payment_methods,
-    });
+    await stripe.paymentMethods.detach(id);
+    res.redirect(303, '/api/user/payment-method/all');
+    // const user = await User.findByIdAndUpdate(
+    //   userId,
+    //   {
+    //     $pull: {
+    //       payment_methods: { _id: id },
+    //     },
+    //   },
+    //   { upsert: true, new: true, select: { payment_methods: 1 } },
+    // );
+    // console.log({ payment_methods: user.payment_methods });
+    // res.status(200).send({
+    //   msg: 'payment method successfully added',
+    //   payment_methods: user.payment_methods,
+    // });
   }),
 ];
 
@@ -619,32 +621,52 @@ export const getPaymentMethods = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const findCustomer = await stripe.customers.list();
 
     const paymentMethods = await stripe.paymentMethods.list({
       customer: req.session.passport.user,
-      type: 'card',
     });
+    const customer = await stripe.customers.retrieve(userId);
+    const defaultPaymentMethod =
+      customer.invoice_settings?.default_payment_method;
+    const newMethodsArray = paymentMethods.data
+      .map((method) => {
+        if (method.type === 'card') {
+          const { brand, exp_month, exp_year, last4, funding } = method?.card;
+          return {
+            id: method.id,
+            brand: brand[0].toUpperCase() + brand.slice(1),
+            exp_month,
+            exp_year: exp_year,
+            last4,
+            type: 'card',
+            funding: funding[0].toUpperCase() + funding.slice(1),
+            name: method.billing_details.name,
+          };
+        }
 
-    const newMethodsArray = paymentMethods.data.map((method) => {
-      const { brand, exp_month, exp_year, last4, funding } = method?.card;
-      const newObj = {
-        brand: brand[0].toUpperCase() + brand.slice(1),
-        exp_month,
-        exp_year: exp_year,
-        last4,
-        type: 'card',
-        funding: funding[0].toUpperCase() + funding.slice(1),
-        name: method.billing_details.name,
-      };
-
-      return newObj;
+        if (method.type === 'paypal') {
+          return {
+            id: method.id,
+            type: method.type,
+            text: 'PayPal',
+          };
+        }
+      })
+      .sort((a, b) => {
+        if (a.id === defaultPaymentMethod) {
+          return -1;
+        }
+        if (b.id === defaultPaymentMethod) {
+          return +1;
+        }
+        return 0;
+      });
+    console.log({ newMethodsArray, defaultPaymentMethod });
+    return res.status(200).send({
+      success: true,
+      paymentMethods: newMethodsArray,
+      defaultPaymentMethod,
     });
-
-    console.log({ newMethodsArray });
-    return res
-      .status(200)
-      .send({ success: true, paymentMethods: newMethodsArray });
   }),
 ];
 
@@ -671,7 +693,7 @@ export const setUpPaypal = [
       mode: 'setup',
       customer: userId,
       success_url: `${CLIENT_URL}/my-account/payment-methods/`,
-      cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel`,
+      cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     console.log({ session });
