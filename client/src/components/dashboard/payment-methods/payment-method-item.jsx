@@ -13,7 +13,8 @@ function PaymentMethodItem({
     inputDisable,
     cardData,
 }) {
-    const [defaultCheck, setDefaultCheck] = useState(isDefault || false);  const requirements = {
+    const [defaultCheck, setDefaultCheck] = useState(isDefault || false);
+    const requirements = {
         klarna: 'You may be required to enter further personal details at checkout.',
         paypal: "You'll need to enter your login details when you place your order.",
     };
@@ -22,7 +23,7 @@ function PaymentMethodItem({
         <section className="flex !h-full  !min-h-[106px] flex-col bg-white p-4">
             <section className="mb-3 flex h-full flex-row">
                 <div className="top h-full flex-[0.7] self-start">
-                    <img src={icon || cardData.icon} className="h-8 w-8" />
+                    <img src={icon} className="h-8 w-8" />
                 </div>
                 <div className="middle h-full flex-[5]">
                     <p className="mb-2 text-base font-[400] ">{method}</p>
@@ -30,7 +31,7 @@ function PaymentMethodItem({
                         <p className="w-11/12">{requirements[type]}</p>
                     )}
 
-                    {Object.keys(cardData).length > 1 && (
+                    {cardData.isCard && (
                         <>
                             <p className="text-base font-[400]">
                                 Exp:{' '}

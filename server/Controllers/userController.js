@@ -39,7 +39,7 @@ const handleProfilePhoto = async (file, id) => {
       { upsert: true, new: true },
     );
 
-    console.log(updateUser);
+
   }
 };
 
@@ -212,7 +212,7 @@ export const signUp_user = [
     }
 
     const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
-    console.log({ salt });
+
     const hashPassword = bcrypt.hashSync(password, salt);
     const user = await User.create({ ...req.body, password: hashPassword });
     await stripe.customers.create({
@@ -242,7 +242,7 @@ export const update_single = [
     const { id } = req.params;
     const { file } = req;
 
-    console.log(req.body);
+    
     const user = await User.updateOne({ _id: id }, req.body, {
       new: true,
       upsert: true,
@@ -290,7 +290,7 @@ export const loginUser = [
       return res.status(400).send(newResult);
     }
     passport.authenticate('local', (err, user, info) => {
-      console.log({ user });
+   
       if (err) {
         next(err);
       }
@@ -321,7 +321,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  console.log({ user: req.user, session: req.session });
+  
   return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
@@ -411,9 +411,9 @@ export const deleteAddress = [
         .populate('address')
         .exec(),
     ]);
-    console.log({ address: user.address });
+    
 
-    console.log(id);
+  
     res.status(200).send({ success: true, address: user.address });
   }),
 ];
@@ -427,7 +427,7 @@ export const editAddress = [
     const { id } = req.params;
     if (!result.isEmpty()) {
       const newResult = errorRegenerator(result);
-      console.log(newResult);
+   
       return res.status(400).send(newResult);
     }
 
@@ -514,7 +514,7 @@ export const addPaymentMethod = [
       },
       { upsert: true, new: true, select: { payment_methods: 1 } },
     );
-    console.log({ payment_methods: user.payment_methods });
+   
 
     res.status(200).send({
       msg: 'payment method successfully added',
@@ -570,7 +570,7 @@ export const saveCustomerCard = [
 
     const allCustomers = findCustomer.data;
     const checkExists = allCustomers.some((item) => item.id == userId);
-    console.log({ checkExists });
+   
     let setupIntent = null;
     if (checkExists) {
       setupIntent = await stripe.setupIntents.create({
@@ -667,7 +667,7 @@ export const setUpPaypal = [
       cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
     });
 
-    console.log({ session });
+   
 
     res.send({ success: true, url: session.url });
   }),
@@ -722,7 +722,7 @@ export const setUpKlarna = [
       //   },
       // },
     });
-    console.log({ paymentMethod });
+
 
     const attachPaymentMethod = await stripe.paymentMethods.attach(
       paymentMethod.id,

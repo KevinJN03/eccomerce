@@ -18,12 +18,14 @@ import logos from './logos';
 import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
+
 export function AddCartForm({ clientSecret }) {
     const [error, setError] = useState({});
     const [isDefault, setDefault] = useState(false);
     const [btnLoad, setBtnLoad] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
-
+    const { PaymentMethodsDispatch } = usePaymentMethods();
     const [name, setName] = useState('');
     const [cvc, setCvc] = useState('');
     const stripe = useStripe();
@@ -63,7 +65,27 @@ export function AddCartForm({ clientSecret }) {
                 .post(
                     `user/payment-method/changedefault/${setupIntent.payment_method}`
                 )
-                .then((res) => console.log(res));
+                .then(({ data }) =>
+                    PaymentMethodsDispatch({
+                        type: 'set',
+                        payload: data.paymentMethods,
+                    })
+                )
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            axios
+                .get(`user/payment-method/all`)
+                .then(({ data }) =>
+                    PaymentMethodsDispatch({
+                        type: 'set',
+                        payload: data.paymentMethods,
+                    })
+                )
+                .catch((error) => {
+                    console.error(error);
+                });
         }
         setTimeout(() => {
             if (error) {

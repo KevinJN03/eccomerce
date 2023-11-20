@@ -1,4 +1,3 @@
-import card_logo from '../../../assets/icons/credit-card.png';
 import visa from '../../../assets/icons/payment-icons/visa.svg';
 import discover from '../../../assets/icons/payment-icons/discover.svg';
 
@@ -9,7 +8,7 @@ import amex from '../../../assets/icons/payment-icons/american-express.svg';
 
 export default {
     amex,
-    card_logo,
+
     visa,
     discover,
     maestro,

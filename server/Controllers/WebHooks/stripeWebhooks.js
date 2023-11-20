@@ -6,13 +6,11 @@ const CLIENT_URL = process.env.CLIENT_URL;
 
 const stripeWebHooks = asyncHandler((req, res, next) => {
   const event = req.body;
-
-  if (event.type == 'checkout.session.completed') {
-
-
-    console.log('complete', event)
+  if (event.type == 'setup_intent.succeeded') {
+    return res.redirect('/api/user/payment-method/all');
+  } else {
+    res.status(200).send({ success: true });
   }
-  res.status(200).send('hi');
 });
 
 export default stripeWebHooks;

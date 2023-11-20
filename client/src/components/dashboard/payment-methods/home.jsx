@@ -27,7 +27,7 @@ function Home({}) {
         setLoading(true);
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 800);
+        }, 500);
 
         return () => {
             clearTimeout(timeout);
@@ -44,15 +44,15 @@ function Home({}) {
 
     const handleDefaultMethod = (id) => {
         setDefaultCheck(() => id);
-        axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
-            setTimeout(() => {
+        axios
+            .post(`user/payment-method/changedefault/${id}`)
+            .then(({ data }) => {
                 PaymentMethodsDispatch({
                     type: 'set',
-                    payload: res.data.payment_methods,
+                    payload: data.paymentMethods,
                 });
                 setDefaultCheck(() => null);
-            }, 400)
-        );
+            });
     };
     return (
         <section className="payment-method">
@@ -81,8 +81,9 @@ function Home({}) {
                             },
                             idx
                         ) => {
-                            const cardData = {};
+                            const cardData = { isCard: false };
                             if (type == 'card') {
+                                cardData.isCard = true;
                                 cardData.name = name;
                                 cardData.exp_month = exp_month;
                                 cardData.exp_year = exp_year;
@@ -91,7 +92,7 @@ function Home({}) {
                                         brand.toLowerCase().replaceAll(' ', '_')
                                     ];
                             }
-                            
+
                             return (
                                 <PaymentMethodItem
                                     cardData={cardData}
@@ -105,7 +106,9 @@ function Home({}) {
                                     icon={
                                         type === 'paypal'
                                             ? paypal_icon
-                                            : type === 'klarna' && klarna_icon
+                                            : type === 'klarna'
+                                            ? klarna_icon
+                                            : cardData.icon || card_icon
                                     }
                                     type={type}
                                     method={
