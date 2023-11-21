@@ -3,7 +3,7 @@ import Category from './category.jsx';
 import Color from './color.jsx';
 import Size from './size.jsx';
 
-function Index({ filterCount, setFilterCount }) {
+function Index({ filterCount, setFilterCount, loading }) {
     return (
         <section id="filter-nav">
             {filterCount > 0 ? (
@@ -15,9 +15,9 @@ function Index({ filterCount, setFilterCount }) {
                     Clear all ({filterCount})
                 </button>
             ) : null}
-            <Size addToFilter={setFilterCount} />
-            <Color />
-            <Category />
+            <Size addToFilter={setFilterCount} loading={loading} />
+            <Color loading={loading} />
+            <Category loading={loading} />
         </section>
     );
 }

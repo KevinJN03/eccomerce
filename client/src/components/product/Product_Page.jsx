@@ -12,7 +12,19 @@ import axios from '../../api/axios';
 import { Outlet } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+const tagButtons = [
+    '  ActiveWear',
+    'Active Tops',
+    ' Sports Bras',
+    'Active Jackets',
+    ' ActiveWear',
+    ' Active Tops',
+    'Sports Bras',
+    ' Active Jackets',
+];
 function Product_Page() {
+    const [loading, setLoading] = useState(true);
     const [filterCount, setFilterCount] = useState(0);
     const [state, dispatch] = useGenderCategory();
     const [products, setProducts] = useState([]);
@@ -22,7 +34,11 @@ function Product_Page() {
             .then((res) => {
                 let lowerCaseGender = state.gender.toLowerCase();
                 console.log('data response: ', res.data[lowerCaseGender]);
-                setProducts(res.data[lowerCaseGender]);
+
+                setTimeout(() => {
+                    setProducts(res.data[lowerCaseGender]);
+                     setLoading(() => false);
+                }, 1000);
             })
             .catch((err) => {
                 console.error('err at product fetch: ', err);
@@ -35,15 +51,19 @@ function Product_Page() {
         <section id="product_page">
             <section className="product-page-section flex w-full max-w-[1366px] flex-col sm:px-5 md+lg:!px-10">
                 <div className="product-header mb-4 flex flex-col sm:gap-2 md+lg:gap-4">
-                    <Navigation_Links />
+                    <Navigation_Links loading={loading} />
                     <div className="middle flex flex-row items-center sm+md:justify-between">
-                        <h2 className="font-black tracking-tight sm:w-28 sm:text-2xl md+lg:text-4xl">
-                            {/* WOMEN'S ACTIVEWEAR TOPS */}
-                            {state.gender.toUpperCase() +
-                                "'S" +
-                                ' ' +
-                                state.productCategory.toUpperCase()}
-                        </h2>
+                        {!loading ? (
+                            <h2 className="font-black tracking-tight sm:w-28 sm:text-2xl md+lg:text-4xl">
+                                {/* WOMEN'S ACTIVEWEAR TOPS */}
+                                {state.gender.toUpperCase() +
+                                    "'S" +
+                                    ' ' +
+                                    state.productCategory.toUpperCase()}
+                            </h2>
+                        ) : (
+                            <div className="skeleton-pulse h-12 w-3/12 sm:w-28"></div>
+                        )}
                         {screenSize.width < 800 && (
                             <>
                                 <label
@@ -62,41 +82,29 @@ function Product_Page() {
                     </div>
 
                     <div className="bottom">
-                        <button className="category-filter-btn">
-                            ActiveWear
-                        </button>
-                        <button className="category-filter-btn">
-                            Active Tops
-                        </button>
-                        <button className="category-filter-btn">
-                            Sports Bras
-                        </button>
-                        <button className="category-filter-btn">
-                            Active Jackets
-                        </button>
-
-                        {/* test */}
-
-                        <button className="category-filter-btn">
-                            ActiveWear
-                        </button>
-                        <button className="category-filter-btn">
-                            Active Tops
-                        </button>
-                        <button className="category-filter-btn">
-                            Sports Bras
-                        </button>
-                        <button className="category-filter-btn">
-                            Active Jackets
-                        </button>
+                        {!loading ? (
+                            <>
+                                {' '}
+                                {tagButtons.map((text) => {
+                                    return (
+                                        <button className="category-filter-btn">
+                                            {text}
+                                        </button>
+                                    );
+                                })}
+                            </>
+                        ) : (
+                            <div className="skeleton-pulse h-12 w-7/12 sm:w-28"></div>
+                        )}
                     </div>
                 </div>
                 <section className="product-page-wrapper">
                     <Filter
                         filterCount={filterCount}
                         setFilterCount={setFilterCount}
+                        loading={loading}
                     />
-                    <Collection products={products} />
+                    <Collection products={products} loading={loading} />
                 </section>
             </section>
         </section>

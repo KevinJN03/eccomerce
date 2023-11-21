@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import arrow from '../../../assets/footer-icons/right-arrow.png';
 import Arrow from './arrow';
 
-function Color({}) {
+function Color({ loading }) {
     const [count, setCount] = useState();
     const [show, setShow] = useState(true);
     const toggleShow = () => {
@@ -29,30 +29,36 @@ function Color({}) {
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
     return (
         <section id="color-section">
-            <div className="section-header">
-                <h3 className="section-title">
-                    {count ? `Colors (${count})` : 'Colors'}
-                </h3>
-                <div className="arrow-wrapper" onClick={toggleShow}>
-                <Arrow show={show}/>
-                </div>
-            </div>
-            {show ? (
-                <section id="color-wrapper">
-                    {colors.map((color) => {
-                        return (
-                            <div key={color.id}>
-                                <div
-                                    className="shade"
-                                    style={colorStyle(color.value)}
-                                ></div>
-                                <p>{color.value}</p>
-                            </div>
-                        );
-                    })}
-                </section>
+            {!loading ? (
+                <>
+                    <div className="section-header">
+                        <h3 className="section-title">
+                            {count ? `Colors (${count})` : 'Colors'}
+                        </h3>
+                        <div className="arrow-wrapper" onClick={toggleShow}>
+                            <Arrow show={show} />
+                        </div>
+                    </div>
+                    {show ? (
+                        <section id="color-wrapper">
+                            {colors.map((color) => {
+                                return (
+                                    <div key={color.id}>
+                                        <div
+                                            className="shade"
+                                            style={colorStyle(color.value)}
+                                        ></div>
+                                        <p>{color.value}</p>
+                                    </div>
+                                );
+                            })}
+                        </section>
+                    ) : (
+                        ''
+                    )}
+                </>
             ) : (
-                ''
+                <div className="skeleton-pulse h-full min-h-[200px] w-full"></div>
             )}
         </section>
     );

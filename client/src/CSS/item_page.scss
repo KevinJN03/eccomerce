@@ -27,11 +27,9 @@
     /* display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: ; */
-    @apply /* grid-template-rows: repeat(auto-fit);
-    */ /* width: 100px;
-    */ /* @apply gap-1;
+    @apply mr-3 flex flex-col gap-y-1;
 
-    */ mr-3 grid grid-cols-1 gap-1;
+    @apply h-full;
 }
 .photo-wrapper {
     width: 100%;
@@ -82,10 +80,10 @@
 .wishlist {
     // @apply h-16 w-16 flex-[0.5] md:mx-auto;
     flex: 0.5;
-    @apply flex h-full w-full items-center justify-center rounded-full bg-slate-200 cursor-pointer;
+    @apply flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-200;
 
     #wishlist-btn {
-        @apply bg-contain bg-no-repeat h-full w-full flex items-center justify-center;
+        @apply flex h-full w-full items-center justify-center bg-contain bg-no-repeat;
         background-position: center;
         background-size: 30px 30px;
         background-image: url('../assets/icons/empty-heart.png');

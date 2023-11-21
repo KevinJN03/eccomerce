@@ -5,8 +5,13 @@ import { useEffect } from 'react';
 function Navigation_Links({ className, product, loading }) {
     const [state, dispatch] = useGenderCategory();
     useEffect(() => {
-        if (product.gender && product.gender != state.gender) {
+        if (
+            product.gender &&
+            product.gender != state.gender
+        ) {
             console.log('not the same gender');
+
+            debugger
             dispatch({ type: product.gender });
         }
     }, []);
@@ -17,7 +22,7 @@ function Navigation_Links({ className, product, loading }) {
             }`}
         >
             {loading ? (
-                <div className="skeleton-pulse h-full rounded-full"></div>
+                <div className="skeleton-pulse h-5 w-1/6 "></div>
             ) : (
                 <>
                     <Link to="/" className="text-s">

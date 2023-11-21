@@ -8,7 +8,7 @@ function Recommended({products, loading}) {
             <h1 className="mb-4 mx-3 font-gotham text-xl text-[var(--primary)] font-bold sm:mx-5 sm:text-lg sm:font-semibold md:ml-8">
             YOU MIGHT ALSO LIKE
             </h1>
-            <Collection products={products} />
+            <Collection products={products}loading={loading} />
             <div className="load-more-btn-wrapper my-6 flex w-full items-center justify-center">
             
             </div>

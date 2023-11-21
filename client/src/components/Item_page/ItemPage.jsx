@@ -15,7 +15,7 @@ import Shipping from '../cart/shipping';
 import axios from '../../api/axios';
 
 function ItemPage() {
-    const [product, setProduct] = useState({ images: [] });
+    const [product, setProduct] = useState({ images: [], gender: null });
     const [alsoLike, setAlsoLike] = useState();
     const [state, dispatch] = useGenderCategory();
 
@@ -28,7 +28,7 @@ function ItemPage() {
                 .get(`/product/${id}`)
                 .then((res) => {
                     setProduct(res.data);
-                    // setLoading(false);
+                    setLoading(false);
                     const gender = state.gender;
                     setAlsoLike(res.data.also_like[gender]);
                 })
@@ -86,9 +86,8 @@ function ItemPage() {
                             loading={loading}
                         />
                         <Product_info
-
-                        loading={loading}
-                            price={product?.price?.current}
+                            loading={loading}
+                           
                             text={example?.text}
                             title={product?.title}
                             size={product?.size}
@@ -99,9 +98,13 @@ function ItemPage() {
                             product={product}
                         />
                     </section>
-                    <Reviews product={product} loading={loading} />
+                    {!loading ? (
+                        <Reviews product={product} />
+                    ) : (
+                        <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
+                    )}
                     <div className=" item-page-divider border-5 w-full sm+md:mb-10 lg:!hidden"></div>
-                    {/* <Recommended products={alsoLike} /> */}
+                    <Recommended products={alsoLike} loading={loading} />
                 </section>
             </section>
             {/* )} */}

@@ -4,20 +4,26 @@ function Item_List({ images, handleImgChange, loading }) {
         <section id="item-list-section">
             <section id="item-list-wrapper">
                 {loading ? (
-                    <div className="skeleton-pulse h-full "></div>
+                    <>
+                        {new Array(3).fill(1).map((item, idx) => {
+                            return (
+                                <div className="photo-wrapper" key={idx}>
+                                    <img className="list-image skeleton-pulse min-h-full min-w-full"></img>
+                                </div>
+                            );
+                        })}
+                    </>
                 ) : (
                     <>
                         {images.map((image, index) => {
                             return (
-                                <>
-                                    <div className="photo-wrapper" key={index}>
-                                        <img
-                                            src={image}
-                                            className="list-image"
-                                            onClick={handleImgChange}
-                                        />
-                                    </div>
-                                </>
+                                <div className="photo-wrapper" key={index}>
+                                    <img
+                                        src={image}
+                                        className="list-image"
+                                        onClick={handleImgChange}
+                                    />
+                                </div>
                             );
                         })}
                     </>

@@ -66,7 +66,7 @@ function Checkout() {
     };
 
     return (
-        <AnimatePresence>
+        <>
             {loading && (
                 <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                     <img src={RedirectImage} className="h-28 w-28" />
@@ -82,10 +82,10 @@ function Checkout() {
                 <motion.section id="checkout-page">
                     <motion.section
                         id="checkout"
-                        variants={variants}
-                        animate={'animate'}
-                        initial={'initial'}
-                        exit={'exit'}
+                        // variants={variants}
+                        // animate={'animate'}
+                        // initial={'initial'}
+                        // exit={'exit'}
                     >
                         <Checkout_Header text={'CHECKOUT'} />
                         <div className="checkout-body">
@@ -130,7 +130,7 @@ function Checkout() {
                     </motion.section>
                 </motion.section>
             )}
-        </AnimatePresence>
+        </>
     );
 }
 
