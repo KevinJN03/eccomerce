@@ -65,7 +65,7 @@ function ItemPage() {
             ) : ( */}
             <section className="item-page-wrapper">
                 <section id="item-page">
-                    <Navigation_Links
+                    <Navigation_Links shouldUpdateGender={true}
                         product={{
                             title: product?.title,
                             gender: product?.gender,

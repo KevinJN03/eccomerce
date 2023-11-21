@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from './navigationLinks';
 import axios from '../../api/axios';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -28,6 +28,21 @@ function Product_Page() {
     const [filterCount, setFilterCount] = useState(0);
     const [state, dispatch] = useGenderCategory();
     const [products, setProducts] = useState([]);
+
+ const location = useLocation()
+
+
+ useEffect(()=> {
+    setLoading(true)
+const timeout = setTimeout(()=> {
+setLoading(false)
+}, 1000)
+
+
+return()=> {
+    clearTimeout(timeout)
+}
+ }, [location.pathname])
     useEffect(() => {
         axios
             .get(`/category/${state.productCategory}/${state.gender}`)
@@ -37,7 +52,7 @@ function Product_Page() {
 
                 setTimeout(() => {
                     setProducts(res.data[lowerCaseGender]);
-                     setLoading(() => false);
+                    setLoading(() => false);
                 }, 1000);
             })
             .catch((err) => {
@@ -51,7 +66,10 @@ function Product_Page() {
         <section id="product_page">
             <section className="product-page-section flex w-full max-w-[1366px] flex-col sm:px-5 md+lg:!px-10">
                 <div className="product-header mb-4 flex flex-col sm:gap-2 md+lg:gap-4">
-                    <Navigation_Links loading={loading} />
+                    <Navigation_Links
+                        loading={loading}
+                        shouldUpdateGender={false}
+                    />
                     <div className="middle flex flex-row items-center sm+md:justify-between">
                         {!loading ? (
                             <h2 className="font-black tracking-tight sm:w-28 sm:text-2xl md+lg:text-4xl">

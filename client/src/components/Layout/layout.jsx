@@ -3,7 +3,7 @@ import Header from './header';
 import { useLayoutContext } from '../../context/layoutContext';
 import { Fragment, useContext } from 'react';
 import { ProductsProvider } from '../../hooks/genderCategory.jsx';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
 import { CartProvider } from '../../context/cartContext';
 import { useState, useEffect } from 'react';
@@ -14,7 +14,7 @@ function Layout() {
     const { layout } = useLayoutContext();
     console.log('layout:', layout);
     const [loading, setLoading] = useState(false);
-
+    const location = useLocation();
     // useEffect(() => {
     //     let timout = setTimeout(() => {
     //         setLoading(false);
@@ -28,16 +28,35 @@ function Layout() {
     function Loader() {
         return <span className="loading loading-infinity loading-lg"></span>;
     }
+
+    const outletVariants = {
+        initial: {
+            opacity: 1,
+            y: 50,
+        },
+        animate: {
+            opacity: 1,
+            y: 0,
+
+            transition: { duration: 0.5 },
+        },
+
+        exit: {
+            opacity: 0,
+            // y: -0,
+            transition: { duration: 0.5 },
+        },
+    };
     return (
         <CartProvider>
             <ProductsProvider>
                 <AnimatePresence>
-                    {layout ? (
+                    {layout && (
                         <motion.section
                             className={'w-full'}
-                            variants={variants}
-                            initial={'initial'}
-                            animate={'animate'}
+                            // variants={variants}
+                            // initial={'initial'}
+                            // animate={'animate'}
                             exit={'exit'}
                         >
                             <Header />
@@ -49,10 +68,12 @@ function Layout() {
 
                             <Footer />
                         </motion.section>
-                    ) : (
+                    )}{' '}
+                    {!layout && (
                         <motion.section
+                            // key={layout}
                             className={'w-full'}
-                            variants={variants}
+                            variants={outletVariants}
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}
