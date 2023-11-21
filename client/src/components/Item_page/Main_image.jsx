@@ -7,7 +7,7 @@ const Main_Image = forwardRef(function Main_Image({ images, loading }, ref) {
     return (
         <>
             {loading ? (
-                <div className="skeleton-pulse h-full"></div>
+                <div id="main_image" className="skeleton-pulse h-full"></div>
             ) : (
                 <section id="main_image">
                     {screenSize.width > 980 ? (

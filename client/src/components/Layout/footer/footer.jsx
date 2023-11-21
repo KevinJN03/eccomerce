@@ -10,9 +10,16 @@ import {
     faSquareFacebook,
 } from '@fortawesome/free-brands-svg-icons';
 import snapchat from '../../../assets/icons/Snapchat-Ghost-Outlined-Logo.wine (1).svg';
+import variants from '../../common/framerMotionVariants';
+import { motion, AnimatePresence } from 'framer-motion';
 function Footer() {
     return (
-        <div className="footer-wrapper">
+        <motion.div
+            className="footer-wrapper"
+            variants={variants}
+            initial={'initial'}
+            animate={'animate'}
+        >
             <section className="footer-header flex h-14 w-full items-center justify-center bg-white py-2 sm+md:px-4">
                 <div className="left ">
                     <div className="item">
@@ -45,7 +52,7 @@ function Footer() {
             <div className="footer_copyright-wrapper">
                 <Footer_Copyright />
             </div>
-        </div>
+        </motion.div>
     );
 }
 

@@ -12,16 +12,13 @@ import 'dayjs/locale/en-gb';
 ReactDOM.createRoot(document.getElementById('root')).render(
     /* <React.StrictMode>  */
     <AuthContextProvider>
-        <LayoutProvider>
-            <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en-gb"
-            >
-                <DarkModeContextProvider>
-                    <App />
-                </DarkModeContextProvider>
-            </LocalizationProvider>
-        </LayoutProvider>
+        {/* <LayoutProvider> */}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+            <DarkModeContextProvider>
+                <App />
+            </DarkModeContextProvider>
+        </LocalizationProvider>
+        {/* </LayoutProvider> */}
     </AuthContextProvider>
 
     /* </React.StrictMode>   */

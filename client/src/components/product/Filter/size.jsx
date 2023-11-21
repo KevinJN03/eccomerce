@@ -29,7 +29,7 @@ const sizes = [
     { id: uuidv4(), value: '42', type: 'pant' },
 ];
 
-function Size({ addToFilter }) {
+function Size({ addToFilter, loading }) {
     const [count, setCount] = useState();
     const [show, setShow] = useState(true);
     const [select, setSelect] = useState(false);
@@ -104,53 +104,61 @@ function Size({ addToFilter }) {
         return viewArr;
     };
     return (
-        <section id="size-section">
-            <div className="section-header" onClick={toggleShow}>
-                <h3 className="section-title">
-                    {count ? `Size (${count})` : 'Size'}
-                </h3>
-                <div className="arrow-wrapper" onClick={toggleShow}>
-                    <Arrow show={show} />
-                </div>
-            </div>
-            <AnimatePresence>
-                {show && (
-                    <motion.section
-                        variants={viewVars}
-                        initial="initial"
-                        animate="animate"
-                        exit="exit"
-                        className="origin-top"
-                    >
-                        <motion.div id="size-btn-wrapper">
-                            {sizeView(sizes, shortView)}
-                        </motion.div>
-
-                        {
-                            <button
-                                className="view-more-btn mt-3 flex items-center gap-2 text-sm underline underline-offset-[6px]"
-                                onClick={() => setShortView(!shortView)}
+        <AnimatePresence>
+            <section id="size-section">
+                {!loading ? (
+                    <>
+                        {' '}
+                        <div className="section-header" onClick={toggleShow}>
+                            <h3 className="section-title">
+                                {count ? `Size (${count})` : 'Size'}
+                            </h3>
+                            <div className="arrow-wrapper" onClick={toggleShow}>
+                                <Arrow show={show} />
+                            </div>
+                        </div>
+                        {show && (
+                            <motion.section
+                                variants={viewVars}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                className="origin-top"
                             >
-                                {screenSize.width > 980 && (
-                                    <>
-                                        {shortView ? (
+                                <motion.div id="size-btn-wrapper">
+                                    {sizeView(sizes, shortView)}
+                                </motion.div>
+
+                                {
+                                    <button
+                                        className="view-more-btn mt-3 flex items-center gap-2 text-sm underline underline-offset-[6px]"
+                                        onClick={() => setShortView(!shortView)}
+                                    >
+                                        {screenSize.width > 980 && (
                                             <>
-                                                {' '}
-                                                <AddSharpIcon /> View More
-                                            </>
-                                        ) : (
-                                            <>
-                                                <RemoveSharpIcon /> View Less
+                                                {shortView ? (
+                                                    <>
+                                                        <AddSharpIcon /> View
+                                                        More
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <RemoveSharpIcon /> View
+                                                        Less
+                                                    </>
+                                                )}
                                             </>
                                         )}
-                                    </>
-                                )}
-                            </button>
-                        }
-                    </motion.section>
+                                    </button>
+                                }
+                            </motion.section>
+                        )}
+                    </>
+                ) : (
+                    <div className="skeleton-pulse h-full min-h-[200px] w-full"></div>
                 )}
-            </AnimatePresence>
-        </section>
+            </section>
+        </AnimatePresence>
     );
 }
 

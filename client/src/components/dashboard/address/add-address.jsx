@@ -5,7 +5,8 @@ import Address_Form from './form';
 import { useAuth } from '../../../hooks/useAuth';
 
 function Add_Address({}) {
-    const { setAddress } = useUserDashboardContext();
+    const { setAddress, defaultAddresses, setDefaultAddresses } =
+        useUserDashboardContext();
     const { authDispatch } = useAuth();
     const navigate = useNavigate();
     const handleClick = async ({
@@ -24,11 +25,13 @@ function Add_Address({}) {
                 lastName,
                 mobile,
                 ...address,
-            });   
-
+            });
+            const { data } = result;
             setTimeout(() => {
-                setAddress(() => result.data.address);
-
+                setAddress(() => data.address);
+                if (data.default_address) {
+                    setDefaultAddresses(() => data.default_address);
+                }
                 setLoading(() => false);
                 navigate('/my-account/addresses');
             }, 1500);

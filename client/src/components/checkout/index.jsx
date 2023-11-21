@@ -24,9 +24,41 @@ function Checkout() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isOrderSubmit, setOrderSubmit] = useState(false);
-
-    const [shippingAddress, setShippingAddress] = useState(exampleCustomerInfo);
+    const [addresses, setAddresses] = useState([]);
+    const [shippingAddress, setShippingAddress] = useState({});
     const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
+    const [defaultAddresses, setDefaultAddresses] = useState({});
+    useEffect(() => {
+        axios
+            .get('user/userData')
+            .then((res) => {
+                const { user } = res.data;
+
+                const default_address = user?.default_address;
+                setDefaultAddresses(() => user?.default_address || {});
+                const findAddress = (property, setState) => {
+                    if (default_address[property]) {
+                        const foundAddress = user.address.find(
+                            (item) => item._id == default_address[property]
+                        );
+
+                        console.log({ foundAddress });
+                        setState(() => foundAddress);
+                    }
+                };
+
+                findAddress('shipping_address', setShippingAddress);
+                findAddress('billing_address', setBillingAddress);
+
+                setAddresses(() => user.address);
+            })
+            .catch((error) => {
+                console.error(
+                    'error while trying to get logged in user data',
+                    error
+                );
+            });
+    }, []);
     const { cart } = useCart();
     useEffect(() => {
         if (cart.length == 0) {
@@ -66,7 +98,7 @@ function Checkout() {
     };
 
     return (
-        <AnimatePresence>
+        <>
             {loading && (
                 <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                     <img src={RedirectImage} className="h-28 w-28" />
@@ -82,10 +114,10 @@ function Checkout() {
                 <motion.section id="checkout-page">
                     <motion.section
                         id="checkout"
-                        variants={variants}
-                        animate={'animate'}
-                        initial={'initial'}
-                        exit={'exit'}
+                        // variants={variants}
+                        // animate={'animate'}
+                        // initial={'initial'}
+                        // exit={'exit'}
                     >
                         <Checkout_Header text={'CHECKOUT'} />
                         <div className="checkout-body">
@@ -96,6 +128,9 @@ function Checkout() {
                                 <Address
                                     shippingAddress={shippingAddress}
                                     setShippingAddress={setShippingAddress}
+                                    addresses={addresses}
+                                    defaultAddresses={defaultAddresses}
+                                    defaultProperty={'shipping_address'}
                                 />
                                 <Delivery />
                                 <Payment
@@ -130,7 +165,7 @@ function Checkout() {
                     </motion.section>
                 </motion.section>
             )}
-        </AnimatePresence>
+        </>
     );
 }
 

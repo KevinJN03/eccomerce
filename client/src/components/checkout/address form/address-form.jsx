@@ -8,27 +8,28 @@ function Address_Form({
     setAddress,
     handleClick,
     cancel,
+    text,
 }) {
     const inputs = [
         { label: 'FIRST NAME', property: 'firstName' },
         { label: 'LAST NAME', property: 'lastName' },
         {
-            label: 'MOBILE (For delivery updates )',
+            label: 'MOBILE',
             property: 'mobile',
         },
         {
             label: 'ADDRESS FINDER',
             placeHolder: 'Start typing a postcode or address...',
         },
-        { label: 'ADDRESS LINE 1', property: 'address1' },
-        { label: 'ADDRESS LINE 2', property: 'address2' },
+        { label: 'ADDRESS LINE 1', property: 'address_1' },
+        { label: 'ADDRESS LINE 2', property: 'address_2' },
         { label: 'CITY', property: 'city' },
         { label: 'COUNTY', property: 'county' },
         { label: 'POSTCODE', property: 'postCode' },
     ];
     return (
         <section id="address-form" className="relative">
-            <h1 className="mb-6">EDIT ADDRESS</h1>
+            <p className="mb-6 text-[18px] font-bold tracking-wider">{text}</p>
 
             <div className="address-form-wrapper">
                 <div className="address-input-wrapper">
@@ -51,9 +52,10 @@ function Address_Form({
                         );
                     })}
 
-                    <h1 className="flex flex-col gap-2">
-                        COUNTRY:<span>UK</span>
+                    <h1 className="mb-2 text-sm font-bold text-gray-400">
+                        COUNTRY:
                     </h1>
+                    <p className="text-sm">{address?.country}</p>
                     <button
                         className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
                         type="button"

@@ -37,9 +37,10 @@ router.get('/userData', getAllUserData);
 router.post('/address/add', addUserAddress);
 router.put('/address/edit/:id', editAddress);
 router.delete('/address/delete/:id', deleteAddress);
+router.put('/address/changeDefault', updateDefaultAddress);
 router.put('/changedetails', changeDetails);
 router.put('/changepreferences', updatePreferences);
-router.put('/address/changeDefault', updateDefaultAddress);
+
 router.get('/payment-method/card/save', saveCustomerCard);
 router.get('/payment-method/paypal', setUpPaypal);
 router.get('/payment-method/klarna', setUpKlarna);

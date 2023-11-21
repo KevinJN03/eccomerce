@@ -2,14 +2,19 @@ import NavigateNextSharpIcon from '@mui/icons-material/NavigateNextSharp';
 import { useGenderCategory } from '../../hooks/genderCategory';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-function Navigation_Links({ className, product, loading }) {
+function Navigation_Links({ className, product, loading, shouldUpdateGender }) {
     const [state, dispatch] = useGenderCategory();
     useEffect(() => {
+        if (!shouldUpdateGender) {
+            return;
+        }
         if (product.gender && product.gender != state.gender) {
-            console.log('not the same gender');
+            console.log('not the same gender', product);
+
+            debugger;
             dispatch({ type: product.gender });
         }
-    }, []);
+    }, [product]);
     return (
         <div
             className={`links flex flex-row items-center gap-2 whitespace-nowrap pr-4 md+lg:text-xs ${
@@ -17,7 +22,7 @@ function Navigation_Links({ className, product, loading }) {
             }`}
         >
             {loading ? (
-                <div className="skeleton-pulse h-full rounded-full"></div>
+                <div className="skeleton-pulse h-5 w-1/6 "></div>
             ) : (
                 <>
                     <Link to="/" className="text-s">

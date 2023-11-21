@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 
 function Product_info({
     title,
-    price,
+
     text,
     size,
     details,
@@ -21,20 +21,33 @@ function Product_info({
     style_it_with_image,
     product,
     color,
-    loading
+    loading,
 }) {
-    const [priceState, setPriceState] = useState(product.price?.current);
+    const [priceState, setPriceState] = useState(null);
     console.log('render product info');
 
-    const [sizeSelect, setSizeSelect] = useState(
-        product?.size?.length == 1 ? product.size[0].size : null
-    );
+    const [sizeSelect, setSizeSelect] = useState(null);
     const sizeRef = useRef();
-    const [colorSelect, setColorSelect] = useState(
-        product.color.length == 1 ? product.color[0].color : null
-    );
+    const [colorSelect, setColorSelect] = useState(null);
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
+
+    useEffect(() => {
+        if (product.hasOwnProperty('price')) {
+            setPriceState(() => product.price?.current);
+        }
+        if (product.hasOwnProperty('color')) {
+            setColorSelect(() =>
+                product.color.length == 1 ? product.color[0].color : null
+            );
+        }
+
+        if (product.hasOwnProperty('size')) {
+            setColorSelect(() =>
+                product.size.length == 1 ? product.color[0].color : null
+            );
+        }
+    }, [product]);
     useEffect(() => {
         const refStock =
             sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.stock;
@@ -60,10 +73,13 @@ function Product_info({
 
     return (
         <section id="product-info">
-            <Info title={title} price={priceState} text={text} />
-            {/* <Size size={size} select={select} handleClick={handleClick} /> */}
+            {!loading ? (
+                <Info title={title} price={priceState} text={text} />
+            ) : (
+                <div className="skeleton-pulse mb-4 h-full max-h-[100px] w-full"></div>
+            )}
 
-            {product.isColorPresent && (
+            {product?.isColorPresent && !loading ? (
                 <Select
                     array={color}
                     text={'COLOUR'}
@@ -74,18 +90,20 @@ function Product_info({
                     setPrice={setPriceState}
                     ref={null}
                     isSecond={false}
-        
                 />
+            ) : (
+                product?.isColorPresent &&
+                loading && (
+                    <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
+                )
             )}
 
-            {product.isSizePresent && (
+            {product?.isSizePresent && !loading ? (
                 <Select
                     array={
                         (product.isVariationCombine &&
                             colorSelect &&
                             product.combineVariation[colorSelect]) ||
-
-
                         product.size
                     }
                     property={'size'}
@@ -97,6 +115,11 @@ function Product_info({
                     ref={sizeRef}
                     isSecond={true}
                 />
+            ) : (
+                product?.isSizePresent &&
+                loading && (
+                    <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
+                )
             )}
 
             {error && (
@@ -104,26 +127,48 @@ function Product_info({
                     Please select from the available colour and size options.
                 </div>
             )}
+
             <div className="adddtocart-wishlist">
-                <AddToCart
-                    product={product}
-                    price={priceState}
-                    sizeSelect={sizeSelect}
-                    colorSelect={colorSelect}
-                    setError={setError}
-                    isOutOfStock={isOutOfStock}
-                />
-                <WishList />
+                {loading ? (
+                    <div className="skeleton-pulse mb-4 h-full w-full"></div>
+                ) : (
+                    <>
+                        <AddToCart
+                            product={product}
+                            price={priceState}
+                            sizeSelect={sizeSelect}
+                            colorSelect={colorSelect}
+                            setError={setError}
+                            isOutOfStock={isOutOfStock}
+                        />
+                        <WishList />
+                    </>
+                )}
             </div>
 
-            <Shipping />
-            <div className=" flex flex-col border-t-[thin] sm:mx-4 sm+md:mb-10 sm+md:gap-0 lg:mt-6">
-                {/* flex flex-col sm+md:gap-4 sm+md:border-t-2 sm:pt-3 sm+md:mb-4 */}
-                <Product_Detail details={details} />
-                <Return />
-            </div>
+            {!loading ? (
+                <Shipping />
+            ) : (
+                <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
+            )}
+
+            {!loading ? (
+                <>
+                    <div className=" flex flex-col border-t-[thin] sm:mx-4 sm+md:mb-10 sm+md:gap-0 lg:mt-6">
+                        <Product_Detail details={details} />
+                        <Return />{' '}
+                    </div>
+                </>
+            ) : (
+                <div className="skeleton-pulse h-full w-full"></div>
+            )}
+
             <section className="similar-style-with-container flex sm:mx-4 sm+md:flex-col-reverse sm+md:gap-8 lg:mt-5 lg:flex-col">
-                <Similar_Styles images={images} />
+                {!loading ? (
+                    <Similar_Styles images={images} />
+                ) : (
+                    <div className="skeleton-pulse h-full w-full"></div>
+                )}
                 {/* <Style_It_With products={style_it_with_image} /> */}
             </section>
         </section>

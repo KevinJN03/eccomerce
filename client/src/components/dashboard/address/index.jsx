@@ -35,7 +35,7 @@ function Index({}) {
         if (address.length > 0) {
             return address
                 .sort((a, b) => {
-                    console.log('addressId: ', a._id);
+                 
                     if (a._id == defaultAddresses?.shipping_address) {
                         return -1;
                     } else if (b._id == defaultAddresses?.shipping_address) {
