@@ -346,7 +346,7 @@ export const getAllUserData = [
     res.send({ user });
   }),
 ];
-
+//change default address
 export const changeDetails = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
@@ -385,8 +385,19 @@ export const addUserAddress = [
         .populate('address')
         .exec(),
     ]);
+    if (user.address.length == 1) {
+      user.default_address = {
+        billing_address: address.id,
+        shipping_address: address.id,
+      };
 
-    res.status(200).send({ success: true, address: user.address });
+      await user.save();
+    }
+    res.status(200).send({
+      success: true,
+      address: user.address,
+      default_address: user.default_address,
+    });
   }),
 ];
 
@@ -406,6 +417,14 @@ export const deleteAddress = [
         .populate('address')
         .exec(),
     ]);
+
+    if (user.default_address.shipping_address == address.id) {
+      user.default_address = {
+        shipping_address: null,
+        billing_address: null,
+      };
+      await user.save();
+    }
 
     res.status(200).send({ success: true, address: user.address });
   }),
