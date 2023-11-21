@@ -40,8 +40,7 @@ function Dashboard() {
             setContactPreference(() => user?.contact_preferences);
             setAddress(() => user?.address);
             setUserPaymentMethods(() => [
-                ...paymentResult.data.paymentMethods,
-                ...user?.payment_methods,
+                ...paymentResult.data.paymentMethods
             ]);
             setDefaultAddresses(() => user?.default_address);
 

@@ -44,11 +44,24 @@ function Add_Payment_Method({}) {
             }
         }
     };
+
+    const handlePaymentClick = async ({ type }) => {
+        try {
+            const result = await axios.get(`user/payment-method/${type}`);
+
+            const { url } = result.data;
+            console.log({ url });
+
+            window.open(url, '_self');
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const buttonsArray = [
         {
             index: 1,
             icon: card_icon,
-            logo: 'credit-card',
+            type: 'credit-card',
             text: 'CREDIT/DEBIT CARD',
             alt: 'black card icon with transparent background',
             onClick: () => navigate('card'),
@@ -56,37 +69,43 @@ function Add_Payment_Method({}) {
         {
             index: 2,
             icon: paypal_icon,
-            logo: 'paypal',
+            type: 'paypal',
             text: 'PayPal',
             alt: 'paypal icon',
+            onClick: () => handlePaymentClick({ type: 'paypal' }),
         },
 
-        {
-            index: 3,
-            icon: paypal_icon,
-            logo: 'paypal',
-            text: 'Pay in 3',
-            alt: 'paypal icon',
-            description: 'with PayPal Pay Later',
-        },
-        {
-            index: 4,
-            icon: klarna_logo,
-            logo: 'klarna',
-            text: 'Pay Later',
-            alt: 'klarna logo',
-            description: 'with Klarna',
-        },
+        // {
+        //     index: 3,
+        //     icon: paypal_icon,
+        //     logo: 'paypal',
+        //     text: 'Pay in 3',
+        //     alt: 'paypal icon',
+        //     description: 'with PayPal Pay Later',
+        //     onClick: () => handlePaymentClick({ type: 'paypal' }),
+        // },
+        // {
+        //     index: 4,
+        //     icon: klarna_logo,
+        //     logo: 'klarna',
+        //     text: 'Pay Later',
+        //     alt: 'klarna logo',
+        //     description: 'with Klarna',
+        //     onClick: () => handlePaymentClick({ type: 'klarna' }),
+        // },
     ];
     const filteredButtonArray = buttonsArray.filter(
-        (item) => !paymentMethods.some((method) => item.index === method.index)
+        (item) => !paymentMethods.some((method) => method.type == item.type)
         // paymentMethods.some((method) => item.index == method?.index)
     );
-    useEffect(()=> {
-if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
-    navigate('card')
-}
-    }, [])
+    useEffect(() => {
+        if (
+            filteredButtonArray.length == 1 &&
+            filteredButtonArray[0].index == 1
+        ) {
+            navigate('card');
+        }
+    }, []);
 
     console.log('filteredButtonArray: ', filteredButtonArray);
     return (
@@ -97,20 +116,21 @@ if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
                     <h2 className="mb-2 text-xl font-bold">
                         {'ADD PAYMENT METHOD'}
                     </h2>
-                    <span className="flex flex-row items-center gap-x-4">
-                        <img
-                            src={info_icon}
-                            alt="black information icon with transparent background"
-                            className="h-6 w-6"
-                        />
-                        {paymentMethods.length < 1 && (
+                    {paymentMethods.length < 1 && (
+                        <span className="flex flex-row items-center gap-x-4">
+                            <img
+                                src={info_icon}
+                                alt="black information icon with transparent background"
+                                className="h-6 w-6"
+                            />
+
                             <p>
                                 You currently have no saved payment methods. Get
                                 started by adding one.
                             </p>
-                        )}
-                    </span>
-                    <div className="mt-4 flex flex-col !items-center">
+                        </span>
+                    )}
+                    <div className="mb-10 mt-4 flex flex-col !items-center">
                         {filteredButtonArray.map(
                             (
                                 {
@@ -119,7 +139,7 @@ if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
                                     alt,
                                     onClick,
                                     description,
-                                    logo,
+                                    type,
                                     index,
                                 },
                                 idx
@@ -146,15 +166,7 @@ if(filteredButtonArray.length == 1 && filteredButtonArray[0].index == 1) {
                                         alt={alt}
                                         description={description}
                                         loading={loadingBtnID == index}
-                                        onClick={() =>
-                                            addPaymentMethod({
-                                                index,
-                                                text,
-                                                alt,
-                                                description,
-                                                logo,
-                                            })
-                                        }
+                                        onClick={onClick}
                                     />
                                 );
                             }

@@ -22,6 +22,8 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
+
+const CLIENT_URL = process.env.CLIENT_URL;
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -36,8 +38,6 @@ const handleProfilePhoto = async (file, id) => {
       { profileImg },
       { upsert: true, new: true },
     );
-
-    console.log(updateUser);
   }
 };
 
@@ -210,7 +210,7 @@ export const signUp_user = [
     }
 
     const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
-    console.log({ salt });
+
     const hashPassword = bcrypt.hashSync(password, salt);
     const user = await User.create({ ...req.body, password: hashPassword });
     await stripe.customers.create({
@@ -240,7 +240,6 @@ export const update_single = [
     const { id } = req.params;
     const { file } = req;
 
-    console.log(req.body);
     const user = await User.updateOne({ _id: id }, req.body, {
       new: true,
       upsert: true,
@@ -288,7 +287,6 @@ export const loginUser = [
       return res.status(400).send(newResult);
     }
     passport.authenticate('local', (err, user, info) => {
-      console.log({ user });
       if (err) {
         next(err);
       }
@@ -319,7 +317,6 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  console.log({ user: req.user, session: req.session });
   return res
     .status(200)
     .send({ user: req.user, authenticated: req.isAuthenticated() });
@@ -409,9 +406,7 @@ export const deleteAddress = [
         .populate('address')
         .exec(),
     ]);
-    console.log({ address: user.address });
 
-    console.log(id);
     res.status(200).send({ success: true, address: user.address });
   }),
 ];
@@ -425,7 +420,7 @@ export const editAddress = [
     const { id } = req.params;
     if (!result.isEmpty()) {
       const newResult = errorRegenerator(result);
-      console.log(newResult);
+
       return res.status(400).send(newResult);
     }
 
@@ -512,7 +507,6 @@ export const addPaymentMethod = [
       },
       { upsert: true, new: true, select: { payment_methods: 1 } },
     );
-    console.log({ payment_methods: user.payment_methods });
 
     res.status(200).send({
       msg: 'payment method successfully added',
@@ -527,20 +521,22 @@ export const deletePaymentMethod = [
     const { id } = req.params;
     const userId = req.session.passport.user;
 
-    const user = await User.findByIdAndUpdate(
-      userId,
-      {
-        $pull: {
-          payment_methods: { _id: id },
-        },
-      },
-      { upsert: true, new: true, select: { payment_methods: 1 } },
-    );
-    console.log({ payment_methods: user.payment_methods });
-    res.status(200).send({
-      msg: 'payment method successfully added',
-      payment_methods: user.payment_methods,
-    });
+    await stripe.paymentMethods.detach(id);
+    res.redirect(303, '/api/user/payment-method/all');
+    // const user = await User.findByIdAndUpdate(
+    //   userId,
+    //   {
+    //     $pull: {
+    //       payment_methods: { _id: id },
+    //     },
+    //   },
+    //   { upsert: true, new: true, select: { payment_methods: 1 } },
+    // );
+    // console.log({ payment_methods: user.payment_methods });
+    // res.status(200).send({
+    //   msg: 'payment method successfully added',
+    //   payment_methods: user.payment_methods,
+    // });
   }),
 ];
 
@@ -549,31 +545,11 @@ export const changeDefaultMethod = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
-    /*  const user = await User.findById(userId, { payment_methods: 1 });
-    const payment_methods = [...user.payment_methods];
-    const index = payment_methods.findIndex((item) => item._id == id);
-
-    const findNewDefaultMethodObj = {};
-
-    const new_payment_method = [];
-    payment_methods.forEach((paymentMethodObj) => {
-      if (paymentMethodObj._id != id) {
-        new_payment_method.push(paymentMethodObj);
-      } else {
-        new_payment_method.unshift(paymentMethodObj);
-      }
-    });
-
-    user.payment_methods = new_payment_method;
-    await user.save(); */
-
     const customer = await stripe.customers.update(userId, {
       invoice_settings: { default_payment_method: id },
     });
 
-    res.status(200).send({
-      msg: 'default method successfully changed',
-    });
+    res.redirect(303, '/api/user/payment-method/all');
   }),
 ];
 
@@ -586,7 +562,7 @@ export const saveCustomerCard = [
 
     const allCustomers = findCustomer.data;
     const checkExists = allCustomers.some((item) => item.id == userId);
-    console.log({ checkExists });
+
     let setupIntent = null;
     if (checkExists) {
       setupIntent = await stripe.setupIntents.create({
@@ -617,32 +593,59 @@ export const getPaymentMethods = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const findCustomer = await stripe.customers.list();
 
     const paymentMethods = await stripe.paymentMethods.list({
       customer: req.session.passport.user,
-      type: 'card',
     });
+    const customer = await stripe.customers.retrieve(userId);
+    const defaultPaymentMethod =
+      customer.invoice_settings?.default_payment_method;
+    const newMethodsArray = paymentMethods.data
+      .map((method) => {
+        if (method.type === 'card') {
+          const { brand, exp_month, exp_year, last4, funding } = method?.card;
 
-    const newMethodsArray = paymentMethods.data.map((method) => {
-      const { brand, exp_month, exp_year, last4, funding } = method?.card;
-      const newObj = {
-        brand: brand[0].toUpperCase() + brand.slice(1),
-        exp_month,
-        exp_year: exp_year,
-        last4,
-        type: 'card',
-        funding: funding[0].toUpperCase() + funding.slice(1),
-        name: method.billing_details.name,
-      };
+          const newMonth = '0' + exp_month;
+          return {
+            id: method.id,
+            brand: brand[0].toUpperCase() + brand.slice(1),
+            exp_month: newMonth.slice(-2),
+            exp_year: exp_year,
+            last4,
+            type: 'card',
+            funding: funding[0].toUpperCase() + funding.slice(1),
+            name: method.billing_details.name,
+          };
+        }
 
-      return newObj;
+        if (method.type === 'paypal') {
+          return {
+            id: method.id,
+            type: method.type,
+            text: 'PayPal',
+          };
+        }
+
+        return {
+          id: method.id,
+          type: method.type,
+          text: method.type,
+        };
+      })
+      .sort((a, b) => {
+        if (a.id === defaultPaymentMethod) {
+          return -1;
+        }
+        if (b.id === defaultPaymentMethod) {
+          return +1;
+        }
+        return 0;
+      });
+
+    return res.status(200).send({
+      success: true,
+      paymentMethods: newMethodsArray,
     });
-
-    console.log({ newMethodsArray });
-    return res
-      .status(200)
-      .send({ success: true, paymentMethods: newMethodsArray });
   }),
 ];
 
@@ -650,23 +653,72 @@ export const setUpPaypal = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    // const setupIntent = await stripe.setupIntents.create({
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['paypal'],
+      mode: 'setup',
+      customer: userId,
+      success_url: `${CLIENT_URL}/my-account/payment-methods/`,
+      cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
+    });
+
+    res.send({ success: true, url: session.url });
+  }),
+];
+
+export const setUpKlarna = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    // const session = await stripe.checkout.sessions.create({
+    //   payment_method_types: ['klarna','afterpay_clearpay'],
+    //   shipping_address_collection: { allowed_countries: ['GB', 'US'] },
+    //   line_items: [
+    //     {
+    //       price_data: {
+    //         currency: 'gbp',
+    //         product_data: {
+    //           name: 'Setup Klarna For Future Use',
+    //         },
+    //          unit_amount:100,
+
+    //       },
+    //       quantity: 1,
+    //     },
+    //   ],
+    //   mode: 'payment',
     //   customer: userId,
-    //   payment_method_types: ['paypal'],
-    // });
-    // console.log({
-    //   id: setupIntent.id,
-    //   client_secret: setupIntent.client_secret,
-    // });
-    // res.status(200).send({
-    //   success: true,
-    //   id: setupIntent.id,
-    //   client_secret: setupIntent.client_secret,
+    //   success_url: `${CLIENT_URL}/my-account/payment-methods/`,
+    //   cancel_url: `${CLIENT_URL}/my-account/payment-methods/cancel?session_id={CHECKOUT_SESSION_ID}`,
     // });
 
+    // res.send({ success: true, url: session.url });
+    const { email, firstName, lastName } = req.user;
+    const name = `${firstName} ${lastName}`;
 
-    const session = await stripe.checkout.session.create({
-      
-    })
+    const paymentMethod = await stripe.paymentMethods.create({
+      type: 'afterpay_clearpay',
+      billing_details: {
+        address: {
+          line1: 'null',
+          country: 'GB',
+          postal_code: 'null',
+        },
+        name,
+        email,
+      },
+      // klarna: {
+      //   dob: {
+      //     day: 22,
+      //     month: 3,
+      //     year: 2002,
+      //   },
+      // },
+    });
+
+    const attachPaymentMethod = await stripe.paymentMethods.attach(
+      paymentMethod.id,
+      { customer: userId },
+    );
+    res.status(200).send({ success: true });
   }),
 ];

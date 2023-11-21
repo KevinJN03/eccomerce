@@ -13,6 +13,7 @@ import categoryRoute from './Routes/categoryRoute.js';
 import couponRoute from './Routes/couponRoute.js';
 import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
+import webHookRoute from './Routes/webhookRoute.js';
 import userRoute from './Routes/userRoute.js';
 import adminRoute from './Routes/adminRoute.js';
 import orderRoute from './Routes/orderRoute.js';
@@ -78,7 +79,7 @@ app.use('/api/user', userRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
-
+app.use('/api/webhook', webHookRoute);
 app.use(errorHandler);
 
 const httpOptions = {

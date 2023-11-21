@@ -1,6 +1,6 @@
 import Collection from '../product/Collection/collection.jsx';
 import { useWindowSize } from '@uidotdev/usehooks';
-function Recommended({products}) {
+function Recommended({products, loading}) {
     return (
         // <section className="recommend-wrapper border-t-2 w-screen">
              <section id="Recommended" className="flex flex-col ">

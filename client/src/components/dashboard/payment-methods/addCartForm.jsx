@@ -18,12 +18,14 @@ import logos from './logos';
 import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
+
 export function AddCartForm({ clientSecret }) {
     const [error, setError] = useState({});
     const [isDefault, setDefault] = useState(false);
     const [btnLoad, setBtnLoad] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
-
+    const { PaymentMethodsDispatch } = usePaymentMethods();
     const [name, setName] = useState('');
     const [cvc, setCvc] = useState('');
     const stripe = useStripe();
@@ -43,47 +45,59 @@ export function AddCartForm({ clientSecret }) {
             return;
         }
         setBtnLoad(true);
-        console.log(elements.getElement('card'));
 
-        const { error, setupIntent } = await stripe.confirmCardSetup(
-            clientSecret,
-            {
+        stripe
+            .confirmCardSetup(clientSecret, {
                 payment_method: {
                     card: elements.getElement('card'),
                     billing_details: {
                         name,
                     },
                 },
-            }
-        );
-        console.log({ setupIntent });
+            })
+            .then(({ error, setupIntent }) => {
+                setTimeout(async () => {
+                    try {
+                        let paymentMethodArray = [];
+                        if (isDefault) {
+                            const result = await axios.post(
+                                `user/payment-method/changedefault/${setupIntent.payment_method}`
+                            );
+                            const { paymentMethods } = result.data;
+                            paymentMethodArray = paymentMethods;
+                        } else {
+                            const result = await axios.get(
+                                `user/payment-method/all`
+                            );
+                            const { paymentMethods } = result.data;
+                            paymentMethodArray = paymentMethods;
+                        }
+                        PaymentMethodsDispatch({
+                            type: 'set',
+                            payload: paymentMethodArray,
+                        });
+                        if (error) {
+                            console.log(error);
 
-        if (isDefault) {
-            axios
-                .post(
-                    `user/payment-method/changedefault/${setupIntent.payment_method}`
-                )
-                .then((res) => console.log(res));
-        }
-        setTimeout(() => {
-            if (error) {
-                console.log(error);
-
-                if (error.message.includes('card number')) {
-                    setError((prevState) => ({
-                        ...prevState,
-                        card: error.message,
-                    }));
-                }
-                setError((prevState) => ({
-                    ...prevState,
-                    general: error.message,
-                }));
-            } else {
-                navigate('/my-account/payment-methods');
-            }
-            setBtnLoad(() => false);
-        }, 1000);
+                            if (error.message.includes('card number')) {
+                                setError((prevState) => ({
+                                    ...prevState,
+                                    card: error.message,
+                                }));
+                            }
+                            setError((prevState) => ({
+                                ...prevState,
+                                general: error.message,
+                            }));
+                        } else {
+                            navigate('/my-account/payment-methods');
+                        }
+                        setBtnLoad(() => false);
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }, 1200);
+            });
     };
 
     const variants = {

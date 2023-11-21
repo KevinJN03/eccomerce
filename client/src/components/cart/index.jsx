@@ -5,7 +5,7 @@ import QTY_SIZE_OPTION from './qty-size-options';
 import Cart_Item from './cart-item';
 import Total from './total';
 import { forwardRef } from 'react';
-import { useScroll, motion, useInView } from 'framer-motion';
+import { useScroll, motion, useInView, AnimatePresence } from 'framer-motion';
 import { useWindowSize } from '@uidotdev/usehooks';
 
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ import zIndex from '@mui/material/styles/zIndex';
 import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
 import calculateTotal from '../common/calculateTotal';
-
+import variants from '../common/framerMotionVariants.jsx';
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
@@ -26,9 +26,15 @@ function Cart({}) {
         dispatch({ type: 'remove', cartId: id });
     };
     return (
-        <>
+        <AnimatePresence>
             {cart.length > 0 ? (
-                <section id="cart-page">
+                <motion.section
+                    id="cart-page"
+                    variants={variants}
+                    initial={'initial'}
+                    animate={'animate'}
+                    exit={'exit'}
+                >
                     <motion.span
                         className="sticky-header sticky  flex items-center justify-between bg-white p-3 lg:!hidden"
                         animate={{
@@ -77,11 +83,11 @@ function Cart({}) {
                     </div>
 
                     <Total ref={checkoutBottomRef} />
-                </section>
+                </motion.section>
             ) : (
                 <Empty_Cart />
             )}
-        </>
+        </AnimatePresence>
     );
 }
 

@@ -20,7 +20,7 @@ function DeletePaymentMethod() {
             .then((res) => {
                 PaymentMethodsDispatch({
                     type: 'set',
-                    payload: res.data.payment_methods,
+                    payload: res.data.paymentMethods,
                 });
             })
             .catch((error) => {

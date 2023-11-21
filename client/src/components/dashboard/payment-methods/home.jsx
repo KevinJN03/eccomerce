@@ -27,7 +27,7 @@ function Home({}) {
         setLoading(true);
         const timeout = setTimeout(() => {
             setLoading(false);
-        }, 800);
+        }, 500);
 
         return () => {
             clearTimeout(timeout);
@@ -44,15 +44,15 @@ function Home({}) {
 
     const handleDefaultMethod = (id) => {
         setDefaultCheck(() => id);
-        axios.post(`user/payment-method/changedefault/${id}`).then((res) =>
-            setTimeout(() => {
+        axios
+            .post(`user/payment-method/changedefault/${id}`)
+            .then(({ data }) => {
                 PaymentMethodsDispatch({
                     type: 'set',
-                    payload: res.data.payment_methods,
+                    payload: data.paymentMethods,
                 });
                 setDefaultCheck(() => null);
-            }, 400)
-        );
+            });
     };
     return (
         <section className="payment-method">
@@ -70,7 +70,7 @@ function Home({}) {
                                 logo,
                                 text,
                                 description,
-                                _id,
+                                id,
                                 type,
                                 brand,
                                 exp_month,
@@ -81,8 +81,9 @@ function Home({}) {
                             },
                             idx
                         ) => {
-                            const cardData = {};
-                            if (name) {
+                            const cardData = { isCard: false };
+                            if (type == 'card') {
+                                cardData.isCard = true;
                                 cardData.name = name;
                                 cardData.exp_month = exp_month;
                                 cardData.exp_year = exp_year;
@@ -91,34 +92,36 @@ function Home({}) {
                                         brand.toLowerCase().replaceAll(' ', '_')
                                     ];
                             }
-                            debugger;
+
                             return (
                                 <PaymentMethodItem
                                     cardData={cardData}
                                     inputDisable={
-                                        defaultCheck && defaultCheck != _id
+                                        defaultCheck && defaultCheck != id
                                     }
-                                    check={defaultCheck == _id}
-                                    key={_id}
+                                    check={defaultCheck == id}
+                                    key={id}
                                     isDefault={idx == 0}
                                     arrayLength={paymentMethods.length}
                                     icon={
-                                        logo === 'paypal'
+                                        type === 'paypal'
                                             ? paypal_icon
-                                            : logo === 'credit-card'
-                                            ? card_icon
-                                            : logo === 'klarna' && klarna_icon
+                                            : type === 'klarna'
+                                            ? klarna_icon
+                                            : cardData.icon || card_icon
                                     }
-                                    logo={logo}
+                                    type={type}
                                     method={
                                         text
-                                            ? `${text} ${description}`
+                                            ? `${text} ${
+                                                  description ? description : ''
+                                              }`
                                             : `${funding} ${brand} (${last4})`
                                     }
                                     handleDefault={() =>
-                                        handleDefaultMethod(_id)
+                                        handleDefaultMethod(id)
                                     }
-                                    handleDelete={() => handleDelete(_id)}
+                                    handleDelete={() => handleDelete(id)}
                                 />
                             );
                         }
