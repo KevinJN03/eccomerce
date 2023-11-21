@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import exampleCustomerInfo from './address form/example-customer-info.jsx';
 import axios from '../../api/axios.js';
-
+import variants from '../common/framerMotionVariants.jsx';
 function Checkout() {
     disableLayout();
 
@@ -65,20 +65,6 @@ function Checkout() {
             });
     };
 
-    const variants = {
-        initial: {
-            opacity: 0,
-        },
-        animate: {
-            opacity: 1,
-          
-            transition: {duration: 0.9,}
-        },
-
-        exit: {
-            opacity: 0,
-        },
-    };
     return (
         <AnimatePresence>
             {loading && (

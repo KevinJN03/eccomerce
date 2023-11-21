@@ -21,6 +21,7 @@ function Product_info({
     style_it_with_image,
     product,
     color,
+    loading
 }) {
     const [priceState, setPriceState] = useState(product.price?.current);
     console.log('render product info');

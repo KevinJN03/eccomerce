@@ -134,11 +134,6 @@ function Header() {
                 </header>
 
                 <section id="category-wrapper" className="md:hidden">
-                    {/* {category == 'men' ? (
-                    <Header_Category category={'men'} />
-                ) : (
-                    <Header_Category category={'women'} />
-                )} */}
                     <Header_Category category={state.gender} />
                 </section>
             </section>
