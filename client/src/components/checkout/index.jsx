@@ -2,7 +2,7 @@ import '../../CSS/checkout.css';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
 import disableLayout from '../../hooks/disableLayout';
-import Address from './address';
+import Address from './address form/address.jsx';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total/Checkout_Total.jsx';
 import Country_Picker from './country_picker';
@@ -18,9 +18,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import exampleCustomerInfo from './address form/example-customer-info.jsx';
 import axios from '../../api/axios.js';
 import variants from '../common/framerMotionVariants.jsx';
+import logOutUser from '../common/logoutUser.js';
+import { useAuth } from '../../hooks/useAuth.jsx';
+import CheckOutProvider from '../../context/checkOutContext.jsx';
 function Checkout() {
     disableLayout();
 
+    const [error, setError] = useState('123456789788');
+    const { authDispatch } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isOrderSubmit, setOrderSubmit] = useState(false);
@@ -28,6 +33,7 @@ function Checkout() {
     const [shippingAddress, setShippingAddress] = useState({});
     const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
     const [defaultAddresses, setDefaultAddresses] = useState({});
+
     useEffect(() => {
         axios
             .get('user/userData')
@@ -57,6 +63,8 @@ function Checkout() {
                     'error while trying to get logged in user data',
                     error
                 );
+
+                logOutUser({ error, authDispatch, navigate });
             });
     }, []);
     const { cart } = useCart();
@@ -98,7 +106,22 @@ function Checkout() {
     };
 
     return (
-        <>
+        <CheckOutProvider
+            value={{
+                loading,
+                setLoading,
+                error,
+                setError,
+                addresses,
+                setAddresses,
+                shippingAddress,
+                setShippingAddress,
+                billingAddress,
+                setBillingAddress,
+                defaultAddresses,
+                setDefaultAddresses,
+            }}
+        >
             {loading && (
                 <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                     <img src={RedirectImage} className="h-28 w-28" />
@@ -112,6 +135,7 @@ function Checkout() {
 
             {!loading && (
                 <motion.section id="checkout-page">
+                
                     <motion.section
                         id="checkout"
                         // variants={variants}
@@ -122,14 +146,18 @@ function Checkout() {
                         <Checkout_Header text={'CHECKOUT'} />
                         <div className="checkout-body">
                             <section id="checkout-body-wrapper">
+                            {error && (
+                                    <div className='bg-red-200 !sticky !top-0 p-5'>
+                                        <p>{error}</p>
+                                    </div>
+                                )}
                                 <Country_Picker />
                                 <Promo />
                                 <Email_address />
                                 <Address
-                                    shippingAddress={shippingAddress}
-                                    setShippingAddress={setShippingAddress}
-                                    addresses={addresses}
-                                    defaultAddresses={defaultAddresses}
+                
+                                    mainAddress={shippingAddress}
+                                    setMainAddress={setShippingAddress}
                                     defaultProperty={'shipping_address'}
                                 />
                                 <Delivery />
@@ -158,6 +186,12 @@ function Checkout() {
                                         </span>
                                     )}
                                 </button>
+
+                                {error && (
+                                    <div className='bg-red-200 !sticky !top-0 p-5'>
+                                        <p>{error}</p>
+                                    </div>
+                                )}
                             </section>
 
                             <Checkout_Total />
@@ -165,7 +199,7 @@ function Checkout() {
                     </motion.section>
                 </motion.section>
             )}
-        </>
+        </CheckOutProvider>
     );
 }
 

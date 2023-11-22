@@ -11,6 +11,7 @@ import Button from './button';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useAuth } from '../../../hooks/useAuth';
 import axios from '../../../api/axios';
+import logOutUser from '../../common/logoutUser';
 
 function Add_Payment_Method({}) {
     const navigate = useNavigate();
@@ -37,11 +38,8 @@ function Add_Payment_Method({}) {
             }, 600);
         } catch (error) {
             console.log('error at payment methods: ', error);
-
-            if (error.response.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                navigate('/login');
-            }
+            logOutUser({ error, authDispatch, navigate });
+         
         }
     };
 

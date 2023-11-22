@@ -47,7 +47,7 @@
 }
 #checkout-change-btn {
     background-color: var(--light-grey);
-    @apply px-7 py-1 font-semibold tracking-wide;
+    @apply px-7 py-1 font-semibold tracking-wide disabled:cursor-not-allowed;
 }
 
 #country-picker {
@@ -217,7 +217,7 @@
 }
 
 .buy-now-btn {
-    @apply flex w-full items-center justify-center self-center h-14 max-h-20 font-gotham font-bold text-white;
+    @apply flex h-14 max-h-20 w-full items-center justify-center self-center font-gotham font-bold text-white;
 }
 
 .buy-now-btn:disabled {

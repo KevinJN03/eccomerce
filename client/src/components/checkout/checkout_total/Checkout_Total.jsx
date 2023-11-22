@@ -26,7 +26,7 @@ function Checkout_Total({}) {
     };
 
     return (
-        <section id="checkout-total">
+        <section id="checkout-total" className='sticky top-0'>
             <div className="flex flex-row items-center justify-between border-b-2 pb-4">
                 <h1 className="font-gotham text-xl font-bold tracking-wider">
                     {cart.length} {cart.length > 1 ? 'ITEMS' : 'ITEM'}

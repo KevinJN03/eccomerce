@@ -19,11 +19,9 @@ function DeleteAddress() {
             setAddress(result.data.address);
             setModalCheck(false);
         } catch (error) {
-            console.log('error: ', error);
-            if (error.response.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                navigate('/login');
-            }
+            console.error('error: ', error);
+            logOutUser({ error, authDispatch, navigate });
+         
         }
     };
 
