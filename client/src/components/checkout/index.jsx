@@ -2,7 +2,7 @@ import '../../CSS/checkout.css';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
 import disableLayout from '../../hooks/disableLayout';
-import Address from './address';
+import Address from './address form/address.jsx';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total/Checkout_Total.jsx';
 import Country_Picker from './country_picker';
@@ -126,11 +126,12 @@ function Checkout() {
                                 <Promo />
                                 <Email_address />
                                 <Address
-                                    shippingAddress={shippingAddress}
-                                    setShippingAddress={setShippingAddress}
+                                    mainAddress={shippingAddress}
+                                    setMainAddress={setShippingAddress}
                                     addresses={addresses}
                                     defaultAddresses={defaultAddresses}
                                     defaultProperty={'shipping_address'}
+                                    setDefaultAddresses={setDefaultAddresses}
                                 />
                                 <Delivery />
                                 <Payment
