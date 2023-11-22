@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
 import Address_Input from './address-input';
 import { Helmet } from 'react-helmet';
+import axios from '../../../api/axios';
+
 function Address_Form({
-    setChange,
     buttontext,
-    address,
     setAddress,
+    address,
     handleClick,
     cancel,
-
+    setDefaultAddresses,
+    setAddresses,
     type,
+    setChange,
+    setLoading,
 }) {
-    const [edit, setEdit] = useState(false);
+    const [showAddressBox, setShowAddressBox] = useState(
+        type == 'add' ? false : true
+    );
     const generalInput = [
         { label: 'FIRST NAME', property: 'firstName' },
         { label: 'LAST NAME', property: 'lastName' },
@@ -37,7 +43,10 @@ function Address_Form({
         type == 'edit' ? ' EDIT ADDRESS' : type == 'add' && 'ADD NEW ADDRESS';
 
     const getInputArray = () => {
-        if (type == 'edit' && edit) {
+        if (type == 'add') {
+            return generalInput.concat(addressInput);
+        }
+        if (type == 'edit' && !showAddressBox) {
             return generalInput.concat(addressInput);
         } else {
             return generalInput;
@@ -54,6 +63,42 @@ function Address_Form({
         address.postCode,
         address.country,
     ];
+
+    async function handleSubmit() {
+        var updatedAddress = address;
+        try {
+            setLoading(true);
+            let result;
+            console.log({ updatedAddress });
+            if (type == 'edit') {
+                result = await axios.put(
+                    `user/address/edit/${updatedAddress._id}`,
+                    updatedAddress
+                );
+
+                const { address, default_address } = result.data.user;
+                setAddresses(() => address);
+                setDefaultAddresses(() => default_address);
+            } else if (type == 'add') {
+                result = await axios.post(`user/address/add`, updatedAddress);
+                const { address, default_address } = result.data;
+                setAddresses(() => address);
+                setDefaultAddresses(() => default_address);
+            }
+
+            setTimeout(() => {
+                handleClick();
+                setLoading(false);
+            }, 1000);
+        } catch (error) {
+            console.error('error while updating/adding address', error);
+
+            if (error.response.status == 401) {
+                console.log('unauth');
+            
+            }
+        }
+    }
     return (
         <section id="address-form" className="relative">
             <p className="mb-6 text-[18px] font-bold tracking-wider">{text}</p>
@@ -70,7 +115,6 @@ function Address_Form({
                                     value={address[property]}
                                     placeHolder={placeHolder}
                                     handleOnChange={(e) => {
-                                        console.log('clicked on');
                                         setAddress((prevState) => ({
                                             ...prevState,
                                             [property]: e.target.value,
@@ -80,12 +124,16 @@ function Address_Form({
                             );
                         }
                     )}
-                    {!edit && (
-                        <div className="bg-[var(--light-grey)] p-4 flex flex-col gap-y-1 mb-4">
+                    {showAddressBox && (
+                        <div className="mb-4 flex flex-col gap-y-1 bg-[var(--light-grey)] py-4 pl-4 pr-4">
                             {addressBoxText.map((data) => {
-                                return <p className='text-sm'>{data}</p>;
+                                return <p className="text-sm">{data}</p>;
                             })}
-                            <button type='button' className='border-t-2 w-full text-start mt-2 pt-2'>
+                            <button
+                                onClick={() => setShowAddressBox(() => false)}
+                                type="button"
+                                className="mt-2 w-full border-t-2 border-gray-300 pt-2 text-start  hover:underline"
+                            >
                                 Edit
                             </button>
                         </div>
@@ -98,10 +146,13 @@ function Address_Form({
                     <button
                         className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
                         type="button"
-                        onClick={handleClick}
+                        onClick={handleSubmit}
                     >
                         {buttontext ? buttontext : 'DELIVER TO THIS ADDRESS'}
                     </button>
+                    <p className="hover:underline">
+                        Save and return to address book
+                    </p>
                 </div>
                 <button
                     onClick={cancel}

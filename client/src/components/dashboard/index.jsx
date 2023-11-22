@@ -50,11 +50,8 @@ function Dashboard() {
                 'error while checking if user is authenticated: ',
                 error
             );
-
-            if (error?.response?.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                navigate('/login');
-            }
+            logOutUser({ error, authDispatch, navigate });
+          
         }
     }
 

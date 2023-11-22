@@ -76,14 +76,8 @@ function Edit_Address({}) {
                 if (error.response.status == 404) {
                     setNotFound(() => true);
                 }
-    
-                if (error.response.status == 401) {
-                    authDispatch({ type: 'LOGOUT' });
-                    return navigate('/login');
-                }
+                logOutUser({ error, authDispatch, navigate });
             }, 1500);
-
-          
 
             setError(() => error.response.data);
             setDisable(true);

@@ -6,17 +6,23 @@ import Change_Btn from '../../common/btn/change-btn';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import axios from '../../../api/axios';
 import Address_Item from './address-item';
+import { useCheckoutContext } from '../../../context/checkOutContext';
 
 function Address({
     mainAddress,
     setMainAddress,
-    addresses,
-    defaultAddresses,
     defaultProperty,
-    setDefaultAddresses,
 }) {
+    const {
+        error,
+        setError,
+        defaultAddresses,
+        setDefaultAddresses,
+        addresses,
+        setAddresses,
+    } = useCheckoutContext();
     const [checkAddress, setCheckAddress] = useState(null);
-
+    const [change, setChange] = useState(false);
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
     const [editAddress, setEditAddress] = useState({
@@ -44,8 +50,6 @@ function Address({
         setTemporaryMainAddress(() => mainAddress);
     }, [mainAddress]);
 
-    const [change, setChange] = useState(false);
-
     const cancel = () => {
         setTemporaryMainAddress(() => mainAddress);
         setChange(() => false);
@@ -60,11 +64,13 @@ function Address({
     };
 
     const handleEdit = (address) => {
+        setTemporaryMainAddress(() => address);
         setEditAddress((prevState) => ({ ...prevState, edit: true, address }));
     };
 
     const handleNewAddress = () => {
-        setNewAddress(true);
+        setTemporaryMainAddress({});
+        setNewAddress(() => true);
     };
 
     const handleDefault = (id) => {
@@ -89,6 +95,17 @@ function Address({
                 console.error('error while settng default address: ', error);
             });
     };
+
+    const addressFormProps = {
+        setLoading,
+        setAddresses,
+        setDefaultAddresses,
+        setChange,
+        cancel,
+        address: temporaryMainAddress,
+        setAddress: setTemporaryMainAddress,
+        handleClick,
+    };
     const content = () => {
         if (!change) {
             return (
@@ -104,25 +121,9 @@ function Address({
             return (
                 <section className="flex flex-col gap-y-6">
                     {newAddress ? (
-                        <Address_Form
-                        type={'add'}
-                            setChange={setChange}
-                            cancel={cancel}
-                            address={{}}
-                            setAddress={setTemporaryMainAddress}
-                            text={'ADD NEW ADDRESS'}
-                            handleClick={handleClick}
-                        />
+                        <Address_Form type={'add'} {...addressFormProps} />
                     ) : editAddress.edit ? (
-                        <Address_Form
-                            type={'edit'}
-                            setChange={setChange}
-                            cancel={cancel}
-                            text={'EDIT ADDRESS'}
-                            address={editAddress.address}
-                            setAddress={setTemporaryMainAddress}
-                            handleClick={handleClick}
-                        />
+                        <Address_Form type={'edit'} {...addressFormProps} />
                     ) : (
                         <>
                             {sortAddresses.map((address, idx) => {
@@ -202,8 +203,9 @@ function Address({
                     <div className={`address-header relative`}>{content()}</div>
                 </div>
             </section>
+
             {loading && (
-                <div class="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
+                <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
             )}
         </section>
     );

@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import logOutUser from '../common/logoutUser.js';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
 function Details({}) {
@@ -91,10 +92,8 @@ function Details({}) {
             return;
         } catch (error) {
             console.log('error here: ', error);
-            if (error.response.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                navigate('/login');
-            }
+
+            logOutUser({ error, authDispatch, navigate });
         }
     };
     return (

@@ -86,11 +86,9 @@ function Contact_Preferences({}) {
                 }, 700);
             })
             .catch((error) => {
-                if (error.response.status == 401) {
-                    authDispatch({ type: 'LOGOUT' });
-                    return navigate('/login');
-                }
+              
                 console.log('error at preferences: ', error);
+                logOutUser({ error, authDispatch, navigate });
             });
     };
     return (
