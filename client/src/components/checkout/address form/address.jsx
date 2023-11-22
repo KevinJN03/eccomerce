@@ -105,6 +105,7 @@ function Address({
                 <section className="flex flex-col gap-y-6">
                     {newAddress ? (
                         <Address_Form
+                        type={'add'}
                             setChange={setChange}
                             cancel={cancel}
                             address={{}}
@@ -114,6 +115,7 @@ function Address({
                         />
                     ) : editAddress.edit ? (
                         <Address_Form
+                            type={'edit'}
                             setChange={setChange}
                             cancel={cancel}
                             text={'EDIT ADDRESS'}
@@ -135,7 +137,7 @@ function Address({
                                     loading,
                                     setLoading,
                                     setMainAddress,
-                                    setChange
+                                    setChange,
                                 };
 
                                 return (

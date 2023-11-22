@@ -8,24 +8,51 @@ function Address_Form({
     setAddress,
     handleClick,
     cancel,
-    text,
+
+    type,
 }) {
-    const inputs = [
+    const [edit, setEdit] = useState(false);
+    const generalInput = [
         { label: 'FIRST NAME', property: 'firstName' },
         { label: 'LAST NAME', property: 'lastName' },
         {
             label: 'MOBILE',
             property: 'mobile',
         },
-        {
-            label: 'ADDRESS FINDER',
-            placeHolder: 'Start typing a postcode or address...',
-        },
+        // {
+        //     label: 'ADDRESS FINDER',
+        //     placeHolder: 'Start typing a postcode or address...',
+        // },
+    ];
+
+    const addressInput = [
         { label: 'ADDRESS LINE 1', property: 'address_1' },
         { label: 'ADDRESS LINE 2', property: 'address_2' },
         { label: 'CITY', property: 'city' },
         { label: 'COUNTY', property: 'county' },
         { label: 'POSTCODE', property: 'postCode' },
+    ];
+
+    const text =
+        type == 'edit' ? ' EDIT ADDRESS' : type == 'add' && 'ADD NEW ADDRESS';
+
+    const getInputArray = () => {
+        if (type == 'edit' && edit) {
+            return generalInput.concat(addressInput);
+        } else {
+            return generalInput;
+        }
+    };
+
+    const newInputArray = getInputArray();
+
+    const addressBoxText = [
+        `${address.address_1}${
+            address.address_2 ? `, ${address.address_2}` : ''
+        }`,
+        address.city,
+        address.postCode,
+        address.country,
     ];
     return (
         <section id="address-form" className="relative">
@@ -33,24 +60,36 @@ function Address_Form({
 
             <div className="address-form-wrapper">
                 <div className="address-input-wrapper">
-                    {inputs.map(({ label, placeHolder, property }, idx) => {
-                        return (
-                            <Address_Input
-                                key={label}
-                                label={label}
-                                // defaultValue={defaultValue}
-                                value={address[property]}
-                                placeHolder={placeHolder}
-                                handleOnChange={(e) => {
-                                    console.log('clicked on');
-                                    setAddress((prevState) => ({
-                                        ...prevState,
-                                        [property]: e.target.value,
-                                    }));
-                                }}
-                            />
-                        );
-                    })}
+                    {newInputArray.map(
+                        ({ label, placeHolder, property }, idx) => {
+                            return (
+                                <Address_Input
+                                    key={label}
+                                    label={label}
+                                    // defaultValue={defaultValue}
+                                    value={address[property]}
+                                    placeHolder={placeHolder}
+                                    handleOnChange={(e) => {
+                                        console.log('clicked on');
+                                        setAddress((prevState) => ({
+                                            ...prevState,
+                                            [property]: e.target.value,
+                                        }));
+                                    }}
+                                />
+                            );
+                        }
+                    )}
+                    {!edit && (
+                        <div className="bg-[var(--light-grey)] p-4 flex flex-col gap-y-1 mb-4">
+                            {addressBoxText.map((data) => {
+                                return <p className='text-sm'>{data}</p>;
+                            })}
+                            <button type='button' className='border-t-2 w-full text-start mt-2 pt-2'>
+                                Edit
+                            </button>
+                        </div>
+                    )}
 
                     <h1 className="mb-2 text-sm font-bold text-gray-400">
                         COUNTRY:
