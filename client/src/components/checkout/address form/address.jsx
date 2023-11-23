@@ -8,24 +8,9 @@ import axios from '../../../api/axios';
 import Address_Item from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import Address_Book from './address-book';
+import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
 
-const viewReducer = (state, action) => {
-    if (
-        action.type == 'book' ||
-        action.type == 'edit' ||
-        action.type == 'main' ||
-        action.type == 'add'
-    ) {
-        return action.type;
-    }
-
-    throw new Error(
-        `invalid action for viewReducer, you action is ${JSON.stringify(
-            action
-        )}}. please check the reducer to check it accepted actions.`
-    );
-};
-function Address({ mainAddress, setMainAddress, defaultProperty }) {
+function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
     const {
         error,
         setError,
@@ -35,9 +20,9 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
         setAddresses,
     } = useCheckoutContext();
 
-    const [viewContent, viewDispatch] = useReducer(viewReducer, 'main');
+    const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
     const [checkAddress, setCheckAddress] = useState(null);
-    const [change, setChange] = useState(false);
+
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
     const [editAddress, setEditAddress] = useState({
@@ -46,7 +31,6 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
     });
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
-    const [newAddress, setNewAddress] = useState(false);
 
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
@@ -69,12 +53,13 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
         setTemporaryMainAddress(() => mainAddress);
         viewDispatch({ type: 'main' });
         setEditAddress(() => ({ edit: false }));
-        setNewAddress(false);
     };
 
-    const handleClick = () => {
-        setMainAddress(() => temporaryMainAddress);
-        setChange(() => false);
+    const handleClick = (updateMainAddress = true) => {
+        if (updateMainAddress) {
+            setMainAddress(() => temporaryMainAddress);
+        }
+
         setEditAddress(() => ({ edit: false }));
     };
 
@@ -116,7 +101,7 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
         setLoading,
         setAddresses,
         setDefaultAddresses,
-        setChange,
+
         cancel,
         address: temporaryMainAddress,
         setAddress: setTemporaryMainAddress,
@@ -129,14 +114,11 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
             <Address_Book
                 loading={loading}
                 viewDispatch={viewDispatch}
-                addressFormProps={addressFormProps}
-                newAddress={newAddress}
-                editAddress={editAddress}
                 handleNewAddress={handleNewAddress}
-                setChange={setChange}
                 sortAddresses={sortAddresses}
                 addressItemProps={{
                     checkAddress,
+                    addressType,
                     setCheckAddress,
                     defaultAddresses,
                     defaultProperty,
@@ -145,7 +127,7 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
                     loading,
                     setLoading,
                     setMainAddress,
-                    setChange,
+                    addressType,
                     viewDispatch,
                     currentAddressId: mainAddress?._id,
                 }}
@@ -191,7 +173,7 @@ function Address({ mainAddress, setMainAddress, defaultProperty }) {
                     </Helmet>
                 </HelmetProvider>
 
-                <h1 className="checkout-title">DELIVERY ADDRESS</h1>
+                <h1 className="checkout-title">{addressType} ADDRESS</h1>
                 <div id="address-container">
                     <div className={`address-header relative`}>
                         {views[viewContent]}

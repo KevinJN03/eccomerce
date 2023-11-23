@@ -13,7 +13,7 @@ function Address_Item({
     setLoading,
     viewDispatch,
     setMainAddress,
-    setChange,
+    addressType,
     currentAddressId,
 }) {
     const inputRef = useRef(null);
@@ -45,6 +45,8 @@ function Address_Item({
             setLoading(() => false);
         }, 1000);
     };
+
+    const addressTypeLowerCase = addressType.toLowerCase();
     return (
         <AnimatePresence>
             <motion.section className="border-b-[1px]">
@@ -73,7 +75,7 @@ function Address_Item({
                 >
                     {address._id == defaultAddresses[defaultProperty] ? (
                         <p className="mt-6">
-                            This is your default delivery address
+                            This is your default {addressTypeLowerCase} address
                         </p>
                     ) : (
                         <div className="mt-6 flex items-center gap-x-3">
@@ -84,7 +86,10 @@ function Address_Item({
                                 id="checkbox"
                                 className="daisy-checkbox rounded-none"
                             />
-                            <p>Set as your default delivery address</p>
+                            <p>
+                                Set as your default {addressTypeLowerCase}{' '}
+                                address
+                            </p>
                         </div>
                     )}
                 </motion.div>

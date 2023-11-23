@@ -80,7 +80,7 @@ function Address_Form({
         address.country,
     ];
 
-    async function handleSubmit() {
+    async function handleSubmit(returnTo = 'main', updateMainAddress = true) {
         var updatedAddress = address;
         try {
             setLoading(true);
@@ -102,8 +102,9 @@ function Address_Form({
             }
 
             setTimeout(() => {
-                handleClick();
+                handleClick(updateMainAddress);
                 setLoading(false);
+                viewDispatch({ type: returnTo });
             }, 1000);
         } catch (error) {
             console.error('error while updating/adding address', error);
@@ -136,6 +137,10 @@ function Address_Form({
         className: 'text-gray-500',
         setValue: setAddress,
     };
+
+    const returnToBook = () => {
+        handleSubmit('book', false);
+    };
     return (
         <section id="address-form" className="relative">
             <p className="mb-6 text-[18px] font-bold tracking-wider">{text}</p>
@@ -153,19 +158,6 @@ function Address_Form({
                                         value={address[property]}
                                         property={property}
                                     />
-                                    {/* <Address_Input
-                                        key={label}
-                                        label={label}
-                                        // defaultValue={defaultValue}
-                                        value={address[property]}
-                                        placeHolder={placeHolder}
-                                        handleOnChange={(e) => {
-                                            setAddress((prevState) => ({
-                                                ...prevState,
-                                                [property]: e.target.value,
-                                            }));
-                                        }}
-                                    /> */}
                                 </>
                             );
                         }
@@ -192,14 +184,14 @@ function Address_Form({
                     <button
                         className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
                         type="button"
-                        onClick={handleSubmit}
+                        onClick={() => handleSubmit()}
                     >
                         {buttontext ? buttontext : 'DELIVER TO THIS ADDRESS'}
                     </button>
                     {type == 'edit' && (
                         <p
                             className="cursor-pointer hover:underline"
-                            onClick={() => viewDispatch({ type: 'book' })}
+                            onClick={returnToBook}
                         >
                             Save and return to address book
                         </p>

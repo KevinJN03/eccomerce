@@ -3,14 +3,11 @@ import Address_Item from './address-item';
 
 function Address_Book({
     loading,
-    addressFormProps,
-    editAddress,
     handleNewAddress,
-    setChange,
-    newAddress,
     sortAddresses,
     viewDispatch,
     addressItemProps,
+  
 }) {
     return (
         <section className="flex flex-col gap-y-6">

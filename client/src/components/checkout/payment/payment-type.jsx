@@ -5,7 +5,7 @@ import klarna_logo from '../../../assets/icons/payment-icons/klarna.svg';
 import Payment_Methods from '../../cart/payment_methods';
 function Payment_Type({}) {
     return (
-        <section id="payment-type" className="mt-4">
+        <section id="payment-type" className="mt-4 px-6">
             <p className="mb-8 font-gotham font-semibold tracking-widest ">
                 PAYMENT TYPE
             </p>

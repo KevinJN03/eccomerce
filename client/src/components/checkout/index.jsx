@@ -43,7 +43,6 @@ function Checkout() {
     const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
     const [defaultAddresses, setDefaultAddresses] = useState({});
     const [select, setSelect] = useState('GB');
-   
 
     useEffect(() => {
         axios
@@ -172,10 +171,12 @@ function Checkout() {
                                             mainAddress={shippingAddress}
                                             setMainAddress={setShippingAddress}
                                             defaultProperty={'shipping_address'}
+                                            addressType={'DELIVERY'}
                                         />
 
                                         <Delivery />
                                         <Payment
+                                            defaultProperty={'billing_address'}
                                             billingAddress={billingAddress}
                                             setBillingAddress={
                                                 setBillingAddress
