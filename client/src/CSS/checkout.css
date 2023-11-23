@@ -52,7 +52,7 @@
 
 #country-picker {
     margin-top: 20px;
-    @apply mb-3 px-6 py-6;
+    @apply  px-6 py-6;
 }
 
 .checkout-body {
@@ -75,7 +75,7 @@
 }
 
 .promo-header-container span {
-    @apply mb-3 flex h-20 items-center justify-center font-semibold tracking-wider;
+    @apply  flex h-20 items-center justify-center font-semibold tracking-wider;
 }
 
 .active-promo-voucher {
@@ -109,7 +109,7 @@
     @apply mt-4;
 }
 #promo-section {
-    @apply mb-3 flex flex-col pb-0 pt-8;
+    @apply  flex flex-col pb-0 pt-8;
 }
 #promo-section * {
     border-bottom-color: none;
@@ -145,11 +145,11 @@
 }
 
 #address {
-    @apply mb-3 mt-3 p-6;
+    @apply  mt-3 p-6;
 }
 
 #delivery {
-    @apply mb-3 p-6;
+    @apply p-6;
 }
 
 .shipping-option-detail {
@@ -179,7 +179,7 @@
 }
 
 #payment {
-    @apply mb-3 p-6 pb-0;
+    @apply p-6 pb-0;
 }
 
 .payment-sub-header {
@@ -216,10 +216,6 @@
     margin: 0 -24px;
 }
 
-.buy-now-btn {
-    @apply flex h-14 max-h-20 w-full items-center justify-center self-center font-gotham font-bold text-white;
-}
-
 .buy-now-btn:disabled {
     background-color: #018849be;
     @apply cursor-not-allowed;
@@ -229,9 +225,10 @@
 
 #checkout-total {
     /* min-width:  fit-content; */
-
-    height: fit-content;
-    @apply mt-5 p-6 sm+md:w-[90vw] sm+md:self-center lg:w-[400px];
+    /* position: -webkit-sticky;
+    position: sticky;
+    top: 20px !important; */
+    @apply mt-5 h-fit p-6 sm+md:w-[90vw] sm+md:self-center lg:w-[400px];
 }
 
 #checkout-total div {
@@ -264,4 +261,13 @@
 
 .digicert-logo {
     @apply h-10 pr-4 sm+md:object-contain;
+}
+
+.sticky-error {
+    position: sticky;
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: -ms-sticky;
+    position: -o-sticky;
+    top: 0;
 }

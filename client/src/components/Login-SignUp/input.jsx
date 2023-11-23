@@ -16,7 +16,10 @@ function Input({
         <div className={`input-container`}>
             <div className="relative">
                 {error?.[property] && <ErrorMessage msg={error[property]} />}
-                <label htmlFor={label.toLowerCase().replaceAll(' ', '-')}>
+                <label
+                    htmlFor={label.toLowerCase().replaceAll(' ', '-')}
+                    className={className}
+                >
                     {`${label}${asterisk ? ' *' : ''} :`}{' '}
                 </label>
                 <input

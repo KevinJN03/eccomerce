@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import Promo_Voucher_header from '../promo-voucher-header';
 import Address_Form from './address-form';
 import Customer_Info from './customer-info';
@@ -7,12 +7,25 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import axios from '../../../api/axios';
 import Address_Item from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import Address_Book from './address-book';
 
-function Address({
-    mainAddress,
-    setMainAddress,
-    defaultProperty,
-}) {
+const viewReducer = (state, action) => {
+    if (
+        action.type == 'book' ||
+        action.type == 'edit' ||
+        action.type == 'main' ||
+        action.type == 'add'
+    ) {
+        return action.type;
+    }
+
+    throw new Error(
+        `invalid action for viewReducer, you action is ${JSON.stringify(
+            action
+        )}}. please check the reducer to check it accepted actions.`
+    );
+};
+function Address({ mainAddress, setMainAddress, defaultProperty }) {
     const {
         error,
         setError,
@@ -21,6 +34,8 @@ function Address({
         addresses,
         setAddresses,
     } = useCheckoutContext();
+
+    const [viewContent, viewDispatch] = useReducer(viewReducer, 'main');
     const [checkAddress, setCheckAddress] = useState(null);
     const [change, setChange] = useState(false);
     const [sortAddresses, setSortAddresses] = useState({});
@@ -52,7 +67,7 @@ function Address({
 
     const cancel = () => {
         setTemporaryMainAddress(() => mainAddress);
-        setChange(() => false);
+        viewDispatch({ type: 'main' });
         setEditAddress(() => ({ edit: false }));
         setNewAddress(false);
     };
@@ -66,11 +81,12 @@ function Address({
     const handleEdit = (address) => {
         setTemporaryMainAddress(() => address);
         setEditAddress((prevState) => ({ ...prevState, edit: true, address }));
+        viewDispatch({ type: 'edit' });
     };
 
     const handleNewAddress = () => {
         setTemporaryMainAddress({});
-        setNewAddress(() => true);
+        viewDispatch({ type: 'add' });
     };
 
     const handleDefault = (id) => {
@@ -105,84 +121,61 @@ function Address({
         address: temporaryMainAddress,
         setAddress: setTemporaryMainAddress,
         handleClick,
+        viewDispatch,
     };
-    const content = () => {
-        if (!change) {
-            return (
-                <div className="adress-info-container flex flex-row items-baseline justify-between">
-                    <Customer_Info customer={mainAddress} />
-                    {/* <button type="button" id="checkout-change-btn" onClick={()=> setChange(!change)}>Change</button> */}
-                    <Change_Btn setChange={setChange} change={change} />
-                </div>
-            );
-        }
 
-        if (change && addresses.length > 1) {
-            return (
-                <section className="flex flex-col gap-y-6">
-                    {newAddress ? (
-                        <Address_Form type={'add'} {...addressFormProps} />
-                    ) : editAddress.edit ? (
-                        <Address_Form type={'edit'} {...addressFormProps} />
-                    ) : (
-                        <>
-                            {sortAddresses.map((address, idx) => {
-                                const props = {
-                                    address,
-                                    checkAddress,
-                                    setCheckAddress,
-                                    defaultAddresses,
-                                    defaultProperty,
-                                    handleDefault,
-                                    handleEdit,
-                                    loading,
-                                    setLoading,
-                                    setMainAddress,
-                                    setChange,
-                                };
+    const views = {
+        book: (
+            <Address_Book
+                loading={loading}
+                viewDispatch={viewDispatch}
+                addressFormProps={addressFormProps}
+                newAddress={newAddress}
+                editAddress={editAddress}
+                handleNewAddress={handleNewAddress}
+                setChange={setChange}
+                sortAddresses={sortAddresses}
+                addressItemProps={{
+                    checkAddress,
+                    setCheckAddress,
+                    defaultAddresses,
+                    defaultProperty,
+                    handleDefault,
+                    handleEdit,
+                    loading,
+                    setLoading,
+                    setMainAddress,
+                    setChange,
+                    viewDispatch,
+                    currentAddressId: mainAddress?._id,
+                }}
+            />
+        ),
 
-                                return (
-                                    <Address_Item
-                                        {...props}
-                                        key={address._id}
-                                    />
-                                );
-                            })}
+        edit: <Address_Form type={'edit'} {...addressFormProps} />,
 
-                            <div className="flex flex-row justify-between">
-                                <button
-                                    disabled={loading}
-                                    onClick={handleNewAddress}
-                                    className="!bg-primary px-4 py-2 font-bold tracking-wider text-white transition-all hover:!bg-black disabled:cursor-not-allowed"
-                                >
-                                    ADD NEW ADDRESS
-                                </button>
-                                <button
-                                    disabled={loading}
-                                    id="checkout-change-btn"
-                                    onClick={() => setChange(() => false)}
-                                >
-                                    CANCEL
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </section>
-            );
-        }
+        add: <Address_Form type={'add'} {...addressFormProps} />,
 
-        if (change && addresses.length == 1) {
-            return (
-                <Address_Form
-                    setChange={setChange}
-                    cancel={cancel}
-                    address={temporaryMainAddress}
-                    setAddress={setTemporaryMainAddress}
-                    handleClick={handleClick}
-                />
-            );
-        }
+        main: (
+            <div className="adress-info-container flex flex-row items-baseline justify-between">
+                <Customer_Info customer={mainAddress} />
+                <button
+                    type="button"
+                    id="checkout-change-btn"
+                    onClick={() => {
+                        if (addresses.length > 1) {
+                            viewDispatch({ type: 'book' });
+                        } else {
+                            viewDispatch({ type: 'edit' });
+                        }
+                    }}
+                >
+                    CHANGE
+                </button>
+            </div>
+        ),
     };
+
     return (
         <section className="relative">
             <section
@@ -200,7 +193,9 @@ function Address({
 
                 <h1 className="checkout-title">DELIVERY ADDRESS</h1>
                 <div id="address-container">
-                    <div className={`address-header relative`}>{content()}</div>
+                    <div className={`address-header relative`}>
+                        {views[viewContent]}
+                    </div>
                 </div>
             </section>
 

@@ -11,9 +11,10 @@ function Address_Item({
     handleEdit,
     loading,
     setLoading,
-    checkAddress,
+    viewDispatch,
     setMainAddress,
     setChange,
+    currentAddressId,
 }) {
     const inputRef = useRef(null);
 
@@ -40,7 +41,7 @@ function Address_Item({
 
         setTimeout(() => {
             setMainAddress(() => address);
-            setChange(() => false);
+            viewDispatch({ type: 'main' });
             setLoading(() => false);
         }, 1000);
     };
@@ -60,12 +61,7 @@ function Address_Item({
                         name="address"
                         className="daisy-radio ml-auto mr-14"
                         ref={inputRef}
-                        checked={
-                            checkAddress
-                                ? checkAddress == address._id
-                                : defaultAddresses[defaultProperty] ==
-                                  address._id
-                        }
+                        checked={currentAddressId == address._id}
                     />
                 </div>
                 <motion.div

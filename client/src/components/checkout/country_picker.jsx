@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import ReactFlagsSelect from 'react-flags-select';
 import ReactCountryFlag from 'react-country-flag';
 import { useWindowSize } from '@uidotdev/usehooks';
-function Country_Picker({}) {
+function Country_Picker({ select, setSelect }) {
     const screenSize = useWindowSize();
-    const [select, setSelect] = useState('GB');
+
     const [showOption, setShowOption] = useState(false);
     const onSelect = (code) => setSelect(() => code);
 
