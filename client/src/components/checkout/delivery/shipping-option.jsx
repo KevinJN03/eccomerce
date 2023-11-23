@@ -5,7 +5,7 @@ import axios from '../../../api/axios';
 import dayjs from 'dayjs';
 import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
 
-function Shipping_Option({}) {
+function Shipping_Option({ disable }) {
     const { cart, setDeliveryOption, deliveryOption } = useCart();
     const today = dayjs();
 
@@ -35,6 +35,7 @@ function Shipping_Option({}) {
                             </p>
                         </div>
                         <input
+                            disabled={disable}
                             type="radio"
                             name="delivery"
                             defaultChecked={

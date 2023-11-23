@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import Customer_Info from './customer-info';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useCheckoutContext } from '../../../context/checkOutContext';
 
 function Address_Item({
     address,
@@ -15,7 +16,12 @@ function Address_Item({
     setMainAddress,
     addressType,
     currentAddressId,
+    enableAddressEdit,
+    handleClick,
 }) {
+
+    console.log('rerender items component')
+    const { SetDisableOtherComponents } = useCheckoutContext();
     const inputRef = useRef(null);
 
     const variants = {
@@ -43,6 +49,10 @@ function Address_Item({
             setMainAddress(() => address);
             viewDispatch({ type: 'main' });
             setLoading(() => false);
+            // SetDisableOtherCOmponents({
+            //     addressType: null,
+            //     disable: false,
+            // });
         }, 1000);
     };
 
@@ -72,6 +82,7 @@ function Address_Item({
                     initial={'initial'}
                     animate={'animate'}
                     exit={'exit'}
+                    className="mb-5"
                 >
                     {address._id == defaultAddresses[defaultProperty] ? (
                         <p className="mt-6">
@@ -94,15 +105,17 @@ function Address_Item({
                     )}
                 </motion.div>
 
-                <button
-                    disabled={loading}
-                    onClick={() => handleEdit(address)}
-                    className={
-                        'my-5 text-sm font-bold tracking-widest hover:underline disabled:cursor-not-allowed'
-                    }
-                >
-                    EDIT ADDRESS
-                </button>
+                {enableAddressEdit && (
+                    <button
+                        disabled={loading}
+                        onClick={() => handleEdit(address)}
+                        className={
+                            'mb-5 text-sm font-bold tracking-widest hover:underline disabled:cursor-not-allowed'
+                        }
+                    >
+                        EDIT ADDRESS
+                    </button>
+                )}
             </motion.section>
         </AnimatePresence>
     );

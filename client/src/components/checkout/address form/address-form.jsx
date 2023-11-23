@@ -19,6 +19,7 @@ function Address_Form({
     type,
     setChange,
     setLoading,
+    addressType
 }) {
     const { setError, select } = useCheckoutContext();
 
@@ -186,7 +187,7 @@ function Address_Form({
                         type="button"
                         onClick={() => handleSubmit()}
                     >
-                        {buttontext ? buttontext : 'DELIVER TO THIS ADDRESS'}
+                        {addressType == 'DELIVERY' ? 'DELIVER TO THIS ADDRESS': 'USE THIS ADDRESS'}
                     </button>
                     {type == 'edit' && (
                         <p

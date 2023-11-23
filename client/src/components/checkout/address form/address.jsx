@@ -10,7 +10,13 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import Address_Book from './address-book';
 import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
 
-function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
+function Address({
+    mainAddress,
+    setMainAddress,
+    defaultProperty,
+    addressType,
+    enableAddressEdit,
+}) {
     const {
         error,
         setError,
@@ -18,6 +24,8 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
         setDefaultAddresses,
         addresses,
         setAddresses,
+        disableOtherComponents,
+        SetDisableOtherComponents,
     } = useCheckoutContext();
 
     const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
@@ -32,6 +40,9 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
 
+    const disable =
+        disableOtherComponents.disable &&
+        disableOtherComponents.addressType != addressType;
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
             if (a._id == defaultAddresses[defaultProperty]) {
@@ -53,6 +64,10 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
         setTemporaryMainAddress(() => mainAddress);
         viewDispatch({ type: 'main' });
         setEditAddress(() => ({ edit: false }));
+        SetDisableOtherComponents({
+            addressType: null,
+            disable: false,
+        });
     };
 
     const handleClick = (updateMainAddress = true) => {
@@ -61,6 +76,10 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
         }
 
         setEditAddress(() => ({ edit: false }));
+        SetDisableOtherComponents({
+            addressType: null,
+            disable: false,
+        });
     };
 
     const handleEdit = (address) => {
@@ -107,16 +126,19 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
         setAddress: setTemporaryMainAddress,
         handleClick,
         viewDispatch,
+        addressType,
     };
 
     const views = {
         book: (
             <Address_Book
+                cancel={cancel}
                 loading={loading}
                 viewDispatch={viewDispatch}
                 handleNewAddress={handleNewAddress}
                 sortAddresses={sortAddresses}
                 addressItemProps={{
+                    enableAddressEdit,
                     checkAddress,
                     addressType,
                     setCheckAddress,
@@ -129,6 +151,7 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
                     setMainAddress,
                     addressType,
                     viewDispatch,
+                    handleClick,
                     currentAddressId: mainAddress?._id,
                 }}
             />
@@ -145,11 +168,13 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
                     type="button"
                     id="checkout-change-btn"
                     onClick={() => {
-                        if (addresses.length > 1) {
-                            viewDispatch({ type: 'book' });
-                        } else {
-                            viewDispatch({ type: 'edit' });
-                        }
+                        viewDispatch({ type: 'book' });
+
+                        SetDisableOtherComponents((prevState) => ({
+                            ...prevState,
+                            addressType,
+                            disable: true,
+                        }));
                     }}
                 >
                     CHANGE
@@ -159,10 +184,12 @@ function Address({ mainAddress, setMainAddress, defaultProperty, addressType}) {
     };
 
     return (
-        <section className="relative">
+        <section
+            className={disable && 'disable-component'}
+        >
             <section
                 id="address"
-                className={`relative ${loading ? 'opacity-50' : 'opacity-100'}`}
+                className={`${loading ? 'opacity-50' : 'opacity-100'}`}
             >
                 <HelmetProvider>
                     <Helmet>

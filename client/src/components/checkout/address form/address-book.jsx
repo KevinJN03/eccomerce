@@ -7,6 +7,7 @@ function Address_Book({
     sortAddresses,
     viewDispatch,
     addressItemProps,
+    cancel,
   
 }) {
     return (
@@ -31,7 +32,7 @@ function Address_Book({
                 <button
                     disabled={loading}
                     id="checkout-change-btn"
-                    onClick={() => viewDispatch({ type: 'main' })}
+                    onClick={cancel}
                 >
                     CANCEL
                 </button>

@@ -5,14 +5,15 @@ import Voucher from './voucher';
 import AppliedCoupon from './appliedCoupon';
 import MultiplePromo from './multiplePromo';
 import { useCart } from '../../context/cartContext';
+import { useCheckoutContext } from '../../context/checkOutContext';
 
-function Promo({}) {
+function Promo({ disable }) {
     const [option, setOption] = useState('promo');
     // const [Promo, setPromo] = useState({ bool: false });
     const [openMultiple, setOpenMultiple] = useState(false);
     const [display, setDisplay] = useState(false);
     const { promo } = useCart();
-
+    const [show, setShow] = useState(false);
     useEffect(() => {
         if (promo.length > 1) {
             setOpenMultiple(true);
@@ -60,9 +61,30 @@ function Promo({}) {
             </div>
         );
     };
+
+    const toggleShow = () => {
+        if (disable) {
+            setShow(false);
+        } else {
+            setShow(!show);
+        }
+    };
+
+    useEffect(() => {
+        if (disable) {
+            toggleShow();
+        }
+    }, [disable]);
     return (
-        <section id="promo-section" className={`${!promo[0].bool && '!pb-8'}`}>
+        <section
+            id="promo-section"
+            className={`${!promo[0].bool ? '!pb-8' : ''} ${
+                disable ? 'disable-component' : ''
+            }`}
+        >
             <DropDown_Detail
+                show={show}
+                toggleShow={toggleShow}
                 header={'PROMO/STUDENT CODE OR VOUCHERS'}
                 headerClass="promo-header"
                 details={details()}

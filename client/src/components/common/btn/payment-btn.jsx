@@ -1,6 +1,12 @@
-function Payment_Btn({ onClick, button_text, button_img, additional_text }) {
+function Payment_Btn({
+    onClick,
+    button_text,
+    button_img,
+    additional_text,
+    disable,
+}) {
     return (
-        <button type="button" className="payment-btn">
+        <button type="button" className="payment-btn" disabled={disable}>
             <img
                 loading="lazy"
                 src={button_img}

@@ -19,18 +19,12 @@ const {error, setError} = useCheckoutContext()
     const { deliveryOption } = useCart();
     const { promo } = useCart();
 
-    const product = {
-        img: 'https://images.asos-media.com/cart/dr-martens-garin-sandals-in-back-brando-leather/203997482-1-black',
-        title: 'Dr Martens Garin sandals in back brando leather',
-        color: 'BLACK',
-        size: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-        price: 90.99,
-        qty: 1,
-        delivery: 'Free',
-    };
+  
 
     return (
-        <motion.section className="mt-5 h-fit" style={{ y: scrollY }}>
+        <motion.section className="mt-5 h-fit" 
+        style={{ y: scrollY }}
+        >
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">
                     <h1 className="font-gotham text-xl font-bold tracking-wider">

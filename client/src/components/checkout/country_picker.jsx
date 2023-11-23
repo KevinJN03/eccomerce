@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ReactFlagsSelect from 'react-flags-select';
 import ReactCountryFlag from 'react-country-flag';
 import { useWindowSize } from '@uidotdev/usehooks';
-function Country_Picker({ select, setSelect }) {
+function Country_Picker({ select, setSelect, disable }) {
     const screenSize = useWindowSize();
 
     const [showOption, setShowOption] = useState(false);
@@ -20,7 +20,7 @@ function Country_Picker({ select, setSelect }) {
     }, [select]);
 
     return (
-        <section id="country-picker">
+        <section id='country-picker' className={`${disable ? 'disable-component' : ''}`}>
             <h1 className="mb-2 text-lg font-bold tracking-wider">
                 DELIVERY COUNTRY:
             </h1>
@@ -45,6 +45,7 @@ function Country_Picker({ select, setSelect }) {
                             selectedSize={screenSize > 480 ? 20 : 14}
                         />
                         <button
+                            disabled={disable}
                             type="button"
                             onClick={handleCloseOption}
                             id="checkout-change-btn"
@@ -54,6 +55,7 @@ function Country_Picker({ select, setSelect }) {
                     </>
                 ) : (
                     <button
+                        disabled={disable}
                         type="button"
                         id="checkout-change-btn"
                         onClick={handleShowOption}

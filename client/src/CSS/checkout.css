@@ -52,7 +52,7 @@
 
 #country-picker {
     margin-top: 20px;
-    @apply  px-6 py-6;
+    @apply px-6 py-6;
 }
 
 .checkout-body {
@@ -75,7 +75,7 @@
 }
 
 .promo-header-container span {
-    @apply  flex h-20 items-center justify-center font-semibold tracking-wider;
+    @apply flex h-20 items-center justify-center font-semibold tracking-wider;
 }
 
 .active-promo-voucher {
@@ -109,14 +109,14 @@
     @apply mt-4;
 }
 #promo-section {
-    @apply  flex flex-col pb-0 pt-8;
+    @apply flex flex-col pb-0 pt-8;
 }
 #promo-section * {
     border-bottom-color: none;
 }
 
 .checkout-title {
-    @apply mb-4 mt-4 text-xl font-bold tracking-widest;
+    @apply mb-4 mt-0 text-xl font-bold tracking-widest;
 }
 
 .address-header {
@@ -145,7 +145,7 @@
 }
 
 #address {
-    @apply  mt-3 p-6;
+    @apply p-6;
 }
 
 #delivery {
@@ -175,11 +175,12 @@
 }
 
 .delivery-mb {
-    margin-bottom: 40px !important;
+    margin-bottom: 20px !important;
 }
 
 #payment {
-    
+
+    @apply p-2
 }
 
 .payment-sub-header {
@@ -270,4 +271,8 @@
     position: -ms-sticky;
     position: -o-sticky;
     top: 0;
+}
+
+.disable-component {
+    @apply mix-blend-overlay transition-all;
 }

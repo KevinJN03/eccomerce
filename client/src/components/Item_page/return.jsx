@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import DropDown_Detail from '../common/dropdown/dropdown_detail';
 function Return({}) {
+    const [show, setShow] = useState(false);
     const returnDetail = () => {
         return (
             <div className="w-full">
@@ -16,9 +18,15 @@ function Return({}) {
             </div>
         );
     };
+
+    const toggleShow = () => {
+        setShow(!show);
+    };
     return (
         <section id="return-section">
             <DropDown_Detail
+                show={show}
+                toggleShow={toggleShow}
                 details={returnDetail()}
                 header={'30-day Returns: Store Credit'}
             />

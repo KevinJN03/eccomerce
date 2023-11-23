@@ -43,7 +43,10 @@ function Checkout() {
     const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
     const [defaultAddresses, setDefaultAddresses] = useState({});
     const [select, setSelect] = useState('GB');
-
+    const [disableOtherComponents, SetDisableOtherComponents] = useState({
+        disable: false,
+        addressType: null,
+    });
     useEffect(() => {
         axios
             .get('user/userData')
@@ -134,6 +137,8 @@ function Checkout() {
                 setError,
                 select,
                 setSelect,
+                disableOtherComponents,
+                SetDisableOtherComponents,
             }}
         >
             {loading && (
@@ -162,19 +167,36 @@ function Checkout() {
                                 <section className="left flex flex-col !bg-[var(--light-grey)]">
                                     <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
                                         <Country_Picker
+                                            disable={
+                                             disableOtherComponents.disable
+                                                
+                                            }
                                             select={select}
                                             setSelect={setSelect}
                                         />
-                                        <Promo />
-                                        <Email_address />
+                                        <Promo
+                                            disable={
+                                                disableOtherComponents.disable
+                                            }
+                                        />
+                                        <Email_address
+                                            disable={
+                                                disableOtherComponents.disable
+                                            }
+                                        />
                                         <Address
                                             mainAddress={shippingAddress}
                                             setMainAddress={setShippingAddress}
                                             defaultProperty={'shipping_address'}
                                             addressType={'DELIVERY'}
+                                            enableAddressEdit={true}
                                         />
 
-                                        <Delivery />
+                                        <Delivery
+                                            disable={
+                                                disableOtherComponents.disable
+                                            }
+                                        />
                                         <Payment
                                             defaultProperty={'billing_address'}
                                             billingAddress={billingAddress}
@@ -185,10 +207,10 @@ function Checkout() {
                                     </section>
                                     <div className="bottom mt-5 flex flex-col gap-y-3">
                                         <button
-                                            className=" flex h-14 max-h-20 w-11/12 items-center justify-center self-center bg-primary-green font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100"
+                                            className=" flex h-14 max-h-20 w-11/12 items-center justify-center self-center bg-primary-green font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100 disabled:opacity-40"
                                             type="button"
                                             onClick={submitOrder}
-                                            // disabled
+                                             disabled={disableOtherComponents.disable}
                                         >
                                             {isOrderSubmit ? (
                                                 <svg
