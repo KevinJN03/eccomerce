@@ -29,6 +29,9 @@ function Address({
     defaultProperty,
     addressType,
     enableAddressEdit,
+    disableHeader,
+    disableChangeBtn,
+    subHeader
 }) {
     const {
         defaultAddresses,
@@ -129,7 +132,7 @@ function Address({
     const value = {
         setAddresses,
         setDefaultAddresses,
-        disableRef ,
+        disableRef,
         viewDispatch,
         addressType,
         viewContent,
@@ -149,6 +152,8 @@ function Address({
         temporaryMainAddress,
         setTemporaryMainAddress,
         handleDefault,
+        disableChangeBtn,
+        subHeader
     };
 
     const view = () => {
@@ -175,7 +180,7 @@ function Address({
 
             opacity: 1,
 
-            transition: { duration: 0.7 },
+            transition: { duration: 0.5 },
         },
     };
     return (
@@ -199,9 +204,11 @@ function Address({
                                 ></script>
                             </Helmet>
                         </HelmetProvider>
-                        <h1 className="checkout-title">
-                            {addressType} ADDRESS
-                        </h1>{' '}
+                        {!disableHeader && (
+                            <h1 className="checkout-title">
+                                {addressType} ADDRESS
+                            </h1>
+                        )}
                         <div id="address-container" ref={containerRef}>
                             <AnimatePresence mode="wait">
                                 {viewContent && (

@@ -21,7 +21,7 @@ function Address_Form({ type }) {
         cancel,
         setDefaultAddresses,
         setAddresses,
-
+        loading,
         setLoading,
         addressType,
     } = useAddressContext();
@@ -230,6 +230,7 @@ function Address_Form({ type }) {
                         )}
                     </div>
                     <button
+                        disabled={loading}
                         onClick={cancel}
                         className="sm+md:absolute sm+md:right-0 sm+md:top-1"
                         id="checkout-change-btn"

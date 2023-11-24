@@ -3,6 +3,7 @@ import credit_icon from '../../../assets/icons/credit-card.png';
 import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
 import klarna_logo from '../../../assets/icons/payment-icons/klarna.svg';
 import Payment_Methods from '../../cart/payment_methods';
+import { SubHeader } from './payment';
 function Payment_Type({ disable }) {
     const paymentMethodArray = [
         {
@@ -37,9 +38,10 @@ function Payment_Type({ disable }) {
                 disable ? 'disable-component' : 'display-component'
             }`}
         >
-            <p className="mb-8 font-gotham font-semibold tracking-widest ">
-                PAYMENT TYPE
-            </p>
+            <div className='mb-6 mt-3'>
+                     <SubHeader disablePadding={true} text={'PAYMENT TYPE'} />
+            </div>
+       
             <div id="payment-btn-container">
                 {paymentMethodArray.map((item, idx) => {
                     return (

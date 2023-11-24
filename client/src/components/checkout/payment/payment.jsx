@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Change_Btn from '../../common/btn/change-btn';
 import Customer_Info from '../address form/customer-info';
 import Payment_Type from './payment-type';
@@ -6,6 +6,33 @@ import Address_Form from '../address form/address-form';
 import examplecustomerInfo from '../address form/example-customer-info';
 import Address from '../address form/address';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+
+export function SubHeader({
+    text,
+    disablePadding,
+    onClick,
+    disable,
+    className,
+}) {
+    const changeBtnRef = useRef();
+    return (
+        <div
+            className={`flex justify-between ${
+                disablePadding ? '' : 'mb-0 p-6 pb-0'
+            } `}
+        >
+            <h3 className="font-gotham text-lg text-black">{text}</h3>
+            <button
+                type="button"
+                id="checkout-change-btn"
+                onClick={onClick}
+                disabled={disable}
+            >
+                CHANGE
+            </button>
+        </div>
+    );
+}
 function Payment({
     billingAddress,
     setBillingAddress,
@@ -19,8 +46,17 @@ function Payment({
         disableOtherComponents.addressType != 'BILLING';
     return (
         <section className={`!bg-white `}>
+            <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
+            {/* <SubHeader text={'BILLING ADDRESS'} /> */}
+
             <div className="!bg-[var(--light-grey)]">
                 <Address
+                    subHeader={{
+                        text: 'BILLING ADDRESS',
+                        disablePadding: true,
+                    }}
+                    disableHeader={true}
+                    disableChangeBtn={true}
                     mainAddress={billingAddress}
                     setMainAddress={setBillingAddress}
                     defaultProperty={defaultProperty}
@@ -30,7 +66,7 @@ function Payment({
             </div>
 
             <div
-                className={`mx-4 border-b-[1px] border-black ${
+                className={`mx-4  border-t-[thin] border-black ${
                     disable ? 'opacity-30' : ''
                 }`}
             >

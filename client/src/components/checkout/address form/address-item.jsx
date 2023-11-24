@@ -45,7 +45,7 @@ function Address_Item({ address, idx }) {
         addressType,
         mainAddress,
         enableAddressEdit,
-        disableRef,
+        disableRef
     } = useAddressContext();
 
     const currentAddressId = mainAddress?._id;
@@ -110,7 +110,7 @@ function Address_Item({ address, idx }) {
                 ) : (
                     <div className="mt-6 flex items-center gap-x-3">
                         <input
-                            disabled={loading}
+                            disabled={loading|| disableRef.current}
                             onChange={() => handleDefault(address._id)}
                             type="checkbox"
                             id="checkbox"
@@ -125,7 +125,7 @@ function Address_Item({ address, idx }) {
 
             {enableAddressEdit && (
                 <button
-                    disabled={loading || disableRef}
+                    disabled={loading || disableRef.current}
                     onClick={() => handleEdit(address)}
                     className={
                         'mb-5 text-sm font-bold tracking-widest hover:underline disabled:cursor-not-allowed'
