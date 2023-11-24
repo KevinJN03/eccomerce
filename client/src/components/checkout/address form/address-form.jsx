@@ -8,21 +8,24 @@ import Input from '../../Login-SignUp/input';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateVariants } from './address-item';
-// import variants from './variants';
-function Address_Form({
-    viewDispatch,
-    buttontext,
-    setAddress,
-    address,
-    handleClick,
-    cancel,
-    setDefaultAddresses,
-    setAddresses,
-    type,
-    setChange,
-    setLoading,
-    addressType,
-}) {
+import { useAuth } from '../../../hooks/useAuth';
+import { useAddressContext } from '../../../context/checkOutAddressContext';
+
+function Address_Form({ type }) {
+    const {
+        viewDispatch,
+
+        setTemporaryMainAddress,
+        temporaryMainAddress,
+        handleClick,
+        cancel,
+        setDefaultAddresses,
+        setAddresses,
+
+        setLoading,
+        addressType,
+    } = useAddressContext();
+    const { authDispatch } = useAuth();
     const { setError, select } = useCheckoutContext();
 
     const navigate = useNavigate();
@@ -46,7 +49,10 @@ function Address_Form({
 
     useEffect(() => {
         if (type === 'add') {
-            setAddress((prevState) => ({ ...prevState, country: select }));
+            setTemporaryMainAddress((prevState) => ({
+                ...prevState,
+                country: select,
+            }));
         }
     }, [select]);
 
@@ -75,16 +81,18 @@ function Address_Form({
     const newInputArray = getInputArray();
 
     const addressBoxText = [
-        `${address.address_1}${
-            address.address_2 ? `, ${address.address_2}` : ''
+        `${temporaryMainAddress?.address_1}${
+            temporaryMainAddress?.address_2
+                ? `, ${temporaryMainAddress?.address_2}`
+                : ''
         }`,
-        address.city,
-        address.postCode,
-        address.country,
+        temporaryMainAddress?.city,
+        temporaryMainAddress?.postCode,
+        temporaryMainAddress?.country,
     ];
 
     async function handleSubmit(returnTo = 'main', updateMainAddress = true) {
-        var updatedAddress = address;
+        var updatedAddress = temporaryMainAddress;
         try {
             setLoading(true);
             let result;
@@ -113,8 +121,7 @@ function Address_Form({
             console.error('error while updating/adding address', error);
             setTimeout(() => {
                 if (error.response.status == 400) {
-                    setInputError((prevState) => ({
-                        ...prevState,
+                    setInputError(() => ({
                         ...error.response.data,
                     }));
                 }
@@ -138,85 +145,99 @@ function Address_Form({
         autoComplete: true,
         manyProperty: true,
         className: 'text-gray-500',
-        setValue: setAddress,
+        setValue: setTemporaryMainAddress,
     };
 
     const returnToBook = () => {
         handleSubmit('book', false);
     };
 
-    const variants = generateVariants(1);
+    const variants = generateVariants(1, 0.2);
     return (
         <motion.section
             variants={variants}
             animate={'animate'}
             initial={'initial'}
+            exit={'exit'}
             id="address-form"
             className="relative"
         >
-            <p className="mb-6 text-[18px] font-bold tracking-wider">{text}</p>
+            {/* {(viewContent == 'add' || viewContent == 'edit') && ( */}
 
-            <div className="address-form-wrapper">
-                <div className="address-input-wrapper">
-                    {newInputArray.map(
-                        ({ label, placeHolder, property }, idx) => {
-                            return (
-                                <>
-                                    <Input
-                                        {...inputProps}
-                                        key={label}
-                                        label={label}
-                                        value={address[property]}
-                                    />
-                                </>
-                            );
-                        }
-                    )}
-                    {showAddressBox && (
-                        <div className="mb-4 flex flex-col gap-y-1 bg-[var(--light-grey)] py-4 pl-4 pr-4">
-                            {addressBoxText.map((data) => {
-                                return <p className="text-sm">{data}</p>;
-                            })}
-                            <button
-                                onClick={() => setShowAddressBox(() => false)}
-                                type="button"
-                                className="mt-2 w-full border-t-2 border-gray-300 pt-2 text-start  hover:underline"
-                            >
-                                Edit
-                            </button>
-                        </div>
-                    )}
+            <>
+                <p className="mb-6 text-[18px] font-bold tracking-wider">
+                    {text}
+                </p>
 
-                    <h1 className="mb-2 text-sm font-bold text-gray-500">
-                        COUNTRY:
-                    </h1>
-                    <p className="text-sm">{address?.country || select}</p>
-                    <button
-                        className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
-                        type="button"
-                        onClick={() => handleSubmit()}
-                    >
-                        {addressType == 'DELIVERY'
-                            ? 'DELIVER TO THIS ADDRESS'
-                            : 'USE THIS ADDRESS'}
-                    </button>
-                    {type == 'edit' && (
-                        <p
-                            className="cursor-pointer hover:underline"
-                            onClick={returnToBook}
-                        >
-                            Save and return to address book
+                <div className="address-form-wrapper">
+                    <div className="address-input-wrapper">
+                        {newInputArray.map(
+                            ({ label, placeHolder, property }, idx) => {
+                                return (
+                                    <>
+                                        <Input
+                                            {...inputProps}
+                                            key={label}
+                                            label={label}
+                                            value={
+                                                temporaryMainAddress[property]
+                                            }
+                                            property={property}
+                                        />
+                                    </>
+                                );
+                            }
+                        )}
+                        {showAddressBox && (
+                            <div className="mb-4 flex flex-col gap-y-1 bg-[var(--light-grey)] py-4 pl-4 pr-4">
+                                {addressBoxText.map((data) => {
+                                    return <p className="text-sm">{data}</p>;
+                                })}
+                                <button
+                                    onClick={() =>
+                                        setShowAddressBox(() => false)
+                                    }
+                                    type="button"
+                                    className="mt-2 w-full border-t-2 border-gray-300 pt-2 text-start  hover:underline"
+                                >
+                                    Edit
+                                </button>
+                            </div>
+                        )}
+
+                        <h1 className="mb-2 text-sm font-bold text-gray-500">
+                            COUNTRY:
+                        </h1>
+                        <p className="text-sm">
+                            {temporaryMainAddress?.country || select}
                         </p>
-                    )}
+                        <button
+                            className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
+                            type="button"
+                            onClick={() => handleSubmit()}
+                        >
+                            {addressType == 'DELIVERY'
+                                ? 'DELIVER TO THIS ADDRESS'
+                                : 'USE THIS ADDRESS'}
+                        </button>
+                        {type == 'edit' && (
+                            <p
+                                className="cursor-pointer hover:underline"
+                                onClick={returnToBook}
+                            >
+                                Save and return to address book
+                            </p>
+                        )}
+                    </div>
+                    <button
+                        onClick={cancel}
+                        className="sm+md:absolute sm+md:right-0 sm+md:top-1"
+                        id="checkout-change-btn"
+                    >
+                        CANCEL
+                    </button>
                 </div>
-                <button
-                    onClick={cancel}
-                    className="sm+md:absolute sm+md:right-0 sm+md:top-1"
-                    id="checkout-change-btn"
-                >
-                    CANCEL
-                </button>
-            </div>
+            </>
         </motion.section>
     );
 }

@@ -3,8 +3,9 @@ import Customer_Info from './customer-info';
 import { AnimatePresence, motion, stagger } from 'framer-motion';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { v4 as uuidv4 } from 'uuid';
+import { useAddressContext } from '../../../context/checkOutAddressContext';
 
-export const generateVariants = (idx) => {
+export const generateVariants = (idx, exitDuration = 0.2) => {
     return {
         initial: {
             opacity: 0,
@@ -24,60 +25,34 @@ export const generateVariants = (idx) => {
             opacity: 0,
             translateX: 50,
             transition: {
-                duration: 0.15,
-                ease: 'easeInOut',
+                duration: exitDuration,
+                ease: 'easeOut',
             },
         },
     };
 };
-function Address_Item({
-    address,
-    setCheckAddress,
-    defaultAddresses,
-    defaultProperty,
-    handleDefault,
-    handleEdit,
-    loading,
-    setLoading,
-    viewContent,
-    viewDispatch,
-    setMainAddress,
-    addressType,
-    currentAddressId,
-    enableAddressEdit,
-    handleClick,
-    idx,
-}) {
-    console.log('rerender items component');
+function Address_Item({ address, idx }) {
+    const {
+        setCheckAddress,
+        defaultAddresses,
+        defaultProperty,
+        handleDefault,
+        handleEdit,
+        loading,
+        setLoading,
+        viewDispatch,
+        setMainAddress,
+        addressType,
+        mainAddress,
+        enableAddressEdit,
+        disableRef,
+    } = useAddressContext();
+
+    const currentAddressId = mainAddress?._id;
     const { SetDisableOtherComponents } = useCheckoutContext();
     const inputRef = useRef(null);
 
-    // const variants = {
-    //     initial: {
-    //         opacity: 0,
-    //         translateX: -50,
-    //     },
-    //     animate: {
-    //         opacity: 1,
-    //         translateX: 0,
-    //         transition: {
-    //             duration: 0.5,
-    //             ease: 'easeInOut',
-    //             delay: idx * 0.3,
-    //         },
-    //     },
-
-    //     exit: {
-    //         opacity: 0,
-    //         translateX: 50,
-    //         transition: {
-    //             duration: 0.15,
-    //             ease: 'easeInOut',
-    //         },
-    //     },
-    // };
-
-    const variants = generateVariants(idx+1);
+    const variants = generateVariants(idx + 1);
 
     const handleCurrentAddress = () => {
         inputRef.current.click();
@@ -150,7 +125,7 @@ function Address_Item({
 
             {enableAddressEdit && (
                 <button
-                    disabled={loading}
+                    disabled={loading || disableRef}
                     onClick={() => handleEdit(address)}
                     className={
                         'mb-5 text-sm font-bold tracking-widest hover:underline disabled:cursor-not-allowed'

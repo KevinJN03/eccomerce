@@ -12,7 +12,16 @@ import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
 import { ClickAwayListener } from '@mui/material';
 import { useClickAway } from '@uidotdev/usehooks';
 import { AnimatePresence, motion } from 'framer-motion';
-import { generateVariants } from './address-item';
+
+import Main from './main';
+import { AddressContextProvider } from '../../../context/checkOutAddressContext';
+
+const views = {
+    book: <Address_Book />,
+    edit: <Address_Form type={'edit'} />,
+    add: <Address_Form type={'add'} />,
+    main: <Main />,
+};
 
 function Address({
     mainAddress,
@@ -22,8 +31,6 @@ function Address({
     enableAddressEdit,
 }) {
     const {
-        error,
-        setError,
         defaultAddresses,
         setDefaultAddresses,
         addresses,
@@ -34,19 +41,11 @@ function Address({
 
     const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
     const [checkAddress, setCheckAddress] = useState(null);
-    const [height, setHeight] = useState('0');
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
-    const [editAddress, setEditAddress] = useState({
-        edit: false,
-        address: {},
-    });
+    const disableRef = useRef(false);
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
-
-    const disable =
-        disableOtherComponents.disable &&
-        disableOtherComponents.addressType != addressType;
 
     const clickAwayRef = useClickAway(() => {
         if (!disableOtherComponents.disable) {
@@ -60,7 +59,7 @@ function Address({
             viewDispatch({ type: 'main' });
         }
     });
-    const mainComponentVariant = generateVariants(0);
+
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
             if (a._id == defaultAddresses[defaultProperty]) {
@@ -74,48 +73,16 @@ function Address({
 
         setSortAddresses(() => newAddresses);
     }, [addresses]);
+
     useEffect(() => {
         setTemporaryMainAddress(() => mainAddress);
     }, [mainAddress]);
 
     const containerRef = useRef();
-    // heightRef.current = 10;
-    const cancel = () => {
-        setTemporaryMainAddress(() => mainAddress);
-        viewDispatch({ type: 'main' });
-        setEditAddress(() => ({ edit: false }));
-        SetDisableOtherComponents({
-            addressType: null,
-            disable: false,
-        });
-    };
-
-    const handleClick = (updateMainAddress = true) => {
-        if (updateMainAddress) {
-            setMainAddress(() => temporaryMainAddress);
-        }
-
-        setEditAddress(() => ({ edit: false }));
-        SetDisableOtherComponents({
-            addressType: null,
-            disable: false,
-        });
-    };
-
-    const handleEdit = (address) => {
-        setTemporaryMainAddress(() => address);
-        setEditAddress((prevState) => ({ ...prevState, edit: true, address }));
-        viewDispatch({ type: 'edit' });
-    };
-
-    const handleNewAddress = () => {
-        setTemporaryMainAddress({});
-        viewDispatch({ type: 'add' });
-    };
 
     const handleDefault = (id) => {
         setLoading(true);
-        console.log(id);
+
         const data = {
             [defaultProperty]: id,
         };
@@ -123,8 +90,6 @@ function Address({
         axios
             .put('user/address/changeDefault', data)
             .then((res) => {
-                console.log(res.data);
-
                 setTimeout(() => {
                     setDefaultAddresses(() => res.data.default_address);
                     setLoading(false);
@@ -133,19 +98,6 @@ function Address({
             .catch((error) => {
                 console.error('error while settng default address: ', error);
             });
-    };
-
-    const addressFormProps = {
-        setLoading,
-        setAddresses,
-        setDefaultAddresses,
-
-        cancel,
-        address: temporaryMainAddress,
-        setAddress: setTemporaryMainAddress,
-        handleClick,
-        viewDispatch,
-        addressType,
     };
 
     useEffect(() => {
@@ -157,76 +109,58 @@ function Address({
         }
     }, [disableOtherComponents.disable, disableOtherComponents.addressType]);
 
-    const views = {
-        book: (
-            <Address_Book
-                viewContent={viewContent}
-                cancel={cancel}
-                loading={loading}
-                viewDispatch={viewDispatch}
-                handleNewAddress={handleNewAddress}
-                sortAddresses={sortAddresses}
-                addressItemProps={{
-                    viewContent,
-                    enableAddressEdit,
-                    checkAddress,
-                    addressType,
-                    setCheckAddress,
-                    defaultAddresses,
-                    defaultProperty,
-                    handleDefault,
-                    handleEdit,
-                    loading,
-                    setLoading,
-                    setMainAddress,
-                    addressType,
-                    viewDispatch,
-                    handleClick,
-                    currentAddressId: mainAddress?._id,
-                }}
-            />
-        ),
+    const onClickAway = () => {
+        if (!disableOtherComponents.disable) {
+            return;
+        }
 
-        edit: <Address_Form type={'edit'} {...addressFormProps} />,
+        if (disableOtherComponents.addressType == addressType) {
+            SetDisableOtherComponents({
+                disable: false,
+                addressType: null,
+            });
+            viewDispatch({ type: 'main' });
+        }
+    };
+    const disable =
+        disableOtherComponents.disable &&
+        disableOtherComponents.addressType != addressType;
 
-        add: <Address_Form type={'add'} {...addressFormProps} />,
+    const value = {
+        setAddresses,
+        setDefaultAddresses,
+        disableRef ,
+        viewDispatch,
+        addressType,
+        viewContent,
+        mainAddress,
+        setMainAddress,
+        defaultProperty,
+        addressType,
+        enableAddressEdit,
+        defaultAddresses,
+        viewDispatch,
+        checkAddress,
+        setCheckAddress,
+        sortAddresses,
+        setSortAddresses,
+        loading,
+        setLoading,
+        temporaryMainAddress,
+        setTemporaryMainAddress,
+        handleDefault,
+    };
 
-        main: (
-            <motion.div
-                className="adress-info-container flex flex-row items-baseline justify-between"
-                variants={mainComponentVariant}
-                animate={'animate'}
-                initial={'initial'}
-                exit={'exit'}
-               
-            >
-                <Customer_Info customer={mainAddress} />
-                <button
-                    disabled={
-                        disableOtherComponents.disable &&
-                        disableOtherComponents.addressType != addressType
-                    }
-                    type="button"
-                    id="checkout-change-btn"
-                    onClick={() => {
-                        if (
-                            disableOtherComponents.disable &&
-                            disable.addressType != addressType
-                        ) {
-                            return;
-                        }
-
-                        SetDisableOtherComponents(() => ({
-                            addressType,
-                            disable: true,
-                        }));
-                        viewDispatch({ type: 'book' });
-                    }}
-                >
-                    CHANGE
-                </button>
-            </motion.div>
-        ),
+    const view = () => {
+        if (viewContent == 'main') {
+            return <Main />;
+        } else if (viewContent == 'add') {
+            return <Address_Form type={'add'} />;
+        } else if (viewContent == 'edit') {
+            return <Address_Form type={'edit'} />;
+        } else if (viewContent == 'book') {
+            return <Address_Book />;
+        }
     };
 
     const variants = {
@@ -243,70 +177,53 @@ function Address({
 
             transition: { duration: 0.7 },
         },
-
-        // exit: {
-        //     opacity: 1,
-        //     height: 0,
-
-        //     transition: { duration: 3, ease: 'easeOut'},
-        // },
-    };
-
-    const onClickAway = () => {
-        if (!disableOtherComponents.disable) {
-            return;
-        }
-        console.log('testing');
-        if (disableOtherComponents.addressType == addressType) {
-            SetDisableOtherComponents({
-                disable: false,
-                addressType: null,
-            });
-            viewDispatch({ type: 'main' });
-        }
     };
     return (
         <ClickAwayListener onClickAway={onClickAway}>
-            <motion.section
-                className={`relative ${
-                    disable ? 'disable-component' : 'display-component'
-                }`}
-                ref={clickAwayRef}
-            >
-                <section
-                    id="address"
-                    className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+            <AddressContextProvider value={value}>
+                <motion.section
+                    className={`relative ${
+                        disable ? 'disable-component' : 'display-component'
+                    }`}
+                    ref={clickAwayRef}
                 >
-                    <HelmetProvider>
-                        <Helmet>
-                            <script
-                                type="text/javascript"
-                                src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
-                            ></script>
-                        </Helmet>
-                    </HelmetProvider>
+                    <section
+                        id="address"
+                        className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+                    >
+                        <HelmetProvider>
+                            <Helmet>
+                                <script
+                                    type="text/javascript"
+                                    src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
+                                ></script>
+                            </Helmet>
+                        </HelmetProvider>
+                        <h1 className="checkout-title">
+                            {addressType} ADDRESS
+                        </h1>{' '}
+                        <div id="address-container" ref={containerRef}>
+                            <AnimatePresence mode="wait">
+                                {viewContent && (
+                                    <motion.div
+                                        className={`address-header relative`}
+                                        key={viewContent}
+                                        variants={variants}
+                                        animate={'animate'}
+                                        initial={'initial'}
+                                    >
+                                        {views[viewContent]}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </section>
 
-                    <h1 className="checkout-title">{addressType} ADDRESS</h1>
-                    <div id="address-container" ref={containerRef}>
-                        <AnimatePresence>
-                            <motion.div
-                                className={`address-header relative`}
-                                key={viewContent}
-                                variants={variants}
-                                animate={'animate'}
-                                initial={'initial'}
-                                exit={'exit'}
-                            >
-                                {views[viewContent]}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </section>
-
-                {loading && (
-                    <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
-                )}
-            </motion.section>
+                    {loading && (
+                        <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
+                    )}
+                </motion.section>
+            </AddressContextProvider>
         </ClickAwayListener>
     );
 }

@@ -40,7 +40,7 @@ function Checkout() {
     const [isOrderSubmit, setOrderSubmit] = useState(false);
     const [addresses, setAddresses] = useState([]);
     const [shippingAddress, setShippingAddress] = useState({});
-    const [billingAddress, setBillingAddress] = useState(exampleCustomerInfo);
+    const [billingAddress, setBillingAddress] = useState({});
     const [defaultAddresses, setDefaultAddresses] = useState({});
     const [select, setSelect] = useState('GB');
     const [disableOtherComponents, SetDisableOtherComponents] = useState({
