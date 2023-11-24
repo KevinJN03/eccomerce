@@ -33,7 +33,9 @@ function Payment_Type({ disable }) {
     return (
         <section
             id="payment-type"
-            className={`mt-4 px-6 ${disable && 'disable-component'}`}
+            className={`mt-4 px-6 ${
+                disable ? 'disable-component' : 'display-component'
+            }`}
         >
             <p className="mb-8 font-gotham font-semibold tracking-widest ">
                 PAYMENT TYPE

@@ -9,6 +9,10 @@ import Address_Item from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import Address_Book from './address-book';
 import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
+import { ClickAwayListener } from '@mui/material';
+import { useClickAway } from '@uidotdev/usehooks';
+import { AnimatePresence, motion } from 'framer-motion';
+import { generateVariants } from './address-item';
 
 function Address({
     mainAddress,
@@ -30,7 +34,7 @@ function Address({
 
     const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
     const [checkAddress, setCheckAddress] = useState(null);
-
+    const [height, setHeight] = useState('0');
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
     const [editAddress, setEditAddress] = useState({
@@ -43,6 +47,20 @@ function Address({
     const disable =
         disableOtherComponents.disable &&
         disableOtherComponents.addressType != addressType;
+
+    const clickAwayRef = useClickAway(() => {
+        if (!disableOtherComponents.disable) {
+            return;
+        }
+        if (disableOtherComponents.addressType == addressType) {
+            SetDisableOtherComponents(() => ({
+                disable: false,
+                addressType: null,
+            }));
+            viewDispatch({ type: 'main' });
+        }
+    });
+    const mainComponentVariant = generateVariants(0);
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
             if (a._id == defaultAddresses[defaultProperty]) {
@@ -60,6 +78,8 @@ function Address({
         setTemporaryMainAddress(() => mainAddress);
     }, [mainAddress]);
 
+    const containerRef = useRef();
+    // heightRef.current = 10;
     const cancel = () => {
         setTemporaryMainAddress(() => mainAddress);
         viewDispatch({ type: 'main' });
@@ -100,7 +120,6 @@ function Address({
             [defaultProperty]: id,
         };
 
-        console.log({ data });
         axios
             .put('user/address/changeDefault', data)
             .then((res) => {
@@ -129,15 +148,26 @@ function Address({
         addressType,
     };
 
+    useEffect(() => {
+        if (
+            disableOtherComponents.disable &&
+            disableOtherComponents.addressType != addressType
+        ) {
+            viewDispatch({ type: 'main' });
+        }
+    }, [disableOtherComponents.disable, disableOtherComponents.addressType]);
+
     const views = {
         book: (
             <Address_Book
+                viewContent={viewContent}
                 cancel={cancel}
                 loading={loading}
                 viewDispatch={viewDispatch}
                 handleNewAddress={handleNewAddress}
                 sortAddresses={sortAddresses}
                 addressItemProps={{
+                    viewContent,
                     enableAddressEdit,
                     checkAddress,
                     addressType,
@@ -162,56 +192,122 @@ function Address({
         add: <Address_Form type={'add'} {...addressFormProps} />,
 
         main: (
-            <div className="adress-info-container flex flex-row items-baseline justify-between">
+            <motion.div
+                className="adress-info-container flex flex-row items-baseline justify-between"
+                variants={mainComponentVariant}
+                animate={'animate'}
+                initial={'initial'}
+                exit={'exit'}
+               
+            >
                 <Customer_Info customer={mainAddress} />
                 <button
+                    disabled={
+                        disableOtherComponents.disable &&
+                        disableOtherComponents.addressType != addressType
+                    }
                     type="button"
                     id="checkout-change-btn"
                     onClick={() => {
-                        viewDispatch({ type: 'book' });
+                        if (
+                            disableOtherComponents.disable &&
+                            disable.addressType != addressType
+                        ) {
+                            return;
+                        }
 
-                        SetDisableOtherComponents((prevState) => ({
-                            ...prevState,
+                        SetDisableOtherComponents(() => ({
                             addressType,
                             disable: true,
                         }));
+                        viewDispatch({ type: 'book' });
                     }}
                 >
                     CHANGE
                 </button>
-            </div>
+            </motion.div>
         ),
     };
 
+    const variants = {
+        initial: {
+            height: containerRef?.current
+                ? containerRef.current.clientHeight + 'px'
+                : 'auto',
+            opacity: 0.5,
+        },
+        animate: {
+            height: 'auto',
+
+            opacity: 1,
+
+            transition: { duration: 0.7 },
+        },
+
+        // exit: {
+        //     opacity: 1,
+        //     height: 0,
+
+        //     transition: { duration: 3, ease: 'easeOut'},
+        // },
+    };
+
+    const onClickAway = () => {
+        if (!disableOtherComponents.disable) {
+            return;
+        }
+        console.log('testing');
+        if (disableOtherComponents.addressType == addressType) {
+            SetDisableOtherComponents({
+                disable: false,
+                addressType: null,
+            });
+            viewDispatch({ type: 'main' });
+        }
+    };
     return (
-        <section
-            className={disable && 'disable-component'}
-        >
-            <section
-                id="address"
-                className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+        <ClickAwayListener onClickAway={onClickAway}>
+            <motion.section
+                className={`relative ${
+                    disable ? 'disable-component' : 'display-component'
+                }`}
+                ref={clickAwayRef}
             >
-                <HelmetProvider>
-                    <Helmet>
-                        <script
-                            type="text/javascript"
-                            src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
-                        ></script>
-                    </Helmet>
-                </HelmetProvider>
+                <section
+                    id="address"
+                    className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+                >
+                    <HelmetProvider>
+                        <Helmet>
+                            <script
+                                type="text/javascript"
+                                src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
+                            ></script>
+                        </Helmet>
+                    </HelmetProvider>
 
-                <h1 className="checkout-title">{addressType} ADDRESS</h1>
-                <div id="address-container">
-                    <div className={`address-header relative`}>
-                        {views[viewContent]}
+                    <h1 className="checkout-title">{addressType} ADDRESS</h1>
+                    <div id="address-container" ref={containerRef}>
+                        <AnimatePresence>
+                            <motion.div
+                                className={`address-header relative`}
+                                key={viewContent}
+                                variants={variants}
+                                animate={'animate'}
+                                initial={'initial'}
+                                exit={'exit'}
+                            >
+                                {views[viewContent]}
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {loading && (
-                <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
-            )}
-        </section>
+                {loading && (
+                    <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
+                )}
+            </motion.section>
+        </ClickAwayListener>
     );
 }
 

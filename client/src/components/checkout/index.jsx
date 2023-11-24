@@ -176,7 +176,8 @@ function Checkout() {
                                         />
                                         <Promo
                                             disable={
-                                                disableOtherComponents.disable
+                                           disableOtherComponents.disable
+                                         
                                             }
                                         />
                                         <Email_address

@@ -63,23 +63,24 @@ function Promo({ disable }) {
     };
 
     const toggleShow = () => {
+        console.log('disable: ', disable)
         if (disable) {
-            setShow(false);
+            setShow(()=> false);
         } else {
-            setShow(!show);
+            setShow(() => !show);
         }
     };
 
     useEffect(() => {
         if (disable) {
-            toggleShow();
+            setShow(false);
         }
     }, [disable]);
     return (
         <section
             id="promo-section"
             className={`${!promo[0].bool ? '!pb-8' : ''} ${
-                disable ? 'disable-component' : ''
+                disable ? 'disable-component' : 'display-component'
             }`}
         >
             <DropDown_Detail
@@ -94,6 +95,7 @@ function Promo({ disable }) {
                 setTriggerClose={setTriggerClose}
                 display={display}
                 setDisplay={setDisplay}
+                disable={disable}
             />
             {promo[0].bool && display && <AppliedCoupon />}
             <MultiplePromo setCheck={setOpenMultiple} check={openMultiple} />

@@ -1,24 +1,34 @@
+import { useRef } from 'react';
 import Address_Form from './address-form';
 import Address_Item from './address-item';
-
+import { AnimatePresence, motion, stagger } from 'framer-motion';
+import variants from './variants';
 function Address_Book({
     loading,
     handleNewAddress,
     sortAddresses,
     viewDispatch,
     addressItemProps,
+    viewContent,
     cancel,
-  
 }) {
     return (
-        <section className="flex flex-col gap-y-6">
+        <motion.section
+            key={viewContent}
+            variants={variants}
+            animate={'animate'}
+            initial={'initial'}
+            exit={'exit'}
+            className="flex flex-col gap-y-6"
+        >
+            <h2 className="mb-[-10px] p-0 font-bold">ADDRESS BOOK</h2>
             {sortAddresses.map((address, idx) => {
                 const props = {
                     address,
                     ...addressItemProps,
                 };
 
-                return <Address_Item {...props} key={address._id} />;
+                return <Address_Item {...props} key={address._id} idx={idx} />;
             })}
 
             <div className="flex flex-row justify-between">
@@ -37,7 +47,7 @@ function Address_Book({
                     CANCEL
                 </button>
             </div>
-        </section>
+        </motion.section>
     );
 }
 

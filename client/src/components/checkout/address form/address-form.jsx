@@ -6,7 +6,9 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import logOutUser from '../../common/logoutUser';
 import Input from '../../Login-SignUp/input';
 import { useNavigate } from 'react-router-dom';
-
+import { motion, AnimatePresence } from 'framer-motion';
+import { generateVariants } from './address-item';
+// import variants from './variants';
 function Address_Form({
     viewDispatch,
     buttontext,
@@ -19,11 +21,11 @@ function Address_Form({
     type,
     setChange,
     setLoading,
-    addressType
+    addressType,
 }) {
     const { setError, select } = useCheckoutContext();
 
-    const naviage = useNavigate();
+    const navigate = useNavigate();
     const [showAddressBox, setShowAddressBox] = useState(
         type == 'add' ? false : true
     );
@@ -142,8 +144,16 @@ function Address_Form({
     const returnToBook = () => {
         handleSubmit('book', false);
     };
+
+    const variants = generateVariants(1);
     return (
-        <section id="address-form" className="relative">
+        <motion.section
+            variants={variants}
+            animate={'animate'}
+            initial={'initial'}
+            id="address-form"
+            className="relative"
+        >
             <p className="mb-6 text-[18px] font-bold tracking-wider">{text}</p>
 
             <div className="address-form-wrapper">
@@ -157,7 +167,6 @@ function Address_Form({
                                         key={label}
                                         label={label}
                                         value={address[property]}
-                                        property={property}
                                     />
                                 </>
                             );
@@ -187,7 +196,9 @@ function Address_Form({
                         type="button"
                         onClick={() => handleSubmit()}
                     >
-                        {addressType == 'DELIVERY' ? 'DELIVER TO THIS ADDRESS': 'USE THIS ADDRESS'}
+                        {addressType == 'DELIVERY'
+                            ? 'DELIVER TO THIS ADDRESS'
+                            : 'USE THIS ADDRESS'}
                     </button>
                     {type == 'edit' && (
                         <p
@@ -206,7 +217,7 @@ function Address_Form({
                     CANCEL
                 </button>
             </div>
-        </section>
+        </motion.section>
     );
 }
 export default Address_Form;

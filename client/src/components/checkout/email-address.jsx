@@ -4,7 +4,7 @@ function Email_address({disable}) {
 
     const auth = useAuth()
     return (
-        <section id="Email_address" className={`flex flex-col gap-4 ${disable ? 'disable-component': ''}`}>
+        <section id="Email_address" className={`flex flex-col gap-4 ${disable ? 'disable-component': 'display-component'}`}>
 
             {
                 auth.authenticated ? <>

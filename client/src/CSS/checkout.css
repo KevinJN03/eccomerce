@@ -179,8 +179,7 @@
 }
 
 #payment {
-
-    @apply p-2
+    @apply p-2;
 }
 
 .payment-sub-header {
@@ -274,5 +273,16 @@
 }
 
 .disable-component {
-    @apply mix-blend-overlay transition-all;
+    /* @apply mix-blend-overlay transition-all; */
+    mix-blend-mode: overlay;
+    opacity: 0.9;
+    transition: opacity 0.6s ease-in-out;
+    background-color: black
+}
+
+.display-component {
+    mix-blend-mode: normal;
+    background-color: transparent;
+    opacity: 1;
+   
 }
