@@ -23,8 +23,8 @@ export const Input = forwardRef(function Input(
                     autoComplete="off"
                     value={value}
                     type="number"
-                    className={`input-number input h-full w-full rounded-lg ${
-                        property == 'price' ? 'px-6' : 'px-2'
+                    className={`input-number input !h-full w-full rounded-lg ${
+                        property == 'price' ? '!px-6' : '!px-2'
                     }  py-4 ${
                         error?.[property] && '!border-red-300 !bg-red-200'
                     }`}

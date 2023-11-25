@@ -8,28 +8,24 @@ function AddToCart({
     setError,
     isOutOfStock,
     price,
+    variationSelect,
 }) {
     const { dispatch } = useCart();
 
     const handleClick = () => {
-        console.log({
-            sizeSelect,
-            colorSelect,
-            isSizePresent: product.isSizePresent,
-            isColorPresent: product.isColorPresent,
-        });
+        
 
-        console.log({ sizeSelect });
+
         if (
-            (sizeSelect == null && product.isSizePresent) ||
-            (colorSelect == null && product.isColorPresent)
+            (product.isSizePresent && !variationSelect.size.id) ||
+            (product.isColorPresent && !variationSelect.color.id)
         ) {
             console.log('enter error');
             setError(() => true);
             return;
         }
 
-        const { id, title, images, delivery } = product;
+        const { id, title, images, delivery, size, color } = product;
 
         const newImagesArray = images[0];
         const newProduct = {
@@ -37,15 +33,18 @@ function AddToCart({
             title,
             price: product.price,
             images: [newImagesArray],
-            delivery
+            delivery,
+            size,
+            color,
         };
 
-        newProduct.selectSize = sizeSelect;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
         newProduct.price.current = price;
-        newProduct.color = colorSelect;
+        newProduct.variationSelect = variationSelect;
         dispatch({ type: 'add', product: newProduct });
+
+        setError(() => false);
     };
     return (
         <>

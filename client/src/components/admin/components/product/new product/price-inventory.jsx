@@ -175,9 +175,5 @@ function InventoryInput(props) {
         };
     }, []);
 
-    return (
-        <div className="relative">
-            <Input {...props} />
-        </div>
-    );
+    return <Input {...props} />;
 }

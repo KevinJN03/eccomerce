@@ -69,9 +69,9 @@ function Cart_Item({ product }) {
                 </p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
-                    {product?.color && (
+                    {product?.variationSelect?.color?.variation && (
                         <span className="border-r-[1px] pr-2">
-                            {product?.color}
+                            {product.variationSelect.color.variation}
                         </span>
                     )}
                     {product.isSizePresent && (

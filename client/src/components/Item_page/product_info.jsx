@@ -31,7 +31,10 @@ function Product_info({
     const [colorSelect, setColorSelect] = useState(null);
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
-    const [variationSelect, setVariationSelection] = useState({color: null, size: null});
+    const [variationSelect, setVariationSelection] = useState({
+        color: {id: null, variation: null},
+        size: {id: null, variation: null},
+    });
     useEffect(() => {
         if (product.hasOwnProperty('price')) {
             setPriceState(() => product.price?.current);
@@ -72,7 +75,6 @@ function Product_info({
     //     }, [colorSelect])
 
     return (
-        
         <section id="product-info">
             {!loading ? (
                 <Info title={title} price={priceState} text={text} />
@@ -87,8 +89,7 @@ function Product_info({
                     array={color}
                     text={'COLOUR'}
                     single={color[0]['variation']}
-                    property={'variation'}
-                    setSelect={setColorSelect}
+                    property={'color'}
                     setOutOfStock={setOutOfStock}
                     setPrice={setPriceState}
                     ref={null}
@@ -114,7 +115,6 @@ function Product_info({
                     property={'size'}
                     text={'SIZE'}
                     single={size[0]['variation']}
-                    setSelect={setSizeSelect}
                     setOutOfStock={setOutOfStock}
                     setPrice={setPriceState}
                     ref={sizeRef}
@@ -139,6 +139,7 @@ function Product_info({
                 ) : (
                     <>
                         <AddToCart
+                            variationSelect={variationSelect}
                             product={product}
                             price={priceState}
                             sizeSelect={sizeSelect}
