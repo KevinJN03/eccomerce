@@ -1,3 +1,5 @@
+
+
 :root {
     --about-primary: #4d6bc6;
 }
@@ -223,10 +225,10 @@
 
 .single-variation {
     .single-variation-btn {
-        @apply h-10 w-10 rounded-full bg-[var(--light-grey)] p-3;
+        @apply h-10 w-10 rounded-full  p-3  bg-[var(--light-grey)] #{!important};
 
         &:hover {
-            @apply scale-105 bg-gray-300 transition-all;
+            @apply scale-105  transition-all bg-gray-300 #{!important};
         }
     }
 

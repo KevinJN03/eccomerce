@@ -42,20 +42,19 @@ export default function Price_Inventory() {
         publishErrorDispatch({ type: 'clear', path: 'stock' });
     }, [stockValue.value]);
 
-
-        const onStockClickAwayRef = useClickAway(() => {
-            if (!stockValue.value) return;
-            const formatStock = formatData(stockValue.value, 0);
-    console.log('change here')
-            setStockValue({ value: formatStock, on: true });
-            // setGlobalUpdate((prev) => {
-            //     return { ...prev, stock: formatStock };
-            // });
-        });
+    const onStockClickAwayRef = useClickAway(() => {
+        if (!stockValue.value) return;
+        const formatStock = formatData(stockValue.value, 0);
+        console.log('change here');
+        setStockValue({ value: formatStock, on: true });
+        // setGlobalUpdate((prev) => {
+        //     return { ...prev, stock: formatStock };
+        // });
+    });
 
     const onPriceClickAwayRef = useClickAway(() => {
         if (!priceValue.value) return;
-        console.log('change here')
+        console.log('change here');
         const formatPrice = formatData(priceValue.value, 2);
 
         setPriceValue({ value: formatPrice, on: true });
@@ -176,5 +175,9 @@ function InventoryInput(props) {
         };
     }, []);
 
-    return <Input {...props} />;
+    return (
+        <div className="relative">
+            <Input {...props} />
+        </div>
+    );
 }

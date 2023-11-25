@@ -28,7 +28,18 @@ function AddToCart({
             setError(() => true);
             return;
         }
-        const newProduct = { ...product };
+
+        const { id, title, images, delivery } = product;
+
+        const newImagesArray = images[0];
+        const newProduct = {
+            id,
+            title,
+            price: product.price,
+            images: [newImagesArray],
+            delivery
+        };
+
         newProduct.selectSize = sizeSelect;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;

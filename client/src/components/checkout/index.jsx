@@ -26,10 +26,14 @@ import variants from '../common/framerMotionVariants.jsx';
 import logOutUser from '../common/logoutUser.js';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import CheckOutProvider from '../../context/checkOutContext.jsx';
+import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import Buy_Now_Btn from './buy-now-btn.jsx';
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Checkout() {
     disableLayout();
-
+    const stripePromise = loadStripe(STRIPE_KEY);
     const [error, setError] = useState({
         msg: null,
         positionY: '0px',
@@ -47,38 +51,54 @@ function Checkout() {
         disable: false,
         addressType: null,
     });
-    useEffect(() => {
-        axios
-            .get('user/userData')
-            .then((res) => {
-                const { user } = res.data;
-
-                const default_address = user?.default_address;
-                setDefaultAddresses(() => user?.default_address || {});
-                const findAddress = (property, setState) => {
-                    if (default_address[property]) {
-                        const foundAddress = user.address.find(
-                            (item) => item._id == default_address[property]
-                        );
-
-                        console.log({ foundAddress });
-                        setState(() => foundAddress);
-                    }
-                };
-
-                findAddress('shipping_address', setShippingAddress);
-                findAddress('billing_address', setBillingAddress);
-
-                setAddresses(() => user.address);
-            })
-            .catch((error) => {
-                console.error(
-                    'error while trying to get logged in user data',
-                    error
-                );
-
-                logOutUser({ error, authDispatch, navigate });
+    const [paymentIntent, setPaymentIntent] = useState('');
+    const fetchData = async (controller) => {
+        try {
+            const result = await axios.get('user/userData', {
+                signal: controller.signal,
             });
+
+            const paymentIntentResult = await axios.post(
+                'order/create-payment-intent',
+                cart
+            );
+
+            const { clientSecret } = paymentIntentResult.data;
+
+            setPaymentIntent(() => clientSecret);
+            const { user } = result.data;
+
+            const default_address = user?.default_address;
+            setDefaultAddresses(() => user?.default_address || {});
+            const findAddress = (property, setState) => {
+                if (default_address[property]) {
+                    const foundAddress = user.address.find(
+                        (item) => item._id == default_address[property]
+                    );
+
+                    setState(() => foundAddress);
+                }
+            };
+
+            findAddress('shipping_address', setShippingAddress);
+            findAddress('billing_address', setBillingAddress);
+
+            setAddresses(() => user.address);
+        } catch (error) {
+            console.error(
+                'error while trying to get logged in user data',
+                error
+            );
+
+            logOutUser({ error, authDispatch, navigate });
+        }
+    };
+    useEffect(() => {
+        const controller = new AbortController();
+        fetchData(controller);
+        return () => {
+            controller.abort();
+        };
     }, []);
     const { cart } = useCart();
     useEffect(() => {
@@ -94,29 +114,6 @@ function Checkout() {
             };
         }
     }, [cart]);
-
-    const submitOrder = () => {
-        setOrderSubmit(() => true);
-
-        axios
-            .post('/order/create', {
-                billingAddress,
-                shippingAddress,
-                cart,
-            })
-            .then((res) => {
-                console.log({ res });
-                setTimeout(() => {
-                    setOrderSubmit(() => false);
-                }, 2000);
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setOrderSubmit(() => false);
-                }, 2000);
-                console.log('error when creating order: ', error);
-            });
-    };
 
     return (
         <CheckOutProvider
@@ -139,119 +136,100 @@ function Checkout() {
                 setSelect,
                 disableOtherComponents,
                 SetDisableOtherComponents,
+                isOrderSubmit,
+                setOrderSubmit,
             }}
         >
-            {loading && (
-                <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
-                    <img src={RedirectImage} className="h-28 w-28" />
-                    <p className="text-center text-lg">
-                        Your cart is Empty, you will get redirected to the Home
-                        Page in a few seconds.
-                    </p>
-                    <span className="loading loading-infinity loading-lg"></span>
-                </div>
-            )}
+            <Elements stripe={stripePromise}>
+                {loading && (
+                    <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
+                        <img src={RedirectImage} className="h-28 w-28" />
+                        <p className="text-center text-lg">
+                            Your cart is Empty, you will get redirected to the
+                            Home Page in a few seconds.
+                        </p>
+                        <span className="loading loading-infinity loading-lg"></span>
+                    </div>
+                )}
 
-            {!loading && (
-                <section id="checkout-page">
-                    <section
-                        id="checkout"
-                        variants={variants}
-                        animate={'animate'}
-                        initial={'initial'}
-                        exit={'exit'}
-                    >
-                        <Checkout_Header text={'CHECKOUT'} />
-                        <div className="checkout-body">
-                            <section id="checkout-body-wrapper">
-                                <section className="left flex flex-col !bg-[var(--light-grey)]">
-                                    <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
-                                        <Country_Picker
-                                            disable={
-                                             disableOtherComponents.disable
-                                                
-                                            }
-                                            select={select}
-                                            setSelect={setSelect}
-                                        />
-                                        <Promo
-                                            disable={
-                                           disableOtherComponents.disable
-                                         
-                                            }
-                                        />
-                                        <Email_address
-                                            disable={
-                                                disableOtherComponents.disable
-                                            }
-                                        />
-                                        <Address
-                                            mainAddress={shippingAddress}
-                                            setMainAddress={setShippingAddress}
-                                            defaultProperty={'shipping_address'}
-                                            addressType={'DELIVERY'}
-                                            enableAddressEdit={true}
-                                        />
+                {!loading && (
+                    <section id="checkout-page">
+                        <section
+                            id="checkout"
+                            variants={variants}
+                            animate={'animate'}
+                            initial={'initial'}
+                            exit={'exit'}
+                        >
+                            <Checkout_Header text={'CHECKOUT'} />
+                            <div className="checkout-body">
+                                <section id="checkout-body-wrapper">
+                                    <section className="left flex flex-col !bg-[var(--light-grey)]">
+                                        <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
+                                            <Country_Picker
+                                                disable={
+                                                    disableOtherComponents.disable
+                                                }
+                                                select={select}
+                                                setSelect={setSelect}
+                                            />
+                                            <Promo
+                                                disable={
+                                                    disableOtherComponents.disable
+                                                }
+                                            />
+                                            <Email_address
+                                                disable={
+                                                    disableOtherComponents.disable
+                                                }
+                                            />
+                                            <Address
+                                                mainAddress={shippingAddress}
+                                                setMainAddress={
+                                                    setShippingAddress
+                                                }
+                                                defaultProperty={
+                                                    'shipping_address'
+                                                }
+                                                addressType={'DELIVERY'}
+                                                enableAddressEdit={true}
+                                            />
 
-                                        <Delivery
-                                            disable={
-                                                disableOtherComponents.disable
-                                            }
-                                        />
-                                        <Payment
-                                            defaultProperty={'billing_address'}
-                                            billingAddress={billingAddress}
-                                            setBillingAddress={
-                                                setBillingAddress
-                                            }
-                                        />
+                                            <Delivery
+                                                disable={
+                                                    disableOtherComponents.disable
+                                                }
+                                            />
+                                            <Payment
+                                                defaultProperty={
+                                                    'billing_address'
+                                                }
+                                                billingAddress={billingAddress}
+                                                setBillingAddress={
+                                                    setBillingAddress
+                                                }
+                                            />
+                                        </section>
+                                        <div className="bottom mt-5 flex flex-col gap-y-3">
+                                            <Buy_Now_Btn
+                                                disable={
+                                                    disableOtherComponents.disable
+                                                }
+                                                isOrderSubmit={isOrderSubmit}
+                                            />
+                                        </div>
                                     </section>
-                                    <div className="bottom mt-5 flex flex-col gap-y-3">
-                                        <button
-                                            className=" flex h-14 max-h-20 w-11/12 items-center justify-center self-center bg-primary-green font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100 disabled:opacity-40"
-                                            type="button"
-                                            onClick={submitOrder}
-                                             disabled={disableOtherComponents.disable}
-                                        >
-                                            {isOrderSubmit ? (
-                                                <svg
-                                                    className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
-                                                    viewBox="25 25 50 50"
-                                                    strokeWidth="5"
-                                                >
-                                                    <circle
-                                                        cx="50"
-                                                        cy="50"
-                                                        r="20"
-                                                    />
-                                                </svg>
-                                            ) : (
-                                                <span className="text-white">
-                                                    BUY NOW
-                                                </span>
-                                            )}
-                                        </button>
-                                        <p className="mb-12 w-11/12 self-center">
-                                            By placing your order you agree to
-                                            our Terms & Conditions, privacy and
-                                            returns policies . You also consent
-                                            to some of your data being stored by
-                                            GLAMO, which may be used to make
-                                            future shopping experiences better
-                                            for you.
-                                        </p>
-                                    </div>
                                 </section>
-                            </section>
 
-                            <Checkout_Total />
-                        </div>
-                        <footer className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center">
-                            GLAMO Help
-                        </footer>
+                                <Checkout_Total />
+                            </div>
+                            <footer className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center">
+                                GLAMO Help
+                            </footer>
+                        </section>
                     </section>
-                </section>
-            )}
+                )}
+            </Elements>
         </CheckOutProvider>
     );
 }

@@ -18,7 +18,7 @@ function Product_info({
     size,
     details,
     images,
-    style_it_with_image,
+
     product,
     color,
     loading,
@@ -31,7 +31,7 @@ function Product_info({
     const [colorSelect, setColorSelect] = useState(null);
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
-
+    const [variationSelect, setVariationSelection] = useState({color: null, size: null});
     useEffect(() => {
         if (product.hasOwnProperty('price')) {
             setPriceState(() => product.price?.current);
@@ -72,6 +72,7 @@ function Product_info({
     //     }, [colorSelect])
 
     return (
+        
         <section id="product-info">
             {!loading ? (
                 <Info title={title} price={priceState} text={text} />
@@ -81,10 +82,12 @@ function Product_info({
 
             {product?.isColorPresent && !loading ? (
                 <Select
+                    variationSelect={variationSelect}
+                    setVariationSelection={setVariationSelection}
                     array={color}
                     text={'COLOUR'}
-                    single={color[0].color}
-                    property={'color'}
+                    single={color[0]['variation']}
+                    property={'variation'}
                     setSelect={setColorSelect}
                     setOutOfStock={setOutOfStock}
                     setPrice={setPriceState}
@@ -100,6 +103,8 @@ function Product_info({
 
             {product?.isSizePresent && !loading ? (
                 <Select
+                    variationSelect={variationSelect}
+                    setVariationSelection={setVariationSelection}
                     array={
                         (product.isVariationCombine &&
                             colorSelect &&
@@ -108,7 +113,7 @@ function Product_info({
                     }
                     property={'size'}
                     text={'SIZE'}
-                    single={product?.size?.[0]?.size}
+                    single={size[0]['variation']}
                     setSelect={setSizeSelect}
                     setOutOfStock={setOutOfStock}
                     setPrice={setPriceState}

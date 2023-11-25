@@ -12,8 +12,10 @@ import { ElementDiv } from './element-div';
 import axios from '../../../api/axios';
 import Error_Alert from '../../common/error-alert';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
 
-export default function Add_Card({ setViewContent }) {
+export default function Add_Card({}) {
+    const { setView } = usePaymentTypeContext();
     const stripe = useStripe();
     const elements = useElements();
     const [clientSecret, setClientSecret] = useState('');
@@ -27,21 +29,19 @@ export default function Add_Card({ setViewContent }) {
         asterisk: false,
     };
 
-
-
     useEffect(() => {
         const cardNumberElement = elements.create('cardNumber', {
             classes: {
                 base: 'card-number-input',
             },
-            placeholder: ''
+            placeholder: '',
         });
         const cardCvcElement = elements.create('cardCvc', {
             classes: {
                 base: 'card-number-input',
             },
 
-            placeholder: ''
+            placeholder: '',
         });
 
         const cardExpiryDateElement = elements.create('cardExpiry', {
@@ -113,7 +113,7 @@ export default function Add_Card({ setViewContent }) {
                     },
                 }
             );
-
+        
             if (error) {
                 console.error(error);
                 setError((prevState) => ({
@@ -142,7 +142,7 @@ export default function Add_Card({ setViewContent }) {
                 disablePadding={true}
                 disableChangeBtn={true}
                 enableCancelBtn={true}
-                cancelBtnClick={() => setViewContent('options')}
+                cancelBtnClick={() => setView('options')}
             />
             <Error_Alert
                 property={'general'}

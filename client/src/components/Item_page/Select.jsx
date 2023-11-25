@@ -1,7 +1,17 @@
 import { forwardRef, useEffect, useState } from 'react';
 
 const Select = forwardRef(function Select(
-    { text, single, array, setSelect, property, setOutOfStock, setPrice },
+    {
+        text,
+        single,
+        array,
+        setSelect,
+        property,
+        setOutOfStock,
+        setPrice,
+        variationSelect,
+        setVariationSelection,
+    },
     ref
 ) {
     const [stockState, setStockState] = useState();

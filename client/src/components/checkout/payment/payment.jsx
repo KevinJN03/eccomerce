@@ -17,50 +17,45 @@ function Payment({
 
     defaultProperty,
 }) {
-    const stripePromise = loadStripe(STRIPE_KEY);
     const { disableOtherComponents } = useCheckoutContext();
- 
+
     const disable =
         disableOtherComponents.disable &&
         disableOtherComponents.addressType != 'BILLING';
 
-
     return (
-        <Elements stripe={stripePromise}>
-            <section className={`!bg-white `}>
-                <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
+        // <Elements stripe={stripePromise}>
+        <section className={`!bg-white `}>
+            <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
 
-                <div className="!bg-[var(--light-grey)]">
-                    <Address
-                        subHeader={{
-                            text: 'BILLING ADDRESS',
-                            disablePadding: true,
-                        }}
-                        disableHeader={true}
-                        disableChangeBtn={true}
-                        mainAddress={billingAddress}
-                        setMainAddress={setBillingAddress}
-                        defaultProperty={defaultProperty}
-                        addressType={'BILLING'}
-                        enableAddressEdit={false}
-                    />
-                </div>
+            <div className="!bg-[var(--light-grey)]">
+                <Address
+                    subHeader={{
+                        text: 'BILLING ADDRESS',
+                        disablePadding: true,
+                    }}
+                    disableHeader={true}
+                    disableChangeBtn={true}
+                    mainAddress={billingAddress}
+                    setMainAddress={setBillingAddress}
+                    defaultProperty={defaultProperty}
+                    addressType={'BILLING'}
+                    enableAddressEdit={false}
+                />
+            </div>
 
-                <div
-                    className={`mx-4  border-t-[thin] border-black ${
-                        disable ? 'opacity-30' : ''
-                    }`}
-                >
-                    {' '}
-                </div>
-                <div className="!bg-[var(--light-grey)]">
-                    <Payment_Type
-                        disable={disableOtherComponents.disable}
-                    
-                    />
-                </div>
-            </section>
-        </Elements>
+            <div
+                className={`mx-4  border-t-[thin] border-black ${
+                    disable ? 'opacity-30' : ''
+                }`}
+            >
+                {' '}
+            </div>
+            <div className="!bg-[var(--light-grey)]">
+                <Payment_Type disable={disableOtherComponents.disable} />
+            </div>
+        </section>
+        // </Elements>
     );
 }
 

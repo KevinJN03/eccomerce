@@ -3,6 +3,7 @@ import credit_icon from '../../../assets/icons/credit-card.png';
 import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
 import klarna_logo from '../../../assets/icons/payment-icons/klarna.svg';
 import Payment_Methods from '../../cart/payment_methods';
+import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
 const paymentMethodArray = [
     {
         button_text: 'ADD CREDIT / DEBIT CARD',
@@ -34,7 +35,9 @@ const paymentMethodArray = [
         view: 'klarna',
     },
 ];
-function Payment_Options({ setView }) {
+function Payment_Options({ }) {
+
+    const {setView}  = usePaymentTypeContext()
     return (
         <div className="flex w-6/12 flex-col">
             {paymentMethodArray.map((item, idx) => {

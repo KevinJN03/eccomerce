@@ -47,7 +47,7 @@ export const get_single_admin_product = asyncHandler(async (req, res, next) => {
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await Product.findOne({ _id: id })
+  const product = await Product.findById(id)
     .populate({
       path: 'category',
       populate: [
@@ -70,77 +70,44 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
   }
 
   const {
-    title,
     price,
-    detail,
-    images,
-    reviews,
+
     category,
-    gender,
-    isSizePresent,
-    isColorPresent,
+
     minVariationPrice,
-    delivery,
   } = product;
 
   if (!price.current) {
     price.current = minVariationPrice;
   }
+
+  const newProducts = product.toJSON({ flattenMaps: true });
   const newData = {
+    ...newProducts,
     id: product.id,
-    gender,
-    title,
-    price,
-    detail,
-    images,
-    reviews,
     category: category.name,
-    isSizePresent,
-    isColorPresent,
     also_like: { men: category.men, women: category.women },
-    minVariationPrice,
-    delivery,
   };
   if ('variations' in product) {
     product.variations.map((variation) => {
-      console.log('im maping');
+      console.log(variation);
       if (variation.name == 'Size' && !variation.name2) {
         const sizeArr = [];
         for (const [key, value] of variation?.options) {
-          const obj = { size: value.variation };
-          if (value.hasOwnProperty('price')) {
-            obj.price = value.price;
-          }
-
-          if (value.hasOwnProperty('stock')) {
-            obj.stock = value.stock;
-          }
-
-          sizeArr.push(obj);
+          sizeArr.push(value);
         }
         newData.size = sizeArr;
       }
 
       if (variation.name == 'Colour' && !variation.name2) {
-        console.log('im in color');
         const colorArr = [];
         for (const [key, value] of variation?.options) {
-          const obj = { color: value.variation };
 
-          if (value.hasOwnProperty('price')) {
-            obj.price = value.price;
-          }
-
-          if (value.hasOwnProperty('stock')) {
-            obj.stock = value.stock;
-          }
-          colorArr.push(obj);
+          colorArr.push(value);
         }
         newData.color = colorArr;
       }
       if (variation?.name2) {
-        console.log('is combine');
-
         const arr = [];
         const testObj = {};
         const map = new Map();
@@ -175,7 +142,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
       }
     });
   }
-  console.log({ newData });
+console.log(newData.color)
   res.send(newData);
 });
 
@@ -284,7 +251,6 @@ export const create_new_product = [
   async function (req, res, next) {
     const resultValidation = validationResult(req);
     if (!resultValidation.isEmpty()) {
-      console.log('errorList:', resultValidation.errors);
       res.status(400).send(resultValidation.errors);
       return;
     }
@@ -330,7 +296,6 @@ export const update_product = [
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
-      console.log('errorList:', result.errors);
       res.status(400).send(result.errors);
       return;
     }
@@ -347,10 +312,9 @@ export const update_product = [
     }).populate({
       path: 'category',
     });
-    console.log({ oldProduct });
+
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
-    console.log({ price: productData.price });
 
     const newPrice = {
       current: productData?.price?.current,
