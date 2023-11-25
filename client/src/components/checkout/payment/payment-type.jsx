@@ -1,71 +1,53 @@
-import Payment_Btn from '../../common/btn/payment-btn';
 import credit_icon from '../../../assets/icons/credit-card.png';
-import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
-import klarna_logo from '../../../assets/icons/payment-icons/klarna.svg';
+
 import Payment_Methods from '../../cart/payment_methods';
 import { SubHeader } from './payment';
+import Payment_Options from './payment-options';
+import { useState } from 'react';
+
+import PaymentMethodProvider from '../../../context/paymentMethodContext';
+
+import logos from '../../dashboard/payment-methods/logos';
+import { Input } from 'postcss';
+import ErrorMessage from '../../Login-SignUp/errorMessage';
+import Add_Card from './add_card';
+
 function Payment_Type({ disable }) {
-    const paymentMethodArray = [
-        {
-            button_text: 'ADD CREDIT / DEBIT CARD',
-            button_img: credit_icon,
-        },
-        {
-            button_text: 'PAYPAL',
-            button_img: paypal_icon,
-        },
 
-        {
-            button_text: 'PAY IN 3',
-            additional_text: 'with PayPal Pay Later',
-            button_img: paypal_icon,
-        },
-        {
-            button_text: 'PAY LATER',
-            additional_text: 'with Klarna',
-            button_img: klarna_logo,
-        },
-        {
-            button_text: 'PAY IN 3',
-            additional_text: 'with Klarna',
-            button_img: klarna_logo,
-        },
-    ];
+   
+    const [viewContent, setView] = useState('options');
+  
+
+    const views = {
+        options: <Payment_Options setView={setView} />,
+        card: <Add_Card />,
+    };
     return (
-        <section
-            id="payment-type"
-            className={`mt-4 px-6 ${
-                disable ? 'disable-component' : 'display-component'
-            }`}
-        >
-            <div className='mb-6 mt-3'>
-                     <SubHeader disablePadding={true} text={'PAYMENT TYPE'} />
-            </div>
-       
-            <div id="payment-btn-container">
-                {paymentMethodArray.map((item, idx) => {
-                    return (
-                        <>
-                            <Payment_Btn
-                                {...item}
-                                key={idx}
-                                disable={disable}
-                            />
-                            {idx == 0 && (
-                                <h1 className="mb-3 self-center text-lg font-semibold tracking-widest">
-                                    OR
-                                </h1>
-                            )}
-                        </>
-                    );
-                })}
-            </div>
+        <PaymentMethodProvider>
+            <section
+                id="payment-type"
+                className={`mt-4 px-6 ${
+                    disable ? 'disable-component' : 'display-component'
+                }`}
+            >
+                <div className="mb-6 mt-3">
+                    <SubHeader
+                        disablePadding={true}
+                        text={'PAYMENT TYPE'}
+                        disableChangeBtn={viewContent == 'options'}
+                    />
+                </div>
 
-            <div className="checkout-payment-methods">
-                <h2 className="font-semibold tracking-widest">WE ACCEPT:</h2>
-                <Payment_Methods className="w-10" />
-            </div>
-        </section>
+                {views[viewContent]}
+
+                <div className="checkout-payment-methods">
+                    <h2 className="font-semibold tracking-widest">
+                        WE ACCEPT:
+                    </h2>
+                    <Payment_Methods className="w-10" />
+                </div>
+            </section>
+        </PaymentMethodProvider>
     );
 }
 

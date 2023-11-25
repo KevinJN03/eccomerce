@@ -1,4 +1,4 @@
-import '../../CSS/checkout.css';
+import '../../CSS/checkout.scss';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
 import disableLayout from '../../hooks/disableLayout';

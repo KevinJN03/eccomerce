@@ -48,7 +48,12 @@ export function PaymentMethodProvider({ children, userPaymentMethods }) {
     );
 
     useEffect(() => {
-        PaymentMethodsDispatch({ type: 'set', payload: userPaymentMethods });
+        if (userPaymentMethods) {
+            PaymentMethodsDispatch({
+                type: 'set',
+                payload: userPaymentMethods,
+            });
+        }
     }, [userPaymentMethods]);
 
     return (

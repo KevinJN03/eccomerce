@@ -1,3 +1,6 @@
+
+
+@tailwind components;
 .login-signup-page {
     @apply m-0 flex h-full flex-col  items-center p-0;
     min-width: 100%;
@@ -41,26 +44,29 @@
     @apply w-full text-center text-xl font-semibold tracking-widest;
 }
 
-.input-container {
-    @apply mb-5 flex w-full flex-col relative;
+@layer components {
+    .input-container {
+        @apply relative mb-5 flex w-full flex-col;
+    }
+
+    .input-container p {
+        @apply mt-2 text-s font-light;
+    }
+    .input-container label {
+        @apply mb-2 text-sm font-semibold tracking-wide;
+    }
+    .input-container input {
+        @apply py-4 !h-[44px] w-full;
+        border: 1px solid black;
+    }
 }
 
-.input-container p {
-    @apply mt-2 text-s font-light;
-}
-.input-container label {
-    @apply mb-2 text-sm font-semibold tracking-wide;
-}
-.input-container input {
-    @apply h-12 w-full;
-    border: 1px solid black;
-}
 #form-container {
     @apply mt-10 flex w-full flex-col items-center justify-center;
     max-width: 380px;
 }
 .date-picker {
- display: flex;
+    display: flex;
     width: 100%;
     /* grid-template-columns: 30% 30% 30%;
     gap: 10px;
@@ -91,8 +97,8 @@ input[type='radio'] {
 }
 
 .login-signup-btn {
-    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 hover:opacity-100 transition-all disabled:opacity-70 disabled:cursor-not-allowed;
-     background-color: #2d2d2d !important;
+    @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 transition-all hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-70;
+    background-color: #2d2d2d !important;
     color: white;
     height: 25px;
     padding: 25px 0;
@@ -110,9 +116,9 @@ input[type='radio'] {
     @apply whitespace-nowrap;
     border-bottom: 2px solid #0770cf;
 
-    flex: 1
+    flex: 1;
 }
 .not-active-option {
     border-bottom: 2px solid var(--grey);
-    flex: 1
+    flex: 1;
 }

@@ -9,9 +9,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
-
 :root {
     --primary: #2d2d2d;
     --white: white;

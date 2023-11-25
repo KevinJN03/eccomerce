@@ -111,9 +111,7 @@ export function AddCartForm({ clientSecret }) {
         exit: { opacity: 0 },
     };
 
-    const handleCardNumber = (e) => {
-        setCardNumber(e.target.value);
-    };
+  
 
     return (
         <>

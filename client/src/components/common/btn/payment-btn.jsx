@@ -4,16 +4,17 @@ function Payment_Btn({
     button_img,
     additional_text,
     disable,
+    handleClick
 }) {
     return (
-        <button type="button" className="payment-btn" disabled={disable}>
+        <button type="button" className="payment-btn" disabled={disable} onClick={handleClick}>
             <img
                 loading="lazy"
                 src={button_img}
-                className="h-8 w-12 object-contain"
+                className="h-6 w-8 object-contain"
             />
             <aside>
-                <h2 className="font-semibold tracking-wider">{button_text}</h2>
+                <h2 className="font-semibold font-gotham tracking-wider text-sm">{button_text}</h2>
                 {additional_text ? <p>{additional_text}</p> : null}
             </aside>
         </button>

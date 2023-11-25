@@ -6,6 +6,15 @@ import Address_Form from '../address form/address-form';
 import examplecustomerInfo from '../address form/example-customer-info';
 import Address from '../address form/address';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import {
+    Elements,
+    PaymentElement,
+    useStripe,
+   
+} from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 export function SubHeader({
     text,
@@ -13,6 +22,7 @@ export function SubHeader({
     onClick,
     disable,
     className,
+    disableChangeBtn
 }) {
     const changeBtnRef = useRef();
     return (
@@ -22,14 +32,14 @@ export function SubHeader({
             } `}
         >
             <h3 className="font-gotham text-lg text-black">{text}</h3>
-            <button
+          {!disableChangeBtn &&  <button
                 type="button"
                 id="checkout-change-btn"
                 onClick={onClick}
                 disabled={disable}
             >
                 CHANGE
-            </button>
+            </button>}
         </div>
     );
 }
@@ -39,13 +49,16 @@ function Payment({
 
     defaultProperty,
 }) {
+
+    const stripePromise = loadStripe(STRIPE_KEY);
     const { disableOtherComponents } = useCheckoutContext();
 
     const disable =
         disableOtherComponents.disable &&
         disableOtherComponents.addressType != 'BILLING';
     return (
-        <section className={`!bg-white `}>
+        <Elements stripe={stripePromise}>
+                 <section className={`!bg-white `}>
             <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
             {/* <SubHeader text={'BILLING ADDRESS'} /> */}
 
@@ -76,6 +89,8 @@ function Payment({
                 <Payment_Type disable={disableOtherComponents.disable} />
             </div>
         </section>
+        </Elements>
+   
     );
 }
 
