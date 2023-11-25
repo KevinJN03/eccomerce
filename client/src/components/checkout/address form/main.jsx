@@ -3,7 +3,7 @@ import { generateVariants } from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import Customer_Info from './customer-info';
 import { useAddressContext } from '../../../context/checkOutAddressContext';
-import { SubHeader } from '../payment/payment';
+import { SubHeader } from '../payment/SubHeader';
 
 const mainComponentVariant = generateVariants(1);
 function Main() {
@@ -27,7 +27,7 @@ function Main() {
             exit={'exit'}
         >
             {disableChangeBtn && (
-                <div className="w-full basis-full mb-6">
+                <div className="mb-6 w-full basis-full">
                     <SubHeader
                         {...subHeader}
                         onClick={handleChange}

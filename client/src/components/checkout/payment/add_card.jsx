@@ -5,82 +5,62 @@ import logos from '../../dashboard/payment-methods/logos';
 import credit_icon from '../../../assets/icons/credit-card.png';
 import dayjs from 'dayjs';
 import cvv_icon from '../../../assets/icons/cvv-icon.png';
-import { SubHeader } from './payment';
+import { SubHeader } from './SubHeader';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { ElementDiv } from './element-div';
+import axios from '../../../api/axios';
+import Error_Alert from '../../common/error-alert';
+import { useCheckoutContext } from '../../../context/checkOutContext';
 
-export default function Add_Card({}) {
+export default function Add_Card({ setViewContent }) {
     const stripe = useStripe();
-
     const elements = useElements();
-
-    useEffect(() => {
-        if (elements) {
-            if (elements.getElement('cardNumber')) {
-                return;
-            }
-            var cardNumberElement = elements.create('cardNumber', {
-                classes: {
-                    base: 'card-number-input',
-                },
-            });
-            var cardCvcElement = elements.create('cardCvc', {
-                classes: {
-                    base: 'card-number-input',
-                },
-            });
-            cardNumberElement.mount('#cardNumber');
-            cardCvcElement.mount('#cardCvc');
-        }
-    }, [elements]);
-    const [cardNumber, setCardNumber] = useState('');
+    const [clientSecret, setClientSecret] = useState('');
+    const [defaultCheck, setDefaultCheck] = useState(false);
     const [error, setError] = useState({});
     const [name, setName] = useState('');
-
-    const [cvv, setCvv] = useState('');
+    const { billingAddress } = useCheckoutContext();
     const errorProps = {
         error,
         setError,
         asterisk: false,
     };
-    const numberInputOnWheelPreventChange = (e) => {
-        // Prevent the input value change
-        e.target.blur();
 
-        // Prevent the page/container scrolling
-        e.stopPropagation();
 
-        // Refocus immediately, on the next tick (after the current function is done)
-        setTimeout(() => {
-            e.target.focus();
-        }, 0);
-    };
 
-    const handleCardNumber = (e) => {
-        e.preventDefault();
-        const lastIndex = parseInt(e.target.value.slice(-1));
-        console.log({ lastIndex });
-        if (!lastIndex && e.target.value.length > cardNumber.length) {
-            return;
-        }
-        const parts = [];
-        let value = e.target.value.replaceAll(' ', '');
+    useEffect(() => {
+        const cardNumberElement = elements.create('cardNumber', {
+            classes: {
+                base: 'card-number-input',
+            },
+            placeholder: ''
+        });
+        const cardCvcElement = elements.create('cardCvc', {
+            classes: {
+                base: 'card-number-input',
+            },
 
-        for (let i = 0; i < value.length; i += 4) {
-            parts.push(value.substring(i, i + 4));
-        }
+            placeholder: ''
+        });
 
-        if (parts.length) {
-            setCardNumber(() => parts.join(' '));
-        } else {
-            setCardNumber(() => value);
-        }
+        const cardExpiryDateElement = elements.create('cardExpiry', {
+            classes: {
+                base: 'card-number-input',
+            },
+        });
+        cardExpiryDateElement.mount('#cardExpiry');
+        cardNumberElement.mount('#cardNumber');
+        cardCvcElement.mount('#cardCvc');
 
-        setError((prevState) => ({
-            ...prevState,
-            cardNumber: null,
-        }));
-    };
+        return () => {
+            console.log('cleaning up elements', cardNumberElement);
+            cardNumberElement.destroy();
+            cardCvcElement.destroy();
+            cardExpiryDateElement.destroy();
+            // elements.off();
+        };
+    }, []);
 
     const tenYearsfromNow = dayjs().add(10, 'year').year();
     const range = (start, stop, step, sliceStart) =>
@@ -91,78 +71,97 @@ export default function Add_Card({}) {
     const months = range(1, 12, 1, -2);
     const years = range(dayjs().year(), tenYearsfromNow, 1, -4);
 
+    useEffect(() => {
+        axios
+            .get('user/payment-method/card/save')
+            .then(({ data }) => {
+                setClientSecret(() => data.client_secret || '');
+            })
+            .catch((error) => {
+                console.log('error while getting secret: ', error);
+            });
+    }, []);
+    const saveCard = async () => {
+        try {
+            console.log('clientSecret', clientSecret);
+            if (!clientSecret || !stripe || !elements) {
+                setError((prevState) => ({
+                    ...prevState,
+                    general: 'Please try again in a few seconds.',
+                }));
+                return;
+            }
+
+            const address = {
+                city: billingAddress['city'],
+                country: billingAddress['country'],
+                line1: billingAddress['address_1'],
+                line2: billingAddress['address_2'],
+                postal_code: billingAddress['postCode'],
+                state: billingAddress['county'],
+            };
+
+            const { error, setupIntent } = await stripe.confirmCardSetup(
+                clientSecret,
+                {
+                    payment_method: {
+                        card: elements.getElement('cardNumber'),
+                        billing_details: {
+                            name,
+                            address,
+                        },
+                    },
+                }
+            );
+
+            if (error) {
+                console.error(error);
+                setError((prevState) => ({
+                    ...prevState,
+                    general: error.message,
+                }));
+            } else {
+                console.log({ setupIntent });
+
+                setError({
+                    general: null,
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            setError((prevState) => ({
+                ...prevState,
+                general: error.message,
+            }));
+        }
+    };
     return (
         <section className="add-card">
-            <SubHeader text={'ADD CREDIT/DEBIT CARD'} disablePadding={true} />
-
+            <SubHeader
+                text={'ADD CREDIT/DEBIT CARD'}
+                disablePadding={true}
+                disableChangeBtn={true}
+                enableCancelBtn={true}
+                cancelBtnClick={() => setViewContent('options')}
+            />
+            <Error_Alert
+                property={'general'}
+                error={error}
+                setError={setError}
+            />
             <div className="mb-4 mt-4 w-4/6">
-                {/* <div className="input-container">
-                    <div className="relative">
-                        {error.cardNumber && (
-                            <ErrorMessage msg={error['cardNumber']} />
-                        )}
-                        <label htmlFor={'card-number'}>CARD NUMBER:</label>
-                        <div className="relative">
-                            <div
-                                // onPaste={(e) => e.preventDefault()}
-                                // onCopy={(e) => e.preventDefault()}
-                                // pattern="^[0-9]*$"
-                                // inputMode="numeric"
-                                // autoCorrect="off"
-                                // spellCheck="false"
-                                // autoComplete="cc-number"
-                                // maxLength="23"
-                                // type={'text'}
-                                name={'cardNumber'}
-                                id={'cardNumber'}
-                                className="login-signup-input cardNumber-input select-none pr-14"
-                                value={cardNumber}
-                                onChange={handleCardNumber}
-                                // onWheel={numberInputOnWheelPreventChange}
-                            ></div>
-                            <img
-                                src={credit_icon}
-                                alt={
-                                    'black credit card outline icon white transparent background'
-                                }
-                                className="absolute right-4 top-2/4 h-8 w-8 translate-y-[-50%]"
-                            />
-                        </div>
-                    </div>
-                </div> */}
-
-
                 <ElementDiv
                     label={'CARD NUMBER'}
                     id={'cardNumber'}
                     icon={{ img: credit_icon, alt: 'credit card icon' }}
                     className={'w-full'}
                 />
-                <div className="expiry-date input-container w-3/4">
-                    <label htmlFor={'card-number'}>EXPIRY DATE </label>
-                    <div className="flex flex-row gap-x-2">
-                        {[
-                            { data: months, title: 'Month' },
-                            { data: years, title: 'Year' },
-                        ].map(({ data, title }, idx) => {
-                            return (
-                                <select
-                                    key={idx}
-                                    className="select h-11 !rounded-none border-[1px] !border-primary !outline-none"
-                                >
-                                    <option>{title}</option>
 
-                                    {data.map((item) => {
-                                        return (
-                                            <option key={item}>{item}</option>
-                                        );
-                                    })}
-                                </select>
-                            );
-                        })}
-                    </div>
-                </div>
-
+                <ElementDiv
+                    label={'EXPIRY DATE'}
+                    id={'cardExpiry'}
+                    className={'w-2/6'}
+                />
                 <Input
                     value={name}
                     setValue={setName}
@@ -178,21 +177,24 @@ export default function Add_Card({}) {
                     icon={{ img: cvv_icon, alt: 'cvc icon' }}
                     className={'w-2/6'}
                 />
-
-                {/* <div className='h-12 w-full border-black border-[1px] w-2/4 relative flex flex-col gap-y-3 !mt-0 relative'>
+                <div
+                    className="my-6 flex flex-row items-center justify-start gap-x-3 hover:cursor-pointer"
+                    onClick={() => setDefaultCheck((prevState) => !prevState)}
+                >
                     <input
-                        type="text"
-                        value={cvv}
-                        maxLength={3}
-                        className="mt-2 login-signup-input !mt-0"
-                        onChange={(e) => setCvv(e.target.value)}
+                        type="checkbox"
+                        className="daisy-checkbox rounded-none"
+                        name="default"
+                        id="default-payment-check"
+                        checked={defaultCheck}
                     />
-                    <img src={cvv_icon} alt="cvv icon" className='h-6 w-6 relative' />
-                </div> */}
 
+                    <p>Save card details for next time</p>
+                </div>
                 <button
+                    onClick={saveCard}
                     type="button"
-                    className="w-full !bg-primary py-3 text-base font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
+                    className="w-7/12 !bg-primary py-3 text-base font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
                 >
                     USE THIS CARD
                 </button>
@@ -209,21 +211,41 @@ export default function Add_Card({}) {
     );
 }
 
-function ElementDiv({ label, id, icon, className }) {
-    return (
-        <div className={`${className} input-container relative flex flex-wrap`}>
-            <label htmlFor={id} className="w-full basis-full">
-                {label}
-            </label>
-<section className='relative'>
-     <div id={id}></div>
-          {icon &&  <img
-                src={icon.img}
-                alt={icon.alt}
-                className="absolute right-3 h-6 w-6 top-2/4 translate-y-[-50%]"
-            />}
-</section>
-           
-        </div>
-    );
-}
+// const numberInputOnWheelPreventChange = (e) => {
+//     // Prevent the input value change
+//     e.target.blur();
+
+//     // Prevent the page/container scrolling
+//     e.stopPropagation();
+
+//     // Refocus immediately, on the next tick (after the current function is done)
+//     setTimeout(() => {
+//         e.target.focus();
+//     }, 0);
+// };
+
+// const handleCardNumber = (e) => {
+//     e.preventDefault();
+//     const lastIndex = parseInt(e.target.value.slice(-1));
+//     console.log({ lastIndex });
+//     if (!lastIndex && e.target.value.length > cardNumber.length) {
+//         return;
+//     }
+//     const parts = [];
+//     let value = e.target.value.replaceAll(' ', '');
+
+//     for (let i = 0; i < value.length; i += 4) {
+//         parts.push(value.substring(i, i + 4));
+//     }
+
+//     if (parts.length) {
+//         setCardNumber(() => parts.join(' '));
+//     } else {
+//         setCardNumber(() => value);
+//     }
+
+//     setError((prevState) => ({
+//         ...prevState,
+//         cardNumber: null,
+//     }));
+// };

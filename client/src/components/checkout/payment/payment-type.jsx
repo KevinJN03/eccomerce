@@ -1,9 +1,9 @@
 import credit_icon from '../../../assets/icons/credit-card.png';
 
 import Payment_Methods from '../../cart/payment_methods';
-import { SubHeader } from './payment';
+import { SubHeader } from './SubHeader';
 import Payment_Options from './payment-options';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import PaymentMethodProvider from '../../../context/paymentMethodContext';
 
@@ -13,15 +13,18 @@ import ErrorMessage from '../../Login-SignUp/errorMessage';
 import Add_Card from './add_card';
 
 function Payment_Type({ disable }) {
-
-   
     const [viewContent, setView] = useState('options');
-  
-
+    const [disableChangeBtn, setDisableChangeBtn] = useState(false);
     const views = {
         options: <Payment_Options setView={setView} />,
-        card: <Add_Card />,
+        card: <Add_Card setViewContent={setView} />,
     };
+    useEffect(() => {
+        if (viewContent == 'options') {
+            setDisableChangeBtn(true);
+        }
+    }, [viewContent]);
+
     return (
         <PaymentMethodProvider>
             <section
@@ -34,7 +37,7 @@ function Payment_Type({ disable }) {
                     <SubHeader
                         disablePadding={true}
                         text={'PAYMENT TYPE'}
-                        disableChangeBtn={viewContent == 'options'}
+                        disableChangeBtn={disableChangeBtn}
                     />
                 </div>
 
