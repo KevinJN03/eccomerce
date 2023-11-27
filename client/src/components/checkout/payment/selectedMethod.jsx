@@ -21,6 +21,7 @@ function Selected_Method({}) {
         'paypal-pay-in-3': <PayPalPayIn3 />,
         'klarna-pay-later': <KlarnaSelect />,
         'klarna-pay-in-3': <KlarnaSelect />,
+        clearpay: <ClearPaySelect/>
     };
 
     return (

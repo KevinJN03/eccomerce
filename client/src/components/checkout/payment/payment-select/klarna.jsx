@@ -184,7 +184,7 @@ function KlarnaSelect({}) {
                         identity. You must be 18 years of age to use Klarna.
                     </p>
 
-                    <p className="mt-4">
+                    <p className="mt-4 text-sm">
                         Klarna's Pay in 3 and Pay in 30 is an unregulated credit
                         agreement. Borrowing more than you can afford or paying
                         late may negatively impact your financial status and
@@ -206,9 +206,10 @@ function KlarnaSelect({}) {
                     msg={
                         'Buy now and pay Klarna by 5 January, 2024, once your order has been dispatched.'
                     }
+                     className='flex-wrap w-full'
                     extraInfo={{
                         msg: 'MORE INFO',
-                        className: 'text-base font-light text-black underline',
+                        className: 'text-base font-light text-black underline cursor-pointer',
                     }}
                 />
             </div>

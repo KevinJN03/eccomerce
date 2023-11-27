@@ -40,7 +40,7 @@ function Payment_Type({ disable }) {
                 // setSelectedMethod(() => data.paymentMethods[0]);
 
                 setSelectedMethod(() => ({
-                    type: 'paypal-pay-in-3',
+                    type: 'clearpay',
                     title: 'PAY IN 3',
                 }));
             })
