@@ -31,16 +31,17 @@ function Wallet({}) {
                 })}
             </div>
 
-            <div className="m-0 my-6 flex flex-row justify-between p-0">
+            <div className="m-0 my-6 flex flex-row justify-between p-0 items-center">
                 <button
                     // disabled={loading || disableRef.current}
                     onClick={() => setView('options')}
-                    className="!bg-primary px-4 py-2 font-bold tracking-wider text-white transition-all hover:!bg-black disabled:cursor-not-allowed"
+                    className="!bg-primary px-4 py-3 font-bold tracking-wider text-white transition-all hover:!bg-black disabled:cursor-not-allowed"
                 >
-                    ADD NEW ADDRESS
+                    ADD NEW PAYMENT METHOD
                 </button>
                 <button
                     // disabled={loading || disableRef.current}
+                    className='h-fit !py-2'
                     id="checkout-change-btn"
                     onClick={() => setView('selectedMethod')}
                 >

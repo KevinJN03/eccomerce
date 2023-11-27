@@ -1,37 +1,108 @@
-import { useElements } from '@stripe/react-stripe-js';
+import { useElements, useStripe } from '@stripe/react-stripe-js';
 import axios from '../../api/axios';
 import { useCart } from '../../context/cartContext';
 import { useCheckoutContext } from '../../context/checkOutContext';
+import { useEffect, useRef, useState } from 'react';
+const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 function Buy_Now_Btn({ disable }) {
-    const { isOrderSubmit, setOrderSubmit, billingAddress, shippingAddress } =
-        useCheckoutContext();
-
+    const {
+        isOrderSubmit,
+        setOrderSubmit,
+        billingAddress,
+        shippingAddress,
+        selectedMethod,
+        setError,
+        error,
+    } = useCheckoutContext();
+    const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
     const { cart } = useCart();
-
+    const stripe = useStripe();
     const elements = useElements();
 
-    const submitOrder = () => {
-        setOrderSubmit(() => true);
-        console.log('elements: ', elements.getElement('cardCvc'));
-        axios
-            .post('/order/create', {
-                billingAddress,
-                shippingAddress,
-                cart,
-            })
-            .then((res) => {
-                console.log({ res });
-                setTimeout(() => {
-                    setOrderSubmit(() => false);
-                }, 2000);
-            })
-            .catch((error) => {
-                setTimeout(() => {
-                    setOrderSubmit(() => false);
-                }, 2000);
-                console.log('error when creating order: ', error);
-            });
+    const fetchPaymentIntent = async () => {
+        const { data } = await axios.post('/order/create-payment-intent', {
+            billing: {
+                address: {
+                    city: billingAddress.city,
+                    country: billingAddress.country,
+                    line1: billingAddress.address_1,
+                    line2: billingAddress.address_2,
+                    postal_code: billingAddress.postCode,
+                    state: billingAddress.county,
+                },
+                name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+            },
+            shipping: {
+                address: {
+                    city: shippingAddress.city,
+                    country: shippingAddress.country,
+                    line1: shippingAddress.address_1,
+                    line2: shippingAddress.address_2,
+                    postal_code: shippingAddress.postCode,
+                    state: shippingAddress.county,
+                },
+                name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+            },
+            cart,
+        });
+
+        const { id, clientSecret } = data;
+        setPaymentIntentInfo({ id, clientSecret });
+    };
+
+    useEffect(() => {
+        if (
+            Object.keys(billingAddress).length == 0 &&
+            Object.keys(shippingAddress).length == 0
+        ) {
+            return;
+        }
+        fetchPaymentIntent();
+    }, [billingAddress, shippingAddress]);
+
+    const submitOrder = async () => {
+        try {
+            setOrderSubmit(() => true);
+            console.log({ paymentIntentInfo });
+
+            if (selectedMethod.type == 'card') {
+                var { error, paymentIntent } = await stripe.confirmCardPayment(
+                    paymentIntentInfo.clientSecret,
+                    {
+                        payment_method: selectedMethod.id,
+                        payment_method_options: {
+                            card: {
+                                cvc: elements.getElement('cardCvc'),
+                            },
+                        },
+                    }
+                );
+            }
+
+            if (selectedMethod.type == 'paypal') {
+                var { error, paymentIntent } =
+                    await stripe.confirmPayPalPayment(
+                        paymentIntentInfo.clientSecret,
+                        {
+                            return_url: `${CLIENT_URL}/order/success`,
+                        }
+                    );
+            }
+
+            if (error) {
+                console.error('error with payment intent', error);
+                setError((prevState) => ({ ...prevState, msg: error.message }));
+            } else {
+                console.log({ paymentIntent });
+            }
+        } catch (error) {
+            console.error('error whil setingg up paymnetIntent: ', error);
+        } finally {
+            setTimeout(() => {
+                setOrderSubmit(() => false);
+            }, 2000);
+        }
     };
     return (
         <>

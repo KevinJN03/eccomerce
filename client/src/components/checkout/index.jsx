@@ -51,21 +51,13 @@ function Checkout() {
         disable: false,
         addressType: null,
     });
-    const [paymentIntent, setPaymentIntent] = useState('');
+    const [selectedMethod, setSelectedMethod] = useState({});
     const fetchData = async (controller) => {
         try {
             const result = await axios.get('user/userData', {
                 signal: controller.signal,
             });
 
-            const paymentIntentResult = await axios.post(
-                'order/create-payment-intent',
-                cart
-            );
-
-            const { clientSecret } = paymentIntentResult.data;
-
-            setPaymentIntent(() => clientSecret);
             const { user } = result.data;
 
             const default_address = user?.default_address;
@@ -138,6 +130,8 @@ function Checkout() {
                 SetDisableOtherComponents,
                 isOrderSubmit,
                 setOrderSubmit,
+                selectedMethod,
+                setSelectedMethod,
             }}
         >
             <Elements stripe={stripePromise}>

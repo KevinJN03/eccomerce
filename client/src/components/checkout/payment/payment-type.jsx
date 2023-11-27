@@ -15,6 +15,7 @@ import Selected_Method from './selectedMethod';
 import Wallet from './wallet';
 import axios from '../../../api/axios';
 import PaymentTypeProvider from '../../../context/paymentTypeContext';
+import { useCheckoutContext } from '../../../context/checkOutContext';
 
 const views = {
     options: <Payment_Options />,
@@ -24,19 +25,21 @@ const views = {
     wallet: <Wallet />,
 };
 function Payment_Type({ disable }) {
-    const [viewContent, setView] = useState('wallet');
+    const [viewContent, setView] = useState('selectedMethod');
     const [disableChangeBtn, setDisableChangeBtn] = useState(false);
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedMethod, setSelectedMethod] = useState({});
-
+    // const [selectedMethod, setSelectedMethod] = useState({});
+    const { selectedMethod, setSelectedMethod } = useCheckoutContext();
     const [nextView, setNextView] = useState('');
     useEffect(() => {
         axios
             .get('user/payment-method/all')
             .then(({ data }) => {
                 setUserPaymentMethods(() => data.paymentMethods);
-                setSelectedMethod(() => data.paymentMethods[0]);
+                // setSelectedMethod(() => data.paymentMethods[0]);
+
+                setSelectedMethod(() => ({ type: 'paypal' }));
             })
             .catch((error) => {
                 console.error('error while fetching payment methods', error);
