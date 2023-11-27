@@ -3,6 +3,8 @@ import axios from '../../api/axios';
 import { useCart } from '../../context/cartContext';
 import { useCheckoutContext } from '../../context/checkOutContext';
 import { useEffect, useRef, useState } from 'react';
+
+import paypal_icon from '../../assets/icons/payment-icons/paypal.svg';
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 function Buy_Now_Btn({ disable }) {
@@ -108,7 +110,7 @@ function Buy_Now_Btn({ disable }) {
         <>
             {' '}
             <button
-                className=" flex h-14 max-h-20 w-11/12 items-center justify-center self-center bg-primary-green font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100 disabled:opacity-40"
+                className={`${selectedMethod['type'] == 'paypal' ? "bg-yellow-400":  "bg-primary-green"} flex h-14 max-h-20 w-11/12 items-center justify-center self-center font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100 disabled:opacity-40`}
                 type="button"
                 onClick={submitOrder}
                 disabled={disable}
@@ -122,7 +124,21 @@ function Buy_Now_Btn({ disable }) {
                         <circle cx="50" cy="50" r="20" />
                     </svg>
                 ) : (
-                    <span className="text-white">BUY NOW</span>
+                    <>
+                        {' '}
+                        {selectedMethod['type'] == 'paypal' ? (
+                            <span className="flex flex-row items-center justify-center">
+                                <p className='text-lg font-[400] text-black'>Pay with</p>
+                                <img
+                                    src={paypal_icon}
+                                    alt="paypal icon"
+                                    className="h-20 "
+                                />
+                            </span>
+                        ) : (
+                            <span className="text-white">BUY NOW</span>
+                        )}
+                    </>
                 )}
             </button>
             <p className="mb-12 w-11/12 self-center">

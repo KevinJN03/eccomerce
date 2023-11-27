@@ -8,15 +8,14 @@ import CardSelect from './payment-select/card';
 import PayPalSelect from './payment-select/paypal';
 import KlarnaSelect from './payment-select/klarna';
 import ClearPaySelect from './payment-select/clearpay';
+import '../../../CSS/checkout.scss';
 function Selected_Method({}) {
     const elements = useElements();
 
     const { selectedMethod, setNextView } = usePaymentTypeContext();
 
     return (
-        <section className="mb-6">
-        
-
+        <section className="mb-8 mt-4">
             {selectedMethod['type'] == 'card' && <CardSelect />}
             {selectedMethod['type'] == 'paypal' && <PayPalSelect />}
             {selectedMethod['type'] == 'klarna' && <KlarnaSelect />}
