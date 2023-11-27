@@ -52,6 +52,7 @@ function Checkout() {
         addressType: null,
     });
     const [selectedMethod, setSelectedMethod] = useState({});
+    const [klarnaDob, setKlarnaDob] = useState({})
     const fetchData = async (controller) => {
         try {
             const result = await axios.get('user/userData', {
@@ -132,6 +133,7 @@ function Checkout() {
                 setOrderSubmit,
                 selectedMethod,
                 setSelectedMethod,
+                klarnaDob, setKlarnaDob
             }}
         >
             <Elements stripe={stripePromise}>

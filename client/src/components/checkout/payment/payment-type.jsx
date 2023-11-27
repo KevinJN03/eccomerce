@@ -39,7 +39,10 @@ function Payment_Type({ disable }) {
                 setUserPaymentMethods(() => data.paymentMethods);
                 // setSelectedMethod(() => data.paymentMethods[0]);
 
-                setSelectedMethod(() => ({ type: 'paypal' }));
+                setSelectedMethod(() => ({
+                    type: 'klarna',
+                    title: 'PAY IN 3 WITH KLARNA',
+                }));
             })
             .catch((error) => {
                 console.error('error while fetching payment methods', error);

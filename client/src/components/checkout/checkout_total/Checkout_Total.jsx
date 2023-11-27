@@ -7,9 +7,11 @@ import calculatePromo from '../../common/calculatePromo';
 import { motion, useScroll } from 'framer-motion';
 import closeIcon from '../../../assets/icons/close.png';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+
+import { useWindowSize } from '@uidotdev/usehooks';
 function Checkout_Total() {
     const { cart } = useCart();
-const {error, setError} = useCheckoutContext()
+    const { error, setError } = useCheckoutContext();
     const { scrollY } = useScroll();
 
     const { withShipping, withOutShipping, savePercent, amountOff } =
@@ -19,11 +21,12 @@ const {error, setError} = useCheckoutContext()
     const { deliveryOption } = useCart();
     const { promo } = useCart();
 
-  
-
+    const screenSize = useWindowSize();
+    console.log(screenSize);
     return (
-        <motion.section className="mt-5 h-fit" 
-        style={{ y: scrollY }}
+        <motion.section
+            className="mt-5 h-fit"
+            style={{ y: screenSize.width > 1024 ? scrollY : '' }}
         >
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">
@@ -78,7 +81,7 @@ const {error, setError} = useCheckoutContext()
                             }))
                         }
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 shrink-0 stroke-current hover:scale-110 transition-all"
+                        className="h-6 w-6 shrink-0 stroke-current transition-all hover:scale-110"
                         fill="none"
                         viewBox="0 0 24 24"
                     >

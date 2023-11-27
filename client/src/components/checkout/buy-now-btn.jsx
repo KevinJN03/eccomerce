@@ -5,6 +5,11 @@ import { useCheckoutContext } from '../../context/checkOutContext';
 import { useEffect, useRef, useState } from 'react';
 
 import paypal_icon from '../../assets/icons/payment-icons/paypal.svg';
+import { useAuth } from '../../hooks/useAuth';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from 'dayjs';
+import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
+dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 function Buy_Now_Btn({ disable }) {
@@ -16,8 +21,13 @@ function Buy_Now_Btn({ disable }) {
         selectedMethod,
         setError,
         error,
+
+        klarnaDob,
+        setKlarnaDob,
     } = useCheckoutContext();
     const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
+
+    const { user } = useAuth();
     const { cart } = useCart();
     const stripe = useStripe();
     const elements = useElements();
@@ -66,9 +76,8 @@ function Buy_Now_Btn({ disable }) {
     const submitOrder = async () => {
         try {
             setOrderSubmit(() => true);
-            console.log({ paymentIntentInfo });
 
-            if (selectedMethod.type == 'card') {
+            if (selectedMethod['type'] == 'card') {
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
                     paymentIntentInfo.clientSecret,
                     {
@@ -82,7 +91,7 @@ function Buy_Now_Btn({ disable }) {
                 );
             }
 
-            if (selectedMethod.type == 'paypal') {
+            if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
                     await stripe.confirmPayPalPayment(
                         paymentIntentInfo.clientSecret,
@@ -92,9 +101,53 @@ function Buy_Now_Btn({ disable }) {
                     );
             }
 
+            if (selectedMethod['type'] == 'klarna') {
+                const billing_details = {
+                    address: {
+                        city: billingAddress.city,
+                        country: billingAddress.country,
+                        line1: billingAddress.address_1,
+                        line2: billingAddress.address_2,
+                        postal_code: billingAddress.postCode,
+                        state: billingAddress.county,
+                    },
+                    name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+                    email: user.email,
+                };
+
+                const klarnaDObFormat = `${klarnaDob['year']}-${klarnaDob['month']}-${klarnaDob['day']}`;
+                const isKlarnaDobValid = dayjs(
+                    klarnaDObFormat,
+                    'YYYY-MM-DD',
+                    true
+                ).isValid();
+
+                if (!isKlarnaDobValid) {
+                    setKlarnaDob((prevState) => ({
+                        ...prevState,
+                        error: "Oops! This doesn't appear to be a valid date of birth.",
+                    }));
+
+                    setOrderSubmit(() => false);
+                    return;
+                }
+                var { error, paymentIntent } =
+                    await stripe.confirmKlarnaPayment(
+                        paymentIntentInfo.clientSecret,
+                        {
+                            payment_method: {
+                                billing_details,
+                            },
+                            return_url: `${CLIENT_URL}/order/success`,
+                        }
+                    );
+            }
             if (error) {
                 console.error('error with payment intent', error);
-                setError((prevState) => ({ ...prevState, msg: error.message }));
+                setError((prevState) => ({
+                    ...prevState,
+                    msg: error.message,
+                }));
             } else {
                 console.log({ paymentIntent });
             }
@@ -106,11 +159,51 @@ function Buy_Now_Btn({ disable }) {
             }, 2000);
         }
     };
+
+    const buttonContent = () => {
+        if (selectedMethod['title'] == 'Pay Later') {
+            return (
+                <span className="flex flex-row items-center justify-center gap-x-2">
+                    <img
+                        src={paypal_pp_icon}
+                        alt="paypal icon"
+                        className="h-6 w-6 "
+                    />
+                    <p className="text-lg font-[400] text-black">Pay Later</p>
+                </span>
+            );
+        } else if (selectedMethod['title'] == 'Pay With') {
+            return (
+                <span className="flex flex-row items-center justify-center">
+                    <p className="text-lg font-[400] text-black">Pay with</p>
+                    <img
+                        src={paypal_icon}
+                        alt="paypal icon"
+                        className="h-16 "
+                    />
+                </span>
+            );
+        } else {
+            return (
+                <span className="text-white">
+                    {selectedMethod?.title
+                        ? `${selectedMethod.title}`
+                        : 'BUY NOW'}
+                </span>
+            );
+        }
+    };
     return (
-        <>
-            {' '}
-            <button
-                className={`${selectedMethod['type'] == 'paypal' ? "bg-yellow-400":  "bg-primary-green"} flex h-14 max-h-20 w-11/12 items-center justify-center self-center font-gotham font-bold text-white opacity-95 transition-all hover:opacity-100 disabled:opacity-40`}
+        <div className='w-11/12 flex flex-col self-center gap-y-4'>
+           
+
+           <div className='bg-[#000000] bg-opacity-50 w-full h-12'>
+              <button
+                className={`${
+                    selectedMethod['type'] == 'paypal'
+                        ? 'bg-amber-400'
+                        : 'bg-primary-green'
+                } flex h-14 max-h-20 w-full h-full items-center justify-center self-center font-gotham font-bold transition-all disabled:opacity-40 hover:mix-blend-overlay`}
                 type="button"
                 onClick={submitOrder}
                 disabled={disable}
@@ -125,29 +218,23 @@ function Buy_Now_Btn({ disable }) {
                     </svg>
                 ) : (
                     <>
-                        {' '}
-                        {selectedMethod['type'] == 'paypal' ? (
-                            <span className="flex flex-row items-center justify-center">
-                                <p className='text-lg font-[400] text-black'>Pay with</p>
-                                <img
-                                    src={paypal_icon}
-                                    alt="paypal icon"
-                                    className="h-20 "
-                                />
-                            </span>
-                        ) : (
-                            <span className="text-white">BUY NOW</span>
-                        )}
+              
+                         {buttonContent()} 
+                    
+                  
+                    
                     </>
                 )}
             </button>
-            <p className="mb-12 w-11/12 self-center">
+           </div>
+          
+            <p className="mb-12 w-11/12 self-start">
                 By placing your order you agree to our Terms & Conditions,
                 privacy and returns policies . You also consent to some of your
                 data being stored by GLAMO, which may be used to make future
                 shopping experiences better for you.
             </p>
-        </>
+        </div>
     );
 }
 

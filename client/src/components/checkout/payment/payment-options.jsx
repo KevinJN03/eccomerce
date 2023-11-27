@@ -14,6 +14,7 @@ function Payment_Options({}) {
 
         setSelectedMethod(() => ({
             type: this.view,
+            title: this.title
         }));
         setView('selectedMethod')
     }
@@ -28,6 +29,7 @@ function Payment_Options({}) {
             button_text: 'PAYPAL',
             button_img: paypal_icon,
             view: 'paypal',
+            title: 'Pay With',
             handleClick: handlePaymentOption,
         },
 
@@ -36,6 +38,7 @@ function Payment_Options({}) {
             additional_text: 'with PayPal Pay Later',
             button_img: paypal_icon,
             view: 'paypal',
+            title: 'Pay Later',
             handleClick: handlePaymentOption,
         },
         {
@@ -43,6 +46,8 @@ function Payment_Options({}) {
             additional_text: 'with Klarna',
             button_img: klarna_logo,
             view: 'klarna',
+            title: 'PAY LATER WITH KLARNA',
+
             handleClick: handlePaymentOption,
         },
         {
@@ -50,6 +55,7 @@ function Payment_Options({}) {
             additional_text: 'with Klarna',
             button_img: klarna_logo,
             view: 'klarna',
+            title: 'PAY IN 3 WITH KLARNA',
             handleClick: handlePaymentOption,
         },
     ];
