@@ -161,7 +161,7 @@ function Buy_Now_Btn({ disable }) {
     };
 
     const buttonContent = () => {
-        if (selectedMethod['title'] == 'Pay Later') {
+        if (selectedMethod['type'] == 'paypal-pay-in-3') {
             return (
                 <span className="flex flex-row items-center justify-center gap-x-2">
                     <img
@@ -172,7 +172,7 @@ function Buy_Now_Btn({ disable }) {
                     <p className="text-lg font-[400] text-black">Pay Later</p>
                 </span>
             );
-        } else if (selectedMethod['title'] == 'Pay With') {
+        } else if (selectedMethod['type'] == 'paypal') {
             return (
                 <span className="flex flex-row items-center justify-center">
                     <p className="text-lg font-[400] text-black">Pay with</p>
@@ -194,40 +194,33 @@ function Buy_Now_Btn({ disable }) {
         }
     };
     return (
-        <div className='w-11/12 flex flex-col self-center gap-y-4'>
-           
+        <div className="flex w-11/12 flex-col gap-y-4 self-center">
+            <div className="h-12 w-full bg-[#000000] bg-opacity-50">
+                <button
+                    className={`${
+                        selectedMethod['type'] == 'paypal' ||
+                        selectedMethod['type'] == 'paypal-pay-in-3'
+                            ? 'bg-amber-400'
+                            : 'bg-primary-green'
+                    } flex h-14 h-full max-h-20 w-full items-center justify-center self-center font-gotham font-bold transition-all hover:mix-blend-overlay disabled:opacity-40`}
+                    type="button"
+                    onClick={submitOrder}
+                    disabled={disable}
+                >
+                    {isOrderSubmit ? (
+                        <svg
+                            className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                            viewBox="25 25 50 50"
+                            strokeWidth="5"
+                        >
+                            <circle cx="50" cy="50" r="20" />
+                        </svg>
+                    ) : (
+                        <>{buttonContent()}</>
+                    )}
+                </button>
+            </div>
 
-           <div className='bg-[#000000] bg-opacity-50 w-full h-12'>
-              <button
-                className={`${
-                    selectedMethod['type'] == 'paypal'
-                        ? 'bg-amber-400'
-                        : 'bg-primary-green'
-                } flex h-14 max-h-20 w-full h-full items-center justify-center self-center font-gotham font-bold transition-all disabled:opacity-40 hover:mix-blend-overlay`}
-                type="button"
-                onClick={submitOrder}
-                disabled={disable}
-            >
-                {isOrderSubmit ? (
-                    <svg
-                        className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
-                        viewBox="25 25 50 50"
-                        strokeWidth="5"
-                    >
-                        <circle cx="50" cy="50" r="20" />
-                    </svg>
-                ) : (
-                    <>
-              
-                         {buttonContent()} 
-                    
-                  
-                    
-                    </>
-                )}
-            </button>
-           </div>
-          
             <p className="mb-12 w-11/12 self-start">
                 By placing your order you agree to our Terms & Conditions,
                 privacy and returns policies . You also consent to some of your

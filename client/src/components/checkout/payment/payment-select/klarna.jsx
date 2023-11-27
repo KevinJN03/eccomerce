@@ -10,6 +10,7 @@ import { useCheckoutContext } from '../../../../context/checkOutContext';
 import ErrorMessage, {
     ErrorMessagePointerUp,
 } from '../../../Login-SignUp/errorMessage';
+import { usePaymentTypeContext } from '../../../../context/paymentTypeContext';
 
 dayjs.extend(localeData);
 
@@ -73,7 +74,7 @@ function Select({ header, dataArray }) {
 function KlarnaSelect({}) {
     const [futureUse, setFutureUse] = useState(true);
     const { klarnaDob, setKlarnaDob } = useCheckoutContext();
-
+    const { selectedMethod, setNextView } = usePaymentTypeContext();
     const days = createRange(1, 31, 1);
     const months = dayjs.months();
 
@@ -89,7 +90,7 @@ function KlarnaSelect({}) {
                     alt="klarna logo"
                     className="h-6 w-8 object-contain"
                 />
-                <p className="text-sm">PAY LATER WITH KLARNA</p>
+                <p className="text-sm">{selectedMethod.title}</p>
             </div>
             <div className="middle my-8 ">
                 <div className="middle-top px-2">

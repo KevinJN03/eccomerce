@@ -17,6 +17,7 @@ function PayPalSelect({}) {
                 msg={
                     'Hit the PayPal button below to sign into PayPal and confirm your payment.'
                 }
+               
             />
         </section>
     );

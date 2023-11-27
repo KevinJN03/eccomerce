@@ -40,8 +40,8 @@ function Payment_Type({ disable }) {
                 // setSelectedMethod(() => data.paymentMethods[0]);
 
                 setSelectedMethod(() => ({
-                    type: 'klarna',
-                    title: 'PAY IN 3 WITH KLARNA',
+                    type: 'paypal-pay-in-3',
+                    title: 'PAY IN 3',
                 }));
             })
             .catch((error) => {
