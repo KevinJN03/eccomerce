@@ -24,7 +24,7 @@ function Product_info({
     loading,
 }) {
     const [priceState, setPriceState] = useState(null);
-    console.log('render product info');
+    ('render product info');
 
     const [sizeSelect, setSizeSelect] = useState(null);
     const sizeRef = useRef();
@@ -32,8 +32,8 @@ function Product_info({
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [variationSelect, setVariationSelection] = useState({
-        color: {id: null, variation: null},
-        size: {id: null, variation: null},
+        color: { id: null, variation: null },
+        size: { id: null, variation: null },
     });
     useEffect(() => {
         if (product.hasOwnProperty('price')) {

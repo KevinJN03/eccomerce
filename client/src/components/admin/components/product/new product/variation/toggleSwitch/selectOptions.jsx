@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { v4 as uuidv4 } from 'uuid';
 function SelectOptions({ property, selection, setSelection }) {
-    const { temporaryVariation, setTemporaryVariation } =
-        useVariation();
+    const { temporaryVariation, setTemporaryVariation } = useVariation();
     const [bothName, setBothName] = useState('');
 
     useEffect(() => {
@@ -44,8 +43,8 @@ function SelectOptions({ property, selection, setSelection }) {
 
     const handleSelect = (value, both) => {
         setSelection(() => value);
-        console.log('handleSelect triggered');
-        console.log('both', both);
+        ('handleSelect triggered');
+        'both', both;
         const newTemporaryVariation = filterDisabledVariation();
 
         let update;

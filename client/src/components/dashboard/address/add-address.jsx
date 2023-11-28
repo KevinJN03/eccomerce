@@ -36,7 +36,7 @@ function Add_Address({}) {
                 navigate('/my-account/addresses');
             }, 1500);
         } catch (error) {
-            console.log('error when adding address: ', error);
+            'error when adding address: ', error;
             setTimeout(() => {
                 setLoading(() => false);
                 if (error.response.status == 401) {

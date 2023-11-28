@@ -15,8 +15,7 @@ function Main() {
         disableChangeBtn,
         subHeader,
     } = useAddressContext();
-    const { disableOtherComponents, SetDisableOtherComponents } =
-        useCheckoutContext();
+    const { disableOtherComponents } = useCheckoutContext();
 
     return (
         <motion.div
@@ -32,7 +31,7 @@ function Main() {
                         {...subHeader}
                         onClick={handleChange}
                         disable={
-                            disableOtherComponents.disable &&
+                            disableOtherComponents?.disable &&
                             disableOtherComponents.addressType != addressType
                         }
                     />{' '}
@@ -43,7 +42,7 @@ function Main() {
             {!disableChangeBtn && (
                 <button
                     disabled={
-                        disableOtherComponents.disable &&
+                        disableOtherComponents?.disable &&
                         disableOtherComponents.addressType != addressType
                     }
                     type="button"

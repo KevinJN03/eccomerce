@@ -86,8 +86,7 @@ function Contact_Preferences({}) {
                 }, 700);
             })
             .catch((error) => {
-              
-                console.log('error at preferences: ', error);
+                'error at preferences: ', error;
                 logOutUser({ error, authDispatch, navigate });
             });
     };

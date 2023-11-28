@@ -30,7 +30,7 @@ function PayPalSetUp({ clientSecret }) {
         if (error) {
             setError(() => error.message);
         }
-        console.log({ error, setupIntent, CLIENT_URL, return_url });
+        ({ error, setupIntent, CLIENT_URL, return_url });
     };
 
     const variants = {

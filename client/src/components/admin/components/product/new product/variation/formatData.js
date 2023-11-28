@@ -1,16 +1,14 @@
 export default (data, num) => {
     try {
-
         if (data == null || data == undefined) {
-         
-            return 
-        };
+            return;
+        }
 
-//    console.log('try format');
+        //    ('try format');
         let newData = parseFloat(data).toFixed(num);
 
-       return newData
+        return newData;
     } catch (error) {
-        console.log('error formatting', error);
+        'error formatting', error;
     }
 };

@@ -22,12 +22,12 @@ function Cart_Item({ product }) {
     const { dispatch } = useCart();
 
     useEffect(() => {
-        console.log('update item');
+        ('update item');
         dispatch({ type: 'edit item', quantity, size, cartId: product.cartId });
     }, [quantity, size]);
 
     const handleRemove = (id) => {
-        console.log('Id:', id);
+        'Id:', id;
         dispatch({ type: 'remove', cartId: product.cartId });
     };
 

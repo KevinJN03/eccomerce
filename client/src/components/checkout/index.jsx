@@ -30,7 +30,7 @@ import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import Buy_Now_Btn from './buy-now-btn.jsx';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
-
+import dayjs from 'dayjs';
 function Checkout() {
     disableLayout();
 
@@ -55,49 +55,60 @@ function Checkout() {
         addressType: null,
     });
 
+    const { cart } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
-    const fetchData = async (controller) => {
-        try {
-            const result = await axios.get('user/userData', {
-                signal: controller.signal,
-            });
 
-            const { user } = result.data;
+    const abortControllerRef = useRef(new AbortController());
 
-            const default_address = user?.default_address;
-            setDefaultAddresses(() => user?.default_address || {});
-            const findAddress = (property, setState) => {
-                if (default_address[property]) {
-                    const foundAddress = user.address.find(
-                        (item) => item._id == default_address[property]
-                    );
-
-                    setState(() => foundAddress);
-                }
-            };
-
-            findAddress('shipping_address', setShippingAddress);
-            findAddress('billing_address', setBillingAddress);
-
-            setAddresses(() => user.address);
-        } catch (error) {
-            console.error(
-                'error while trying to get logged in user data',
-                error
-            );
-
-            logOutUser({ error, authDispatch, navigate });
-        }
-    };
     useEffect(() => {
-        const controller = new AbortController();
-        fetchData(controller);
-        return () => {
-            controller.abort();
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+
+        const fetchData = async () => {
+            try {
+                const result = await axios.get('user/userData', {
+                    signal: abortControllerRef.current.signal,
+                });
+
+                const { user } = result.data;
+
+                const dobDayjs = dayjs(user.dob);
+                const dobOBj = {
+                    year: dobDayjs.year(),
+                    month: dobDayjs.month() + 1,
+                    day: dobDayjs.date(),
+                };
+                setKlarnaDob(dobOBj);
+                const default_address = user?.default_address;
+                setDefaultAddresses(() => user?.default_address || {});
+                const findAddress = (property, setState) => {
+                    if (default_address[property]) {
+                        const foundAddress = user.address.find(
+                            (item) => item._id == default_address[property]
+                        );
+
+                        setState(() => foundAddress);
+                    }
+                };
+
+                findAddress('shipping_address', setShippingAddress);
+                findAddress('billing_address', setBillingAddress);
+
+                setAddresses(() => user.address);
+            } catch (error) {
+                console.error(
+                    'error while trying to get logged in user data',
+                    error
+                );
+
+                logOutUser({ error, authDispatch, navigate });
+            }
         };
+
+        fetchData();
     }, []);
-    const { cart } = useCart();
+
     useEffect(() => {
         if (cart.length == 0) {
             setLoading(() => true);
@@ -111,6 +122,8 @@ function Checkout() {
             };
         }
     }, [cart]);
+
+
 
     return (
         <CheckOutProvider
@@ -169,19 +182,19 @@ function Checkout() {
                                         <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
                                             <Country_Picker
                                                 disable={
-                                                    disableOtherComponents.disable
+                                                    disableOtherComponents?.disable
                                                 }
                                                 select={select}
                                                 setSelect={setSelect}
                                             />
                                             <Promo
                                                 disable={
-                                                    disableOtherComponents.disable
+                                                    disableOtherComponents?.disable
                                                 }
                                             />
                                             <Email_address
                                                 disable={
-                                                    disableOtherComponents.disable
+                                                    disableOtherComponents?.disable
                                                 }
                                             />
                                             <Address
@@ -198,7 +211,7 @@ function Checkout() {
 
                                             <Delivery
                                                 disable={
-                                                    disableOtherComponents.disable
+                                                    disableOtherComponents?.disable
                                                 }
                                             />
                                             <Payment
@@ -214,7 +227,7 @@ function Checkout() {
                                         <div className="bottom mt-5 flex flex-col gap-y-3">
                                             <Buy_Now_Btn
                                                 disable={
-                                                    disableOtherComponents.disable
+                                                    disableOtherComponents?.disable
                                                 }
                                                 isOrderSubmit={isOrderSubmit}
                                             />

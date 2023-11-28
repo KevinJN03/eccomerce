@@ -13,7 +13,7 @@ function Card_Item({
     id,
 }) {
     const { selectedMethod, setSelectedMethod } = usePaymentTypeContext();
-    console.log({ selectedMethod });
+    ({ selectedMethod });
     return (
         <section
             className="flex w-full flex-row gap-x-4 py-5"

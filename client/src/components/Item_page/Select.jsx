@@ -5,7 +5,7 @@ const Select = forwardRef(function Select(
         text,
         single,
         array,
-      
+
         property,
         setOutOfStock,
         setPrice,
@@ -34,8 +34,7 @@ const Select = forwardRef(function Select(
             ...prevState,
             [property]: { variation, id },
         }));
-        console.log( variationSelect)
-    
+        variationSelect;
 
         if (stock == 0 || stock) {
             setStockState(() => stock);

@@ -81,7 +81,7 @@ function Edit_Address({}) {
 
             setError(() => error.response.data);
             setDisable(true);
-            console.log('error when adding address: ', error);
+            'error when adding address: ', error;
         }
     };
 

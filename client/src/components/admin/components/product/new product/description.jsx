@@ -10,7 +10,8 @@ import { useEffect, useState } from 'react';
 import useNewProductError from '../../../../../useNewProductError';
 import OptionError from './variation/error/optionError';
 function Description({}) {
-    const { description, setDescription,  publishErrorDispatch } = useNewProduct();
+    const { description, setDescription, publishErrorDispatch } =
+        useNewProduct();
     const [descriptionError, setDescriptionError] = useState('');
 
     useNewProductError('detail', setDescriptionError);
@@ -22,10 +23,6 @@ function Description({}) {
     }, [description]);
 
     const boldClick = () => {
-        console.log(
-            'current: ',
-            description.getCurrentContent().getPlainText()
-        );
         setDescription(RichUtils.toggleInlineStyle(description, 'BOLD'));
     };
 
@@ -77,7 +74,11 @@ function Description({}) {
             )}
             <section className="richText-Editor ">
                 <div className="richText-Editor-header">
-                    <select id='descriptionOption' name='descriptionOption' className=" !z-10 my-1 h-[20px] !min-h-[20px] max-w-[60px] rounded-none border-none bg-white text-sm">
+                    <select
+                        id="descriptionOption"
+                        name="descriptionOption"
+                        className=" !z-10 my-1 h-[20px] !min-h-[20px] max-w-[60px] rounded-none border-none bg-white text-sm"
+                    >
                         {Object.keys(customStyleMap).map((item) => {
                             return (
                                 <option key={item} value={item}>

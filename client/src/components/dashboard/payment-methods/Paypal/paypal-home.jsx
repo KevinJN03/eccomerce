@@ -18,7 +18,7 @@ function PayPalHome({}) {
     useEffect(() => {
         axios('user/payment-method/paypal')
             .then(({ data }) => {
-                console.log(data)
+                (data)
                 debugger
                 setOptions((prevState) => ({
                     ...prevState,

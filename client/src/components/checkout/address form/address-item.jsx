@@ -45,11 +45,12 @@ function Address_Item({ address, idx }) {
         addressType,
         mainAddress,
         enableAddressEdit,
-        disableRef
+        disableRef,
     } = useAddressContext();
 
     const currentAddressId = mainAddress?._id;
-    const { SetDisableOtherComponents } = useCheckoutContext();
+    const { disableOtherComponents, SetDisableOtherComponents } =
+        useCheckoutContext();
     const inputRef = useRef(null);
 
     const variants = generateVariants(idx + 1);
@@ -62,10 +63,14 @@ function Address_Item({ address, idx }) {
             setMainAddress(() => address);
             viewDispatch({ type: 'main' });
             setLoading(() => false);
+
             SetDisableOtherComponents({
                 addressType: null,
                 disable: false,
-            });
+            })
+           
+
+         
         }, 1000);
     };
 
@@ -110,7 +115,7 @@ function Address_Item({ address, idx }) {
                 ) : (
                     <div className="mt-6 flex items-center gap-x-3">
                         <input
-                            disabled={loading|| disableRef.current}
+                            disabled={loading || disableRef.current}
                             onChange={() => handleDefault(address._id)}
                             type="checkbox"
                             id="checkbox"

@@ -24,7 +24,7 @@ function Payment({
 
     const [initialView, setInitialView] = useState(null);
     const disable =
-        disableOtherComponents.disable &&
+        disableOtherComponents?.disable &&
         disableOtherComponents.addressType != 'BILLING';
 
     useEffect(() => {

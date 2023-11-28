@@ -66,7 +66,7 @@ export default function Add_Card({}) {
         });
 
         return () => {
-            console.log('cleaning up elements', cardNumberElement);
+            'cleaning up elements', cardNumberElement;
             cardNumberElement.destroy();
             cardCvcElement.destroy();
             cardExpiryDateElement.destroy();
@@ -90,13 +90,13 @@ export default function Add_Card({}) {
                 setClientSecret(() => data.client_secret || '');
             })
             .catch((error) => {
-                console.log('error while getting secret: ', error);
+                'error while getting secret: ', error;
             });
     }, []);
 
     const saveCard = async () => {
         try {
-            console.log('clientSecret', clientSecret);
+            'clientSecret', clientSecret;
             if (!clientSecret || !stripe || !elements) {
                 setError((prevState) => ({
                     ...prevState,
@@ -160,7 +160,7 @@ export default function Add_Card({}) {
                     }));
                 }
             } else {
-                console.log({ setupIntent });
+                ({ setupIntent });
 
                 setError({
                     general: null,

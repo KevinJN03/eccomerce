@@ -78,7 +78,7 @@ export function AddCartForm({ clientSecret }) {
                             payload: paymentMethodArray,
                         });
                         if (error) {
-                            console.log(error);
+                            (error);
 
                             if (error.message.includes('card number')) {
                                 setError((prevState) => ({

@@ -48,7 +48,7 @@ return()=> {
             .get(`/category/${state.productCategory}/${state.gender}`)
             .then((res) => {
                 let lowerCaseGender = state.gender.toLowerCase();
-                console.log('data response: ', res.data[lowerCaseGender]);
+                ('data response: ', res.data[lowerCaseGender]);
 
                 setTimeout(() => {
                     setProducts(res.data[lowerCaseGender]);

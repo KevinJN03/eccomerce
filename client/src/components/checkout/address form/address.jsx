@@ -10,7 +10,6 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import Address_Book from './address-book';
 import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
 import { ClickAwayListener } from '@mui/material';
-import { useClickAway } from '@uidotdev/usehooks';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import Main from './main';
@@ -31,7 +30,7 @@ function Address({
     enableAddressEdit,
     disableHeader,
     disableChangeBtn,
-    subHeader
+    subHeader,
 }) {
     const {
         defaultAddresses,
@@ -49,19 +48,6 @@ function Address({
     const disableRef = useRef(false);
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
-
-    const clickAwayRef = useClickAway(() => {
-        if (!disableOtherComponents.disable) {
-            return;
-        }
-        if (disableOtherComponents.addressType == addressType) {
-            SetDisableOtherComponents(() => ({
-                disable: false,
-                addressType: null,
-            }));
-            viewDispatch({ type: 'main' });
-        }
-    });
 
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
@@ -105,8 +91,8 @@ function Address({
 
     useEffect(() => {
         if (
-            disableOtherComponents.disable &&
-            disableOtherComponents.addressType != addressType
+            disableOtherComponents?.disable &&
+            disableOtherComponents?.addressType != addressType
         ) {
             viewDispatch({ type: 'main' });
         }
@@ -122,11 +108,12 @@ function Address({
                 disable: false,
                 addressType: null,
             });
+
             viewDispatch({ type: 'main' });
         }
     };
     const disable =
-        disableOtherComponents.disable &&
+        disableOtherComponents?.disable &&
         disableOtherComponents.addressType != addressType;
 
     const value = {
@@ -153,7 +140,7 @@ function Address({
         setTemporaryMainAddress,
         handleDefault,
         disableChangeBtn,
-        subHeader
+        subHeader,
     };
 
     const view = () => {
@@ -184,13 +171,12 @@ function Address({
         },
     };
     return (
-        <ClickAwayListener onClickAway={onClickAway}>
-            <AddressContextProvider value={value}>
+        <AddressContextProvider value={value}>
+            <ClickAwayListener onClickAway={onClickAway}>
                 <motion.section
                     className={`relative ${
                         disable ? 'disable-component' : 'display-component'
                     }`}
-                    ref={clickAwayRef}
                 >
                     <section
                         id="address"
@@ -230,8 +216,8 @@ function Address({
                         <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
                     )}
                 </motion.section>
-            </AddressContextProvider>
-        </ClickAwayListener>
+            </ClickAwayListener>
+        </AddressContextProvider>
     );
 }
 

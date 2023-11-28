@@ -54,7 +54,7 @@ export default function combineReducer(state, action) {
 
             return newVariation;
         } catch (error) {
-            console.log('error while combining: ', error);
+            'error while combining: ', error;
         }
     }
 

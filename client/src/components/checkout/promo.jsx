@@ -63,9 +63,9 @@ function Promo({ disable }) {
     };
 
     const toggleShow = () => {
-        console.log('disable: ', disable)
+        'disable: ', disable;
         if (disable) {
-            setShow(()=> false);
+            setShow(() => false);
         } else {
             setShow(() => !show);
         }

@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import variants from '../common/framerMotionVariants.jsx';
 function Layout() {
     const { layout } = useLayoutContext();
-    console.log('layout:', layout);
+    'layout:', layout;
     const [loading, setLoading] = useState(false);
     const location = useLocation();
     // useEffect(() => {

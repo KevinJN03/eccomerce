@@ -9,7 +9,7 @@ function DOB({ states }) {
     const { dob, setDob } = states;
 
     const handleDateChange = (date) => {
-        console.log(date.format());
+      
         setDob(date.format('YYYY-MM-DD'));
     };
     return (

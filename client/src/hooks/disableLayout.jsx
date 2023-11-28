@@ -4,10 +4,10 @@ function disableLayout() {
     const { layout, setLayout } = useLayoutContext();
 
     useEffect(() => {
-        setLayout(()=> false);
+        setLayout(() => false);
 
         return () => {
-            console.log('setting layout back to true');
+            ('setting layout back to true');
             setLayout(true);
         };
     }, []);

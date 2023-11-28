@@ -1,6 +1,6 @@
 import { PasswordSharp } from '@mui/icons-material';
 import { useState } from 'react';
-import { Link,  useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 
 import ErrorMessage from './errorMessage';
@@ -15,7 +15,7 @@ function Login({ handleSubmit, admin }) {
     const { authDispatch } = useAuth();
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log('user login', e);
+        'user login', e;
 
         setLoading(true);
 
@@ -26,16 +26,16 @@ function Login({ handleSubmit, admin }) {
                     setLoading(() => false);
                 }, 1000);
 
-                console.log('login data: ', res.data);
+                'login data: ', res.data;
                 authDispatch({ type: 'LOGIN', payload: res.data });
-                navigate(-1)
+                navigate(-1);
             })
             .catch((error) => {
                 setTimeout(() => {
                     setLoading(() => false);
                     setError(error.response.data);
                 }, 1000);
-                console.log('error at user login: ', error);
+                'error at user login: ', error;
             });
     };
     return (

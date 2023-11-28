@@ -24,7 +24,7 @@ function Add_Payment_Method({}) {
         try {
             const { index } = obj;
             setLoading(() => index);
-            console.log(obj);
+            (obj);
 
             const result = await axios.post('user/payment-method/add', obj);
             setTimeout(() => {
@@ -37,7 +37,7 @@ function Add_Payment_Method({}) {
                 navigate('/my-account/payment-methods');
             }, 600);
         } catch (error) {
-            console.log('error at payment methods: ', error);
+            ('error at payment methods: ', error);
             logOutUser({ error, authDispatch, navigate });
          
         }
@@ -48,7 +48,7 @@ function Add_Payment_Method({}) {
             const result = await axios.get(`user/payment-method/${type}`);
 
             const { url } = result.data;
-            console.log({ url });
+            ({ url });
 
             window.open(url, '_self');
         } catch (error) {
@@ -105,7 +105,7 @@ function Add_Payment_Method({}) {
         }
     }, []);
 
-    console.log('filteredButtonArray: ', filteredButtonArray);
+    ('filteredButtonArray: ', filteredButtonArray);
     return (
         <section className="add-payment-method bg-white p-4">
             {currentLocation == 'add' ? (

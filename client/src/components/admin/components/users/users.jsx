@@ -4,7 +4,7 @@ import { DarkModeContext } from '../../../../context/darkModeContext';
 import { useContext } from 'react';
 function Users({}) {
     const { darkMode } = useContext(DarkModeContext);
-    console.log('DarkMode', darkMode);
+    'DarkMode', darkMode;
     return <Outlet />;
 }
 

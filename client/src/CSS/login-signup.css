@@ -1,7 +1,5 @@
-
-
 @tailwind components;
-.login-signup-page {
+in-signup-page {
     @apply m-0 flex h-full flex-col  items-center p-0;
     min-width: 100%;
     background-color: var(--light-grey);
@@ -56,7 +54,7 @@
         @apply mb-2 text-sm font-semibold tracking-wide;
     }
     .input-container input {
-        @apply py-4 !h-[44px] w-full;
+        @apply !h-[44px] w-full py-4;
         border: 1px solid black;
     }
 }
@@ -96,7 +94,7 @@ input[type='radio'] {
     accent-color: var(--primary);
 }
 
-.login-signup-btn {
+in-signup-btn {
     @apply my-8 flex w-full items-center justify-center font-semibold tracking-widest opacity-95 transition-all hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-70;
     background-color: #2d2d2d !important;
     color: white;
@@ -104,7 +102,7 @@ input[type='radio'] {
     padding: 25px 0;
 }
 
-.login-signup-input {
+in-signup-input {
     @apply px-4;
 }
 .middle-seperator {

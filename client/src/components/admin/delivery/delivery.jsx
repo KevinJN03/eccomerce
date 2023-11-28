@@ -32,46 +32,39 @@ export default function Delivery() {
 
     const viewClick = (id) => {
         setType('view');
-        console.log({ id });
+        ({ id });
         const findProfile = profiles.find((profile) => profile._id == id);
         setDeliveryProfile(findProfile);
         setModalCheck(true);
     };
-    
 
     return (
-       
-               <>
-               <Datatable
-                    type="delivery"
-                    column={deliveryColumn}
-                    row={profiles}
-                    setLoading={setLoading}
+        <>
+            <Datatable
+                type="delivery"
+                column={deliveryColumn}
+                row={profiles}
+                setLoading={setLoading}
+                loading={loading}
+                addBtn={addClick}
+                viewBtn={viewClick}
+            />
+            {modalCheck && (
+                <Modal
+                    ModalContent={
+                        <New
+                            profile={deliveryProfile}
+                            setProfile={setDeliveryProfile}
+                            setModalState={setModalCheck}
+                        />
+                    }
+                    button_text="Select Profile"
+                    check={modalCheck}
+                    setCheck={setModalCheck}
                     loading={loading}
-                    addBtn={addClick}
-                    viewBtn={viewClick}
+                    setLoading={setLoading}
                 />
-                {modalCheck && (
-                    <Modal
-                        ModalContent={
-                            <New
-                                
-                                profile={deliveryProfile}
-                                setProfile={setDeliveryProfile}
-
-                                setModalState={setModalCheck}
-                            />
-                        }
-                        button_text="Select Profile"
-                        check={modalCheck}
-                        setCheck={setModalCheck}
-                        loading={loading}
-                        setLoading={setLoading}
-                
-                    />
-                )}
-               </>
-                
-           
+            )}
+        </>
     );
 }

@@ -11,10 +11,10 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
 
     const { authenticated } = useAuth();
-   
+
     const navigate = useNavigate();
     useEffect(() => {
-        console.log({ authenticated });
+        ({ authenticated });
         if (authenticated) {
             navigate('/my-account');
         }

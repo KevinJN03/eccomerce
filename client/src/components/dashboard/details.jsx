@@ -62,7 +62,7 @@ function Details({}) {
         };
 
         const isSame = _.isEqual(onMountValue, newValues);
-        console.log({ isSame, onMountValue, newValues });
+        ({ isSame, onMountValue, newValues });
         if (!isSame) {
             setDisable(false);
         } else {
@@ -91,7 +91,7 @@ function Details({}) {
 
             return;
         } catch (error) {
-            console.log('error here: ', error);
+            'error here: ', error;
 
             logOutUser({ error, authDispatch, navigate });
         }

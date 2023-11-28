@@ -10,7 +10,7 @@ function MultiplePromo({ setCheck, check }) {
         const filtered = promoArr.filter((promo) => promo.id == item.id);
         setPromo(filtered);
         setCheck(false);
-        // console.log(filtered)
+        // (filtered)
     };
     return (
         <>
@@ -34,26 +34,27 @@ function MultiplePromo({ setCheck, check }) {
 
                     <div className="">
                         {promo.map((item, idx) => {
-                                const { savePercent, amountOff } = calculatePromo(idx);
-                                return (
-                                    <div
-                                        className="flex flex-col gap-y-4"
-                                        key={item.id}
-                                    >
-                                        <PromoSavings
-                                            promo={item}
-                                            key={item.code}
-                                            savePercent={savePercent}
-                                            amountOff={amountOff}
-                                        />
-                                        <label
-                                            onClick={() => handleClick(item)}
-                                            htmlFor="modal-3"
-                                            className="mb-4 w-full border-2 py-2 text-center font-gotham text-xl hover:bg-[#f9f9f9]"
-                                        >{`USE ${item.code}`}</label>
-                                    </div>
-                                );
-                            })}
+                            const { savePercent, amountOff } =
+                                calculatePromo(idx);
+                            return (
+                                <div
+                                    className="flex flex-col gap-y-4"
+                                    key={idx}
+                                >
+                                    <PromoSavings
+                                        promo={item}
+                                        key={item.code}
+                                        savePercent={savePercent}
+                                        amountOff={amountOff}
+                                    />
+                                    <label
+                                        onClick={() => handleClick(item)}
+                                        htmlFor="modal-3"
+                                        className="mb-4 w-full border-2 py-2 text-center font-gotham text-xl hover:bg-[#f9f9f9]"
+                                    >{`USE ${item.code}`}</label>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>

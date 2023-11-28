@@ -32,6 +32,7 @@ function Select({ header, dataArray }) {
             error: null,
         }));
     };
+
     return (
         <select
             onChange={handleOnChange}
@@ -40,11 +41,18 @@ function Select({ header, dataArray }) {
             } dob-select border-[1px] px-5 py-3 text-s focus:outline`}
         >
             <option className="text-left indent-2">{header}</option>
+
             {dataArray.map((item, idx) => {
+                const selected =
+                    klarnaDob?.[header.toLowerCase()] == item || false;
                 return (
                     <>
                         {header == 'Month' && (
                             <option
+                                selected={
+                                    klarnaDob?.[header.toLowerCase()] ==
+                                        idx + 1 || false
+                                }
                                 value={('0' + idx + 1).toString().slice(-2)}
                                 className="text-left text-s"
                             >
@@ -52,15 +60,22 @@ function Select({ header, dataArray }) {
                             </option>
                         )}
 
-                        {header == 'Day' ? (
+                        {header == 'Day' && (
                             <option
+                                selected={selected}
                                 value={('0' + item).toString().slice(-2)}
                                 className="text-left text-s"
                             >
                                 {item}
                             </option>
-                        ) : (
-                            <option value={item} className="text-left text-s">
+                        )}
+
+                        {header == 'Year' && (
+                            <option
+                                value={item}
+                                className="text-left text-s"
+                                selected={selected}
+                            >
                                 {item}
                             </option>
                         )}
@@ -206,10 +221,11 @@ function KlarnaSelect({}) {
                     msg={
                         'Buy now and pay Klarna by 5 January, 2024, once your order has been dispatched.'
                     }
-                     className='flex-wrap w-full'
+                    className="w-full flex-wrap"
                     extraInfo={{
                         msg: 'MORE INFO',
-                        className: 'text-base font-light text-black underline cursor-pointer',
+                        className:
+                            'text-base font-light text-black underline cursor-pointer',
                     }}
                 />
             </div>

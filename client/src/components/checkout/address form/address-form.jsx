@@ -96,7 +96,7 @@ function Address_Form({ type }) {
         try {
             setLoading(true);
             let result;
-            console.log({ updatedAddress });
+            ({ updatedAddress });
             if (type == 'edit') {
                 result = await axios.put(
                     `user/address/edit/${updatedAddress._id}`,

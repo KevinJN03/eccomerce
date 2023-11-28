@@ -22,7 +22,7 @@ function Checkout_Total() {
     const { promo } = useCart();
 
     const screenSize = useWindowSize();
-    console.log(screenSize);
+
     return (
         <motion.section
             className="mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"

@@ -5,10 +5,7 @@ import { useVariation } from '../../../../../../context/variationContext';
 
 import { v4 as uuidv4 } from 'uuid';
 import { useNewProduct } from '../../../../../../context/newProductContext';
-function SingleList({
-    variation,
-    isCombine,
-}) {
+function SingleList({ variation, isCombine }) {
     const { name, options, priceHeader, quantityHeader } = variation;
     const [selected, setSelected] = useState(new Map());
     const { contentDispatch, setModalCheck } = useNewProduct();
@@ -42,7 +39,7 @@ function SingleList({
             update,
             setCheckAll,
         });
-        console.log('update modal open');
+        ('update modal open');
     };
 
     const layout = determineLayout();
@@ -121,7 +118,6 @@ function SingleList({
                 setCheckAll={setCheckAll}
                 checkAll={checkAll}
                 layout={layout}
-               
             />
         </section>
     );

@@ -21,11 +21,9 @@ export function AddressContextProvider({ children, value }) {
     const { disableOtherComponents, SetDisableOtherComponents } =
         useCheckoutContext();
     const handleChange = () => {
-        console.log(
-            'test',
+        'test',
             disableOtherComponents.disable &&
-                disableOtherComponents.addressType != addressType
-        );
+                disableOtherComponents.addressType != addressType;
         if (
             disableOtherComponents.disable &&
             disableOtherComponents.addressType != addressType
@@ -33,26 +31,26 @@ export function AddressContextProvider({ children, value }) {
             return;
         }
 
-        SetDisableOtherComponents(() => ({
+        SetDisableOtherComponents({
             addressType,
             disable: true,
-        }));
+        });
         viewDispatch({ type: 'book' });
 
-        console.log('test5');
+        ('test5');
     };
 
     const cancel = () => {
-        console.log('cancel', viewContent);
+        'cancel', viewContent;
         disableRef.current = true;
 
         // setTemporaryMainAddress(() => mainAddress);
         viewDispatch({ type: 'main' });
-
         SetDisableOtherComponents({
             addressType: null,
             disable: false,
         });
+
         setTimeout(() => {
             disableRef.current = false;
         }, 500);
@@ -62,7 +60,6 @@ export function AddressContextProvider({ children, value }) {
         if (updateMainAddress) {
             setMainAddress(() => temporaryMainAddress);
         }
-
         SetDisableOtherComponents({
             addressType: null,
             disable: false,
@@ -76,7 +73,7 @@ export function AddressContextProvider({ children, value }) {
     };
 
     const handleNewAddress = () => {
-        console.log({ disableRef });
+        ({ disableRef });
         if (disableRef.current) {
             return;
         }

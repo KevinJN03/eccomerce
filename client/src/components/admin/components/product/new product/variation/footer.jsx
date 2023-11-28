@@ -28,7 +28,7 @@ function Footer({ type }) {
     } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        console.log('publish change');
+        
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
     }, [publish]);
 
@@ -63,14 +63,14 @@ function Footer({ type }) {
                 publishData(formData);
             }, 1000);
 
-            console.log('isAllInputValid.current: ', isAllInputValid.current);
+            
             if (publishError?.size > 0) {
-                console.log('i have clearTimeount');
+                
                 clearTimeout(timeout);
                 setLoading(() => false);
             }
         } catch (error) {
-            console.log('error while publish: ', error);
+            
         }
     };
 
@@ -91,7 +91,7 @@ function Footer({ type }) {
             setLoading(() => false);
 
             const errorData = error.response.data;
-            console.log('error', errorData);
+            
             errorData?.[0]?.type == 'field'
                 ? publishErrorDispatch({ type: 'set', data: errorData })
                 : publishErrorDispatch({

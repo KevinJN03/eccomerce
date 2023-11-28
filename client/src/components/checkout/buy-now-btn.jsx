@@ -171,7 +171,7 @@ function Buy_Now_Btn({ disable }) {
 
                 setOrderSubmit(() => false);
             } else {
-                console.log({ paymentIntent });
+                ({ paymentIntent });
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);

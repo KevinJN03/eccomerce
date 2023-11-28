@@ -9,7 +9,7 @@ function Navigation_Links({ className, product, loading, shouldUpdateGender }) {
             return;
         }
         if (product.gender && product.gender != state.gender) {
-            console.log('not the same gender', product);
+            'not the same gender', product;
 
             debugger;
             dispatch({ type: product.gender });

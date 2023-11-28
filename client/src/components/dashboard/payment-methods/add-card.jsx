@@ -12,7 +12,7 @@ import AddCartForm from '../../common/error-alert';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Add_Card({}) {
-    console.log('env: ', STRIPE_KEY);
+    'env: ', STRIPE_KEY;
     const stripePromise = loadStripe(STRIPE_KEY);
 
     const [loading, setLoading] = useState(true);
@@ -48,7 +48,7 @@ function Add_Card({}) {
         axios
             .get('user/payment-method/card/save')
             .then((res) => {
-                console.log(res.data.client_secret);
+                res.data.client_secret;
                 setOptions((prevState) => ({
                     ...prevState,
                     clientSecret: res.data.client_secret,
@@ -57,7 +57,7 @@ function Add_Card({}) {
                 setLoading(() => false);
             })
             .catch((error) => {
-                console.logo('error while getting secret: ', error);
+                o('error while getting secret: ', error);
                 setLoading(() => false);
             });
     }, []);

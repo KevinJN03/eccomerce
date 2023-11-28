@@ -33,7 +33,7 @@ function ItemPage() {
                     setAlsoLike(res.data.also_like[gender]);
                 })
                 .catch((error) => {
-                    console.log('Error fetching data, not found', error);
+                    'Error fetching data, not found', error;
                 });
         }, 1500);
         return () => {
@@ -45,7 +45,7 @@ function ItemPage() {
     function getRoute() {
         const { id } = useParams();
         const route = location.pathname.split('/')[1];
-        console.log('path', route);
+        'path', route;
     }
     function Loader() {
         return <span className="loading loading-infinity loading-lg"></span>;
@@ -65,7 +65,8 @@ function ItemPage() {
             ) : ( */}
             <section className="item-page-wrapper">
                 <section id="item-page">
-                    <Navigation_Links shouldUpdateGender={true}
+                    <Navigation_Links
+                        shouldUpdateGender={true}
                         product={{
                             title: product?.title,
                             gender: product?.gender,
@@ -87,7 +88,6 @@ function ItemPage() {
                         />
                         <Product_info
                             loading={loading}
-                           
                             text={example?.text}
                             title={product?.title}
                             size={product?.size}

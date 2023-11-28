@@ -25,7 +25,7 @@ function UpdateProduct(props, value) {
     props?.singleValue &&
         useEffect(() => {
             const { singleValue } = props;
-            console.log('here');
+            ('here');
             setTitle(() => singleValue?.title);
             setPriceValue((prev) => ({
                 ...prev,
@@ -55,7 +55,7 @@ function UpdateProduct(props, value) {
                     type: 'set',
                     combine: newVariations.slice(2)[0],
                 });
-                console.log('combine', newVariations[2]);
+                'combine', newVariations[2];
                 contentDispatch({ type: 'manage' });
             }
             setVariations(() => newVariations.slice(0, 2));

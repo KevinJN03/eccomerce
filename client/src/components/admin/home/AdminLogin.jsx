@@ -25,9 +25,9 @@ function AdminLogin({}) {
         try {
             const result = await adminAxios.post('login', data);
 
-            console.log({ result });
+            ({ result });
         } catch (error) {
-            console.log('error at admin login', error.response.data);
+            'error at admin login', error.response.data;
 
             setError(() => error.response.data);
         }

@@ -141,20 +141,15 @@ function Payment_Type({ initialView }) {
     };
 
     const onClickAway = () => {
-        console.log({ disableOtherComponents });
         if (!disableOtherComponents['disable']) {
             return;
         }
 
-        // SetDisableOtherComponents(() => ({
-        //     disable: false,
-        //     addressType: null,
-        // }));
-        // if (selectedMethod['type']) {
-        //     setView('selectedMethod');
-        // } else {
-        //     setView('options');
-        // }
+        if (selectedMethod['type']) {
+            setView('selectedMethod');
+        } else {
+            setView('options');
+        }
     };
     return (
         <PaymentTypeProvider value={value}>

@@ -13,14 +13,11 @@ function AddToCart({
     const { dispatch } = useCart();
 
     const handleClick = () => {
-        
-
-
         if (
             (product.isSizePresent && !variationSelect.size.id) ||
             (product.isColorPresent && !variationSelect.color.id)
         ) {
-            console.log('enter error');
+            ('enter error');
             setError(() => true);
             return;
         }

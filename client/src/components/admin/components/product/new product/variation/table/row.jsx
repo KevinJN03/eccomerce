@@ -40,8 +40,7 @@ function Row({
     const [stock, setStock] = useState(singleVariation?.stock);
     const [trigger, setTrigger] = useState(false);
 
-    const { setVariations, combineDispatch } =
-        useNewProduct();
+    const { setVariations, combineDispatch } = useNewProduct();
 
     useEffect(() => {
         if (check == true) {
@@ -135,7 +134,7 @@ function Row({
     };
 
     function onClickAway() {
-        console.log('clickaway');
+        ('clickaway');
         if (
             (!price && !stock) ||
             (singleVariation.price == price &&
@@ -240,7 +239,7 @@ function Row({
                                 name={`check-${singleVariation.id}`}
                                 key={inputCheck}
                                 // onAnimationComplete={(definition) => {
-                                //     console.log(
+                                //     (
                                 //         'Completed animating',
                                 //         definition,
                                 //         this.definition
@@ -250,7 +249,7 @@ function Row({
                                 // animate={inputCheck ? 'inputCheck' : 'uncheck'}
                                 // initial={false}
                                 type="checkbox"
-                                className={`checkbox no-animation !rounded-[3px]`}
+                                className={`no-animation checkbox !rounded-[3px]`}
                                 /* inputCheck && !variation.disabled */
                                 checked={inputCheck && visible}
                                 onChange={handleCheck}
@@ -339,17 +338,12 @@ function Row({
 
 export function RowInput(props) {
     const { visible, value, error, property, handleOnchange } = props;
-    const {
-        publish,
-        publishErrorDispatch,
-        publishError,
-        isAllInputValid,
-  
-    } = useNewProduct();
+    const { publish, publishErrorDispatch, publishError, isAllInputValid } =
+        useNewProduct();
 
     const addToValidateError = (err) => {
         if (err || error[property]) {
-            // console.log('error');
+            // ('error');
             publishErrorDispatch({
                 type: 'addToValidateInput',
                 path: props?.id,
@@ -357,16 +351,14 @@ export function RowInput(props) {
             });
         }
 
-        // console.log('trying', publishError);
+        // ('trying', publishError);
     };
     useEffect(() => {
-    
-
         if (publishError.has('validateInput') && props?.id) {
             const isPresent = publishError.get('validateInput').has(props?.id);
 
             if ((isPresent && !error[property]) || !visible) {
-                console.log('deleting here');
+                ('deleting here');
                 publishErrorDispatch({
                     type: 'deleteValidateInput',
                     path: props?.id,
@@ -383,7 +375,7 @@ export function RowInput(props) {
         if (publish.firstAttempt) {
             const err = handleOnchange(value);
             if (visible && err) {
-                console.log('run useEffect for publish.firstattempt');
+                ('run useEffect for publish.firstattempt');
                 addToValidateError(err);
                 // isAllInputValid.current = false;
 

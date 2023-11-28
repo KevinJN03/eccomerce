@@ -9,13 +9,13 @@ export default function CategorySelect({
     isCategory,
 }) {
     const handleChange = (e) => {
-        console.log({ e: e.target.value });
+        
         setState(e.target.value);
     };
     return (
         <select
-        id='options'
-        name='options'
+            id="options"
+            name="options"
             className="category-select daisy-select my-0 !min-w-[160px] outline"
             defaultValue={title}
             value={state}
@@ -25,12 +25,11 @@ export default function CategorySelect({
                 {title}
             </option>
             {options.map((option, index) => {
-                // console.log("index: ", index)
+                // 
                 return (
                     <option
                         key={index}
                         value={isCategory ? option._id : option.toLowerCase()}
-                   
                     >
                         {isCategory ? option.name.toUpperCase() : option}
                     </option>

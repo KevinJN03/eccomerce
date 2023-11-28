@@ -24,7 +24,7 @@ export const reducer = (state, action) => {
         const newState = [...state].filter(({ id }) => {
             return id != action.id;
         });
-        console.log({ newState, state });
+        ({ newState, state });
         return newState;
     }
 

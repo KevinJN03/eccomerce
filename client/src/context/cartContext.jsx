@@ -17,7 +17,7 @@ const reducer = (cart, action) => {
 
     const { product } = action;
 
-    console.log({ product });
+    ({ product });
     if (action.type == 'add') {
         const foundItemInCart = cart.map((item) => {
             if (
@@ -47,7 +47,7 @@ const reducer = (cart, action) => {
     if (action.type == 'edit item') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
-                console.log('found item');
+                ('found item');
                 const newItem = {
                     ...item,
                     quantity: action.quantity,
@@ -108,7 +108,7 @@ export function CartProvider({ children }) {
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cart));
-        console.log('state updated');
+        ('state updated');
     }, [cart]);
 
     const value = {
