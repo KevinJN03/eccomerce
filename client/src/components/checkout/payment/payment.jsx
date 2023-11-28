@@ -12,8 +12,6 @@ import PaymentMethodProvider from '../../../context/paymentMethodContext';
 import axios from '../../../api/axios';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
-
 function Payment({
     billingAddress,
     setBillingAddress,
@@ -80,12 +78,10 @@ function Payment({
                     <PaymentMethodProvider
                         userPaymentMethods={userPaymentMethods}
                     >
-                        {initialView && (
-                            <Payment_Type
-                                disable={disableOtherComponents.disable}
-                                initialView={initialView}
-                            />
-                        )}
+                        <Payment_Type
+                            disable={disableOtherComponents.disable}
+                            initialView={initialView}
+                        />
                     </PaymentMethodProvider>
                 </motion.div>
             </AnimatePresence>

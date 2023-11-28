@@ -13,7 +13,7 @@ import axios from '../../../api/axios';
 import Error_Alert from '../../common/error-alert';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
-
+import { AnimatePresence, motion } from 'framer-motion';
 export default function Add_Card({}) {
     const { setView } = usePaymentTypeContext();
     const stripe = useStripe();
@@ -53,6 +53,18 @@ export default function Add_Card({}) {
         cardNumberElement.mount('#cardNumber');
         cardCvcElement.mount('#cardCvc');
 
+        cardCvcElement.on('change', () => {
+            setError((prevState) => ({ ...prevState, cvc: null }));
+        });
+
+        cardExpiryDateElement.on('change', () => {
+            setError((prevState) => ({ ...prevState, expiryDate: null }));
+        });
+
+        cardNumberElement.on('change', () => {
+            setError((prevState) => ({ ...prevState, number: null }));
+        });
+
         return () => {
             console.log('cleaning up elements', cardNumberElement);
             cardNumberElement.destroy();
@@ -81,6 +93,7 @@ export default function Add_Card({}) {
                 console.log('error while getting secret: ', error);
             });
     }, []);
+
     const saveCard = async () => {
         try {
             console.log('clientSecret', clientSecret);
@@ -101,6 +114,14 @@ export default function Add_Card({}) {
                 state: billingAddress['county'],
             };
 
+            if (!name) {
+                setError((prevState) => ({
+                    ...prevState,
+                    name: 'Please enter a nome.',
+                }));
+                return;
+            }
+
             const { error, setupIntent } = await stripe.confirmCardSetup(
                 clientSecret,
                 {
@@ -113,13 +134,31 @@ export default function Add_Card({}) {
                     },
                 }
             );
-        
+
             if (error) {
                 console.error(error);
-                setError((prevState) => ({
-                    ...prevState,
-                    general: error.message,
-                }));
+                const splitCode = error.code.split('_')[1];
+                if (splitCode == 'cvc') {
+                    setError((prevState) => ({
+                        ...prevState,
+                        cvc: error.message,
+                    }));
+                } else if (splitCode == 'number') {
+                    setError((prevState) => ({
+                        ...prevState,
+                        number: error.message,
+                    }));
+                } else if (splitCode == 'expiry') {
+                    setError((prevState) => ({
+                        ...prevState,
+                        expiryDate: error.message,
+                    }));
+                } else {
+                    setError((prevState) => ({
+                        ...prevState,
+                        general: error.message,
+                    }));
+                }
             } else {
                 console.log({ setupIntent });
 
@@ -136,7 +175,7 @@ export default function Add_Card({}) {
         }
     };
     return (
-        <section className="add-card">
+        <motion.section className="add-card">
             <SubHeader
                 text={'ADD CREDIT/DEBIT CARD'}
                 disablePadding={true}
@@ -155,12 +194,16 @@ export default function Add_Card({}) {
                     id={'cardNumber'}
                     icon={{ img: credit_icon, alt: 'credit card icon' }}
                     className={'w-full'}
+                    error={error}
+                    property={'number'}
                 />
 
                 <ElementDiv
                     label={'EXPIRY DATE'}
                     id={'cardExpiry'}
                     className={'w-2/6'}
+                    error={error}
+                    property={'expiryDate'}
                 />
                 <Input
                     value={name}
@@ -176,6 +219,8 @@ export default function Add_Card({}) {
                     id={'cardCvc'}
                     icon={{ img: cvv_icon, alt: 'cvc icon' }}
                     className={'w-2/6'}
+                    error={error}
+                    property={'cvc'}
                 />
                 <div
                     className="my-6 flex flex-row items-center justify-start gap-x-3 hover:cursor-pointer"
@@ -187,6 +232,7 @@ export default function Add_Card({}) {
                         name="default"
                         id="default-payment-check"
                         checked={defaultCheck}
+                        onChange={() => setDefaultCheck(!defaultCheck)}
                     />
 
                     <p>Save card details for next time</p>
@@ -199,53 +245,6 @@ export default function Add_Card({}) {
                     USE THIS CARD
                 </button>
             </div>
-            {/* <div className="mt-2 flex flex-row items-center gap-x-3 border-t-2 pt-4">
-                <p className="text-lg font-bold">WE ACCEPT: </p>
-                <div className="flex flex-row gap-x-2">
-                    {Object.values(logos).map((icon) => {
-                        return <img src={icon} className="h-10 w-10" />;
-                    })}
-                </div>
-            </div> */}
-        </section>
+        </motion.section>
     );
 }
-
-// const numberInputOnWheelPreventChange = (e) => {
-//     // Prevent the input value change
-//     e.target.blur();
-
-//     // Prevent the page/container scrolling
-//     e.stopPropagation();
-
-//     // Refocus immediately, on the next tick (after the current function is done)
-//     setTimeout(() => {
-//         e.target.focus();
-//     }, 0);
-// };
-
-// const handleCardNumber = (e) => {
-//     e.preventDefault();
-//     const lastIndex = parseInt(e.target.value.slice(-1));
-//     console.log({ lastIndex });
-//     if (!lastIndex && e.target.value.length > cardNumber.length) {
-//         return;
-//     }
-//     const parts = [];
-//     let value = e.target.value.replaceAll(' ', '');
-
-//     for (let i = 0; i < value.length; i += 4) {
-//         parts.push(value.substring(i, i + 4));
-//     }
-
-//     if (parts.length) {
-//         setCardNumber(() => parts.join(' '));
-//     } else {
-//         setCardNumber(() => value);
-//     }
-
-//     setError((prevState) => ({
-//         ...prevState,
-//         cardNumber: null,
-//     }));
-// };

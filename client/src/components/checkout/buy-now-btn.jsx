@@ -9,6 +9,7 @@ import { useAuth } from '../../hooks/useAuth';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
+import { AnimatePresence, motion } from 'framer-motion';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
@@ -77,6 +78,19 @@ function Buy_Now_Btn({ disable }) {
         try {
             setOrderSubmit(() => true);
 
+            const billing_details = {
+                address: {
+                    city: billingAddress.city,
+                    country: billingAddress.country,
+                    line1: billingAddress.address_1,
+                    line2: billingAddress.address_2,
+                    postal_code: billingAddress.postCode,
+                    state: billingAddress.county,
+                },
+                name: `${billingAddress.firstName} ${billingAddress.lastName}`,
+                email: user.email,
+            };
+
             if (selectedMethod['type'] == 'card') {
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
                     paymentIntentInfo.clientSecret,
@@ -90,31 +104,18 @@ function Buy_Now_Btn({ disable }) {
                     }
                 );
             }
-
+            const return_url = `${CLIENT_URL}/order/success`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
                     await stripe.confirmPayPalPayment(
                         paymentIntentInfo.clientSecret,
                         {
-                            return_url: `${CLIENT_URL}/order/success`,
+                            return_url,
                         }
                     );
             }
 
             if (selectedMethod['type'] == 'klarna') {
-                const billing_details = {
-                    address: {
-                        city: billingAddress.city,
-                        country: billingAddress.country,
-                        line1: billingAddress.address_1,
-                        line2: billingAddress.address_2,
-                        postal_code: billingAddress.postCode,
-                        state: billingAddress.county,
-                    },
-                    name: `${billingAddress.firstName} ${billingAddress.lastName}`,
-                    email: user.email,
-                };
-
                 const klarnaDObFormat = `${klarnaDob['year']}-${klarnaDob['month']}-${klarnaDob['day']}`;
                 const isKlarnaDobValid = dayjs(
                     klarnaDObFormat,
@@ -138,16 +139,37 @@ function Buy_Now_Btn({ disable }) {
                             payment_method: {
                                 billing_details,
                             },
-                            return_url: `${CLIENT_URL}/order/success`,
+                            return_url,
+                        }
+                    );
+            }
+
+            if (selectedMethod['type'] == 'clearpay') {
+                var { error, paymentIntent } =
+                    await stripe.confirmAfterpayClearpayPayment(
+                        paymentIntentInfo.clientSecret,
+                        {
+                            payment_method: { billing_details },
+                            return_url,
                         }
                     );
             }
             if (error) {
                 console.error('error with payment intent', error);
-                setError((prevState) => ({
-                    ...prevState,
-                    msg: error.message,
-                }));
+
+                if (error.code == 'incomplete_cvc') {
+                    setError((prevState) => ({
+                        ...prevState,
+                        cvc: error.message,
+                    }));
+                } else {
+                    setError((prevState) => ({
+                        ...prevState,
+                        msg: error.message,
+                    }));
+                }
+
+                setOrderSubmit(() => false);
             } else {
                 console.log({ paymentIntent });
             }
@@ -160,6 +182,30 @@ function Buy_Now_Btn({ disable }) {
         }
     };
 
+    const pVariant = {
+        initial: {
+            opacity: 0,
+        },
+        animate: {
+            opacity: 1,
+
+            transition: { duration: 0.2, delay: 0.4 },
+        },
+    };
+
+    const imgVariant = {
+        initial: {
+            opacity: 1,
+            display: 'hidden',
+            content: '',
+            translateX: -50,
+        },
+        animate: {
+            opacity: 1,
+            translateX: 0,
+            transition: { duration: 0.5, delay: 0.2 },
+        },
+    };
     const buttonContent = () => {
         if (selectedMethod['type'] == 'paypal-pay-in-3') {
             return (
@@ -174,14 +220,26 @@ function Buy_Now_Btn({ disable }) {
             );
         } else if (selectedMethod['type'] == 'paypal') {
             return (
-                <span className="flex flex-row items-center justify-center">
-                    <p className="text-lg font-[400] text-black">Pay with</p>
-                    <img
-                        src={paypal_icon}
-                        alt="paypal icon"
-                        className="h-16 "
-                    />
-                </span>
+                <AnimatePresence>
+                    <motion.span className="flex flex-row items-center justify-center">
+                        <motion.p
+                            className="text-lg font-[400] text-black"
+                            variants={pVariant}
+                            animate={'animate'}
+                            initial={'initial'}
+                        >
+                            Pay with
+                        </motion.p>
+                        <motion.img
+                            variants={imgVariant}
+                            animate={'animate'}
+                            initial={'initial'}
+                            src={paypal_icon}
+                            alt="paypal icon"
+                            className="h-16"
+                        />
+                    </motion.span>
+                </AnimatePresence>
             );
         } else {
             return (
@@ -196,29 +254,31 @@ function Buy_Now_Btn({ disable }) {
     return (
         <div className="flex w-11/12 flex-col gap-y-4 self-center">
             <div className="h-12 w-full bg-[#000000] bg-opacity-50">
-                <button
-                    className={`${
-                        selectedMethod['type'] == 'paypal' ||
-                        selectedMethod['type'] == 'paypal-pay-in-3'
-                            ? 'bg-amber-400'
-                            : 'bg-primary-green'
-                    } flex h-14 h-full max-h-20 w-full items-center justify-center self-center font-gotham font-bold transition-all hover:mix-blend-overlay disabled:opacity-40 disabled:cursor-not-allowed`}
-                    type="button"
-                    onClick={submitOrder}
-                    disabled={disable}
-                >
-                    {isOrderSubmit ? (
-                        <svg
-                            className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
-                            viewBox="25 25 50 50"
-                            strokeWidth="5"
-                        >
-                            <circle cx="50" cy="50" r="20" />
-                        </svg>
-                    ) : (
-                        <>{buttonContent()}</>
-                    )}
-                </button>
+                <AnimatePresence>
+                    <motion.button
+                        className={`${
+                            selectedMethod['type'] == 'paypal' ||
+                            selectedMethod['type'] == 'paypal-pay-in-3'
+                                ? 'bg-amber-400'
+                                : 'bg-primary-green'
+                        } flex h-14 h-full max-h-20 w-full items-center justify-center self-center font-gotham font-bold transition-all hover:mix-blend-overlay disabled:cursor-not-allowed disabled:opacity-40`}
+                        type="button"
+                        onClick={submitOrder}
+                        disabled={disable}
+                    >
+                        {isOrderSubmit ? (
+                            <svg
+                                className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                                viewBox="25 25 50 50"
+                                strokeWidth="5"
+                            >
+                                <circle cx="50" cy="50" r="20" />
+                            </svg>
+                        ) : (
+                            <>{buttonContent()}</>
+                        )}
+                    </motion.button>
+                </AnimatePresence>
             </div>
 
             <p className="mb-12 w-11/12 self-start">

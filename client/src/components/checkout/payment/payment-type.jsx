@@ -19,6 +19,8 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { generateVariants } from '../address form/address-item';
 import variants from '../address form/variants';
+
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 const views = {
     options: <Payment_Options />,
     card: <Add_Card />,
@@ -45,6 +47,11 @@ function Payment_Type({ initialView }) {
     const disable =
         disableOtherComponents['disable'] &&
         !disableOtherComponents['excludePayment'];
+
+    useEffect(() => {
+        setView(initialView);
+    }, [initialView]);
+
     useEffect(() => {
         if (
             viewContent == 'wallet' ||
@@ -132,55 +139,82 @@ function Payment_Type({ initialView }) {
             },
         },
     };
+
+    const onClickAway = () => {
+        console.log({ disableOtherComponents });
+        if (!disableOtherComponents['disable']) {
+            return;
+        }
+
+        // SetDisableOtherComponents(() => ({
+        //     disable: false,
+        //     addressType: null,
+        // }));
+        // if (selectedMethod['type']) {
+        //     setView('selectedMethod');
+        // } else {
+        //     setView('options');
+        // }
+    };
     return (
         <PaymentTypeProvider value={value}>
-            <motion.section
-                id="payment-type"
-                className={`mt-4 px-6 ${
-                    disable ? 'disable-component' : 'display-component'
-                }`}
-            >
-                <div className="mb-6 mt-3">
-                    <SubHeader
-                        disable={disable}
-                        disablePadding={true}
-                        text={'PAYMENT TYPE'}
-                        disableChangeBtn={disableChangeBtn}
-                        onClick={handleClick}
-                        enableCancelBtn={enableCancelBtn}
-                        cancelBtnClick={() => setView(() => 'selectedMethod')}
-                    />
-                </div>{' '}
-                <AnimatePresence mode="wait">
-                    <motion.section
-                        ref={containerRef}
-                        key={viewContent}
-                        variants={containerVariants}
-                        animate={'animate'}
-                        initial={'initial'}
-                        exit={'exit'}
-                    >
-                        <motion.div>
-                            {viewContent && (
-                                <motion.div
-                                    variants={viewVariants}
+            <ClickAwayListener onClickAway={onClickAway}>
+                <motion.div>
+                    {initialView && (
+                        <motion.section
+                            id="payment-type"
+                            className={`mt-4 px-6 ${
+                                disable
+                                    ? 'disable-component'
+                                    : 'display-component'
+                            }`}
+                        >
+                            <div className="mb-6 mt-3">
+                                <SubHeader
+                                    disable={disable}
+                                    disablePadding={true}
+                                    text={'PAYMENT TYPE'}
+                                    disableChangeBtn={disableChangeBtn}
+                                    onClick={handleClick}
+                                    enableCancelBtn={enableCancelBtn}
+                                    cancelBtnClick={() =>
+                                        setView(() => 'selectedMethod')
+                                    }
+                                />
+                            </div>{' '}
+                            <AnimatePresence mode="wait">
+                                <motion.section
+                                    ref={containerRef}
+                                    key={viewContent}
+                                    variants={containerVariants}
                                     animate={'animate'}
                                     initial={'initial'}
                                     exit={'exit'}
                                 >
-                                    {views[viewContent]}
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    </motion.section>
-                </AnimatePresence>
-                <div className="checkout-payment-methods">
-                    <h2 className="font-semibold tracking-widest">
-                        WE ACCEPT:
-                    </h2>
-                    <Payment_Methods className="w-10" />
-                </div>
-            </motion.section>
+                                    <motion.div>
+                                        {viewContent && (
+                                            <motion.div
+                                                variants={viewVariants}
+                                                animate={'animate'}
+                                                initial={'initial'}
+                                                exit={'exit'}
+                                            >
+                                                {views[viewContent]}
+                                            </motion.div>
+                                        )}
+                                    </motion.div>
+                                </motion.section>
+                            </AnimatePresence>
+                            <div className="checkout-payment-methods">
+                                <h2 className="font-semibold tracking-widest">
+                                    WE ACCEPT:
+                                </h2>
+                                <Payment_Methods className="w-10" />
+                            </div>
+                        </motion.section>
+                    )}
+                </motion.div>
+            </ClickAwayListener>
         </PaymentTypeProvider>
     );
 }

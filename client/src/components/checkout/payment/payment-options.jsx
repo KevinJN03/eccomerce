@@ -81,17 +81,31 @@ function Payment_Options({}) {
                 }
                 return (
                     <>
-                        <Payment_Btn
+                    {idx == 0 ?
+                        <>  <Payment_Btn
                             {...item}
                             key={idx}
                             disable={false}
                             handleClick={handleClick}
                         />
-                        {idx == 0 && (
+                       
                             <h1 className="mb-3 self-center font-gotham text-sm font-semibold tracking-widest text-slate-500">
                                 OR
                             </h1>
-                        )}
+                        </>
+                       
+                       :<Payment_Btn
+                        {...item}
+                        key={idx}
+                        disable={false}
+                        handleClick={handleClick}
+                        className={'max-h-12'}
+                    />
+                
+
+
+                    }
+                        
                     </>
                 );
             })}

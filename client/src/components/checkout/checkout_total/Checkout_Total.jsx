@@ -25,7 +25,7 @@ function Checkout_Total() {
     console.log(screenSize);
     return (
         <motion.section
-            className="mt-5 h-fit"
+            className="mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
             style={{ y: screenSize.width > 1024 ? scrollY : '' }}
         >
             <section id="checkout-total">

@@ -33,7 +33,10 @@ const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Checkout() {
     disableLayout();
-    const stripePromise = loadStripe(STRIPE_KEY);
+
+    const [stripePromise, setStripePromise] = useState(() =>
+        loadStripe(STRIPE_KEY)
+    );
     const [error, setError] = useState({
         msg: null,
         positionY: '0px',
@@ -51,8 +54,9 @@ function Checkout() {
         disable: false,
         addressType: null,
     });
+
     const [selectedMethod, setSelectedMethod] = useState({});
-    const [klarnaDob, setKlarnaDob] = useState({})
+    const [klarnaDob, setKlarnaDob] = useState({});
     const fetchData = async (controller) => {
         try {
             const result = await axios.get('user/userData', {
@@ -133,7 +137,8 @@ function Checkout() {
                 setOrderSubmit,
                 selectedMethod,
                 setSelectedMethod,
-                klarnaDob, setKlarnaDob
+                klarnaDob,
+                setKlarnaDob,
             }}
         >
             <Elements stripe={stripePromise}>
