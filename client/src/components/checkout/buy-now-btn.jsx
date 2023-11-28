@@ -109,7 +109,7 @@ function Buy_Now_Btn({ disable }) {
                     }
                 );
             }
-            const return_url = `${CLIENT_URL}/order/success`;
+            const return_url = `${CLIENT_URL}/order-success`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
                     await stripe.confirmPayPalPayment(clientSecret, {
