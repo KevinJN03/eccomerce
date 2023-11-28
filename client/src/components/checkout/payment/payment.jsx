@@ -8,6 +8,8 @@ import Address from '../address form/address';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import PaymentMethodProvider from '../../../context/paymentMethodContext';
+import axios from '../../../api/axios';
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
@@ -18,13 +20,31 @@ function Payment({
     defaultProperty,
 }) {
     const { disableOtherComponents } = useCheckoutContext();
-
+    const [userPaymentMethods, setUserPaymentMethods] = useState([]);
+    const { selectedMethod, setSelectedMethod } = useCheckoutContext();
     const disable =
         disableOtherComponents.disable &&
         disableOtherComponents.addressType != 'BILLING';
 
+    useEffect(() => {
+        axios
+            .get('user/payment-method/all')
+            .then(({ data }) => {
+                setUserPaymentMethods(() => data.paymentMethods);
+                // setSelectedMethod(() => data.paymentMethods[0]);
+
+                setSelectedMethod(() => ({
+                    type: 'clearpay',
+                    title: 'PAY IN 3',
+                }));
+            })
+            .catch((error) => {
+                console.error('error while fetching payment methods', error);
+            });
+    }, []);
+
     return (
-        // <Elements stripe={stripePromise}>
+     
         <section className={`!bg-white `}>
             <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
 
@@ -52,7 +72,9 @@ function Payment({
                 {' '}
             </div>
             <div className="!bg-[var(--light-grey)]">
-                <Payment_Type disable={disableOtherComponents.disable} />
+                <PaymentMethodProvider userPaymentMethods={userPaymentMethods}>
+                    <Payment_Type disable={disableOtherComponents.disable} />
+                </PaymentMethodProvider>
             </div>
         </section>
         // </Elements>

@@ -5,7 +5,7 @@ import { SubHeader } from './SubHeader';
 import Payment_Options from './payment-options';
 import { useEffect, useState } from 'react';
 
-import PaymentMethodProvider from '../../../context/paymentMethodContext';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
 
 import logos from '../../dashboard/payment-methods/logos';
 import { Input } from 'postcss';
@@ -27,33 +27,24 @@ const views = {
 function Payment_Type({ disable }) {
     const [viewContent, setView] = useState('selectedMethod');
     const [disableChangeBtn, setDisableChangeBtn] = useState(false);
-    const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [loading, setLoading] = useState(false);
     // const [selectedMethod, setSelectedMethod] = useState({});
     const { selectedMethod, setSelectedMethod } = useCheckoutContext();
     const [nextView, setNextView] = useState('');
+    const { paymentMethods } = usePaymentMethods();
+    const [enableCancelBtn, setEnableCancelBtn] = useState(false);
     useEffect(() => {
-        axios
-            .get('user/payment-method/all')
-            .then(({ data }) => {
-                setUserPaymentMethods(() => data.paymentMethods);
-                // setSelectedMethod(() => data.paymentMethods[0]);
-
-                setSelectedMethod(() => ({
-                    type: 'clearpay',
-                    title: 'PAY IN 3',
-                }));
-            })
-            .catch((error) => {
-                console.error('error while fetching payment methods', error);
-            });
-    }, []);
-
-    useEffect(() => {
-        if (viewContent == 'options' || viewContent == 'wallet') {
+        if (
+            viewContent == 'wallet' ||
+            (viewContent == 'options' && paymentMethods.length == 0)
+        ) {
             setDisableChangeBtn(true);
+            setEnableCancelBtn(() => false);
+        } else if (viewContent == 'options' && paymentMethods.length > 0) {
+            setEnableCancelBtn(() => true);
         } else {
             setDisableChangeBtn(false);
+            setEnableCancelBtn(() => false);
         }
 
         if (viewContent == 'selectedMethod') {
@@ -78,32 +69,32 @@ function Payment_Type({ disable }) {
     };
     return (
         <PaymentTypeProvider value={value}>
-            <PaymentMethodProvider userPaymentMethods={userPaymentMethods}>
-                <section
-                    id="payment-type"
-                    className={`mt-4 px-6 ${
-                        disable ? 'disable-component' : 'display-component'
-                    }`}
-                >
-                    <div className="mb-6 mt-3">
-                        <SubHeader
-                            disablePadding={true}
-                            text={'PAYMENT TYPE'}
-                            disableChangeBtn={disableChangeBtn}
-                            onClick={handleClick}
-                        />
-                    </div>
+            <section
+                id="payment-type"
+                className={`mt-4 px-6 ${
+                    disable ? 'disable-component' : 'display-component'
+                }`}
+            >
+                <div className="mb-6 mt-3">
+                    <SubHeader
+                        disablePadding={true}
+                        text={'PAYMENT TYPE'}
+                        disableChangeBtn={disableChangeBtn}
+                        onClick={handleClick}
+                        enableCancelBtn={enableCancelBtn}
+                        cancelBtnClick={() => setView(() => 'selectedMethod')}
+                    />
+                </div>
 
-                    {views[viewContent]}
+                {views[viewContent]}
 
-                    <div className="checkout-payment-methods">
-                        <h2 className="font-semibold tracking-widest">
-                            WE ACCEPT:
-                        </h2>
-                        <Payment_Methods className="w-10" />
-                    </div>
-                </section>
-            </PaymentMethodProvider>
+                <div className="checkout-payment-methods">
+                    <h2 className="font-semibold tracking-widest">
+                        WE ACCEPT:
+                    </h2>
+                    <Payment_Methods className="w-10" />
+                </div>
+            </section>
         </PaymentTypeProvider>
     );
 }
