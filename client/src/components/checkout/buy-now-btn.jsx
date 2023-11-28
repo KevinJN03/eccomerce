@@ -202,7 +202,7 @@ function Buy_Now_Btn({ disable }) {
                         selectedMethod['type'] == 'paypal-pay-in-3'
                             ? 'bg-amber-400'
                             : 'bg-primary-green'
-                    } flex h-14 h-full max-h-20 w-full items-center justify-center self-center font-gotham font-bold transition-all hover:mix-blend-overlay disabled:opacity-40`}
+                    } flex h-14 h-full max-h-20 w-full items-center justify-center self-center font-gotham font-bold transition-all hover:mix-blend-overlay disabled:opacity-40 disabled:cursor-not-allowed`}
                     type="button"
                     onClick={submitOrder}
                     disabled={disable}

@@ -10,6 +10,7 @@ import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentMethodProvider from '../../../context/paymentMethodContext';
 import axios from '../../../api/axios';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
@@ -22,6 +23,8 @@ function Payment({
     const { disableOtherComponents } = useCheckoutContext();
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const { selectedMethod, setSelectedMethod } = useCheckoutContext();
+
+    const [initialView, setInitialView] = useState(null);
     const disable =
         disableOtherComponents.disable &&
         disableOtherComponents.addressType != 'BILLING';
@@ -31,12 +34,14 @@ function Payment({
             .get('user/payment-method/all')
             .then(({ data }) => {
                 setUserPaymentMethods(() => data.paymentMethods);
-                // setSelectedMethod(() => data.paymentMethods[0]);
 
-                setSelectedMethod(() => ({
-                    type: 'clearpay',
-                    title: 'PAY IN 3',
-                }));
+                if (data.paymentMethods[0]) {
+                    setSelectedMethod(() => data.paymentMethods[0]);
+
+                    setInitialView(() => 'selectedMethod');
+                } else {
+                    setInitialView(() => 'options');
+                }
             })
             .catch((error) => {
                 console.error('error while fetching payment methods', error);
@@ -44,7 +49,6 @@ function Payment({
     }, []);
 
     return (
-     
         <section className={`!bg-white `}>
             <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
 
@@ -71,11 +75,20 @@ function Payment({
             >
                 {' '}
             </div>
-            <div className="!bg-[var(--light-grey)]">
-                <PaymentMethodProvider userPaymentMethods={userPaymentMethods}>
-                    <Payment_Type disable={disableOtherComponents.disable} />
-                </PaymentMethodProvider>
-            </div>
+            <AnimatePresence mode="wait">
+                <motion.div className="!bg-[var(--light-grey)]">
+                    <PaymentMethodProvider
+                        userPaymentMethods={userPaymentMethods}
+                    >
+                        {initialView && (
+                            <Payment_Type
+                                disable={disableOtherComponents.disable}
+                                initialView={initialView}
+                            />
+                        )}
+                    </PaymentMethodProvider>
+                </motion.div>
+            </AnimatePresence>
         </section>
         // </Elements>
     );
