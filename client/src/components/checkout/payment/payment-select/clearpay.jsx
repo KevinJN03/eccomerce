@@ -65,7 +65,10 @@ function ClearPaySelect({}) {
                             .fill(1)
                             .map((item, idx) => {
                                 return (
-                                    <span className="h-2 w-2 rounded-full bg-white "></span>
+                                    <span
+                                        key={idx}
+                                        className="h-2 w-2 rounded-full bg-white "
+                                    ></span>
                                 );
                             })}
                     </div>
@@ -79,6 +82,7 @@ function ClearPaySelect({}) {
                         ].map((item, idx) => {
                             return (
                                 <span
+                                    key={idx}
                                     className={`${
                                         idx == 0
                                             ? 'justify-start'

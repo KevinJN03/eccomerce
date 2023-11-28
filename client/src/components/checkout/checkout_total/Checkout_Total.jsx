@@ -35,7 +35,9 @@ function Checkout_Total() {
                     </h1>
                     <Link to="/cart">Edit</Link>
                 </div>
-                <div className="product-container">
+
+              <div className='max-h-[300px] flex mb-4 py-6 border-b-2'>
+                <div className="product-container max-h-[70%] overflow-y-auto">
                     {cart &&
                         cart.map((product) => {
                             return (
@@ -45,7 +47,11 @@ function Checkout_Total() {
                                 />
                             );
                         })}
-                </div>
+                </div> 
+              </div>
+                     
+                
+              
 
                 <div className="flex flex-col gap-3">
                     <p className="flex justify-between">

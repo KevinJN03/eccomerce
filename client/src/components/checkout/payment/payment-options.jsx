@@ -6,10 +6,15 @@ import clearPay_logo from '../../../assets/icons/payment-icons/afterpay.png';
 import Payment_Methods from '../../cart/payment_methods';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import calculateTotal from '../../common/calculateTotal';
 
 function Payment_Options({}) {
     const { setView } = usePaymentTypeContext();
     const { setSelectedMethod } = useCheckoutContext();
+
+    const { withShipping } = calculateTotal();
+
+    const total = withShipping;
     function handlePaymentOption() {
         setSelectedMethod(() => ({
             type: this.method,
@@ -21,7 +26,7 @@ function Payment_Options({}) {
         {
             button_text: 'ADD CREDIT / DEBIT CARD',
             button_img: credit_icon,
-
+            disable: false,
             handleClick: () => setView('card'),
         },
         {
@@ -31,6 +36,8 @@ function Payment_Options({}) {
             title: 'Pay With',
             method: 'paypal',
             handleClick: handlePaymentOption,
+
+            disable: false,
         },
 
         {
@@ -41,15 +48,18 @@ function Payment_Options({}) {
             title: 'Pay Later',
             method: 'paypal-pay-in-3',
             handleClick: handlePaymentOption,
+            disable: total < 30 || total > 2000,
+            disableMsg:
+                'Pay in 3 is only available for orders above £30.00 and below £2,000.00',
         },
         {
             button_text: 'PAY LATER',
             additional_text: 'with Klarna',
             button_img: klarna_logo,
             view: 'klarna',
-            method: 'klarna-pay-later',
+            method: 'klarna',
             title: 'PAY LATER WITH KLARNA',
-
+            disable: false,
             handleClick: handlePaymentOption,
         },
         {
@@ -58,22 +68,28 @@ function Payment_Options({}) {
             button_img: klarna_logo,
             view: 'klarna',
             title: 'PAY IN 3 WITH KLARNA',
-            method: 'klarna-pay-in-3',
+            method: 'klarna',
             handleClick: handlePaymentOption,
+            disable: total < 25 || total > 800,
+            disableMsg:
+                'Pay in 3 with Klarna is only available for orders above £25.00 and below £800.00',
         },
         {
             button_text: 'CLEARPAY',
-            
+
             button_img: clearPay_logo,
             view: 'clearpay',
             title: 'PAY NOW WITH CLEARPAY',
             method: 'clearpay',
             handleClick: handlePaymentOption,
+            disable: total < 25 || total > 800,
+            disableMsg:
+                'Clearpay is only available for orders above £25.00 and below £800.00',
         },
     ];
 
     return (
-        <div className="flex w-6/12 mb-6 flex-col">
+        <div className="mb-6 flex w-6/12 flex-col">
             {paymentMethodArray.map((item, idx) => {
                 let handleClick = item.handleClick;
                 if (idx > 0) {
@@ -81,31 +97,28 @@ function Payment_Options({}) {
                 }
                 return (
                     <>
-                    {idx == 0 ?
-                        <>  <Payment_Btn
-                            {...item}
-                            key={idx}
-                            disable={false}
-                            handleClick={handleClick}
-                        />
-                       
-                            <h1 className="mb-3 self-center font-gotham text-sm font-semibold tracking-widest text-slate-500">
-                                OR
-                            </h1>
-                        </>
-                       
-                       :<Payment_Btn
-                        {...item}
-                        key={idx}
-                        disable={false}
-                        handleClick={handleClick}
-                        className={'max-h-12'}
-                    />
-                
-
-
-                    }
-                        
+                        {idx == 0 ? (
+                            <>
+                                {' '}
+                                <Payment_Btn
+                                    {...item}
+                                    key={idx}
+                                    // disable={false}
+                                    handleClick={handleClick}
+                                />
+                                <h1 className="mb-3 self-center font-gotham text-sm font-semibold tracking-widest text-slate-500">
+                                    OR
+                                </h1>
+                            </>
+                        ) : (
+                            <Payment_Btn
+                                {...item}
+                                key={idx}
+                                // disable={false}
+                                handleClick={handleClick}
+                                className={'max-h-12'}
+                            />
+                        )}
                     </>
                 );
             })}

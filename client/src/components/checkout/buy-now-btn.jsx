@@ -14,6 +14,7 @@ dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 function Buy_Now_Btn({ disable }) {
+    console.log('rerender');
     const {
         isOrderSubmit,
         setOrderSubmit,
@@ -61,23 +62,26 @@ function Buy_Now_Btn({ disable }) {
         });
 
         const { id, clientSecret } = data;
-        setPaymentIntentInfo({ id, clientSecret });
-    };
 
-    useEffect(() => {
-        if (
-            Object.keys(billingAddress).length == 0 &&
-            Object.keys(shippingAddress).length == 0
-        ) {
-            return;
-        }
-        fetchPaymentIntent();
-    }, [billingAddress, shippingAddress]);
+        return { id, clientSecret };
+    };
 
     const submitOrder = async () => {
         try {
             setOrderSubmit(() => true);
+            let clientSecret = '';
+            if (!paymentIntentInfo) {
+                const info = await fetchPaymentIntent();
+                clientSecret = info.clientSecret;
+                setPaymentIntentInfo({
+                    id: info.id,
+                    clientSecret: info.clientSecret,
+                });
 
+                console.log({ info });
+            } else {
+                clientSecret = paymentIntentInfo.clientSecret;
+            }
             const billing_details = {
                 address: {
                     city: billingAddress.city,
@@ -92,8 +96,9 @@ function Buy_Now_Btn({ disable }) {
             };
 
             if (selectedMethod['type'] == 'card') {
+                console.log({ clientSecret });
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
-                    paymentIntentInfo.clientSecret,
+                    clientSecret,
                     {
                         payment_method: selectedMethod.id,
                         payment_method_options: {
@@ -107,12 +112,9 @@ function Buy_Now_Btn({ disable }) {
             const return_url = `${CLIENT_URL}/order/success`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
-                    await stripe.confirmPayPalPayment(
-                        paymentIntentInfo.clientSecret,
-                        {
-                            return_url,
-                        }
-                    );
+                    await stripe.confirmPayPalPayment(clientSecret, {
+                        return_url,
+                    });
             }
 
             if (selectedMethod['type'] == 'klarna') {
@@ -122,7 +124,7 @@ function Buy_Now_Btn({ disable }) {
                     'YYYY-MM-DD',
                     true
                 ).isValid();
-
+                console.log({ isKlarnaDobValid });
                 if (!isKlarnaDobValid) {
                     setKlarnaDob((prevState) => ({
                         ...prevState,
@@ -133,26 +135,20 @@ function Buy_Now_Btn({ disable }) {
                     return;
                 }
                 var { error, paymentIntent } =
-                    await stripe.confirmKlarnaPayment(
-                        paymentIntentInfo.clientSecret,
-                        {
-                            payment_method: {
-                                billing_details,
-                            },
-                            return_url,
-                        }
-                    );
+                    await stripe.confirmKlarnaPayment(clientSecret, {
+                        payment_method: {
+                            billing_details,
+                        },
+                        return_url,
+                    });
             }
 
             if (selectedMethod['type'] == 'clearpay') {
                 var { error, paymentIntent } =
-                    await stripe.confirmAfterpayClearpayPayment(
-                        paymentIntentInfo.clientSecret,
-                        {
-                            payment_method: { billing_details },
-                            return_url,
-                        }
-                    );
+                    await stripe.confirmAfterpayClearpayPayment(clientSecret, {
+                        payment_method: { billing_details },
+                        return_url,
+                    });
             }
             if (error) {
                 console.error('error with payment intent', error);

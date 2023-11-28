@@ -191,7 +191,7 @@
 }
 
 .payment-btn {
-    @apply mb-4 flex w-full flex-row items-center p-3;
+    @apply flex w-full flex-row items-center p-3;
 
     border: 2px solid var(--light-grey);
 }
@@ -233,8 +233,29 @@
 }
 
 #checkout-total .product-container {
-    @apply mb-4 flex flex-col gap-5 border-b-2 py-6;
+    @apply flex flex-col gap-5 ;
     width: 100%;
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
 .product-container .product-cart {
     @apply flex flex-row gap-5;
@@ -293,11 +314,7 @@
 .dob-select {
     select {
         text-align-last: right;
-       
-       
-    
     }
     option {
-       
     }
 }
