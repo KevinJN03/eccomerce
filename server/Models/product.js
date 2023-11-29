@@ -9,7 +9,7 @@ const variationSchema = new Schema(
     default: Boolean,
     quantityHeader: Object,
     priceHeader: Object,
-    combine: Boolean,
+    combine: Schema.Types.Boolean,
     on: Boolean,
     name2: String,
   },

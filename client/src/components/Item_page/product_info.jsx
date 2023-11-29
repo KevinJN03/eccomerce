@@ -74,6 +74,9 @@ function Product_info({
     // setOutOfStock(() => false)
     //     }, [colorSelect])
 
+
+
+    console.log({ combineVariation: product.combineVariation})
     return (
         <section id="product-info">
             {!loading ? (
@@ -107,9 +110,6 @@ function Product_info({
                     variationSelect={variationSelect}
                     setVariationSelection={setVariationSelection}
                     array={
-                        (product.isVariationCombine &&
-                            colorSelect &&
-                            product.combineVariation[colorSelect]) ||
                         product.size
                     }
                     property={'size'}

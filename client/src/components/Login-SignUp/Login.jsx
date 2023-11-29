@@ -65,7 +65,7 @@ function Login({ handleSubmit, admin }) {
             </Link>
             <button
                 type="button"
-                className="login-signup-btn "
+                className="login-signup-btn"
                 disabled={error.email || error.password || loading}
                 onClick={(e) =>
                     admin

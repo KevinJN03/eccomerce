@@ -70,7 +70,8 @@ function Buy_Now_Btn({ disable }) {
         try {
             setOrderSubmit(() => true);
             let clientSecret = '';
-            if (!paymentIntentInfo) {
+            // if (!paymentIntentInfo) {
+                if (true) {
                 const info = await fetchPaymentIntent();
                 clientSecret = info.clientSecret;
                 setPaymentIntentInfo({
