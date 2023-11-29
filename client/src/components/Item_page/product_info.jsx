@@ -24,59 +24,66 @@ function Product_info({
     loading,
 }) {
     const [priceState, setPriceState] = useState(null);
-    ('render product info');
 
-    const [sizeSelect, setSizeSelect] = useState(null);
     const sizeRef = useRef();
-    const [colorSelect, setColorSelect] = useState(null);
+
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [variationSelect, setVariationSelection] = useState({
-        color: { id: null, variation: null },
-        size: { id: null, variation: null },
+        variation1: { id: null, variation: null },
+        variation2: { id: null, variation: null },
     });
-    useEffect(() => {
-        if (product.hasOwnProperty('price')) {
-            setPriceState(() => product.price?.current);
-        }
-        if (product.hasOwnProperty('color')) {
-            setColorSelect(() =>
-                product.color.length == 1 ? product.color[0].color : null
-            );
-        }
 
-        if (product.hasOwnProperty('size')) {
-            setColorSelect(() =>
-                product.size.length == 1 ? product.color[0].color : null
-            );
+    const [combineVariation, setCombineVariation] = useState(null);
+
+    useEffect(() => {
+        setPriceState(product?.price?.current);
+
+        if (product?.isVariationCombine) {
+            setCombineVariation(() => product?.combineVariation);
         }
     }, [product]);
+
     useEffect(() => {
-        const refStock =
-            sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.stock;
-        const refPrice =
-            sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.price;
+        // const refStock =
+        //     sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.stock;
+        // const refPrice =
+        //     sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.price;
 
-        if (refPrice) {
-            setPriceState(() => refPrice);
+        // if (refPrice) {
+        //     setPriceState(() => refPrice);
+        // }
+        // if (refStock == 0) {
+        //     setOutOfStock(() => true);
+        // } else {
+        //     setOutOfStock(() => false);
+        // }
+        // if (error) {
+        //     setError(() => false);
+        // }
+
+        console.log('select change');
+
+    
+
+        if (product?.isVariationCombine) {
+            var getPrice =
+                combineVariation?.[variationSelect?.variation1?.variation]?.[
+                    variationSelect?.variation2?.variation
+                ]?.price;
+
+                setPriceState(() => getPrice || product?.price?.current);
         }
-        if (refStock == 0) {
-            setOutOfStock(() => true);
-        } else {
-            setOutOfStock(() => false);
-        }
-        if (error) {
-            setError(() => false);
-        }
-    }, [sizeSelect, colorSelect]);
 
-    //     useEffect(() => {
-    // setOutOfStock(() => false)
-    //     }, [colorSelect])
+       
+    }, [variationSelect.variation1, variationSelect.variation2]);
 
-
-
-    console.log({ combineVariation: product.combineVariation})
+    console.log({
+        variation2: product?.variation1,
+        variation1: product?.variation2,
+        combine: product?.combineVariation,
+        isVariationCombine: product?.isVariationCombine,
+    });
     return (
         <section id="product-info">
             {!loading ? (
@@ -85,43 +92,43 @@ function Product_info({
                 <div className="skeleton-pulse mb-4 h-full max-h-[100px] w-full"></div>
             )}
 
-            {product?.isColorPresent && !loading ? (
+            {product?.isVariation1Present && !loading ? (
+                <>
+                    <Select
+                        variationSelect={variationSelect}
+                        setVariationSelection={setVariationSelection}
+                        array={product.variation1.array}
+                        text={product.variation1.title.toUpperCase()}
+                        single={product?.variation1?.array?.[0]['variation']}
+                        property={'variation1'}
+                        setOutOfStock={setOutOfStock}
+                        setPrice={setPriceState}
+                        ref={null}
+                        isSecond={false}
+                    />
+                </>
+            ) : (
+                product?.isVariation1Present &&
+                loading && (
+                    <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
+                )
+            )}
+
+            {product?.isVariation2Present && !loading ? (
                 <Select
                     variationSelect={variationSelect}
                     setVariationSelection={setVariationSelection}
-                    array={color}
-                    text={'COLOUR'}
-                    single={color[0]['variation']}
-                    property={'color'}
+                    array={product.variation2.array}
+                    text={product.variation2.title.toUpperCase()}
+                    single={product?.variation2?.array?.[0]['variation']}
+                    property={'variation2'}
                     setOutOfStock={setOutOfStock}
                     setPrice={setPriceState}
                     ref={null}
                     isSecond={false}
                 />
             ) : (
-                product?.isColorPresent &&
-                loading && (
-                    <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
-                )
-            )}
-
-            {product?.isSizePresent && !loading ? (
-                <Select
-                    variationSelect={variationSelect}
-                    setVariationSelection={setVariationSelection}
-                    array={
-                        product.size
-                    }
-                    property={'size'}
-                    text={'SIZE'}
-                    single={size[0]['variation']}
-                    setOutOfStock={setOutOfStock}
-                    setPrice={setPriceState}
-                    ref={sizeRef}
-                    isSecond={true}
-                />
-            ) : (
-                product?.isSizePresent &&
+                product?.isVariation2Present &&
                 loading && (
                     <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
                 )
@@ -142,8 +149,6 @@ function Product_info({
                             variationSelect={variationSelect}
                             product={product}
                             price={priceState}
-                            sizeSelect={sizeSelect}
-                            colorSelect={colorSelect}
                             setError={setError}
                             isOutOfStock={isOutOfStock}
                         />

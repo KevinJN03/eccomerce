@@ -90,10 +90,10 @@ function ItemPage() {
                             loading={loading}
                             text={example?.text}
                             title={product?.title}
-                            size={product?.size}
+                          
                             details={product?.detail}
                             images={example?.similar_styles_images}
-                            color={product?.color}
+                        
                             style_it_with_image={example?.style_it_with_image}
                             product={product}
                         />

@@ -3,8 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
 function AddToCart({
     product,
-    sizeSelect,
-    colorSelect,
+    variation1Select,
     setError,
     isOutOfStock,
     price,
