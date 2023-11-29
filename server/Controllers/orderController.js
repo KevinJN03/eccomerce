@@ -6,7 +6,7 @@ import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 
 import 'dotenv/config';
 import Stripe from 'stripe';
-
+import _ from 'lodash';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const create_order = [
@@ -37,7 +37,7 @@ export const create_order = [
         return product;
       }),
     );
-
+    let isQuantityFixed = true;
     const getResult = getAllCartProducts.map((product) => {
       const getVariationSelectArray = cartObj[product.id];
 
@@ -48,9 +48,12 @@ export const create_order = [
           );
 
           const getVariation = findVariation.options.get(size.id);
-
-          cartPrice +=
-            (getVariation?.price || product?.price?.current) * quantity;
+          if (_.has(getVariation, 'price')) {
+            cartPrice += getVariation.price * quantity;
+            isQuantityFixed = false;
+          } else {
+            cartPrice += product.price.current * quantity;
+          }
           return getVariation;
         }
 
@@ -60,8 +63,13 @@ export const create_order = [
           );
 
           const getVariation = findVariation.options.get(color.id);
-          cartPrice +=
-            (getVariation?.price || product?.price?.current) * quantity;
+
+          if (_.has(getVariation, 'price')) {
+            cartPrice += getVariation.price * quantity;
+            isQuantityFixed = false;
+          } else {
+            cartPrice += product.price.current * quantity;
+          }
 
           return getVariation;
         }
@@ -115,7 +123,7 @@ export const createPaymentIntent = [
         return product;
       }),
     );
-
+    let isQuantityFixed = true;
     const getResult = getAllCartProducts.map((product) => {
       const getVariationSelectArray = cartObj[product.id];
 
@@ -126,9 +134,12 @@ export const createPaymentIntent = [
           );
 
           const getVariation = findVariation.options.get(size.id);
-
-          cartPrice +=
-            (getVariation?.price || product?.price?.current) * quantity;
+          if (_.has(getVariation, 'price')) {
+            cartPrice += getVariation.price * quantity;
+            isQuantityFixed = false;
+          } else {
+            cartPrice += product.price.current * quantity;
+          }
           return getVariation;
         }
 
@@ -138,8 +149,13 @@ export const createPaymentIntent = [
           );
 
           const getVariation = findVariation.options.get(color.id);
-          cartPrice +=
-            (getVariation?.price || product?.price?.current) * quantity;
+
+          if (_.has(getVariation, 'price')) {
+            cartPrice += getVariation.price * quantity;
+            isQuantityFixed = false;
+          } else {
+            cartPrice += product.price.current * quantity;
+          }
 
           return getVariation;
         }
@@ -148,14 +164,18 @@ export const createPaymentIntent = [
     const calculatePrice = parseInt(cartPrice * 100);
     console.log({ calculatePrice });
     /* use off_session inorder to allow klarna payment */
+
     const paymentIntent = await stripe.paymentIntents.create({
+      metadata: {
+        cartObj: JSON.stringify(cartObj),
+        isQuantityFixed,
+      },
       amount: calculatePrice,
       currency: 'gbp',
       customer: userId,
       // setup_future_usage: 'off_session',
       shipping,
       payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
-     
     });
 
     res.status(200).send({
