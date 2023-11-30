@@ -296,11 +296,7 @@ background-color: #2d2d2d
     background-color: white;
     @apply flex h-full w-12 items-center justify-center rounded-r-lg;
 }
-.newletter-btn {
-    /* @apply absolute h-6 w-6 rounded-full; */
-    @apply h-6 w-6 rounded-full;
-    right: 4%;
-}
+
 
 /* footer section */
 .footer-wrapper {
