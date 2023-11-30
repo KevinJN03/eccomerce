@@ -5,6 +5,7 @@ function sortCombineVariation(options) {
 
   const variationObj = {};
   const map = new Map();
+  const variation2Map = new Map();
   const variation1 = {
     array: [],
   };
@@ -13,9 +14,19 @@ function sortCombineVariation(options) {
   };
   for (const [key, value] of options) {
     minPriceValue = Math.min(value.price, minPriceValue);
+
+    if (!variation2Map.has(value.variation2)) {
+      const newObj = {
+        variation: value.variation2,
+        id: key,
+      };
+      variation2.array.push(newObj);
+      variation2Map.set(value.variation2, newObj);
+    }
+
     if (!map.has(value.variation)) {
-      variation1.array.push(value.variation);
-      variation2.array.push(value.variation2);
+      variation1.array.push({ variation: value.variation, id: key });
+
       const newVariationObj = {
         [value.variation2]: {
           id: value.id,
