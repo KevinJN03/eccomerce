@@ -14,6 +14,9 @@ function Cart_Item({ product }) {
     const heart_icon_ref = useRef();
 
     const [quantity, setQuantity] = useState(product?.quantity);
+    const [findSize, setFindSize] = useState(null);
+    const [sizeOptionArray, setSizeOptionArray] = useState([]);
+    const [findColor, setFindColor] = useState(null);
     const [size, setSize] = useState(product?.selectSize);
     let quantityArr = arrayRange(1, 10, 1);
 
@@ -33,13 +36,37 @@ function Cart_Item({ product }) {
     const handleSizeChange = () => {};
 
     const handleQuantityChange = (e) => {
-        setQuantity(e.target.value);
+        setQuantity(() => e.target.value);
         dispatch({
             type: 'edit quantity',
             quantity: e.target.value,
             cartId: product.cartId,
         });
     };
+
+    useEffect(() => {
+        const variationSelectArray = Object.entries(
+            product?.variationSelect
+        ).map(([key, value]) => {
+            console.log(key, value);
+
+            if (value?.title == 'Colour') {
+                setFindColor(() => ({
+                    variation: value?.variation,
+                    variationType: key,
+                }));
+            }
+
+            if (value?.title == 'Size') {
+                setFindSize(() => ({
+                    variation: value?.variation,
+                    variationType: key,
+                }));
+
+                setSizeOptionArray(() => product?.[key]?.array || []);
+            }
+        });
+    }, []);
     return (
         <div id="cart-product">
             <button
@@ -75,17 +102,17 @@ function Cart_Item({ product }) {
                 </p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
-                    {product?.variationSelect?.color?.variation && (
+                    {findColor && (
                         <span className="border-r-[1px] pr-2">
-                            {product.variationSelect.color.variation}
+                            {findColor?.variation}
                         </span>
                     )}
-                    {product.isSizePresent && (
+                    {findSize && (
                         <div className="cursor-pointer border-r-[1px] pr-2">
                             <QTY_SIZE_OPTION
                                 handleOnChange={handleSizeChange}
-                                options={product.size}
-                                select={size}
+                                options={sizeOptionArray}
+                                select={findSize.variation}
                                 type="size"
                             />
                             <div className="border-r-2 pr-2"></div>

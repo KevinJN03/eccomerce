@@ -20,7 +20,18 @@ function AddToCart({
             return;
         }
 
-        const { id, title, images, delivery, size, color } = product;
+        const {
+            id,
+            title,
+            images,
+            delivery,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
+        } = product;
 
         const newImagesArray = images[0];
         const newProduct = {
@@ -29,8 +40,12 @@ function AddToCart({
             price: product.price,
             images: [newImagesArray],
             delivery,
-            size,
-            color,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
         };
 
         newProduct.cartId = uuidv4();
@@ -40,6 +55,8 @@ function AddToCart({
         dispatch({ type: 'add', product: newProduct });
 
         setError(() => false);
+
+        console.log({ variationSelect });
     };
     return (
         <>

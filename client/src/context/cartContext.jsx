@@ -22,9 +22,10 @@ const reducer = (cart, action) => {
         const foundItemInCart = cart.map((item) => {
             if (
                 item.id == product.id &&
-                item.variationSelect.color.id ==
-                    product.variationSelect.color.id &&
-                item.variationSelect.size.id == product.variationSelect.size.id
+                item?.variationSelect?.variation1?.variation ==
+                    product?.variationSelect?.variation1?.variation &&
+                item?.variationSelect?.variation2?.variation ==
+                    product?.variationSelect?.variation2?.variation
             ) {
                 isProductInCart = true;
                 return { ...item, quantity: item.quantity + 1 };

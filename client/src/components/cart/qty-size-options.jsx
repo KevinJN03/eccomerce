@@ -17,18 +17,18 @@ const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
                 ref={ref}
                 tabIndex={'0'}
             >
-                {options.map((num, index) => {
+                {options.map((item, index) => {
                     return (
                         <option
                             key={index}
-                            value={type == 'size' ? num.size : num}
+                            value={type == 'size' ? item?.variation : item}
                             selected={
                                 type == 'size'
-                                    ? num.size == select
-                                    : num == select
+                                    ? item?.variation == select
+                                    : item == select
                             }
                         >
-                            {type == 'size' ? num.size : num}
+                            {type == 'size' ? item?.variation : item}
                         </option>
                     );
                 })}

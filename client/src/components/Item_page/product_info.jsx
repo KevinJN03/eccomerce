@@ -11,21 +11,8 @@ import Style_It_With from './style_it_with/style_it_with';
 
 import { useEffect, useRef, useState } from 'react';
 
-function Product_info({
-    title,
-
-    text,
-    size,
-    details,
-    images,
-
-    product,
-    color,
-    loading,
-}) {
+function Product_info({ title, text, details, images, product, loading }) {
     const [priceState, setPriceState] = useState(null);
-
-
 
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
@@ -51,18 +38,34 @@ function Product_info({
                     variationSelect?.variation2?.variation
                 ]?.price;
 
-                setPriceState(() => getPrice || product?.price?.current);
+            setPriceState(() => getPrice || product?.price?.current);
         }
-
-       
     }, [variationSelect.variation1, variationSelect.variation2]);
 
-    console.log({
-        variation2: product?.variation1,
-        variation1: product?.variation2,
-        combine: product?.combineVariation,
-        isVariationCombine: product?.isVariationCombine,
-    });
+    // console.log({
+    //     variation2: product?.variation1,
+    //     variation1: product?.variation2,
+    //     combine: product?.combineVariation,
+    //     isVariationCombine: product?.isVariationCombine,
+    // });
+
+    useEffect(() => {
+        console.log({ isVariation1Present: product?.isVariation1Present });
+
+        [1, 2].map((variationNumber) => {
+            if (product?.[`isVariation${variationNumber}Present`]) {
+                setVariationSelection((prevState) => ({
+                    ...prevState,
+                    [`variation${variationNumber}`]: {
+                        ...prevState?.[`variation${variationNumber}`],
+                        title: product?.[`variation${variationNumber}`]?.title,
+                    },
+                }));
+            }
+        });
+
+        console.log('variation changed');
+    }, [product]);
     return (
         <section id="product-info">
             {!loading ? (
