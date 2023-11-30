@@ -44,16 +44,30 @@ const reducer = (cart, action) => {
         return cart.filter((product) => product.cartId !== action.cartId);
     }
 
-    if (action.type == 'edit item') {
+    if (action.type == 'edit quantity') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
-                ('found item');
+                const newItem = {
+                    ...item,
+                    quantity: action.quantity,
+                };
+
+                return newItem;
+            }
+            return item;
+        });
+
+        return newCart;
+    }
+
+    if (action.type == 'edit variation') {
+        const newCart = cart.map((item) => {
+            if (item.cartId === action.cartId) {
                 const newItem = {
                     ...item,
                     quantity: action.quantity,
                     variationSelect: {
                         ...item.variationSelect,
-                        size: { ...action.size },
                     },
                 };
 
@@ -63,11 +77,11 @@ const reducer = (cart, action) => {
         });
 
         return newCart;
-    } else {
-        throw new Error(
-            `${action.type} is not valid, please use either add or remove`
-        );
     }
+
+    throw new Error(
+        `${action.type} is not valid, please use either add or remove`
+    );
 };
 const cartContext = createContext(null);
 export function CartProvider({ children }) {

@@ -25,7 +25,7 @@ function Product_info({
 }) {
     const [priceState, setPriceState] = useState(null);
 
-    const sizeRef = useRef();
+
 
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
@@ -45,27 +45,6 @@ function Product_info({
     }, [product]);
 
     useEffect(() => {
-        // const refStock =
-        //     sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.stock;
-        // const refPrice =
-        //     sizeRef?.current?.[sizeRef?.current?.selectedIndex].dataset?.price;
-
-        // if (refPrice) {
-        //     setPriceState(() => refPrice);
-        // }
-        // if (refStock == 0) {
-        //     setOutOfStock(() => true);
-        // } else {
-        //     setOutOfStock(() => false);
-        // }
-        // if (error) {
-        //     setError(() => false);
-        // }
-
-        console.log('select change');
-
-    
-
         if (product?.isVariationCombine) {
             var getPrice =
                 combineVariation?.[variationSelect?.variation1?.variation]?.[

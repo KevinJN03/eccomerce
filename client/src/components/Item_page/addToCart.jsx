@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
 function AddToCart({
     product,
-    variation1Select,
     setError,
     isOutOfStock,
     price,
@@ -13,8 +12,8 @@ function AddToCart({
 
     const handleClick = () => {
         if (
-            (product.isSizePresent && !variationSelect.size.id) ||
-            (product.isColorPresent && !variationSelect.color.id)
+            (product.isSizePresent && !variationSelect.variation1.variation) ||
+            (product.isColorPresent && !variationSelect.variation2.variation)
         ) {
             ('enter error');
             setError(() => true);

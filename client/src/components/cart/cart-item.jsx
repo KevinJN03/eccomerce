@@ -21,11 +21,6 @@ function Cart_Item({ product }) {
     const sizeRef = useRef(null);
     const { dispatch } = useCart();
 
-    useEffect(() => {
-        ('update item');
-        dispatch({ type: 'edit item', quantity, size, cartId: product.cartId });
-    }, [quantity, size]);
-
     const handleRemove = (id) => {
         'Id:', id;
         dispatch({ type: 'remove', cartId: product.cartId });
@@ -33,6 +28,17 @@ function Cart_Item({ product }) {
 
     const onClick = () => {
         qtyRef.current.focus();
+    };
+
+    const handleSizeChange = () => {};
+
+    const handleQuantityChange = (e) => {
+        setQuantity(e.target.value);
+        dispatch({
+            type: 'edit quantity',
+            quantity: e.target.value,
+            cartId: product.cartId,
+        });
     };
     return (
         <div id="cart-product">
@@ -77,9 +83,9 @@ function Cart_Item({ product }) {
                     {product.isSizePresent && (
                         <div className="cursor-pointer border-r-[1px] pr-2">
                             <QTY_SIZE_OPTION
+                                handleOnChange={handleSizeChange}
                                 options={product.size}
                                 select={size}
-                                setSelect={setSize}
                                 type="size"
                             />
                             <div className="border-r-2 pr-2"></div>
@@ -91,9 +97,9 @@ function Cart_Item({ product }) {
                     >
                         <p>Qty</p>
                         <QTY_SIZE_OPTION
+                            handleOnChange={handleQuantityChange}
                             options={quantityArr}
                             select={quantity}
-                            setSelect={setQuantity}
                             ref={qtyRef}
                         />
                     </div>
