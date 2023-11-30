@@ -9,7 +9,7 @@ function SingleVariation({ singleVariation, deleteVariation, editVariation }) {
 
    
     return (
-        <section className="single-variation border-1 rounded-lg py-2 px-3 flex flex-col gap-1 mb-2">
+        <section className="single-variation !border-[1.5px] border-gray-300 rounded-lg py-2 px-3 flex flex-col gap-1 mb-2">
             <h2 className='font-medium text-sm'>{name}</h2>
             <p className='text-xs'>
                 { options && options.length} {options && options.length > 1 ? 'options' : 'option'}
@@ -22,7 +22,7 @@ function SingleVariation({ singleVariation, deleteVariation, editVariation }) {
                             return (
                                 <p
                                     key={id}
-                                    className="border-1 font-medium text-xxs  rounded-full flex justify-center items-center h-4 px-2 py-3 whitespace-nowrap"
+                                    className="border-[1px] font-medium text-xxs  rounded-full flex justify-center items-center h-4 px-2 py-3 whitespace-nowrap"
                                 >
                                     {variation}
                                 </p>

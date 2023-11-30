@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react';
-import Input from '../../Login-SignUp/input';
 import '../../../CSS/user-dashboard.scss';
-import card_logo from '../../../assets/icons/credit-card.png';
-import visa_logo from '../../../assets/icons/payment-icons/visa.svg';
-import discover_logo from '../../../assets/icons/payment-icons/discover.svg';
-
-import maestro_logo from '../../../assets/icons/payment-icons/maestro.svg';
-import masterCard_logo from '../../../assets/icons/payment-icons/mastercard-alt.svg';
-
-import american_express_logo from '../../../assets/icons/payment-icons/american-express.svg';
 import axios from '../../../api/axios';
 import {
     Elements,
@@ -17,11 +8,11 @@ import {
     useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import AddCartForm from './addCartForm';
+import AddCartForm from '../../common/error-alert';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Add_Card({}) {
-    console.log('env: ', STRIPE_KEY);
+    'env: ', STRIPE_KEY;
     const stripePromise = loadStripe(STRIPE_KEY);
 
     const [loading, setLoading] = useState(true);
@@ -57,17 +48,17 @@ function Add_Card({}) {
         axios
             .get('user/payment-method/card/save')
             .then((res) => {
-                console.log(res.data.client_secret);
+                res.data.client_secret;
                 setOptions((prevState) => ({
                     ...prevState,
                     clientSecret: res.data.client_secret,
                 }));
 
-                 setLoading(() => false);
+                setLoading(() => false);
             })
             .catch((error) => {
-                console.logo('error while getting secret: ', error);
-                 setLoading(() => false);
+                o('error while getting secret: ', error);
+                setLoading(() => false);
             });
     }, []);
 
@@ -77,7 +68,7 @@ function Add_Card({}) {
             <p>
                 Now please enter your card details exactly as they are printed.
             </p>
-            <div className="mb-4 mt-4 w-4/6 flex flex-col justify-center">
+            <div className="mb-4 mt-4 flex w-4/6 flex-col justify-center">
                 {loading ? (
                     <svg
                         className="spinner-ring spinner-sm [--spinner-color:var(--slate-12)]"

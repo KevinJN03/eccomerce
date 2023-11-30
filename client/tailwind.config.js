@@ -1,11 +1,16 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
-
+            textShadow: {
+                sm: '0 1px 2px var(--tw-shadow-color)',
+                DEFAULT: '0 2px 4px var(--tw-shadow-color)',
+                lg: '0 8px 16px var(--tw-shadow-color)',
+              },
             colors: {
                 primary: '#2d2d2d',
                 'primary-green': '#018849',
@@ -49,7 +54,7 @@ export default {
             'md+lg': '481px',
         },
     },
-    plugins: [require('daisyui'), require('rippleui')],
+    plugins: [require('daisyui'), require('rippleui'), ],
 
     daisyui: {
         prefix: 'daisy-',

@@ -19,6 +19,7 @@ import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
+import  Error_Alert  from '../../common/error-alert';
 
 export function AddCartForm({ clientSecret }) {
     const [error, setError] = useState({});
@@ -77,7 +78,7 @@ export function AddCartForm({ clientSecret }) {
                             payload: paymentMethodArray,
                         });
                         if (error) {
-                            console.log(error);
+                            (error);
 
                             if (error.message.includes('card number')) {
                                 setError((prevState) => ({
@@ -100,55 +101,13 @@ export function AddCartForm({ clientSecret }) {
             });
     };
 
-    const variants = {
-        initial: { opacity: 0 },
-        animate: {
-            opacity: 1,
-            transition: {
-                duration: 2,
-            },
-        },
-        exit: { opacity: 0 },
-    };
-
-    const handleCardNumber = (e) => {
-        setCardNumber(e.target.value);
-    };
-
     return (
         <>
-            <AnimatePresence>
-                {error?.general && (
-                    <motion.div
-                        className="alert alert-error mb-2  rounded-none"
-                        variants={variants}
-                        initial={'initial'}
-                        animate={'animate'}
-                        exit={'exit'}
-                    >
-                        <motion.svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 shrink-0 stroke-current transition-all hover:scale-110 hover:cursor-pointer"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            onClick={() =>
-                                setError((prevstate) => ({
-                                    ...prevstate,
-                                    general: null,
-                                }))
-                            }
-                        >
-                            <motion.path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                        </motion.svg>
-                        <span>{error.general}</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <Error_Alert
+                property={'general'}
+                error={error}
+                setError={setError}
+            />
             <div className="relative">
                 <label className="font-semibold tracking-wide">
                     Card Number :

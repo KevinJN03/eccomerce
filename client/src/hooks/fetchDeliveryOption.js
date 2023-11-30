@@ -14,7 +14,7 @@ const fetchDeliveryOptions = (setState) => {
                 }
             });
         });
-        console.log(deliveryArray);
+        deliveryArray;
 
         const controller = new AbortController();
 
@@ -26,7 +26,7 @@ const fetchDeliveryOptions = (setState) => {
                 setState(() => data);
             })
             .catch((error) => {
-                console.log('error at fetching delivery: ', error);
+                'error at fetching delivery: ', error;
             });
 
         return () => {

@@ -11,11 +11,9 @@ export function LayoutProvider({ children }) {
 
     const value = { layout, setLayout };
     return (
-        <>
-            <LayoutContext.Provider value={value}>
-                {children}
-            </LayoutContext.Provider>
-        </>
+        <LayoutContext.Provider value={value}>
+            {children}
+        </LayoutContext.Provider>
     );
 }
 

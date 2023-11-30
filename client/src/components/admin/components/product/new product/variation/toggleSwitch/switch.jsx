@@ -9,9 +9,9 @@ function Switch({state, toggle}) {
         >
             <input
                 type="checkbox"
-                className={`/* toggle toggle-lg ${
+                className={` daisy-toggle daisy-toggle-lg ${
                     !state ? '!bg-black ' : '!bg-black'
-                } */`}
+                } `}
                 readOnly
                 checked={state}
            

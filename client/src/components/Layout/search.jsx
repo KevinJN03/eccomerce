@@ -27,28 +27,26 @@ function Search({ search }) {
             axios
                 .get(`/search?q=${debounceValue}`)
                 .then((res) => {
-                    console.log('suggestions', res.data);
+                    'suggestions', res.data;
                     setSuggestions(res.data);
                 })
                 .catch((error) => {
-                    console.log('error fetching suggestions: ', error);
+                    'error fetching suggestions: ', error;
                 });
         }
     }, [debounceValue]);
 
     const openSearch = () => {
-
-       
         setOpen(true);
         toggle();
     };
 
-    const mobileSearch = ()=> {
-         if (screenSize.width <= 480) {
-          return  setMobileOverlay(true);
+    const mobileSearch = () => {
+        if (screenSize.width <= 480) {
+            return setMobileOverlay(true);
         }
-    }
-    console.log('searchText: ', searchText);
+    };
+    'searchText: ', searchText;
     const closeSearch = () => {
         setOpen(false);
         toggle();

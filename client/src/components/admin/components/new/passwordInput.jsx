@@ -10,7 +10,7 @@ function Passwordinput({ passwordRef, setPassword, password }) {
         const [show, setShow] = useState(false);
         const toggleShow = (e) => {
             setShow(!show);
-            console.log(passwordRef.current.type);
+
             if (show) {
                 passwordRef.current.type = 'password';
             } else {
@@ -23,8 +23,8 @@ function Passwordinput({ passwordRef, setPassword, password }) {
                 numbers: true,
                 symbols: true,
             });
-            console.log(newPassword);
-            setPassword(newPassword)
+
+            setPassword(newPassword);
         };
         return (
             <span className="absolute right-2 top-2/4">

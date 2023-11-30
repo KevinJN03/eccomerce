@@ -17,13 +17,14 @@ const reducer = (cart, action) => {
 
     const { product } = action;
 
-    console.log({ product });
+    ({ product });
     if (action.type == 'add') {
         const foundItemInCart = cart.map((item) => {
             if (
                 item.id == product.id &&
-                item.color == product.color &&
-                item.selectSize == product.selectSize
+                item.variationSelect.color.id ==
+                    product.variationSelect.color.id &&
+                item.variationSelect.size.id == product.variationSelect.size.id
             ) {
                 isProductInCart = true;
                 return { ...item, quantity: item.quantity + 1 };
@@ -46,11 +47,14 @@ const reducer = (cart, action) => {
     if (action.type == 'edit item') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
-                console.log('found item');
+                ('found item');
                 const newItem = {
                     ...item,
                     quantity: action.quantity,
-                    selectSize: action.size,
+                    variationSelect: {
+                        ...item.variationSelect,
+                        size: { ...action.size },
+                    },
                 };
 
                 return newItem;
@@ -104,10 +108,17 @@ export function CartProvider({ children }) {
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cart));
-        console.log('state updated');
+        ('state updated');
     }, [cart]);
 
-    const value = { cart, dispatch, deliveryOption, setDeliveryOption , promo, setPromo};
+    const value = {
+        cart,
+        dispatch,
+        deliveryOption,
+        setDeliveryOption,
+        promo,
+        setPromo,
+    };
 
     return (
         <cartContext.Provider value={value}>{children}</cartContext.Provider>

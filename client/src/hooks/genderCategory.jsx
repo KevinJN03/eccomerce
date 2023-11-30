@@ -26,7 +26,9 @@ function reducer(state, action) {
         };
     } else {
         throw Error(
-            `Unknown action type, check useGenderCategory Reducer. action: ${JSON.stringify(action)} action.type: ${action?.type}`
+            `Unknown action type, check useGenderCategory Reducer. action: ${JSON.stringify(
+                action
+            )} action.type: ${action?.type}`
         );
     }
 }
@@ -37,7 +39,7 @@ export function ProductsProvider({ children }) {
     useEffect(() => {
         localStorage.setItem('genderCategory', JSON.stringify(state));
 
-        console.log('genderCategory state updated');
+        ('genderCategory state updated');
     }, [state]);
 
     return (

@@ -36,14 +36,14 @@ function Voucher({ triggerClose, setDisplay, display }) {
                         setError({ bool: false });
                         triggerClose(true);
                     }
-                    console.log(res);
+                    res;
                 })
                 .catch((error) => {
-                    console.log('error at promo', error);
+                    'error at promo', error;
                     setError({ msg: 'invalidCoupon', bool: true });
                 });
 
-            console.log(voucherText);
+            voucherText;
         } else {
             setError({ msg: 'emptyField', bool: true });
         }

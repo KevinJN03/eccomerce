@@ -24,7 +24,7 @@ export const reducer = (state, action) => {
         const newState = [...state].filter(({ id }) => {
             return id != action.id;
         });
-        console.log({ newState, state });
+        ({ newState, state });
         return newState;
     }
 
@@ -48,7 +48,12 @@ export function PaymentMethodProvider({ children, userPaymentMethods }) {
     );
 
     useEffect(() => {
-        PaymentMethodsDispatch({ type: 'set', payload: userPaymentMethods });
+        if (userPaymentMethods) {
+            PaymentMethodsDispatch({
+                type: 'set',
+                payload: userPaymentMethods,
+            });
+        }
     }, [userPaymentMethods]);
 
     return (

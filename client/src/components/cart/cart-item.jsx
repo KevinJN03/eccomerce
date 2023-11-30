@@ -22,12 +22,12 @@ function Cart_Item({ product }) {
     const { dispatch } = useCart();
 
     useEffect(() => {
-        console.log('update item');
+        ('update item');
         dispatch({ type: 'edit item', quantity, size, cartId: product.cartId });
     }, [quantity, size]);
 
     const handleRemove = (id) => {
-        console.log('Id:', id);
+        'Id:', id;
         dispatch({ type: 'remove', cartId: product.cartId });
     };
 
@@ -69,9 +69,9 @@ function Cart_Item({ product }) {
                 </p>
                 <p className="">{product.title}</p>
                 <div className="cart-options">
-                    {product?.color && (
+                    {product?.variationSelect?.color?.variation && (
                         <span className="border-r-[1px] pr-2">
-                            {product?.color}
+                            {product.variationSelect.color.variation}
                         </span>
                     )}
                     {product.isSizePresent && (

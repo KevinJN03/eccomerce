@@ -19,7 +19,7 @@ function Admin_Dashboard() {
                 }
             })
             .catch((error) => {
-                console.log('error at admin while fetching counts: ', error);
+                'error at admin while fetching counts: ', error;
             });
     }, []);
     return (

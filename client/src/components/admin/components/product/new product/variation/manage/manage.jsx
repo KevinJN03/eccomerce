@@ -36,7 +36,7 @@ function Manage({}) {
     useEffect(() => {
         const isEqual = _.isEqual(variations, temporaryVariation);
         if (!isEqual) {
-            console.log('not true');
+            ('not true');
             setDisableApply(() => false);
         }
     }, [temporaryVariation]);
@@ -115,7 +115,7 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-debugger
+        debugger;
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -192,10 +192,10 @@ debugger
             {notDisabled < 2 && (
                 <button
                     onClick={() => contentDispatch({ type: 'main' })}
-                    className="border-1 mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-black px-2 py-2 transition-all ease-in-out hover:!px-[12.5px]"
+                    className="mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-[2px] border-black px-3 py-3 transition-all ease-in-out hover:!px-5"
                 >
                     <AddRoundedIcon className="bg-transparent" />
-                    <span className="bg-transparent text-sm">
+                    <span className="bg-transparent text-base font-semibold">
                         Add a variation
                     </span>
                 </button>

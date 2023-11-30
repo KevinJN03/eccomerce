@@ -1,10 +1,10 @@
 import { useAuth } from "../../hooks/useAuth";
 
-function Email_address({}) {
+function Email_address({disable}) {
 
     const auth = useAuth()
     return (
-        <section id="Email_address" className="flex flex-col gap-4">
+        <section id="Email_address" className={`flex flex-col gap-4 ${disable ? 'disable-component': 'display-component'}`}>
 
             {
                 auth.authenticated ? <>

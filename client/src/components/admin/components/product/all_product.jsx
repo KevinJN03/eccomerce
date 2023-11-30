@@ -13,11 +13,11 @@ function All_Products() {
         axios.get('/product').then((res) => {
             setProducts(res.data);
         }).catch((error) => {
-console.log('error: ' , error)
+
         });
     }, [loading]);
 
-    console.log({ products });
+  
     return (
         <>
  

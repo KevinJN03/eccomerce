@@ -25,7 +25,7 @@ function New({ setModalState }) {
 
     useEffect(() => {
         setDisable(() => true);
-        console.log({ profile });
+      
         if (profile) {
             setFetchRoute(() => 'update');
             const newArr = defaultTimes.slice(1, 4);
@@ -37,7 +37,7 @@ function New({ setModalState }) {
                     type == profile?.processingTime.type
                 ) {
                     profile.processingTime.start == start;
-                    console.log(profile.processingTime.start);
+                
                     return time;
                 }
             });
@@ -73,7 +73,7 @@ function New({ setModalState }) {
             }
         };
         const axiosCatch = (error) => {
-            console.log('error whilst creating or adding:', error);
+       
             setError(handleError(error));
         };
 
@@ -91,7 +91,7 @@ function New({ setModalState }) {
     };
 
     const handleOnchange = (e, value) => {
-        console.log('onchange triggered');
+   
         const fetchProfile = value[e.target.selectedIndex].dataset.profile;
         const profileToJson = JSON.parse(fetchProfile);
 

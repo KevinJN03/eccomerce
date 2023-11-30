@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import '../../index.css'
+import '../../index.css';
+import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage';
 function Input({ header, button_text, handleClick, setText, error, setError }) {
     const msg = {
         invalidCoupon:
@@ -14,11 +15,9 @@ function Input({ header, button_text, handleClick, setText, error, setError }) {
     };
 
     const onKeyDown = (e) => {
-       
-        if(e.keyCode === 13){
-            handleClick()
+        if (e.keyCode === 13) {
+            handleClick();
         }
-     
     };
     return (
         <>
@@ -30,30 +29,21 @@ function Input({ header, button_text, handleClick, setText, error, setError }) {
                     type="text"
                     id="promo"
                     onChange={(e) => handleOnChange(e)}
-                    className={`!border-2 !border-black ${error.bool && '!border-red-400'}`}
+                    className={`!border-2 !border-black ${
+                        error.bool && '!border-red-400'
+                    }`}
                     onKeyDown={(e) => onKeyDown(e)}
-                    tabIndex='0'
+                    tabIndex="0"
                 ></input>
 
                 <button
                     type="button"
-                    className="font-gotham font-bold tracking-wider text-white !bg-[var(--primary-2)] hover:!bg-black transition-all"
+                    className="!bg-[var(--primary-2)] font-gotham font-bold tracking-wider text-white transition-all hover:!bg-black"
                     onClick={handleClick}
-                
-                   
                 >
                     {button_text}
                 </button>
-                {error.bool && (
-                    <div className="promo-error border-1 relative relative top-[-5px] flex w-full border-red-500 bg-red-100 p-2">
-                        <span className="triangle absolute left-10 top-[-23px] h-0 w-0 border-b-[15px] border-l-[10px] border-r-[10px] border-b-red-500 border-l-transparent border-r-transparent !z-[1]">
-                            <span className="inner-triangle relative right-2  top-[-6px] h-0  w-0 border-b-[12px] border-l-[8px] border-r-[8px] border-b-red-100 border-l-transparent border-r-transparent  "></span>
-                        </span>
-                        <p className="!w-full  font-light tracking-wider ">
-                            {msg[error.msg]}
-                        </p>
-                    </div>
-                )}
+                {error.bool && <ErrorMessagePointerUp msg={msg[error.msg]} />}
             </span>
         </>
     );

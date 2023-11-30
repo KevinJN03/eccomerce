@@ -10,6 +10,6 @@ export default function fetchProfile(setState) {
             }
         })
         .catch((error) => {
-            console.log('error at deliver: ', error);
+       
         });
 }

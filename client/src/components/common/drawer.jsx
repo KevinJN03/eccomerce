@@ -6,9 +6,8 @@ function Drawer({ product }) {
     const [fit, setFit] = useState(null);
 
     const handleFitClick = (e) => {
-        setFit(e.target.textContent)
-        console.log(fit)
-    }
+        setFit(e.target.textContent)(fit);
+    };
     return (
         <>
             <input
@@ -25,7 +24,7 @@ function Drawer({ product }) {
                         </p>
                         <label
                             htmlFor="drawer-right"
-                            className="btn btn-circle btn-ghost btn-sm absolute right-6 top-4"
+                            className="btn btn-sm btn-circle btn-ghost absolute right-6 top-4"
                         >
                             ✕
                         </label>
@@ -69,21 +68,27 @@ function Drawer({ product }) {
                                 <button
                                     type="button"
                                     onClick={(e) => handleFitClick(e)}
-                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'True to Size' && 'border-black'}`}
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${
+                                        fit == 'True to Size' && 'border-black'
+                                    }`}
                                 >
                                     True to Size
                                 </button>
                                 <button
                                     onClick={(e) => handleFitClick(e)}
                                     type="button"
-                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'Runs small' && 'border-black'}`}
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${
+                                        fit == 'Runs small' && 'border-black'
+                                    }`}
                                 >
                                     Runs small
                                 </button>
                                 <button
                                     onClick={(e) => handleFitClick(e)}
                                     type="button"
-                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${fit == 'Runs Large' && 'border-black'}`}
+                                    className={`border-1 flex  justify-center whitespace-nowrap rounded-full px-4 py-3 text-sm font-semibold sm:text-xs ${
+                                        fit == 'Runs Large' && 'border-black'
+                                    }`}
                                 >
                                     Runs Large
                                 </button>

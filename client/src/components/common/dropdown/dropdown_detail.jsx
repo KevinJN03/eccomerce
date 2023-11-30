@@ -7,43 +7,44 @@ function DropDown_Detail({
     headerClass,
     borderNone,
     className,
-    triggerClose,
-    setTriggerClose,
-    display, setDisplay
+    // triggerClose,
+    // setTriggerClose,
+    // display,
+    // setDisplay,
+    show,
+    toggleShow,
+    disable,
 }) {
-    const [show, setShow] = useState(false);
+    // const toggleShow = () => {
 
- 
-    const toggleShow = () => {
-        setShow(!show);
-
-        if(display != undefined){
-             setDisplay(show);
-        }
-       
-    };
+    //     if (display != undefined) {
+    //         setDisplay(show);
+    //     }
+    // };
 
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
 
-    if(triggerClose != null){
-         useEffect(() => {
-        setShow(false);
-        setTriggerClose(false);
-        setDisplay(true);
-    }, [triggerClose]);
-    }
-   
+    // if (triggerClose != null) {
+    //     useEffect(() => {
+    //         setShow(false);
+    //         setTriggerClose(false);
+    //         setDisplay(true);
+    //     }, [triggerClose]);
+    // }
 
-    useEffect(() => {}, []);
     return (
         <section
             id="dropdown-detail"
             className={`${borderNone ? null : 'border-b-[thin]'} ${className} `}
         >
-            <div className="section-header" onClick={toggleShow}>
+            <button
+                className="section-header w-full disabled:cursor-not-allowed"
+                onClick={toggleShow}
+                disabled={disable}
+            >
                 <h3 className={`section-title ${headerClass}`}>{header}</h3>
                 <ExpandMoreRoundedIcon className={toggleClass} />
-            </div>
+            </button>
             {show && (
                 <section className=" mb-5 !max-w-[610px] md:min-w-full sm+md:mb-3">
                     {details}

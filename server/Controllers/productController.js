@@ -13,7 +13,8 @@ import s3Upload, { s3Delete } from '../s3Service.js';
 // eslint-disable-next-line import/prefer-default-export
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
-
+import _ from 'lodash';
+import sortCombineVariation from '../utils/sortCOmbineVariations.js';
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
   res.send(products);
@@ -47,7 +48,7 @@ export const get_single_admin_product = asyncHandler(async (req, res, next) => {
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await Product.findOne({ _id: id })
+  const product = await Product.findById(id)
     .populate({
       path: 'category',
       populate: [
@@ -70,112 +71,130 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
   }
 
   const {
-    title,
     price,
-    detail,
-    images,
-    reviews,
+
     category,
-    gender,
-    isSizePresent,
-    isColorPresent,
+
     minVariationPrice,
-    delivery,
   } = product;
 
-  if (!price.current) {
-    price.current = minVariationPrice;
-  }
+  const newProducts = product.toJSON({ flattenMaps: true });
   const newData = {
+    ...newProducts,
     id: product.id,
-    gender,
-    title,
-    price,
-    detail,
-    images,
-    reviews,
     category: category.name,
-    isSizePresent,
-    isColorPresent,
     also_like: { men: category.men, women: category.women },
-    minVariationPrice,
-    delivery,
   };
-  if ('variations' in product) {
-    product.variations.map((variation) => {
-      console.log('im maping');
+
+  if (_.has(price, 'current')) {
+    price.current = minVariationPrice;
+  } else {
+    newData.price = { ...newData.price, current: minVariationPrice };
+  }
+
+  // if ('variations' in product) {
+
+  const isVariationsPresent = _.has(newProducts, 'variations');
+
+  if (isVariationsPresent) {
+    const { variations } = product;
+    for (let i = 0; i < variations.length; i++) {
+      const { combine, name, name2, options } = variations[i];
+
+      if (i == 0 && combine) {
+        console.log('this variation is combined');
+
+        // jump to 3rd variation which is combined
+        i++;
+        continue;
+      }
+
+      if (i == 2) {
+
+        const { variationObj, minPriceValue, variation1, variation2 } = sortCombineVariation(options);
+
+        variation1.title = name
+        variation2.title = name2
+        console.log({ variationObj, minPriceValue, variation1, variation2 });
+      }
+    }
+  }
+
+  if (isVariationsPresent) {
+    product.variations.map((variation, idx) => {
+      if (idx == 0) {
+      }
       if (variation.name == 'Size' && !variation.name2) {
         const sizeArr = [];
         for (const [key, value] of variation?.options) {
-          const obj = { size: value.variation };
-          if (value.hasOwnProperty('price')) {
-            obj.price = value.price;
-          }
-
-          if (value.hasOwnProperty('stock')) {
-            obj.stock = value.stock;
-          }
-
-          sizeArr.push(obj);
+          sizeArr.push(value);
         }
         newData.size = sizeArr;
       }
 
       if (variation.name == 'Colour' && !variation.name2) {
-        console.log('im in color');
         const colorArr = [];
         for (const [key, value] of variation?.options) {
-          const obj = { color: value.variation };
-
-          if (value.hasOwnProperty('price')) {
-            obj.price = value.price;
-          }
-
-          if (value.hasOwnProperty('stock')) {
-            obj.stock = value.stock;
-          }
-          colorArr.push(obj);
+          colorArr.push(value);
         }
         newData.color = colorArr;
       }
-      if (variation?.name2) {
-        console.log('is combine');
 
+      const isName2Present = variation?.name2;
+
+      if (isName2Present) {
+        let minPriceValue = Infinity;
+        console.log('im in here');
         const arr = [];
         const testObj = {};
-        const map = new Map();
-        //   const arr2 = [];
 
-        //   // create 2 arrays 1 for size, 1 for color
-        //   //
+        const variationObj = {};
+        const map = new Map();
         for (const [key, value] of variation?.options) {
           const newObj = {
-            size: value.variation2,
-            price: value.price,
-            stock: value.stock,
+            ...value,
           };
-
+          minPriceValue = Math.min(value.price, minPriceValue);
           if (!map.has(value.variation)) {
-            const newArr = [newObj];
-            const obj = { color: value.variation, size: newArr };
-            arr.push(obj);
-            testObj[value.variation] = newArr;
-            map.set(value.variation, newArr);
+            const newVariationObj = {
+              [value.variation2]: {
+                id: value.id,
+                stock: value.stock,
+                price: value.price,
+                visible: value.visible,
+              },
+            };
+
+            variationObj[value.variation] = newVariationObj;
+            map.set(value.variation, newVariationObj);
           } else {
             const getItemFromMap = map.get(value.variation);
-            getItemFromMap.push(newObj);
 
-            map.set(value.variation, getItemFromMap);
+            const newVariationObj = {
+              [value.variation2]: {
+                id: value.id,
+                stock: value.stock,
+                price: value.price,
+                visible: value.visible,
+              },
+            };
+            const updatedVariationObject = Object.assign(
+              getItemFromMap,
+              newVariationObj,
+            );
+            map.set(value.variation, updatedVariationObject);
           }
         }
-        newData.isVariationCombine = true;
+
+        newData.price.current = minPriceValue;
+
         // newData.combineVariation = arr;
-        newData.combineVariation = testObj;
+        newData.combineVariation = variationObj;
         newData.testObj = testObj;
       }
     });
   }
-  console.log({ newData });
+  console.log();
   res.send(newData);
 });
 
@@ -284,7 +303,6 @@ export const create_new_product = [
   async function (req, res, next) {
     const resultValidation = validationResult(req);
     if (!resultValidation.isEmpty()) {
-      console.log('errorList:', resultValidation.errors);
       res.status(400).send(resultValidation.errors);
       return;
     }
@@ -330,7 +348,6 @@ export const update_product = [
     const result = validationResult(req);
 
     if (!result.isEmpty()) {
-      console.log('errorList:', result.errors);
       res.status(400).send(result.errors);
       return;
     }
@@ -347,10 +364,9 @@ export const update_product = [
     }).populate({
       path: 'category',
     });
-    console.log({ oldProduct });
+
     await s3Delete('products', id);
     await s3Upload(sharpResult, false, id);
-    console.log({ price: productData.price });
 
     const newPrice = {
       current: productData?.price?.current,

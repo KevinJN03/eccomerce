@@ -4,7 +4,7 @@ export default function combineReducer(state, action) {
         const data = { ...action.combine };
         const newData = { ...data, on: true };
 
-        return { ...newData };
+        return { ...newData, combine: true };
     }
     if (action == 'clear') {
         return { ...state, options: new Map(), on: false };
@@ -16,7 +16,7 @@ export default function combineReducer(state, action) {
             action.newObj
         );
 
-        return { ...state, options: newOptionsMap };
+        return { ...state, options: newOptionsMap, combine: true };
     }
     if (action.type == 'combineVariations') {
         try {
@@ -50,11 +50,12 @@ export default function combineReducer(state, action) {
                 name2: variations[1].name,
                 quantityHeader: { on: true },
                 priceHeader: { on: true },
+                combine: true,
             };
 
             return newVariation;
         } catch (error) {
-            console.log('error while combining: ', error);
+            'error while combining: ', error;
         }
     }
 

@@ -10,7 +10,7 @@ function DobPicker({ error, setDob, showDescription, value, setError }) {
                 dob: null,
             }));
         } catch (error) {
-            console.log('error changing date: ', error);
+            'error changing date: ', error;
         }
     };
     return (

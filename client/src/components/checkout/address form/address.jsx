@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import Promo_Voucher_header from '../promo-voucher-header';
 import Address_Form from './address-form';
 import Customer_Info from './customer-info';
@@ -7,31 +7,47 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import axios from '../../../api/axios';
 import Address_Item from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import Address_Book from './address-book';
+import checkoutViewReducer from '../../../hooks/checkoutViewReducer';
+import { ClickAwayListener } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
+
+import Main from './main';
+import { AddressContextProvider } from '../../../context/checkOutAddressContext';
+
+const views = {
+    book: <Address_Book />,
+    edit: <Address_Form type={'edit'} />,
+    add: <Address_Form type={'add'} />,
+    main: <Main />,
+};
 
 function Address({
     mainAddress,
     setMainAddress,
     defaultProperty,
+    addressType,
+    enableAddressEdit,
+    disableHeader,
+    disableChangeBtn,
+    subHeader,
 }) {
     const {
-        error,
-        setError,
         defaultAddresses,
         setDefaultAddresses,
         addresses,
         setAddresses,
+        disableOtherComponents,
+        SetDisableOtherComponents,
     } = useCheckoutContext();
+
+    const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
     const [checkAddress, setCheckAddress] = useState(null);
-    const [change, setChange] = useState(false);
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
-    const [editAddress, setEditAddress] = useState({
-        edit: false,
-        address: {},
-    });
+    const disableRef = useRef(false);
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
-    const [newAddress, setNewAddress] = useState(false);
 
     useEffect(() => {
         const newAddresses = [...addresses].sort((a, b) => {
@@ -46,46 +62,23 @@ function Address({
 
         setSortAddresses(() => newAddresses);
     }, [addresses]);
+
     useEffect(() => {
         setTemporaryMainAddress(() => mainAddress);
     }, [mainAddress]);
 
-    const cancel = () => {
-        setTemporaryMainAddress(() => mainAddress);
-        setChange(() => false);
-        setEditAddress(() => ({ edit: false }));
-        setNewAddress(false);
-    };
-
-    const handleClick = () => {
-        setMainAddress(() => temporaryMainAddress);
-        setChange(() => false);
-        setEditAddress(() => ({ edit: false }));
-    };
-
-    const handleEdit = (address) => {
-        setTemporaryMainAddress(() => address);
-        setEditAddress((prevState) => ({ ...prevState, edit: true, address }));
-    };
-
-    const handleNewAddress = () => {
-        setTemporaryMainAddress({});
-        setNewAddress(() => true);
-    };
+    const containerRef = useRef();
 
     const handleDefault = (id) => {
         setLoading(true);
-        console.log(id);
+
         const data = {
             [defaultProperty]: id,
         };
 
-        console.log({ data });
         axios
             .put('user/address/changeDefault', data)
             .then((res) => {
-                console.log(res.data);
-
                 setTimeout(() => {
                     setDefaultAddresses(() => res.data.default_address);
                     setLoading(false);
@@ -96,118 +89,135 @@ function Address({
             });
     };
 
-    const addressFormProps = {
-        setLoading,
+    useEffect(() => {
+        if (
+            disableOtherComponents?.disable &&
+            disableOtherComponents?.addressType != addressType
+        ) {
+            viewDispatch({ type: 'main' });
+        }
+    }, [disableOtherComponents.disable, disableOtherComponents.addressType]);
+
+    const onClickAway = () => {
+        if (!disableOtherComponents.disable) {
+            return;
+        }
+
+        if (disableOtherComponents.addressType == addressType) {
+            SetDisableOtherComponents({
+                disable: false,
+                addressType: null,
+            });
+
+            viewDispatch({ type: 'main' });
+        }
+    };
+    const disable =
+        disableOtherComponents?.disable &&
+        disableOtherComponents.addressType != addressType;
+
+    const value = {
         setAddresses,
         setDefaultAddresses,
-        setChange,
-        cancel,
-        address: temporaryMainAddress,
-        setAddress: setTemporaryMainAddress,
-        handleClick,
+        disableRef,
+        viewDispatch,
+        addressType,
+        viewContent,
+        mainAddress,
+        setMainAddress,
+        defaultProperty,
+        addressType,
+        enableAddressEdit,
+        defaultAddresses,
+        viewDispatch,
+        checkAddress,
+        setCheckAddress,
+        sortAddresses,
+        setSortAddresses,
+        loading,
+        setLoading,
+        temporaryMainAddress,
+        setTemporaryMainAddress,
+        handleDefault,
+        disableChangeBtn,
+        subHeader,
     };
-    const content = () => {
-        if (!change) {
-            return (
-                <div className="adress-info-container flex flex-row items-baseline justify-between">
-                    <Customer_Info customer={mainAddress} />
-                    {/* <button type="button" id="checkout-change-btn" onClick={()=> setChange(!change)}>Change</button> */}
-                    <Change_Btn setChange={setChange} change={change} />
-                </div>
-            );
+
+    const view = () => {
+        if (viewContent == 'main') {
+            return <Main />;
+        } else if (viewContent == 'add') {
+            return <Address_Form type={'add'} />;
+        } else if (viewContent == 'edit') {
+            return <Address_Form type={'edit'} />;
+        } else if (viewContent == 'book') {
+            return <Address_Book />;
         }
+    };
 
-        if (change && addresses.length > 1) {
-            return (
-                <section className="flex flex-col gap-y-6">
-                    {newAddress ? (
-                        <Address_Form type={'add'} {...addressFormProps} />
-                    ) : editAddress.edit ? (
-                        <Address_Form type={'edit'} {...addressFormProps} />
-                    ) : (
-                        <>
-                            {sortAddresses.map((address, idx) => {
-                                const props = {
-                                    address,
-                                    checkAddress,
-                                    setCheckAddress,
-                                    defaultAddresses,
-                                    defaultProperty,
-                                    handleDefault,
-                                    handleEdit,
-                                    loading,
-                                    setLoading,
-                                    setMainAddress,
-                                    setChange,
-                                };
+    const variants = {
+        initial: {
+            height: containerRef?.current
+                ? containerRef.current.clientHeight + 'px'
+                : 'auto',
+            opacity: 0.5,
+        },
+        animate: {
+            height: 'auto',
 
-                                return (
-                                    <Address_Item
-                                        {...props}
-                                        key={address._id}
-                                    />
-                                );
-                            })}
+            opacity: 1,
 
-                            <div className="flex flex-row justify-between">
-                                <button
-                                    disabled={loading}
-                                    onClick={handleNewAddress}
-                                    className="!bg-primary px-4 py-2 font-bold tracking-wider text-white transition-all hover:!bg-black disabled:cursor-not-allowed"
-                                >
-                                    ADD NEW ADDRESS
-                                </button>
-                                <button
-                                    disabled={loading}
-                                    id="checkout-change-btn"
-                                    onClick={() => setChange(() => false)}
-                                >
-                                    CANCEL
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </section>
-            );
-        }
-
-        if (change && addresses.length == 1) {
-            return (
-                <Address_Form
-                    setChange={setChange}
-                    cancel={cancel}
-                    address={temporaryMainAddress}
-                    setAddress={setTemporaryMainAddress}
-                    handleClick={handleClick}
-                />
-            );
-        }
+            transition: { duration: 0.5 },
+        },
     };
     return (
-        <section className="relative">
-            <section
-                id="address"
-                className={`relative ${loading ? 'opacity-50' : 'opacity-100'}`}
-            >
-                <HelmetProvider>
-                    <Helmet>
-                        <script
-                            type="text/javascript"
-                            src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
-                        ></script>
-                    </Helmet>
-                </HelmetProvider>
+        <AddressContextProvider value={value}>
+            <ClickAwayListener onClickAway={onClickAway}>
+                <motion.section
+                    className={`relative ${
+                        disable ? 'disable-component' : 'display-component'
+                    }`}
+                >
+                    <section
+                        id="address"
+                        className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+                    >
+                        <HelmetProvider>
+                            <Helmet>
+                                <script
+                                    type="text/javascript"
+                                    src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
+                                ></script>
+                            </Helmet>
+                        </HelmetProvider>
+                        {!disableHeader && (
+                            <h1 className="checkout-title">
+                                {addressType} ADDRESS
+                            </h1>
+                        )}
+                        <div id="address-container" ref={containerRef}>
+                            <AnimatePresence mode="wait">
+                                {viewContent && (
+                                    <motion.div
+                                        className={`address-header relative`}
+                                        key={viewContent}
+                                        variants={variants}
+                                        animate={'animate'}
+                                        initial={'initial'}
+                                    >
+                                        {views[viewContent]}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </section>
 
-                <h1 className="checkout-title">DELIVERY ADDRESS</h1>
-                <div id="address-container">
-                    <div className={`address-header relative`}>{content()}</div>
-                </div>
-            </section>
-
-            {loading && (
-                <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
-            )}
-        </section>
+                    {loading && (
+                        <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
+                    )}
+                </motion.section>
+            </ClickAwayListener>
+        </AddressContextProvider>
     );
 }
 

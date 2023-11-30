@@ -19,15 +19,14 @@ function Address_Item({
     const handleCheck = async (setState, { state, property }) => {
         try {
             setState(!state);
-        
-          setTimeout(()=> {
-    setLoading(true);
-          }, 500)
+
+            setTimeout(() => {
+                setLoading(true);
+            }, 500);
             const data = { [property]: addressItem._id };
 
             const result = await axios.put('user/address/changeDefault', data);
 
-            
             setTimeout(() => {
                 setDefaultAddresses(() => result.data.default_address);
                 setLoading(false);
@@ -35,7 +34,7 @@ function Address_Item({
 
             return;
         } catch (error) {
-            console.log('error at changingDefault: ', error);
+            'error at changingDefault: ', error;
         }
     };
     return (

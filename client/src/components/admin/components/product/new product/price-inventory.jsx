@@ -14,7 +14,7 @@ import handleValue from './utils/handleValue';
 import { quantityOptions, priceOptions } from './utils/handleValueOptions';
 import { v4 as uuidv4 } from 'uuid';
 export default function Price_Inventory() {
-    console.log('rerender');
+ 
     const {
         globalUpdate,
         setGlobalUpdate,
@@ -33,29 +33,28 @@ export default function Price_Inventory() {
     useNewProductError('stock', setError, { obj: true, property: 'stock' });
 
     useEffect(() => {
-        console.log('priceValuechange');
+    
         publishErrorDispatch({ type: 'clear', path: 'price' });
     }, [priceValue.value]);
 
     useEffect(() => {
-        console.log('stockValuechange');
+       
         publishErrorDispatch({ type: 'clear', path: 'stock' });
     }, [stockValue.value]);
 
-
-        const onStockClickAwayRef = useClickAway(() => {
-            if (!stockValue.value) return;
-            const formatStock = formatData(stockValue.value, 0);
-    console.log('change here')
-            setStockValue({ value: formatStock, on: true });
-            // setGlobalUpdate((prev) => {
-            //     return { ...prev, stock: formatStock };
-            // });
-        });
+    const onStockClickAwayRef = useClickAway(() => {
+        if (!stockValue.value) return;
+        const formatStock = formatData(stockValue.value, 0);
+       
+        setStockValue({ value: formatStock, on: true });
+        // setGlobalUpdate((prev) => {
+        //     return { ...prev, stock: formatStock };
+        // });
+    });
 
     const onPriceClickAwayRef = useClickAway(() => {
         if (!priceValue.value) return;
-        console.log('change here')
+        
         const formatPrice = formatData(priceValue.value, 2);
 
         setPriceValue({ value: formatPrice, on: true });
@@ -68,7 +67,7 @@ export default function Price_Inventory() {
     );
     const checkPrice = variations.some((item) => item.priceHeader.on == true);
     const handlePriceChange = (value) => {
-        console.log('handlePriceChange');
+  
         const options = {
             ...priceOptions,
             value,
@@ -167,11 +166,11 @@ function InventoryInput(props) {
     const { setValue, value } = props;
 
     useEffect(() => {
-        console.log('IS MOUNTED', { value });
+      
         setValue((obj) => ({ ...obj, on: true }));
 
         return () => {
-            console.log('IS UNMOUNTED');
+          
             setValue((obj) => ({ ...obj, on: false }));
         };
     }, []);

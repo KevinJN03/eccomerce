@@ -11,8 +11,14 @@ import restart from '../../../../../assets/icons/restart.png';
 import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
 import useNewProductError from '../../../../../useNewProductError';
 function Details() {
-    const { category, setCategory, gender, setGender, publishError, publishErrorDispatch } =
-        useNewProduct();
+    const {
+        category,
+        setCategory,
+        gender,
+        setGender,
+        publishError,
+        publishErrorDispatch,
+    } = useNewProduct();
     const [genderError, setGenderError] = useState('');
 
     const [categoryError, setCategoryError] = useState('');
@@ -21,12 +27,12 @@ function Details() {
 
     useEffect(() => {
         setGenderError('');
-        publishErrorDispatch({type: 'clear', path: 'gender'})
+        publishErrorDispatch({ type: 'clear', path: 'gender' });
     }, [gender]);
 
     useEffect(() => {
         setCategoryError('');
-        publishErrorDispatch({type: 'clear', path: 'category'})
+        publishErrorDispatch({ type: 'clear', path: 'category' });
     }, [category]);
 
     const [allCategory, setAllCategory] = useState([]);
@@ -50,7 +56,7 @@ function Details() {
 
     const handleFetchCategory = () => {
         const data = fetchData('category');
-        // console.log(data)
+        
         data.then((res) => {
             setAllCategory(res);
         });
@@ -107,7 +113,7 @@ function Details() {
                             )}
                             <span className="flex !h-full flex-nowrap items-center gap-2">
                                 <CategorySelect
-                               isCategory={true}
+                                    isCategory={true}
                                     setState={setCategory}
                                     state={category}
                                     options={allCategory}

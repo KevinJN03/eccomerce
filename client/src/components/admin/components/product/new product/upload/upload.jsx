@@ -16,15 +16,15 @@ function Upload({}) {
             const items = Array.from(files);
             const reorderedItems = items[result.source.index];
             const nextReorderItem = items[result.destination.index];
-      console.log({result})
+            
             // items.splice(result.destination.index, 1, reorderedItems);
             // items.splice(result.source.index, 1, nextReorderItem);
-items[result.destination.index] = reorderedItems
-items[result.source.index] = nextReorderItem
-            console.log({ items });
+            items[result.destination.index] = reorderedItems;
+            items[result.source.index] = nextReorderItem;
+            
             setFiles(() => items);
         } catch (error) {
-            console.log('error while dragging product photo: ', error);
+            
             setFiles(() => files);
         }
     };
@@ -62,7 +62,7 @@ items[result.source.index] = nextReorderItem
         newFiles.splice(findIndex, 1);
         newFiles.push(updateFile);
         setFiles(newFiles);
-        console.log({ updateFile });
+        
     };
 
     return (

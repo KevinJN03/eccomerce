@@ -5,7 +5,7 @@ import axios from '../../../api/axios';
 import dayjs from 'dayjs';
 import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
 
-function Shipping_Option({}) {
+function Shipping_Option({ disable }) {
     const { cart, setDeliveryOption, deliveryOption } = useCart();
     const today = dayjs();
 
@@ -23,7 +23,7 @@ function Shipping_Option({}) {
                 const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
                 const newDeliveryDate = today.add(processingTime.end, addUnit);
                 return (
-                    <div className="shipping_option">
+                    <div className="shipping_option" key={_id}>
                         <p className="font-semibold">
                             {cost ? `£ ${cost}` : 'FREE'}
                         </p>
@@ -35,6 +35,7 @@ function Shipping_Option({}) {
                             </p>
                         </div>
                         <input
+                            disabled={disable}
                             type="radio"
                             name="delivery"
                             defaultChecked={

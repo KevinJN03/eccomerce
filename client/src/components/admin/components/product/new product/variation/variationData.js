@@ -80,7 +80,7 @@ export const generateVariation = (name, option) => {
 export const filteredVariation = (name, options) => {
     const newOptions = new Map(options);
     let generatedList = generateVariation(name, { array: true });
-    console.log({ generatedList, options });
+    ({ generatedList, options });
 
     const valueSet = new Set();
     for (const [key, value] of options.entries()) {
@@ -91,19 +91,18 @@ export const filteredVariation = (name, options) => {
         // let filterArr = generatedList.filter(
         //     (item) => !newOptions.includes(item.variation)
         // );
-        // console.log({ filterArr });
+        // ({ filterArr });
         // return filterArr;
     }
     const newArr = generatedList.filter((item) => {
         if (!valueSet.has(item.variation)) {
             return true;
-        }else {
-         return false   
+        } else {
+            return false;
         }
-        
     });
 
-   return newArr
+    return newArr;
 };
 
 export const generateCustomVariation = (text) => {

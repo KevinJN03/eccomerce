@@ -15,14 +15,14 @@ function Product_Single({}) {
         adminAxios
             .get(`/product/${id}`)
             .then((res) => {
-        setSingleValue(() => res.data)
+                setSingleValue(() => res.data);
 
                 setTimeout(() => {
                     setLoading(() => false);
                 }, 1000);
             })
             .catch((error) => {
-                console.log('error while fetching single product: ', error);
+                'error while fetching single product: ', error;
             });
     }, []);
 
@@ -37,7 +37,7 @@ function Product_Single({}) {
             ) : (
                 // </section>
 
-                <New_Product  type={'update'}/>
+                <New_Product type={'update'} />
             )}
         </NewProductProvider>
     );

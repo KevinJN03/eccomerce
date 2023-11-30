@@ -3,38 +3,44 @@ import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
 function AddToCart({
     product,
-    sizeSelect,
-    colorSelect,
+    variation1Select,
     setError,
     isOutOfStock,
     price,
+    variationSelect,
 }) {
     const { dispatch } = useCart();
 
     const handleClick = () => {
-        console.log({
-            sizeSelect,
-            colorSelect,
-            isSizePresent: product.isSizePresent,
-            isColorPresent: product.isColorPresent,
-        });
-
-        console.log({ sizeSelect });
         if (
-            (sizeSelect == null && product.isSizePresent) ||
-            (colorSelect == null && product.isColorPresent)
+            (product.isSizePresent && !variationSelect.size.id) ||
+            (product.isColorPresent && !variationSelect.color.id)
         ) {
-            console.log('enter error');
+            ('enter error');
             setError(() => true);
             return;
         }
-        const newProduct = { ...product };
-        newProduct.selectSize = sizeSelect;
+
+        const { id, title, images, delivery, size, color } = product;
+
+        const newImagesArray = images[0];
+        const newProduct = {
+            id,
+            title,
+            price: product.price,
+            images: [newImagesArray],
+            delivery,
+            size,
+            color,
+        };
+
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
         newProduct.price.current = price;
-        newProduct.color = colorSelect;
+        newProduct.variationSelect = variationSelect;
         dispatch({ type: 'add', product: newProduct });
+
+        setError(() => false);
     };
     return (
         <>

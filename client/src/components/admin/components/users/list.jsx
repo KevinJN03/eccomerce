@@ -12,7 +12,7 @@ function All_Users() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selection, setSelection] = useState([]);
-    console.log(selection);
+    selection;
     useEffect(() => {
         axios
             .get('/user/all')
@@ -22,7 +22,7 @@ function All_Users() {
                 }
             })
             .catch((error) => {
-                console.log('error at fetchng users in admin', error);
+                'error at fetchng users in admin', error;
             });
     }, [loading]);
     return (

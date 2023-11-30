@@ -21,7 +21,6 @@ function DeleteAddress() {
         } catch (error) {
             console.error('error: ', error);
             logOutUser({ error, authDispatch, navigate });
-         
         }
     };
 

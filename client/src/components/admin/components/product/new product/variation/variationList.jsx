@@ -6,7 +6,7 @@ import SingleList from './singleList';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function VariationList({}) {
-    console.log('variationList Mount')
+    ('variationList Mount');
     const { variations, dispatch, setCheck } = useVariation();
     const { combine, combineDispatch } = useNewProduct();
 

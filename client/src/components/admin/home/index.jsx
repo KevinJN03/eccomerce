@@ -58,7 +58,7 @@ export function AdminReducer(state, action) {
 
 function Admin({}) {
     const { darkMode } = useDarkMode();
-    console.log('darkMode', darkMode);
+    'darkMode', darkMode;
     disableLayout();
 
     const [modalCheck, setModalCheck] = useState(false);
@@ -75,12 +75,12 @@ function Admin({}) {
         adminDispatch,
     };
     const location = useLocation();
-console.log({location: location.pathname.split('/')})
+    ({ location: location.pathname.split('/') });
     return (
         <AdminContextProvider value={value}>
             <section className={`admin ${darkMode ? 'dark' : ''}`}>
                 <ContentProvider>
-                    {location.pathname.split('/')[2]== 'login' ? (
+                    {location.pathname.split('/')[2] == 'login' ? (
                         <Outlet />
                     ) : (
                         <section className="home">

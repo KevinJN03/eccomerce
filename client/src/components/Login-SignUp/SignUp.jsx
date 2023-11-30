@@ -31,7 +31,7 @@ function SignUp() {
                 interest,
             });
         } catch (error) {
-            console.log('error while creating user:', error.response.data);
+            'error while creating user:', error.response.data;
 
             setError(() => error.response.data);
         }

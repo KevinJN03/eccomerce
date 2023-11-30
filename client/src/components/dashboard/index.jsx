@@ -39,19 +39,13 @@ function Dashboard() {
             setDob(() => dayjs(user.dob).toISOString());
             setContactPreference(() => user?.contact_preferences);
             setAddress(() => user?.address);
-            setUserPaymentMethods(() => [
-                ...paymentResult.data.paymentMethods
-            ]);
+            setUserPaymentMethods(() => [...paymentResult.data.paymentMethods]);
             setDefaultAddresses(() => user?.default_address);
 
             return Promise.resolve('ok');
         } catch (error) {
-            console.log(
-                'error while checking if user is authenticated: ',
-                error
-            );
+            'error while checking if user is authenticated: ', error;
             logOutUser({ error, authDispatch, navigate });
-          
         }
     }
 
@@ -77,7 +71,7 @@ function Dashboard() {
 
     const [selectOption, setSelectionOption] = useState(getRoute());
     useEffect(() => {
-        console.log('split: ', pathname.split('/'));
+        'split: ', pathname.split('/');
 
         setSelectionOption(() => getRoute());
     }, [pathname]);
@@ -121,7 +115,7 @@ function Dashboard() {
 
             navigate('/home');
         } catch (error) {
-            console.log('error while loging out: ', error);
+            'error while loging out: ', error;
         }
     };
 

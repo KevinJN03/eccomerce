@@ -7,22 +7,20 @@ import { useAdminContext } from '../../../../../../context/adminContext';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 export default function Main() {
     const [defaultVariations, setDefaultVariations] = useState([]);
-    const { temporaryVariation  } =
-        useVariation();
+    const { temporaryVariation } = useVariation();
 
-        const { contentDispatch, setModalCheck} = useNewProduct()
+    const { contentDispatch, setModalCheck } = useNewProduct();
 
     const [disabled, setDisabled] = useState({});
     const findVariation = (option) => {
         const result = temporaryVariation.some((item) => item.disabled);
 
-        console.log({ option });
+        ({ option });
         return result;
     };
 
     const exit = () => {
         if (temporaryVariation.length >= 1) {
-           
             contentDispatch({ type: 'manage' });
         }
 
@@ -44,7 +42,7 @@ export default function Main() {
 
     useEffect(() => {
         let newTemporaryVariation = [...temporaryVariation];
-        console.log('mount here');
+        ('mount here');
         const newDefaultVariations = checkEntries();
         /* disable default variation button if the variation exists already */
 
@@ -73,7 +71,6 @@ export default function Main() {
 
                 updateDefaultDisabled.push(variation);
                 return;
-               
             });
             setDefaultVariations(updateDefaultDisabled);
             return;
@@ -82,7 +79,7 @@ export default function Main() {
         return setDefaultVariations(newDefaultVariations);
     }, []);
 
-    console.log('defaultMap: ', defaultMap);
+    'defaultMap: ', defaultMap;
     return (
         <section className="variation-main relative h-full ">
             <h1 className="mb-2">What type of variation is it?</h1>

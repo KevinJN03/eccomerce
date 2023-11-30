@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-
+import {motion} from 'framer-motion'
 function Customer_Info({ className, customer, elementClass }) {
     return (
-        <div id="customer-info" className={className ? className : null}>
+        <motion.div id="customer-info" className={className ? className : null}>
             <p
                 className={elementClass}
             >{`${customer?.firstName} ${customer?.lastName}`}</p>
@@ -15,7 +15,7 @@ function Customer_Info({ className, customer, elementClass }) {
             <p className={elementClass}>{customer?.postCode}</p>
             <p className={elementClass}>UK</p>
             <p className={elementClass}>{customer?.mobile}</p>
-        </div>
+        </motion.div>
     );
 }
 

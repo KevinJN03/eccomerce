@@ -13,23 +13,22 @@ function Single_User({}) {
     const [user, setUser] = useState({});
     const [error, setError] = useState();
     const { id } = useParams();
-    console.log(id);
+    id;
     useEffect(() => {
         adminAxios
             .get(`user/${id}`)
             .then((res) => {
                 if (res.status == 200) {
                     let data = res.data;
-                    console.log(data);
+                    data;
                     setUser(data);
                 }
             })
             .catch((error) => {
-                console.log('error at single user: ', error);
+                'error at single user: ', error;
                 setError(error);
             });
     }, []);
-
 
     return (
         <div className="single">
@@ -37,19 +36,22 @@ function Single_User({}) {
 
             <div className="singleContainer">
                 <Navbar />
-                {error && <Error link={'/admin/users'} buttonText={'GO TO USERS'}/>}
+                {error && (
+                    <Error link={'/admin/users'} buttonText={'GO TO USERS'} />
+                )}
                 {!error && (
                     <>
                         <div className="top">
                             <div className="left">
-                                <Link to={'./edit'} className="editButton">Edit</Link >
+                                <Link to={'./edit'} className="editButton">
+                                    Edit
+                                </Link>
                                 <h1 className="title">Information</h1>
                                 <div className="item">
                                     <img
                                         src={user.profileImg || userIcon}
                                         alt=""
                                         className="itemImg"
-                                
                                     />
                                     <div className="details">
                                         <h1 className="itemTitle">{`${user.firstName} ${user.lastName}`}</h1>
@@ -74,7 +76,9 @@ function Single_User({}) {
                                                 Address:
                                             </span>
                                             <span className="itemValue">
-                                                {user.address && `${user.address[0].line1}, ${user.address[0].line2} ` || 'N/A'}
+                                                {(user.address &&
+                                                    `${user.address[0].line1}, ${user.address[0].line2} `) ||
+                                                    'N/A'}
                                             </span>
                                         </div>
                                         <div className="detailItem">
@@ -82,7 +86,9 @@ function Single_User({}) {
                                                 Country:
                                             </span>
                                             <span className="itemValue">
-                                                { user.address && user.address[0].country || 'N/A'}
+                                                {(user.address &&
+                                                    user.address[0].country) ||
+                                                    'N/A'}
                                             </span>
                                         </div>
                                     </div>
@@ -102,7 +108,6 @@ function Single_User({}) {
                     </>
                 )}
             </div>
-           
         </div>
     );
 }

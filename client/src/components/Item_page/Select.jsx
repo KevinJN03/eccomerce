@@ -1,7 +1,17 @@
 import { forwardRef, useEffect, useState } from 'react';
 
 const Select = forwardRef(function Select(
-    { text, single, array, setSelect, property, setOutOfStock, setPrice },
+    {
+        text,
+        single,
+        array,
+
+        property,
+        setOutOfStock,
+        setPrice,
+        variationSelect,
+        setVariationSelection,
+    },
     ref
 ) {
     const [stockState, setStockState] = useState();
@@ -14,10 +24,17 @@ const Select = forwardRef(function Select(
         }
     }, [stockState]);
     const onChange = (e) => {
+        const id = e.target.options[e.target.selectedIndex].dataset?.id;
+        const variation =
+            e.target.options[e.target.selectedIndex].dataset?.variation;
         const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
         const price = e.target.options[e.target.selectedIndex].dataset?.price;
 
-        setSelect(() => JSON.parse(e.target.value));
+        setVariationSelection((prevState) => ({
+            ...prevState,
+            [property]: { variation, id },
+        }));
+        variationSelect;
 
         if (stock == 0 || stock) {
             setStockState(() => stock);
@@ -53,17 +70,15 @@ const Select = forwardRef(function Select(
                         {array.map((item, index) => {
                             return (
                                 <option
-                                    value={
-                                        property
-                                            ? JSON.stringify(item[property])
-                                            : item
-                                    }
+                                    // value={property ? { ...item } : item}
                                     key={index}
+                                    data-id={item['id']}
+                                    data-variation={item['variation']}
                                     data-price={item?.price}
                                     data-stock={item?.stock}
                                     // disabled={item?.stock == 0}
                                 >
-                                    {`${property ? item[property] : item}${
+                                    {`${item['variation'] || item}${
                                         item?.stock == 0
                                             ? ' - Out of Stock'
                                             : ''

@@ -49,6 +49,7 @@ import Add_GiftCard from './components/dashboard/gift-card-voucher/card.jsx';
 import Add_Voucher from './components/dashboard/gift-card-voucher/voucher.jsx';
 import PayPalHome from './components/dashboard/payment-methods/Paypal/paypal-home.jsx';
 import Cancel_Payment from './components/dashboard/payment-methods/cancelPayment.jsx';
+import Order_Success from './components/order/order-success.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -219,6 +220,10 @@ function Router({ Header, Footer }) {
                 },
 
                 {
+path:'order-success',
+element: <Order_Success/>
+                },
+                {
                     path: '/admin',
                     element: <Admin />,
 
@@ -297,10 +302,6 @@ function Router({ Header, Footer }) {
         },
     ]);
 
-    return (
-        <>
-            <RouterProvider router={router} />
-        </>
-    );
+    return <RouterProvider router={router} />;
 }
 export default Router;

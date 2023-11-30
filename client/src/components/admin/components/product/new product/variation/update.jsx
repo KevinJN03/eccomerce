@@ -61,7 +61,8 @@ function Update({}) {
     const apply = () => {
         try {
             setTimeout(() => {
-                setUpdate((prevState)=> ({...prevState,
+                setUpdate((prevState) => ({
+                    ...prevState,
                     [category]: value,
                     bool: !update.bool,
                 }));
@@ -73,7 +74,7 @@ function Update({}) {
             //     setSelected([])
             // }, 1000)
         } catch (error) {
-            console.log('error at apply', error);
+            'error at apply', error;
         }
     };
 
@@ -122,7 +123,7 @@ function Update({}) {
                         onChange={(e) => handleOnchange(e.target.value)}
                         type="number"
                         ref={ref}
-                        className={`input-number border-1 input input-bordered input-lg min-w-full rounded-md ${
+                        className={`input-number border-1 input-bordered input input-lg min-w-full rounded-md ${
                             category == 'price' ? '!px-6' : ' px-2'
                         } ${error?.[category] && 'border-red-400 bg-red-100'}`}
                     />
@@ -132,15 +133,14 @@ function Update({}) {
                         </span>
                     )}
                 </span>
-<AnimatePresence>
-
-                {error?.[category] && (
-                    <OptionError
-                        className={'!gap-1 !px-0 py-2'}
-                        msg={error?.[category]}
-                    />
-                )}
-</AnimatePresence>
+                <AnimatePresence>
+                    {error?.[category] && (
+                        <OptionError
+                            className={'!gap-1 !px-0 py-2'}
+                            msg={error?.[category]}
+                        />
+                    )}
+                </AnimatePresence>
             </div>
 
             <div className="variation-footer">

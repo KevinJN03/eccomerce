@@ -47,10 +47,10 @@ function New({ type, title }) {
 
     useEffect(() => {
         if (id) {
-            console.log(id);
+       
             adminAxios.get(`/user/${id}`).then((res) => {
                 let data = res.data;
-                console.log(data);
+            
                 // setFile(data.profileImg)
                 setAddress(data.address[0]);
                 setGenerateUrl(false);
@@ -96,7 +96,7 @@ function New({ type, title }) {
     };
 
     file && (body.file = file);
-    console.log('body', body);
+   
     const save = () => {
         // const form = new FormData()
 
@@ -117,13 +117,13 @@ function New({ type, title }) {
         if (type == 'new') {
             body.password = password;
         }
-        console.log('body', body);
+      
         let option = type == 'new' ? 'create' : `update/${id}`;
 
         adminAxios
             .postForm(`/user/${option}`, body)
             .then((res) => {
-                console.log(res.data);
+               
 
                 if (res.status == 201 || 200) {
                     setError([]);
