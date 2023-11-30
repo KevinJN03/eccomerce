@@ -68,7 +68,7 @@ function Cart_Item({ product }) {
         });
     }, []);
     return (
-        <div id="cart-product">
+        <section className="white relative flex h-full flex-row gap-x-4 px-4 py-4">
             <button
                 type="button"
                 id="cart-close"
@@ -77,13 +77,20 @@ function Cart_Item({ product }) {
             >
                 <img loading="lazy" src={close} />{' '}
             </button>
-            <Link to={`/product/${product.id}`} className="cart-img-container">
+            <Link
+                to={`/product/${product.id}`}
+                className="cart-img-container min-h-full"
+            >
                 <img
                     src={product.images[0]}
-                    className="h-full w-full object-cover"
+                    className="h-auto w-full object-center"
                 ></img>
             </Link>
-            <section id="cart-info">
+
+            <section
+                id="cart-info"
+                className="flex !min-h-full flex-col flex-nowrap"
+            >
                 <p className="flex gap-x-3 text-sm font-bold tracking-wider text-[var(--primary-2)]">
                     <span
                         className={
@@ -100,43 +107,48 @@ function Cart_Item({ product }) {
                             </span>
                         )}
                 </p>
-                <p className="">{product.title}</p>
-                <div className="cart-options">
-                    {findColor && (
-                        <span className="border-r-[1px] pr-2">
-                            {findColor?.variation}
-                        </span>
-                    )}
-                    {findSize && (
-                        <div className="cursor-pointer border-r-[1px] pr-2">
+
+                <div className=" bottom relative flex h-full !max-h-full w-full flex-col justify-between mt-2">
+                    <p className="w-11/12 text-gray-500">
+                        {product.title}
+                    </p>
+                    <div className="cart-options">
+                        {findColor && (
+                            <span className="border-r-[1px] pr-2 text-s">
+                                {findColor?.variation?.toUpperCase()}
+                            </span>
+                        )}
+                        {findSize && (
+                            <div className="cursor-pointer border-r-[1px] pr-2">
+                                <QTY_SIZE_OPTION
+                                    handleOnChange={handleSizeChange}
+                                    options={sizeOptionArray}
+                                    select={findSize.variation}
+                                    type="size"
+                                />
+                                <div className="border-r-2 pr-2"></div>
+                            </div>
+                        )}
+                        <div
+                            className="flex !cursor-pointer flex-nowrap  gap-x-2"
+                            onClick={onClick}
+                        >
+                            <p>Qty</p>
                             <QTY_SIZE_OPTION
-                                handleOnChange={handleSizeChange}
-                                options={sizeOptionArray}
-                                select={findSize.variation}
-                                type="size"
+                                handleOnChange={handleQuantityChange}
+                                options={quantityArr}
+                                select={quantity}
+                                ref={qtyRef}
                             />
-                            <div className="border-r-2 pr-2"></div>
                         </div>
-                    )}
-                    <div
-                        className="flex !cursor-pointer flex-nowrap  gap-x-2"
-                        onClick={onClick}
-                    >
-                        <p>Qty</p>
-                        <QTY_SIZE_OPTION
-                            handleOnChange={handleQuantityChange}
-                            options={quantityArr}
-                            select={quantity}
-                            ref={qtyRef}
-                        />
                     </div>
+                    <button type="button" id="save-later-btn" className="">
+                        <img loading="lazy" src={heart} ref={heart_icon_ref} />
+                        <p className="m-0 text-xs">Save for later</p>
+                    </button>
                 </div>
-                <button type="button" id="save-later-btn">
-                    <img loading="lazy" src={heart} ref={heart_icon_ref} />
-                    <p className="m-0 text-xs">Save for later</p>
-                </button>
             </section>
-        </div>
+        </section>
     );
 }
 

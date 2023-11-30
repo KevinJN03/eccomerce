@@ -13,7 +13,7 @@ const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
                 onChange={handleOnChange}
                 name="quantity-select"
                 id="qty-size-select"
-                className="!max-w-[120px] "
+                className="!max-w-[80px] text-s"
                 ref={ref}
                 tabIndex={'0'}
             >

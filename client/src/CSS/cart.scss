@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto&family=Roboto+Slab:wght@100;200;300;400;500;600&display=swap');
 
 #cart-page {
-    @apply flex justify-center gap-4 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center;
+    @apply flex justify-center gap-4 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center mb-24;
     background-color: var(--light-grey);
     min-height: 100%;
     max-width: 100%;
@@ -9,22 +9,19 @@
 .cart {
     @apply w-full md:w-[100%] lg:w-[500px];
 }
-#cart-product {
-    @apply white relative flex flex-row gap-5 px-8 py-5;
-    border-bottom: 2px solid var(--light-grey);
-}
+
 .cart-header {
     @apply white mb-2 mt-4 flex h-14 items-center justify-between px-8 py-10;
 }
 
 .cart-img-container {
-    height: 150px;
-    width: 120px;
-    @apply white flex justify-start;
+  
+    @apply white flex justify-start w-28 h-36 min-h-full;
 }
 
 #cart-info {
     width: 70%;
+   
 }
 
 .cart-options {
@@ -36,14 +33,14 @@
 }
 
 #save-later-btn {
-    @apply mt-5 flex h-8 flex-row items-center justify-center whitespace-nowrap px-2;
+    @apply flex h-8 w-fit max-w-[130px] flex-row items-center justify-center whitespace-nowrap px-4;
     border: 1px solid var(--light-grey);
     gap: 10px;
 }
 #save-later-btn img {
-    height: 50%;
+    // height: 50%;
 
-    @apply m-0;
+    @apply m-0 h-3 w-3;
 }
 
 .white {
@@ -70,9 +67,6 @@
     }
 }
 
-.product-cart-wrapper {
-    @apply mb-2 w-full;
-}
 
 #total-container {
     @apply white my-4 py-5 sm:px-3 md:mr-3 md:px-5  sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8;

@@ -29,6 +29,18 @@ function Product_info({ title, text, details, images, product, loading }) {
         if (product?.isVariationCombine) {
             setCombineVariation(() => product?.combineVariation);
         }
+
+        if (product?.isVariation1Present) {
+            if (product?.variation1?.array?.length == 1) {
+                setVariationSelection((prevState) => ({
+                    ...prevState,
+                    variation1: {
+                        ...prevState.variation1,
+                        ...product?.variation1?.array[0],
+                    },
+                }));
+            }
+        }
     }, [product]);
 
     useEffect(() => {

@@ -12,8 +12,10 @@ function AddToCart({
 
     const handleClick = () => {
         if (
-            (product.isSizePresent && !variationSelect.variation1.variation) ||
-            (product.isColorPresent && !variationSelect.variation2.variation)
+            (product.isVariation1Present &&
+                !variationSelect.variation1.variation) ||
+            (product.isVariation2Present &&
+                !variationSelect.variation2.variation)
         ) {
             ('enter error');
             setError(() => true);

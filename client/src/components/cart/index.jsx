@@ -69,14 +69,19 @@ function Cart({}) {
                                 Items are reserved for 60 minutes
                             </p>
                         </div>
-                        <div className="product-cart-wrapper">
+                        <div className="product-cart-wrapper flex flex-col flex-nowrap bg-white">
                             {cart.length > 0 &&
-                                cart.map((item) => {
+                                cart.map((item, idx) => {
                                     return (
-                                        <Cart_Item
-                                            key={item.cartId}
-                                            product={item}
-                                        />
+                                        <>
+                                            {idx != 0 && (
+                                                <div className="mx-6 h-1 border-t-[1px] border-gray-300"></div>
+                                            )}
+                                            <Cart_Item
+                                                key={item.cartId}
+                                                product={item}
+                                            />
+                                        </>
                                     );
                                 })}
                         </div>

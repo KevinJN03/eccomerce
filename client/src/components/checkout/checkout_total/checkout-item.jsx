@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 function Checkout_Item({ product }) {
+
     return (
         <div className="product-cart">
             <Link
@@ -22,11 +23,11 @@ function Checkout_Item({ product }) {
                     {product.title}
                 </p>
                 <span className="flex flex-row gap-x-3 font-bold ">
-                    {product?.variationSelect?.color?.variation && (
-                        <p>{product?.variationSelect?.color?.variation}</p>
+                    {product?.isVariation1Present && (
+                        <p>{product?.variationSelect?.variation1?.variation || ''}</p>
                     )}
-                    {product?.variationSelect?.size?.variation && (
-                        <p>{product?.variationSelect?.size?.variation}</p>
+                    {product?.isVariation2Present && (
+                        <p>{product?.variationSelect?.variation2?.variation || ''}</p>
                     )}
                 </span>
                 <p>

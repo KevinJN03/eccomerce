@@ -12,24 +12,30 @@ function CardSelect({}) {
 
     const { error, setError } = useCheckoutContext();
     useEffect(() => {
-        var cardCvcElement = elements.create('cardCvc', {
-            classes: {
-                base: 'card-number-input',
-            },
+        if (elements) {
+            console.log('create cardcvc');
+            var cardCvcElement = elements.create('cardCvc', {
+                classes: {
+                    base: 'card-number-input',
+                },
 
-            placeholder: '',
-        });
+                placeholder: '',
+            });
 
-        cardCvcElement.mount('#cardCvc');
-        cardCvcElement.on('change', (e) => {
-            setError((prevState) => ({ ...prevState, cvc: null }));
-        });
+            cardCvcElement.mount('#cardCvc');
+            cardCvcElement.on('change', (e) => {
+                setError((prevState) => ({ ...prevState, cvc: null }));
+            });
+        }
 
         return () => {
-            cardCvcElement.destroy();
-            setError((prevState) => ({ ...prevState, cvc: null }));
+            if (cardCvcElement) {
+                console.log('destroy cardcvc');
+                cardCvcElement.destroy();
+                setError((prevState) => ({ ...prevState, cvc: null }));
+            }
         };
-    }, []);
+    }, [elements]);
 
     const handleClick = () => {};
     return (
