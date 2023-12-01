@@ -39,9 +39,9 @@ function Shipping_Option({ disable }) {
                             type="radio"
                             name="delivery"
                             defaultChecked={
-                                deliveryOption.id == _id || idx == 0
+                                deliveryOption.id == _id || cost == 0
                             }
-                            value={JSON.stringify({ cost, name })}
+                            value={JSON.stringify({ cost, name, id: _id })}
                             onChange={handleDelivery}
                         ></input>
                     </div>

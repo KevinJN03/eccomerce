@@ -10,6 +10,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
@@ -30,10 +31,10 @@ function Buy_Now_Btn({ disable }) {
     const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
 
     const { user } = useAuth();
-    const { cart } = useCart();
+    const { cart, deliveryOption } = useCart();
     const stripe = useStripe();
     const elements = useElements();
-
+const navigate = useNavigate()
     const fetchPaymentIntent = async () => {
         const { data } = await axios.post('/order/create-payment-intent', {
             billing: {
@@ -59,6 +60,7 @@ function Buy_Now_Btn({ disable }) {
                 name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
             },
             cart,
+            deliveryOption
         });
 
         const { id, clientSecret } = data;
@@ -68,6 +70,7 @@ function Buy_Now_Btn({ disable }) {
 
     const submitOrder = async () => {
         try {
+            console.log({deliveryOption})
             setOrderSubmit(() => true);
             let clientSecret = '';
             // if (!paymentIntentInfo) {
@@ -168,7 +171,9 @@ function Buy_Now_Btn({ disable }) {
 
                 setOrderSubmit(() => false);
             } else {
-                ({ paymentIntent });
+                if(selectedMethod?.type == 'card'){
+                    navigate('/order-success')
+                }
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);

@@ -3,7 +3,7 @@ import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import { validationResult, check } from 'express-validator';
 import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
-
+import randomstring from 'randomstring';
 import 'dotenv/config';
 import Stripe from 'stripe';
 import _ from 'lodash';
@@ -98,7 +98,7 @@ export const createPaymentIntent = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const { cart, shipping } = req.body;
+    const { cart, shipping, deliveryOption } = req.body;
     // make a map with all the cart item products
     //
     let cartPrice = 0;
@@ -112,10 +112,12 @@ export const createPaymentIntent = [
         isVariation1Present,
         isVariation2Present,
         isVariationCombine,
+        cartId,
       }) => {
         const obj = {
           id,
           ...variationSelect,
+          cartId,
           quantity,
           isVariation1Present,
           isVariation2Present,
@@ -144,7 +146,7 @@ export const createPaymentIntent = [
       const getVariationSelectArray = cartObj[product.id];
 
       getVariationSelectArray.map((variationDetail) => {
-        // console.log(variationDetail);
+        console.log(variationDetail);
         if (product?.variations) {
           if (product.variations.length < 3) {
             // console.log({ notCobine: true, variationDetail });
@@ -202,8 +204,6 @@ export const createPaymentIntent = [
                 variationDetail?.variation2?.id,
               );
 
-              console.log({ foundOptionVariation });
-
               if (foundOptionVariation) {
                 cartPrice +=
                   foundOptionVariation?.price * variationDetail?.quantity;
@@ -215,12 +215,25 @@ export const createPaymentIntent = [
         }
       });
     });
-    const calculatePrice = parseInt(cartPrice * 100);
-    console.log({ cartPrice });
-    /* use off_session inorder to allow klarna payment */
 
+    if (_.has(deliveryOption, 'cost')) {
+      cartPrice += deliveryOption.cost;
+    }
+
+    let parseCartPrice = parseFloat(cartPrice).toFixed(2).replace('.', '');
+    const calculatePrice = parseInt(parseCartPrice);
+
+    /* use off_session inorder to allow klarna payment */
+    const generateOrderNumber = randomstring.generate({
+      length: 12,
+      charset: 'alphanumeric',
+      capitalization: 'uppercase',
+    });
+
+    console.log({ generateOrderNumber });
     const paymentIntent = await stripe.paymentIntents.create({
       metadata: {
+        orderNumber: generateOrderNumber,
         // cartObj: JSON.stringify(cartObj),
         isQuantityFixed,
       },
