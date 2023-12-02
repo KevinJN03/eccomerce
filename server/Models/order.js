@@ -2,15 +2,15 @@ import mongoose, { SchemaType } from 'mongoose';
 
 const { Schema } = mongoose;
 const enum_states = {
-  values: ['received', 'shipped', 'delivered', 'cancelled', 'unpaid'],
+  values: ['received', 'shipped', 'delivered', 'cancelled', 'processing'],
   message:
-    'enum validator failed value `VALUE`, please ensure value is of any of the following: received, shipped, delivered, cancelled',
+    'enum validator failed value `VALUE`, please ensure value is of any of the following: received, shipped, delivered, cancelled, ',
 };
 const OrderSchema = new Schema({
   _id: { type: Schema.Types.String, required: true, unique: true },
   items: [
     {
-      id: { type: Schema.Types.ObjectId, ref: 'product' },
+      product: { type: Schema.Types.ObjectId, ref: 'product' },
       quantity: { type: Schema.Types.Number },
       isVariation1Present: { type: Schema.Types.Boolean },
       isVariation2Present: { type: Schema.Types.Boolean },
@@ -55,6 +55,7 @@ const OrderSchema = new Schema({
   //   transaction_cost: { type: Schema.Types.Number },
 
   cartObj: { type: Schema.Types.Mixed, ref: 'product' },
+  cartIds: [{ type: Schema.Types.String }],
 });
 
 export default mongoose.model('order', OrderSchema);

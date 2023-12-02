@@ -107,9 +107,8 @@ export default function NavOption({ selectOption, loadingState }) {
                                     </motion.div>
 
                                     <div
-                                        className={`justify-left Item.text-s flex h-full max-h-9 w-full items-center font-light underline-offset-2 hover:underline ${
-                                            options.length - 1 != idx &&
-                                            'border-b-[1px]'
+                                        className={`justify-left text-s mr-[-12px] flex h-full w-full items-center font-light underline-offset-2 hover:underline ${
+                                            options.length - 1 != idx && 'border-b-[1px]'
                                         }`}
                                     >
                                         {loadingState ? (

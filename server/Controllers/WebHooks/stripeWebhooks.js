@@ -6,6 +6,7 @@ import Product from '../../Models/product.js';
 import _ from 'lodash';
 import Order from '../../Models/order.js';
 import product from '../../Models/product.js';
+import User from '../../Models/user.js';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -16,6 +17,8 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
     const { payment_intent } = event.data.object;
     const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent);
     const orderNumber = paymentIntent.metadata?.orderNumber;
+
+    const userId = paymentIntent?.customer;
 
     const order = await Order.findById(orderNumber);
 
@@ -105,6 +108,16 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
         { _id: orderNumber },
         { $unset: { cartObj: '' }, $set: { status: 'received' } },
         { new: true },
+      );
+
+      const updateUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $push: { orders: orderNumber },
+        },
+        {
+          upsert: true,
+        },
       );
     });
 

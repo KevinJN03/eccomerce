@@ -27,7 +27,7 @@ import Layout from './components/Layout/layout';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
 import AdminLogin from './components/admin/home/AdminLogin';
-import My_Orders from './components/dashboard/my-orders';
+import My_Orders from './components/dashboard/order/my-orders.jsx';
 import Overview from './components/dashboard/Overview';
 import Returns from './components/dashboard/returns';
 import Details from './components/dashboard/details';
@@ -50,6 +50,7 @@ import Add_Voucher from './components/dashboard/gift-card-voucher/voucher.jsx';
 import PayPalHome from './components/dashboard/payment-methods/Paypal/paypal-home.jsx';
 import Cancel_Payment from './components/dashboard/payment-methods/cancelPayment.jsx';
 import Order_Success from './components/order/order-success.jsx';
+import Order_Info from './components/dashboard/order/order-info.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -102,7 +103,14 @@ function Router({ Header, Footer }) {
                             path: 'orders',
 
                             element: <My_Orders />,
+
+                           
                         },
+                        {
+                            path: 'orders/:id',
+                            element: <Order_Info />,
+                        },
+
                         {
                             path: 'returns',
 
@@ -220,8 +228,8 @@ function Router({ Header, Footer }) {
                 },
 
                 {
-path:'order-success',
-element: <Order_Success/>
+                    path: 'order-success',
+                    element: <Order_Success />,
                 },
                 {
                     path: '/admin',

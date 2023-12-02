@@ -107,6 +107,7 @@ export const createPaymentIntent = [
     const cartMap = new Map();
     const cartObj = {};
     const itemsArray = [];
+    const cartIds = [];
     cart.map(
       ({
         id,
@@ -128,7 +129,8 @@ export const createPaymentIntent = [
           isVariationCombine,
           price: price?.current,
         };
-        itemsArray.push({ ...obj });
+        itemsArray.push({ ...obj, product: id });
+        cartIds.push(cartId);
         if (!cartMap.has(id)) {
           obj.cartId = cartId;
           const array = [obj];
@@ -242,7 +244,7 @@ export const createPaymentIntent = [
     const orderObj = {
       _id: orderNumber,
       customer: userId,
-      status: 'unpaid',
+      status: 'processing',
       shipping_address: shipping,
       billing_address: billing,
       transaction_cost: {
@@ -256,6 +258,7 @@ export const createPaymentIntent = [
       },
       items: itemsArray,
       cartObj,
+      cartIds,
     };
 
     const order = await Order.create(orderObj);
@@ -275,11 +278,10 @@ export const getOrderDetails = [
     const userId = req.session.passport.user;
     const { id } = req.params;
 
-    const order = await Order.findById(id.toUpperCase()).populate('items.id', [
-      'images',
-      'title',
-      'variations',
-    ]);
+    const order = await Order.findById(id.toUpperCase()).populate(
+      'items.product',
+      ['images', 'title', 'variations'],
+    );
     // .exec();
 
     if (order) {

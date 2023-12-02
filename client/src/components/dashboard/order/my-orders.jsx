@@ -1,12 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import order_icon from '../../assets/icons/profile-icons/package.png';
+import order_icon from '../../../assets/icons/profile-icons/package.png';
 
-import Header from './header';
-import Empty_Body from './empty-body';
+import Header from '../header';
+import Empty_Body from '../empty-body';
 import { useEffect, useState } from 'react';
-import axios from '../../api/axios';
-import logOutUser from '../common/logoutUser';
-import { useAuth } from '../../hooks/useAuth';
+import axios from '../../../api/axios';
+import logOutUser from '../../common/logoutUser';
+import { useAuth } from '../../../hooks/useAuth.jsx';
 import dayjs from 'dayjs';
 function My_Orders({}) {
     const navigate = useNavigate();
@@ -107,7 +107,7 @@ function My_Orders({}) {
                                         </div>
                                         {/* <div className="right flex-1"> */}
                                         <Link
-                                        to={`${order?._id}`}
+                                            to={`${order?._id}`}
                                             type="button"
                                             className="h-full flex-[0.8] border-2 py-2 text-center font-gotham tracking-wider transition-all hover:!bg-[var(--light-grey)]"
                                         >
