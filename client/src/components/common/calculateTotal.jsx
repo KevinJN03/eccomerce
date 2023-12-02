@@ -25,7 +25,7 @@ const calculateTotal = () => {
         }
     }
     const newTotal = parseFloat(
-        total + deliveryOption.cost - amountOff
+        total + (deliveryOption?.cost || 0) - amountOff
     ).toFixed(2);
     const withShipping = newTotal;
   

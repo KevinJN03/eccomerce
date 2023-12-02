@@ -63,7 +63,7 @@ function Checkout_Total() {
                     <p className="flex justify-between">
                         Delivery{' '}
                         <span>
-                            {deliveryOption.cost
+                            {deliveryOption?.cost
                                 ? `£ ${deliveryOption.cost}`
                                 : 'FREE'}
                         </span>

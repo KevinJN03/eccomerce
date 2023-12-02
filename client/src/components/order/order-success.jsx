@@ -6,7 +6,7 @@ import facebook_icon from '../../assets/icons/facebook.svg';
 import instagram_icon from '../../assets/icons/instagram.svg';
 
 import image from '../../assets/images/order-photo-women.jpg';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
 import { useReducer } from 'react';
@@ -24,7 +24,7 @@ function OrderInfo({ header, text, headerClassName }) {
                 </h3>
             </span>
 
-            <p className="flex-1 text-sm tracking-wide self-center">{text}</p>
+            <p className="flex-1 self-center text-sm tracking-wide">{text}</p>
         </div>
     );
 }
@@ -152,7 +152,7 @@ function Order_Success({}) {
                                     <h2 className=" border-b-[1px] py-4 font-gotham text-xl font-bold tracking-wider">
                                         {order.items.length} ITEM
                                     </h2>
-                                    <section className="flex flex-col flex-nowrap max-h-[300px] overflow-y-auto scrollbar">
+                                    <section className="scrollbar flex max-h-[300px] flex-col flex-nowrap overflow-y-auto">
                                         {order.items.map((product) => {
                                             return (
                                                 <section className="box-content flex max-h-[120px] flex-row gap-x-4 border-b-[1px] py-6">
@@ -199,7 +199,7 @@ function Order_Success({}) {
                                                             )}
                                                         </div>
 
-                                                        <p className="text-sm text-dark-gray tracking-wide">
+                                                        <p className="text-dark-gray text-sm tracking-wide">
                                                             Qty:
                                                             <span className="ml-2 font-gotham font-bold">
                                                                 {
@@ -215,15 +215,21 @@ function Order_Success({}) {
                                 </section>
                             )}
 
-                            <p className="cursor-pointer text-sm font-[400] hover:underline">
+                            <Link to={'my-account/cancel-order'} className="cursor-pointer text-sm font-[400] hover:underline">
                                 Cancel this order
-                            </p>
-                            <p className="cursor-pointer text-sm font-[400] hover:underline">
+                            </Link>
+                            <Link
+                                to={'/my-account'}
+                                className="cursor-pointer text-sm font-[400] hover:underline"
+                            >
                                 My Account
-                            </p>
-                            <p className="cursor-pointer text-sm font-[400] hover:underline">
+                            </Link>
+                            <Link
+                                to={'/return-policy'}
+                                className="cursor-pointer text-sm font-[400] hover:underline"
+                            >
                                 Returns Policy
-                            </p>
+                            </Link>
                         </div>
 
                         <div className="mt-3 flex flex-row items-center gap-x-4 bg-white p-6">

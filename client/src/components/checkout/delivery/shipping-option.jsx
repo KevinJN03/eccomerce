@@ -21,6 +21,30 @@ function Shipping_Option({ disable }) {
         setDeliveryDate(() => delivery_date);
     };
 
+    const generateDeliveryDate = ({ processingTime }) => {
+        const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
+        const newDeliveryDate = today.add(processingTime.end, addUnit);
+
+        const newFormatDate = newDeliveryDate.format('dddd, D MMMM, YYYY');
+
+        return newFormatDate;
+    };
+
+    useEffect(() => {
+        if (!deliveryOption?.id && profiles.length >= 1) {
+            console.log({ deliveryOption });
+            const { id, cost, name, processingTime } = profiles[0];
+
+            const delivery_date = generateDeliveryDate({
+                processingTime,
+            });
+            setDeliveryDate(() => delivery_date);
+
+            setDeliveryOption({ id, cost, name });
+        }else {
+        }
+    }, [profiles]);
+
     return (
         <>
             {profiles.map(({ name, cost, processingTime, _id }, idx) => {

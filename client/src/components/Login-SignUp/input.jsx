@@ -28,10 +28,11 @@ function Input({
                 <div className={`relative flex flex-row ${inputClassName}`}>
                     <input
                         autoComplete={autoComplete}
-                        type={property}
+                     
+                        type={'text'}
                         name={property}
                         id={property}
-                        className={`login-signup-input`}
+                        className={`login-signup-input py-4`}
                         value={value}
                         onChange={(e) => {
                             manyProperty
