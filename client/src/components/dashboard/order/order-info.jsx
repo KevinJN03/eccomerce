@@ -1,6 +1,7 @@
 import order_icon from '../../../assets/icons/profile-icons/package.svg';
 import calendar_icon from '../../../assets/icons/profile-icons/calender.png';
 import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
+import duplicate_icon from '../../../assets/icons/duplicate.png';
 import logos from '../payment-methods/logos.jsx';
 function OrderNumberDate({ icon, title, text }) {
     return (
@@ -107,9 +108,38 @@ function Order_Info({}) {
                 </div>
 
                 <div className="order-details mt-3 bg-white p-6">
-                    <h3 className='text-sm font-gotham pb-6 border-b-2'>ORDER TOTAL</h3>
-                    <div>
-                        sub
+                    <h3 className="border-b-2 pb-6 font-gotham text-sm">
+                        ORDER TOTAL
+                    </h3>
+                    <p className="text-dark-gray my-6 flex items-center justify-between font-gotham tracking-wider">
+                        SUB-TOTAL:{' '}
+                        <span className="text-sm tracking-wide">£6.99</span>
+                    </p>
+
+                    <p className="text-dark-gray my-6 flex items-center justify-between font-gotham tracking-wider">
+                        DELIVERY:{' '}
+                        <span className="text-sm tracking-wide">£4.50</span>
+                    </p>
+
+                    <p className="flex justify-between border-t-2 py-2 pt-6 font-gotham text-base tracking-wider ">
+                        TOTAL:{' '}
+                        <span className="font-gotham font-bold tracking-widest">
+                            £11.49
+                        </span>
+                    </p>
+                </div>
+
+                <div className="mt-3 bg-white p-6">
+                    <h3 className="border-b-2 pb-6 font-gotham text-sm">
+                        NEED HELP?
+                    </h3>
+                    <div className="flex cursor-pointer flex-row items-center justify-between pt-5 transition-all hover:underline">
+                        <p className="text-sm ">Order Issues FAQ</p>
+                        <img
+                            src={duplicate_icon}
+                            alt="duplicate icon"
+                            className="h-8 w-8"
+                        />
                     </div>
                 </div>
             </section>
