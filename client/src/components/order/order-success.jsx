@@ -10,6 +10,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
 import { useReducer } from 'react';
+import { useCart } from '../../context/cartContext';
 
 function OrderInfo({ header, text, headerClassName }) {
     return (
@@ -31,6 +32,7 @@ function OrderInfo({ header, text, headerClassName }) {
 
 function Tooltip({ text }) {
     const [visibility, setVisibility] = useState(false);
+
     return (
         <div
             className="relative flex flex-col"
@@ -55,13 +57,10 @@ function Order_Success({}) {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [order, setOrder] = useState({});
-
-    console.log({ searchParams });
-
+    const { dispatch } = useCart();
     const abortController = useRef(new AbortController());
     useEffect(() => {
         const orderNumber = searchParams.get('order-number');
-        console.log({ orderNumber });
 
         abortController.current?.abort();
 
@@ -72,6 +71,13 @@ function Order_Success({}) {
             })
             .then(({ data }) => {
                 setOrder(() => ({ ...data.order }));
+                if (data.order?.status == 'received') {
+                    console.log(data.order?.status);
+                    dispatch({
+                        type: 'remove items',
+                        cartIds: data.order?.cartIds,
+                    });
+                }
             })
             .catch((error) => {
                 console.error(error);
@@ -153,44 +159,47 @@ function Order_Success({}) {
                                         {order.items.length} ITEM
                                     </h2>
                                     <section className="scrollbar flex max-h-[300px] flex-col flex-nowrap overflow-y-auto">
-                                        {order.items.map((product) => {
+                                        {order.items.map((item) => {
                                             return (
                                                 <section className="box-content flex max-h-[120px] flex-row gap-x-4 border-b-[1px] py-6">
                                                     <div className="left flex-1">
                                                         <img
                                                             className="h-full w-full object-cover"
                                                             src={
-                                                                product.id
+                                                                item.product
                                                                     ?.images[0]
                                                             }
                                                             alt=""
                                                         />
                                                     </div>
                                                     <div className="right flex flex-[4] flex-col gap-y-2">
-                                                        {product?.price && (
+                                                        {item?.price && (
                                                             <p className="!text-dark-gray h-fit text-base font-bold">
                                                                 £{' '}
                                                                 {parseFloat(
-                                                                    product?.price
+                                                                    item?.price
                                                                 ).toFixed(2)}
                                                             </p>
                                                         )}
 
                                                         <p className="h-fit w-2/6 text-xs">
-                                                            {product.id?.title}
+                                                            {
+                                                                item.product
+                                                                    ?.title
+                                                            }
                                                         </p>
 
                                                         <div className="flex flex-row gap-x-4 font-bold tracking-wider ">
-                                                            {product?.isVariation1Present && (
+                                                            {item?.isVariation1Present && (
                                                                 <p className="!text-dark-gray font-gotham">
-                                                                    {product.variation1?.variation?.toUpperCase()}
+                                                                    {item.variation1?.variation?.toUpperCase()}
                                                                 </p>
                                                             )}
 
-                                                            {product?.isVariation2Present && (
+                                                            {item?.isVariation2Present && (
                                                                 <Tooltip
                                                                     text={
-                                                                        product
+                                                                        item
                                                                             .variation2
                                                                             ?.variation ||
                                                                         null
@@ -202,9 +211,7 @@ function Order_Success({}) {
                                                         <p className="text-dark-gray text-sm tracking-wide">
                                                             Qty:
                                                             <span className="ml-2 font-gotham font-bold">
-                                                                {
-                                                                    product?.quantity
-                                                                }
+                                                                {item?.quantity}
                                                             </span>
                                                         </p>
                                                     </div>
@@ -215,7 +222,10 @@ function Order_Success({}) {
                                 </section>
                             )}
 
-                            <Link to={'my-account/cancel-order'} className="cursor-pointer text-sm font-[400] hover:underline">
+                            <Link
+                                to={'my-account/cancel-order'}
+                                className="cursor-pointer text-sm font-[400] hover:underline"
+                            >
                                 Cancel this order
                             </Link>
                             <Link

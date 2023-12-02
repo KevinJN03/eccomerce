@@ -70,6 +70,7 @@ function Buy_Now_Btn({ disable }) {
     };
 
     const submitOrder = async () => {
+        let isCardPaymentSuccessful = false;
         try {
             console.log({ deliveryOption });
             setOrderSubmit(() => true);
@@ -178,15 +179,18 @@ function Buy_Now_Btn({ disable }) {
                 setOrderSubmit(() => false);
             } else {
                 if (selectedMethod?.type == 'card') {
-                    navigate(
-                        `/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`
-                    );
+                    isCardPaymentSuccessful = true;
                 }
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);
         } finally {
             setTimeout(() => {
+                if (isCardPaymentSuccessful) {
+                    navigate(
+                        `/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`
+                    );
+                }
                 setOrderSubmit(() => false);
             }, 2000);
         }

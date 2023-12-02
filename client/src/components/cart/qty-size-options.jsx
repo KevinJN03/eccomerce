@@ -23,7 +23,7 @@ const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
                             key={index}
                             value={type == 'size' ? item?.variation : item}
                             data-id={'size' ? item?.id : null}
-                            selected={
+                            defaultValue={
                                 type == 'size'
                                     ? item?.variation == select
                                     : item == select

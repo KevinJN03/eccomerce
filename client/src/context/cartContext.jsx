@@ -79,13 +79,20 @@ const reducer = (cart, action) => {
         return newCart;
     }
 
+    if (action.type == 'remove items') {
+        const cartIds = action?.cartIds;
+        const newCart = cart.filter((item) => !cartIds.includes(item.cartId));
+
+        console.log({ newCart, cartIds });
+        return newCart;
+    }
+
     throw new Error(
         `${action.type} is not valid, please use either add or remove`
     );
 };
 const cartContext = createContext(null);
 export function CartProvider({ children }) {
-    
     const [cart, dispatch] = useReducer(reducer, cartFromLocalStorage);
     const [promo, setPromo] = useState([{ bool: false }]);
     const [deliveryOption, setDeliveryOption] = useState({});
