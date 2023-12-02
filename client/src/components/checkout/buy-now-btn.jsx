@@ -177,9 +177,11 @@ function Buy_Now_Btn({ disable }) {
 
                 setOrderSubmit(() => false);
             } else {
-                // if(selectedMethod?.type == 'card'){
-                //     navigate('/order-success')
-                // }
+                if (selectedMethod?.type == 'card') {
+                    navigate(
+                        `/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`
+                    );
+                }
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);

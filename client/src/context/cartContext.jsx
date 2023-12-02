@@ -66,9 +66,8 @@ const reducer = (cart, action) => {
             if (item.cartId === action.cartId) {
                 const newItem = {
                     ...item,
-                    quantity: action.quantity,
                     variationSelect: {
-                        ...item.variationSelect,
+                        ...action.variationSelect,
                     },
                 };
 

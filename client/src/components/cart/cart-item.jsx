@@ -33,7 +33,48 @@ function Cart_Item({ product }) {
         qtyRef.current.focus();
     };
 
-    const handleSizeChange = () => {};
+    const handleSizeChange = (e) => {
+        const { id } =
+            e.target.options[e.target.options.selectedIndex]?.dataset;
+
+        let variationIndex = null;
+        if (!product?.isVariationCombine) {
+            const findSizeVariation = [
+                product?.variation1,
+                product?.variation2,
+            ].find((item, idx) => {
+                if (item.title == 'Size') {
+                    variationIndex = idx + 1;
+                    return item;
+                }
+            });
+
+            if (findSizeVariation?.array) {
+                const foundVariation = findSizeVariation.array.find(
+                    (item) => item.id == id
+                );
+
+                if (foundVariation) {
+                    const updatedVariationSelect = {
+                        ...product?.variationSelect,
+                        [`variation${variationIndex}`]: {
+                            ...product.variationSelect?.[
+                                `variation${variationIndex}`
+                            ],
+                            ...foundVariation,
+                        },
+                    };
+
+                    dispatch({
+                        type: 'edit variation',
+                        cartId: product?.cartId,
+                        variationSelect: updatedVariationSelect,
+                    });
+                    console.log({ foundVariation, updatedVariationSelect });
+                }
+            }
+        }
+    };
 
     const handleQuantityChange = (e) => {
         setQuantity(() => e.target.value);
@@ -83,7 +124,7 @@ function Cart_Item({ product }) {
             >
                 <img
                     src={product.images[0]}
-                    className="h-auto w-full object-center"
+                    className="h-[140px] w-full max-w-[110px] object-cover"
                 ></img>
             </Link>
 
@@ -108,10 +149,8 @@ function Cart_Item({ product }) {
                         )}
                 </p>
 
-                <div className=" bottom relative flex h-full !max-h-full w-full flex-col justify-between mt-2">
-                    <p className="w-11/12 text-gray-500">
-                        {product.title}
-                    </p>
+                <div className=" bottom relative mt-2 flex h-full !max-h-full w-full flex-col justify-between">
+                    <p className="w-11/12 text-gray-500">{product.title}</p>
                     <div className="cart-options">
                         {findColor && (
                             <span className="border-r-[1px] pr-2 text-s">

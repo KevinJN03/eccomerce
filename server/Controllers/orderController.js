@@ -7,6 +7,8 @@ import randomstring from 'randomstring';
 import 'dotenv/config';
 import Stripe from 'stripe';
 import _ from 'lodash';
+import generateOrderNumber from '../utils/generateOrderNumber.js';
+import Order from '../Models/order.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const create_order = [
@@ -98,12 +100,13 @@ export const createPaymentIntent = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const { cart, shipping, deliveryOption } = req.body;
+    const { cart, shipping, deliveryOption, billing, deliveryDate } = req.body;
     // make a map with all the cart item products
     //
     let cartPrice = 0;
     const cartMap = new Map();
     const cartObj = {};
+    const itemsArray = [];
     cart.map(
       ({
         id,
@@ -113,21 +116,27 @@ export const createPaymentIntent = [
         isVariation2Present,
         isVariationCombine,
         cartId,
+        price,
       }) => {
         const obj = {
           id,
           ...variationSelect,
-          cartId,
+
           quantity,
           isVariation1Present,
           isVariation2Present,
           isVariationCombine,
+          price: price?.current,
         };
+        itemsArray.push({ ...obj });
         if (!cartMap.has(id)) {
+          obj.cartId = cartId;
           const array = [obj];
+
           cartObj[id] = array;
           cartMap.set(id, array);
         } else {
+          obj.cartId = cartId;
           const getArray = cartMap.get(id);
 
           getArray.push(obj);
@@ -135,63 +144,53 @@ export const createPaymentIntent = [
         }
       },
     );
-    const getAllCartProducts = await Promise.all(
-      Object.keys(cartObj).map((id) => {
-        const product = Product.findById(id);
-        return product;
-      }),
-    );
+
+    const productsArray = Object.keys(cartObj);
+
+    const getAllCartProducts = await Product.find({
+      _id: { $in: productsArray },
+    });
     let isQuantityFixed = true;
     const getResult = getAllCartProducts.map((product) => {
       const getVariationSelectArray = cartObj[product.id];
 
       getVariationSelectArray.map((variationDetail) => {
-        console.log(variationDetail);
         if (product?.variations) {
           if (product.variations.length < 3) {
             // console.log({ notCobine: true, variationDetail });
 
             const foundObj = { price: null, stock: null };
             const findOptionsforVariation1 = product.variations.find(
-              (item) => item.name == variationDetail.variation1.title,
+              (item) => item.name === variationDetail.variation1.title,
             );
             const findOptionsforVariation2 = product.variations.find(
-              (item) => item.name == variationDetail.variation2.title,
+              (item) => item.name === variationDetail.variation2.title,
             );
 
-            if (findOptionsforVariation1) {
-              const foundOptionVariation = findOptionsforVariation1.options.get(
-                variationDetail.variation1.id,
-              );
+            const findPrice_StockArray = [
+              findOptionsforVariation1,
+              findOptionsforVariation2,
+            ].map((variation, index) => {
+              if (variation?.options) {
+                const foundOptionVariation = variation.options.get(
+                  variationDetail[`variation${index + 1}`].id,
+                );
 
-              if (_.has(foundOptionVariation, 'price')) {
-                foundObj.price = foundOptionVariation.price;
+                if (_.has(foundOptionVariation, 'price')) {
+                  foundObj.price = foundOptionVariation.price;
+                }
+
+                if (_.has(foundOptionVariation, 'stock')) {
+                  foundObj.stock = foundOptionVariation.stock;
+                }
               }
-
-              if (_.has(foundOptionVariation, 'stock')) {
-                foundObj.stock = foundOptionVariation.stock;
-              }
-            }
-
-            if (findOptionsforVariation2) {
-              const foundOptionVariation = findOptionsforVariation2.options.get(
-                variationDetail.variation2.id,
-              );
-
-              if (_.has(foundOptionVariation, 'price')) {
-                foundObj.price = foundOptionVariation.price;
-              }
-
-              if (_.has(foundOptionVariation, 'stock')) {
-                foundObj.stock = foundOptionVariation.stock;
-              }
-            }
-
+            });
             console.log({ foundObj });
 
             if (foundObj.price) {
               cartPrice += foundObj.price * variationDetail?.quantity;
             } else {
+              console.log('variation wasnt present');
               cartPrice += product?.price?.current * variationDetail.quantity;
             }
           } else {
@@ -215,26 +214,21 @@ export const createPaymentIntent = [
         }
       });
     });
-
+    let subTotal = cartPrice;
     if (_.has(deliveryOption, 'cost')) {
       cartPrice += deliveryOption.cost;
     }
 
-    let parseCartPrice = parseFloat(cartPrice).toFixed(2).replace('.', '');
-    const calculatePrice = parseInt(parseCartPrice);
+    let parseCartPrice = parseFloat(cartPrice).toFixed(2);
+    const calculatePrice = parseInt(parseCartPrice.replace('.', ''));
 
     /* use off_session inorder to allow klarna payment */
-    const generateOrderNumber = randomstring.generate({
-      length: 12,
-      charset: 'alphanumeric',
-      capitalization: 'uppercase',
-    });
+    const orderNumber = generateOrderNumber();
 
-    console.log({ generateOrderNumber });
+    console.log({ calculatePrice });
     const paymentIntent = await stripe.paymentIntents.create({
       metadata: {
-        orderNumber: generateOrderNumber,
-        // cartObj: JSON.stringify(cartObj),
+        orderNumber,
         isQuantityFixed,
       },
       amount: calculatePrice,
@@ -245,10 +239,66 @@ export const createPaymentIntent = [
       payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
     });
 
+    const orderObj = {
+      _id: orderNumber,
+      customer: userId,
+      status: 'unpaid',
+      shipping_address: shipping,
+      billing_address: billing,
+      transaction_cost: {
+        total: parseCartPrice,
+        subtotal: parseFloat(subTotal).toFixed(2),
+      },
+      shipping_option: {
+        cost: deliveryOption?.cost,
+        delivery_date: deliveryDate,
+        name: deliveryOption?.name,
+      },
+      items: itemsArray,
+      cartObj,
+    };
+
+    const order = await Order.create(orderObj);
+    // console.log({ order });
     res.status(200).send({
       success: true,
       clientSecret: paymentIntent.client_secret,
+      orderNumber: orderNumber,
       id: paymentIntent.id,
     });
+  }),
+];
+
+export const getOrderDetails = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    const { id } = req.params;
+
+    const order = await Order.findById(id.toUpperCase()).populate('items.id', [
+      'images',
+      'title',
+      'variations',
+    ]);
+    // .exec();
+
+    if (order) {
+      if (order.customer.toString() === userId) {
+        return res.status(200).send({
+          order,
+          success: false,
+        });
+      } else {
+        res.status(404).send({
+          msg: 'You are not authorized.',
+          success: false,
+        });
+      }
+    } else {
+      return res.status(404).send({
+        msg: 'Not Found',
+        success: false,
+      });
+    }
   }),
 ];
