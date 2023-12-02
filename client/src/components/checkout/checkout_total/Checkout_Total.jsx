@@ -36,22 +36,19 @@ function Checkout_Total() {
                     <Link to="/cart">Edit</Link>
                 </div>
 
-              <div className='max-h-[300px] flex mb-4 py-6 border-b-2'>
-                <div className="product-container max-h-[70%] overflow-y-auto">
-                    {cart &&
-                        cart.map((product) => {
-                            return (
-                                <Checkout_Item
-                                    product={product}
-                                    key={product.cartId}
-                                />
-                            );
-                        })}
-                </div> 
-              </div>
-                     
-                
-              
+                <div className="mb-4 flex max-h-[300px] border-b-2 py-6">
+                    <div className="product-container scrollbar max-h-[70%] overflow-y-auto">
+                        {cart &&
+                            cart.map((product) => {
+                                return (
+                                    <Checkout_Item
+                                        product={product}
+                                        key={product.cartId}
+                                    />
+                                );
+                            })}
+                    </div>
+                </div>
 
                 <div className="flex flex-col gap-3">
                     <p className="flex justify-between">

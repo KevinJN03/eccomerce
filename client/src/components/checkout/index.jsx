@@ -54,7 +54,7 @@ function Checkout() {
         disable: false,
         addressType: null,
     });
-
+    const [deliveryDate, setDeliveryDate] = useState('');
     const { cart } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
@@ -123,8 +123,6 @@ function Checkout() {
         }
     }, [cart]);
 
-
-
     return (
         <CheckOutProvider
             value={{
@@ -152,6 +150,7 @@ function Checkout() {
                 setSelectedMethod,
                 klarnaDob,
                 setKlarnaDob,
+                deliveryDate, setDeliveryDate
             }}
         >
             <Elements stripe={stripePromise}>

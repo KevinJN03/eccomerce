@@ -6,24 +6,84 @@ import facebook_icon from '../../assets/icons/facebook.svg';
 import instagram_icon from '../../assets/icons/instagram.svg';
 
 import image from '../../assets/images/order-photo-women.jpg';
+import { useSearchParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import axios from '../../api/axios';
+import { useReducer } from 'react';
 
 function OrderInfo({ header, text, headerClassName }) {
     return (
         <div className="flex flex-row flex-nowrap">
-            <span className='flex-1'>
-               <h3
-                className={`${headerClassName || ''} font-gotham !text-gray-500 text-opacity-5`}
-            >
-                {header}
-            </h3>  
+            <span className="flex-1">
+                <h3
+                    className={`${
+                        headerClassName || ''
+                    } font-gotham !text-gray-500 text-opacity-5`}
+                >
+                    {header}
+                </h3>
             </span>
-           
-            <p className="text-base flex-1 break-all">{text}</p>
+
+            <p className="flex-1 text-sm tracking-wide self-center">{text}</p>
+        </div>
+    );
+}
+
+function Tooltip({ text }) {
+    const [visibility, setVisibility] = useState(false);
+    return (
+        <div
+            className="relative flex flex-col"
+            onMouseEnter={() => setVisibility(() => true)}
+            onMouseLeave={() => setVisibility(() => false)}
+        >
+            <p
+                className={`z-1 absolute bottom-4 hidden whitespace-nowrap bg-gray-100 px-3 py-2 font-sans text-xs font-medium ${
+                    (visibility && '!block') || ''
+                }`}
+            >
+                {text}
+            </p>
+            <p className="!text-dark-gray w-[100px] truncate font-gotham">
+                {text?.toUpperCase()}
+            </p>
         </div>
     );
 }
 function Order_Success({}) {
     disableLayout();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [order, setOrder] = useState({});
+
+    console.log({ searchParams });
+
+    const abortController = useRef(new AbortController());
+    useEffect(() => {
+        const orderNumber = searchParams.get('order-number');
+        console.log({ orderNumber });
+
+        abortController.current?.abort();
+
+        abortController.current = new AbortController();
+        axios
+            .get(`order/${orderNumber}`, {
+                signal: abortController.current?.signal,
+            })
+            .then(({ data }) => {
+                setOrder(() => ({ ...data.order }));
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+        return () => {
+            abortController.current?.abort();
+        };
+    }, []);
+
+    const handleClick = () => {};
+    const [visibility, setVisibility] = useState(false);
     return (
         <section className="flex h-full min-h-screen w-full flex-wrap justify-center bg-[var(--light-grey)]">
             <section className="mb-10 flex w-full max-w-4xl flex-col flex-nowrap">
@@ -37,7 +97,7 @@ function Order_Success({}) {
 
                 <section className="flex flex-row flex-nowrap gap-x-3 ">
                     <div className="left flex max-w-[580px] flex-1 flex-col flex-nowrap">
-                        <div className=" bg-white p-6">
+                        <div className=" bg-white px-8 py-6">
                             <h3 className="mb-4 font-gotham text-lg tracking-wider !text-primary">
                                 THANK YOU FOR YOUR ORDER
                             </h3>
@@ -50,26 +110,111 @@ function Order_Success({}) {
                             <div className="mt-6 flex flex-col gap-y-3">
                                 <OrderInfo
                                     header={'ORDER TOTAL:'}
-                                    text={'Received'}
+                                    text={
+                                        order?.transaction_cost?.total
+                                            ? `£ ${parseFloat(
+                                                  order.transaction_cost.total
+                                              ).toFixed(2)}`
+                                            : ''
+                                    }
                                 />
                                 <OrderInfo
                                     header={'ORDER REFERENCE:'}
-                                    text={'Received'} headerClassName={'w-5'}
+                                    text={order?._id}
+                                    headerClassName={'w-5'}
                                 />
 
                                 <OrderInfo
                                     header={'DELIVERY:'}
-                                    text={'Received111111111111111111111111111111111111111111111111111111111111111111111111'}
+                                    text={
+                                        order?.shipping_option?.delivery_date
+                                            ? `Delivered on or before ${order?.shipping_option?.delivery_date}.`
+                                            : ''
+                                    }
                                 />
 
                                 <OrderInfo
                                     header={'ORDER STATUS:'}
-                                    text={'Received'}
+                                    text={
+                                        order?.status
+                                            ? `${order.status[0].toUpperCase()}${order.status.slice(
+                                                  1
+                                              )}`
+                                            : ''
+                                    }
                                 />
                             </div>
                         </div>
 
-                        <div className="mt-3 flex  flex-col flex-nowrap gap-y-4 bg-white p-6 pt-12 ">
+                        <div className="mt-3 flex  flex-col flex-nowrap gap-y-4 bg-white p-8 pt-3 ">
+                            {order?.items && (
+                                <section className="">
+                                    <h2 className=" border-b-[1px] py-4 font-gotham text-xl font-bold tracking-wider">
+                                        {order.items.length} ITEM
+                                    </h2>
+                                    <section className="flex flex-col flex-nowrap max-h-[300px] overflow-y-auto scrollbar">
+                                        {order.items.map((product) => {
+                                            return (
+                                                <section className="box-content flex max-h-[120px] flex-row gap-x-4 border-b-[1px] py-6">
+                                                    <div className="left flex-1">
+                                                        <img
+                                                            className="h-full w-full object-cover"
+                                                            src={
+                                                                product.id
+                                                                    ?.images[0]
+                                                            }
+                                                            alt=""
+                                                        />
+                                                    </div>
+                                                    <div className="right flex flex-[4] flex-col gap-y-2">
+                                                        {product?.price && (
+                                                            <p className="!text-dark-gray h-fit text-base font-bold">
+                                                                £{' '}
+                                                                {parseFloat(
+                                                                    product?.price
+                                                                ).toFixed(2)}
+                                                            </p>
+                                                        )}
+
+                                                        <p className="h-fit w-2/6 text-xs">
+                                                            {product.id?.title}
+                                                        </p>
+
+                                                        <div className="flex flex-row gap-x-4 font-bold tracking-wider ">
+                                                            {product?.isVariation1Present && (
+                                                                <p className="!text-dark-gray font-gotham">
+                                                                    {product.variation1?.variation?.toUpperCase()}
+                                                                </p>
+                                                            )}
+
+                                                            {product?.isVariation2Present && (
+                                                                <Tooltip
+                                                                    text={
+                                                                        product
+                                                                            .variation2
+                                                                            ?.variation ||
+                                                                        null
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </div>
+
+                                                        <p className="text-sm text-dark-gray tracking-wide">
+                                                            Qty:
+                                                            <span className="ml-2 font-gotham font-bold">
+                                                                {
+                                                                    product?.quantity
+                                                                }
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </section>
+                                            );
+                                        })}
+                                    </section>
+                                </section>
+                            )}
+
                             <p className="cursor-pointer text-sm font-[400] hover:underline">
                                 Cancel this order
                             </p>

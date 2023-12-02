@@ -1,12 +1,9 @@
-
-
 #App {
     max-width: 100%;
     @apply m-0 flex flex-col items-center p-0;
     /* background-color: var(--light-grey); */
     width: 100%;
     overflow-x: hidden;
-    
 }
 
 #main {
@@ -14,11 +11,10 @@
     min-height: 80vh;
     width: 100%;
     background-color: var(--light-grey);
-   
 }
 
-.header-section{
-background-color: #2d2d2d
+.header-section {
+    background-color: #2d2d2d;
 }
 #header-wrapper {
     display: flex;
@@ -165,11 +161,9 @@ background-color: #2d2d2d
     /* min-width: calc(100% / 3); */
     height: 100%;
     width: 100%;
-    @apply flex items-center justify-center ;
+    @apply flex items-center justify-center;
     /* display: none !important; */
 }
-
-
 
 .img-icon {
     /* object-fit: cover; */
@@ -198,7 +192,7 @@ background-color: #2d2d2d
 
 .header-middle {
     flex: 2 2 auto;
-    @apply sm:mx-0 md:mx-10 lg:mx-20 flex flex-row h-full items-center md+lg:max-w-[700px];
+    @apply flex h-full flex-row items-center sm:mx-0 md:mx-10 lg:mx-20 md+lg:max-w-[700px];
     /* z-index: 1; */
     /* display: flex;
     flex-direction: row;
@@ -223,7 +217,7 @@ background-color: #2d2d2d
     max-width: 30px;
     position: absolute;
     right: 10px;
-    top:50%
+    top: 50%;
 }
 
 /* #search-icon {
@@ -252,7 +246,7 @@ background-color: #2d2d2d
     /* background-color: green; */
     border: 1px solid black;
     height: 10px;
-    background-color: var(--light-grey)
+    background-color: var(--light-grey);
 }
 
 .bottom-text {
@@ -263,10 +257,10 @@ background-color: #2d2d2d
     font-size: 1.2rem;
 }
 
-.section-1, #section-1 {
+.section-1,
+#section-1 {
     @apply mb-10 flex w-full flex-row;
 }
-
 
 .salebanner-gap {
     gap: 3px;
@@ -296,7 +290,6 @@ background-color: #2d2d2d
     background-color: white;
     @apply flex h-full w-12 items-center justify-center rounded-r-lg;
 }
-
 
 /* footer section */
 .footer-wrapper {
@@ -405,12 +398,11 @@ background-color: #2d2d2d
 }
 
 @media screen and (max-width: 980px) {
-   
     #section-1 {
-        @apply mt-7 mb-4 gap-1 grid grid-cols-2 w-full grid-flow-row;
+        @apply mb-4 mt-7 grid w-full grid-flow-row grid-cols-2 gap-1;
     }
     #section-1-wrapper {
-       @apply h-full w-full;
+        @apply h-full w-full;
     }
     .footer_copyright-wrapper {
         display: none;
@@ -433,5 +425,28 @@ background-color: #2d2d2d
     #section-3 {
         display: flex;
         @apply !flex-col-reverse justify-center;
+    }
+}
+
+.scrollbar {
+    /* width */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 }

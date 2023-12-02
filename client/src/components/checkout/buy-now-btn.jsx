@@ -27,14 +27,16 @@ function Buy_Now_Btn({ disable }) {
 
         klarnaDob,
         setKlarnaDob,
+        deliveryDate,
     } = useCheckoutContext();
-    const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
+    // const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
 
     const { user } = useAuth();
     const { cart, deliveryOption } = useCart();
     const stripe = useStripe();
     const elements = useElements();
-const navigate = useNavigate()
+    const navigate = useNavigate();
+    const paymentIntentInfo = useRef();
     const fetchPaymentIntent = async () => {
         const { data } = await axios.post('/order/create-payment-intent', {
             billing: {
@@ -60,29 +62,25 @@ const navigate = useNavigate()
                 name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
             },
             cart,
-            deliveryOption
+            deliveryOption,
+            deliveryDate,
         });
 
-        const { id, clientSecret } = data;
-
-        return { id, clientSecret };
+        return data;
     };
 
     const submitOrder = async () => {
         try {
-            console.log({deliveryOption})
+            console.log({ deliveryOption });
             setOrderSubmit(() => true);
-            let clientSecret = '';
-            // if (!paymentIntentInfo) {
-                if (true) {
+            if (true) {
                 const info = await fetchPaymentIntent();
-                clientSecret = info.clientSecret;
-                setPaymentIntentInfo({
-                    id: info.id,
-                    clientSecret: info.clientSecret,
-                });
 
-                console.log({ info });
+                paymentIntentInfo.current = info;
+                // setPaymentIntentInfo({
+                //     id: info.id,
+                //     clientSecret: info.clientSecret,
+                // });
             } else {
                 clientSecret = paymentIntentInfo.clientSecret;
             }
@@ -100,9 +98,8 @@ const navigate = useNavigate()
             };
 
             if (selectedMethod['type'] == 'card') {
-                console.log({ clientSecret });
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
-                    clientSecret,
+                    paymentIntentInfo.current.clientSecret,
                     {
                         payment_method: selectedMethod.id,
                         payment_method_options: {
@@ -113,12 +110,15 @@ const navigate = useNavigate()
                     }
                 );
             }
-            const return_url = `${CLIENT_URL}/order-success`;
+            const return_url = `${CLIENT_URL}/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
-                    await stripe.confirmPayPalPayment(clientSecret, {
-                        return_url,
-                    });
+                    await stripe.confirmPayPalPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            return_url,
+                        }
+                    );
             }
 
             if (selectedMethod['type'] == 'klarna') {
@@ -139,20 +139,26 @@ const navigate = useNavigate()
                     return;
                 }
                 var { error, paymentIntent } =
-                    await stripe.confirmKlarnaPayment(clientSecret, {
-                        payment_method: {
-                            billing_details,
-                        },
-                        return_url,
-                    });
+                    await stripe.confirmKlarnaPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            payment_method: {
+                                billing_details,
+                            },
+                            return_url,
+                        }
+                    );
             }
 
             if (selectedMethod['type'] == 'clearpay') {
                 var { error, paymentIntent } =
-                    await stripe.confirmAfterpayClearpayPayment(clientSecret, {
-                        payment_method: { billing_details },
-                        return_url,
-                    });
+                    await stripe.confirmAfterpayClearpayPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            payment_method: { billing_details },
+                            return_url,
+                        }
+                    );
             }
             if (error) {
                 console.error('error with payment intent', error);
@@ -171,9 +177,9 @@ const navigate = useNavigate()
 
                 setOrderSubmit(() => false);
             } else {
-                if(selectedMethod?.type == 'card'){
-                    navigate('/order-success')
-                }
+                // if(selectedMethod?.type == 'card'){
+                //     navigate('/order-success')
+                // }
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);
