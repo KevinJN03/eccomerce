@@ -87,13 +87,17 @@ app.get(
     const props = {
       firstName: 'kevin',
       orderNumber: '882411829',
-      orderDate: 'Tuesday 28 November 2023'
+      orderDate: 'Tuesday 28 November 2023',
+      subtotal: 6.9,
+      deliveryCost: 4.5,
+      total: 11.59,
+      paymentType: 'paypal'
     };
 
     const emailHtml = render(<Test {...props} />);
     const mailOptions = {
       from: 'kevinjean321@gmail.com',
-      to: 'hotboyroyal@gmail.com',
+      to: "	outlook_6A69ED344A4F9548@outlook.com",
       subject: 'test email',
       html: emailHtml,
       // template: 'New Template',
@@ -102,7 +106,7 @@ app.get(
       // },
     };
 
-    // const sendEmail = await transporter.sendMail(mailOptions);
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

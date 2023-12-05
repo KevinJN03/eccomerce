@@ -10,10 +10,40 @@ import {
   Img,
   Section,
   Row,
+  Column,
+  Hr,
+  Button,
+  Container,
 } from '@react-email/components';
+
+const logos = {
+  afterpay: 'afterpay.png',
+  amex: 'american-express.png',
+  klarna: 'klarna.png',
+  maestro: 'maestro.png',
+  mastercard: 'mastercard-alt.png',
+  paypal: 'paypal.png',
+  'union-pay': 'union-pay.png',
+};
+
 export default function Test(props) {
   console.log({ props });
   const { firstName } = props;
+  const config = {
+    theme: {
+      extend: {
+        colors: {
+          'dark-gray': '#676666',
+          'light-grey': '#eeeeee',
+        },
+        fontSize: {
+          s: '13px',
+        },
+      },
+    },
+  };
+
+  const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
 
   return (
     <Html lang="en">
@@ -24,7 +54,7 @@ export default function Test(props) {
           href="https://dknhps0hwilzj.cloudfront.net/files/styles.css"
         />
       </head> */}
-      <Tailwind>
+      <Tailwind config={config}>
         <Body
           data-new-gr-c-s-loaded="14.1143.0"
           style={{
@@ -619,93 +649,25 @@ export default function Test(props) {
                                               <td
                                                 style={{ verticalAlign: 'top' }}
                                               >
-                                                <Section  className='ml-4 w-full h-full text-s'>
-                                                  <Row >
-                                                    <Text className='text-xs'>
-                                                       Reclaimed Vintage waffle
-                                                    beanie in washed teal
-                                                    </Text>
-                                                   
-                                                  </Row>
+                                                <Section className="ml-4 w-full h-full text-s">
                                                   <Row>
-                                                    
-                                                  <Text className='text-xs'>
-                                                    £6.99</Text></Row>
-                                                  <Row>
-                                                  <Text className='text-xs'>
-                                                    WASHED TEAL / One Size / Qty
-                                                    1</Text>
-                                                  </Row>
-                                                </Section>
-                                                {/* <table
-                                                  style={{
-                                                    height: '100%',
-                                                    width: '100%',
-                                                    marginLeft: '15px',
-                                                  }}
-                                                >
-                                                  <tr>
-                                                    <td
-                                                      style={{
-                                                        WebkitTextSizeAdjust:
-                                                          'none',
-                                                        MsTextSizeAdjust:
-                                                          'none',
-                                                        msoLineHeightRule:
-                                                          'exactly',
-                                                        fontFamily:
-                                                          'arial, helvetica neue, helvetica, sans-serif',
-                                                        lineHeight: '21px',
-                                                        color: '#333333',
-                                                        fontSize: '14px',
-                                                      }}
-                                                    >
+                                                    <Text className="text-s p-0 pb-1 m-0 font-medium">
                                                       Reclaimed Vintage waffle
                                                       beanie in washed teal
-                                                    </td>
-                                                  </tr>
-                                                  <tr>
-                                                    <td
-                                                      style={{
-                                                        WebkitTextSizeAdjust:
-                                                          'none',
-                                                        MsTextSizeAdjust:
-                                                          'none',
-                                                        msoLineHeightRule:
-                                                          'exactly',
-                                                        fontFamily:
-                                                          'arial, helvetica neue, helvetica, sans-serif',
-                                                        lineHeight: '21px',
-                                                        color: '#333333',
-                                                        fontSize: '14px',
-                                                        fontWeight: 'bold',
-                                                        letterSpacing: '0.05em',
-                                                      }}
-                                                    >
+                                                    </Text>
+                                                  </Row>
+                                                  <Row>
+                                                    <Text className="text-s p-0 pb-1 m-0 font-semibold">
                                                       £6.99
-                                                    </td>
-                                                  </tr>
-                                                  <tr>
-                                                    <td
-                                                      style={{
-                                                        WebkitTextSizeAdjust:
-                                                          'none',
-                                                        MsTextSizeAdjust:
-                                                          'none',
-                                                        msoLineHeightRule:
-                                                          'exactly',
-                                                        fontFamily:
-                                                          'arial, helvetica neue, helvetica, sans-serif',
-                                                        lineHeight: '21px',
-                                                        color: '#333333',
-                                                        fontSize: '14px',
-                                                      }}
-                                                    >
+                                                    </Text>
+                                                  </Row>
+                                                  <Row>
+                                                    <Text className="text-xs p-0 pb-1 m-0 font-light !important">
                                                       WASHED TEAL / One Size /
                                                       Qty 1
-                                                    </td>
-                                                  </tr>
-                                                </table> */}
+                                                    </Text>
+                                                  </Row>
+                                                </Section>
                                               </td>
                                             </tr>
                                           </table>
@@ -759,144 +721,95 @@ export default function Test(props) {
                                         <td
                                           style={{ padding: '0', margin: '0' }}
                                         >
-                                          <table
-                                            className="total-table"
-                                            style={{
-                                              background: 'white',
-                                              width: '100%',
-                                            }}
-                                          >
-                                            <tr className="font-md">
-                                              <td className="text-left font-md font-bold text-dark-gray py-5 px-1 text-s">
-                                                SUB-TOTAL
-                                              </td>
-                                              <td className="text-right text-md">
-                                                £6.9
-                                              </td>
-                                            </tr>
-                                            <tr className="font-md">
-                                              <td className="text-left font-md font-bold text-dark-gray py-5 px-1">
-                                                DELIVERY
-                                              </td>
-                                              <td className="text-right py-5 px-1">
-                                                £4.50
-                                              </td>
-                                            </tr>
-
-                                            <tr
-                                              className="w-full"
-                                              style={{
-                                                alignItems: 'center',
-                                                width: '100%',
-                                              }}
-                                            >
-                                              <td
-                                                colSpan="2"
-                                                className="w-full"
-                                                style={{
-                                                  borderBottom:
-                                                    '2px solid #cccccc',
-                                                  textAlign: 'center',
-                                                  paddingLeft: '20px',
-                                                  boxSizing: 'content-box',
-                                                }}
-                                              ></td>
-                                            </tr>
-
-                                            <tr className="font-md">
-                                              <td className="text-left font-bold py-5 px-1">
-                                                TOTAL
-                                              </td>
-                                              <td className="text-right font-bold py-5 px-1">
-                                                £11.59
-                                              </td>
-                                            </tr>
-                                          </table>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          align="center"
-                                          style={{
-                                            margin: '0',
-                                            paddingTop: '10px',
-                                            paddingBottom: '10px',
-                                            paddingLeft: '20px',
-                                            paddingRight: '20px',
-                                            fontSize: '0',
-                                          }}
-                                          bgcolor="#ffffff"
-                                        >
-                                          <table
-                                            border="0"
-                                            width="100%"
-                                            height="100%"
-                                            cellPadding="0"
-                                            cellSpacing="0"
-                                            style={{
-                                              msoTableLspace: '0pt',
-                                              msoTableRspace: '0pt',
-                                              borderCollapse: 'collapse',
-                                              borderSpacing: '0px',
-                                            }}
-                                          >
-                                            <tr>
-                                              <td
-                                                style={{
-                                                  padding: '0',
-                                                  margin: '0',
-                                                  borderBottom:
-                                                    '1px solid #cccccc',
-                                                  background: 'unset',
-                                                  height: '1px',
-                                                  width: '100%',
-                                                  margin: '0px',
-                                                }}
-                                              ></td>
-                                            </tr>
-                                          </table>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#333333',
-                                              fontSize: '14px',
-                                              background: 'white',
-                                              padding: '0px 20px 20px 20px',
-                                              fontWeight: 'bold',
-                                              display: 'flex',
-                                              justifyContent: 'space-between',
-                                              width: '100%',
-                                              boxSizing: 'border-box',
-                                            }}
-                                          >
-                                            TOTAL
-                                            <span
-                                              style={{
-                                                color: 'black',
-                                                letterSpacing: '0.05em',
-                                              }}
-                                            >
-                                              £11.59
-                                            </span>
-                                          </p>
+                                          <Section className="bg-white px-5">
+                                            <Row>
+                                              <Column>
+                                                <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
+                                                  SUB-TOTAL
+                                                </Text>
+                                              </Column>
+                                              <Column>
+                                                <Text className="text-right p-0 m-0 text-s  tracking-wider">
+                                                  £{props.subtotal}
+                                                </Text>
+                                              </Column>
+                                            </Row>
+                                            <Row>
+                                              <Column>
+                                                <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
+                                                  DELIVERY
+                                                </Text>
+                                              </Column>
+                                              <Column>
+                                                <Text className="text-right p-0 m-0 text-s  tracking-wider">
+                                                  £{props.deliveryCost}
+                                                </Text>
+                                              </Column>
+                                            </Row>
+                                            <Hr className="bg-black" />
+                                            <Row>
+                                              <Column className="pb-6 align-top">
+                                                <Text className="font-semibold p-0 m-0 text-sm tracking-wider">
+                                                  TOTAL
+                                                </Text>
+                                              </Column>
+                                              <Column className="align-top">
+                                                <Text className="text-right text-s font-semibold tracking-wider p-0 m-0  align-top">
+                                                  £{props.total}
+                                                </Text>
+                                              </Column>
+                                            </Row>
+                                          </Section>
                                         </td>
                                       </tr>
                                     </table>
                                   </td>
                                 </tr>
                               </table>
+                            </td>
+                          </tr>
+
+                          <tr>
+                            <td
+                              align="left"
+                              style={{
+                                padding: '0',
+                                margin: '0',
+                                paddingTop: '20px',
+                                paddingLeft: '20px',
+                                paddingRight: '20px',
+                              }}
+                            >
+                              <Section className="bg-white p-5">
+                                <Row>
+                                  <Text className="font-semibold text-dark-gray tracking-wider text-base pt-1 pb-2 m-0 !important">
+                                    {' '}
+                                    PAYMENT DETAILS
+                                  </Text>
+                                </Row>
+                                <Hr />
+                                <Row>
+                                  <Text className="m-0 p-0 font-bold text-dark-gray tracking-wider ">
+                                    PAYMENT TYPE
+                                  </Text>
+                                </Row>
+                                <Row className="mt-2 ">
+                                  <Column
+                                    id="payment"
+                                    className="w-12 border-2 border-black"
+                                  >
+                                    <Img
+                                      src={`${url}/${
+                                        logos?.[props.paymentType]
+                                      }`}
+                                      alt="logo"
+                                      title="logo"
+                                      className="w-full h-auto bg-light-grey rounded-sm block h-8 object-cover"
+                                    />
+                                  </Column>
+                                  <Column className="pl-4">Paypal</Column>
+                                </Row>
+                              </Section>
                             </td>
                           </tr>
 
@@ -932,1149 +845,233 @@ export default function Test(props) {
                                       width: '560px',
                                     }}
                                   >
-                                    <table
-                                      cellPadding="0"
-                                      cellSpacing="0"
-                                      width="100%"
-                                      style={{
-                                        msoTableLspace: '0pt',
-                                        msoTableRspace: '0pt',
-                                        borderCollapse: 'collapse',
-                                        borderSpacing: '0px',
-                                      }}
-                                    >
-                                      <tr>
-                                        <td
-                                          align="left"
-                                          bgcolor="#ffffff"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                            paddingTop: '20px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#333333',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <strong>PAYMENT DETAILS</strong>
-                                          </p>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          align="center"
-                                          style={{
-                                            margin: '0',
-                                            paddingTop: '10px',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                            paddingBottom: '20px',
-                                            fontSize: '0',
-                                          }}
-                                          bgcolor="#ffffff"
-                                        >
-                                          <table
-                                            border="0"
-                                            width="100%"
-                                            height="100%"
-                                            cellPadding="0"
-                                            cellSpacing="0"
-                                            style={{
-                                              msoTableLspace: '0pt',
-                                              msoTableRspace: '0pt',
-                                              borderCollapse: 'collapse',
-                                              borderSpacing: '0px',
-                                            }}
-                                          >
-                                            <tr>
-                                              <td
-                                                style={{
-                                                  padding: '0',
-                                                  margin: '0',
-                                                  borderBottom:
-                                                    '2px solid #cccccc',
-                                                  background: 'unset',
-                                                  height: '1px',
-                                                  width: '100%',
-                                                  margin: '0px',
-                                                }}
-                                              ></td>
-                                            </tr>
-                                          </table>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          align="left"
-                                          bgcolor="#ffffff"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <strong>PAYMENT TYPE</strong>
-                                          </p>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <div
-                                            style={{
-                                              background: '#ffffff',
-                                              display: 'flex',
-                                              gap: '0px 5px',
-                                              padding: '20px 20px 30px 20px',
-                                              alignItems: 'center',
-                                            }}
-                                          >
-                                            <img
-                                              src="https://img.icons8.com/color/48/paypal.png"
-                                              style={{
-                                                display: 'block',
-                                                border: '1px solid #eee',
-                                                outline: 'none',
-                                                textDecoration: 'none',
-                                                MsInterpolationMode: 'bicubic',
-                                                width: '24px',
-                                                height: '24px',
-                                                objectFit: 'cover',
-                                              }}
-                                              alt=""
+                                    <Section className="bg-white p-5">
+                                      <Text className="font-semibold text-base">
+                                        CHANGED YOUR MIND?
+                                      </Text>
+
+                                      <Hr />
+
+                                      <Text className="text-dark-gray font-semibold tracking-wider">
+                                        CANCELLING AN ORDER
+                                      </Text>
+
+                                      <Text className="text-sm">
+                                        We’re not able to make changes to your
+                                        order, but you do have the option to
+                                        cancel it. Find out more. Go to your
+                                        order from the button below and follow
+                                        the instructions.
+                                      </Text>
+                                      <Container
+                                        className="align-middle px-auto text-center"
+                                        align="center"
+                                      >
+                                        <Button className="text-center font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider">
+                                          VIEW ORDER
+                                        </Button>
+                                      </Container>
+
+                                      <Text className="text-dark-gray font-semibold tracking-wider ">
+                                        RETURNING AN ORDER
+                                      </Text>
+
+                                      <Text className="text-sm">
+                                        You also have the option to return any
+                                        unwanted items by Monday 15 January
+                                        2024*. However, for hygiene reasons
+                                        there are some items that we can’t
+                                        accept back and these will be sent back
+                                        to you.
+                                      </Text>
+
+                                      <Container
+                                        className="align-middle px-auto text-center"
+                                        align="center"
+                                      >
+                                        <Button className="text-center font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider">
+                                          RETURN INFORMATION
+                                        </Button>
+                                      </Container>
+                                    </Section>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+
+                          <Container
+                            className="bg-light-grey text-center py-4 m-0 !min-w-full"
+                            align="center"
+                          >
+                            <Text className="m-0 p-0 text-xs">Thanks,</Text>
+
+                            <Text className="m-0 p-0 font-semibold text-xs">
+                              The GLAMO team
+                            </Text>
+                          </Container>
+
+                          <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-full">
+                            <Text className="m-0 p-0 font-semibold text-base pb-2">
+                              ANY QUESTIONS?
+                            </Text>
+                            <Text className="m-0 p-0 pb-3 font-light">
+                              For everything else you want to know…
+                            </Text>
+                            <Section id="section-table">
+                              {[
+                                {
+                                  column1: {
+                                    text: 'Payment, Promos & Gift Vouchers',
+                                  },
+                                  column2: { text: 'Order issues' },
+                                },
+                                {
+                                  column1: { text: '	Delivery' },
+                                  column2: { text: 'Customer Care' },
+                                },
+                              ].map(({ column1, column2 }) => {
+                                return (
+                                  <tr id="text-row" className="w-full">
+                                    {[column1, column2].map((column) => {
+                                      return (
+                                        <>
+                                          <Column className="w-6 h-6">
+                                            <Img
+                                              src="https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/files/logos/icons8-duplicate-96.png"
+                                              className="w-full h-full"
                                             />
-                                            <p
-                                              style={{
-                                                margin: '0',
-                                                WebkitTextSizeAdjust: 'none',
-                                                MsTextSizeAdjust: 'none',
-                                                msoLineHeightRule: 'exactly',
-                                                fontFamily:
-                                                  'arial, helvetica neue, helvetica, sans-serif',
-                                                lineHeight: '21px',
-                                                color: '#333333',
-                                                fontSize: '14px',
-                                              }}
-                                            >
-                                              PayPal
-                                            </p>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td
-                              align="left"
-                              style={{
-                                padding: '0',
-                                margin: '0',
-                                paddingTop: '20px',
-                                paddingLeft: '20px',
-                                paddingRight: '20px',
-                              }}
-                            >
-                              <table
-                                cellPadding="0"
-                                cellSpacing="0"
-                                width="100%"
-                                style={{
-                                  msoTableLspace: '0pt',
-                                  msoTableRspace: '0pt',
-                                  borderCollapse: 'collapse',
-                                  borderSpacing: '0px',
-                                }}
-                              >
-                                <tr>
-                                  <td
+                                          </Column>
+                                          <Column className="pl-1 max-w-[100px]">
+                                            <Text className="text-left text-xs font-semibold !w-fit underline underline-offset-2 decoration-2 decoration-dark-gray">
+                                              {column.text}
+                                            </Text>
+                                          </Column>
+                                        </>
+                                      );
+                                    })}
+                                  </tr>
+                                );
+                              })}{' '}
+                            </Section>
+                          </Container>
+                          <Container className="bg-[#333333] text-white p-5 !min-w-full">
+                            <Section>
+                              <Row align="center">
+                                <Column>
+                                  <Text className="text-center font-bold">
+                                    Find inspiration
+                                  </Text>
+                                  {/* <Container> */}
+                                  <Row
+                                    className="w-fit border-spacing-x-4"
                                     align="center"
-                                    valign="top"
-                                    style={{
-                                      padding: '0',
-                                      margin: '0',
-                                      width: '560px',
-                                    }}
                                   >
-                                    <table
-                                      cellPadding="0"
-                                      cellSpacing="0"
-                                      width="100%"
-                                      style={{
-                                        msoTableLspace: '0pt',
-                                        msoTableRspace: '0pt',
-                                        borderCollapse: 'collapse',
-                                        borderSpacing: '0px',
-                                      }}
-                                    >
-                                      <tr>
-                                        <td
-                                          align="left"
-                                          bgcolor="#ffffff"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                            paddingTop: '20px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#333333',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <strong>CHANGED YOUR MIND?</strong>
-                                            <br />
-                                          </p>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          align="center"
-                                          style={{
-                                            margin: '0',
-                                            paddingTop: '10px',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                            paddingBottom: '20px',
-                                            fontSize: '0',
-                                          }}
-                                          bgcolor="#ffffff"
-                                        >
-                                          <table
-                                            border="0"
-                                            width="100%"
-                                            height="100%"
-                                            cellPadding="0"
-                                            cellSpacing="0"
-                                            style={{
-                                              msoTableLspace: '0pt',
-                                              msoTableRspace: '0pt',
-                                              borderCollapse: 'collapse',
-                                              borderSpacing: '0px',
-                                            }}
-                                          >
-                                            <tr>
-                                              <td
-                                                style={{
-                                                  padding: '0',
-                                                  margin: '0',
-                                                  borderBottom:
-                                                    '2px solid #cccccc',
-                                                  background: 'unset',
-                                                  height: '1px',
-                                                  width: '100%',
-                                                  margin: '0px',
-                                                }}
-                                              ></td>
-                                            </tr>
-                                          </table>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          align="left"
-                                          bgcolor="#ffffff"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <b>CANCELLING AN ORDER</b>
-                                          </p>
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <br />
-                                          </p>
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <span style={{ color: '#000000' }}>
-                                              We’re not able to make changes to
-                                              your order, but you do have the
-                                              option to cancel it.{' '}
-                                              <a
-                                                href=""
-                                                target="_blank"
-                                                style={{
-                                                  WebkitTextSizeAdjust: 'none',
-                                                  MsTextSizeAdjust: 'none',
-                                                  msoLineHeightRule: 'exactly',
-                                                  textDecoration: 'underline',
-                                                  color: '#000000',
-                                                  fontSize: '14px',
-                                                }}
-                                              >
-                                                Find out more
-                                              </a>
-                                            </span>
-                                            <span style={{ color: '#000000' }}>
-                                              . Go to your order from the button
-                                              below and follow the instructions.
-                                            </span>
-                                            <br />
-                                          </p>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{
-                                            padding: '0px',
-                                            margin: '0px',
-                                          }}
-                                        >
-                                          <div
-                                            style={{
-                                              background: '#ffffff',
-                                              display: 'flex',
-                                              justifyContent: 'center',
-                                              width: '100%',
-                                              padding: '20px 0px',
-                                            }}
-                                          >
-                                            <button
-                                              style={{
-                                                background: 'transparent',
-                                                padding: '10px 0px',
-                                                border: '2px solid #eee',
-                                                fontWeight: '600',
-                                                letterSpacing: '0.05em',
-                                                width: '50%',
-                                              }}
-                                            >
-                                              VIEW ORDER
-                                            </button>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{
-                                            padding: '0px',
-                                            margin: '0px',
-                                          }}
-                                        >
-                                          <div
-                                            style={{ background: '#ffffff' }}
-                                          ></div>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td
-                                    align="center"
-                                    valign="top"
-                                    style={{
-                                      padding: '0',
-                                      margin: '0',
-                                      width: '560px',
-                                    }}
-                                  >
-                                    <table
-                                      cellPadding="0"
-                                      cellSpacing="0"
-                                      width="100%"
-                                      style={{
-                                        msoTableLspace: '0pt',
-                                        msoTableRspace: '0pt',
-                                        borderCollapse: 'collapse',
-                                        borderSpacing: '0px',
-                                      }}
-                                    >
-                                      <tr>
-                                        <td
-                                          align="left"
-                                          bgcolor="#ffffff"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '15px',
-                                            paddingRight: '15px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <b>RETURNING AN ORDER</b>
-                                          </p>
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <br />
-                                          </p>
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#808080',
-                                              fontSize: '14px',
-                                            }}
-                                          >
-                                            <span
-                                              style={{ color: '#000000' }}
-                                            ></span>
-                                            You also have the option to return
-                                            any unwanted items by Monday 15
-                                            January 2024*. However, for hygiene
-                                            reasons, there are some items that
-                                            we can’t accept back and these will
-                                            be sent back to you.
-                                            <span
-                                              style={{ color: '#000000' }}
-                                            ></span>
-                                            <br />
-                                          </p>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <div
-                                            style={{
-                                              background: '#ffffff',
-                                              display: 'flex',
-                                              justifyContent: 'center',
-                                              width: '100%',
-                                              padding: '20px 0px',
-                                            }}
-                                          >
-                                            <button
-                                              style={{
-                                                background: 'transparent',
-                                                padding: '10px 0px',
-                                                border: '2px solid #eee',
-                                                fontWeight: '600',
-                                                letterSpacing: '0.05em',
-                                                width: '50%',
-                                              }}
-                                            >
-                                              RETURN INFORMATION
-                                            </button>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <div
-                                            style={{ background: '#ffffff' }}
-                                          ></div>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                          {/* here */}
-                          <tr>
-                            <td align="left" style={{ padding: 0, margin: 0 }}>
-                              <table
-                                cellPadding="0"
-                                cellSpacing="0"
-                                width="100%"
-                                style={{
-                                  msoTableLspace: '0pt',
-                                  msoTableRspace: '0pt',
-                                  borderCollapse: 'collapse',
-                                  borderSpacing: '0px',
-                                }}
-                              >
-                                <tr>
-                                  <td
-                                    align="center"
-                                    valign="top"
-                                    style={{
-                                      padding: 0,
-                                      margin: 0,
-                                      width: '600px',
-                                    }}
-                                  >
-                                    <table
-                                      cellPadding="0"
-                                      cellSpacing="0"
-                                      width="100%"
-                                      style={{
-                                        msoTableLspace: '0pt',
-                                        msoTableRspace: '0pt',
-                                        borderCollapse: 'collapse',
-                                        borderSpacing: '0px',
-                                      }}
-                                    >
-                                      <tr>
-                                        <td
-                                          align="center"
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingTop: '15px',
-                                            paddingBottom: '15px',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              msTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                "arial, 'helvetica neue', helvetica, sans-serif",
-                                              lineHeight: '18px',
-                                              color: '#333333',
-                                              fontSize: '12px',
-                                            }}
-                                          >
-                                            Thanks,
-                                          </p>
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              msTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                "arial, 'helvetica neue', helvetica, sans-serif",
-                                              lineHeight: '18px',
-                                              color: '#333333',
-                                              fontSize: '12px',
-                                            }}
-                                          >
-                                            <strong>The GLAMO team</strong>
-                                          </p>
-                                        </td>
-                                      </tr>
+                                    {[
+                                      { icon: `icons8-facebook-48+(1).png` },
 
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <div
-                                            style={{
-                                              background: '#dedfe4',
-                                              padding: '20px',
-                                            }}
-                                          >
-                                            <p
-                                              style={{
-                                                margin: '0',
-                                                WebkitTextSizeAdjust: 'none',
-                                                msTextSizeAdjust: 'none',
-                                                msoLineHeightRule: 'exactly',
-                                                fontFamily:
-                                                  "arial, 'helvetica neue', helvetica, sans-serif",
-                                                lineHeight: '21px',
-                                                color: '#333333',
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                                letterSpacing: '0.05em',
-                                              }}
-                                            >
-                                              ANY QUESTIONS?
-                                            </p>
-                                            <p
-                                              style={{
-                                                margin: '0',
-                                                WebkitTextSizeAdjust: 'none',
-                                                msTextSizeAdjust: 'none',
-                                                msoLineHeightRule: 'exactly',
-                                                fontFamily:
-                                                  "arial, 'helvetica neue', helvetica, sans-serif",
-                                                lineHeight: '21px',
-                                                color: '#333333',
-                                                fontSize: '14px',
-                                              }}
-                                            >
-                                              For everything else you want to
-                                              know…
-                                            </p>
-                                            <div
-                                              className="top"
-                                              style={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                gap: '0px 40px',
-                                                paddingTop: '20px',
-                                                marginBottom: '5px',
-                                              }}
-                                            >
-                                              <div
-                                                style={{
-                                                  display: 'flex',
-                                                  gap: '0px 5px',
-                                                  alignItems: 'center',
-                                                  flex: '1 1 0%',
-                                                }}
-                                              >
-                                                <img
-                                                  src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8duplicate96.png"
-                                                  style={{
-                                                    display: 'block',
-                                                    border: '0',
-                                                    outline: 'none',
-                                                    textDecoration: 'none',
-                                                    MsInterpolationMode:
-                                                      'bicubic',
-                                                    width: '20px',
-                                                    height: '20px',
-                                                  }}
-                                                  alt=""
-                                                />
-                                                <p
-                                                  style={{
-                                                    margin: '0',
-                                                    WebkitTextSizeAdjust:
-                                                      'none',
-                                                    msTextSizeAdjust: 'none',
-                                                    msoLineHeightRule:
-                                                      'exactly',
-                                                    fontFamily:
-                                                      "arial, 'helvetica neue', helvetica, sans-serif",
-                                                    lineHeight: '21px',
-                                                    color: '#333333',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    textDecoration: 'underline',
-                                                    textUnderlineOffset: '2px',
-                                                  }}
-                                                >
-                                                  Payment, Promos & Gift
-                                                  Vouchers
-                                                </p>
-                                              </div>
-                                              <div
-                                                style={{
-                                                  display: 'flex',
-                                                  gap: '0px 5px',
-                                                  alignItems: 'center',
-                                                  flex: '1 1 0%',
-                                                }}
-                                              >
-                                                <img
-                                                  src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8duplicate96.png"
-                                                  style={{
-                                                    display: 'block',
-                                                    border: '0',
-                                                    outline: 'none',
-                                                    textDecoration: 'none',
-                                                    MsInterpolationMode:
-                                                      'bicubic',
-                                                    width: '20px',
-                                                    height: '20px',
-                                                  }}
-                                                  alt=""
-                                                />
-                                                <p
-                                                  style={{
-                                                    margin: '0',
-                                                    WebkitTextSizeAdjust:
-                                                      'none',
-                                                    msTextSizeAdjust: 'none',
-                                                    msoLineHeightRule:
-                                                      'exactly',
-                                                    fontFamily:
-                                                      "arial, 'helvetica neue', helvetica, sans-serif",
-                                                    lineHeight: '21px',
-                                                    color: '#333333',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    textDecoration: 'underline',
-                                                    textUnderlineOffset: '2px',
-                                                  }}
-                                                >
-                                                  Order issues
-                                                </p>
-                                              </div>
-                                            </div>
-                                            <div
-                                              className="bottom"
-                                              style={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                gap: '0px 40px',
-                                                paddingBottom: '20px',
-                                              }}
-                                            >
-                                              <div
-                                                style={{
-                                                  display: 'flex',
-                                                  gap: '0px 5px',
-                                                  alignItems: 'center',
-                                                  flex: '1 1 0%',
-                                                }}
-                                              >
-                                                <img
-                                                  src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8duplicate96.png"
-                                                  style={{
-                                                    display: 'block',
-                                                    border: '0',
-                                                    outline: 'none',
-                                                    textDecoration: 'none',
-                                                    MsInterpolationMode:
-                                                      'bicubic',
-                                                    width: '20px',
-                                                    height: '20px',
-                                                  }}
-                                                  alt=""
-                                                />
-                                                <p
-                                                  style={{
-                                                    margin: '0',
-                                                    WebkitTextSizeAdjust:
-                                                      'none',
-                                                    msTextSizeAdjust: 'none',
-                                                    msoLineHeightRule:
-                                                      'exactly',
-                                                    fontFamily:
-                                                      "arial, 'helvetica neue', helvetica, sans-serif",
-                                                    lineHeight: '21px',
-                                                    color: '#333333',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    textDecoration: 'underline',
-                                                    textUnderlineOffset: '2px',
-                                                  }}
-                                                >
-                                                  Delivery
-                                                </p>
-                                              </div>
-                                              <div
-                                                style={{
-                                                  display: 'flex',
-                                                  gap: '0px 5px',
-                                                  alignItems: 'center',
-                                                  flex: '1 1 0%',
-                                                }}
-                                              >
-                                                <img
-                                                  src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8duplicate96.png"
-                                                  style={{
-                                                    display: 'block',
-                                                    border: '0',
-                                                    outline: 'none',
-                                                    textDecoration: 'none',
-                                                    MsInterpolationMode:
-                                                      'bicubic',
-                                                    width: '20px',
-                                                    height: '20px',
-                                                  }}
-                                                  alt=""
-                                                />
-                                                <p
-                                                  style={{
-                                                    margin: '0',
-                                                    WebkitTextSizeAdjust:
-                                                      'none',
-                                                    msTextSizeAdjust: 'none',
-                                                    msoLineHeightRule:
-                                                      'exactly',
-                                                    fontFamily:
-                                                      "arial, 'helvetica neue', helvetica, sans-serif",
-                                                    lineHeight: '21px',
-                                                    color: '#333333',
-                                                    fontSize: '14px',
-                                                    fontWeight: 'bold',
-                                                    textDecoration: 'underline',
-                                                    textUnderlineOffset: '2px',
-                                                  }}
-                                                >
-                                                  Customer Care1
-                                                </p>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </td>
-                                      </tr>
+                                      {
+                                        icon: 'icons8-instagram-48+(1).png',
+                                        shinkIcon: true,
+                                        style: {
+                                          background:
+                                            'linear-gradient(115deg, #f9ce34, #ee2a7b, #6228d7)',
+                                        },
+                                      },
+                                      {
+                                        icon: 'icons8-pinterest-48.png',
+                                      },
+                                      {
+                                        icon: 'icons8-twitter-50.png',
+                                        style: {
+                                          background: '#1da1f2',
+                                        },
+                                        shinkIcon: true,
+                                       
+                                      },
+                                      {
+                                        icon: 'icons8-tiktok-48.png',
+                                        style: {
+                                          background: '#eee',
+                                        },
+                                        shinkIcon: true,
+                                      },
+                                    ].map(
+                                      ({
+                                        icon,
+                                        style,
+                                        imgStyle,
 
-                                      <tr>
-                                        <td
-                                          style={{ padding: '0', margin: '0' }}
-                                        >
-                                          <section
-                                            style={{
-                                              background: '#2d2d2d',
-                                              color: 'white',
-                                              padding: '25px 20px 40px 20px',
-                                            }}
+                                        shinkIcon,
+                                      }) => {
+                                        return (
+                                          <Column
+                                            className="!w-7 !h-7 text-center rounded-full align-middle"
+                                            align="center"
+                                            style={style}
                                           >
-                                            <table
-                                              style={{
-                                                msoTableLspace: '0pt',
-                                                msoTableRspace: '0pt',
-                                                borderCollapse: 'collapse',
-                                                borderSpacing: '0px',
-                                                width: '100%',
-                                              }}
-                                            >
-                                              <tr>
-                                                <th
-                                                  style={{
-                                                    width: '50%',
-                                                    alignItems: 'center',
-                                                  }}
-                                                >
-                                                  Find inspiration
-                                                </th>
-                                                <th style={{ width: '50%' }}>
-                                                  Get the app
-                                                </th>
-                                              </tr>
-                                              <tr>
-                                                <td
-                                                  style={{
-                                                    padding: '0',
-                                                    margin: '10px 0px',
-                                                    display: 'grid',
-                                                    justifyContent: 'center',
-                                                    gap: '0px 10px',
-                                                    gridAutoFlow: 'column',
-                                                  }}
-                                                >
-                                                  <span
-                                                    className="instagram"
-                                                    style={{
-                                                      background:
-                                                        'linear-gradient(115deg, #f9ce34, #ee2a7b, #6228d7)',
-                                                      borderRadius: '50%',
-                                                      width: '30px',
-                                                      height: '30px',
-                                                      display: 'flex',
-                                                      justifyContent: 'center',
-                                                      alignItems: 'center',
-                                                    }}
-                                                  >
-                                                    <img
-                                                      src="https://img.icons8.com/sf-regular/48/000000/instagram-new.png"
-                                                      style={{
-                                                        border: '0',
-                                                        outline: 'none',
-                                                        textDecoration: 'none',
-                                                        MsInterpolationMode:
-                                                          'bicubic',
-                                                        filter: 'invert(100%)',
-                                                        width: '80%',
-                                                        height: '80%',
-                                                      }}
-                                                      alt=""
-                                                    />
-                                                  </span>
-                                                  <span
-                                                    className="twitter"
-                                                    style={{
-                                                      background: '#1da1f2',
-                                                      borderRadius: '50%',
-                                                      boxSizing: 'border-box',
-                                                      height: '30px',
-                                                      width: '30px',
-                                                      display: 'flex',
-                                                      justifyContent: 'center',
-                                                      alignItems: 'center',
-                                                    }}
-                                                  >
-                                                    <img
-                                                      src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8twitter50.png"
-                                                      style={{
-                                                        display: 'block',
-                                                        border: '0',
-                                                        outline: 'none',
-                                                        textDecoration: 'none',
-                                                        MsInterpolationMode:
-                                                          'bicubic',
-                                                        filter: 'invert(100%)',
-                                                        width: '60%',
-                                                        height: '60%',
-                                                      }}
-                                                      alt=""
-                                                    />
-                                                  </span>
-                                                  <img
-                                                    src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8pinterest48.png"
-                                                    style={{
-                                                      display: 'block',
-                                                      border: '0',
-                                                      outline: 'none',
-                                                      textDecoration: 'none',
-                                                      MsInterpolationMode:
-                                                        'bicubic',
-                                                      width: '30px',
-                                                      height: '30px',
-                                                    }}
-                                                    alt=""
-                                                  />
-                                                  <span
-                                                    style={{
-                                                      background: '#eee',
-                                                      borderRadius: '50%',
-                                                      width: '30px',
-                                                      height: '30px',
-                                                      display: 'flex',
-                                                      justifyContent: 'center',
-                                                      alignItems: 'center',
-                                                    }}
-                                                  >
-                                                    <img
-                                                      src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8tiktok48.png"
-                                                      style={{
-                                                        display: 'block',
-                                                        border: '0',
-                                                        outline: 'none',
-                                                        textDecoration: 'none',
-                                                        MsInterpolationMode:
-                                                          'bicubic',
-                                                        width: '80%',
-                                                        height: '80%',
-                                                      }}
-                                                      alt=""
-                                                    />
-                                                  </span>
-                                                  <img
-                                                    src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/icons8facebook48_1.png"
-                                                    alt="facebook-new"
-                                                    style={{
-                                                      display: 'block',
-                                                      border: '0',
-                                                      outline: 'none',
-                                                      textDecoration: 'none',
-                                                      MsInterpolationMode:
-                                                        'bicubic',
-                                                      width: '30px',
-                                                      height: '30px',
-                                                    }}
-                                                  />
-                                                </td>
-                                                <td
-                                                  style={{
-                                                    padding: '0',
-                                                    margin: '0',
-                                                  }}
-                                                >
-                                                  <div
-                                                    style={{
-                                                      display: 'flex',
-                                                      flexDirection: 'row',
-                                                      gap: '5px',
-                                                      justifyContent: 'center',
-                                                    }}
-                                                  >
-                                                    <img
-                                                      src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/5a902dbf7f96951c82922875_prA.png"
-                                                      style={{
-                                                        display: 'block',
-                                                        border: '0',
-                                                        outline: 'none',
-                                                        textDecoration: 'none',
-                                                        MsInterpolationMode:
-                                                          'bicubic',
-                                                        width: '100px',
-                                                        height: '28px',
-                                                      }}
-                                                      alt=""
-                                                    />
-                                                    <img
-                                                      src="https://fbtskzl.stripocdn.email/content/guids/CABINET_b2c54c9f4f7a6a37ee9f194178460c55773a1f517775c0801028dbe0265558ca/images/5a902db97f96951c82922874_1_XT1.png"
-                                                      style={{
-                                                        display: 'block',
-                                                        border: '0',
-                                                        outline: 'none',
-                                                        textDecoration: 'none',
-                                                        MsInterpolationMode:
-                                                          'bicubic',
-                                                        width: '100px',
-                                                        height: '28px',
-                                                      }}
-                                                      alt=""
-                                                    />
-                                                  </div>
-                                                </td>
-                                              </tr>
-                                            </table>
-                                          </section>
-                                        </td>
-                                      </tr>
+                                            <Img
+                                              src={`${url}/${icon}`}
+                                              style={imgStyle}
+                                              className={`${
+                                                shinkIcon
+                                                  ? '!w-[60%] !h-[60%]'
+                                                  : 'w-full h-full'
+                                              } object-contain mx-auto`}
+                                            />
+                                          </Column>
+                                        );
+                                      },
+                                    )}
+                                  </Row>
+                                </Column>
+                                <Column>
+                                  <Text className="text-center font-bold tracking-wider">
+                                    Get the app
+                                  </Text>
 
-                                      <tr>
-                                        <td
-                                          style={{
-                                            padding: '0',
-                                            margin: '0',
-                                            paddingLeft: '20px',
-                                            paddingRight: '20px',
-                                            paddingBottom: '30px',
-                                            backgroundColor: '#2d2d2d',
-                                          }}
-                                        >
-                                          <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                "arial, 'helvetica neue', helvetica, sans-serif",
-                                              lineHeight: '22px',
-                                              color: '#efefef',
-                                              fontSize: '11px',
-                                            }}
-                                          >
-                                            *GLAMO has estimated this date on
-                                            the basis of your expected delivery
-                                            date and the refunds window
-                                            applicable to your jurisdiction.
-                                            Please see website{' '}
-                                            <a
-                                              href=""
-                                              target="_blank"
-                                              style={{
-                                                WebkitTextSizeAdjust: 'none',
-                                                MsTextSizeAdjust: 'none',
-                                                msoLineHeightRule: 'exactly',
-                                                textDecoration: 'none',
-                                                color: '#efefef',
-                                                fontSize: '11px',
-                                              }}
-                                            >
-                                              T&amp;Cs
-                                            </a>{' '}
-                                            for more details on returns and
-                                            refunds, and for the refunds window
-                                            applicable to your jurisdiction.
-                                            This inbox is not attended, so
-                                            please don’t reply to this email.
-                                            This is a service email. You will
-                                            receive these no matter what your
-                                            marketing communication preferences
-                                            are. We’ll always keep your data
-                                            safe and secure.{' '}
-                                            <a
-                                              href=""
-                                              target="_blank"
-                                              style={{
-                                                WebkitTextSizeAdjust: 'none',
-                                                MsTextSizeAdjust: 'none',
-                                                msoLineHeightRule: 'exactly',
-                                                textDecoration: 'none',
-                                                color: '#efefef',
-                                                fontSize: '11px',
-                                              }}
-                                            >
-                                              Click here
-                                            </a>{' '}
-                                            to know why we need it and how we
-                                            use it.&nbsp;
-                                          </p>
-                                        </td>
-                                      </tr>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
+                                  <Row className="w-fit border-spacing-x-1">
+                                    <Column className="!w-[100px] !h-[28px]">
+                                      <Img
+                                        src={`${url}/google-badge.png`}
+                                        className="w-[100px] !h-[28px]"
+                                      />
+                                    </Column>
+                                    <Column className="!w-[100px]">
+                                      <Img
+                                        src={`${url}/apple-badge.png`}
+                                        className="w-[100px] !h-[28px]"
+                                      />
+                                    </Column>
+                                  </Row>
+                                </Column>
+                              </Row>
+
+                              {/* <Row className='mt-20'> */}
+                                <Text className='pt-10 text-xs leading-4'>
+                                  *GLAMO has estimated this date on the basis of
+                                  your expected delivery date and the refunds
+                                  window applicable to your jurisdiction. Please
+                                  see website T&Cs for more details on returns
+                                  and refunds, and for the refunds window
+                                  applicable to your jurisdiction.
+                                </Text>
+                                <Text className='text-xs leading-4'>
+                                  This inbox is not attended so please don’t
+                                  reply to this email. This is a service email.
+                                  You will receive these no matter what your
+                                  marketing communication preferences are.
+                                </Text>
+                                <Text className='text-xs leading-4'>
+                                  We’ll always keep your data safe and secure.
+                                  Click here to know why we need it and how we
+                                  use it.
+                                </Text>
+                              {/* </Row> */}
+                            </Section>
+                          </Container>
+
+                          
                         </table>
                       </td>
                     </tr>
