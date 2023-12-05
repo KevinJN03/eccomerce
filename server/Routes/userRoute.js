@@ -20,6 +20,7 @@ import {
   getPaymentMethods,
   setUpPaypal,
   setUpKlarna,
+  getOrders,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -48,4 +49,5 @@ router.post('/payment-method/add', addPaymentMethod);
 router.post('/payment-method/changedefault/:id', changeDefaultMethod);
 router.delete('/payment-method/delete/:id', deletePaymentMethod);
 router.get('/payment-method/all', getPaymentMethods);
+router.get('/orders', getOrders);
 export default router;

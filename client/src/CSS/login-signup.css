@@ -1,4 +1,3 @@
-
 @tailwind components;
 .login-signup-page {
     @apply m-0 flex h-full flex-col  items-center p-0;
@@ -54,8 +53,8 @@
     .input-container label {
         @apply mb-2 text-sm font-semibold tracking-wide;
     }
-    .input-container input {
-        @apply py-4 !h-[44px] w-full;
+    .input-container input[type='text'] {
+        @apply !h-[48px] w-full box-border;
         border: 1px solid black;
     }
 }
@@ -84,15 +83,11 @@
 }
 
 .radio-containers {
-    @apply flex flex-row;
+    @apply flex flex max-h-[44px] flex-row items-center;
 }
 
 .radio-containers label {
-    @apply text-sm font-normal;
-}
-
-input[type='radio'] {
-    accent-color: var(--primary);
+    @apply m-0 p-0 text-sm font-normal;
 }
 
 .login-signup-btn {
@@ -120,4 +115,12 @@ input[type='radio'] {
 .not-active-option {
     border-bottom: 2px solid var(--grey);
     flex: 1;
+}
+
+.truncate-text {
+    display: -webkit-box;
+    max-width: 200px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

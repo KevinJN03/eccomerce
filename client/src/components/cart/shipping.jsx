@@ -16,7 +16,10 @@ function Shipping({ options }) {
             >
                 {options.map(({ name, cost, _id }) => {
                     return (
-                        <option value={JSON.stringify({ cost, name, id: _id })}>
+                        <option
+                            key={_id}
+                            value={JSON.stringify({ cost, name, id: _id })}
+                        >
                             {name}
                         </option>
                     );

@@ -16,10 +16,11 @@ import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import Address from '../Models/address.js';
 import addressValidator from '../utils/addressValidator.js';
 import errorRegenerator from '../utils/errorRegenerator.js';
-import user from '../Models/user.js';
+
 import { v4 as uuidv4 } from 'uuid';
 import mongoose from 'mongoose';
 import Stripe from 'stripe';
+import Order from '../Models/order.js';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -739,5 +740,25 @@ export const setUpKlarna = [
       { customer: userId },
     );
     res.status(200).send({ success: true });
+  }),
+];
+
+export const getOrders = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.session.passport.user;
+    // const getUserOrder = await User.findOne({ _id: userId }, null, {
+    //   projection: { orders: 1 },
+    //   populate: 'orders',
+    // });
+
+    const getUserOrder = await Order.find({ customer: userId }, null, {
+      lean: true,
+ 
+    })
+      .populate('items.product')
+      .exec();
+
+    return res.status(200).send({ success: true, orders: getUserOrder });
   }),
 ];

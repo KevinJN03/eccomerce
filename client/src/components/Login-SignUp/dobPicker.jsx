@@ -22,8 +22,9 @@ function DobPicker({ error, setDob, showDescription, value, setError }) {
                     inputFormat="DD-MM-YYYY"
                     views={['day', 'month', 'year']}
                     slotProps={{
-                        textField: { size: 'small', fullWidth: true },
+                        textField: { size: 'small', fullWidth: true, },
                     }}
+              
                     onChange={handleDateChange}
                     defaultValue={dayjs(value)}
                 />

@@ -236,26 +236,7 @@
     @apply flex flex-col gap-5 ;
     width: 100%;
 
-    /* width */
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 5px;
-    }
-
-    /* Handle on hover */
-    &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
+   
 }
 .product-container .product-cart {
     @apply flex flex-row gap-5;

@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
 function AddToCart({
     product,
-    variation1Select,
     setError,
     isOutOfStock,
     price,
@@ -13,15 +12,28 @@ function AddToCart({
 
     const handleClick = () => {
         if (
-            (product.isSizePresent && !variationSelect.size.id) ||
-            (product.isColorPresent && !variationSelect.color.id)
+            (product.isVariation1Present &&
+                !variationSelect.variation1.variation) ||
+            (product.isVariation2Present &&
+                !variationSelect.variation2.variation)
         ) {
             ('enter error');
             setError(() => true);
             return;
         }
 
-        const { id, title, images, delivery, size, color } = product;
+        const {
+            id,
+            title,
+            images,
+            delivery,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
+        } = product;
 
         const newImagesArray = images[0];
         const newProduct = {
@@ -30,8 +42,12 @@ function AddToCart({
             price: product.price,
             images: [newImagesArray],
             delivery,
-            size,
-            color,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
         };
 
         newProduct.cartId = uuidv4();
@@ -41,6 +57,8 @@ function AddToCart({
         dispatch({ type: 'add', product: newProduct });
 
         setError(() => false);
+
+        console.log({ variationSelect });
     };
     return (
         <>

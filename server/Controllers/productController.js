@@ -89,6 +89,9 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
   // if ('variations' in product) {
   const isVariationsPresent = _.has(newProducts, 'variations');
 
+  newData.isVariation1Present = false;
+  newData.isVariation2Present = false;
+  newData.isVariationCombine = false;
   if (isVariationsPresent) {
     const { variations } = product;
     let minimumPrice = Infinity;
@@ -140,75 +143,6 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
       newData.price.current = minimumPrice;
     }
   }
-
-  // if (isVariationsPresent) {
-  //   product.variations.map((variation, idx) => {
-  //     if (idx == 0) {
-  //     }
-  //     if (variation.name == 'Size' && !variation.name2) {
-  //       const sizeArr = [];
-  //       for (const [key, value] of variation?.options) {
-  //         sizeArr.push(value);
-  //       }
-  //       newData.size = sizeArr;
-  //     }
-
-  //     if (variation.name == 'Colour' && !variation.name2) {
-  //       const colorArr = [];
-  //       for (const [key, value] of variation?.options) {
-  //         colorArr.push(value);
-  //       }
-  //       newData.color = colorArr;
-  //     }
-
-  //     const isName2Present = variation?.name2;
-
-  //     if (isName2Present) {
-  //       let minPriceValue = Infinity;
-  //       console.log('im in here');
-  //       const variationObj = {};
-  //       const map = new Map();
-  //       for (const [key, value] of variation?.options) {
-  //         minPriceValue = Math.min(value.price, minPriceValue);
-  //         if (!map.has(value.variation)) {
-  //           const newVariationObj = {
-  //             [value.variation2]: {
-  //               id: value.id,
-  //               stock: value.stock,
-  //               price: value.price,
-  //               visible: value.visible,
-  //             },
-  //           };
-
-  //           variationObj[value.variation] = newVariationObj;
-  //           map.set(value.variation, newVariationObj);
-  //         } else {
-  //           const getItemFromMap = map.get(value.variation);
-
-  //           const newVariationObj = {
-  //             [value.variation2]: {
-  //               id: value.id,
-  //               stock: value.stock,
-  //               price: value.price,
-  //               visible: value.visible,
-  //             },
-  //           };
-  //           const updatedVariationObject = Object.assign(
-  //             getItemFromMap,
-  //             newVariationObj,
-  //           );
-  //           map.set(value.variation, updatedVariationObject);
-  //         }
-  //       }
-
-  //       newData.price.current = minPriceValue;
-
-  //       // newData.combineVariation = arr;
-  //       newData.combineVariation = variationObj;
-  //     }
-  //   });
-  // }
-
   console.log(newData.price);
   res.send(newData);
 });

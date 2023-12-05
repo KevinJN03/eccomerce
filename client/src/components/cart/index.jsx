@@ -14,6 +14,8 @@ import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
 import calculateTotal from '../common/calculateTotal';
 import variants from '../common/framerMotionVariants.jsx';
+
+import { v4 as uuidv4 } from 'uuid';
 function Cart({}) {
     const checkoutRef = useRef(null);
     const checkoutBottomRef = useRef(null);
@@ -25,8 +27,40 @@ function Cart({}) {
     const handleRemove = (id) => {
         dispatch({ type: 'remove', cartId: id });
     };
+
+    const borderVariant = {
+        initial: {
+            opacity: 0,
+        },
+        animate: {
+            opacity: 1,
+            transition: { delay: 2, duration: 0.2 },
+        },
+        exit: {
+            delay: 10,
+        },
+    };
+
+    const generateItemVariant = (delay) => {
+        return {
+            initial: {
+                opacity: 0,
+                translateY: 50,
+            },
+            animate: {
+                opacity: 1,
+                translateY: 0,
+                transition: { duration: 1.5, delay: delay * 0.4 },
+            },
+            exit: {
+                opacity: 0,
+                duration: 4,
+                transition: { duration: 4 },
+            },
+        };
+    };
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
             {cart.length > 0 ? (
                 <motion.section
                     id="cart-page"
@@ -69,16 +103,33 @@ function Cart({}) {
                                 Items are reserved for 60 minutes
                             </p>
                         </div>
-                        <div className="product-cart-wrapper">
-                            {cart.length > 0 &&
-                                cart.map((item) => {
+                        <div className="product-cart-wrapper flex flex-col flex-nowrap">
+                            <AnimatePresence>
+                                {cart.map((item, idx) => {
                                     return (
-                                        <Cart_Item
+                                        <motion.div
+                                            variants={generateItemVariant(idx)}
+                                            animate={'animate'}
+                                            initial={'initial'}
+                                            exit={'exit'}
                                             key={item.cartId}
-                                            product={item}
-                                        />
+                                        >
+                                            {idx != 0 && (
+                                                <motion.div
+                                                    key={uuidv4()}
+                                                    variants={borderVariant}
+                                                    animate={'animate'}
+                                                    initial={'initial'}
+                                                    exit={'exit'}
+                                                    className="mx-6 h-1 border-t-[1px] border-gray-300"
+                                                ></motion.div>
+                                            )}
+
+                                            <Cart_Item product={item} />
+                                        </motion.div>
                                     );
                                 })}
+                            </AnimatePresence>
                         </div>
                     </div>
 

@@ -3,28 +3,26 @@ function Interest({ setInterest, interest }) {
         <div className="input-container">
             <label>MOSTLY INTERESTED IN:</label>
             <div id="radio-wrapper">
-                <div className="radio-containers">
-                    <input
-                        type="radio"
-                        name="interest"
-                        id="womenswear"
-                        value={'womenswear'}
-                        checked={interest === 'womenswear'}
-                        onClick={(e) => setInterest(() => e.target.value)}
-                    />
-                    <label htmlFor="womenswear">Womenswear</label>
-                </div>
-                <div className="radio-containers">
-                    <input
-                        type="radio"
-                        name="interest"
-                        id="menswear"
-                        value={'menswear'}
-                        checked={interest === 'menswear'}
-                        onClick={(e) => setInterest(() => e.target.value)}
-                    />
-                    <label htmlFor="womenswear">Menswear</label>
-                </div>
+                {['womenswear', 'menswear'].map((option) => {
+                    return (
+                        <div className="radio-containers" key={option}>
+                            <input
+                            className="daisy-radio"
+                                type="radio"
+                                name="interest"
+                                id={option}
+                                value={option}
+                                checked={interest === option}
+                                onClick={(e) =>
+                                    setInterest(() => e.target.value)
+                                }
+                            />
+                            <label htmlFor={option}>
+                                {option[0].toUpperCase() + option.slice(1)}
+                            </label>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

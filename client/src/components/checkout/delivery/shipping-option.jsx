@@ -4,9 +4,11 @@ import axios from '../../../api/axios';
 
 import dayjs from 'dayjs';
 import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
+import { useCheckoutContext } from '../../../context/checkOutContext';
 
 function Shipping_Option({ disable }) {
     const { cart, setDeliveryOption, deliveryOption } = useCart();
+    const { setDeliveryDate } = useCheckoutContext();
     const today = dayjs();
 
     const [profiles, setProfiles] = useState([]);
@@ -14,14 +16,43 @@ function Shipping_Option({ disable }) {
     fetchDeliveryOptions(setProfiles);
 
     const handleDelivery = (e) => {
-        setDeliveryOption(() => JSON.parse(e.target.value));
+        const { id, cost, name, delivery_date } = e.target.dataset;
+        setDeliveryOption(() => ({ id, cost: parseFloat(cost), name }));
+        setDeliveryDate(() => delivery_date);
     };
+
+    const generateDeliveryDate = ({ processingTime }) => {
+        const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
+        const newDeliveryDate = today.add(processingTime.end, addUnit);
+
+        const newFormatDate = newDeliveryDate.format('dddd, D MMMM, YYYY');
+
+        return newFormatDate;
+    };
+
+    useEffect(() => {
+        if (!deliveryOption?.id && profiles.length >= 1) {
+            console.log({ deliveryOption });
+            const { id, cost, name, processingTime } = profiles[0];
+
+            const delivery_date = generateDeliveryDate({
+                processingTime,
+            });
+            setDeliveryDate(() => delivery_date);
+
+            setDeliveryOption({ id, cost, name });
+        }else {
+        }
+    }, [profiles]);
 
     return (
         <>
             {profiles.map(({ name, cost, processingTime, _id }, idx) => {
                 const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
                 const newDeliveryDate = today.add(processingTime.end, addUnit);
+
+                const newFormatDate =
+                    newDeliveryDate.format('dddd, D MMMM, YYYY');
                 return (
                     <div className="shipping_option" key={_id}>
                         <p className="font-semibold">
@@ -29,19 +60,19 @@ function Shipping_Option({ disable }) {
                         </p>
                         <div className="shipping-option-detail">
                             <p className="text-sm font-semibold">{name}</p>
-                            <p>
-                                Delivered on or before{' '}
-                                {newDeliveryDate.format('dddd, D MMMM, YYYY')}
-                            </p>
+                            <p>Delivered on or before {newFormatDate}</p>
                         </div>
                         <input
                             disabled={disable}
                             type="radio"
                             name="delivery"
+                            data-delivery_date={newFormatDate}
                             defaultChecked={
-                                deliveryOption.id == _id || idx == 0
+                                deliveryOption.id == _id || cost == 0
                             }
-                            value={JSON.stringify({ cost, name })}
+                            data-id={_id}
+                            data-cost={cost}
+                            data-name={name}
                             onChange={handleDelivery}
                         ></input>
                     </div>

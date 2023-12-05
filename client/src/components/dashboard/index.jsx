@@ -12,7 +12,7 @@ import { useAuth } from '../../hooks/useAuth.jsx';
 import axios from '../../api/axios.js';
 import dayjs from 'dayjs';
 import DeleteAddress from './address/deleteAddress.jsx';
-
+import logOutUser from '../common/logoutUser.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import useCurrentLocation from '../../hooks/useCurrentLocation.jsx';
 function Dashboard() {
@@ -151,7 +151,7 @@ function Dashboard() {
                                                     initial={{ opacity: 0.5 }}
                                                     className="user-initial flex h-full w-full items-center justify-center rounded-full !bg-primary text-center font-gotham text-4xl !font-extrabold text-white"
                                                 >
-                                                    KJ
+                                                    {` ${user?.firstName?.toUpperCase()[0]}${user?.lastName?.toUpperCase()[0]}`}
                                                 </motion.span>
                                             )}
                                         </div>

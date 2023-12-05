@@ -34,8 +34,8 @@ function Payment({
                 setUserPaymentMethods(() => data.paymentMethods);
 
                 if (data.paymentMethods[0]) {
-                    setSelectedMethod(() => data.paymentMethods[0]);
-
+                    // setSelectedMethod(() => data.paymentMethods[0]);
+                    setSelectedMethod(() => ({type: 'paypal'}));
                     setInitialView(() => 'selectedMethod');
                 } else {
                     setInitialView(() => 'options');

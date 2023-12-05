@@ -10,6 +10,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
@@ -26,14 +27,16 @@ function Buy_Now_Btn({ disable }) {
 
         klarnaDob,
         setKlarnaDob,
+        deliveryDate,
     } = useCheckoutContext();
-    const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
+    // const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
 
     const { user } = useAuth();
-    const { cart } = useCart();
+    const { cart, deliveryOption } = useCart();
     const stripe = useStripe();
     const elements = useElements();
-
+    const navigate = useNavigate();
+    const paymentIntentInfo = useRef();
     const fetchPaymentIntent = async () => {
         const { data } = await axios.post('/order/create-payment-intent', {
             billing: {
@@ -59,27 +62,26 @@ function Buy_Now_Btn({ disable }) {
                 name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
             },
             cart,
+            deliveryOption,
+            deliveryDate,
         });
 
-        const { id, clientSecret } = data;
-
-        return { id, clientSecret };
+        return data;
     };
 
     const submitOrder = async () => {
+        let isCardPaymentSuccessful = false;
         try {
+            console.log({ deliveryOption });
             setOrderSubmit(() => true);
-            let clientSecret = '';
-            // if (!paymentIntentInfo) {
-                if (true) {
+            if (true) {
                 const info = await fetchPaymentIntent();
-                clientSecret = info.clientSecret;
-                setPaymentIntentInfo({
-                    id: info.id,
-                    clientSecret: info.clientSecret,
-                });
 
-                console.log({ info });
+                paymentIntentInfo.current = info;
+                // setPaymentIntentInfo({
+                //     id: info.id,
+                //     clientSecret: info.clientSecret,
+                // });
             } else {
                 clientSecret = paymentIntentInfo.clientSecret;
             }
@@ -97,9 +99,8 @@ function Buy_Now_Btn({ disable }) {
             };
 
             if (selectedMethod['type'] == 'card') {
-                console.log({ clientSecret });
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
-                    clientSecret,
+                    paymentIntentInfo.current.clientSecret,
                     {
                         payment_method: selectedMethod.id,
                         payment_method_options: {
@@ -110,12 +111,15 @@ function Buy_Now_Btn({ disable }) {
                     }
                 );
             }
-            const return_url = `${CLIENT_URL}/order-success`;
+            const return_url = `${CLIENT_URL}/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
-                    await stripe.confirmPayPalPayment(clientSecret, {
-                        return_url,
-                    });
+                    await stripe.confirmPayPalPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            return_url,
+                        }
+                    );
             }
 
             if (selectedMethod['type'] == 'klarna') {
@@ -136,20 +140,26 @@ function Buy_Now_Btn({ disable }) {
                     return;
                 }
                 var { error, paymentIntent } =
-                    await stripe.confirmKlarnaPayment(clientSecret, {
-                        payment_method: {
-                            billing_details,
-                        },
-                        return_url,
-                    });
+                    await stripe.confirmKlarnaPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            payment_method: {
+                                billing_details,
+                            },
+                            return_url,
+                        }
+                    );
             }
 
             if (selectedMethod['type'] == 'clearpay') {
                 var { error, paymentIntent } =
-                    await stripe.confirmAfterpayClearpayPayment(clientSecret, {
-                        payment_method: { billing_details },
-                        return_url,
-                    });
+                    await stripe.confirmAfterpayClearpayPayment(
+                        paymentIntentInfo.current.clientSecret,
+                        {
+                            payment_method: { billing_details },
+                            return_url,
+                        }
+                    );
             }
             if (error) {
                 console.error('error with payment intent', error);
@@ -168,12 +178,19 @@ function Buy_Now_Btn({ disable }) {
 
                 setOrderSubmit(() => false);
             } else {
-                ({ paymentIntent });
+                if (selectedMethod?.type == 'card') {
+                    isCardPaymentSuccessful = true;
+                }
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);
         } finally {
             setTimeout(() => {
+                if (isCardPaymentSuccessful) {
+                    navigate(
+                        `/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`
+                    );
+                }
                 setOrderSubmit(() => false);
             }, 2000);
         }

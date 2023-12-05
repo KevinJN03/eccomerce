@@ -32,7 +32,7 @@ const Select = forwardRef(function Select(
 
         setVariationSelection((prevState) => ({
             ...prevState,
-            [property]: { variation, id },
+            [property]: { ...prevState[property], variation, id },
         }));
         variationSelect;
 

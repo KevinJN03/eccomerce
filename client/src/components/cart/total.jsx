@@ -9,7 +9,7 @@ import fetchDeliveryOptions from '../../hooks/fetchDeliveryOption';
 const Total = forwardRef(function ({}, ref) {
     const { withOutShipping } = calculateTotal();
     let totalAmount = withOutShipping;
-    debugger;
+    
     const [shippingOptions, setShippingOptions] = useState([]);
     const { deliveryOption } = useCart();
 

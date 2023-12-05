@@ -3,7 +3,7 @@ import chat_icon from '../../../../assets/icons/profile-icons/chat.png';
 import dashboard_icon from '../../../../assets/icons/profile-icons/dashboard.png';
 import return_icon from '../../../../assets/icons/profile-icons/delivery-status.png';
 import info_icon from '../../../../assets/icons/profile-icons/info.png';
-import order_icon from '../../../../assets/icons/profile-icons/package.png';
+import order_icon from '../../../../assets/icons/profile-icons/package.svg';
 import { useAuth } from '../../../../hooks/useAuth';
 import Dropdown_Option from './dropdown_option';
 function Profile_Dropdown({}) {

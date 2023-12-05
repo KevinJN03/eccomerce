@@ -10,11 +10,12 @@ export default {
                 sm: '0 1px 2px var(--tw-shadow-color)',
                 DEFAULT: '0 2px 4px var(--tw-shadow-color)',
                 lg: '0 8px 16px var(--tw-shadow-color)',
-              },
+            },
             colors: {
                 primary: '#2d2d2d',
                 'primary-green': '#018849',
-                'grey-100': ' #dddddd46;',
+                'grey-100': '#dddddd46;',
+                'dark-gray': '#676666',
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
@@ -54,9 +55,9 @@ export default {
             'md+lg': '481px',
         },
     },
-    plugins: [require('daisyui'), require('rippleui'), ],
+    plugins: [require('daisyui'), require('rippleui')],
 
     daisyui: {
         prefix: 'daisy-',
-    }
+    },
 };
