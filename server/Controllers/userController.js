@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from 'uuid';
 import mongoose from 'mongoose';
 import Stripe from 'stripe';
 import Order from '../Models/order.js';
-
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -454,8 +454,16 @@ export const editAddress = [
       return res.status(404).send({ notFound: true });
     }
 
+    const parseNumber = parsePhoneNumberFromString(
+      req.body?.mobile,
+      req.body?.country,
+    );
     if (isUserAddress) {
-      await Address.findByIdAndUpdate(id, { ...req.body }, { new: true });
+      await Address.findByIdAndUpdate(
+        id,
+        { ...req.body, mobile: parseNumber?.number },
+        { new: true },
+      );
       return res.redirect(303, '/api/user/userData');
     }
   }),
@@ -754,7 +762,6 @@ export const getOrders = [
 
     const getUserOrder = await Order.find({ customer: userId }, null, {
       lean: true,
- 
     })
       .populate('items.product')
       .exec();

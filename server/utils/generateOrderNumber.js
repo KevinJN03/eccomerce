@@ -6,5 +6,7 @@ export default function generateOrderNumber() {
     charset: 'alphanumeric',
     capitalization: 'uppercase',
   });
+
+  console.log('orderNumberfromstring: ', orderNumberString)
   return orderNumberString;
 }

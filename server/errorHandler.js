@@ -10,7 +10,7 @@ const customValidationError = (error) => {
 export default async function errorHandler(error, req, res, next) {
   error.statusCode = error.statusCode || 500;
   error.status = error.status || 'error';
-
+  console.log(error);
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
     return res.status(400).json({ success: false, msg: 'Invalid Id format' });
   }
@@ -26,7 +26,7 @@ export default async function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-  console.log(error);
+  
   if (error.name == 'MulterError') {
     error.message =
       'Error occurs while adding or deleting images. Please contact Administrator for asssistance.';

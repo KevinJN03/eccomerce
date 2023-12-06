@@ -48,6 +48,7 @@ const OrderSchema = new Schema({
   shipping_option: {
     cost: { type: Schema.Types.Number },
     delivery_date: { type: Schema.Types.String },
+    name: { type: Schema.Types.String },
   },
   //   address: {
   //     type: Schema.Types.Mixed,
