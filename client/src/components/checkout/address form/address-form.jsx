@@ -10,7 +10,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { generateVariants } from './address-item';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAddressContext } from '../../../context/checkOutAddressContext';
-
+import {
+    postcodeValidator,
+    postcodeValidatorExistsForCountry,
+} from 'postcode-validator';
 function Address_Form({ type }) {
     const {
         viewDispatch,
@@ -93,10 +96,10 @@ function Address_Form({ type }) {
 
     async function handleSubmit(returnTo = 'main', updateMainAddress = true) {
         var updatedAddress = temporaryMainAddress;
+
         try {
             setLoading(true);
             let result;
-            ({ updatedAddress });
             if (type == 'edit') {
                 result = await axios.put(
                     `user/address/edit/${updatedAddress._id}`,

@@ -213,7 +213,7 @@ function Checkout() {
                                                     disableOtherComponents?.disable
                                                 }
                                             />
-                                            <Payment
+                                            {/* <Payment
                                                 defaultProperty={
                                                     'billing_address'
                                                 }
@@ -221,7 +221,7 @@ function Checkout() {
                                                 setBillingAddress={
                                                     setBillingAddress
                                                 }
-                                            />
+                                            /> */}
                                         </section>
                                         <div className="bottom mt-5 flex flex-col gap-y-3">
                                             <Buy_Now_Btn

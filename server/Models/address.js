@@ -10,7 +10,7 @@ const AddressSchema = new Schema({
   address_2: { type: Schema.Types.String },
   city: { type: Schema.Types.String, required: true },
   county: { type: Schema.Types.String },
-  postCode: { type: Schema.Types.String, required: true },
+  postCode: { type: Schema.Types.String, required: true, uppercase: true },
   mobile: { type: Schema.Types.Number, required: true },
   country: { type: Schema.Types.String, required: true },
 });

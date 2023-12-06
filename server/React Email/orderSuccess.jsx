@@ -26,9 +26,9 @@ const logos = {
   'union-pay': 'union-pay.png',
 };
 
-export default function Test(props) {
+export default function OrderSuccess(props) {
   console.log({ props });
-  const { firstName } = props;
+  const { firstName, shipping_address } = props;
   const config = {
     theme: {
       extend: {
@@ -449,7 +449,21 @@ export default function Test(props) {
                                           >
                                             <strong>DELIVERY ADDRESS</strong>
                                           </p>
-                                          {/* More paragraphs go here */}
+
+                                          <p>{shipping_address?.name}</p>
+                                          <p>
+                                            {shipping_address?.address?.line1}
+                                          </p>
+                                          <p>
+                                            {shipping_address?.address?.line2}
+                                          </p>
+                                          <p>
+                                            {`${shipping_address?.address?.postal_code} ${shipping_address?.address?.city}, ${shipping_address?.country}`}
+                                          </p>
+
+                                          <p>
+                                            {`${shipping_address?.address?.postal_code} ${shipping_address?.address?.city}, ${shipping_address?.phone}`}
+                                          </p>
                                         </td>
                                       </tr>
                                     </table>
@@ -987,7 +1001,6 @@ export default function Test(props) {
                                           background: '#1da1f2',
                                         },
                                         shinkIcon: true,
-                                       
                                       },
                                       {
                                         icon: 'icons8-tiktok-48.png',
@@ -1048,30 +1061,28 @@ export default function Test(props) {
                               </Row>
 
                               {/* <Row className='mt-20'> */}
-                                <Text className='pt-10 text-xs leading-4'>
-                                  *GLAMO has estimated this date on the basis of
-                                  your expected delivery date and the refunds
-                                  window applicable to your jurisdiction. Please
-                                  see website T&Cs for more details on returns
-                                  and refunds, and for the refunds window
-                                  applicable to your jurisdiction.
-                                </Text>
-                                <Text className='text-xs leading-4'>
-                                  This inbox is not attended so please don’t
-                                  reply to this email. This is a service email.
-                                  You will receive these no matter what your
-                                  marketing communication preferences are.
-                                </Text>
-                                <Text className='text-xs leading-4'>
-                                  We’ll always keep your data safe and secure.
-                                  Click here to know why we need it and how we
-                                  use it.
-                                </Text>
+                              <Text className="pt-10 text-xs leading-4">
+                                *GLAMO has estimated this date on the basis of
+                                your expected delivery date and the refunds
+                                window applicable to your jurisdiction. Please
+                                see website T&Cs for more details on returns and
+                                refunds, and for the refunds window applicable
+                                to your jurisdiction.
+                              </Text>
+                              <Text className="text-xs leading-4">
+                                This inbox is not attended so please don’t reply
+                                to this email. This is a service email. You will
+                                receive these no matter what your marketing
+                                communication preferences are.
+                              </Text>
+                              <Text className="text-xs leading-4">
+                                We’ll always keep your data safe and secure.
+                                Click here to know why we need it and how we use
+                                it.
+                              </Text>
                               {/* </Row> */}
                             </Section>
                           </Container>
-
-                          
                         </table>
                       </td>
                     </tr>

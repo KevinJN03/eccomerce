@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import Main from './main';
 import { AddressContextProvider } from '../../../context/checkOutAddressContext';
-
+import _ from 'lodash';
 const views = {
     book: <Address_Book />,
     edit: <Address_Form type={'edit'} />,
@@ -170,6 +170,14 @@ function Address({
             transition: { duration: 0.5 },
         },
     };
+
+    useEffect(() => {
+        const isAddressEmpty = _.isEmpty(mainAddress)
+        console.log({isAddressEmpty})
+        if (isAddressEmpty) {
+            viewDispatch({type: 'add'})
+        }
+    });
     return (
         <AddressContextProvider value={value}>
             <ClickAwayListener onClickAway={onClickAway}>
