@@ -7,7 +7,7 @@ function Customer_Info({ className, customer, elementClass }) {
                 className={elementClass}
             >{`${customer?.firstName} ${customer?.lastName}`}</p>
             <p className={elementClass}>{`${customer?.address_1} `}</p>
-            {customer.address_2 && (
+            {customer?.address_2 && (
                 <p className={elementClass}>{`${customer?.address_2} `}</p>
             )}
             <p className={elementClass}>{customer?.county}</p>

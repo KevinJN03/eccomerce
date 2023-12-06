@@ -9,18 +9,26 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import calculateTotal from '../../common/calculateTotal';
 
 function Payment_Options({}) {
-    const { setView } = usePaymentTypeContext();
-    const { setSelectedMethod } = useCheckoutContext();
+    const { setView, loading, setLoading } = usePaymentTypeContext();
+    const { setSelectedMethod, setIsFirstPaymentSet } = useCheckoutContext();
 
     const { withShipping } = calculateTotal();
 
     const total = withShipping;
     function handlePaymentOption() {
+        setLoading(true);
         setSelectedMethod(() => ({
             type: this.method,
             title: this.title,
         }));
-        setView('selectedMethod');
+
+        setIsFirstPaymentSet(() => true);
+
+        setView(() => 'selectedMethod');
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 2100);
     }
     const paymentMethodArray = [
         {

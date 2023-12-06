@@ -10,10 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { generateVariants } from './address-item';
 import { useAuth } from '../../../hooks/useAuth';
 import { useAddressContext } from '../../../context/checkOutAddressContext';
-import {
-    postcodeValidator,
-    postcodeValidatorExistsForCountry,
-} from 'postcode-validator';
+
 function Address_Form({ type }) {
     const {
         viewDispatch,
@@ -27,8 +24,9 @@ function Address_Form({ type }) {
         loading,
         setLoading,
         addressType,
+        enableCancelBtn,
     } = useAddressContext();
-    const { authDispatch } = useAuth();
+    const { user, authDispatch } = useAuth();
     const { setError, select } = useCheckoutContext();
 
     const navigate = useNavigate();
@@ -37,6 +35,7 @@ function Address_Form({ type }) {
     );
 
     const [inputError, setInputError] = useState({});
+
     const generalInput = [
         { label: 'FIRST NAME', property: 'firstName' },
         { label: 'LAST NAME', property: 'lastName' },
@@ -55,6 +54,8 @@ function Address_Form({ type }) {
             setTemporaryMainAddress((prevState) => ({
                 ...prevState,
                 country: select,
+                firstName: prevState?.firstName || user?.firstName,
+                lastName: prevState?.lastName || user?.lastName,
             }));
         }
     }, [select]);
@@ -106,7 +107,9 @@ function Address_Form({ type }) {
                     updatedAddress
                 );
 
-                const { address, default_address } = result.data.user;
+                const { address, default_address } = result.data?.user;
+
+                console.log(result.data.user);
                 setAddresses(() => address);
                 setDefaultAddresses(() => default_address);
             } else if (type == 'add') {
@@ -183,7 +186,7 @@ function Address_Form({ type }) {
                                             key={label}
                                             label={label}
                                             value={
-                                                temporaryMainAddress[property]
+                                                temporaryMainAddress?.[property]
                                             }
                                             property={property}
                                         />
@@ -232,14 +235,16 @@ function Address_Form({ type }) {
                             </p>
                         )}
                     </div>
-                    <button
-                        disabled={loading}
-                        onClick={cancel}
-                        className="sm+md:absolute sm+md:right-0 sm+md:top-1"
-                        id="checkout-change-btn"
-                    >
-                        CANCEL
-                    </button>
+                    {enableCancelBtn && (
+                        <button
+                            disabled={loading}
+                            onClick={cancel}
+                            className="sm+md:absolute sm+md:right-0 sm+md:top-1"
+                            id="checkout-change-btn"
+                        >
+                            CANCEL
+                        </button>
+                    )}
                 </div>
             </>
         </motion.section>
