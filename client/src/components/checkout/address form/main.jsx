@@ -14,6 +14,7 @@ function Main() {
         handleChange,
         disableChangeBtn,
         subHeader,
+        disable
     } = useAddressContext();
     const { disableOtherComponents } = useCheckoutContext();
 
@@ -31,8 +32,7 @@ function Main() {
                         {...subHeader}
                         onClick={handleChange}
                         disable={
-                            disableOtherComponents?.disable &&
-                            disableOtherComponents.addressType != addressType
+                            disable
                         }
                     />{' '}
                 </div>
@@ -42,8 +42,7 @@ function Main() {
             {!disableChangeBtn && (
                 <button
                     disabled={
-                        disableOtherComponents?.disable &&
-                        disableOtherComponents.addressType != addressType
+                      disable
                     }
                     type="button"
                     id="checkout-change-btn"

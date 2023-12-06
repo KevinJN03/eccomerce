@@ -20,9 +20,17 @@ function Payment({
 }) {
     const { disableOtherComponents } = useCheckoutContext();
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
-    const { selectedMethod, setSelectedMethod } = useCheckoutContext();
+
+    const [loading, setLoading] = useState(true);
+    const {
+        selectedMethod,
+        setSelectedMethod,
+        isFirstPaymentSet,
+        setIsFirstPaymentSet,
+    } = useCheckoutContext();
 
     const [initialView, setInitialView] = useState(null);
+    const [disableAddress, setDisableAddress] = useState(false);
     const disable =
         disableOtherComponents?.disable &&
         disableOtherComponents.addressType != 'BILLING';
@@ -35,7 +43,7 @@ function Payment({
 
                 if (data.paymentMethods[0]) {
                     // setSelectedMethod(() => data.paymentMethods[0]);
-                    setSelectedMethod(() => ({type: 'paypal'}));
+                    setSelectedMethod(() => ({ type: 'paypal' }));
                     setInitialView(() => 'selectedMethod');
                 } else {
                     setInitialView(() => 'options');
@@ -63,6 +71,12 @@ function Payment({
                     defaultProperty={defaultProperty}
                     addressType={'BILLING'}
                     enableAddressEdit={false}
+                    disable={
+                        disableOtherComponents?.disableAddress
+                            ? disableOtherComponents?.disableAddress
+                            : disableOtherComponents?.disable &&
+                              disableOtherComponents.addressType != 'BILLING'
+                    }
                 />
             </div>
 
@@ -74,13 +88,15 @@ function Payment({
                 {' '}
             </div>
             <AnimatePresence mode="wait">
-                <motion.div className="!bg-[var(--light-grey)]">
+                <motion.div className="relative !bg-[var(--light-grey)]">
                     <PaymentMethodProvider
                         userPaymentMethods={userPaymentMethods}
                     >
                         <Payment_Type
-                            disable={disableOtherComponents.disable}
+                            disable={disable}
                             initialView={initialView}
+                            disableAddress={disableAddress}
+                            setDisableAddress={setDisableAddress}
                         />
                     </PaymentMethodProvider>
                 </motion.div>

@@ -14,21 +14,26 @@ import Error_Alert from '../../common/error-alert';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { usePaymentMethods } from '../../../context/paymentMethodContext';
+
 export default function Add_Card({}) {
-    const { setView } = usePaymentTypeContext();
+    const { setView, setLoading } = usePaymentTypeContext();
     const stripe = useStripe();
     const elements = useElements();
     const [clientSecret, setClientSecret] = useState('');
     const [defaultCheck, setDefaultCheck] = useState(false);
     const [error, setError] = useState({});
     const [name, setName] = useState('');
-    const { billingAddress } = useCheckoutContext();
+    const { billingAddress, setIsFirstPaymentSet, setSelectedMethod } =
+        useCheckoutContext();
+
+    const [btnLoad, setBtnLoad] = useState(false);
     const errorProps = {
         error,
         setError,
         asterisk: false,
     };
-
+    const { PaymentMethodsDispatch } = usePaymentMethods();
     useEffect(() => {
         const cardNumberElement = elements.create('cardNumber', {
             classes: {
@@ -36,9 +41,9 @@ export default function Add_Card({}) {
             },
             placeholder: '',
         });
-        const cardCvcElement = elements.create('cardCvc', {
+        var cardCvcElement = elements.create('cardCvc', {
             classes: {
-                base: 'card-number-input',
+                base: 'card-number-input card-cvc',
             },
 
             placeholder: '',
@@ -96,7 +101,13 @@ export default function Add_Card({}) {
 
     const saveCard = async () => {
         try {
-            'clientSecret', clientSecret;
+            setBtnLoad(true);
+
+            // const cvvNumber = document.querySelectorAll(
+            //     '[data-elements-stable-field-name="cardCvc"]'
+            // );
+            // const check2 = document.querySelectorAll('.InputContainer');
+            // console.log({ cvvNumber, check2 });
             if (!clientSecret || !stripe || !elements) {
                 setError((prevState) => ({
                     ...prevState,
@@ -117,7 +128,7 @@ export default function Add_Card({}) {
             if (!name) {
                 setError((prevState) => ({
                     ...prevState,
-                    name: 'Please enter a nome.',
+                    name: 'Please enter a name.',
                 }));
                 return;
             }
@@ -134,7 +145,6 @@ export default function Add_Card({}) {
                     },
                 }
             );
-
             if (error) {
                 console.error(error);
                 const splitCode = error.code.split('_')[1];
@@ -160,11 +170,35 @@ export default function Add_Card({}) {
                     }));
                 }
             } else {
-                ({ setupIntent });
+                setIsFirstPaymentSet(() => true);
 
-                setError({
+                console.log({ setupIntent });
+                setError(() => ({
                     general: null,
+                }));
+                setBtnLoad(false);
+                setLoading(true);
+                // setView(() => 'selectedMethod');
+                const { data } = await axios.get('user/payment-method/all');
+                const findPaymentMethod = data?.paymentMethods?.find(
+                    (item) => item.id == setupIntent?.payment_method
+                );
+
+                console.log({ findPaymentMethod });
+                setSelectedMethod({
+                    type: 'card',
+                    ...findPaymentMethod,
                 });
+                PaymentMethodsDispatch({
+                    type: 'set',
+                    payload: data?.paymentMethods,
+                });
+                setTimeout(() => {
+                    setLoading(false);
+                    setView(() => 'selectedMethod');
+                }, 1500);
+
+                // setLoading(false)
             }
         } catch (error) {
             console.error(error);
@@ -172,6 +206,10 @@ export default function Add_Card({}) {
                 ...prevState,
                 general: error.message,
             }));
+        } finally {
+            setTimeout(() => {
+                setBtnLoad(false);
+            }, 1000);
         }
     };
     return (
@@ -240,9 +278,19 @@ export default function Add_Card({}) {
                 <button
                     onClick={saveCard}
                     type="button"
-                    className="w-7/12 !bg-primary py-3 text-base font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
+                    className="flex h-12 w-7/12 items-center justify-center !bg-primary text-base font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
                 >
-                    USE THIS CARD
+                    {btnLoad ? (
+                        <svg
+                            className="spinner-ring spinner-sm [--spinner-color:var(--slate-1)]"
+                            viewBox="25 25 50 50"
+                            strokeWidth="5"
+                        >
+                            <circle cx="50" cy="50" r="20" />
+                        </svg>
+                    ) : (
+                        'USE THIS CARD'
+                    )}
                 </button>
             </div>
         </motion.section>

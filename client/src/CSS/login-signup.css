@@ -53,8 +53,10 @@
     .input-container label {
         @apply mb-2 text-sm font-semibold tracking-wide;
     }
-    .input-container input[type='text'] {
-        @apply !h-[48px] w-full box-border;
+    .input-container input[type='text'],
+    .input-container input[type='password'],
+    .input-container input[type='email'] {
+        @apply box-border !h-[48px] w-full;
         border: 1px solid black;
     }
 }

@@ -31,6 +31,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import Buy_Now_Btn from './buy-now-btn.jsx';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 import dayjs from 'dayjs';
+
+import findAddress from '../common/findaddress.jsx';
 function Checkout() {
     disableLayout();
 
@@ -58,7 +60,9 @@ function Checkout() {
     const { cart } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
-
+    const [isDataSet, setIsDataSet] = useState(false);
+    const [isDeliveryAddressFill, setIsDeliveryAddressFill] = useState(false);
+    const [isFirstPaymentSet, setIsFirstPaymentSet] = useState(false);
     const abortControllerRef = useRef(new AbortController());
 
     useEffect(() => {
@@ -82,20 +86,25 @@ function Checkout() {
                 setKlarnaDob(dobOBj);
                 const default_address = user?.default_address;
                 setDefaultAddresses(() => user?.default_address || {});
-                const findAddress = (property, setState) => {
-                    if (default_address[property]) {
-                        const foundAddress = user.address.find(
-                            (item) => item._id == default_address[property]
-                        );
 
-                        setState(() => foundAddress);
-                    }
-                };
-
-                findAddress('shipping_address', setShippingAddress);
-                findAddress('billing_address', setBillingAddress);
+                const findShipping = findAddress({
+                    property: 'shipping_address',
+                    default_address,
+                    addresses: user?.address,
+                });
+                const findBilling = findAddress({
+                    property: 'billing_address',
+                    default_address,
+                    addresses: user?.address,
+                });
+                setShippingAddress(() => findShipping);
+                setBillingAddress(() => findBilling);
 
                 setAddresses(() => user.address);
+                setIsDataSet(() => true);
+                if (user?.address?.length >= 1) {
+                    setIsDeliveryAddressFill(() => true);
+                }
             } catch (error) {
                 console.error(
                     'error while trying to get logged in user data',
@@ -150,7 +159,11 @@ function Checkout() {
                 setSelectedMethod,
                 klarnaDob,
                 setKlarnaDob,
-                deliveryDate, setDeliveryDate
+                deliveryDate,
+                setDeliveryDate,
+                isDataSet,
+                isFirstPaymentSet,
+                setIsFirstPaymentSet
             }}
         >
             <Elements stripe={stripePromise}>
@@ -206,27 +219,52 @@ function Checkout() {
                                                 }
                                                 addressType={'DELIVERY'}
                                                 enableAddressEdit={true}
+                                                disable={
+                                                    disableOtherComponents?.disable &&
+                                                    disableOtherComponents.addressType !=
+                                                        'DELIVERY'
+                                                }
                                             />
 
-                                            <Delivery
-                                                disable={
-                                                    disableOtherComponents?.disable
-                                                }
-                                            />
-                                            <Payment
-                                                defaultProperty={
-                                                    'billing_address'
-                                                }
-                                                billingAddress={billingAddress}
-                                                setBillingAddress={
-                                                    setBillingAddress
-                                                }
-                                            />
+                                            {isDeliveryAddressFill ? (
+                                                <Delivery
+                                                    disable={
+                                                        disableOtherComponents?.disable
+                                                    }
+                                                />
+                                            ) : (
+                                                <div className="border-2 px-6 py-4">
+                                                    <p className="text-lg font-bold opacity-20">
+                                                        DELIVERY OPTIONS
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {isDeliveryAddressFill ? (
+                                                <Payment
+                                                    defaultProperty={
+                                                        'billing_address'
+                                                    }
+                                                    billingAddress={
+                                                        billingAddress
+                                                    }
+                                                    setBillingAddress={
+                                                        setBillingAddress
+                                                    }
+                                                />
+                                            ) : (
+                                                <div className="border-2 px-6 py-4">
+                                                    <p className="text-lg font-bold opacity-20">
+                                                        PAYMENT
+                                                    </p>
+                                                </div>
+                                            )}
                                         </section>
                                         <div className="bottom mt-5 flex flex-col gap-y-3">
                                             <Buy_Now_Btn
                                                 disable={
-                                                    disableOtherComponents?.disable
+                                                    disableOtherComponents?.disable ||
+                                                    !isDeliveryAddressFill
                                                 }
                                                 isOrderSubmit={isOrderSubmit}
                                             />

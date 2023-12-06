@@ -30,18 +30,20 @@ function Dashboard() {
     const [contact_preference, setContactPreference] = useState({});
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [defaultAddresses, setDefaultAddresses] = useState({});
-
+    const [ordersArray, setOrdersArray] = useState([]);
     async function fetchResults() {
         try {
             const userResult = await axios.get('user/userData');
             const paymentResult = await axios.get('user/payment-method/all');
+
+            const orderResults = await axios.get('user/orders');
             const { user } = userResult.data;
             setDob(() => dayjs(user.dob).toISOString());
             setContactPreference(() => user?.contact_preferences);
             setAddress(() => user?.address);
             setUserPaymentMethods(() => [...paymentResult.data.paymentMethods]);
             setDefaultAddresses(() => user?.default_address);
-
+            setOrdersArray(() => orderResults.data?.orders);
             return Promise.resolve('ok');
         } catch (error) {
             'error while checking if user is authenticated: ', error;
@@ -101,6 +103,8 @@ function Dashboard() {
         defaultAddresses,
         setDefaultAddresses,
         userPaymentMethods,
+        ordersArray,
+        setOrdersArray,
     };
 
     const view = {
@@ -151,7 +155,11 @@ function Dashboard() {
                                                     initial={{ opacity: 0.5 }}
                                                     className="user-initial flex h-full w-full items-center justify-center rounded-full !bg-primary text-center font-gotham text-4xl !font-extrabold text-white"
                                                 >
-                                                    {` ${user?.firstName?.toUpperCase()[0]}${user?.lastName?.toUpperCase()[0]}`}
+                                                    {` ${
+                                                        user?.firstName?.toUpperCase()[0]
+                                                    }${
+                                                        user?.lastName?.toUpperCase()[0]
+                                                    }`}
                                                 </motion.span>
                                             )}
                                         </div>
@@ -215,7 +223,7 @@ function Dashboard() {
                                 variants={outletVariant}
                                 initial={'initial'}
                                 animate={'animate'}
-                                className={`right min-h-full flex-[2] ${
+                                className={`right min-h-full max-w-[568px] flex-[2] ${
                                     loadingState ? 'bg-white' : ''
                                 }`}
                             >

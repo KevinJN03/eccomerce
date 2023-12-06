@@ -41,7 +41,7 @@ export const reducer = (state, action) => {
     );
 };
 
-export function PaymentMethodProvider({ children, userPaymentMethods }) {
+export function PaymentMethodProvider({ children, userPaymentMethods, }) {
     const [paymentMethods, PaymentMethodsDispatch] = useReducer(
         reducer,
         userPaymentMethods || []

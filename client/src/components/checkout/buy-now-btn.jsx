@@ -60,6 +60,7 @@ function Buy_Now_Btn({ disable }) {
                     state: shippingAddress.county,
                 },
                 name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+                phone: shippingAddress?.mobile,
             },
             cart,
             deliveryOption,
@@ -102,7 +103,7 @@ function Buy_Now_Btn({ disable }) {
                 var { error, paymentIntent } = await stripe.confirmCardPayment(
                     paymentIntentInfo.current.clientSecret,
                     {
-                        payment_method: selectedMethod.id,
+                        payment_method: selectedMethod?.id,
                         payment_method_options: {
                             card: {
                                 cvc: elements.getElement('cardCvc'),
@@ -163,8 +164,9 @@ function Buy_Now_Btn({ disable }) {
             }
             if (error) {
                 console.error('error with payment intent', error);
-
-                if (error.code == 'incomplete_cvc') {
+                const splitErrorCode = error.code?.split('_')?.[1];
+                
+                if (splitErrorCode == 'cvc') {
                     setError((prevState) => ({
                         ...prevState,
                         cvc: error.message,

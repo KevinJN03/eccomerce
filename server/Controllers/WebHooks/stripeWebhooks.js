@@ -8,14 +8,16 @@ import Order from '../../Models/order.js';
 import product from '../../Models/product.js';
 import User from '../../Models/user.js';
 import transporter from '../../utils/nodemailer.js';
-
+import { render } from '@react-email/render';
+import OrderSuccess from '../../React Email/orderSuccess.jsx';
+import * as React from 'react';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const CLIENT_URL = process.env.CLIENT_URL;
 
 const stripeWebHooks = asyncHandler(async (req, res, next) => {
   try {
     const event = req.body;
-    if (event.type == 'charge.succeeded') {
+    if (event.type === 'charge.succeeded') {
       const { payment_intent } = event.data.object;
       const paymentIntent =
         await stripe.paymentIntents.retrieve(payment_intent);
@@ -113,7 +115,9 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             { _id: orderNumber },
             { $unset: { cartObj: '' }, $set: { status: 'received' } },
             { new: true },
-          );
+          )
+            .populate('items.product')
+            .exec();
 
           const updateUser = await User.findByIdAndUpdate(
             userId,
@@ -122,14 +126,29 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             },
             {
               upsert: true,
+              new: true,
             },
           );
 
+          const props = {
+            firstName: updateUser?.firstName,
+            orderNumber: orderNumber,
+            orderDate: order?.shipping_option?.delivery_date,
+            subtotal: parseFloat(order?.transaction_cost?.subtotal).toFixed(2),
+            deliveryCost: parseFloat(order?.shipping_option?.cost).toFixed(2),
+            total: parseFloat(order?.transaction_cost?.total).toFixed(2),
+            paymentType: 'paypal',
+            deliveryName: order?.shipping_option?.name,
+            shipping_address: order?.shipping_address,
+            items: updateOrder?.items,
+          };
+          const emailHtml = render(<OrderSuccess {...props} />);
+
           const sendEmail = await transporter.sendMail({
             from: 'kevinjean321@gmail.com',
-            to: 'hotboyroyal@gmail.com',
-            subject: 'test email',
-            html: `<p>this is a test email</p>`,
+            to: updateUser?.email,
+            subject: 'Thanks for your order!',
+            html: emailHtml,
           });
         })
         .catch((error) => {

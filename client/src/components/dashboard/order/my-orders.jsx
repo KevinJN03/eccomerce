@@ -8,25 +8,27 @@ import axios from '../../../api/axios';
 import logOutUser from '../../common/logoutUser';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import dayjs from 'dayjs';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 function My_Orders({}) {
     const navigate = useNavigate();
     const { authDispatch } = useAuth();
-    const [ordersArray, setOrdersArray] = useState([]);
-    useEffect(() => {
-        axios
-            .get('user/orders')
-            .then(({ data }) => {
-                console.log({ data });
-                setOrdersArray(() => data?.orders);
-            })
-            .catch((error) => {
-                console.error('error while fetching user orders', error);
 
-                if (error.response.status == 401) {
-                    logOutUser({ error, navigate, authDispatch });
-                }
-            });
-    }, []);
+    const { ordersArray } = useUserDashboardContext();
+    // useEffect(() => {
+    //     axios
+    //         .get('user/orders')
+    //         .then(({ data }) => {
+    //             console.log({ data });
+    //             setOrdersArray(() => data?.orders);
+    //         })
+    //         .catch((error) => {
+    //             console.error('error while fetching user orders', error);
+
+    //             if (error.response.status == 401) {
+    //                 logOutUser({ error, navigate, authDispatch });
+    //             }
+    //         });
+    // }, []);
     return (
         <section className="my-orders">
             <Header icon={order_icon} text={'MY ORDERS'} />
@@ -40,13 +42,7 @@ function My_Orders({}) {
                     link={'/'}
                 />
             )}
-            <div className="top px-8 py-4">
-                <p>
-                    {`Displaying ${ordersArray.length} ${
-                        ordersArray.length == 1 ? 'order' : 'orders'
-                    }`}
-                </p>
-            </div>
+
             {ordersArray.length > 0 && (
                 <>
                     {ordersArray.map((order) => {
@@ -55,9 +51,18 @@ function My_Orders({}) {
                         );
                         return (
                             <section className="mb-3">
+                                <div className="top px-8 py-4">
+                                    <p>
+                                        {`Displaying ${ordersArray.length} ${
+                                            ordersArray.length == 1
+                                                ? 'order'
+                                                : 'orders'
+                                        }`}
+                                    </p>
+                                </div>
                                 <div className="middle bg-white p-6">
                                     <div>
-                                        <p className="text-dark-gray font-gotham text-xs font-bold tracking-wider">
+                                        <p className="font-gotham text-xs font-bold tracking-wider text-dark-gray">
                                             ORDER STATUS:
                                         </p>
                                         <p className="font-gotham text-base font-bold">
@@ -89,7 +94,7 @@ function My_Orders({}) {
 
                                     <div className="mt-3 flex flex-row items-center">
                                         <div className="left flex flex-1 flex-col flex-nowrap">
-                                            <p className="text-dark-gray font-gotham text-xs tracking-wider">
+                                            <p className="font-gotham text-xs tracking-wider text-dark-gray">
                                                 ORDER REF.:{' '}
                                                 <span className="text-sm">
                                                     {order?._id}
@@ -97,7 +102,7 @@ function My_Orders({}) {
                                             </p>
 
                                             {order?.status == 'received' && (
-                                                <p className="text-dark-gray font-gotham text-xs tracking-wider">
+                                                <p className="font-gotham text-xs tracking-wider text-dark-gray">
                                                     ORDER DATE:{' '}
                                                     <span className="text-sm">
                                                         {orderDate}
@@ -116,19 +121,21 @@ function My_Orders({}) {
                                         {/* </div> */}
                                     </div>
                                 </div>
+
+                                <div className="bottom mt-3 bg-white p-8">
+                                    <p className="text-center">
+                                        {`Displaying ${ordersArray.length} ${
+                                            ordersArray.length == 1
+                                                ? 'order'
+                                                : 'orders'
+                                        }`}
+                                    </p>
+                                </div>
                             </section>
                         );
                     })}
                 </>
             )}
-
-            <div className="bottom mt-3 bg-white p-8">
-                <p className="text-center">
-                    {`Displaying ${ordersArray.length} ${
-                        ordersArray.length == 1 ? 'order' : 'orders'
-                    }`}
-                </p>
-            </div>
         </section>
     );
 }

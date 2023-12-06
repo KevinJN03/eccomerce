@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import Main from './main';
 import { AddressContextProvider } from '../../../context/checkOutAddressContext';
-
+import _ from 'lodash';
 const views = {
     book: <Address_Book />,
     edit: <Address_Form type={'edit'} />,
@@ -31,6 +31,7 @@ function Address({
     disableHeader,
     disableChangeBtn,
     subHeader,
+    disable,
 }) {
     const {
         defaultAddresses,
@@ -39,6 +40,7 @@ function Address({
         setAddresses,
         disableOtherComponents,
         SetDisableOtherComponents,
+        isDataSet,
     } = useCheckoutContext();
 
     const [viewContent, viewDispatch] = useReducer(checkoutViewReducer, 'main');
@@ -46,6 +48,7 @@ function Address({
     const [sortAddresses, setSortAddresses] = useState({});
     const [loading, setLoading] = useState(false);
     const disableRef = useRef(false);
+    const [enableCancelBtn, setEnableCancelBtn] = useState(true);
     const [temporaryMainAddress, setTemporaryMainAddress] =
         useState(mainAddress);
 
@@ -59,7 +62,6 @@ function Address({
                 return 0;
             }
         });
-
         setSortAddresses(() => newAddresses);
     }, [addresses]);
 
@@ -91,8 +93,9 @@ function Address({
 
     useEffect(() => {
         if (
-            disableOtherComponents?.disable &&
-            disableOtherComponents?.addressType != addressType
+            // disableOtherComponents?.disable &&
+            // disableOtherComponents?.addressType != addressType
+            disable
         ) {
             viewDispatch({ type: 'main' });
         }
@@ -112,9 +115,9 @@ function Address({
             viewDispatch({ type: 'main' });
         }
     };
-    const disable =
-        disableOtherComponents?.disable &&
-        disableOtherComponents.addressType != addressType;
+    // const disable =
+    //     disableOtherComponents?.disable &&
+    //     disableOtherComponents.addressType != addressType;
 
     const value = {
         setAddresses,
@@ -141,6 +144,9 @@ function Address({
         handleDefault,
         disableChangeBtn,
         subHeader,
+        enableCancelBtn,
+        addresses,
+        disable,
     };
 
     const view = () => {
@@ -170,6 +176,22 @@ function Address({
             transition: { duration: 0.5 },
         },
     };
+
+    useEffect(() => {
+        if (isDataSet) {
+            const isAddressEmpty = _.isEmpty(mainAddress);
+            console.log({ isAddressEmpty });
+            if (isAddressEmpty) {
+                setEnableCancelBtn(() => false);
+
+                viewDispatch({ type: 'add' });
+            } else {
+                setEnableCancelBtn(() => true);
+                viewDispatch({ type: 'main' });
+            }
+        }
+    }, [isDataSet]);
+
     return (
         <AddressContextProvider value={value}>
             <ClickAwayListener onClickAway={onClickAway}>
@@ -195,21 +217,43 @@ function Address({
                                 {addressType} ADDRESS
                             </h1>
                         )}
-                        <div id="address-container" ref={containerRef}>
-                            <AnimatePresence mode="wait">
-                                {viewContent && (
-                                    <motion.div
-                                        className={`address-header relative`}
-                                        key={viewContent}
-                                        variants={variants}
-                                        animate={'animate'}
-                                        initial={'initial'}
-                                    >
-                                        {views[viewContent]}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                        {/* {isDataSet && (
+                            <div id="address-container" ref={containerRef}>
+                                <AnimatePresence mode="wait">
+                                    {viewContent && (
+                                        <motion.div
+                                            className={`address-header relative`}
+                                            key={viewContent}
+                                            variants={variants}
+                                            animate={'animate'}
+                                            initial={'initial'}
+                                        >
+                                            {views[viewContent]}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        )} */}{' '}
+                        <AnimatePresence mode="wait">
+                            {isDataSet && (
+                                <motion.div
+                                    id="address-container"
+                                    ref={containerRef}
+                                >
+                                    {viewContent && (
+                                        <motion.div
+                                            className={`address-header relative`}
+                                            key={viewContent}
+                                            variants={variants}
+                                            animate={'animate'}
+                                            initial={'initial'}
+                                        >
+                                            {views[viewContent]}
+                                        </motion.div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </section>
 
                     {loading && (

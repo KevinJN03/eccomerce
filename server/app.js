@@ -26,7 +26,7 @@ import transporter from './utils/nodemailer.js';
 import * as React from 'react';
 import { render } from '@react-email/render';
 
-import Test from './React Email/test.jsx';
+import OrderSuccess from './React Email/orderSuccess.jsx';
 const { DBNAME, URL, SECRET } = process.env;
 const PORT = 3000;
 const db = () => {
@@ -82,22 +82,33 @@ app.use('/api/webhook', webHookRoute);
 app.get(
   '/api/test',
   asyncHandler(async (req, res, next) => {
-    const { SMTP_USER, SMTP_PASSWORD, SMTP_HOST, SMTP_PORT } = process.env;
-
     const props = {
       firstName: 'kevin',
       orderNumber: '882411829',
       orderDate: 'Tuesday 28 November 2023',
       subtotal: 6.9,
-      deliveryCost: 4.5,
+      deliveryCost: 4.5,  
       total: 11.59,
-      paymentType: 'paypal'
-    };
-
-    const emailHtml = render(<Test {...props} />);
-    const mailOptions = {
+      paymentType: 'paypal',
+      deliveryName: 'Free Shipping',
+      shipping_address: {
+        name: 'kevin jean',
+        phone: '07432298043',
+        address: {
+          city: 'london', 
+          line1: 'flat 2', 
+          line2: '14 test road',
+          postal_code: 'tst124', 
+          state: 'lewisham', 
+          country: 'GB', 
+        },
+      },
+    };  
+ 
+    const emailHtml = render(<OrderSuccess {...props} />);
+    const mailOptions = { 
       from: 'kevinjean321@gmail.com',
-      to: "	outlook_6A69ED344A4F9548@outlook.com",
+      to: '	outlook_6A69ED344A4F9548@outlook.com',
       subject: 'test email',
       html: emailHtml,
       // template: 'New Template',
@@ -106,7 +117,7 @@ app.get(
       // },
     };
 
-    const sendEmail = await transporter.sendMail(mailOptions);
+    // const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );
@@ -120,7 +131,7 @@ const httpOptions = {
 };
 console.log({
   NODE_ENV: process.env.NODE_ENV,
-  bool: process.env.NODE_ENV === 'production',
+  bool: process.env.NODE_ENV === 'production', 
 });
 const sslServer = https.createServer(httpOptions, app);
 sslServer.listen(PORT, () => {

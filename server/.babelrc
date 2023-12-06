@@ -1,21 +1,31 @@
+// {
+//   "presets": ["@babel/preset-env", "@babel/preset-react"],
+//   "plugins": [
+//     // [
+//     //   "babel-plugin-add-import-extension",
+//     //   {
+//     //     "extension": "jsx",
+//     //     "replace": true,
+//     //     "observedScriptExtensions": ["js", "ts", "jsx", "tsx", "mjs", "cjs"]
+//     //   }
+//     // ],
+//     [
+//       "module-resolver",
+//       {
+//         "root": ["./"]
+//       }
+//     ],
+//     "@babel/plugin-syntax-jsx",
+//     "@babel/plugin-transform-spread",
+//     "@babel/plugin-proposal-private-property-in-object"
+//   ]
+// }
 {
   "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
-    // [
-    //   "babel-plugin-add-import-extension",
-    //   {
-    //     "extension": "jsx",
-    //     "replace": true,
-    //     "observedScriptExtensions": ["js", "ts", "jsx", "tsx", "mjs", "cjs"]
-    //   }
-    // ],
-    [
-      "module-resolver",
-      {
-        "root": ["./"]
-      }
-    ],
     "@babel/plugin-syntax-jsx",
-    "@babel/plugin-transform-spread"
+    "@babel/plugin-transform-arrow-functions",
+    "@babel/plugin-proposal-private-property-in-object",
+    "babel-plugin-module-resolver"
   ]
 }

@@ -1,12 +1,11 @@
 import { createContext, useContext } from 'react';
 import { useCheckoutContext } from './checkOutContext';
-
+import findAddress from '../components/common/findaddress';
 const AddressContext = createContext(null);
 
 export const useAddressContext = () => {
     return useContext(AddressContext);
 };
-
 export function AddressContextProvider({ children, value }) {
     const {
         viewDispatch,
@@ -15,29 +14,31 @@ export function AddressContextProvider({ children, value }) {
         temporaryMainAddress,
         setMainAddress,
         setTemporaryMainAddress,
+        addresses,
         mainAddress,
+        defaultAddresses,
+        defaultProperty,
         disableRef,
     } = value;
-    const { disableOtherComponents, SetDisableOtherComponents } =
-        useCheckoutContext();
+    const {
+        disableOtherComponents,
+        SetDisableOtherComponents,
+        setIsDeliveryAddressFill,
+    } = useCheckoutContext();
     const handleChange = () => {
-        'test',
-            disableOtherComponents.disable &&
-                disableOtherComponents.addressType != addressType;
-        if (
-            disableOtherComponents.disable &&
-            disableOtherComponents.addressType != addressType
-        ) {
-            return;
-        }
+    
+        // if (
+        //     disableOtherComponents.disable &&
+        //     disableOtherComponents.addressType != addressType
+        // ) {
+        //     return;
+        // }
 
         SetDisableOtherComponents({
             addressType,
             disable: true,
         });
         viewDispatch({ type: 'book' });
-
-        ('test5');
     };
 
     const cancel = () => {
@@ -58,7 +59,15 @@ export function AddressContextProvider({ children, value }) {
 
     const handleClick = (updateMainAddress = true) => {
         if (updateMainAddress) {
-            setMainAddress(() => temporaryMainAddress);
+            // setMainAddress(() => temporaryMainAddress);
+
+            const foundAddress = findAddress({
+                property: defaultProperty,
+                default_address: defaultAddresses,
+                addresses,
+            });
+            console.log({ foundAddress, defaultAddresses, defaultProperty });
+            setMainAddress(() => foundAddress);
         }
         SetDisableOtherComponents({
             addressType: null,

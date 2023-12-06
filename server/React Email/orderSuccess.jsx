@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { useEffect } from 'react';
+import { useEffect, Fragment } from 'react';
+import { v4 as uuid } from 'uuid';
 import {
   Head,
   Tailwind,
@@ -15,7 +16,7 @@ import {
   Button,
   Container,
 } from '@react-email/components';
-
+import { v4 as uuidv4 } from 'uuid';
 const logos = {
   afterpay: 'afterpay.png',
   amex: 'american-express.png',
@@ -26,9 +27,19 @@ const logos = {
   'union-pay': 'union-pay.png',
 };
 
-export default function Test(props) {
-  console.log({ props });
-  const { firstName } = props;
+export default function OrderSuccess({
+  firstName,
+  shipping_address,
+  subtotal,
+  orderNumber,
+  orderDate,
+  deliveryCost,
+  total,
+  paymentType,
+  deliveryName,
+  items,
+}) {
+  // const { firstName, shipping_address, subtotal, orderNumber, orderDate, deliveryCost, total, paymentType } = props;
   const config = {
     theme: {
       extend: {
@@ -48,12 +59,7 @@ export default function Test(props) {
   return (
     <Html lang="en">
       <Head />
-      {/* <head>
-        <link
-          rel="stylesheet"
-          href="https://dknhps0hwilzj.cloudfront.net/files/styles.css"
-        />
-      </head> */}
+
       <Tailwind config={config}>
         <Body
           data-new-gr-c-s-loaded="14.1143.0"
@@ -292,12 +298,8 @@ export default function Test(props) {
                                             Hi {firstName}, your order has been
                                             received.
                                           </Text>
-                                          <Text>
-                                            Order No.: {props.orderNumber}
-                                          </Text>
-                                          <Text>
-                                            Order date: {props.orderDate}
-                                          </Text>
+                                          <Text>Order No.: {orderNumber}</Text>
+                                          <Text>Order date: {orderDate}</Text>
                                         </td>
                                       </tr>
                                     </table>
@@ -435,21 +437,47 @@ export default function Test(props) {
                                           }}
                                         >
                                           <p
-                                            style={{
-                                              margin: '0',
-                                              WebkitTextSizeAdjust: 'none',
-                                              MsTextSizeAdjust: 'none',
-                                              msoLineHeightRule: 'exactly',
-                                              fontFamily:
-                                                'arial, helvetica neue, helvetica, sans-serif',
-                                              lineHeight: '21px',
-                                              color: '#333333',
-                                              fontSize: '14px',
-                                            }}
+                                            // style={{
+                                            //   margin: '0',
+                                            //   WebkitTextSizeAdjust: 'none',
+                                            //   MsTextSizeAdjust: 'none',
+                                            //   msoLineHeightRule: 'exactly',
+                                            //   fontFamily:
+                                            //     'arial, helvetica neue, helvetica, sans-serif',
+                                            //   lineHeight: '21px',
+                                            //   color: '#333333',
+                                            //   fontSize: '14px',
+                                            // }}
+
+                                            className="p-0 m-0 pb-3 "
                                           >
                                             <strong>DELIVERY ADDRESS</strong>
                                           </p>
-                                          {/* More paragraphs go here */}
+
+                                          <p className="p-0 m-0 pb-1">
+                                            {shipping_address?.name}
+                                          </p>
+                                          <p className="p-0 m-0 pb-1">
+                                            {shipping_address?.address?.line1}
+                                          </p>
+
+                                          {shipping_address?.address?.line2 && (
+                                            <p className="p-0 m-0 pb-1">
+                                              {shipping_address?.address?.line2}
+                                            </p>
+                                          )}
+
+                                          <p className="p-0 m-0 pb-1">
+                                            {`${shipping_address?.address?.postal_code?.toUpperCase()} ${
+                                              shipping_address?.address?.city
+                                            }, ${
+                                              shipping_address?.address?.country
+                                            }`}
+                                          </p>
+
+                                          <p className="p-0 m-0 pb-1">
+                                            {shipping_address?.phone}
+                                          </p>
                                         </td>
                                       </tr>
                                     </table>
@@ -622,7 +650,7 @@ export default function Test(props) {
                                               fontSize: '14px',
                                             }}
                                           >
-                                            Delivery method: Standard Delivery
+                                            Delivery method: {deliveryName}
                                           </p>
                                         </td>
                                       </tr>
@@ -630,47 +658,61 @@ export default function Test(props) {
                                         <td
                                           style={{ padding: '0', margin: '0' }}
                                         >
-                                          <table
-                                            style={{
-                                              background: '#ffffff',
-                                              padding: '20px',
-                                              width: '100%',
-                                            }}
-                                          >
-                                            <tr>
-                                              <td style={{ width: '100px' }}>
-                                                <Img
-                                                  src={
-                                                    'https://ci4.googleusercontent.com/proxy/ovLwDaQffyvxXsj5hpaFkC-lx9miC2-qAfHkG_gEz46F92nVi0PCx92dJX2Y56Z1L4kY_POV4fFq8ziKpD7nzoUqc1MYDE3ZCQ1-xAYgt0keAwRnMX4=s0-d-e1-ft#https://images.asos-media.com/products/image/205321575-1-washedteal'
-                                                  }
-                                                  className="border-none outline-none w-[100px] h-[140px]"
-                                                />
-                                              </td>
-                                              <td
-                                                style={{ verticalAlign: 'top' }}
-                                              >
-                                                <Section className="ml-4 w-full h-full text-s">
-                                                  <Row>
-                                                    <Text className="text-s p-0 pb-1 m-0 font-medium">
-                                                      Reclaimed Vintage waffle
-                                                      beanie in washed teal
-                                                    </Text>
+                                          <Section className="bg-white p-5 pt-6">
+                                            {items?.map(
+                                              (
+                                                {
+                                                  product,
+                                                  quantity,
+                                                  variation1,
+                                                  variation2,
+                                                  price,
+                                                },
+                                                idx,
+                                              ) => {
+                                                return (
+                                                  <Row
+                                                    key={idx}
+                                                    className="mb-4"
+                                                  >
+                                                    <Column className="w-[100px] h-[140px]">
+                                                      <Img
+                                                        src={
+                                                          product?.images?.[0]
+                                                        }
+                                                        className="border-none outline-none w-[100px] h-[140px]"
+                                                      />
+                                                    </Column>
+                                                    <Column className="pl-5 align-top">
+                                                      <Text className="text-s p-0 pb-1 m-0 font-medium">
+                                                        {product?.title}
+                                                      </Text>
+
+                                                      <Text className="text-s p-0 pb-1 m-0 font-semibold">
+                                                        £
+                                                        {parseFloat(
+                                                          price?.toFixed(2),
+                                                        )}
+                                                      </Text>
+
+                                                      <Text className="text-xs p-0 pb-1 m-0 font-light !important">
+                                                        {`${
+                                                          variation1?.variation
+                                                            ? variation1?.variation
+                                                            : ''
+                                                        } ${
+                                                          variation2?.variation
+                                                            ? ' / ' +
+                                                              variation2.variation
+                                                            : ''
+                                                        } / Qty ${quantity}`}
+                                                      </Text>
+                                                    </Column>
                                                   </Row>
-                                                  <Row>
-                                                    <Text className="text-s p-0 pb-1 m-0 font-semibold">
-                                                      £6.99
-                                                    </Text>
-                                                  </Row>
-                                                  <Row>
-                                                    <Text className="text-xs p-0 pb-1 m-0 font-light !important">
-                                                      WASHED TEAL / One Size /
-                                                      Qty 1
-                                                    </Text>
-                                                  </Row>
-                                                </Section>
-                                              </td>
-                                            </tr>
-                                          </table>
+                                                );
+                                              },
+                                            )}
+                                          </Section>
                                         </td>
                                       </tr>
                                       <tr>
@@ -730,7 +772,7 @@ export default function Test(props) {
                                               </Column>
                                               <Column>
                                                 <Text className="text-right p-0 m-0 text-s  tracking-wider">
-                                                  £{props.subtotal}
+                                                  £{subtotal}
                                                 </Text>
                                               </Column>
                                             </Row>
@@ -742,7 +784,7 @@ export default function Test(props) {
                                               </Column>
                                               <Column>
                                                 <Text className="text-right p-0 m-0 text-s  tracking-wider">
-                                                  £{props.deliveryCost}
+                                                  £{deliveryCost}
                                                 </Text>
                                               </Column>
                                             </Row>
@@ -755,7 +797,7 @@ export default function Test(props) {
                                               </Column>
                                               <Column className="align-top">
                                                 <Text className="text-right text-s font-semibold tracking-wider p-0 m-0  align-top">
-                                                  £{props.total}
+                                                  £{total}
                                                 </Text>
                                               </Column>
                                             </Row>
@@ -799,9 +841,7 @@ export default function Test(props) {
                                     className="w-12 border-2 border-black"
                                   >
                                     <Img
-                                      src={`${url}/${
-                                        logos?.[props.paymentType]
-                                      }`}
+                                      src={`${url}/${logos?.[paymentType]}`}
                                       alt="logo"
                                       title="logo"
                                       className="w-full h-auto bg-light-grey rounded-sm block h-8 object-cover"
@@ -901,7 +941,7 @@ export default function Test(props) {
                           </tr>
 
                           <Container
-                            className="bg-light-grey text-center py-4 m-0 !min-w-full"
+                            className="bg-light-grey text-center py-4 m-0 !min-w-[600px] max-w-[600px]"
                             align="center"
                           >
                             <Text className="m-0 p-0 text-xs">Thanks,</Text>
@@ -911,7 +951,7 @@ export default function Test(props) {
                             </Text>
                           </Container>
 
-                          <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-full">
+                          <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] max-w-[600px]">
                             <Text className="m-0 p-0 font-semibold text-base pb-2">
                               ANY QUESTIONS?
                             </Text>
@@ -930,12 +970,16 @@ export default function Test(props) {
                                   column1: { text: '	Delivery' },
                                   column2: { text: 'Customer Care' },
                                 },
-                              ].map(({ column1, column2 }) => {
+                              ].map(({ column1, column2 }, idx) => {
                                 return (
-                                  <tr id="text-row" className="w-full">
+                                  <tr
+                                    id="text-row"
+                                    className="w-full"
+                                    key={idx}
+                                  >
                                     {[column1, column2].map((column) => {
                                       return (
-                                        <>
+                                        <Fragment key={uuidv4()}>
                                           <Column className="w-6 h-6">
                                             <Img
                                               src="https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/files/logos/icons8-duplicate-96.png"
@@ -947,7 +991,7 @@ export default function Test(props) {
                                               {column.text}
                                             </Text>
                                           </Column>
-                                        </>
+                                        </Fragment>
                                       );
                                     })}
                                   </tr>
@@ -955,7 +999,7 @@ export default function Test(props) {
                               })}{' '}
                             </Section>
                           </Container>
-                          <Container className="bg-[#333333] text-white p-5 !min-w-full">
+                          <Container className="bg-[#333333] text-white p-5 !min-w-[600px] max-w-[600px] w-full">
                             <Section>
                               <Row align="center">
                                 <Column>
@@ -987,7 +1031,6 @@ export default function Test(props) {
                                           background: '#1da1f2',
                                         },
                                         shinkIcon: true,
-                                       
                                       },
                                       {
                                         icon: 'icons8-tiktok-48.png',
@@ -1006,6 +1049,7 @@ export default function Test(props) {
                                       }) => {
                                         return (
                                           <Column
+                                            key={uuidv4()}
                                             className="!w-7 !h-7 text-center rounded-full align-middle"
                                             align="center"
                                             style={style}
@@ -1048,30 +1092,28 @@ export default function Test(props) {
                               </Row>
 
                               {/* <Row className='mt-20'> */}
-                                <Text className='pt-10 text-xs leading-4'>
-                                  *GLAMO has estimated this date on the basis of
-                                  your expected delivery date and the refunds
-                                  window applicable to your jurisdiction. Please
-                                  see website T&Cs for more details on returns
-                                  and refunds, and for the refunds window
-                                  applicable to your jurisdiction.
-                                </Text>
-                                <Text className='text-xs leading-4'>
-                                  This inbox is not attended so please don’t
-                                  reply to this email. This is a service email.
-                                  You will receive these no matter what your
-                                  marketing communication preferences are.
-                                </Text>
-                                <Text className='text-xs leading-4'>
-                                  We’ll always keep your data safe and secure.
-                                  Click here to know why we need it and how we
-                                  use it.
-                                </Text>
+                              <Text className="pt-10 text-xs leading-4">
+                                *GLAMO has estimated this date on the basis of
+                                your expected delivery date and the refunds
+                                window applicable to your jurisdiction. Please
+                                see website T&Cs for more details on returns and
+                                refunds, and for the refunds window applicable
+                                to your jurisdiction.
+                              </Text>
+                              <Text className="text-xs leading-4">
+                                This inbox is not attended so please don’t reply
+                                to this email. This is a service email. You will
+                                receive these no matter what your marketing
+                                communication preferences are.
+                              </Text>
+                              <Text className="text-xs leading-4">
+                                We’ll always keep your data safe and secure.
+                                Click here to know why we need it and how we use
+                                it.
+                              </Text>
                               {/* </Row> */}
                             </Section>
                           </Container>
-
-                          
                         </table>
                       </td>
                     </tr>

@@ -3,7 +3,7 @@ import credit_icon from '../../../assets/icons/credit-card.png';
 import Payment_Methods from '../../cart/payment_methods';
 import { SubHeader } from './SubHeader';
 import Payment_Options from './payment-options';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
 
@@ -28,22 +28,23 @@ const views = {
 
     wallet: <Wallet />,
 };
-function Payment_Type({ initialView }) {
+function Payment_Type({ initialView, setDisableAddress }) {
     const [viewContent, setView] = useState(initialView);
     const [disableChangeBtn, setDisableChangeBtn] = useState(false);
     const [loading, setLoading] = useState(false);
-    // const [selectedMethod, setSelectedMethod] = useState({});
+ 
     const {
         selectedMethod,
         setSelectedMethod,
         SetDisableOtherComponents,
         disableOtherComponents,
+        isFirstPaymentSet,
     } = useCheckoutContext();
     const [nextView, setNextView] = useState('');
     const { paymentMethods } = usePaymentMethods();
     const [enableCancelBtn, setEnableCancelBtn] = useState(false);
     const containerRef = useRef(null);
-
+  
     const disable =
         disableOtherComponents['disable'] &&
         !disableOtherComponents['excludePayment'];
@@ -53,33 +54,82 @@ function Payment_Type({ initialView }) {
     }, [initialView]);
 
     useEffect(() => {
-        if (
-            viewContent == 'wallet' ||
-            (viewContent == 'options' && paymentMethods.length == 0)
-        ) {
+        if (viewContent == 'wallet') {
             SetDisableOtherComponents(() => ({
                 disable: true,
                 addressType: null,
                 excludePayment: true,
+                disableAddress: true,
+            }));
+            // setDisableAddress(() => true);
+            setDisableChangeBtn(true);
+            setEnableCancelBtn(() => false);
+
+            return;
+        }
+
+        if (viewContent == 'options') {
+            if (paymentMethods.length == 0) {
+                if (isFirstPaymentSet) {
+                    console.log('execute if');
+                    SetDisableOtherComponents(() => ({
+                        disable: true,
+                        excludePayment: true,
+                        addressType: null,
+                        disableAddress: true,
+                    }));
+                } else {
+                    console.log('execute else');
+                    SetDisableOtherComponents(() => ({
+                        disable: false,
+                        addressType: null,
+                        excludePayment: true,
+                        disableAddress: false,
+                    }));
+                }
+
+                // setDisableAddress(() => true);
+                setDisableChangeBtn(true);
+                setEnableCancelBtn(() => false);
+            } else {
+                setEnableCancelBtn(() => true);
+            }
+
+            return;
+        }
+
+        if (viewContent == 'card') {
+            SetDisableOtherComponents(() => ({
+                disable: true,
+                excludePayment: true,
+                addressType: null,
+                disableAddress: true,
             }));
             setDisableChangeBtn(true);
             setEnableCancelBtn(() => false);
-        } else if (viewContent == 'options' && paymentMethods.length > 0) {
-            setEnableCancelBtn(() => true);
-        } else if (viewContent == 'card') {
-            setDisableChangeBtn(true);
-            setEnableCancelBtn(() => false);
-        } else {
+
+            return;
+        }
+
+        if (viewContent == 'selectedMethod') {
+            console.log('change to selectedMethod');
+            setNextView('wallet');
+            setDisableChangeBtn(() => false);
             SetDisableOtherComponents(() => ({
                 disable: false,
                 addressType: null,
             }));
             setDisableChangeBtn(false);
             setEnableCancelBtn(() => false);
-        }
-
-        if (viewContent == 'selectedMethod') {
-            setNextView('wallet');
+            return;
+        } else {
+            console.log('execute bottom else');
+            // SetDisableOtherComponents(() => ({
+            //     disable: false,
+            //     addressType: null,
+            // }));
+            // setDisableChangeBtn(false);
+            // setEnableCancelBtn(() => false);
         }
     }, [viewContent]);
 
@@ -141,14 +191,22 @@ function Payment_Type({ initialView }) {
     };
 
     const onClickAway = () => {
-        if (!disableOtherComponents['disable']) {
-            return;
-        }
+        // if (!disableOtherComponents['disable']) {
+        //     return;
+        // }
 
         if (selectedMethod['type']) {
             setView('selectedMethod');
         } else {
             setView('options');
+        }
+    };
+
+    const cancelBtnClick = () => {
+        if (selectedMethod?.type) {
+            setView(() => 'selectedMethod');
+        } else {
+            setView(() => 'options');
         }
     };
     return (
@@ -158,48 +216,67 @@ function Payment_Type({ initialView }) {
                     {initialView && (
                         <motion.section
                             id="payment-type"
-                            className={`mt-4 px-6 ${
+                            className={`relative mt-4 px-6 ${
                                 disable
                                     ? 'disable-component'
                                     : 'display-component'
                             }`}
                         >
-                            <div className="mb-6 mt-3">
-                                <SubHeader
-                                    disable={disable}
-                                    disablePadding={true}
-                                    text={'PAYMENT TYPE'}
-                                    disableChangeBtn={disableChangeBtn}
-                                    onClick={handleClick}
-                                    enableCancelBtn={enableCancelBtn}
-                                    cancelBtnClick={() =>
-                                        setView(() => 'selectedMethod')
-                                    }
-                                />
-                            </div>{' '}
-                            <AnimatePresence mode="wait">
-                                <motion.section
-                                    ref={containerRef}
-                                    key={viewContent}
-                                    variants={containerVariants}
-                                    animate={'animate'}
-                                    initial={'initial'}
-                                    exit={'exit'}
+                            <section className={`relative `}>
+                                {loading && (
+                                    <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
+                                        <svg
+                                            className="spinner-ring spinner-sm [--spinner-color:var(--slate-11)]"
+                                            viewBox="25 25 50 50"
+                                            strokeWidth="5"
+                                        >
+                                            <circle cx="50" cy="50" r="20" />
+                                        </svg>
+                                    </div>
+                                )}
+
+                                <section
+                                    className={` ${
+                                        loading ? 'opacity-40' : ''
+                                    }`}
                                 >
-                                    <motion.div>
-                                        {viewContent && (
-                                            <motion.div
-                                                variants={viewVariants}
-                                                animate={'animate'}
-                                                initial={'initial'}
-                                                exit={'exit'}
-                                            >
-                                                {views[viewContent]}
+                                    <div className="relative mb-6 mt-3">
+                                        <SubHeader
+                                            disable={disable}
+                                            disablePadding={true}
+                                            text={'PAYMENT TYPE'}
+                                            disableChangeBtn={disableChangeBtn}
+                                            onClick={handleClick}
+                                            enableCancelBtn={enableCancelBtn}
+                                            cancelBtnClick={cancelBtnClick}
+                                        />
+                                    </div>
+                                    <AnimatePresence mode="wait">
+                                        <motion.section
+                                            ref={containerRef}
+                                            key={viewContent}
+                                            variants={containerVariants}
+                                            animate={'animate'}
+                                            initial={'initial'}
+                                            exit={'exit'}
+                                        >
+                                            <motion.div>
+                                                {viewContent && (
+                                                    <motion.div
+                                                        variants={viewVariants}
+                                                        animate={'animate'}
+                                                        initial={'initial'}
+                                                        exit={'exit'}
+                                                    >
+                                                        {views[viewContent]}
+                                                    </motion.div>
+                                                )}
                                             </motion.div>
-                                        )}
-                                    </motion.div>
-                                </motion.section>
-                            </AnimatePresence>
+                                        </motion.section>
+                                    </AnimatePresence>
+                                </section>
+                            </section>
+
                             <div className="checkout-payment-methods">
                                 <h2 className="font-semibold tracking-widest">
                                     WE ACCEPT:
