@@ -25,6 +25,7 @@ const logos = {
   mastercard: 'mastercard-alt.png',
   paypal: 'paypal.png',
   'union-pay': 'union-pay.png',
+  visa: 'visa.png',
 };
 
 export default function OrderSuccess({
@@ -838,16 +839,21 @@ export default function OrderSuccess({
                                 <Row className="mt-2 ">
                                   <Column
                                     id="payment"
-                                    className="w-12 border-2 border-black"
+                                    className="w-12 border-2 h-8  border-black"
                                   >
                                     <Img
-                                      src={`${url}/${logos?.[paymentType]}`}
+                                      src={`${url}/${
+                                        logos?.[paymentType?.toLowerCase()]
+                                      }`}
                                       alt="logo"
                                       title="logo"
-                                      className="w-full h-auto bg-light-grey rounded-sm block h-8 object-cover"
+                                      className="w-full bg-light-grey rounded-sm block h-full object-contain"
                                     />
                                   </Column>
-                                  <Column className="pl-4">Paypal</Column>
+                                  <Column className="pl-4">
+                                    {paymentType[0]?.toUpperCase() +
+                                      paymentType.substring(1)}
+                                  </Column>
                                 </Row>
                               </Section>
                             </td>
