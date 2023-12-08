@@ -71,11 +71,6 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
               });
 
               if (!isStockChange) {
-                console.log(
-                  'stock didnt change for product: ',
-                  productObject.title,
-                  variationDetail,
-                );
                 productObject.stock =
                   productObject.stock - variationDetail.quantity || 0;
               }
@@ -110,10 +105,25 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       });
 
       const result = Promise.all([...reduceStock])
+
         .then(async (res) => {
+          let paymentType = '';
+
+          const getPaymentMethod = await stripe.paymentMethods.retrieve(
+            paymentIntent?.payment_method,
+          );
+          if (getPaymentMethod?.type == 'card') {
+            paymentType = getPaymentMethod.card?.brand;
+          } else {
+            paymentType = getPaymentMethod?.type;
+          }
+          console.log({ paymentType });
           const updateOrder = await Order.findOneAndUpdate(
             { _id: orderNumber },
-            { $unset: { cartObj: '' }, $set: { status: 'received' } },
+            {
+              $unset: { cartObj: '' },
+              $set: { status: 'received', paymentType },
+            },
             { new: true },
           )
             .populate('items.product')
@@ -137,7 +147,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             subtotal: parseFloat(order?.transaction_cost?.subtotal).toFixed(2),
             deliveryCost: parseFloat(order?.shipping_option?.cost).toFixed(2),
             total: parseFloat(order?.transaction_cost?.total).toFixed(2),
-            paymentType: 'paypal',
+            paymentType: paymentType,
             deliveryName: order?.shipping_option?.name,
             shipping_address: order?.shipping_address,
             items: updateOrder?.items,

@@ -21,6 +21,7 @@ const OrderSchema = new Schema({
     },
   ],
   createdAt: { type: Schema.Types.Date, default: Date.now },
+  paymentType: { type: Schema.Types.String },
   status: {
     type: Schema.Types.String,
     enum: enum_states,

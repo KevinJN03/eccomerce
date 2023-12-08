@@ -61,7 +61,7 @@ const UserSchema = new Schema(
         index: { type: Schema.Types.Number },
       },
     ],
-    orders: [{ type: Schema.Types.String, ref: 'order' }],
+    // orders: [{ type: Schema.Types.String, ref: 'order' }],
     mobile: { type: Schema.Types.String },
     contact_preferences: {
       discount_newDrops: {
