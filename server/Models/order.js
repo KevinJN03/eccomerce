@@ -2,7 +2,14 @@ import mongoose, { SchemaType } from 'mongoose';
 
 const { Schema } = mongoose;
 const enum_states = {
-  values: ['received', 'shipped', 'delivered', 'cancelled', 'processing'],
+  values: [
+    'received',
+    'shipped',
+    'delivered',
+    'cancelled',
+    'processing',
+    'failed',
+  ],
   message:
     'enum validator failed value `VALUE`, please ensure value is of any of the following: received, shipped, delivered, cancelled, ',
 };
