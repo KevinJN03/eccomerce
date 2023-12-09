@@ -13,11 +13,17 @@ function Input({
     className,
     inputClassName,
     icon,
+    errorMsgClassName,
 }) {
     return (
         <div className={`input-container`}>
             <div className="relative flex flex-col">
-                {error?.[property] && <ErrorMessage msg={error[property]} />}
+                {error?.[property] && (
+                    <ErrorMessage
+                        msg={error[property]}
+                        className={errorMsgClassName}
+                    />
+                )}
 
                 <label
                     htmlFor={label.toLowerCase().replaceAll(' ', '-')}
@@ -28,11 +34,10 @@ function Input({
                 <div className={`relative flex flex-row ${inputClassName}`}>
                     <input
                         autoComplete={autoComplete}
-                     
                         type={'text'}
                         name={property}
                         id={property}
-                        className={`login-signup-input py-4`}
+                        className={`login-signup-input py-4 ${error?.[property] ? '!border-red-500 !border-2' : ''}`}
                         value={value}
                         onChange={(e) => {
                             manyProperty

@@ -54,6 +54,7 @@ import Order_Info from './components/dashboard/order/order-info.jsx';
 import ForgetPassword from './components/forget-password/forget-password.jsx';
 import Login from './components/Login-SignUp/Login.jsx';
 import SignUp from './components/Login-SignUp/SignUp.jsx';
+import ResetSent from './components/forget-password/sent.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -236,6 +237,11 @@ function Router({ Header, Footer }) {
                             path: 'signup',
                             element: <SignUp />,
                         },
+
+                        {
+                            path: 'forget-password/sent',
+                            element : <ResetSent/>
+                        }
                     ],
                 },
 

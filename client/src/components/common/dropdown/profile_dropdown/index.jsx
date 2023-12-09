@@ -11,7 +11,7 @@ function Profile_Dropdown({}) {
 
     const logout = () => {
         axios.get('user/logout').then(() => {
-            authDispatch({type: 'LOGOUT'});
+            authDispatch({ type: 'LOGOUT' });
         });
     };
     return (
@@ -20,14 +20,14 @@ function Profile_Dropdown({}) {
                 {!authenticated ? (
                     <>
                         <a
-                            href="/login"
+                            href="/portal/login"
                             type="button"
                             className="profile_dropdown-btn bg-white text-black"
                         >
                             Sign In
                         </a>
                         <a
-                            href="/signup"
+                            href="/portal/signup"
                             type="button"
                             className="profile_dropdown-btn bg-black text-white"
                         >
@@ -48,7 +48,32 @@ function Profile_Dropdown({}) {
                     </span>
                 )}
             </div>
-            <Dropdown_Option
+
+            {[
+                {
+                    option: { src: dashboard_icon, text: 'Dashboard' },
+                    linkTo: './my-account',
+                },
+                {
+                    option: { src: order_icon, text: 'My Order' },
+                    linkTo: './my-account',
+                },
+                {
+                    option: { src: return_icon, text: 'My Returns' },
+                    linkTo: './my-account/returns',
+                },
+                {
+                    option: { src: info_icon, text: 'Return Information' },
+                    linkTo: './my-account/returns',
+                },
+                {
+                    option: { src: chat_icon, text: 'Contact Preference' },
+                    linkTo: './my-account/contact-preferences',
+                },
+            ].map(({ option, linkTo }) => {
+                return <Dropdown_Option option={option} linkTo={linkTo} />;
+            })}
+            {/* <Dropdown_Option
                 option={{ src: dashboard_icon, text: 'Dashboard' }}
                 linkTo={'./my-account'}
             />
@@ -64,7 +89,7 @@ function Profile_Dropdown({}) {
             <Dropdown_Option
                 option={{ src: chat_icon, text: 'Contact Preference' }}
                 linkTo={'./my-account/contact-preferences'}
-            />
+            /> */}
         </section>
     );
 }

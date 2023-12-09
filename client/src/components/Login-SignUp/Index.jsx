@@ -18,7 +18,11 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
         console.log({ location });
         const route = location.pathname.split('/').slice(-1)[0];
 
-        if (route == 'portal' || route == 'forget-password') {
+        if (
+            route == 'portal' ||
+            route == 'forget-password' ||
+            route == 'sent'
+        ) {
             setOption(() => 'login');
         } else {
             setOption(() => route);
