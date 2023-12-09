@@ -37,7 +37,7 @@ function SignUp() {
         }
     };
     return (
-        <>
+        <section className="w-8/12 flex flex-col flex-nowrap">
             <h1 className="mb-9 text-center text-xl font-bold">
                 SIGN UP WITH EMAIL
             </h1>
@@ -141,7 +141,7 @@ function SignUp() {
                 submit={submit}
                 error={error}
             />
-        </>
+        </section>
     );
 }
 
