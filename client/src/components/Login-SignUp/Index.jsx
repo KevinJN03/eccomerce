@@ -43,7 +43,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                     <div id="login-signup-option">
                         {!admin && (
                             <>
-                                <span
+                                {/* <span
                                     onClick={() => setOption('signup')}
                                     className={
                                         option == 'signup'
@@ -52,11 +52,23 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                     }
                                 >
                                     <Link to={!admin && '/signup'}>Join</Link>
-                                </span>
+                                </span> */}
+                                <Link
+                                    to={!admin && '/signup'}
+                                    onClick={() => setOption('signup')}
+                                    className={
+                                        option == 'signup'
+                                            ? 'active-option'
+                                            : 'not-active-option'
+                                    }
+                                >
+                                    Join
+                                </Link>
                                 <span id="midldle-border"></span>
                             </>
                         )}
-                        <span
+                        <Link
+                            to={!admin && '/login'}
                             onClick={() => setOption('login')}
                             className={
                                 option == 'login'
@@ -64,8 +76,8 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                     : 'not-active-option'
                             }
                         >
-                            <Link to={!admin && '/login'}>Sign In</Link>
-                        </span>
+                            Sign In
+                        </Link>
                     </div>
                     <section id="form-container">
                         {loginorSignup == 'login' && (

@@ -30,6 +30,7 @@ import OrderSuccess from './React Email/orderSuccess.jsx';
 import Order from './Models/order.js';
 import 'dotenv/config';
 import PasswordReset from './React Email/passwordreset.jsx';
+import User from './Models/user.js';
 const { DBNAME, URL, SECRET } = process.env;
 const PORT = 3000;
 const db = () => {
@@ -129,10 +130,20 @@ app.get(
       // },
     };
 
-    // const sendEmail = await transporter.sendMail(mailOptions);
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );
+
+
+
+app.post('/forget-password', asyncHandler(async(req, res, next) => {
+  const user = await User.find({email: req.body.email})
+
+  if(user){
+    
+  }
+}))
 app.use(errorHandler);
 
 const httpOptions = {

@@ -55,7 +55,7 @@ function PasswordReset({ url }) {
               </Row>
               <Row className="p-5 pt-0">
                 <Column className="bg-white box-border w-full p-4 pt-0">
-                  <Text className="font-semibold text-sm tracking-wide">
+                  <Text className="font-semibold text-sm tracking-wide mb-2">
                     WANT TO MAKE YOUR NEW PASSWORD STRONG?
                   </Text>
                   <Hr className="m-0 p-0" />
@@ -74,7 +74,7 @@ function PasswordReset({ url }) {
                   >
                     <Button
                       href={url}
-                      className="align-middle mx-auto bg-[#2d2d2d] text-sm text-white py-3 px-16 font-medium text-center"
+                      className="align-middle mx-auto bg-[#2d2d2d] text-xs tracking-wider text-white py-3 px-16 font-semibold text-center"
                     >
                       RESET PASSWORD
                     </Button>
@@ -85,7 +85,7 @@ function PasswordReset({ url }) {
               <Row className='p-5'>
                
                 <Column className='p-4 pt-0 bg-white'>
-                  <Text className="bg-white text-sm font-semibold box-border w-full">
+                  <Text className="bg-white text-sm font-semibold box-border w-full mb-2">
                     ISSUE WITH THE LINK?
                   </Text>
                   <Hr className="m-0 p-0" />
