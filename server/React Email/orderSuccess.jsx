@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import TotalContainer from './totalContainer.jsx';
 import Item from './item.jsx';
 import Thanks from './thanks.jsx';
+import EmailTailwind from './emailTailwind.jsx';
 const logos = {
   afterpay: 'afterpay.png',
   amex: 'american-express.png',
@@ -48,19 +49,6 @@ export default function OrderSuccess({
   status,
 }) {
   // const { firstName, shipping_address, subtotal, orderNumber, orderDate, deliveryCost, total, paymentType } = props;
-  const config = {
-    theme: {
-      extend: {
-        colors: {
-          'dark-gray': '#676666',
-          'light-grey': '#eeeeee',
-        },
-        fontSize: {
-          s: '13px',
-        },
-      },
-    },
-  };
 
   const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
 
@@ -83,7 +71,7 @@ export default function OrderSuccess({
     <Html lang="en">
       <Head />
 
-      <Tailwind config={config}>
+      <EmailTailwind>
         <Body
           data-new-gr-c-s-loaded="14.1143.0"
           style={{
@@ -896,7 +884,7 @@ export default function OrderSuccess({
                             </td>
                           </tr>
 
-                        <Thanks/>
+                          <Thanks />
 
                           <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] max-w-[600px]">
                             <Text className="m-0 p-0 font-semibold text-base pb-2">
@@ -946,7 +934,6 @@ export default function OrderSuccess({
                               })}{' '}
                             </Section>
                           </Container>
-                          
                         </table>
                       </td>
                     </tr>
@@ -956,7 +943,7 @@ export default function OrderSuccess({
             </table>
           </div>
         </Body>
-      </Tailwind>
+      </EmailTailwind>
     </Html>
   );
 }

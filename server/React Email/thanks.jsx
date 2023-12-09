@@ -22,9 +22,9 @@ function Thanks({ className }) {
       } bg-light-grey text-center m-0 !min-w-[600px] max-w-[600px]`}
       align="center"
     >
-      <Text className="m-0 p-0 text-xs">Thanks,</Text>
+      <Text className="m-0 p-0 text-xs text-center">Thanks,</Text>
 
-      <Text className="m-0 p-0 font-semibold text-xs">The GLAMO team</Text>
+      <Text className="m-0 p-0 font-semibold text-xs text-center">The GLAMO team</Text>
     </Container>
   );
 }

@@ -28,6 +28,8 @@ import { render } from '@react-email/render';
 import OrderCancel from './React Email/orderCancelled.jsx';
 import OrderSuccess from './React Email/orderSuccess.jsx';
 import Order from './Models/order.js';
+import 'dotenv/config';
+import PasswordReset from './React Email/passwordreset.jsx';
 const { DBNAME, URL, SECRET } = process.env;
 const PORT = 3000;
 const db = () => {
@@ -83,9 +85,11 @@ app.use('/api/webhook', webHookRoute);
 app.get(
   '/api/test',
   asyncHandler(async (req, res, next) => {
-    const order = await Order.findById('068D4XFNAGCH', null, {populate: 'items.product', lean: {toObject: true}}).exec();
+    const order = await Order.findById('068D4XFNAGCH', null, {
+      populate: 'items.product',
+      lean: { toObject: true },
+    }).exec();
 
-   
     const props = {
       firstName: 'kevin',
       orderNumber: '882411829',
@@ -108,15 +112,15 @@ app.get(
           country: 'GB',
         },
       },
-      items: order?.items
+      items: order?.items,
     };
 
     // const emailHtml = render(<OrderSuccess {...props} />);
-    
-    const emailHtml = render(<OrderCancel {...props} />);
+
+    const emailHtml = render(<PasswordReset url={'https://google.com'} />);
     const mailOptions = {
       from: 'kevinjean321@gmail.com',
-      to: '	outlook_6A69ED344A4F9548@outlook.com',
+      to: process.env.TEST_EMAIL,
       subject: 'test email',
       html: emailHtml,
       // template: 'New Template',
