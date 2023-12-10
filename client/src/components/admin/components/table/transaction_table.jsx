@@ -6,7 +6,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { v4 as uuidv4 } from 'uuid';
-function Transaction_Table({}) {
+import dayjs from 'dayjs';
+function Transaction_Table({ data }) {
     const rows = [
         {
             id: uuidv4(),
@@ -73,36 +74,51 @@ function Transaction_Table({}) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
+                    {data.map((row) => (
                         <TableRow key={row.id}>
                             <TableCell className="tableCell">
-                                {row.id}
+                                {row._id}
                             </TableCell>
                             <TableCell className="tableCell">
                                 <div className="cellWrapper">
-                                    <img
-                                        src={row.product_img}
-                                        alt=""
-                                        className="image"
-                                    />
-                                    {row.product}
+                                    {row?.items?.map((item) => {
+                                        return (
+                                            <span
+                                                className="tooltip tooltip-top"
+                                                data-tooltip={item?.product.title}
+                                            >
+                                                <img
+                                                    src={
+                                                        item?.product
+                                                            ?.images?.[0]
+                                                    }
+                                                    alt=""
+                                                    className="h-10 w-10 rounded-full object-cover"
+                                                />
+                                            </span>
+                                        );
+                                    })}
+
+                                    {/* {row.product} */}
                                 </div>
                             </TableCell>
                             <TableCell className="tableCell">
-                                {row.customer}
+                                {row?.shipping_address?.name}
                             </TableCell>
                             <TableCell className="tableCell">
-                                {row.date}
+                                {dayjs(row?.createdAt).format('DD MMM, YYYY')}
                             </TableCell>
                             <TableCell className="tableCell">
-                                {row.amount}
+                                £ {row?.transaction_cost?.total?.toFixed(2)}
                             </TableCell>
                             <TableCell className="tableCell">
-                                {row.method}
+                                {row?.paymentType?.[0]?.toUpperCase() +
+                                    row?.paymentType?.substring(1)}
                             </TableCell>
                             <TableCell className="tableCell">
                                 <span className={`status ${row.status}`}>
-                                    {row.status}
+                                    {row.status[0]?.toUpperCase() +
+                                        row.status?.substring(1)}
                                 </span>
                             </TableCell>
                         </TableRow>

@@ -31,7 +31,11 @@ import Order from './Models/order.js';
 import 'dotenv/config';
 import PasswordReset from './React Email/passwordreset.jsx';
 import User from './Models/user.js';
-const { DBNAME, URL, SECRET } = process.env;
+import jwt from 'jsonwebtoken';
+import { check, validationResult } from 'express-validator';
+import bcrypt from 'bcryptjs';
+const { DBNAME, URL, SECRET, PASSWORD_RESET_JWT_SECRET, CLIENT_URL, SENDER, SALT_ROUNDS } =
+  process.env;
 const PORT = 3000;
 const db = () => {
   mongoose
@@ -120,14 +124,10 @@ app.get(
 
     const emailHtml = render(<PasswordReset url={'https://google.com'} />);
     const mailOptions = {
-      from: 'kevinjean321@gmail.com',
+      from: SENDER,
       to: process.env.TEST_EMAIL,
       subject: 'test email',
       html: emailHtml,
-      // template: 'New Template',
-      // context: {
-      //   firstName: 'Adam',
-      // },
     };
 
     const sendEmail = await transporter.sendMail(mailOptions);
@@ -135,15 +135,121 @@ app.get(
   }),
 );
 
+app.post('/api/forget-password', [
+  check('email', 'Email is Invalid.')
+    .trim()
+    .escape()
+    .isEmail()
+    .custom(async (value, { req }) => {
+      const user = await User.findOne({ email: value });
+      if (!user) {
+        throw new Error(
+          "Email Address doesn't exist, please check the email for any typos.",
+        );
+      } else {
+        req.password = user.password;
+        return true;
+      }
+    }),
+  asyncHandler(async (req, res, next) => {
+    const errorFormatter = ({ msg, path }) => {
+      return msg;
+    };
+    const results = validationResult(req).formatWith(errorFormatter);
 
+    if (!results.isEmpty()) {
+      // console.log('validationError: ', results.mapped());
 
-app.post('/forget-password', asyncHandler(async(req, res, next) => {
-  const user = await User.find({email: req.body.email})
+      return res.status(404).send({ error: results.mapped() });
+    }
+    const { email } = req?.body;
+    console.log('here: ', { password: req.password });
 
-  if(user){
-    
-  }
-}))
+    const newSecret = PASSWORD_RESET_JWT_SECRET + req.password;
+
+    const payload = {
+      id: req.password,
+      email: email,
+    };
+    const token = jwt.sign(payload, newSecret, { expiresIn: '15m' });
+    const url = `${CLIENT_URL}/portal/reset-password?pwrt=${token}&email=${email}`;
+
+    const emailHtml = render(<PasswordReset url={url} />);
+    const mailOptions = {
+      from: SENDER,
+      to: email,
+      subject: 'Your GLAMO password reset link is ready',
+      html: emailHtml,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return res.status(200).send({
+      success: true,
+      msg: 'password link successfully generated and sent to user email.',
+    });
+  }),
+]);
+
+app.post('/api/reset-password', [
+  check('password', 'Password must be between 10 to 20 characters.')
+    .trim()
+    .escape()
+    .notEmpty()
+    .isLength({ min: 10, max: 20 }),
+  check('confirmPassword')
+    .trim()
+    .escape()
+    .custom((value, { req }) => {
+      if (value != req.body.password) {
+        throw new Error('passwords does not match.');
+      } else {
+        return true;
+      }
+    }),
+  check('email').trim().escape(),
+  check('token').trim().escape(),
+  asyncHandler(async (req, res, next) => {
+    try {
+      const results = validationResult(req).formatWith(({ msg }) => msg);
+
+      if (!results.isEmpty()) {
+        console.log({ error: results.mapped() });
+        return res.status(400).send({ error: results.mapped() });
+      }
+      const { token, email, password, confirmPassword } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(404)
+          .send({ success: false, msg: 'user does not exist.' });
+      }
+      const getSecret = PASSWORD_RESET_JWT_SECRET + user.password;
+      const payload = jwt.verify(token, getSecret);
+
+      if (payload?.email != email) {
+        return res.status(404).send({ success: false, msg: 'invalid' });
+      }
+
+      const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
+      const hashPassword = bcrypt.hashSync(confirmPassword, salt);
+      user.password = hashPassword;
+      user.save();
+      res.send({ success: true, msg: 'password successfully updated!' });
+    } catch (error) {
+      console.error('invalid jwt', error);
+      let expired = false;
+      let invalid = false;
+      if (error?.name == 'TokenExpiredError') {
+        expired = true;
+      }
+      if (error?.name == 'JsonWebTokenError') {
+        invalid = true;
+      }
+      res.status(500).send({ expired, invalid });
+    }
+  }),
+]);
+
 app.use(errorHandler);
 
 const httpOptions = {

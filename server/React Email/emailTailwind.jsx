@@ -32,7 +32,7 @@ const config = {
 };
 
 function EmailTailwind({ children }) {
-  return <Tailwind config={config}>{children}</Tailwind>;
+  return <Tailwind config={config} key={'tailwind'}>{children}</Tailwind>;
 }
 
 export default EmailTailwind;

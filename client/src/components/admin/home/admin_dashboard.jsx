@@ -7,37 +7,46 @@ import Transaction_Table from '../components/table/transaction_table';
 import { Outlet } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 function Admin_Dashboard() {
-    const [totalUsers, setTotalUsers] = useState(0);
+    const [data, setData] = useState({});
+
     useEffect(() => {
         axios
             .get('/admin/count')
             .then((res) => {
                 if (res.status == 200) {
-                    const { userCount } = res.data;
-                    setTotalUsers(userCount);
+                    setData(() => res.data);
                 }
             })
             .catch((error) => {
                 'error at admin while fetching counts: ', error;
             });
     }, []);
+
+    const todayDate = dayjs()
+        .set('hour', 0)
+        .set('minute', 0)
+        .set('second', 0)
+        .unix();
+
+    console.log({ todayDate, dayjs: dayjs.unix(todayDate) });
     return (
         <>
             <div className="widgets">
-                <Widget type="user" amount={totalUsers} />
-                <Widget type="order" />
+                <Widget type="user" amount={data?.userCount} />
+                <Widget type="order" amount={data?.orderCount} />
                 <Widget type="earning" />
-                <Widget type="balance" />
+                <Widget type="balance" amount={data?.balance} />
             </div>
             <div className="charts">
-                <Featured />
+                <Featured todayAmount={data?.todayAmount} />
                 <Chart />
             </div>
 
             <div className="listContainer">
                 <div className="listTitle">Latest Transactions</div>
-                <Transaction_Table />
+              {data?.orders &&  <Transaction_Table data={data?.orders}/>}
             </div>
         </>
     );

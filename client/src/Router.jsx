@@ -274,7 +274,11 @@ function Router({ Header, Footer }) {
                             element: <Admin_Dashboard />,
                         },
 
-                        { path: 'login', element: <AdminLogin /> },
+                        { path: 'login', element: <AdminLogin />, 
+                    children: [
+                        {index: true,
+                        element: <Login/>}
+                    ] },
                         {
                             path: 'dashboard/',
                             element: <Admin_Dashboard />,

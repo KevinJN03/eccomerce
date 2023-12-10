@@ -7,6 +7,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import disableLayout from '../../hooks/disableLayout';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     disableLayout();
@@ -40,6 +41,20 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
             navigate('/my-account');
         }
     }, []);
+
+    const outletVariant = {
+        initial: {
+            opacity: 0.1,
+        },
+        animate: {
+            opacity: 1,
+            transition: { duration: 0.5 },
+        },
+        exit: {
+            opacity: 0,
+            transition: { duration: 2 },
+        },
+    };
     return (
         <>
             <section className="login-signup-page min-h-screen">
@@ -91,9 +106,20 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                             SIGN IN
                         </Link>
                     </div>
-                    <section className="mt-10 flex w-full flex-col items-center justify-center">
-                        <Outlet />
-                    </section>
+                    <AnimatePresence
+                    
+                    >
+                        <motion.section
+                        key={location?.pathname}
+                            variants={outletVariant}
+                            initial={'initial'}
+                            animate={'animate'}
+                           
+                            className="mt-10 flex w-full flex-col items-center justify-center"
+                        >
+                            <Outlet />
+                        </motion.section>
+                    </AnimatePresence>
                 </section>
                 <div className="mt-2 flex flex-row gap-2 pb-5 text-xs underline underline-offset-2">
                     <span>
