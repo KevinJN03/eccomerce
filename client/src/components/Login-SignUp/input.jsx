@@ -14,7 +14,23 @@ function Input({
     inputClassName,
     icon,
     errorMsgClassName,
+    type,
 }) {
+    const handleOnchange = (e) => {
+        if (manyProperty) {
+            setValue((prevState) => ({
+                ...prevState,
+                [property]: e.target.value,
+            }));
+        } else {
+            setValue(() => e.target.value);
+        }
+
+        setError((prevState) => ({
+            ...prevState,
+            [property]: null,
+        }));
+    };
     return (
         <div className={`input-container`}>
             <div className="relative flex flex-col">
@@ -34,24 +50,14 @@ function Input({
                 <div className={`relative flex flex-row ${inputClassName}`}>
                     <input
                         autoComplete={autoComplete}
-                        type={'text'}
+                        type={type || 'text'}
                         name={property}
                         id={property}
-                        className={`login-signup-input py-4 ${error?.[property] ? '!border-red-500 !border-2' : ''}`}
+                        className={`login-signup-input py-4 ${
+                            error?.[property] ? '!border-2 !border-red-500' : ''
+                        }`}
                         value={value}
-                        onChange={(e) => {
-                            manyProperty
-                                ? setValue((prevState) => ({
-                                      ...prevState,
-                                      [property]: e.target.value,
-                                  }))
-                                : setValue(e.target.value);
-
-                            setError((prevState) => ({
-                                ...prevState,
-                                [property]: null,
-                            }));
-                        }}
+                        onChange={handleOnchange}
                     />
                     {icon && (
                         <img

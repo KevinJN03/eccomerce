@@ -55,6 +55,7 @@ import ForgetPassword from './components/forget-password/forget-password.jsx';
 import Login from './components/Login-SignUp/Login.jsx';
 import SignUp from './components/Login-SignUp/SignUp.jsx';
 import ResetSent from './components/forget-password/sent.jsx';
+import ResetPassword from './components/forget-password/reset.password.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -240,8 +241,12 @@ function Router({ Header, Footer }) {
 
                         {
                             path: 'forget-password/sent',
-                            element : <ResetSent/>
-                        }
+                            element: <ResetSent />,
+                        },
+                        {
+                            path: 'reset-password',
+                            element: <ResetPassword />,
+                        },
                     ],
                 },
 

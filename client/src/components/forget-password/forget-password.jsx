@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Input from '../Login-SignUp/input';
 import emailValidator from 'email-validator';
 import { useNavigate } from 'react-router-dom';
+import axios from '../../api/axios';
 function ForgetPassword({}) {
     const [error, setError] = useState({});
     const [email, setEmail] = useState('');
@@ -21,25 +22,39 @@ function ForgetPassword({}) {
         errorMsgClassName: 'top-[-50px]',
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setSubmit(true);
+    const onSubmit = async (e) => {
+        try {
+            e.preventDefault();
 
-        const isValid = emailValidator.validate(email);
-        console.log({ isValid });
+            setSubmit(true);
 
-        if (!isValid) {
-            setError({
-                email: 'Email fail! Please type in your correct email address',
-            });
-            setSubmit(() => false);
-            return;
-        } else {
-            navigate('sent');
+            const isValid = emailValidator.validate(email);
+            console.log({ isValid });
+
+            if (!isValid) {
+                setError({
+                    email: 'Email fail! Please type in your correct email address',
+                });
+                setSubmit(() => false);
+                return;
+            } else {
+                const { data } = await axios.post('/forget-password', {
+                    email,
+                });
+                console.log({ data });
+                navigate('sent');
+            }
+        } catch (error) {
+            console.error('error while sending password reset link', error);
+
+            if (error?.response?.status == 404) {
+                setError(() => ({ ...error.response.data.error }));
+            }
+        } finally {
+            setTimeout(() => {
+                setSubmit(false);
+            }, 1000);
         }
-        setTimeout(() => {
-            setSubmit(false);
-        }, 1000);
     };
     return (
         <section className="mb-12 flex w-9/12 flex-col items-center ">

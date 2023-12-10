@@ -34,7 +34,7 @@
     align-self: center;
 }
 #login-signup-option a {
-    @apply flex h-16 w-full items-center justify-center w-full text-center text-lg font-semibold tracking-widest;
+    @apply flex h-16 w-full items-center justify-center w-full text-center text-sm font-semibold tracking-widest;
     /* outline:  3px dotted black; */
 }
 

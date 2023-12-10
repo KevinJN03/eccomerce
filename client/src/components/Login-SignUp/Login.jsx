@@ -55,6 +55,7 @@ function Login({ handleSubmit, admin }) {
                 error={error}
                 setError={setError}
                 label={'PASSWORD'}
+                type={'password'}
             />
 
             <Link
