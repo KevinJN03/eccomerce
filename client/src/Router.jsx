@@ -51,6 +51,11 @@ import PayPalHome from './components/dashboard/payment-methods/Paypal/paypal-hom
 import Cancel_Payment from './components/dashboard/payment-methods/cancelPayment.jsx';
 import Order_Success from './components/order/order-success.jsx';
 import Order_Info from './components/dashboard/order/order-info.jsx';
+import ForgetPassword from './components/forget-password/forget-password.jsx';
+import Login from './components/Login-SignUp/Login.jsx';
+import SignUp from './components/Login-SignUp/SignUp.jsx';
+import ResetSent from './components/forget-password/sent.jsx';
+import ResetPassword from './components/forget-password/reset.password.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -93,6 +98,7 @@ function Router({ Header, Footer }) {
                     path: '/about',
                     element: <About />,
                 },
+
                 {
                     path: '/my-account',
                     element: <Dashboard />,
@@ -103,8 +109,6 @@ function Router({ Header, Footer }) {
                             path: 'orders',
 
                             element: <My_Orders />,
-
-                           
                         },
                         {
                             path: 'orders/:id',
@@ -211,13 +215,41 @@ function Router({ Header, Footer }) {
                     ],
                 },
                 {
-                    path: '/login',
-                    element: <LoginSignUp loginorSignup={'login'} />,
+                    path: '/portal',
+                    // element: <LoginSignUp loginorSignup={'login'} />,
+                    // index: true,
+                    element: <LoginSignUp />,
+                    children: [
+                        {
+                            // path: 'login',
+                            element: <Login />,
+                            index: true,
+                        },
+                        {
+                            path: 'login',
+                            element: <Login />,
+                            index: true,
+                        },
+                        {
+                            path: 'forget-password',
+                            element: <ForgetPassword />,
+                        },
+                        {
+                            path: 'signup',
+                            element: <SignUp />,
+                        },
+
+                        {
+                            path: 'forget-password/sent',
+                            element: <ResetSent />,
+                        },
+                        {
+                            path: 'reset-password',
+                            element: <ResetPassword />,
+                        },
+                    ],
                 },
-                {
-                    path: '/signup',
-                    element: <LoginSignUp loginorSignup={'signup'} />,
-                },
+
                 {
                     path: '/cart',
                     element: <Cart />,
@@ -242,7 +274,11 @@ function Router({ Header, Footer }) {
                             element: <Admin_Dashboard />,
                         },
 
-                        { path: 'login', element: <AdminLogin /> },
+                        { path: 'login', element: <AdminLogin />, 
+                    children: [
+                        {index: true,
+                        element: <Login/>}
+                    ] },
                         {
                             path: 'dashboard/',
                             element: <Admin_Dashboard />,

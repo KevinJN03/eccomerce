@@ -16,7 +16,14 @@ import {
   Button,
   Container,
 } from '@react-email/components';
+import 'dotenv/config';
+const clientUrl = process.env.CLIENT_URL;
 import { v4 as uuidv4 } from 'uuid';
+
+import TotalContainer from './totalContainer.jsx';
+import Item from './item.jsx';
+import Thanks from './thanks.jsx';
+import EmailTailwind from './emailTailwind.jsx';
 const logos = {
   afterpay: 'afterpay.png',
   amex: 'american-express.png',
@@ -39,29 +46,32 @@ export default function OrderSuccess({
   paymentType,
   deliveryName,
   items,
+  status,
 }) {
   // const { firstName, shipping_address, subtotal, orderNumber, orderDate, deliveryCost, total, paymentType } = props;
-  const config = {
-    theme: {
-      extend: {
-        colors: {
-          'dark-gray': '#676666',
-          'light-grey': '#eeeeee',
-        },
-        fontSize: {
-          s: '13px',
-        },
-      },
-    },
-  };
 
   const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
+
+  const title = {
+    received: 'IT’S ORDERED!',
+    failed: 'YOUR ORDER HAS FAILED!',
+    shipped: "YOUR ORDER HAS ON IT'S WAY!",
+    cancelled: 'YOUR ORDER HAS BEEN CANCELLED!',
+  };
+
+  const text = {
+    received: 'your order has been received.',
+    failed: 'your order has failed.',
+    shipped: 'your order has been shipped.',
+    cancelled:
+      'we’ve cancelled the order below as requested and you haven’t been charged. All done!',
+  };
 
   return (
     <Html lang="en">
       <Head />
 
-      <Tailwind config={config}>
+      <EmailTailwind>
         <Body
           data-new-gr-c-s-loaded="14.1143.0"
           style={{
@@ -292,12 +302,11 @@ export default function OrderSuccess({
                                               fontSize: '14px',
                                             }}
                                           >
-                                            <b>IT’S ORDERED!</b>
+                                            <b>{title[status]}</b>
                                           </p>
                                           <Text>
                                             {' '}
-                                            Hi {firstName}, your order has been
-                                            received.
+                                            Hi {firstName}, {text[status]}
                                           </Text>
                                           <Text>Order No.: {orderNumber}</Text>
                                           <Text>Order date: {orderDate}</Text>
@@ -660,59 +669,14 @@ export default function OrderSuccess({
                                           style={{ padding: '0', margin: '0' }}
                                         >
                                           <Section className="bg-white p-5 pt-6">
-                                            {items?.map(
-                                              (
-                                                {
-                                                  product,
-                                                  quantity,
-                                                  variation1,
-                                                  variation2,
-                                                  price,
-                                                },
-                                                idx,
-                                              ) => {
-                                                return (
-                                                  <Row
-                                                    key={idx}
-                                                    className="mb-4"
-                                                  >
-                                                    <Column className="w-[100px] h-[140px]">
-                                                      <Img
-                                                        src={
-                                                          product?.images?.[0]
-                                                        }
-                                                        className="border-none outline-none w-[100px] h-[140px]"
-                                                      />
-                                                    </Column>
-                                                    <Column className="pl-5 align-top">
-                                                      <Text className="text-s p-0 pb-1 m-0 font-medium">
-                                                        {product?.title}
-                                                      </Text>
-
-                                                      <Text className="text-s p-0 pb-1 m-0 font-semibold">
-                                                        £
-                                                        {parseFloat(
-                                                          price?.toFixed(2),
-                                                        )}
-                                                      </Text>
-
-                                                      <Text className="text-xs p-0 pb-1 m-0 font-light !important">
-                                                        {`${
-                                                          variation1?.variation
-                                                            ? variation1?.variation
-                                                            : ''
-                                                        } ${
-                                                          variation2?.variation
-                                                            ? ' / ' +
-                                                              variation2.variation
-                                                            : ''
-                                                        } / Qty ${quantity}`}
-                                                      </Text>
-                                                    </Column>
-                                                  </Row>
-                                                );
-                                              },
-                                            )}
+                                            {items?.map((itemProps, idx) => {
+                                              return (
+                                                <Item
+                                                  {...itemProps}
+                                                  key={idx}
+                                                />
+                                              );
+                                            })}
                                           </Section>
                                         </td>
                                       </tr>
@@ -764,45 +728,11 @@ export default function OrderSuccess({
                                         <td
                                           style={{ padding: '0', margin: '0' }}
                                         >
-                                          <Section className="bg-white px-5">
-                                            <Row>
-                                              <Column>
-                                                <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
-                                                  SUB-TOTAL
-                                                </Text>
-                                              </Column>
-                                              <Column>
-                                                <Text className="text-right p-0 m-0 text-s  tracking-wider">
-                                                  £{subtotal}
-                                                </Text>
-                                              </Column>
-                                            </Row>
-                                            <Row>
-                                              <Column>
-                                                <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
-                                                  DELIVERY
-                                                </Text>
-                                              </Column>
-                                              <Column>
-                                                <Text className="text-right p-0 m-0 text-s  tracking-wider">
-                                                  £{deliveryCost}
-                                                </Text>
-                                              </Column>
-                                            </Row>
-                                            <Hr className="bg-black" />
-                                            <Row>
-                                              <Column className="pb-6 align-top">
-                                                <Text className="font-semibold p-0 m-0 text-sm tracking-wider">
-                                                  TOTAL
-                                                </Text>
-                                              </Column>
-                                              <Column className="align-top">
-                                                <Text className="text-right text-s font-semibold tracking-wider p-0 m-0  align-top">
-                                                  £{total}
-                                                </Text>
-                                              </Column>
-                                            </Row>
-                                          </Section>
+                                          <TotalContainer
+                                            subtotal={subtotal}
+                                            total={total}
+                                            deliveryCost={deliveryCost}
+                                          />
                                         </td>
                                       </tr>
                                     </table>
@@ -913,9 +843,13 @@ export default function OrderSuccess({
                                         className="align-middle px-auto text-center"
                                         align="center"
                                       >
-                                        <Button className="text-center font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider">
+                                        <a
+                                          href={`${clientUrl}/order-success?order-number=${orderNumber}`}
+                                          target="_blank"
+                                          className="block text-center self-center no-underline mx-auto text-inherit font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider"
+                                        >
                                           VIEW ORDER
-                                        </Button>
+                                        </a>
                                       </Container>
 
                                       <Text className="text-dark-gray font-semibold tracking-wider ">
@@ -935,9 +869,13 @@ export default function OrderSuccess({
                                         className="align-middle px-auto text-center"
                                         align="center"
                                       >
-                                        <Button className="text-center font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider">
+                                        <a
+                                          href={`${clientUrl}/return-information`}
+                                          target="_blank"
+                                          className="block text-center self-center no-underline mx-auto text-inherit font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider"
+                                        >
                                           RETURN INFORMATION
-                                        </Button>
+                                        </a>
                                       </Container>
                                     </Section>
                                   </td>
@@ -946,16 +884,7 @@ export default function OrderSuccess({
                             </td>
                           </tr>
 
-                          <Container
-                            className="bg-light-grey text-center py-4 m-0 !min-w-[600px] max-w-[600px]"
-                            align="center"
-                          >
-                            <Text className="m-0 p-0 text-xs">Thanks,</Text>
-
-                            <Text className="m-0 p-0 font-semibold text-xs">
-                              The GLAMO team
-                            </Text>
-                          </Container>
+                          <Thanks />
 
                           <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] max-w-[600px]">
                             <Text className="m-0 p-0 font-semibold text-base pb-2">
@@ -1005,121 +934,6 @@ export default function OrderSuccess({
                               })}{' '}
                             </Section>
                           </Container>
-                          <Container className="bg-[#333333] text-white p-5 !min-w-[600px] max-w-[600px] w-full">
-                            <Section>
-                              <Row align="center">
-                                <Column>
-                                  <Text className="text-center font-bold">
-                                    Find inspiration
-                                  </Text>
-                                  {/* <Container> */}
-                                  <Row
-                                    className="w-fit border-spacing-x-4"
-                                    align="center"
-                                  >
-                                    {[
-                                      { icon: `icons8-facebook-48+(1).png` },
-
-                                      {
-                                        icon: 'icons8-instagram-48+(1).png',
-                                        shinkIcon: true,
-                                        style: {
-                                          background:
-                                            'linear-gradient(115deg, #f9ce34, #ee2a7b, #6228d7)',
-                                        },
-                                      },
-                                      {
-                                        icon: 'icons8-pinterest-48.png',
-                                      },
-                                      {
-                                        icon: 'icons8-twitter-50.png',
-                                        style: {
-                                          background: '#1da1f2',
-                                        },
-                                        shinkIcon: true,
-                                      },
-                                      {
-                                        icon: 'icons8-tiktok-48.png',
-                                        style: {
-                                          background: '#eee',
-                                        },
-                                        shinkIcon: true,
-                                      },
-                                    ].map(
-                                      ({
-                                        icon,
-                                        style,
-                                        imgStyle,
-
-                                        shinkIcon,
-                                      }) => {
-                                        return (
-                                          <Column
-                                            key={uuidv4()}
-                                            className="!w-7 !h-7 text-center rounded-full align-middle"
-                                            align="center"
-                                            style={style}
-                                          >
-                                            <Img
-                                              src={`${url}/${icon}`}
-                                              style={imgStyle}
-                                              className={`${
-                                                shinkIcon
-                                                  ? '!w-[60%] !h-[60%]'
-                                                  : 'w-full h-full'
-                                              } object-contain mx-auto`}
-                                            />
-                                          </Column>
-                                        );
-                                      },
-                                    )}
-                                  </Row>
-                                </Column>
-                                <Column>
-                                  <Text className="text-center font-bold tracking-wider">
-                                    Get the app
-                                  </Text>
-
-                                  <Row className="w-fit border-spacing-x-1">
-                                    <Column className="!w-[100px] !h-[28px]">
-                                      <Img
-                                        src={`${url}/google-badge.png`}
-                                        className="w-[100px] !h-[28px]"
-                                      />
-                                    </Column>
-                                    <Column className="!w-[100px]">
-                                      <Img
-                                        src={`${url}/apple-badge.png`}
-                                        className="w-[100px] !h-[28px]"
-                                      />
-                                    </Column>
-                                  </Row>
-                                </Column>
-                              </Row>
-
-                              {/* <Row className='mt-20'> */}
-                              <Text className="pt-10 text-xs leading-4">
-                                *GLAMO has estimated this date on the basis of
-                                your expected delivery date and the refunds
-                                window applicable to your jurisdiction. Please
-                                see website T&Cs for more details on returns and
-                                refunds, and for the refunds window applicable
-                                to your jurisdiction.
-                              </Text>
-                              <Text className="text-xs leading-4">
-                                This inbox is not attended so please don’t reply
-                                to this email. This is a service email. You will
-                                receive these no matter what your marketing
-                                communication preferences are.
-                              </Text>
-                              <Text className="text-xs leading-4">
-                                We’ll always keep your data safe and secure.
-                                Click here to know why we need it and how we use
-                                it.
-                              </Text>
-                              {/* </Row> */}
-                            </Section>
-                          </Container>
                         </table>
                       </td>
                     </tr>
@@ -1129,7 +943,7 @@ export default function OrderSuccess({
             </table>
           </div>
         </Body>
-      </Tailwind>
+      </EmailTailwind>
     </Html>
   );
 }

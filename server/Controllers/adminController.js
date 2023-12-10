@@ -3,12 +3,48 @@ import User from '../Models/user.js';
 import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import { body, check, validationResult } from 'express-validator';
+import Order from '../Models/order.js';
 
+import 'dotenv/config.js';
+
+import Stripe from 'stripe';
+import dayjs from 'dayjs';
+const stripe = Stripe(process.env.STRIPE_KEY);
 export const count_all = asyncHandler(async (req, res, next) => {
   const userCount = await User.countDocuments();
+  const orderCount = await Order.countDocuments();
+  const balance = await stripe.balance.retrieve();
+  const orders = await Order.find()
+    .populate('items.product')
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .exec();
+  const findGBPBalance = balance?.available?.find(
+    (item) => item.currency == 'gbp',
+  );
 
+  const todayDate = dayjs()
+    .set('hour', 0)
+    .set('minute', 0)
+    .set('second', 0)
+    .unix();
+  const charges = await stripe.charges.search({
+    query: `created>${todayDate}`,
+  });
+
+  const todayAmount = charges?.data?.reduce(
+    (accumulater, charge) => (accumulater += charge?.amount),
+    0,
+  );
+
+  console.log({ charges, todayAmount });
+  const amount = findGBPBalance?.amount?.toString();
   res.status(200).json({
     userCount,
+    orderCount,
+    todayAmount: (todayAmount / 100).toFixed(2),
+    balance: (amount / 100).toFixed(2),
+    orders: orders,
   });
 });
 

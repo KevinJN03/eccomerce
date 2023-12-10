@@ -764,8 +764,9 @@ export const getOrders = [
       lean: true,
     })
       .populate('items.product')
+
       .exec();
 
-    return res.status(200).send({ success: true, orders: getUserOrder });
+    return res.status(200).send({ success: true, orders: getUserOrder?.reverse() });
   }),
 ];

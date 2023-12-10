@@ -3,13 +3,35 @@ import glamo from '../../assets/icons/glamo-black-logo.svg';
 import adminLogo from '../../assets/icons/admin.png';
 import SignUp from './SignUp';
 import Login from './Login';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import disableLayout from '../../hooks/disableLayout';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
+    disableLayout();
     const [option, setOption] = useState(loginorSignup);
 
+    const location = useLocation();
+
+    useEffect(() => {
+        console.log({ location });
+        const route = location.pathname.split('/').slice(-1)[0];
+
+        const routesArray = [
+            'portal',
+            'forget-password',
+            'sent',
+            'reset-password',
+        ];
+        if (routesArray.includes(route)) {
+            setOption(() => 'login');
+        } else {
+            setOption(() => route);
+        }
+        console.log(route);
+    }, [location.pathname]);
     const { authenticated } = useAuth();
 
     const navigate = useNavigate();
@@ -19,9 +41,23 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
             navigate('/my-account');
         }
     }, []);
+
+    const outletVariant = {
+        initial: {
+            opacity: 0.1,
+        },
+        animate: {
+            opacity: 1,
+            transition: { duration: 0.5 },
+        },
+        exit: {
+            opacity: 0,
+            transition: { duration: 2 },
+        },
+    };
     return (
         <>
-            <section className="login-signup-page ">
+            <section className="login-signup-page min-h-screen">
                 <section
                     id="login-signup-container"
                     className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
@@ -40,10 +76,11 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                             />
                         )}
                     </Link>
-                    <div id="login-signup-option">
+                    <div id="login-signup-option" className="relative">
                         {!admin && (
                             <>
-                                <span
+                                <Link
+                                    to={!admin && 'signup'}
                                     onClick={() => setOption('signup')}
                                     className={
                                         option == 'signup'
@@ -51,12 +88,14 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                             : 'not-active-option'
                                     }
                                 >
-                                    <Link to={!admin && '/signup'}>Join</Link>
-                                </span>
-                                <span id="midldle-border"></span>
+                                    JOIN
+                                </Link>
+                                {/* <span id="midldle-border"></span> */}
                             </>
                         )}
-                        <span
+                        <div className="divider absolute top-2/4 m-0 h-3/6 w-[2px] translate-y-[-50%] bg-[var(--light-grey)] p-0"></div>
+                        <Link
+                            to={!admin && 'login'}
                             onClick={() => setOption('login')}
                             className={
                                 option == 'login'
@@ -64,15 +103,23 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                     : 'not-active-option'
                             }
                         >
-                            <Link to={!admin && '/login'}>Sign In</Link>
-                        </span>
+                            SIGN IN
+                        </Link>
                     </div>
-                    <section id="form-container">
-                        {loginorSignup == 'login' && (
-                            <Login admin={admin} handleSubmit={handleSubmit} />
-                        )}
-                        {loginorSignup == 'signup' && <SignUp />}
-                    </section>
+                    <AnimatePresence
+                    
+                    >
+                        <motion.section
+                        key={location?.pathname}
+                            variants={outletVariant}
+                            initial={'initial'}
+                            animate={'animate'}
+                           
+                            className="mt-10 flex w-full flex-col items-center justify-center"
+                        >
+                            <Outlet />
+                        </motion.section>
+                    </AnimatePresence>
                 </section>
                 <div className="mt-2 flex flex-row gap-2 pb-5 text-xs underline underline-offset-2">
                     <span>

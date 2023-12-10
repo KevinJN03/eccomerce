@@ -13,13 +13,15 @@ import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import { Link } from 'react-router-dom';
 import './sidebar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
+import glamo_icon from '../../../../../dist/assets/glamo-black-logo-61d90fbe.svg'
 function SideBar({}) {
     const { darkMode, dispatch } = useDarkMode();
     return (
         <section className="side-bar">
             <div className="top">
                 <Link to="/admin">
-                    <span className="logo">glamo</span>
+                    {/* <span className="logo">glamo</span> */}
+                    <img src={glamo_icon} alt='glamo icon' className='w-28' />
                 </Link>
             </div>
             

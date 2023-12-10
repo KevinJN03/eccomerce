@@ -1,4 +1,12 @@
 .user-dashboard {
+
+    .btn {
+        @apply rounded-none bg-white;
+    }
+
+    .btn-active{
+        @apply bg-primary border-none #{!important};
+    }
     .active-btn {
         @apply bg-gray-50 #{!important};
 

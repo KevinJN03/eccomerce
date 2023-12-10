@@ -39,7 +39,7 @@ function Login({ handleSubmit, admin }) {
             });
     };
     return (
-        <>
+        <section className='w-8/12 flex flex-col flex-nowrap'>
             <Input
                 value={email}
                 property={'email'}
@@ -55,11 +55,12 @@ function Login({ handleSubmit, admin }) {
                 error={error}
                 setError={setError}
                 label={'PASSWORD'}
+                type={'password'}
             />
 
             <Link
-                to="/forget-password"
-                className="text-s font-normal tracking-wide"
+                to="/portal/forget-password"
+                className="text-s font-normal tracking-wide text-center self-center hover:underline underline-offset-4 transition-all"
             >
                 Forgot password?
             </Link>
@@ -85,7 +86,7 @@ function Login({ handleSubmit, admin }) {
                     <span className="text-white">SIGN IN</span>
                 )}
             </button>
-        </>
+        </section>
     );
 }
 

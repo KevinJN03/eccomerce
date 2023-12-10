@@ -17,6 +17,20 @@ const CLIENT_URL = process.env.CLIENT_URL;
 const stripeWebHooks = asyncHandler(async (req, res, next) => {
   try {
     const event = req.body;
+
+    if (event.type === 'charge.failed') {
+      console.log({ process: 'failed' });
+      const { payment_intent } = event.data.object;
+      const paymentIntent =
+        await stripe.paymentIntents.retrieve(payment_intent);
+
+      const orderNumber = paymentIntent.metadata?.orderNumber;
+
+      const order = await Order.findByIdAndUpdate(orderNumber, {
+        status: 'failed',
+      });
+    }
+
     if (event.type === 'charge.succeeded') {
       const { payment_intent } = event.data.object;
       const paymentIntent =
@@ -151,6 +165,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             deliveryName: order?.shipping_option?.name,
             shipping_address: order?.shipping_address,
             items: updateOrder?.items,
+            status: 'received',
           };
           const emailHtml = render(<OrderSuccess {...props} />);
 
@@ -215,7 +230,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       res.status(200).send({ success: true });
     }
   } catch (error) {
-    cosnole.error(error);
+    console.error(error);
     res.status(500).send({ error });
   }
 });

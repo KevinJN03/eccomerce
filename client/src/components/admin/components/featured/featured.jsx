@@ -3,7 +3,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import TrendingDownOutlinedIcon from '@mui/icons-material/TrendingDownOutlined';
-function Featured({}) {
+function Featured({ todayAmount }) {
     return (
         <section className="featured">
             <div className="top">
@@ -19,7 +19,7 @@ function Featured({}) {
                     />
                 </div>
                 <p className="title">Total sales made today</p>
-                <p className="amount">$420</p>
+                <p className="amount">£{todayAmount}</p>
                 <p className="description">
                     Previous transactions processing. Last payments may not be
                     included
