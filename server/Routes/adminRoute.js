@@ -21,12 +21,14 @@ import {
   get_all_delivery_profile,
   get_single_delivery_profile,
   update_single_delivery_profile,
+  getAllOrders
 } from '../Controllers/deliveryProfileController.js';
 const router = express.Router();
 router.get('/product/:id', get_single_admin_product);
 router.get('/product/:id/variation', getVariations);
 
 router.get('/count', count_all);
+router.get('/orders', getAllOrders)
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:id', delete_product);
 router.delete('/delete/product/many/:id', delete_many_product);

@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 
 import DeliveryProfile from '../Models/deliveryProfile.js';
+import Order from '../Models/order.js';
 
 export const create_delivery_profile = asyncHandler(async (req, res, next) => {
   const body = req.body;
@@ -53,3 +54,12 @@ export const get_many_delivery_profile = asyncHandler(
     res.status(200).send(profiles);
   },
 );
+
+export const getAllOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find({}, null, {
+    populate: { path: 'items.product' },
+    sort: { createdAt: '-1' },
+  });
+
+  return res.status(200).send({ succes: true, orders });
+});

@@ -41,7 +41,7 @@ function SideBar({}) {
                         <StoreRoundedIcon className="icons" />
                         <span>Products</span>
                     </Link>
-                    <Link>
+                    <Link to ='/admin/orders'>
                         <CreditCardRoundedIcon className="icons" />
                         <span>Orders</span>
                     </Link>

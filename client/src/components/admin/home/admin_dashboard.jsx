@@ -5,15 +5,15 @@ import Featured from '../components/featured/featured';
 import Chart from '../components/chart/chart';
 import Transaction_Table from '../components/table/transaction_table';
 import { Outlet } from 'react-router-dom';
-import axios from '../../../api/axios';
+import { adminAxios } from '../../../api/axios';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 function Admin_Dashboard() {
     const [data, setData] = useState({});
 
     useEffect(() => {
-        axios
-            .get('/admin/count')
+        adminAxios
+            .get('/count')
             .then((res) => {
                 if (res.status == 200) {
                     setData(() => res.data);
@@ -46,7 +46,7 @@ function Admin_Dashboard() {
 
             <div className="listContainer">
                 <div className="listTitle">Latest Transactions</div>
-              {data?.orders &&  <Transaction_Table data={data?.orders}/>}
+                {data?.orders && <Transaction_Table data={data?.orders} />}
             </div>
         </>
     );

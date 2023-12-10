@@ -60,17 +60,21 @@ function Transaction_Table({ data }) {
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
                 <TableHead>
                     <TableRow>
-                        <TableCell className="tableCell">
-                            Transaction ID
-                        </TableCell>
-                        <TableCell className="tableCell">Product</TableCell>
-                        <TableCell className="tableCell">Customer</TableCell>
-                        <TableCell className="tableCell">Date</TableCell>
-                        <TableCell className="tableCell">Amount</TableCell>
-                        <TableCell className="tableCell">
-                            Payment Method
-                        </TableCell>
-                        <TableCell className="tableCell">Status</TableCell>
+                        {[
+                            'Transaction ID',
+                            'Product',
+                            'Customer',
+                            'Date',
+                            'Amount',
+                            'Payment Method',
+                            'Status',
+                        ].map((title) => {
+                            return (
+                                <TableCell className="tableCell" key={title}>
+                                    <p className='font-gotham text-sm'>{title}</p>
+                                </TableCell>
+                            );
+                        })}
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -84,8 +88,11 @@ function Transaction_Table({ data }) {
                                     {row?.items?.map((item) => {
                                         return (
                                             <span
+                                            key={uuidv4()}
                                                 className="tooltip tooltip-top"
-                                                data-tooltip={item?.product.title}
+                                                data-tooltip={
+                                                    item?.product.title
+                                                }
                                             >
                                                 <img
                                                     src={
