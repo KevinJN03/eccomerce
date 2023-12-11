@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import Error from '../../../../error/error.jsx';
 import { adminAxios } from '../../../../../api/axios';
 import userIcon from '../../../../../assets/icons/user.png';
+import { add } from 'lodash';
 function Single_User({}) {
     const [user, setUser] = useState({});
     const [error, setError] = useState();
@@ -30,12 +31,10 @@ function Single_User({}) {
             });
     }, []);
 
+    const address = user?.default_address?.shipping_address;
     return (
         <div className="single">
-            <Sidebar />
-
             <div className="singleContainer">
-                <Navbar />
                 {error && (
                     <Error link={'/admin/users'} buttonText={'GO TO USERS'} />
                 )}
@@ -49,18 +48,18 @@ function Single_User({}) {
                                 <h1 className="title">Information</h1>
                                 <div className="item">
                                     <img
-                                        src={user.profileImg || userIcon}
+                                        src={user?.profileImg || userIcon}
                                         alt=""
                                         className="itemImg"
                                     />
                                     <div className="details">
-                                        <h1 className="itemTitle">{`${user.firstName} ${user.lastName}`}</h1>
+                                        <h1 className="itemTitle">{`${user?.firstName} ${user?.lastName}`}</h1>
                                         <div className="detailItem">
                                             <span className="itemKey">
                                                 Email:
                                             </span>
                                             <span className="itemValue">
-                                                {user.email}
+                                                {user?.email}
                                             </span>
                                         </div>
                                         <div className="detailItem">
@@ -68,7 +67,11 @@ function Single_User({}) {
                                                 Phone:
                                             </span>
                                             <span className="itemValue">
-                                                {user.mobile}
+                                                {
+                                                    user?.default_address
+                                                        ?.shipping_address
+                                                        ?.mobile
+                                                }
                                             </span>
                                         </div>
                                         <div className="detailItem">
@@ -76,19 +79,37 @@ function Single_User({}) {
                                                 Address:
                                             </span>
                                             <span className="itemValue">
-                                                {(user.address &&
-                                                    `${user.address[0].line1}, ${user.address[0].line2} `) ||
-                                                    'N/A'}
+                                                {address && (
+                                                    <>
+                                                        <p>
+                                                            {`${
+                                                                address?.address_1
+                                                            }, ${
+                                                                address?.address_2 ||
+                                                                ''
+                                                            }`}
+                                                        </p>
+                                                        <p>
+                                                            {address?.city ||
+                                                                ''}
+                                                        </p>
+                                                        <p>
+                                                            {`${address?.county}, ${address?.postCode}`}
+                                                        </p>
+                                                    </>
+                                                )}
+                                                {/* {(user.address &&
+                                                    `${address_1, ${user.address[0].line2} `) ||
+                                                    'N/A'} */}
                                             </span>
                                         </div>
                                         <div className="detailItem">
                                             <span className="itemKey">
                                                 Country:
                                             </span>
+
                                             <span className="itemValue">
-                                                {(user.address &&
-                                                    user.address[0].country) ||
-                                                    'N/A'}
+                                                {address?.country || ''}
                                             </span>
                                         </div>
                                     </div>
@@ -103,7 +124,7 @@ function Single_User({}) {
                         </div>
                         <div className="bottom">
                             <h1 className="title">Last Transactions</h1>
-                            <Transaction_Table />
+                            {/* <Transaction_Table /> */}
                         </div>
                     </>
                 )}

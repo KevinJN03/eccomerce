@@ -13,68 +13,30 @@ function Datatable({
     row,
     addBtn,
     viewBtn,
+    actionColumn,
+    selection,
+    setSelection,
 }) {
     const [modalCheck, setModalCheck] = useState(false);
-    const [selection, setSelection] = useState([]);
-    const [checkBox, setCheckBox] = useState(true)
+
+    const [checkBox, setCheckBox] = useState(true);
     const [id, setId] = useState(null);
     const headerTitle = type[0].toUpperCase() + type.substring(1);
     const deleteButtonClick = (type, id) => {
-        
         setId(id);
         setModalCheck(true);
         // setCheckBox(false)
     };
     const deleteAllClick = () => {
         setModalCheck(true);
-       
     };
-    const actionColumn = [
-        {
-            field: 'action',
-            headerName: 'Action',
-            width: 200,
-            renderCell: (params) => {
-                return (
-                    <div className="cellAction">
-                        {viewBtn ? (
-                            <button
-                                type="button"
-                                className="viewButton"
-                                onClick={() => viewBtn(params.row._id)}
-                            >
-                                View
-                            </button>
-                        ) : (
-                            <Link to={`edit/${params.row._id}`}>
-                                <div className="viewButton">View</div>
-                            </Link>
-                        )}
-
-                        { selection.length < 2 && 
-                        <button
-                            className="deleteButton"
-                            onClick={() =>
-                                deleteButtonClick(type, params.row._id)
-                            }
-                        >
-                            
-                            
-                            Delete
-                        </button>
-                        }
-                    </div>
-                );
-            },
-        },
-    ];
 
     return (
         <section className="datatable">
             <div className="datatableTitle">
                 Add New {headerTitle}
                 <div>
-                    {selection.length > 0 && (
+                    {selection?.length > 0 && (
                         <button
                             type="button"
                             className="link mr-2 !border-red-500 !text-red-500"
@@ -98,7 +60,7 @@ function Datatable({
                 getRowId={(row) => row._id}
                 className="datagrid"
                 rows={row}
-                columns={column.concat(actionColumn)}
+                columns={actionColumn ? column.concat(actionColumn) : column}
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 10 },
@@ -106,7 +68,9 @@ function Datatable({
                 }}
                 pageSizeOptions={[5, 10, 20]}
                 checkboxSelection
-                isRowSelectable={(params) => params.row.name != 'Express Delivery'}
+                isRowSelectable={(params) =>
+                    params.row.name != 'Express Delivery'
+                }
                 onRowSelectionModelChange={(select) => {
                     setSelection(select);
                 }}

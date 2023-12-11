@@ -226,7 +226,10 @@ export const signUp_user = [
 export const get_single_user = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await User.findById(id);
+  const user = await User.findById(id, null, { populate: {
+    path: 'default_address.shipping_address'
+  }});
+  console.log(user?.default_address)
 
   if (!user) {
     res.status(404).send('User Not Found');

@@ -8,6 +8,7 @@ import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../../../api/axios.js';
 import { userColumn } from './datatable/datatable-source.jsx';
+import actionColumn from './datatable/actionColumn.jsx';
 function All_Users() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -25,6 +26,18 @@ function All_Users() {
                 'error at fetchng users in admin', error;
             });
     }, [loading]);
+
+    const deleteButtonClick = (type, id) => {
+        setId(id);
+        setModalCheck(true);
+        // setCheckBox(false)
+    };
+
+    const columnAction = actionColumn({
+        viewBtn: false,
+        selection,
+        deleteButtonClick,
+    });
     return (
         <Datatable
             type="user"
@@ -32,6 +45,10 @@ function All_Users() {
             loading={loading}
             column={userColumn}
             row={users}
+            selection={selection}
+            setSelection={setSelection}
+            deleteButtonClick={deleteButtonClick}
+            actionColumn={columnAction}
         />
     );
 }

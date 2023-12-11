@@ -303,7 +303,7 @@ function Router({ Header, Footer }) {
                                     element: <List />,
                                 },
                                 {
-                                    path: ':id/',
+                                    path: 'edit/:id/',
                                     element: <Single_User />,
                                 },
                                 {
