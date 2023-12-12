@@ -4,12 +4,11 @@
     "hosts": [
       "localhost",
       "192.168.1.89",
-      "127.0.0.1",
-      "172.31.192.1"
+      "127.0.0.1"
     ],
     "hash": {
-      "key": "f0f6c35f3448c85c5f979ddb7dc869fd9b5e1a7df5ee23cd3f9a261b2e6ae4a6",
-      "cert": "4cc12f05281c39f694636fb876d973b1136a58dd81a6b08d171e99ceb6dd1902"
+      "key": "b131d15e63651567580c726be3626892b190d0d99530757a9101ee1042d734e8",
+      "cert": "7ff2c4a22af52cdffebace7d51dbab7988ae5bd02db28ac161005867692a9ad8"
     }
   },
   "configFilePath": "C:\\Users\\kevin\\Desktop\\repos\\eccomerce\\client\\cert\\config.json"

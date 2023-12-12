@@ -250,6 +250,7 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
     .toDate();
 
   console.log({ sixMonthsFromToday });
+
   const getOrdersByMonth = await Order.aggregate([
     {
       $match: {

@@ -34,7 +34,7 @@ function Single_User({}) {
         'Oct',
         'Nov',
         'Dec',
-    ];
+    ].map((month, idx) => ({ month, num: idx + 1 }));
 
     useEffect(() => {
         adminAxios
@@ -45,7 +45,22 @@ function Single_User({}) {
 
                 // setChartData(() => data?.getOrdersByMonth);
 
-                const todaysMonth = dayjs().month();
+                // const todaysMonth = dayjs().month() + 1;
+                const todaysMonth = 12;
+                const sixMonthsFromToday = todaysMonth - 6;
+                let monthsArray = null;
+
+                // 6 months from jan = 1- 6 = -5
+                // 12 -5 = 7 july
+
+                if (sixMonthsFromToday < 1) {
+                    monthsArray = months
+                        .slice(12 + sixMonthsFromToday)
+                        .concat(months.slice(0, todaysMonth));
+                } else {
+                    monthsArray = months.slice(todaysMonth - 6, todaysMonth);
+                }
+                console.log({ monthsArray });
                 let pointer = null;
                 const getOrdersByMonth = data?.getOrdersByMonth;
 
@@ -55,9 +70,9 @@ function Single_User({}) {
 
                 let counter = 0;
                 console.log({ pointer });
-                let newData = months.map((item, idx) => {
+                let newData = monthsArray.map(({month, num}, idx) => {
                     let total = 0;
-                    if (idx + 1 == pointer) {
+                    if (num == pointer) {
                         total = getOrdersByMonth[counter]?.total;
                         if (getOrdersByMonth?.[counter + 1]) {
                             pointer = getOrdersByMonth?.[counter + 1]?._id;
@@ -65,7 +80,7 @@ function Single_User({}) {
                         }
                     }
                     return {
-                        month: item,
+                        month: month,
                         total,
                     };
                 });
