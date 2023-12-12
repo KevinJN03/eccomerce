@@ -8,15 +8,40 @@ import { Outlet } from 'react-router-dom';
 import { adminAxios } from '../../../api/axios';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+
+const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+];
 function Admin_Dashboard() {
     const [data, setData] = useState({});
-
+    const [chartData, setChartData] = useState([]);
     useEffect(() => {
         adminAxios
             .get('/count')
             .then((res) => {
                 if (res.status == 200) {
                     setData(() => res.data);
+
+                    const getOrdersByMonth = res.data?.getOrdersByMonth
+                    console.log({getOrdersByMonth})
+                    const newData = months.map((item, idx) => {
+                        return {
+                            month: item,
+                            total: idx,
+                        };
+                    });
+                    setChartData(() => newData);
                 }
             })
             .catch((error) => {
@@ -41,7 +66,7 @@ function Admin_Dashboard() {
             </div>
             <div className="charts">
                 <Featured todayAmount={data?.todayAmount} />
-                <Chart />
+                <Chart data={chartData} />
             </div>
 
             <div className="listContainer">

@@ -8,52 +8,6 @@ import Paper from '@mui/material/Paper';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 function Transaction_Table({ data }) {
-    const rows = [
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Cancelled',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Pending',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Approved',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Pending',
-        },
-    ];
 
     return (
         <TableContainer component={Paper} className="table">
@@ -79,7 +33,7 @@ function Transaction_Table({ data }) {
                 </TableHead>
                 <TableBody>
                     {data.map((row) => (
-                        <TableRow key={row.id}>
+                        <TableRow key={row._id}>
                             <TableCell className="tableCell">
                                 {row._id}
                             </TableCell>

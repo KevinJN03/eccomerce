@@ -10,20 +10,69 @@ import Error from '../../../../error/error.jsx';
 import { adminAxios } from '../../../../../api/axios';
 import userIcon from '../../../../../assets/icons/user.png';
 import { add } from 'lodash';
+import dayjs from 'dayjs';
+import updateLocale from 'dayjs/plugin/updateLocale.js';
+dayjs.extend(updateLocale);
+
 function Single_User({}) {
     const [user, setUser] = useState({});
+    const [orders, setOrders] = useState([]);
+    const [chartData, setChartData] = useState([]);
     const [error, setError] = useState();
     const { id } = useParams();
-    id;
+
+    const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
+
     useEffect(() => {
         adminAxios
             .get(`user/${id}`)
-            .then((res) => {
-                if (res.status == 200) {
-                    let data = res.data;
-                    data;
-                    setUser(data);
+            .then(({ data }) => {
+                setOrders(() => data?.orders);
+                setUser(() => data?.user);
+
+                // setChartData(() => data?.getOrdersByMonth);
+
+                const todaysMonth = dayjs().month();
+                let pointer = null;
+                const getOrdersByMonth = data?.getOrdersByMonth;
+
+                if (getOrdersByMonth.length > 0) {
+                    pointer = getOrdersByMonth[0]?._id;
                 }
+
+                let counter = 0;
+                console.log({ pointer });
+                let newData = months.map((item, idx) => {
+                    let total = 0;
+                    if (idx + 1 == pointer) {
+                        total = getOrdersByMonth[counter]?.total;
+                        if (getOrdersByMonth?.[counter + 1]) {
+                            pointer = getOrdersByMonth?.[counter + 1]?._id;
+                            counter++;
+                        }
+                    }
+                    return {
+                        month: item,
+                        total,
+                    };
+                });
+
+                console.log({ newData });
+
+                setChartData(() => newData);
             })
             .catch((error) => {
                 'error at single user: ', error;
@@ -62,61 +111,64 @@ function Single_User({}) {
                                                 {user?.email}
                                             </span>
                                         </div>
-                                        <div className="detailItem">
-                                            <span className="itemKey">
-                                                Phone:
-                                            </span>
-                                            <span className="itemValue">
-                                                {
-                                                    user?.default_address
-                                                        ?.shipping_address
-                                                        ?.mobile
-                                                }
-                                            </span>
-                                        </div>
-                                        <div className="detailItem">
-                                            <span className="itemKey">
-                                                Address:
-                                            </span>
-                                            <span className="itemValue">
-                                                {address && (
-                                                    <>
-                                                        <p>
-                                                            {`${
-                                                                address?.address_1
-                                                            }, ${
-                                                                address?.address_2 ||
-                                                                ''
-                                                            }`}
-                                                        </p>
-                                                        <p>
-                                                            {address?.city ||
-                                                                ''}
-                                                        </p>
-                                                        <p>
-                                                            {`${address?.county}, ${address?.postCode}`}
-                                                        </p>
-                                                    </>
-                                                )}
-                                                {/* {(user.address &&
-                                                    `${address_1, ${user.address[0].line2} `) ||
-                                                    'N/A'} */}
-                                            </span>
-                                        </div>
-                                        <div className="detailItem">
-                                            <span className="itemKey">
-                                                Country:
-                                            </span>
+                                        {address && (
+                                            <>
+                                                <div className="detailItem">
+                                                    <span className="itemKey">
+                                                        Phone:
+                                                    </span>
+                                                    <span className="itemValue">
+                                                        {
+                                                            user
+                                                                ?.default_address
+                                                                ?.shipping_address
+                                                                ?.mobile
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="detailItem">
+                                                    <span className="itemKey">
+                                                        Address:
+                                                    </span>
+                                                    <span className="itemValue">
+                                                        {address && (
+                                                            <>
+                                                                <p>
+                                                                    {`${
+                                                                        address?.address_1
+                                                                    }, ${
+                                                                        address?.address_2 ||
+                                                                        ''
+                                                                    }`}
+                                                                </p>
+                                                                <p>
+                                                                    {address?.city ||
+                                                                        ''}
+                                                                </p>
+                                                                <p>
+                                                                    {`${address?.county}, ${address?.postCode}`}
+                                                                </p>
+                                                            </>
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <div className="detailItem">
+                                                    <span className="itemKey">
+                                                        Country:
+                                                    </span>
 
-                                            <span className="itemValue">
-                                                {address?.country || ''}
-                                            </span>
-                                        </div>
+                                                    <span className="itemValue">
+                                                        {address?.country || ''}
+                                                    </span>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="right">
                                 <Chart
+                                    data={chartData}
                                     aspect={3 / 1}
                                     title="User Spending ( Last 6 Months)"
                                 />
@@ -124,6 +176,10 @@ function Single_User({}) {
                         </div>
                         <div className="bottom">
                             <h1 className="title">Last Transactions</h1>
+
+                            {orders.length > 0 && (
+                                <Transaction_Table data={orders} />
+                            )}
                             {/* <Transaction_Table /> */}
                         </div>
                     </>
