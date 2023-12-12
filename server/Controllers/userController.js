@@ -22,6 +22,7 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 import Order from '../Models/order.js';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -226,12 +227,62 @@ export const signUp_user = [
 export const get_single_user = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await User.findById(id);
+  const user = await User.findById(id, null, {
+    populate: {
+      path: 'default_address.shipping_address',
+    },
+  });
+
+  const orders = await Order.find({ customer: id }, null, {
+    sort: { createdAt: -1 },
+    limit: 5,
+    populate: {
+      path: 'items.product',
+    },
+  });
+
+  const sixMonthsFromToday = dayjs()
+    .subtract(6, 'month')
+    .set('D', 1)
+    .set('h', 1)
+    .set('m', 0)
+    .set('s', 0)
+    .toDate();
+
+  console.log({ sixMonthsFromToday });
+
+  const getOrdersByMonth = await Order.aggregate([
+    {
+      $match: {
+        status: {
+          $in: ['received', 'shipped', 'delivered'],
+        },
+        createdAt: { $gte: sixMonthsFromToday },
+        customer: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        total: { $sum: '$transaction_cost.total' },
+
+        /* status: { $match: { $or: ['received', 'shipped', 'delivered'] } }, */
+        // customer: { $match: id },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]).exec();
+
+  console.log({ getOrdersByMonth });
 
   if (!user) {
     res.status(404).send('User Not Found');
   } else {
-    res.status(200).send(user);
+    res.status(200).send({ user, orders, getOrdersByMonth });
   }
 });
 
@@ -767,6 +818,8 @@ export const getOrders = [
 
       .exec();
 
-    return res.status(200).send({ success: true, orders: getUserOrder?.reverse() });
+    return res
+      .status(200)
+      .send({ success: true, orders: getUserOrder?.reverse() });
   }),
 ];

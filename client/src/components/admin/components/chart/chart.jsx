@@ -7,34 +7,10 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
+ 
 } from 'recharts';
-const data = [
-    {
-        name: 'January',
-        Total: 1200,
-    },
-    {
-        name: 'February',
-        Total: 1200,
-    },
-    {
-        name: 'March',
-        Total: 1400,
-    },
-    {
-        name: 'April',
-        Total: 1200,
-    },
-    {
-        name: 'May',
-        Total: 900,
-    },
-    {
-        name: 'June',
-        Total: 1200,
-    },
-];
-function Chart({}) {
+
+function Chart({    data}) {
     return (
         <section className="chart">
             <div className="title">Last 6 Months (Revenue)</div>
@@ -43,7 +19,7 @@ function Chart({}) {
                     width={730}
                     height={250}
                     data={data}
-                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                    margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
                 >
                     <defs>
                         <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
@@ -59,7 +35,7 @@ function Chart({}) {
                             />
                         </linearGradient>
                     </defs>
-                    <XAxis dataKey="name" stroke="green" />
+                    <XAxis dataKey="month" stroke="green" />
 
                     <CartesianGrid
                         strokeDasharray="3 3"
@@ -68,7 +44,7 @@ function Chart({}) {
                     <Tooltip />
                     <Area
                         type="monotone"
-                        dataKey="Total"
+                        dataKey="total"
                         stroke="#8884d8"
                         fillOpacity={1}
                         fill="url(#total)"

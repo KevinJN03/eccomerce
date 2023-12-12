@@ -39,6 +39,40 @@ export const count_all = asyncHandler(async (req, res, next) => {
 
   console.log({ charges, todayAmount });
   const amount = findGBPBalance?.amount?.toString();
+
+  const sixMonthsFromToday = dayjs()
+    .subtract(6, 'month')
+    .set('D', 1)
+    .set('h', 1)
+    .set('m', 0)
+    .set('s', 0)
+    .toDate();
+
+  console.log({ sixMonthsFromToday });
+  const getOrdersByMonth = await Order.aggregate([
+    {
+      $match: {
+        status: {
+          $in: ['received', 'shipped', 'delivered'],
+        },
+        createdAt: { $gte: sixMonthsFromToday },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: '$createdAt' },
+        total: { $sum: '$transaction_cost.total' },
+
+        /* status: { $match: { $or: ['received', 'shipped', 'delivered'] } }, */
+        // customer: { $match: id },
+      },
+    },
+    {
+      $sort: {
+        _id: 1,
+      },
+    },
+  ]).exec();
   res.status(200).json({
     userCount,
     orderCount,

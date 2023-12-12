@@ -8,74 +8,32 @@ import Paper from '@mui/material/Paper';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 function Transaction_Table({ data }) {
-    const rows = [
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Cancelled',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Pending',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Approved',
-        },
-        {
-            id: uuidv4(),
-            product: 'Shirt',
-            product_img:
-                'https://images.asos-media.com/products/asos-design-cargo-tapered-trousers-in-black-with-toggles/204062624-1-black?$n_240w$&wid=40&fit=constrain',
-            customer: 'Adam William',
-            date: '1 August',
-            amount: '20.99',
-            method: 'Online',
-            status: 'Pending',
-        },
-    ];
 
     return (
         <TableContainer component={Paper} className="table">
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
                 <TableHead>
                     <TableRow>
-                        <TableCell className="tableCell">
-                            Transaction ID
-                        </TableCell>
-                        <TableCell className="tableCell">Product</TableCell>
-                        <TableCell className="tableCell">Customer</TableCell>
-                        <TableCell className="tableCell">Date</TableCell>
-                        <TableCell className="tableCell">Amount</TableCell>
-                        <TableCell className="tableCell">
-                            Payment Method
-                        </TableCell>
-                        <TableCell className="tableCell">Status</TableCell>
+                        {[
+                            'Transaction ID',
+                            'Product',
+                            'Customer',
+                            'Date',
+                            'Amount',
+                            'Payment Method',
+                            'Status',
+                        ].map((title) => {
+                            return (
+                                <TableCell className="tableCell" key={title}>
+                                    <p className='font-gotham text-sm'>{title}</p>
+                                </TableCell>
+                            );
+                        })}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {data.map((row) => (
-                        <TableRow key={row.id}>
+                        <TableRow key={row._id}>
                             <TableCell className="tableCell">
                                 {row._id}
                             </TableCell>
@@ -84,8 +42,11 @@ function Transaction_Table({ data }) {
                                     {row?.items?.map((item) => {
                                         return (
                                             <span
+                                            key={uuidv4()}
                                                 className="tooltip tooltip-top"
-                                                data-tooltip={item?.product.title}
+                                                data-tooltip={
+                                                    item?.product.title
+                                                }
                                             >
                                                 <img
                                                     src={

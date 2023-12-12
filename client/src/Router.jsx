@@ -56,6 +56,7 @@ import Login from './components/Login-SignUp/Login.jsx';
 import SignUp from './components/Login-SignUp/SignUp.jsx';
 import ResetSent from './components/forget-password/sent.jsx';
 import ResetPassword from './components/forget-password/reset.password.jsx';
+import AdminOrder from './components/admin/order/admin-order.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -279,6 +280,10 @@ function Router({ Header, Footer }) {
                         {index: true,
                         element: <Login/>}
                     ] },
+                    {
+                        path: 'orders',
+                        element: <AdminOrder/>
+                    },
                         {
                             path: 'dashboard/',
                             element: <Admin_Dashboard />,
@@ -298,7 +303,7 @@ function Router({ Header, Footer }) {
                                     element: <List />,
                                 },
                                 {
-                                    path: ':id/',
+                                    path: 'edit/:id/',
                                     element: <Single_User />,
                                 },
                                 {
