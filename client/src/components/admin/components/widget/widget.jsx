@@ -4,12 +4,14 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import { Link } from 'react-router-dom';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-function Widget({ type, amount }) {
+
+import { motion } from 'framer-motion';
+import animationVariant from '../../home/animationVariant';
+function Widget({ type, amount, idx }) {
     let data;
 
     // tempory amount
 
-  
     const diff = 20;
     if (type == 'user') {
         data = {
@@ -44,8 +46,14 @@ function Widget({ type, amount }) {
             icon: <AccountBalanceOutlinedIcon className="icon" />,
         };
     }
+
     return (
-        <div className="widget">
+        <motion.div
+            className="widget"
+            variants={animationVariant(idx)}
+            animate={'animate'}
+            initial={'initial'}
+        >
             <div className="left">
                 <span className="title">{data.title}</span>
                 <span className="counter">
@@ -61,7 +69,7 @@ function Widget({ type, amount }) {
                 </div>
                 {data.icon}
             </div>
-        </div>
+        </motion.div>
     );
 }
 

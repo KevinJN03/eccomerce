@@ -21,7 +21,7 @@ const reducer = (state, action) => {
 
 
 
-export function AdminContextProvider({ children }) {
+export function AdminContextProvider({ children, newValue }) {
     const getAdminUser = JSON.parse(localStorage.getItem('adminUser'));
     const [authAdminUser, authAdminUserDispatch] = useReducer(reducer, getAdminUser);
     const [modalCheck, setModalCheck] = useState(false);
@@ -38,6 +38,7 @@ export function AdminContextProvider({ children }) {
         adminDispatch,
         authAdminUser,
         adminDispatch,
+        ...newValue
     };
     return (
         <AdminContext.Provider

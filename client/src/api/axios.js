@@ -19,19 +19,19 @@ adminAxios.interceptors.response.use(
     },
     function (error) {
         console.log('error here: ', { error });
-        if (error.response?.status == 401) {
-            console.log({ 401: true });
-            window.location.replace(`/admin/login`);
-        }
+        // if (error.response?.status == 401) {
+        //     console.log({ 401: true });
+        //     window.location.replace(`/admin/login`);
+        // }
 
         return Promise.reject(error);
     }
 );
 
-defaultAxios.interceptors.response.use(function (response) {
-    console.log('response: ', response);
+// defaultAxios.interceptors.response.use(function (response) {
+//     console.log('response: ', response);
 
-    // return response;
-});
+//     // return response;
+// });
 
 export { defaultAxios as default, adminAxios };

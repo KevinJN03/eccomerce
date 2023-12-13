@@ -7,23 +7,18 @@ import Datatable from '../components/users/datatable/datatable';
 import { deliveryColumn } from '../components/users/datatable/datatable-source';
 import Modal from '../components/modal/modal';
 import New from '../components/product/new product/delivery/New';
+import { useAdminContext } from '../../../context/adminContext';
 
 export default function Delivery() {
     const [profiles, setProfiles] = useState([]);
     const [deliveryProfile, setDeliveryProfile] = useState({});
+
+    const { deliveryData } = useAdminContext();
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
     // const { dispatch, setModalCheck, content, modalCheck } = useContent();
 
     const [modalCheck, setModalCheck] = useState(false);
-
-    useEffect(() => {
-        fetchProfile(setProfiles);
-    }, []);
-    useEffect(() => {
-        fetchProfile(setProfiles);
-    }, [loading]);
-
     const addClick = () => {
         setType('new');
         setDeliveryProfile(null);
@@ -43,7 +38,7 @@ export default function Delivery() {
             <Datatable
                 type="delivery"
                 column={deliveryColumn}
-                row={profiles}
+                row={deliveryData}
                 setLoading={setLoading}
                 loading={loading}
                 addBtn={addClick}
