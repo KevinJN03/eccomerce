@@ -163,7 +163,7 @@ function Checkout() {
                 setDeliveryDate,
                 isDataSet,
                 isFirstPaymentSet,
-                setIsFirstPaymentSet
+                setIsFirstPaymentSet,
             }}
         >
             <Elements stripe={stripePromise}>

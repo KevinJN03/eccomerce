@@ -249,7 +249,7 @@ function Row({
                                 // animate={inputCheck ? 'inputCheck' : 'uncheck'}
                                 // initial={false}
                                 type="checkbox"
-                                className={`no-animation checkbox !rounded-[3px]`}
+                                className={`no-animation daisy-checkbox !rounded-[3px]`}
                                 /* inputCheck && !variation.disabled */
                                 checked={inputCheck && visible}
                                 onChange={handleCheck}

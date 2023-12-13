@@ -10,21 +10,31 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './sidebar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
-import glamo_icon from '../../../../../dist/assets/glamo-black-logo-61d90fbe.svg'
+import glamo_icon from '../../../../../dist/assets/glamo-black-logo-61d90fbe.svg';
+import axios from '../../../../api/axios';
 function SideBar({}) {
     const { darkMode, dispatch } = useDarkMode();
+    const navigate = useNavigate();
+    const logout = async () => {
+        try {
+            await axios.get('user/logout');
+            navigate('/admin/login');
+        } catch (error) {
+            console.error('error while loginning out', error);
+        }
+    };
     return (
         <section className="side-bar">
             <div className="top">
                 <Link to="/admin">
                     {/* <span className="logo">glamo</span> */}
-                    <img src={glamo_icon} alt='glamo icon' className='w-28' />
+                    <img src={glamo_icon} alt="glamo icon" className="w-28" />
                 </Link>
             </div>
-            
+
             <div className="center">
                 <ul>
                     <p className="title">MAIN</p>
@@ -41,7 +51,7 @@ function SideBar({}) {
                         <StoreRoundedIcon className="icons" />
                         <span>Products</span>
                     </Link>
-                    <Link to ='/admin/orders'>
+                    <Link to="/admin/orders">
                         <CreditCardRoundedIcon className="icons" />
                         <span>Orders</span>
                     </Link>
@@ -76,10 +86,14 @@ function SideBar({}) {
                         <AccountCircleOutlinedIcon className="icons" />
                         <span>Profile</span>
                     </Link>
-                    <Link>
+                    <button type="button" className="" onClick={logout}>
                         <LogoutOutlinedIcon className="icons" />
                         <span>Logout</span>
-                    </Link>
+                    </button>
+                    {/* <Link>
+                        <LogoutOutlinedIcon className="icons" />
+                        <span>Logout</span>
+                    </Link> */}
                 </ul>
             </div>
             <div className="bottom">

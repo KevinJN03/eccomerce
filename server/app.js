@@ -34,8 +34,17 @@ import User from './Models/user.js';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
-const { DBNAME, URL, SECRET, PASSWORD_RESET_JWT_SECRET, CLIENT_URL, SENDER, SALT_ROUNDS } =
-  process.env;
+import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
+import { adminLogin } from './Controllers/adminController.js';
+const {
+  DBNAME,
+  URL,
+  SECRET,
+  PASSWORD_RESET_JWT_SECRET,
+  CLIENT_URL,
+  SENDER,
+  SALT_ROUNDS,
+} = process.env;
 const PORT = 3000;
 const db = () => {
   mongoose
@@ -77,13 +86,14 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/server-status', (req, res) => {
   res.send('OK');
 });
+app.use('/api/admin/login', adminLogin);
 app.use('/api/product', productRoute);
 app.use('/api/coupon', couponRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/search', searchRoute);
 app.use('/api/giftcard', giftCardRoute);
 app.use('/api/user', userRoute);
-app.use('/api/admin', adminRoute);
+app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
 app.use('/api/webhook', webHookRoute);

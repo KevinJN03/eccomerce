@@ -13,28 +13,13 @@ import { add } from 'lodash';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale.js';
 dayjs.extend(updateLocale);
-
+import { get6MonthFromToday, get6MonthsData } from '../../../../common/months.js';
 function Single_User({}) {
     const [user, setUser] = useState({});
     const [orders, setOrders] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [error, setError] = useState();
     const { id } = useParams();
-
-    const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-    ].map((month, idx) => ({ month, num: idx + 1 }));
 
     useEffect(() => {
         adminAxios
@@ -43,51 +28,7 @@ function Single_User({}) {
                 setOrders(() => data?.orders);
                 setUser(() => data?.user);
 
-                // setChartData(() => data?.getOrdersByMonth);
-
-                // const todaysMonth = dayjs().month() + 1;
-                const todaysMonth = 12;
-                const sixMonthsFromToday = todaysMonth - 6;
-                let monthsArray = null;
-
-                // 6 months from jan = 1- 6 = -5
-                // 12 -5 = 7 july
-
-                if (sixMonthsFromToday < 1) {
-                    monthsArray = months
-                        .slice(12 + sixMonthsFromToday)
-                        .concat(months.slice(0, todaysMonth));
-                } else {
-                    monthsArray = months.slice(todaysMonth - 6, todaysMonth);
-                }
-                console.log({ monthsArray });
-                let pointer = null;
-                const getOrdersByMonth = data?.getOrdersByMonth;
-
-                if (getOrdersByMonth.length > 0) {
-                    pointer = getOrdersByMonth[0]?._id;
-                }
-
-                let counter = 0;
-                console.log({ pointer });
-                let newData = monthsArray.map(({month, num}, idx) => {
-                    let total = 0;
-                    if (num == pointer) {
-                        total = getOrdersByMonth[counter]?.total;
-                        if (getOrdersByMonth?.[counter + 1]) {
-                            pointer = getOrdersByMonth?.[counter + 1]?._id;
-                            counter++;
-                        }
-                    }
-                    return {
-                        month: month,
-                        total,
-                    };
-                });
-
-                console.log({ newData });
-
-                setChartData(() => newData);
+                setChartData(() => get6MonthsData(data?.getOrdersByMonth));
             })
             .catch((error) => {
                 'error at single user: ', error;

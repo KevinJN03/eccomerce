@@ -8,40 +8,19 @@ import { Outlet } from 'react-router-dom';
 import { adminAxios } from '../../../api/axios';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { get6MonthsData } from '../../common/months';
 
-const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-];
 function Admin_Dashboard() {
     const [data, setData] = useState({});
     const [chartData, setChartData] = useState([]);
     useEffect(() => {
-        adminAxios
-            .get('/count')
+        adminAxios.get('/count')
             .then((res) => {
                 if (res.status == 200) {
                     setData(() => res.data);
-
-                    const getOrdersByMonth = res.data?.getOrdersByMonth
-                    console.log({getOrdersByMonth})
-                    const newData = months.map((item, idx) => {
-                        return {
-                            month: item,
-                            total: idx,
-                        };
-                    });
-                    setChartData(() => newData);
+                    setChartData(() =>
+                        get6MonthsData(res.data?.getOrdersByMonth)
+                    );
                 }
             })
             .catch((error) => {
@@ -49,13 +28,6 @@ function Admin_Dashboard() {
             });
     }, []);
 
-    const todayDate = dayjs()
-        .set('hour', 0)
-        .set('minute', 0)
-        .set('second', 0)
-        .unix();
-
-    console.log({ todayDate, dayjs: dayjs.unix(todayDate) });
     return (
         <>
             <div className="widgets">

@@ -1,7 +1,7 @@
 import {
   create_user,
   dummy_data,
-  get_all_users,
+  
   signUp_user,
   loginUser,
   checkUser,
@@ -27,7 +27,7 @@ import passport from 'passport';
 import express from 'express';
 const router = express.Router();
 
-router.get('/all', get_all_users);
+
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
 router.post('/login', loginUser);

@@ -6,7 +6,7 @@ import Datatable from './datatable/datatable.jsx';
 import DragDropFile from '../product/new product/dragDropFile.jsx';
 import { Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from '../../../../api/axios.js';
+import axios, { adminAxios } from '../../../../api/axios.js';
 import { userColumn } from './datatable/datatable-source.jsx';
 import actionColumn from './datatable/actionColumn.jsx';
 function All_Users() {
@@ -15,7 +15,7 @@ function All_Users() {
     const [selection, setSelection] = useState([]);
     selection;
     useEffect(() => {
-        axios
+        adminAxios
             .get('/user/all')
             .then((res) => {
                 if (res.status == 200) {

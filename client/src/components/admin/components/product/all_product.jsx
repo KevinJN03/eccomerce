@@ -3,7 +3,7 @@ import Navbar from '../navbar/navbar.jsx';
 import './all_product.scss';
 import Datatable from '../users/datatable/datatable';
 import { useEffect, useState } from 'react';
-import axios from '../../../../api/axios';
+import axios, { adminAxios } from '../../../../api/axios';
 import { productColumn } from '../users/datatable/datatable-source';
 import actionColumn from '../users/datatable/actionColumn.jsx';
 function All_Products() {
@@ -12,7 +12,7 @@ function All_Products() {
     const [selection, setSelection] = useState([]);
 
     useEffect(() => {
-        axios
+        adminAxios
             .get('/product')
             .then((res) => {
                 setProducts(res.data);

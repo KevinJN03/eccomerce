@@ -34,12 +34,24 @@ function Chart({    data}) {
                                 stopOpacity={0}
                             />
                         </linearGradient>
+                        <linearGradient id="numOfOrders" x1="0" y1="0" x2="0" y2="1">
+                            <stop
+                                offset="5%"
+                                stopColor="rgb(167, 237, 167)"
+                                stopOpacity={0.8}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor="rgb(167, 237, 167)"
+                                stopOpacity={0}
+                            />
+                        </linearGradient>
                     </defs>
                     <XAxis dataKey="month" stroke="green" />
-
+<YAxis/>
                     <CartesianGrid
                         strokeDasharray="3 3"
-                        className="chartGrid"
+                        className=""
                     />
                     <Tooltip />
                     <Area
@@ -48,6 +60,13 @@ function Chart({    data}) {
                         stroke="#8884d8"
                         fillOpacity={1}
                         fill="url(#total)"
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="numOfOrders"
+                        stroke="#82ca9d"
+                        fillOpacity={1}
+                        fill="url(#numOfOrders)"
                     />
                 </AreaChart>
             </ResponsiveContainer>
