@@ -7,7 +7,7 @@ import { useAdminContext } from '../../../context/adminContext';
 import actionColumn from '../components/users/datatable/actionColumn';
 import { SubjectSharp } from '@mui/icons-material';
 function AdminOrder({}) {
-    const { orders } = useAdminContext();
+    const { orders, setModalCheck, adminDispatch } = useAdminContext();
 
     const [loading, setLoading] = useState(false);
 
@@ -22,11 +22,17 @@ function AdminOrder({}) {
     //             console.error('error while getting orders', error);
     //         });
     // }, []);
-    const deleteButtonClick = () => {};
+    function secondBtnClick(id) {
+        console.log('delet button clicked!', id);
+        adminDispatch({ type: 'order', id });
+        setModalCheck(true);
+    }
     const dataTableActionColumn = actionColumn({
         selection,
         viewBtn: false,
-        deleteButtonClick,
+        secondBtnClick: (id) => secondBtnClick(id),
+        disableDelete : true,
+        buttonText: 'Update'
     });
     return (
         <section className="">
@@ -38,6 +44,8 @@ function AdminOrder({}) {
                     loading={loading}
                     setLoading={setLoading}
                     actionColumn={dataTableActionColumn}
+                    setSelection={setSelection}
+                    selection={selection}
                 />
             )}
         </section>

@@ -9,15 +9,15 @@ import { useState } from 'react';
 import {v4 as uuidv4} from 'uuid'
 import dayjs from 'dayjs';
 import Product from './product.jsx';
-export function OrderNumberDate({ icon, title, text }) {
+export function OrderNumberDate({ icon, title, text, className }) {
     return (
         <div className="flex flex-row items-center w-full">
-            <div className="flex flex-1 flex-row flex-nowrap items-center gap-x-3">
+            <div className={`flex flex-1 flex-row flex-nowrap items-center gap-x-3 ${className || ''}`}>
                 <img src={icon} alt="box outline icon" className="h-6 w-6" />
                 <h3 className="text-dark-gray font-gotham text-s">{title}</h3>
             </div>
 
-            <p className="flex-1 text-sm">{text}</p>
+            <p className={`flex-1 text-sm ${className || ''}`}>{text}</p>
         </div>
     );
 }

@@ -15,6 +15,7 @@ import Admin from './admin';
 import { useEffect, useState } from 'react';
 import axios, { adminAxios } from '../../../api/axios';
 import { get6MonthsData } from '../../common/months';
+import { useNavigate } from 'react-router-dom';
 // import List from '../components/list/list';
 
 function Index({}) {
@@ -31,6 +32,7 @@ function Index({}) {
     const [orders, setOrders] = useState({});
 
     const [deliveryData, setDeliveryData] = useState([]);
+    const navigate = useNavigate();
     const fetchAll = async () => {
         try {
             const [counts, usersData, productsData, ordersData, deliveryData] =
@@ -55,6 +57,7 @@ function Index({}) {
 
             if (error.response.status == 401) {
                 console.log('unauthenticated');
+                navigate('/admin/login');
             }
         }
     };

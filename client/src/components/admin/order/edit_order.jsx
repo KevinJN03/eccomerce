@@ -8,12 +8,16 @@ import dayjs from 'dayjs';
 import logos from '../../dashboard/payment-methods/logos';
 import { AnimatePresence, motion } from 'framer-motion';
 import animationVariant from '../home/animationVariant';
+import { useAdminContext } from '../../../context/adminContext';
 function Order_Edit({}) {
     const [order, setOrder] = useState({});
+
     const { id } = useParams();
+    const { modalContent } = useAdminContext();
+    console.log('id: ', id, modalContent?.id)
     useEffect(() => {
         adminAxios
-            .get(`order/${id}`)
+            .get(`order/${id || modalContent?.id}`)
             .then(({ data }) => {
                 setOrder(() => data?.order);
             })
@@ -30,7 +34,7 @@ function Order_Edit({}) {
                 initial="initial"
                 animate="animate"
             >
-                <section className="flex max-w-[600px] flex-col gap-y-3 bg-[var(--light-grey)] p-5">
+                <section className="flex w-full max-w-[600px] flex-col gap-y-3 bg-[var(--light-grey)] p-5">
                     <div className="top bg-white p-4">
                         <h3 className="mb-4 font-gotham text-lg">
                             ORDER DETAILS

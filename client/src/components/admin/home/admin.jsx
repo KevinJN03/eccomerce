@@ -19,6 +19,8 @@ import Manage from '../components/product/new product/variation/manage/manage';
 import SelectVariation from '../components/product/new product/variation/selectVariation';
 import Main from '../components/product/new product/variation/main';
 import Update from '../components/product/new product/variation/update';
+import Order_Edit from '../order/edit_order';
+import UpdateOrder from '../order/updateOrder';
 
 function Admin({}) {
     const { darkMode } = useDarkMode();
@@ -38,6 +40,7 @@ function Admin({}) {
         select: <SelectVariation />,
         main: <Main />,
         update: <Update />,
+        order: <UpdateOrder />,
     };
 
     return (
@@ -55,7 +58,7 @@ function Admin({}) {
                                 <Modal
                                     check={modalCheck}
                                     setCheck={setModalCheck}
-                                    ModalContent={views[modalContent.type]}
+                                    ModalContent={views[modalContent?.type]}
                                     loading={loading}
                                     setLoading={setLoading}
                                 />
