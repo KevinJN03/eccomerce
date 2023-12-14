@@ -1,6 +1,6 @@
 import visa from '../../../assets/icons/payment-icons/visa.svg';
 import discover from '../../../assets/icons/payment-icons/discover.svg';
-
+import paypal from '../../../assets/icons/payment-icons/paypal.svg';
 import maestro from '../../../assets/icons/payment-icons/maestro.svg';
 import mastercard from '../../../assets/icons/payment-icons/mastercard-alt.svg';
 
@@ -19,4 +19,5 @@ export default {
     unionpay,
     jcb,
     dinersclub,
+    paypal,
 };

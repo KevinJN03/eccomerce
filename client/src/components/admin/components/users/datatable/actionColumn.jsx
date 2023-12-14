@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function actionColumn({ viewBtn, deleteButtonClick, selection }) {
+function actionColumn({ viewBtn, deleteButtonClick, selection, viewClick }) {
     return [
         {
             field: 'action',
@@ -13,7 +13,7 @@ function actionColumn({ viewBtn, deleteButtonClick, selection }) {
                             <button
                                 type="button"
                                 className="viewButton"
-                                onClick={() => viewBtn(params.row._id)}
+                                onClick={() => viewClick(params?.row?._id)}
                             >
                                 View
                             </button>

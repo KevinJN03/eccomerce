@@ -6,12 +6,12 @@ import logos from '../payment-methods/logos.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-
+import {v4 as uuidv4} from 'uuid'
 import dayjs from 'dayjs';
 import Product from './product.jsx';
-function OrderNumberDate({ icon, title, text }) {
+export function OrderNumberDate({ icon, title, text }) {
     return (
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center w-full">
             <div className="flex flex-1 flex-row flex-nowrap items-center gap-x-3">
                 <img src={icon} alt="box outline icon" className="h-6 w-6" />
                 <h3 className="text-dark-gray font-gotham text-s">{title}</h3>
@@ -108,6 +108,7 @@ function Order_Info({}) {
 
                                         return (
                                             <Product
+                                            key={uuidv4()}
                                                 img={item?.product?.images?.[0]}
                                                 variation1={
                                                     item?.variation1?.variation

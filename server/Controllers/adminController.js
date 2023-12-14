@@ -146,7 +146,23 @@ export const adminLogin = [
 ];
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-  console.log('in here')
+  console.log('in here');
   const users = await User.find({});
   res.status(200).send(users);
+});
+
+export const getSingleOrder = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await Order.findOne({ _id: id?.toUpperCase() }, null, {
+    populate: {
+      path: 'items.product',
+    },
+  });
+
+  if (!order) {
+    return res.status(404).send({ msg: 'Order not dfound.', success: false });
+  }
+console.log({order})
+  res.status(200).send({ order, success: true });
 });

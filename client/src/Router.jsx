@@ -58,6 +58,7 @@ import ResetSent from './components/forget-password/sent.jsx';
 import ResetPassword from './components/forget-password/reset.password.jsx';
 import AdminOrder from './components/admin/order/admin-order.jsx';
 import AdminPortal from './components/admin/home/AdminPortal.jsx';
+import Order_Edit from './components/admin/order/edit_order.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -272,19 +273,26 @@ function Router({ Header, Footer }) {
                     children: [
                         {
                             index: true,
-                        
+
                             element: <Admin_Dashboard />,
                         },
 
-                        { path: 'login', element: <AdminPortal/>, 
-                    children: [
-                        {index: true,
-                        element: <AdminLogin />}
-                    ] },
-                    {
-                        path: 'orders',
-                        element: <AdminOrder/>
-                    },
+                        {
+                            path: 'login',
+                            element: <AdminPortal />,
+                            children: [
+                                { index: true, element: <AdminLogin /> },
+                            ],
+                        },
+                        {
+                            path: 'orders',
+                            element: <AdminOrder />,
+                        },
+                        {
+                            path: 'orders/edit/:id',
+                            element: <Order_Edit />,
+                        },
+
                         {
                             path: 'dashboard/',
                             element: <Admin_Dashboard />,

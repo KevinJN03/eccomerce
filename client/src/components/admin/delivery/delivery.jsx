@@ -8,6 +8,7 @@ import { deliveryColumn } from '../components/users/datatable/datatable-source';
 import Modal from '../components/modal/modal';
 import New from '../components/product/new product/delivery/New';
 import { useAdminContext } from '../../../context/adminContext';
+import actionColumn from '../components/users/datatable/actionColumn';
 
 export default function Delivery() {
     const [profiles, setProfiles] = useState([]);
@@ -17,7 +18,7 @@ export default function Delivery() {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
     // const { dispatch, setModalCheck, content, modalCheck } = useContent();
-
+    const [selection, setSelection] = useState([]);
     const [modalCheck, setModalCheck] = useState(false);
     const addClick = () => {
         setType('new');
@@ -27,12 +28,19 @@ export default function Delivery() {
 
     const viewClick = (id) => {
         setType('view');
-        ({ id });
+        console.log({id})
         const findProfile = profiles.find((profile) => profile._id == id);
         setDeliveryProfile(findProfile);
         setModalCheck(true);
     };
+    const deleteBtnCLick = () => {};
 
+    const dataTableActionColumn = actionColumn({
+        selection,
+        deleteBtnCLick,
+        viewBtn: true,
+        viewClick: viewClick,
+    });
     return (
         <>
             <Datatable
@@ -42,7 +50,8 @@ export default function Delivery() {
                 setLoading={setLoading}
                 loading={loading}
                 addBtn={addClick}
-                viewBtn={viewClick}
+            
+                actionColumn={dataTableActionColumn}
             />
             {modalCheck && (
                 <Modal

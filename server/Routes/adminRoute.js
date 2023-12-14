@@ -4,6 +4,7 @@ import {
   count_all,
   checkLogin,
   getAllUsers,
+  getSingleOrder,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -36,7 +37,9 @@ router.get('/product/:id', get_single_admin_product);
 router.get('/product/:id/variation', getVariations);
 
 router.get('/count', count_all);
+router.get('/order/:id', getSingleOrder);
 router.get('/orders', getAllOrders);
+
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:id', delete_product);
 router.delete('/delete/product/many/:id', delete_many_product);
