@@ -9,7 +9,13 @@ import 'dotenv/config.js';
 
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
+import OrderShipped from '../React Email/emails/orderShipped.jsx';
+import * as React from 'react';
+import { render } from '@react-email/render';
+import transporter from '../utils/nodemailer.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
+
+const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
   const todayDate = dayjs()
     .set('hour', 0)
@@ -197,11 +203,20 @@ export const updateOrder = [
         { _id: id },
         { ...req.body },
         {
-          populate: { path: 'items.product' },
+          populate: { path: 'items.product customer' },
           new: true,
+          lean: { toObject: true },
         },
-      );
-      console.log('is shipped');
+      ).exec();
+      const emailHtml = render(<OrderShipped order={order} />);
+      const mailOptions = {
+        from: SENDER,
+        to: order?.customer?.email,
+        subject: 'Your order’s on its way!',
+        html: emailHtml,
+      };
+
+      const sendEmail = await transporter.sendMail(mailOptions);
     }
     console.log(req.body);
     // res.status(302).redirect('/api/admin/orders');

@@ -7,11 +7,13 @@ import * as React from 'react';
 import OrderShipped from './emails/orderShipped.jsx';
 import PasswordReset from './emails/passwordreset.jsx';
 const router = express.Router();
+import 'dotenv/config.js';
 
+const { SENDER } = process.env;
 router.get(
   '/',
   asyncHandler(async (req, res, next) => {
-    const order = await Order.findById('068D4XFNAGCH', null, {
+    const order = await Order.findById('YB6RNRV4OXKU', null, {
       populate: {
         path: 'items.product customer',
       },
@@ -44,14 +46,14 @@ router.get(
     };
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
     const emailHtml = render(<OrderShipped order={order} />);
-    // const mailOptions = {
-    //   from: SENDER,
-    //   to: process.env.TEST_EMAIL,
-    //   subject: 'test email',
-    //   html: emailHtml,
-    // };
+    const mailOptions = {
+      from: SENDER,
+      to: process.env.TEST_EMAIL,
+      subject: 'test email',
+      html: emailHtml,
+    };
 
-    // const sendEmail = await transporter.sendMail(mailOptions);
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );
