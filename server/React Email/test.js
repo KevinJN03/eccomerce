@@ -53,7 +53,7 @@ router.get(
       html: emailHtml,
     };
 
-    const sendEmail = await transporter.sendMail(mailOptions);
+    // const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

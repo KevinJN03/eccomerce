@@ -136,7 +136,7 @@ function OrderShipped({ order }) {
 
               <Row className=" !bg-light-grey w-full max-w-[600px] m-0">
                 {/* <Container className="p-4 !bg-light-grey w-full"> */}
-                <Column className="p-5 w-full min-w-full">
+                <Column className="px-5 pb-0 w-full min-w-full">
                   <Container className="bg-white p-4 min-w-full">
                     <Text className="font-semibold text-base m-0 p-0">
                       {`${order?.items?.length} ${

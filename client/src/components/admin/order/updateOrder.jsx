@@ -14,6 +14,7 @@ import ErrorMessage, {
     BetaErrorMessage,
 } from '../../Login-SignUp/errorMessage.jsx';
 import OptionError from '../components/product/new product/variation/error/optionError.jsx';
+import { ClickAwayListener } from '@mui/material';
 
 const shippingCarriers = [
     'Royal Mail',
@@ -42,6 +43,7 @@ function UpdateOrder({}) {
     const [showCustomCourier, setShowCustomCourier] = useState(false);
     const [error, setError] = useState({});
     const [status, setStatus] = useState('');
+    const [submitState, setSubmitState] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         adminAxios
@@ -82,6 +84,7 @@ function UpdateOrder({}) {
     const handleSubmit = async () => {
         let success = false;
         try {
+            setSubmitState(() => false);
             console.log('in submit');
 
             if (trackingNumber.length < 12 || courier.length < 3) {
@@ -105,7 +108,7 @@ function UpdateOrder({}) {
             }
 
             console.log('in else');
-
+        
             setSubmitLoad(true);
             const { data } = await adminAxios.put(
                 `order/${modalContent?.id}/update`,
@@ -142,6 +145,17 @@ function UpdateOrder({}) {
             }, 1000);
         }
     };
+    const handleSubmitBtn = () => {
+        if (!status) {
+            setError((prevError) => ({
+                ...prevError,
+                status: 'Please select an available option.',
+            }));
+            return;
+        }
+
+        setSubmitState(() => true);
+    };
     return (
         <section className="relative w-full">
             {submitLoad && (
@@ -161,9 +175,50 @@ function UpdateOrder({}) {
                     </div>
                 </div>
             )}
+
+            {submitState && (
+                <ClickAwayListener
+                    onClickAway={() => setSubmitState(() => false)}
+                >
+                    <div className="absolute left-2/4 top-2/4 z-10 flex w-10/12 translate-x-[-50%] translate-y-[-50%] flex-col rounded-lg bg-white p-5 drop-shadow-2xl">
+                        <p className="text-center font-gotham text-base">
+                            Are you sure you want to update this order?
+                        </p>
+                        <p className="mt-3 w-9/12 self-center text-center">
+                            The following action will notify the user that their
+                            order has been
+                            {` ${status} ${
+                                ['cancelled', 'returned'].includes(status)
+                                    ? `and refund the customer £${order?.transaction_cost?.total?.toFixed(
+                                          2
+                                      )}`
+                                    : ''
+                            }`}
+                            .
+                        </p>
+
+                        <div className="mt-6 flex flex-row flex-nowrap gap-x-2">
+                            <button
+                                onClick={handleSubmit}
+                                type="button"
+                                className="flex-1 rounded-md bg-green-400 py-2 font-gotham text-white hover:bg-green-600"
+                            >
+                                YES
+                            </button>
+                            <button
+                                onClick={() => setSubmitState(() => false)}
+                                type="button"
+                                className="flex-1 rounded-md bg-red-400 py-2 font-gotham text-white hover:bg-red-600"
+                            >
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </ClickAwayListener>
+            )}
             <section
                 className={` ${
-                    submitLoad ? 'opacity-50' : 'opacity-100'
+                    submitLoad || submitState ? 'opacity-50' : 'opacity-100'
                 } flex w-full flex-col items-center justify-center gap-y-3`}
             >
                 {loading && (
@@ -432,7 +487,7 @@ function UpdateOrder({}) {
                             <div className="flex w-full flex-row gap-x-2">
                                 <button
                                     disabled={submitLoad}
-                                    onClick={handleSubmit}
+                                    onClick={handleSubmitBtn}
                                     type="button"
                                     className="w-full rounded-lg !bg-primary p-4 font-gotham text-white transition-all hover:opacity-50"
                                 >
