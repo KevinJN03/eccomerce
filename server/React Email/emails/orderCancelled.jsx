@@ -16,14 +16,14 @@ import {
   Container,
   Font,
 } from '@react-email/components';
-import TotalContainer from './totalContainer.jsx';
-import Item from './item.jsx';
-import Thanks from './thanks.jsx';
-import Footer from './footer.jsx';
-import MoreQuestions from './morequestions.jsx';
-import EmailHead from './emailHead.jsx';
-import EmailTailwind from './emailTailwind.jsx';
-import Header from './header.jsx';
+import TotalContainer from '../components/totalContainer.jsx';
+import Item from '../components/item.jsx';
+import Thanks from '../components/thanks.jsx';
+import Footer from '../components/footer.jsx';
+import MoreQuestions from '../components/morequestions.jsx';
+import EmailHead from '../components/emailHead.jsx';
+import EmailTailwind from '../components/emailTailwind.jsx';
+import Header from '../components/header.jsx';
 
 function OrderCancel({ firstName, orderNumber, orderDate, items }) {
   const totalItems = items.reduce(

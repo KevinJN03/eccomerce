@@ -14,12 +14,12 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import EmailHead from './emailHead.jsx';
-import EmailTailwind from './emailTailwind.jsx';
-import Header from './header.jsx';
+import EmailHead from '../components/emailHead.jsx';
+import EmailTailwind from '../components/emailTailwind.jsx';
+import Header from '../components/header.jsx';
 import 'dotenv/config';
-import Thanks from './thanks.jsx';
-import Footer from './footer.jsx';
+import Thanks from '../components/thanks.jsx';
+import Footer from '../components/footer.jsx';
 
 const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL;
 function PasswordReset({ url }) {

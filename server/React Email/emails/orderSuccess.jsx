@@ -20,10 +20,10 @@ import 'dotenv/config';
 const clientUrl = process.env.CLIENT_URL;
 import { v4 as uuidv4 } from 'uuid';
 
-import TotalContainer from './totalContainer.jsx';
-import Item from './item.jsx';
-import Thanks from './thanks.jsx';
-import EmailTailwind from './emailTailwind.jsx';
+import TotalContainer from '../components/totalContainer.jsx';
+import Item from '../components/item.jsx';
+import Thanks from '../components/thanks.jsx';
+import EmailTailwind from '../components/emailTailwind.jsx';
 const logos = {
   afterpay: 'afterpay.png',
   amex: 'american-express.png',
