@@ -163,6 +163,48 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
   if (!order) {
     return res.status(404).send({ msg: 'Order not dfound.', success: false });
   }
-console.log({order})
+
   res.status(200).send({ order, success: true });
 });
+
+export const updateOrder = [
+  check('courier', 'Please enter a valid courier of 3 or more characters.')
+    .trim()
+    .escape()
+    .isLength({ min: 3 }),
+  check(
+    'trackingNumber',
+    'Please enter a valid password of 12 or more characters.',
+  )
+    .trim()
+    .escape()
+    .isLength({ min: 12 }),
+  check('status', 'Please select an available option.')
+    .trim()
+    .escape()
+    .notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const results = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!results.isEmpty()) {
+      return res.status(400).send({ error: results.mapped() });
+    }
+    const { trackingNumber, courier, status } = req.body;
+
+    if (status === 'shipped') {
+      const order = await Order.findOneAndUpdate(
+        { _id: id },
+        { ...req.body },
+        {
+          populate: { path: 'items.product' },
+          new: true,
+        },
+      );
+      console.log('is shipped');
+    }
+    console.log(req.body);
+    // res.status(302).redirect('/api/admin/orders');
+    res.status(200).send({ success: true, msg: 'order successfully updated!' });
+  }),
+];

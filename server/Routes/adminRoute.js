@@ -5,6 +5,7 @@ import {
   checkLogin,
   getAllUsers,
   getSingleOrder,
+  updateOrder,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -57,5 +58,6 @@ router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);
 
 router.put('/product/update/:id', update_product);
+router.put('/order/:id/update', updateOrder);
 // router.get('/check', checkLogin)
 export default router;

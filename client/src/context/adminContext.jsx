@@ -16,14 +16,17 @@ const reducer = (state, action) => {
         return;
     }
 
-    throw new Error('invalid action type for admin Reducer');
+    throw new Error(
+        'invalid action type for admin Reducer' + JSON.stringify(action)
+    );
 };
-
-
 
 export function AdminContextProvider({ children, newValue }) {
     const getAdminUser = JSON.parse(localStorage.getItem('adminUser'));
-    const [authAdminUser, authAdminUserDispatch] = useReducer(reducer, getAdminUser);
+    const [authAdminUser, authAdminUserDispatch] = useReducer(
+        reducer,
+        getAdminUser
+    );
     const [modalCheck, setModalCheck] = useState(false);
     const [loading, setLoading] = useState(false);
     const [modalContent, adminDispatch] = useReducer(AdminReducer, {
@@ -38,7 +41,8 @@ export function AdminContextProvider({ children, newValue }) {
         adminDispatch,
         authAdminUser,
         adminDispatch,
-        ...newValue
+        ...newValue,
+        authAdminUserDispatch
     };
     return (
         <AdminContext.Provider
