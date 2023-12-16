@@ -94,3 +94,4 @@ function Transaction_Table({ data }) {
 }
 
 export default Transaction_Table;
+   
