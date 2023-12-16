@@ -137,6 +137,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             {
               $unset: { cartObj: '' },
               $set: { status: 'received', paymentType },
+              paymentIntent: paymentIntent?.id,
             },
             { new: true },
           )

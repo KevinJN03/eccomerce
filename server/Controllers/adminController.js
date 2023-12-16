@@ -13,6 +13,7 @@ import OrderShipped from '../React Email/emails/orderShipped.jsx';
 import * as React from 'react';
 import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
+import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const { SENDER } = process.env;
@@ -177,14 +178,29 @@ export const updateOrder = [
   check('courier', 'Please enter a valid courier of 3 or more characters.')
     .trim()
     .escape()
-    .isLength({ min: 3 }),
+    .custom((value, { req }) => {
+      if (req.body?.status == 'shipped') {
+        if (value.length < 3) {
+          return false;
+        }
+      }
+      return true;
+    }),
+
   check(
     'trackingNumber',
     'Please enter a valid password of 12 or more characters.',
   )
     .trim()
     .escape()
-    .isLength({ min: 12 }),
+    .custom((value, { req }) => {
+      if (req.body?.status == 'shipped') {
+        if (value.length < 12) {
+          return false;
+        }
+      }
+      return true;
+    }),
   check('status', 'Please select an available option.')
     .trim()
     .escape()
@@ -218,7 +234,26 @@ export const updateOrder = [
 
       const sendEmail = await transporter.sendMail(mailOptions);
     }
-    console.log(req.body);
+    if (status === 'cancelled') {
+      const order = await Order.findOneAndUpdate(
+        { _id: id },
+        { status },
+        {
+          populate: { path: 'items.product customer' },
+          new: true,
+          lean: { toObject: true },
+        },
+      ).exec();
+      const emailHtml = render(<OrderCancel order={order} />);
+      const mailOptions = {
+        from: SENDER,
+        to: order?.customer?.email,
+        subject: 'Your GLAMO order has been cancelled',
+        html: emailHtml,
+      };
+
+      const sendEmail = await transporter.sendMail(mailOptions);
+    }
     // res.status(302).redirect('/api/admin/orders');
     res.status(200).send({ success: true, msg: 'order successfully updated!' });
   }),

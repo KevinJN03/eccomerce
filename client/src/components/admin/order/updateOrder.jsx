@@ -87,7 +87,10 @@ function UpdateOrder({}) {
             setSubmitState(() => false);
             console.log('in submit');
 
-            if (trackingNumber.length < 12 || courier.length < 3) {
+            if (
+                (trackingNumber.length < 12 || courier.length < 3) &&
+                status == 'shipped'
+            ) {
                 if (trackingNumber.length < 12) {
                     setError((prevState) => ({
                         ...prevState,
@@ -108,7 +111,7 @@ function UpdateOrder({}) {
             }
 
             console.log('in else');
-        
+
             setSubmitLoad(true);
             const { data } = await adminAxios.put(
                 `order/${modalContent?.id}/update`,

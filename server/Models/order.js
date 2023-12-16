@@ -69,6 +69,7 @@ const OrderSchema = new Schema({
 
   trackingNumber: { type: Schema.Types.String },
   courier: { type: Schema.Types.String },
+  paymentIntent: { type: Schema.Types.String },
 });
 
 export default mongoose.model('order', OrderSchema);

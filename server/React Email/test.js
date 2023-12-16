@@ -8,6 +8,7 @@ import OrderShipped from './emails/orderShipped.jsx';
 import PasswordReset from './emails/passwordreset.jsx';
 const router = express.Router();
 import 'dotenv/config.js';
+import OrderCancel from './emails/orderCancelled.jsx';
 
 const { SENDER } = process.env;
 router.get(
@@ -45,7 +46,7 @@ router.get(
       items: order?.items,
     };
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    const emailHtml = render(<OrderShipped order={order} />);
+    const emailHtml = render(<OrderCancel order={order} />);
     const mailOptions = {
       from: SENDER,
       to: process.env.TEST_EMAIL,

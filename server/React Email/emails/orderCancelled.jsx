@@ -24,13 +24,13 @@ import MoreQuestions from '../components/morequestions.jsx';
 import EmailHead from '../components/emailHead.jsx';
 import EmailTailwind from '../components/emailTailwind.jsx';
 import Header from '../components/header.jsx';
-
-function OrderCancel({ firstName, orderNumber, orderDate, items }) {
-  const totalItems = items.reduce(
+import dayjs from 'dayjs'
+function OrderCancel({  order }) {
+  const totalItems = order?.items.reduce(
     (Accum, currentValue) => Accum + currentValue?.quantity,
     0,
   );
-
+  const orderDate = dayjs(order?.createdAt).format('dddd DD MMMM YYYY');
   return (
     <Html>
       <Head>
@@ -53,12 +53,12 @@ function OrderCancel({ firstName, orderNumber, orderDate, items }) {
                     YOUR ORDER HAS BEEN CANCELLED
                   </Text>
                   <Text className="w-5/6 text-center">
-                    Hi {firstName[0].toUpperCase() + firstName.substring(1)},
+                    Hi {order?.customer?.firstName},
                     we’ve cancelled the order below as requested and you haven’t
                     been charged. All done!
                   </Text>
 
-                  <Text className="p-0 m-0">Order No.: {orderNumber}</Text>
+                  <Text className="p-0 m-0">Order No.: {order?._id}</Text>
                   <Text className="p-0 m-0">Order Date: {orderDate}</Text>
                 </Column>
               </Row>
@@ -74,7 +74,7 @@ function OrderCancel({ firstName, orderNumber, orderDate, items }) {
                 <Row className="bg-white " align="center">
                   <Column className="px-4 pb-0 bg-white" align="center">
                     <Section className="bg-white">
-                      {items.map((itemProps, idx) => {
+                      {order?.items?.map((itemProps, idx) => {
                         console.log({ itemProps });
                         return <Item {...itemProps} key={idx} />;
                       })}
