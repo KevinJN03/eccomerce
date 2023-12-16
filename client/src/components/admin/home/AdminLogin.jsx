@@ -1,45 +1,48 @@
+import LoginForm from '../../Login-SignUp/loginForm';
+import { useState } from 'react';
 import { adminAxios } from '../../../api/axios';
-import LoginSignUp from '../../Login-SignUp/Index';
-import Login from '../../Login-SignUp/Login';
+import { useAdminContext } from '../../../context/adminContext.jsx';
 
+import { useNavigate } from 'react-router-dom';
 function AdminLogin({}) {
-    const handleSubmit = async (data, setError) => {
-        debugger;
+    const [error, setError] = useState({ email: null, password: null });
+    const [loading, setLoading] = useState(false);
 
-        if (!data.email) {
-            setError((prevState) => ({
-                ...prevState,
-                email: 'Oops! You need to type your email here',
-            }));
-        }
+    const { authAdminUser, adminDispatch } = useAdminContext();
 
-        if (!data.password) {
-            setError((prevState) => ({
-                ...prevState,
-                password: 'Hey, we need a password here',
-            }));
-
-            return;
-        }
-
+    const navigate = useNavigate();
+    const onSubmit = async ({ email, password }) => {
+        console.log('test');
         try {
-            const result = await adminAxios.post('login', data);
+            setLoading(() => true);
+            const { data } = await adminAxios.post('login', {
+                email,
+                password,
+            });
+            console.log({ data });
 
-            ({ result });
+            adminDispatch({ type: 'LOGIN', payload: data });
+
+            navigate('/admin');
         } catch (error) {
-            'error at admin login', error.response.data;
-
-            setError(() => error.response.data);
+            console.error('error while login in admin', error);
+            setError((prevError) => ({
+                ...prevError,
+                ...error?.response?.data?.error,
+            }));
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
         }
     };
     return (
-        <section id="AdminLogin" className="h-screen">
-            <LoginSignUp
-                loginorSignup={'login'}
-                admin={true}
-                handleSubmit={handleSubmit}
-            />
-        </section>
+        <LoginForm
+            onSubmit={onSubmit}
+            error={error}
+            setError={setError}
+            loading={loading}
+        />
     );
 }
 

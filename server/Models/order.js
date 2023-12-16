@@ -7,6 +7,7 @@ const enum_states = {
     'shipped',
     'delivered',
     'cancelled',
+    'returned',
     'processing',
     'failed',
   ],
@@ -65,6 +66,10 @@ const OrderSchema = new Schema({
 
   cartObj: { type: Schema.Types.Mixed, ref: 'product' },
   cartIds: [{ type: Schema.Types.String }],
+
+  trackingNumber: { type: Schema.Types.String },
+  courier: { type: Schema.Types.String },
+  paymentIntent: { type: Schema.Types.String },
 });
 
 export default mongoose.model('order', OrderSchema);

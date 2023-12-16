@@ -14,10 +14,12 @@ import Modal from '../../admin/components/modal/modal.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import axios from '../../../api/axios.js';
 import logos from './logos.jsx';
+import Pagination from '../pagination/pagination.jsx';
 
 function Home({}) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const { setModalCheck, modalContentDispatch } = useUserDashboardContext();
     const [defaultCheck, setDefaultCheck] = useState(null);
@@ -54,6 +56,8 @@ function Home({}) {
                 setDefaultCheck(() => null);
             });
     };
+
+    const divideBy3 = Math.ceil(paymentMethods.length / 3);
     return (
         <section className="payment-method">
             <Header
@@ -64,7 +68,7 @@ function Home({}) {
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.map(
+                    {paymentMethods.slice(3 * page - 3, page * 3).map(
                         (
                             {
                                 logo,
@@ -125,6 +129,16 @@ function Home({}) {
                                 />
                             );
                         }
+                    )}
+
+                    {divideBy3 > 1 && (
+                        <div className="pagination justify-end">
+                            <Pagination
+                                divideBy={divideBy3}
+                                setPage={setPage}
+                                page={page}
+                            />
+                        </div>
                     )}
                 </div>
             ) : (

@@ -8,72 +8,81 @@ import { Outlet } from 'react-router-dom';
 import { adminAxios } from '../../../api/axios';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
+import { get6MonthsData } from '../../common/months';
+import { useAdminContext } from '../../../context/adminContext';
+import { AnimatePresence, motion } from 'framer-motion';
+import animationVariant from './animationVariant';
 
-const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-];
 function Admin_Dashboard() {
-    const [data, setData] = useState({});
-    const [chartData, setChartData] = useState([]);
-    useEffect(() => {
-        adminAxios
-            .get('/count')
-            .then((res) => {
-                if (res.status == 200) {
-                    setData(() => res.data);
+    // const [data, setData] = useState({});
+    // const [chartData, setChartData] = useState([]);
+    // useEffect(() => {
+    //     adminAxios.get('/count')
+    //         .then((res) => {
+    //             if (res.status == 200) {
+    //                 setData(() => res.data);
+    //                 setChartData(() =>
+    //                     get6MonthsData(res.data?.getOrdersByMonth)
+    //                 );
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             'error at admin while fetching counts: ', error;
+    //         });
+    // }, []);
 
-                    const getOrdersByMonth = res.data?.getOrdersByMonth
-                    console.log({getOrdersByMonth})
-                    const newData = months.map((item, idx) => {
-                        return {
-                            month: item,
-                            total: idx,
-                        };
-                    });
-                    setChartData(() => newData);
-                }
-            })
-            .catch((error) => {
-                'error at admin while fetching counts: ', error;
-            });
-    }, []);
+    const { dashBoardData, chartData } = useAdminContext();
+    const variants = {
+        initial: {
+            opacity: 0,
+            translateY: 50,
+        },
+        animate: {
+            opacity: 1,
+            translateY: 0,
+            transition: { duration: 2 },
+        },
+    };
 
-    const todayDate = dayjs()
-        .set('hour', 0)
-        .set('minute', 0)
-        .set('second', 0)
-        .unix();
-
-    console.log({ todayDate, dayjs: dayjs.unix(todayDate) });
     return (
-        <>
+        <AnimatePresence>
             <div className="widgets">
-                <Widget type="user" amount={data?.userCount} />
-                <Widget type="order" amount={data?.orderCount} />
+                {[
+                    { type: 'user', amount: 'userCount' },
+                    { type: 'order', amount: 'orderCount' },
+                    { type: 'earning' },
+                    { type: 'balance', amount: 'balance' },
+                ].map((item, idx) => {
+                    return (
+                        <Widget
+                            type={item?.type}
+                            amount={dashBoardData?.[item?.amount]}
+                            idx={idx}
+                        />
+                    );
+                })}
+                {/* <Widget type="user" amount={dashBoardData?.userCount} />
+                <Widget type="order" amount={dashBoardData?.orderCount} />
                 <Widget type="earning" />
-                <Widget type="balance" amount={data?.balance} />
+                <Widget type="balance" amount={dashBoardData?.balance} /> */}
             </div>
             <div className="charts">
-                <Featured todayAmount={data?.todayAmount} />
+                <Featured todayAmount={dashBoardData?.todayAmount} />
                 <Chart data={chartData} />
             </div>
 
-            <div className="listContainer">
+            <motion.div
+                className="listContainer"
+                variants={animationVariant(2)}
+                animate={'animate'}
+                initial={'initial'}
+            >
                 <div className="listTitle">Latest Transactions</div>
-                {data?.orders && <Transaction_Table data={data?.orders} />}
-            </div>
-        </>
+                {dashBoardData?.orders && (
+                    <Transaction_Table data={dashBoardData?.orders} />
+                )}
+            </motion.div>
+        </AnimatePresence>
     );
 }
 export default Admin_Dashboard;

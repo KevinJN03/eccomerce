@@ -30,7 +30,9 @@ function Datatable({
     const deleteAllClick = () => {
         setModalCheck(true);
     };
-
+    const rowSelectOnChange = (select) => {
+        setSelection(select);
+    };
     return (
         <section className="datatable">
             <div className="datatableTitle">
@@ -71,9 +73,7 @@ function Datatable({
                 isRowSelectable={(params) =>
                     params.row.name != 'Express Delivery'
                 }
-                onRowSelectionModelChange={(select) => {
-                    setSelection(select);
-                }}
+                // onRowSelectionModelChange={rowSelectOnChange}
             />
             {modalCheck && (
                 <Modal

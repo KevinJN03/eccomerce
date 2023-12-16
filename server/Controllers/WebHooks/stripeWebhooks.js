@@ -9,7 +9,7 @@ import product from '../../Models/product.js';
 import User from '../../Models/user.js';
 import transporter from '../../utils/nodemailer.js';
 import { render } from '@react-email/render';
-import OrderSuccess from '../../React Email/orderSuccess.jsx';
+import OrderSuccess from '../../React Email/emails/orderSuccess.jsx';
 import * as React from 'react';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -137,6 +137,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             {
               $unset: { cartObj: '' },
               $set: { status: 'received', paymentType },
+              paymentIntent: paymentIntent?.id,
             },
             { new: true },
           )

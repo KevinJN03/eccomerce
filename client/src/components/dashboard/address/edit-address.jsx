@@ -21,7 +21,7 @@ function Edit_Address({}) {
 
     const navigate = useNavigate();
     useEffect(() => {
-        debugger;
+
         if (address.length > 0) {
             const findAddressItem = address.find((item) => item._id == id);
 

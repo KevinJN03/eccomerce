@@ -1,6 +1,9 @@
 :root {
     // --primary: green;
     --secondary: rgb(167, 237, 167);
+    --CircularProgress-size: 5004px;
+    --CircularProgress-trackThickness: '16px';
+    --CircularProgress-progressThickness: '18px';
 }
 h1 {
     font-size: 30px;
@@ -186,24 +189,23 @@ h1 {
             border-radius: 50%;
         }
     }
-
-    
 }
 .status {
-        padding: 5px;
-        border-radius: 5px;
+    padding: 5px;
+    border-radius: 5px;
 
-        &.received {
-            color: green;
-            background-color: rgba(0, 128, 0, 0.244);
-        }
-        &.processing {
-            color: goldenrod;
-            background-color: rgba(218, 165, 32, 0.251);
-        }
-
-        &.cancelled, &.failed {
-            color: red;
-            background-color: rgba(255, 0, 0, 0.205);
-        }
+    &.received {
+        color: green;
+        background-color: rgba(0, 128, 0, 0.244);
     }
+    &.processing {
+        color: goldenrod;
+        background-color: rgba(218, 165, 32, 0.251);
+    }
+
+    &.cancelled,
+    &.failed {
+        color: red;
+        background-color: rgba(255, 0, 0, 0.205);
+    }
+}

@@ -43,10 +43,7 @@ const handleProfilePhoto = async (file, id) => {
   }
 };
 
-export const get_all_users = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).send(users);
-});
+
 // test
 export const dummy_data = asyncHandler(async (req, res, next) => {
   const dummyUsers = [
@@ -227,20 +224,6 @@ export const signUp_user = [
 export const get_single_user = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const user = await User.findById(id, null, {
-    populate: {
-      path: 'default_address.shipping_address',
-    },
-  });
-
-  const orders = await Order.find({ customer: id }, null, {
-    sort: { createdAt: -1 },
-    limit: 5,
-    populate: {
-      path: 'items.product',
-    },
-  });
-
   const sixMonthsFromToday = dayjs()
     .subtract(6, 'month')
     .set('D', 1)
@@ -251,33 +234,47 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
 
   console.log({ sixMonthsFromToday });
 
-  const getOrdersByMonth = await Order.aggregate([
-    {
-      $match: {
-        status: {
-          $in: ['received', 'shipped', 'delivered'],
+  const [user, orders, getOrdersByMonth] = await Promise.all([
+    User.findById(id, null, {
+      populate: {
+        path: 'default_address.shipping_address',
+      },
+    }),
+    Order.find({ customer: id }, null, {
+      sort: { createdAt: -1 },
+      limit: 5,
+      populate: {
+        path: 'items.product',
+      },
+    }),
+    Order.aggregate([
+      {
+        $match: {
+          status: {
+            $in: ['received', 'shipped', 'delivered'],
+          },
+          createdAt: { $gte: sixMonthsFromToday },
+          customer: new mongoose.Types.ObjectId(id),
         },
-        createdAt: { $gte: sixMonthsFromToday },
-        customer: new mongoose.Types.ObjectId(id),
       },
-    },
-    {
-      $group: {
-        _id: { $month: '$createdAt' },
-        total: { $sum: '$transaction_cost.total' },
+      {
+        $group: {
+          _id: { $month: '$createdAt' },
+          total: { $sum: '$transaction_cost.total' },
+          numOfOrders: { $sum: 1 },
+          /* status: { $match: { $or: ['received', 'shipped', 'delivered'] } }, */
+          // customer: { $match: id },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ]).exec(),
+  ]);
 
-        /* status: { $match: { $or: ['received', 'shipped', 'delivered'] } }, */
-        // customer: { $match: id },
-      },
-    },
-    {
-      $sort: {
-        _id: 1,
-      },
-    },
-  ]).exec();
 
-  console.log({ getOrdersByMonth });
 
   if (!user) {
     res.status(404).send('User Not Found');
@@ -308,15 +305,13 @@ export const loginUser = [
     .trim()
     .isEmail()
     .custom(async (email) => {
-      try {
-        const result = await User.findOne({ email });
+      const findUser = await User.findOne({ email });
 
-        if (!findUser) {
-          throw new Error('User does not exist.');
-        }
+      if (!findUser) {
+        throw new Error('User does not exist.');
+      }
 
-        return true;
-      } catch (error) {}
+      return true;
     }),
   check(
     'password',
@@ -328,17 +323,15 @@ export const loginUser = [
     .trim()
     .isLength({ min: 10, max: 20 }),
   asyncHandler(async (req, res, next) => {
-    const result = validationResult(req);
+    const result = validationResult(req).formatWith(({ msg }) => {
+      return msg;
+    });
 
     if (!result.isEmpty()) {
-      const newResult = {};
-
-      result.errors.map(({ path, msg }) => {
-        newResult[path] = msg;
-      });
-      return res.status(400).send(newResult);
+      return res.status(400).send(result.mapped());
     }
     passport.authenticate('local', (err, user, info) => {
+     
       if (err) {
         next(err);
       }

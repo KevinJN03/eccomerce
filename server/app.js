@@ -14,6 +14,7 @@ import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
 import webHookRoute from './Routes/webhookRoute.js';
 import userRoute from './Routes/userRoute.js';
+import emailTestRoute from './React Email/test.js';
 import adminRoute from './Routes/adminRoute.js';
 import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
@@ -25,17 +26,26 @@ import asyncHandler from 'express-async-handler';
 import transporter from './utils/nodemailer.js';
 import * as React from 'react';
 import { render } from '@react-email/render';
-import OrderCancel from './React Email/orderCancelled.jsx';
-import OrderSuccess from './React Email/orderSuccess.jsx';
+
 import Order from './Models/order.js';
 import 'dotenv/config';
-import PasswordReset from './React Email/passwordreset.jsx';
+import PasswordReset from './React Email/emails/passwordreset.jsx';
 import User from './Models/user.js';
 import jwt from 'jsonwebtoken';
 import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
-const { DBNAME, URL, SECRET, PASSWORD_RESET_JWT_SECRET, CLIENT_URL, SENDER, SALT_ROUNDS } =
-  process.env;
+import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
+import { adminLogin } from './Controllers/adminController.js';
+;
+const {
+  DBNAME,
+  URL,
+  SECRET,
+  PASSWORD_RESET_JWT_SECRET,
+  CLIENT_URL,
+  SENDER,
+  SALT_ROUNDS,
+} = process.env;
 const PORT = 3000;
 const db = () => {
   mongoose
@@ -77,63 +87,18 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/server-status', (req, res) => {
   res.send('OK');
 });
+app.use('/api/admin/login', adminLogin);
 app.use('/api/product', productRoute);
 app.use('/api/coupon', couponRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/search', searchRoute);
 app.use('/api/giftcard', giftCardRoute);
 app.use('/api/user', userRoute);
-app.use('/api/admin', adminRoute);
+app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
 app.use('/api/webhook', webHookRoute);
-app.get(
-  '/api/test',
-  asyncHandler(async (req, res, next) => {
-    const order = await Order.findById('068D4XFNAGCH', null, {
-      populate: 'items.product',
-      lean: { toObject: true },
-    }).exec();
-
-    const props = {
-      firstName: 'kevin',
-      orderNumber: '882411829',
-      orderDate: 'Tuesday 28 November 2023',
-      subtotal: 6.9,
-      status: 'cancelled',
-      deliveryCost: 4.5,
-      total: 11.59,
-      paymentType: 'paypal',
-      deliveryName: 'Free Shipping',
-      shipping_address: {
-        name: 'kevin jean',
-        phone: '07432298043',
-        address: {
-          city: 'london',
-          line1: 'flat 2',
-          line2: '14 test road',
-          postal_code: 'tst124',
-          state: 'lewisham',
-          country: 'GB',
-        },
-      },
-      items: order?.items,
-    };
-
-    // const emailHtml = render(<OrderSuccess {...props} />);
-
-    const emailHtml = render(<PasswordReset url={'https://google.com'} />);
-    const mailOptions = {
-      from: SENDER,
-      to: process.env.TEST_EMAIL,
-      subject: 'test email',
-      html: emailHtml,
-    };
-
-    const sendEmail = await transporter.sendMail(mailOptions);
-    res.status(200).send(emailHtml);
-  }),
-);
+app.use('/api/test', emailTestRoute);
 
 app.post('/api/forget-password', [
   check('email', 'Email is Invalid.')

@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom';
 
-function actionColumn({ viewBtn, deleteButtonClick, selection }) {
+function actionColumn({
+    viewBtn,
+    secondBtnClick,
+    selection,
+    viewClick,
+    disable2ndBtn,
+    buttonText 
+}) {
     return [
         {
             field: 'action',
@@ -13,7 +20,7 @@ function actionColumn({ viewBtn, deleteButtonClick, selection }) {
                             <button
                                 type="button"
                                 className="viewButton"
-                                onClick={() => viewBtn(params.row._id)}
+                                onClick={() => viewClick(params?.row?._id)}
                             >
                                 View
                             </button>
@@ -23,16 +30,20 @@ function actionColumn({ viewBtn, deleteButtonClick, selection }) {
                             </Link>
                         )}
 
-                        {selection.length < 2 && (
+                        {/* {selection.length < 2 && ( */}
+
+                        {!disable2ndBtn && (
                             <button
                                 className="deleteButton"
                                 onClick={() =>
-                                    deleteButtonClick(type, params.row._id)
+                                    secondBtnClick(params?.row?._id)
                                 }
                             >
-                                Delete
+                                {buttonText || 'Delete'}
                             </button>
                         )}
+
+                        {/*    )} */}
                     </div>
                 );
             },

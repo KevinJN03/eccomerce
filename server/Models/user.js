@@ -63,6 +63,7 @@ const UserSchema = new Schema(
     ],
     // orders: [{ type: Schema.Types.String, ref: 'order' }],
     mobile: { type: Schema.Types.String },
+    adminAccess: { type: Schema.Types.Boolean, default: false },
     contact_preferences: {
       discount_newDrops: {
         email: { type: Schema.Types.Boolean, default: false },

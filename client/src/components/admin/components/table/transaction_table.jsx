@@ -7,8 +7,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-function Transaction_Table({ data }) {
 
+import { motion } from 'framer-motion';
+function Transaction_Table({ data }) {
     return (
         <TableContainer component={Paper} className="table">
             <Table sx={{ minWidth: 650 }} aria-label="caption table">
@@ -25,7 +26,9 @@ function Transaction_Table({ data }) {
                         ].map((title) => {
                             return (
                                 <TableCell className="tableCell" key={title}>
-                                    <p className='font-gotham text-sm'>{title}</p>
+                                    <p className="font-gotham text-sm">
+                                        {title}
+                                    </p>
                                 </TableCell>
                             );
                         })}
@@ -42,7 +45,7 @@ function Transaction_Table({ data }) {
                                     {row?.items?.map((item) => {
                                         return (
                                             <span
-                                            key={uuidv4()}
+                                                key={uuidv4()}
                                                 className="tooltip tooltip-top"
                                                 data-tooltip={
                                                     item?.product.title

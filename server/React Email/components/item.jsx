@@ -4,13 +4,13 @@ import { useEffect, Fragment } from 'react';
 import { v4 as uuid } from 'uuid';
 import { Text, Img, Row, Column } from '@react-email/components';
 
-function Item({ variation1, variation2, product, price, quantity } ) {
+function Item({ variation1, variation2, product, price, quantity }) {
   return (
     <Row className="mb-4">
       <Column className="w-[100px] h-[140px]">
         <Img
           src={product?.images?.[0]}
-          className="border-none outline-none w-[100px] h-[140px]"
+          className="border-none outline-none w-[100px] h-[140px] object-cover"
         />
       </Column>
       <Column className="pl-5 align-top">

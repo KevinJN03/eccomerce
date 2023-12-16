@@ -1,111 +1,108 @@
-import { useEffect, useState, useReducer } from 'react';
-import SideBar from '../components/sidebar/sidebar';
-import Navbar from '../components/navbar/navbar';
 import disableLayout from '../../../hooks/disableLayout';
-
 
 import './admin.scss';
 import './dark.scss';
-import { Outlet, useRoutes, useParams, useLocation } from 'react-router-dom';
+
 import {
     DarkModeContext,
     useDarkMode,
     DarkModeContextProvider,
 } from '../../../context/darkModeContext';
-import { useContext } from 'react';
-import { ContentProvider } from '../../../context/ContentContext';
+
 import { AdminContextProvider } from '../../../context/adminContext';
-import Modal from '../components/modal/modal';
-import Manage from '../components/product/new product/variation/manage/manage';
-import SelectVariation from '../components/product/new product/variation/selectVariation';
-import Main from '../components/product/new product/variation/main';
-import Update from '../components/product/new product/variation/update';
+
+import Admin from './admin';
+import { useEffect, useState } from 'react';
+import axios, { adminAxios } from '../../../api/axios';
+import { get6MonthsData } from '../../common/months';
+import { useNavigate } from 'react-router-dom';
 // import List from '../components/list/list';
-const views = {
-    manage: <Manage />,
-    select: <SelectVariation />,
-    main: <Main />,
-    update: <Update />,
-};
 
-export function AdminReducer(state, action) {
-    if (action.type == 'select') {
-        return {
-            ...state,
-            type: action.type,
-            currentVariation: action.currentVariation,
-            title: action.title,
-            default: action.default,
-        };
-    }
-
-    if (action.type == 'update') {
-        return {
-            ...state,
-            type: action.type,
-            category: action.category,
-            selected: action.selected,
-            setUpdate: action.setUpdate,
-            update: action.update,
-            setCheckAll: action.setCheckAll,
-        };
-    }
-
-    if (action.type == 'main' || action.type == 'manage' || action.type) {
-        return { ...state, type: action.type, currentVariation: null };
-    }
-
-    throw new Error('Invalid type for Variation Reducer');
-}
-
-function Admin({}) {
+function Index({}) {
     const { darkMode } = useDarkMode();
     'darkMode', darkMode;
     disableLayout();
 
-    const [modalCheck, setModalCheck] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [modalContent, adminDispatch] = useReducer(AdminReducer, {
-        type: 'main',
-    });
-    const value = {
-        modalCheck,
-        setModalCheck,
-        loading,
-        setLoading,
-        modalContent,
-        adminDispatch,
+    const [loading, setLoading] = useState(true);
+
+    const [dashBoardData, setDashBoardData] = useState({});
+    const [chartData, setChartData] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
+    const [allProducts, setAllPoducts] = useState([]);
+    const [orders, setOrders] = useState({});
+
+    const [deliveryData, setDeliveryData] = useState([]);
+    const navigate = useNavigate();
+    const fetchAll = async () => {
+        try {
+            const [counts, usersData, productsData, ordersData, deliveryData] =
+                await Promise.all([
+                    adminAxios.get('/count'),
+                    adminAxios.get('/user/all'),
+                    adminAxios.get('/product'),
+                    adminAxios.get('/orders'),
+                    adminAxios.get('/delivery/all'),
+                ]);
+
+            setDashBoardData(() => counts.data);
+            setChartData(() => get6MonthsData(counts.data?.getOrdersByMonth));
+
+            setAllUsers(() => usersData?.data);
+            setAllPoducts(() => productsData?.data);
+
+            setOrders(() => ordersData?.data?.orders);
+            setDeliveryData(() => deliveryData?.data);
+        } catch (error) {
+            console.error('error while fetching all items', error);
+
+            if (error.response.status == 401) {
+                console.log('unauthenticated');
+                navigate('/admin/login');
+            }
+        }
     };
-    const location = useLocation();
-    ({ location: location.pathname.split('/') });
+    useEffect(() => {
+        fetchAll();
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, []);
+
+    const newValue = {
+        dashBoardData,
+        setDashBoardData,
+        setChartData,
+        chartData,
+        allUsers,
+        setAllUsers,
+        allProducts,
+        setAllPoducts,
+        orders,
+        setOrders,
+        deliveryData,
+        setDeliveryData,
+    };
     return (
-        <AdminContextProvider value={value}>
-            <section className={`admin ${darkMode ? 'dark' : ''}`}>
-                <ContentProvider>
-                    {location.pathname.split('/')[2] == 'login' ? (
-                        <Outlet />
-                    ) : (
-                        <section className="home">
-                            <SideBar />
-                            <div className="homeContainer">
-                                <Navbar />
-                                <Outlet />
-                                {modalCheck && (
-                                    <Modal
-                                        check={modalCheck}
-                                        setCheck={setModalCheck}
-                                        ModalContent={views[modalContent.type]}
-                                        loading={loading}
-                                        setLoading={setLoading}
-                                    />
-                                )}
-                            </div>
-                        </section>
-                    )}
-                </ContentProvider>
-            </section>{' '}
+        <AdminContextProvider newValue={newValue}>
+            {loading ? (
+                <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
+                    <svg
+                        className="spinner-ring spinner-sm [--spinner-color:var(--slate-11)]"
+                        viewBox="25 25 50 50"
+                        strokeWidth="5"
+                    >
+                        <circle cx="50" cy="50" r="20" />
+                    </svg>
+                </div>
+            ) : (
+                <Admin />
+            )}
         </AdminContextProvider>
     );
 }
 
-export default Admin;
+export default Index;

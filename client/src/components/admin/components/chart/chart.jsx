@@ -7,12 +7,18 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
- 
 } from 'recharts';
 
-function Chart({    data}) {
+import { motion } from 'framer-motion';
+import animationVariant from '../../home/animationVariant';
+function Chart({ data }) {
     return (
-        <section className="chart">
+        <motion.section
+            className="chart"
+            variants={animationVariant(3)}
+            initial={'initial'}
+            animate={'animate'}
+        >
             <div className="title">Last 6 Months (Revenue)</div>
             <ResponsiveContainer width="100%" aspect={2 / 1}>
                 <AreaChart
@@ -34,13 +40,28 @@ function Chart({    data}) {
                                 stopOpacity={0}
                             />
                         </linearGradient>
+                        <linearGradient
+                            id="numOfOrders"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+                            <stop
+                                offset="5%"
+                                stopColor="rgb(167, 237, 167)"
+                                stopOpacity={0.8}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor="rgb(167, 237, 167)"
+                                stopOpacity={0}
+                            />
+                        </linearGradient>
                     </defs>
                     <XAxis dataKey="month" stroke="green" />
-
-                    <CartesianGrid
-                        strokeDasharray="3 3"
-                        className="chartGrid"
-                    />
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" className="" />
                     <Tooltip />
                     <Area
                         type="monotone"
@@ -49,9 +70,16 @@ function Chart({    data}) {
                         fillOpacity={1}
                         fill="url(#total)"
                     />
+                    <Area
+                        type="monotone"
+                        dataKey="numOfOrders"
+                        stroke="#82ca9d"
+                        fillOpacity={1}
+                        fill="url(#numOfOrders)"
+                    />
                 </AreaChart>
             </ResponsiveContainer>
-        </section>
+        </motion.section>
     );
 }
 

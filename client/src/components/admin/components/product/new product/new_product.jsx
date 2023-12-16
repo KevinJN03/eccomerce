@@ -37,7 +37,8 @@ function New_Product({ Content, type }) {
         loading,
         setLoading,
         publishError,
-        publishErrorDispatch
+        publishErrorDispatch,
+        title,
     } = useNewProduct();
     return (
         <VariationProvider>
@@ -46,7 +47,7 @@ function New_Product({ Content, type }) {
                     <section className="flex justify-center">
                         <div className="product-listing">
                             <div className=" mb-6 ml-4 font-gotham text-3xl font-bold tracking-wider">
-                                New Listing
+                                {type == 'update' ? title : 'New Listing'}
                             </div>
                             <div className="subheader mb-3">
                                 <a href="#about">About</a>
@@ -61,9 +62,14 @@ function New_Product({ Content, type }) {
                                 {publishError.get('default') && (
                                     <div className="alert alert-error">
                                         <svg
-                                        onClick={() => publishErrorDispatch({type: 'clear', path: 'default'})}
+                                            onClick={() =>
+                                                publishErrorDispatch({
+                                                    type: 'clear',
+                                                    path: 'default',
+                                                })
+                                            }
                                             xmlns="http://www.w3.org/2000/svg"
-                                            className="h-6 w-6 shrink-0 stroke-current cursor-pointer hover:scale-110 transition-all"
+                                            className="h-6 w-6 shrink-0 cursor-pointer stroke-current transition-all hover:scale-110"
                                             fill="none"
                                             viewBox="0 0 24 24"
                                         >

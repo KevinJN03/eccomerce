@@ -136,7 +136,7 @@ function Details({}) {
                 />
 
                 <Interest setInterest={setInterest} interest={interest} />
-                
+
                 <Button
                     submit={onSubmit}
                     text={'SAVE CHANGES'}
