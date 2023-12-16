@@ -11,6 +11,7 @@ import transporter from '../../utils/nodemailer.js';
 import { render } from '@react-email/render';
 import OrderSuccess from '../../React Email/emails/orderSuccess.jsx';
 import * as React from 'react';
+import OrderReceived from '../../React Email/emails/orderReceived.jsx';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -121,28 +122,36 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       const result = Promise.all([...reduceStock])
 
         .then(async (res) => {
-          let paymentType = '';
+          // let paymentType = '';
 
           const getPaymentMethod = await stripe.paymentMethods.retrieve(
             paymentIntent?.payment_method,
           );
-          if (getPaymentMethod?.type == 'card') {
+          /*     if (getPaymentMethod?.type == 'card') {
             paymentType = getPaymentMethod.card?.brand;
           } else {
             paymentType = getPaymentMethod?.type;
           }
-          console.log({ paymentType });
+          console.log({ paymentType }); */
           const updateOrder = await Order.findOneAndUpdate(
             { _id: orderNumber },
             {
               $unset: { cartObj: '' },
-              $set: { status: 'received', paymentType },
-              paymentIntent: paymentIntent?.id,
+              $set: {
+                status: 'received',
+                payment_type:
+                  getPaymentMethod?.card?.brand || getPaymentMethod?.type,
+                payment_intent_id: paymentIntent?.id,
+              },
             },
-            { new: true },
-          )
-            .populate('items.product')
-            .exec();
+            {
+              populate: {
+                path: 'items.product customer',
+              },
+              new: true,
+              lean: { toObject: true },
+            },
+          ).exec();
 
           const updateUser = await User.findByIdAndUpdate(
             userId,
@@ -155,24 +164,11 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             },
           );
 
-          const props = {
-            firstName: updateUser?.firstName,
-            orderNumber: orderNumber,
-            orderDate: order?.shipping_option?.delivery_date,
-            subtotal: parseFloat(order?.transaction_cost?.subtotal).toFixed(2),
-            deliveryCost: parseFloat(order?.shipping_option?.cost).toFixed(2),
-            total: parseFloat(order?.transaction_cost?.total).toFixed(2),
-            paymentType: paymentType,
-            deliveryName: order?.shipping_option?.name,
-            shipping_address: order?.shipping_address,
-            items: updateOrder?.items,
-            status: 'received',
-          };
-          const emailHtml = render(<OrderSuccess {...props} />);
+          const emailHtml = render(<OrderReceived order={updateOrder} />);
 
           const sendEmail = await transporter.sendMail({
             from: 'kevinjean321@gmail.com',
-            to: updateUser?.email,
+            to: updateOrder?.customer?.email,
             subject: 'Thanks for your order!',
             html: emailHtml,
           });

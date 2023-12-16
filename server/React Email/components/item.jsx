@@ -19,7 +19,7 @@ function Item({ variation1, variation2, product, price, quantity }) {
         </Text>
 
         <Text className="text-s p-0 pb-1 m-0 font-semibold">
-          £{parseFloat(price?.toFixed(2))}
+          £{price?.toFixed(2) || price}
         </Text>
 
         <Text className="text-xs p-0 pb-1 m-0 font-light !important">

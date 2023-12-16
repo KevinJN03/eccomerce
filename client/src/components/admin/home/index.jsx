@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import axios, { adminAxios } from '../../../api/axios';
 import { get6MonthsData } from '../../common/months';
 import { useNavigate } from 'react-router-dom';
+import { getAllData } from './getAllData';
 // import List from '../components/list/list';
 
 function Index({}) {
@@ -33,36 +34,16 @@ function Index({}) {
 
     const [deliveryData, setDeliveryData] = useState([]);
     const navigate = useNavigate();
-    const fetchAll = async () => {
-        try {
-            const [counts, usersData, productsData, ordersData, deliveryData] =
-                await Promise.all([
-                    adminAxios.get('/count'),
-                    adminAxios.get('/user/all'),
-                    adminAxios.get('/product'),
-                    adminAxios.get('/orders'),
-                    adminAxios.get('/delivery/all'),
-                ]);
-
-            setDashBoardData(() => counts.data);
-            setChartData(() => get6MonthsData(counts.data?.getOrdersByMonth));
-
-            setAllUsers(() => usersData?.data);
-            setAllPoducts(() => productsData?.data);
-
-            setOrders(() => ordersData?.data?.orders);
-            setDeliveryData(() => deliveryData?.data);
-        } catch (error) {
-            console.error('error while fetching all items', error);
-
-            if (error.response.status == 401) {
-                console.log('unauthenticated');
-                navigate('/admin/login');
-            }
-        }
-    };
+  
     useEffect(() => {
-        fetchAll();
+        getAllData({
+            setAllPoducts,
+            setAllUsers,
+            setChartData,
+            setOrders,
+            setDeliveryData,
+            setDashBoardData,
+        });
         const timeout = setTimeout(() => {
             setLoading(false);
         }, 1000);

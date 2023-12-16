@@ -29,7 +29,7 @@ const OrderSchema = new Schema({
     },
   ],
   createdAt: { type: Schema.Types.Date, default: Date.now },
-  paymentType: { type: Schema.Types.String },
+  payment_type: { type: Schema.Types.String },
   status: {
     type: Schema.Types.String,
     enum: enum_states,
@@ -58,6 +58,7 @@ const OrderSchema = new Schema({
     cost: { type: Schema.Types.Number },
     delivery_date: { type: Schema.Types.String },
     name: { type: Schema.Types.String },
+    id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
   },
   //   address: {
   //     type: Schema.Types.Mixed,
@@ -69,7 +70,8 @@ const OrderSchema = new Schema({
 
   trackingNumber: { type: Schema.Types.String },
   courier: { type: Schema.Types.String },
-  paymentIntent: { type: Schema.Types.String },
+  payment_intent_id: { type: Schema.Types.String },
+  refund_id: { type: Schema.Types.String },
 });
 
 export default mongoose.model('order', OrderSchema);

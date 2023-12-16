@@ -17,47 +17,51 @@ import {
   Container,
 } from '@react-email/components';
 
-function TotalContainer({ subtotal, deliveryCost, total }) {
+function TotalContainer({ order }) {
   return (
-    <Section className="bg-white px-5">
-      <Row>
-        <Column>
-          <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
-            SUB-TOTAL
-          </Text>
-        </Column>
-        <Column>
-          <Text className="text-right p-0 m-0 text-s  tracking-wider">
-            £{subtotal}
-          </Text>
-        </Column>
-      </Row>
-      <Row>
-        <Column>
-          <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
-            DELIVERY
-          </Text>
-        </Column>
-        <Column>
-          <Text className="text-right p-0 m-0 text-s  tracking-wider">
-            £{deliveryCost}
-          </Text>
-        </Column>
-      </Row>
-      <Hr className="bg-black" />
-      <Row>
-        <Column className="pb-6 align-top">
-          <Text className="font-semibold p-0 m-0 text-sm tracking-wider">
-            TOTAL
-          </Text>
-        </Column>
-        <Column className="align-top">
-          <Text className="text-right text-s font-semibold tracking-wider p-0 m-0  align-top">
-            £{total}
-          </Text>
-        </Column>
-      </Row>
-    </Section>
+    // <Section className="bg-white w-full min-w-full">
+    <Container id="test12345" className="w-full m-0 p-0 !max-w-full">
+      <Section className="w-full">
+        <Row className="w-full">
+          <Column className="w-full">
+            <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
+              SUB-TOTAL
+            </Text>
+          </Column>
+          <Column className="w-full">
+            <Text className="text-right p-0 m-0 text-s  tracking-wider">
+              £{order?.transaction_cost?.subtotal?.toFixed(2)}
+            </Text>
+          </Column>
+        </Row>
+        <Row className="w-full">
+          <Column className="w-full">
+            <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
+              DELIVERY
+            </Text>
+          </Column>
+          <Column>
+            <Text className="text-right p-0 m-0 text-s  tracking-wider">
+              £{order?.shipping_option?.cost?.toFixed(2)}
+            </Text>
+          </Column>
+        </Row>
+        <Hr className="bg-black" />
+        <Row className="w-full">
+          <Column className="pb-0 align-top w-full">
+            <Text className="font-semibold p-0 m-0 text-sm tracking-wider">
+              TOTAL
+            </Text>
+          </Column>
+          <Column className="align-top">
+            <Text className="text-right text-s font-semibold tracking-wider p-0 m-0  align-top">
+              £{order?.transaction_cost?.total?.toFixed(2)}
+            </Text>
+          </Column>
+        </Row>
+      </Section>
+    </Container>
+    //  </Section>
   );
 }
 

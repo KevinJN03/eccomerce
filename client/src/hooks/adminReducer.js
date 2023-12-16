@@ -21,9 +21,16 @@ export function AdminReducer(state, action) {
         };
     }
 
-    if (action.type == 'main' || action.type == 'manage' || action.type == 'order') {
+    if (
+        action.type == 'main' ||
+        action.type == 'manage' ||
+        action.type == 'order'
+    ) {
         return { ...state, ...action, currentVariation: null };
     }
 
-    throw new Error('Invalid type for Variation Reducer');
+    throw new Error(
+        'Invalid type for Variation Reducer',
+        JSON.stringify(action)
+    );
 }

@@ -24,8 +24,8 @@ import MoreQuestions from '../components/morequestions.jsx';
 import EmailHead from '../components/emailHead.jsx';
 import EmailTailwind from '../components/emailTailwind.jsx';
 import Header from '../components/header.jsx';
-import dayjs from 'dayjs'
-function OrderCancel({  order }) {
+import dayjs from 'dayjs';
+function OrderCancel({ order }) {
   const totalItems = order?.items.reduce(
     (Accum, currentValue) => Accum + currentValue?.quantity,
     0,
@@ -49,17 +49,16 @@ function OrderCancel({  order }) {
                     }
                     className="w-8 h-8"
                   />
-                  <Text className="font-bold text-lg">
+                  <Text className="font-semibold text-lg p-0 py-2 m-0">
                     YOUR ORDER HAS BEEN CANCELLED
                   </Text>
-                  <Text className="w-5/6 text-center">
-                    Hi {order?.customer?.firstName},
-                    we’ve cancelled the order below as requested and you haven’t
-                    been charged. All done!
+                  <Text className="w-5/6 text-center p-0 pb-1 m-0">
+                    Hi {order?.customer?.firstName}, we’ve cancelled the order
+                    below as requested and you haven’t been charged. All done!
                   </Text>
 
                   <Text className="p-0 m-0">Order No.: {order?._id}</Text>
-                  <Text className="p-0 m-0">Order Date: {orderDate}</Text>
+                  <Text className="p-0 m-0 leading-4">Order Date: {orderDate}</Text>
                 </Column>
               </Row>
               <Section className="px-5 pt-0">
@@ -75,7 +74,7 @@ function OrderCancel({  order }) {
                   <Column className="px-4 pb-0 bg-white" align="center">
                     <Section className="bg-white">
                       {order?.items?.map((itemProps, idx) => {
-                        console.log({ itemProps });
+                     
                         return <Item {...itemProps} key={idx} />;
                       })}
                     </Section>
@@ -83,11 +82,10 @@ function OrderCancel({  order }) {
                   </Column>
                 </Row>
                 <Row>
-                  <Column className="">
+                  <Column className="bg-white p-5 pt-0">
                     <TotalContainer
-                      deliveryCost={'3.99'}
-                      total={'10.00'}
-                      subtotal={'6.01'}
+                      order={order}
+                     
                     />
                   </Column>
                 </Row>

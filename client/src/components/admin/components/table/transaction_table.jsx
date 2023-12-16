@@ -76,8 +76,8 @@ function Transaction_Table({ data }) {
                                 £ {row?.transaction_cost?.total?.toFixed(2)}
                             </TableCell>
                             <TableCell className="tableCell">
-                                {row?.paymentType?.[0]?.toUpperCase() +
-                                    row?.paymentType?.substring(1)}
+                                {row?.payment_type?.[0]?.toUpperCase() +
+                                    row?.payment_type?.substring(1)}
                             </TableCell>
                             <TableCell className="tableCell">
                                 <span className={`status ${row.status}`}>
