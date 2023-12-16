@@ -46,7 +46,7 @@ function Tooltip({ text }) {
             >
                 {text}
             </p>
-            <p className="!text-dark-gray w-[100px] truncate font-gotham">
+            <p className="w-[100px] truncate font-gotham !text-dark-gray">
                 {text?.toUpperCase()}
             </p>
         </div>
@@ -156,7 +156,11 @@ function Order_Success({}) {
                             {order?.items && (
                                 <section className="">
                                     <h2 className=" border-b-[1px] py-4 font-gotham text-xl font-bold tracking-wider">
-                                        {order.items.length} ITEM
+                                        {`${order.items.length} ${
+                                            order.items.length > 1
+                                                ? 'ITEMS'
+                                                : 'ITEM'
+                                        }`}
                                     </h2>
                                     <section className="scrollbar flex max-h-[300px] flex-col flex-nowrap overflow-y-auto">
                                         {order.items.map((item) => {
@@ -174,7 +178,7 @@ function Order_Success({}) {
                                                     </div>
                                                     <div className="right flex flex-[4] flex-col gap-y-2">
                                                         {item?.price && (
-                                                            <p className="!text-dark-gray h-fit text-base font-bold">
+                                                            <p className="h-fit text-base font-bold !text-dark-gray">
                                                                 £{' '}
                                                                 {parseFloat(
                                                                     item?.price
@@ -191,7 +195,7 @@ function Order_Success({}) {
 
                                                         <div className="flex flex-row gap-x-4 font-bold tracking-wider ">
                                                             {item?.isVariation1Present && (
-                                                                <p className="!text-dark-gray font-gotham">
+                                                                <p className="font-gotham !text-dark-gray">
                                                                     {item.variation1?.variation?.toUpperCase()}
                                                                 </p>
                                                             )}
@@ -208,7 +212,7 @@ function Order_Success({}) {
                                                             )}
                                                         </div>
 
-                                                        <p className="text-dark-gray text-sm tracking-wide">
+                                                        <p className="text-sm tracking-wide text-dark-gray">
                                                             Qty:
                                                             <span className="ml-2 font-gotham font-bold">
                                                                 {item?.quantity}

@@ -51,7 +51,7 @@ function Footer({}) {
     <Container className="bg-[#333333] text-white p-5 !min-w-[600px] max-w-[600px] w-full">
       <Section>
         <Row align="center">
-          <Column>
+          <Column className='!border-r-2 !border-green-500 pb-4'>
             <Text className="text-center font-bold">Find inspiration</Text>
             {/* <Container> */}
             <Row className="w-fit border-spacing-x-4" align="center">
@@ -83,7 +83,9 @@ function Footer({}) {
               )}
             </Row>
           </Column>
-          <Column>
+          <Column className='w-[1px] !bg-light-grey text-center h-full' align='center' >
+          </Column>
+          <Column className='pb-4'>
             <Text className="text-center font-bold tracking-wider">
               Get the app
             </Text>
