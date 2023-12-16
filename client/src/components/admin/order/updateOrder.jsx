@@ -44,12 +44,16 @@ function UpdateOrder({}) {
     const [error, setError] = useState({});
     const [status, setStatus] = useState('');
     const [submitState, setSubmitState] = useState(false);
+
+    const [updateStatus, setUpdateStatus] = useState(false)
     const navigate = useNavigate();
     useEffect(() => {
         adminAxios
             .get(`order/${modalContent?.id}`)
             .then(({ data }) => {
                 setOrder(() => data?.order);
+
+                setUpdateStatus(() => (['received', 'shipped'].includes(data?.order?.status)) )
             })
             .catch((error) => {
                 console.error('get order details: ', error);
@@ -440,53 +444,55 @@ function UpdateOrder({}) {
                                 </span>
                             </p>
 
-                            <div className="flex justify-between">
-                                <p className="flex w-full flex-nowrap justify-between font-semibold">
-                                    UPDATE STATUS:{' '}
-                                </p>
-                                <div className="flex w-full max-w-[160px] flex-col">
-                                    <select
-                                        name="update-status"
-                                        id="update-status"
-                                        className="min-w-full text-s"
-                                        onChange={(e) => {
-                                            setStatus(e.target.value);
+                            {updateStatus && (
+                                <div className="flex justify-between">
+                                    <p className="flex w-full flex-nowrap justify-between font-semibold">
+                                        UPDATE STATUS:{' '}
+                                    </p>
+                                    <div className="flex w-full max-w-[160px] flex-col">
+                                        <select
+                                            name="update-status"
+                                            id="update-status"
+                                            className="min-w-full text-s"
+                                            onChange={(e) => {
+                                                setStatus(e.target.value);
 
-                                            setError((prevError) => ({
-                                                ...prevError,
-                                                status: null,
-                                            }));
-                                        }}
-                                    >
-                                        <option disabled selected>
-                                            Select Status
-                                        </option>
+                                                setError((prevError) => ({
+                                                    ...prevError,
+                                                    status: null,
+                                                }));
+                                            }}
+                                        >
+                                            <option disabled selected>
+                                                Select Status
+                                            </option>
 
-                                        {[
-                                            'shipped',
-                                            'delivered',
-                                            'cancelled',
-                                            'returned',
-                                        ].map((item) => {
-                                            return (
-                                                <option value={item}>
-                                                    {item[0]?.toUpperCase() +
-                                                        item?.substring(1)}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                    {error?.status && (
-                                        <OptionError
-                                            msg={error?.status}
-                                            className={'!text-s'}
-                                            small={true}
-                                        />
-                                    )}
+                                            {[
+                                                'shipped',
+                                                'delivered',
+                                                'cancelled',
+                                                'returned',
+                                            ].map((item) => {
+                                                return (
+                                                    <option value={item}>
+                                                        {item[0]?.toUpperCase() +
+                                                            item?.substring(1)}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                        {error?.status && (
+                                            <OptionError
+                                                msg={error?.status}
+                                                className={'!text-s'}
+                                                small={true}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
-                        {order?.status == 'received' && (
+                        {updateStatus && (
                             <div className="flex w-full flex-row gap-x-2">
                                 <button
                                     disabled={submitLoad}

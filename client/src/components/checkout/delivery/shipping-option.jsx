@@ -12,7 +12,7 @@ function Shipping_Option({ disable }) {
     const today = dayjs();
 
     const [profiles, setProfiles] = useState([]);
-
+    
     fetchDeliveryOptions(setProfiles);
 
     const handleDelivery = (e) => {
@@ -33,15 +33,26 @@ function Shipping_Option({ disable }) {
     useEffect(() => {
         if (!deliveryOption?.id && profiles.length >= 1) {
             console.log({ deliveryOption });
-            const { id, cost, name, processingTime } = profiles[0];
+            const { _id, cost, name, processingTime } = profiles[0];
 
             const delivery_date = generateDeliveryDate({
                 processingTime,
             });
             setDeliveryDate(() => delivery_date);
 
-            setDeliveryOption({ id, cost, name });
-        }else {
+            setDeliveryOption({ id: _id, cost, name });
+            return;
+        }
+
+        if (deliveryOption?.id && profiles.length >= 1) {
+            const findOption = profiles.find(
+                (item) => item?._id == deliveryOption?.id
+            );
+
+            const delivery_date = generateDeliveryDate({
+                processingTime: findOption?.processingTime,
+            });
+            setDeliveryDate(() => delivery_date);
         }
     }, [profiles]);
 

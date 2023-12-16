@@ -53,7 +53,7 @@ const column = [
             return <p>£ {param?.row?.transaction_cost?.total?.toFixed(2)}</p>;
         },
     },
-    { field: 'paymentType', headerName: 'PAYMENT', width: 100 },
+    { field: 'payment_type', headerName: 'PAYMENT', width: 100 },
     {
         field: 'status',
         headerName: 'STATUS',

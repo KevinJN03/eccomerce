@@ -244,6 +244,16 @@ export const updateOrder = [
           lean: { toObject: true },
         },
       ).exec();
+
+      if (order?.payment_intent_id) {
+        const refund = await stripe.refunds.create({
+          payment_intent: order?.payment_intent_id,
+        });
+
+        await Order.findByIdAndUpdate(id, { refund_id: refund.id });
+        console.log({ refund });
+      }
+
       const emailHtml = render(<OrderCancel order={order} />);
       const mailOptions = {
         from: SENDER,

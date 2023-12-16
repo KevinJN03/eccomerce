@@ -52,13 +52,13 @@ function OrderCancel({ order }) {
                   <Text className="font-semibold text-lg p-0 py-2 m-0">
                     YOUR ORDER HAS BEEN CANCELLED
                   </Text>
-                  <Text className="w-5/6 text-center p-0 m-0">
+                  <Text className="w-5/6 text-center p-0 pb-1 m-0">
                     Hi {order?.customer?.firstName}, we’ve cancelled the order
                     below as requested and you haven’t been charged. All done!
                   </Text>
 
                   <Text className="p-0 m-0">Order No.: {order?._id}</Text>
-                  <Text className="p-0 m-0">Order Date: {orderDate}</Text>
+                  <Text className="p-0 m-0 leading-4">Order Date: {orderDate}</Text>
                 </Column>
               </Row>
               <Section className="px-5 pt-0">
@@ -74,7 +74,7 @@ function OrderCancel({ order }) {
                   <Column className="px-4 pb-0 bg-white" align="center">
                     <Section className="bg-white">
                       {order?.items?.map((itemProps, idx) => {
-                        console.log({ itemProps });
+                     
                         return <Item {...itemProps} key={idx} />;
                       })}
                     </Section>

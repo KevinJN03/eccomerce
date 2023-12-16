@@ -144,7 +144,7 @@ function OrderReceived({ order }) {
 
                     <Hr />
                     {/* <Row className="w-full p-0 m-0"> */}
-                      <TotalContainer order={order} />
+                    <TotalContainer order={order} />
                     {/* </Row> */}
                   </Container>
                 </Column>
@@ -155,7 +155,6 @@ function OrderReceived({ order }) {
                   <Section className="bg-white p-4 py-5 w-full ">
                     <Row>
                       <Text className="font-semibold text-base pb-1 m-0 !important">
-                        {' '}
                         PAYMENT DETAILS
                       </Text>
                     </Row>
@@ -172,7 +171,7 @@ function OrderReceived({ order }) {
                       >
                         <Img
                           src={`${url}/${
-                            logos?.[order?.paymentType?.toLowerCase()]
+                            logos?.[order?.payment_type?.toLowerCase()] || 'credit-card-icon.png'
                           }`}
                           alt="logo"
                           title="logo"
@@ -180,8 +179,8 @@ function OrderReceived({ order }) {
                         />
                       </Column>
                       <Column className="pl-4 text-sm">
-                        {order?.paymentType[0]?.toUpperCase() +
-                          order?.paymentType.substring(1)}
+                        {order?.payment_type?.[0]?.toUpperCase() +
+                          order?.payment_type?.substring(1)}
                       </Column>
                     </Row>
                   </Section>

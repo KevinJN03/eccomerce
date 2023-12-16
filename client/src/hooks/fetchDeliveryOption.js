@@ -3,7 +3,9 @@ import { useCart } from '../context/cartContext';
 import { useState, useEffect } from 'react';
 const fetchDeliveryOptions = (setState) => {
     const { cart } = useCart();
+    
     useEffect(() => {
+        console.log('fetch render');
         const deliveryMap = new Map();
         const deliveryArray = [];
         cart.map((item) => {

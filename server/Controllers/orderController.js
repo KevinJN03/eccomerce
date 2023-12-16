@@ -11,91 +11,6 @@ import generateOrderNumber from '../utils/generateOrderNumber.js';
 import Order from '../Models/order.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
-// export const create_order = [
-//   checkAuthenticated,
-//   asyncHandler(async (req, res, next) => {
-//     const userId = req.session.passport.user;
-//     const { cart, shipping } = req.body;
-//     // make a map with all the cart item products
-//     //
-//     let cartPrice = 0;
-//     const cartMap = new Map();
-//     const cartObj = {};
-//     cart.map(({ id, variationSelect, quantity }) => {
-//       if (!cartMap.has(id)) {
-//         const array = [{ ...variationSelect, quantity }];
-//         cartObj[id] = array;
-//         cartMap.set(id, array);
-//       } else {
-//         const getArray = cartMap.get(id);
-
-//         getArray.push({ ...variationSelect, quantity });
-//         cartMap.set(getArray);
-//       }
-//     });
-//     const getAllCartProducts = await Promise.all(
-//       Object.keys(cartObj).map((id) => {
-//         const product = Product.findById(id);
-//         return product;
-//       }),
-//     );
-//     let isQuantityFixed = true;
-//     const getResult = getAllCartProducts.map((product) => {
-//       const getVariationSelectArray = cartObj[product.id];
-
-//       getVariationSelectArray.map(({ color, size, quantity }) => {
-//         if (product.isSizePresent) {
-//           const findVariation = product.variations.find(
-//             (item) => item.name === 'Size',
-//           );
-
-//           const getVariation = findVariation.options.get(size.id);
-//           if (_.has(getVariation, 'price')) {
-//             cartPrice += getVariation.price * quantity;
-//             isQuantityFixed = false;
-//           } else {
-//             cartPrice += product.price.current * quantity;
-//           }
-//           return getVariation;
-//         }
-
-//         if (product.isColorPresent) {
-//           const findVariation = product.variations.find(
-//             (item) => item.name === 'Colour',
-//           );
-
-//           const getVariation = findVariation.options.get(color.id);
-
-//           if (_.has(getVariation, 'price')) {
-//             cartPrice += getVariation.price * quantity;
-//             isQuantityFixed = false;
-//           } else {
-//             cartPrice += product.price.current * quantity;
-//           }
-
-//           return getVariation;
-//         }
-//       });
-//     });
-//     const calculatePrice = parseInt(cartPrice * 100);
-//     /* use off_session inorder to allow klarna payment */
-//     const paymentIntent = await stripe.paymentIntents.create({
-//       amount: calculatePrice,
-//       currency: 'gbp',
-//       customer: userId,
-//       // setup_future_usage: 'off_session',
-//       shipping,
-//       payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
-//     });
-//     console.log(paymentIntent);
-//     res.status(200).send({
-//       success: true,
-//       clientSecret: paymentIntent.client_secret,
-//       id: paymentIntent.id,
-//     });
-//   }),
-// ];
-
 export const createPaymentIntent = [
   // check('cart').escape(),
   // check('shipping').escape(),
@@ -155,7 +70,6 @@ export const createPaymentIntent = [
     const getAllCartProducts = await Product.find({
       _id: { $in: productsArray },
     });
-
 
     const getResult = getAllCartProducts.map((product) => {
       const getVariationSelectArray = cartObj[product.id];
@@ -228,7 +142,6 @@ export const createPaymentIntent = [
     const paymentIntent = await stripe.paymentIntents.create({
       metadata: {
         orderNumber,
-      
       },
       amount: calculatePrice,
       currency: 'gbp',
@@ -253,6 +166,7 @@ export const createPaymentIntent = [
         cost: deliveryOption?.cost,
         delivery_date: deliveryDate,
         name: deliveryOption?.name,
+        id: deliveryOption?.id,
       },
       items: itemsArray,
       cartObj,

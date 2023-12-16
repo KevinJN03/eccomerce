@@ -1,10 +1,17 @@
 import { useCart } from '../../context/cartContext';
 
 function Shipping({ options }) {
-    const { setDeliveryOption } = useCart();
+    const { setDeliveryOption, deliveryOption } = useCart();
 
     const handleOnChange = (e) => {
-        setDeliveryOption(() => JSON.parse(e.target.value));
+        console.log(e.target.options[e.target.options.selectedIndex].dataset);
+        const { cost, name } =
+            e.target.options[e.target.options.selectedIndex]?.dataset;
+        setDeliveryOption(() => ({
+            cost: parseFloat(cost),
+            name,
+            id: e.target.value,
+        }));
     };
     return (
         <span className="shipping">
@@ -17,8 +24,11 @@ function Shipping({ options }) {
                 {options.map(({ name, cost, _id }) => {
                     return (
                         <option
+                        selected={deliveryOption?.id == _id}
                             key={_id}
-                            value={JSON.stringify({ cost, name, id: _id })}
+                            data-cost={cost}
+                            data-name={name}
+                            value={_id}
                         >
                             {name}
                         </option>

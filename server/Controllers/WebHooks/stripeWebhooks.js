@@ -122,29 +122,33 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       const result = Promise.all([...reduceStock])
 
         .then(async (res) => {
-          let paymentType = '';
+          // let paymentType = '';
 
           const getPaymentMethod = await stripe.paymentMethods.retrieve(
             paymentIntent?.payment_method,
           );
-          if (getPaymentMethod?.type == 'card') {
+          /*     if (getPaymentMethod?.type == 'card') {
             paymentType = getPaymentMethod.card?.brand;
           } else {
             paymentType = getPaymentMethod?.type;
           }
-          console.log({ paymentType });
+          console.log({ paymentType }); */
           const updateOrder = await Order.findOneAndUpdate(
             { _id: orderNumber },
             {
               $unset: { cartObj: '' },
-              $set: { status: 'received', paymentType },
-              paymentIntent: paymentIntent?.id,
+              $set: {
+                status: 'received',
+                payment_type:
+                  getPaymentMethod?.card?.brand || getPaymentMethod?.type,
+                payment_intent_id: paymentIntent?.id,
+              },
             },
             {
-              new: true,
               populate: {
                 path: 'items.product customer',
               },
+              new: true,
               lean: { toObject: true },
             },
           ).exec();
