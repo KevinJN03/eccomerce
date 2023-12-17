@@ -12,6 +12,7 @@ function Address_Item({
     isDefaultShippingAddress,
     isDefaultBillingAddress,
     setLoading,
+    setPage,
 }) {
     const { setDefaultAddresses } = useUserDashboardContext();
     const [billingCheck, setBillingCheck] = useState(false);
@@ -30,6 +31,7 @@ function Address_Item({
             setTimeout(() => {
                 setDefaultAddresses(() => result.data.default_address);
                 setLoading(false);
+                setPage(1)
             }, 1000);
 
             return;

@@ -21,23 +21,6 @@ function My_Orders({}) {
         [page]
     );
 
-    const nextPage = () => {
-        console.log('next');
-
-        if (page == Math.ceil(ordersArray.length / 3)) {
-            return;
-        }
-        setPage((prevPage) => prevPage + 1);
-    };
-
-    const previousPage = () => {
-        console.log('prev');
-        if (page == 1) {
-            return;
-        }
-        setPage((prevPage) => prevPage - 1);
-    };
-
     const divideBy3 = Math.ceil(ordersArray.length / 3);
 
     const courierLinks = {
