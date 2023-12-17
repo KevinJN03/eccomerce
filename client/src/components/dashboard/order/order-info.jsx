@@ -41,7 +41,6 @@ function Order_Info({}) {
     const shipDate = dayjs(findOrder?.shipDate).format('dddd, D MMMM, YYYY');
     const orderDate = dayjs(findOrder?.createdAt).format('dddd, D MMMM, YYYY');
 
-
     const courierLinks = {
         'royal mail':
             'https://www.royalmail.com/track-your-item#/tracking-results/',
@@ -54,7 +53,6 @@ function Order_Info({}) {
         yodel: 'https://www.yodel.co.uk/track/?parcelNumber=',
         tnt: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
     };
-
 
     return (
         <section className="order-info-wrapper">
@@ -171,8 +169,6 @@ function Order_Info({}) {
 
                             <div className="middle flex w-full flex-row gap-x-4 overflow-x-scroll hide-scrollbar">
                                 {findOrder.items?.map((item) => {
-                                   
-
                                     return (
                                         <Product
                                             key={uuidv4()}
@@ -192,39 +188,56 @@ function Order_Info({}) {
                             </div>
 
                             <div className="flex w-full flex-col gap-y-2">
-                                <p className="flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
-                                    <span className='flex-1'>DELIVERY METHOD:</span>
-                                    <span className=" flex-[2.5] text-s font-light">
-                                        {findOrder?.shipping_option?.name}
-                                    </span>
-                                </p>
+                                {['shipped', 'received'].includes(
+                                    findOrder?.status
+                                ) && (
+                                    <>
+                                        <p className="flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
+                                            <span className="flex-1">
+                                                DELIVERY METHOD:
+                                            </span>
+                                            <span className=" flex-[2.5] text-s font-light">
+                                                {
+                                                    findOrder?.shipping_option
+                                                        ?.name
+                                                }
+                                            </span>
+                                        </p>
 
-                                <p className=" flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
-                                    {findOrder?.status == 'shipped' && (
-                                        <span className='flex-1'>SHIPPED DATE:</span>
-                                    )}
-                                    {findOrder?.status == 'received' && (
-                                        <span className=" flex-1" >ORDER DATE:</span>
-                                    )}
-                                    <span className="text-s font-light flex-[2.5]">
-                                        {findOrder?.status == 'shipped' &&
-                                            shipDate}
-                                        {findOrder?.status == 'received' &&
-                                            orderDate}
-                                    </span>
-                                </p>
-                                <a
-                                                target="_blank"
-                                                href={`${
-                                                    courierLinks?.[
-                                                        findOrder?.courier?.toLowerCase()
-                                                    ]
-                                                }${findOrder?.trackingNumber}`}
-                                                className="w-4/6 mt-2 flex-[1] border-2 py-2  text-center font-gotham tracking-wider transition-all hover:!bg-[var(--light-grey)]"
-                                            >
-                                                TRACK PARCEL
-                                            </a>
-                                
+                                        <p className=" flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
+                                            {findOrder?.status == 'shipped' && (
+                                                <span className="flex-1">
+                                                    SHIPPED DATE:
+                                                </span>
+                                            )}
+                                            {findOrder?.status ==
+                                                'received' && (
+                                                <span className=" flex-1">
+                                                    ORDER DATE:
+                                                </span>
+                                            )}
+                                            <span className="flex-[2.5] text-s font-light">
+                                                {findOrder?.status ==
+                                                    'shipped' && shipDate}
+                                                {findOrder?.status ==
+                                                    'received' && orderDate}
+                                            </span>
+                                        </p>
+                                    </>
+                                )}
+                                {findOrder?.status == 'shipped' && (
+                                    <a
+                                        target="_blank"
+                                        href={`${
+                                            courierLinks?.[
+                                                findOrder?.courier?.toLowerCase()
+                                            ]
+                                        }${findOrder?.trackingNumber}`}
+                                        className="mt-2 w-4/6 flex-[1] border-2 py-2  text-center font-gotham tracking-wider transition-all hover:!bg-[var(--light-grey)]"
+                                    >
+                                        TRACK PARCEL
+                                    </a>
+                                )}
                             </div>
                         </div>
 

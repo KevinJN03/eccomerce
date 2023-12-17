@@ -56,7 +56,7 @@ function Profile_Dropdown({}) {
                 },
                 {
                     option: { src: order_icon, text: 'My Order' },
-                    linkTo: './my-account',
+                    linkTo: './my-account/orders',
                 },
                 {
                     option: { src: return_icon, text: 'My Returns' },

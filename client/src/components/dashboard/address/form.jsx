@@ -71,7 +71,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                     label={'MOBILE'}
                     {...options}
                 />
-                <section className="input-container flex flex-col gap-y-2">
+                <section className="input-container flex flex-col gap-y-2 justify-center">
                     <label>COUNTRY: </label>
                     <div className=" flex flex-row items-center justify-start gap-x-4">
                         <ReactCountryFlag
@@ -81,6 +81,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                                 width: '3em',
                                 height: '3em',
                                 borderRadius: '50%',
+                                padding: '0px'
                             }}
                             cdnUrl="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.3/flags/1x1/"
                         />
@@ -89,7 +90,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                             selected={address.country}
                             onSelect={onSelect}
                             selectedSize={14}
-                            className="!w-full"
+                            className="!w-full !p-0"
                         />
                     </div>
                 </section>
