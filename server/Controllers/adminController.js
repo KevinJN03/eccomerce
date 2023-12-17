@@ -14,6 +14,7 @@ import * as React from 'react';
 import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
+import ReturnOrder from '../React Email/emails/returnOrder.jsx';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const { SENDER } = process.env;
@@ -259,6 +260,37 @@ export const updateOrder = [
         from: SENDER,
         to: order?.customer?.email,
         subject: 'Your GLAMO order has been cancelled',
+        html: emailHtml,
+      };
+
+      const sendEmail = await transporter.sendMail(mailOptions);
+    }
+
+    if (status == 'returned') {
+      const order = await Order.findOneAndUpdate(
+        { _id: id },
+        { status },
+        {
+          populate: { path: 'items.product customer' },
+          new: true,
+          lean: { toObject: true },
+        },
+      ).exec();
+
+      if (order?.payment_intent_id) {
+        const refund = await stripe.refunds.create({
+          payment_intent: order?.payment_intent_id,
+        });
+
+        await Order.findByIdAndUpdate(id, { refund_id: refund.id });
+        console.log({ refund });
+      }
+
+      const emailHtml = render(<ReturnOrder order={order} />);
+      const mailOptions = {
+        from: SENDER,
+        to: order?.customer?.email,
+        subject: 'Your refund is on its way! 💸',
         html: emailHtml,
       };
 

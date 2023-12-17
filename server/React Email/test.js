@@ -10,6 +10,7 @@ const router = express.Router();
 import 'dotenv/config.js';
 import OrderCancel from './emails/orderCancelled.jsx';
 import OrderReceived from './emails/orderReceived.jsx';
+import ReturnOrder from './emails/returnOrder.jsx';
 
 const { SENDER } = process.env;
 router.get(
@@ -47,15 +48,16 @@ router.get(
       items: order?.items,
     };
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    const emailHtml = render(<OrderReceived order={order} />);
+    const emailHtml = render(<ReturnOrder order={order} />);
     const mailOptions = {
       from: SENDER,
-      to: process.env.TEST_EMAIL,
+      // to: process.env.TEST_EMAIL,
+      to: 'cahada3632@bayxs.com',
       subject: 'test ored success betaemail email',
       html: emailHtml,
     };
 
-  // const sendEmail = await transporter.sendMail(mailOptions);
+  const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );
