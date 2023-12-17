@@ -25,6 +25,7 @@ export const navOptionsArray = [
 
     [
         { text: 'My details', icon: contact_icon, link: 'my-details' },
+        { text: 'Change Password', icon: 'https://dknhps0hwilzj.cloudfront.net/files/logos/lock.png', link: 'change-password' },
         { text: 'Address book', icon: home_icon, link: 'addresses' },
         { text: 'Payment methods', icon: card_icon, link: 'payment-methods' },
         {
