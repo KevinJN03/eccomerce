@@ -43,7 +43,6 @@ const handleProfilePhoto = async (file, id) => {
   }
 };
 
-
 // test
 export const dummy_data = asyncHandler(async (req, res, next) => {
   const dummyUsers = [
@@ -274,8 +273,6 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
     ]).exec(),
   ]);
 
-
-
   if (!user) {
     res.status(404).send('User Not Found');
   } else {
@@ -331,7 +328,6 @@ export const loginUser = [
       return res.status(400).send(result.mapped());
     }
     passport.authenticate('local', (err, user, info) => {
-     
       if (err) {
         next(err);
       }
