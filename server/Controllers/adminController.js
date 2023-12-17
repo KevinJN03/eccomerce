@@ -216,15 +216,34 @@ export const updateOrder = [
     const { trackingNumber, courier, status } = req.body;
 
     if (status === 'shipped') {
+      const oldOrderInfo = await Order.findById(id, null, {
+        lean: { toObject: true },
+        new: true,
+      });
+
+      const addUnit = oldOrderInfo?.shipping_option?.type?.substring(
+        0,
+        oldOrderInfo?.shipping_option?.type?.length - 1,
+      );
+
+      const newDeliveryDate = dayjs()
+        .add(oldOrderInfo?.shipping_option?.time, addUnit)
+        .format('dddd, D MMMM, YYYY');
+
       const order = await Order.findOneAndUpdate(
         { _id: id },
-        { ...req.body },
+        {
+          ...req.body,
+          ship_date: new Date(),
+          'shipping_option.delivery_date': newDeliveryDate,
+        },
         {
           populate: { path: 'items.product customer' },
           new: true,
           lean: { toObject: true },
         },
       ).exec();
+
       const emailHtml = render(<OrderShipped order={order} />);
       const mailOptions = {
         from: SENDER,
@@ -238,7 +257,7 @@ export const updateOrder = [
     if (status === 'cancelled') {
       const order = await Order.findOneAndUpdate(
         { _id: id },
-        { status },
+        { status, cancel_date: new Date() },
         {
           populate: { path: 'items.product customer' },
           new: true,
@@ -269,7 +288,7 @@ export const updateOrder = [
     if (status == 'returned') {
       const order = await Order.findOneAndUpdate(
         { _id: id },
-        { status },
+        { status, return_date: new Date() },
         {
           populate: { path: 'items.product customer' },
           new: true,

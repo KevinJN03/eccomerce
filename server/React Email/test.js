@@ -14,9 +14,10 @@ import ReturnOrder from './emails/returnOrder.jsx';
 
 const { SENDER } = process.env;
 router.get(
-  '/',
+  '/:id',
   asyncHandler(async (req, res, next) => {
-    const order = await Order.findById('A94ZTBIGZRA0', null, {
+    const { id } = req.params;
+    const order = await Order.findById(id, null, {
       populate: {
         path: 'items.product customer',
       },
@@ -48,7 +49,7 @@ router.get(
       items: order?.items,
     };
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    const emailHtml = render(<ReturnOrder order={order} />);
+    const emailHtml = render(<OrderShipped order={order} />);
     const mailOptions = {
       from: SENDER,
       // to: process.env.TEST_EMAIL,
@@ -57,7 +58,7 @@ router.get(
       html: emailHtml,
     };
 
-  const sendEmail = await transporter.sendMail(mailOptions);
+    //const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

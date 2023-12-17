@@ -58,6 +58,8 @@ const OrderSchema = new Schema({
     cost: { type: Schema.Types.Number },
     delivery_date: { type: Schema.Types.String },
     name: { type: Schema.Types.String },
+    time: { type: Schema.Types.Number },
+    type: { type: Schema.Types.String },
     id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
   },
   //   address: {
@@ -72,6 +74,9 @@ const OrderSchema = new Schema({
   courier: { type: Schema.Types.String },
   payment_intent_id: { type: Schema.Types.String },
   refund_id: { type: Schema.Types.String },
+  ship_date: { type: Schema.Types.Date },
+  return_date: { type: Schema.Types.Date },
+  cancel_date: { type: Schema.Types.Date },
 });
 
 export default mongoose.model('order', OrderSchema);

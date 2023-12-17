@@ -6,15 +6,20 @@ import logos from '../payment-methods/logos.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
-import {v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import Product from './product.jsx';
+import { find } from 'lodash';
 export function OrderNumberDate({ icon, title, text, className }) {
     return (
-        <div className="flex flex-row items-center w-full">
-            <div className={`flex flex-1 flex-row flex-nowrap items-center gap-x-3 ${className || ''}`}>
+        <div className="flex w-full flex-row items-center">
+            <div
+                className={`flex flex-1 flex-row flex-nowrap items-center gap-x-3 ${
+                    className || ''
+                }`}
+            >
                 <img src={icon} alt="box outline icon" className="h-6 w-6" />
-                <h3 className="text-dark-gray font-gotham text-s">{title}</h3>
+                <h3 className="font-gotham text-s text-dark-gray">{title}</h3>
             </div>
 
             <p className={`flex-1 text-sm ${className || ''}`}>{text}</p>
@@ -29,9 +34,28 @@ function Order_Info({}) {
         ordersArray.find((item) => item?._id == id)
     );
 
-    if (findOrder) {
-        var orderDate = dayjs(findOrder?.createdAt)?.format('DD MMM, YYYY');
-    }
+    // if (findOrder) {
+    //     var orderDate = dayjs(findOrder?.createdAt)?.format('DD MMM, YYYY');
+    // }
+
+    const shipDate = dayjs(findOrder?.shipDate).format('dddd, D MMMM, YYYY');
+    const orderDate = dayjs(findOrder?.createdAt).format('dddd, D MMMM, YYYY');
+
+
+    const courierLinks = {
+        'royal mail':
+            'https://www.royalmail.com/track-your-item#/tracking-results/',
+        ups: 'https://www.ups.com/track?track=yes&trackNums=',
+        fedex: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
+        dhl: 'https://www.dhl.com/en/express/tracking.html?AWB=',
+        hermes: 'https://www.evri.com/track/parcel/',
+        'parcelforce worldwide':
+            'https://www.parcelforce.com/track-trace?trackNumber=',
+        yodel: 'https://www.yodel.co.uk/track/?parcelNumber=',
+        tnt: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
+    };
+
+
     return (
         <section className="order-info-wrapper">
             {findOrder && (
@@ -66,20 +90,61 @@ function Order_Info({}) {
                             </button>
                         </div>
 
-                        <div className="mt-3 bg-white p-6">
-                            <h3 className="border-b-[1px] pb-4 font-gotham text-s tracking-wide">
-                                CANCELLATION DETAILS
-                            </h3>
+                        {findOrder?.status == 'cancelled' && (
+                            <div className="mt-3 bg-white p-6">
+                                <h3 className="border-b-[1px] pb-4 font-gotham text-s tracking-wide">
+                                    CANCELLATION DETAILS
+                                </h3>
 
-                            <h3 className="text-dark-gray mt-6 font-gotham text-s tracking-wider">
-                                REASON FOR CANCELLATION:
-                            </h3>
-                            <p className="mt-2 text-sm ">No longer required</p>
-                        </div>
-
+                                <h3 className="mt-6 font-gotham text-s tracking-wider text-dark-gray">
+                                    REASON FOR CANCELLATION:
+                                </h3>
+                                <p className="mt-2 text-sm ">
+                                    No longer required
+                                </p>
+                            </div>
+                        )}
+                        {['shipped', 'received'].includes(
+                            findOrder?.status
+                        ) && (
+                            <div className="mt-3 bg-white p-6">
+                                <p className="mb-3 border-b-[1px] pb-2 font-gotham text-sm">
+                                    DELIVERY ADDRESS
+                                </p>
+                                <p className="text-sm leading-6">
+                                    {findOrder?.shipping_address?.name} <br />
+                                    {
+                                        findOrder?.shipping_address?.address
+                                            ?.line1
+                                    }{' '}
+                                    <br />
+                                    {findOrder?.shipping_address?.address
+                                        ?.line2 && (
+                                        <>
+                                            {
+                                                findOrder?.shipping_address
+                                                    ?.address?.line2
+                                            }
+                                            <br />
+                                        </>
+                                    )}
+                                    {findOrder?.shipping_address?.address?.city}{' '}
+                                    {
+                                        findOrder?.shipping_address?.address
+                                            ?.postal_code
+                                    }{' '}
+                                    <br />
+                                    {
+                                        findOrder?.shipping_address?.address
+                                            ?.country
+                                    }
+                                    {findOrder?.shipping_address?.phone}
+                                </p>
+                            </div>
+                        )}
                         <div className="mt-3 bg-white p-6">
-                            <div className="top border-b-2 pb-6">
-                                <p className="text-dark-gray font-gotham text-s">
+                            <div className="top border-b-2 pb-4">
+                                <p className="font-gotham text-s text-dark-gray">
                                     ORDER STATUS:
                                 </p>
 
@@ -94,34 +159,72 @@ function Order_Info({}) {
                                         }`}
                                     </span>
                                 </p>
+
                                 <p className="text-s">
-                                    Looks like you cancelled your order. A
-                                    confirmation was sent to the email address
-                                    associated with your ASOS account.
+                                    {findOrder?.status == 'cancelled' &&
+                                        'Looks like you cancelled your order. A confirmation was sent to the email address associated with your GLAMO account.'}
+
+                                    {findOrder?.status == 'shipped' &&
+                                        'Your parcel is on its way to a courier and will be with you very soon!'}
                                 </p>
                             </div>
 
-                            <div className="middle flex flex-row gap-x-4 overflow-x-scroll hide-scrollbar">
-                                {findOrder.items?.map(
-                                    (item) => {
-                                        console.log({ item });
+                            <div className="middle flex w-full flex-row gap-x-4 overflow-x-scroll hide-scrollbar">
+                                {findOrder.items?.map((item) => {
+                                   
 
-                                        return (
-                                            <Product
+                                    return (
+                                        <Product
                                             key={uuidv4()}
-                                                img={item?.product?.images?.[0]}
-                                                variation1={
-                                                    item?.variation1?.variation
-                                                }
-                                                variation2={
-                                                    item?.variation2?.variation
-                                                }
-                                                title={item.product?.title}
-                                                price={item?.price}
-                                            />
-                                        );
-                                    }
-                                )}
+                                            id={item?._id}
+                                            img={item?.product?.images?.[0]}
+                                            variation1={
+                                                item?.variation1?.variation
+                                            }
+                                            variation2={
+                                                item?.variation2?.variation
+                                            }
+                                            title={item.product?.title}
+                                            price={item?.price}
+                                        />
+                                    );
+                                })}
+                            </div>
+
+                            <div className="flex w-full flex-col gap-y-2">
+                                <p className="flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
+                                    <span className='flex-1'>DELIVERY METHOD:</span>
+                                    <span className=" flex-[2.5] text-s font-light">
+                                        {findOrder?.shipping_option?.name}
+                                    </span>
+                                </p>
+
+                                <p className=" flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
+                                    {findOrder?.status == 'shipped' && (
+                                        <span className='flex-1'>SHIPPED DATE:</span>
+                                    )}
+                                    {findOrder?.status == 'received' && (
+                                        <span className=" flex-1" >ORDER DATE:</span>
+                                    )}
+                                    <span className="text-s font-light flex-[2.5]">
+                                        {findOrder?.status == 'shipped' &&
+                                            shipDate}
+                                        {findOrder?.status == 'received' &&
+                                            orderDate}
+                                    </span>
+                                </p>
+                                <a
+                                                target="_blank"
+                                                href={`${
+                                                    courierLinks?.[
+                                                        findOrder?.courier?.toLowerCase()
+                                                    ]
+                                                }${findOrder?.trackingNumber}`}
+                                                className="w-4/6 mt-2 flex-[1] border-2 py-2  text-center font-gotham tracking-wider transition-all hover:!bg-[var(--light-grey)]"
+                                            >
+                                                TRACK PARCEL
+                                            </a>
+                                
                             </div>
                         </div>
 
@@ -144,7 +247,7 @@ function Order_Info({}) {
                             <h3 className="border-b-2 pb-6 font-gotham text-sm">
                                 ORDER TOTAL
                             </h3>
-                            <p className="text-dark-gray my-6 flex items-center justify-between font-gotham tracking-wider">
+                            <p className="my-6 flex items-center justify-between font-gotham tracking-wider text-dark-gray">
                                 SUB-TOTAL:{' '}
                                 <span className="text-sm tracking-wider">
                                     {`£${parseFloat(
@@ -154,7 +257,7 @@ function Order_Info({}) {
                                 </span>
                             </p>
 
-                            <p className="text-dark-gray my-6 flex items-center justify-between font-gotham tracking-wider">
+                            <p className="my-6 flex items-center justify-between font-gotham tracking-wider text-dark-gray">
                                 DELIVERY:
                                 <span className="text-sm tracking-wider">
                                     {`£${

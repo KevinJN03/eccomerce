@@ -37,6 +37,7 @@ function OrderShipped({ order }) {
     yodel: 'https://www.yodel.co.uk/track/?parcelNumber=',
     tnt: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
   };
+
   return (
     <Html lang="en">
       <EmailHead />

@@ -9,6 +9,7 @@ import Stripe from 'stripe';
 import _ from 'lodash';
 import generateOrderNumber from '../utils/generateOrderNumber.js';
 import Order from '../Models/order.js';
+import DeliveryProfile from '../Models/deliveryProfile.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const createPaymentIntent = [
@@ -152,6 +153,11 @@ export const createPaymentIntent = [
     });
 
     console.log({ orderNumber });
+
+    const profile = await DeliveryProfile.findById(deliveryOption?.id, null, {
+      toObject: true,
+      new: true,
+    });
     const orderObj = {
       _id: orderNumber,
       customer: userId,
@@ -167,7 +173,10 @@ export const createPaymentIntent = [
         delivery_date: deliveryDate,
         name: deliveryOption?.name,
         id: deliveryOption?.id,
+        time: profile?.processingTime?.end,
+        type: profile?.processingTime?.type,
       },
+
       items: itemsArray,
       cartObj,
       cartIds,
