@@ -7,7 +7,7 @@ import Modal from '../admin/components/modal/modal.jsx';
 import signOut_icon from '../../assets/icons/signout-icon.png';
 import { UserDashboardProvider, reducer } from '../../context/userContext.jsx';
 import DeletePaymentMethod from './payment-methods/delete-payment-method.jsx';
-import NavOption from './navOptions.jsx';
+import NavOption from './nav-options/navOptions.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import axios from '../../api/axios.js';
 import dayjs from 'dayjs';
@@ -15,6 +15,8 @@ import DeleteAddress from './address/deleteAddress.jsx';
 import logOutUser from '../common/logoutUser.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import useCurrentLocation from '../../hooks/useCurrentLocation.jsx';
+import UnsavedDetails from './unsavedDetails.jsx';
+
 function Dashboard() {
     disableLayout();
     const { pathname } = useLocation();
@@ -80,6 +82,7 @@ function Dashboard() {
 
     const [modalContent, modalContentDispatch] = useReducer(reducer, {});
     const [modalCheck, setModalCheck] = useState(false);
+    const [isDetailsUnSaved, setIsDetailsUnSaved] = useState(false);
     const value = {
         modalContent,
         modalContentDispatch,
@@ -105,11 +108,14 @@ function Dashboard() {
         userPaymentMethods,
         ordersArray,
         setOrdersArray,
+        isDetailsUnSaved,
+        setIsDetailsUnSaved,
     };
 
     const view = {
         deletePaymentMethod: <DeletePaymentMethod />,
         deleteAddress: <DeleteAddress />,
+        unsavedDetails: <UnsavedDetails />,
     };
 
     const logout = async () => {
@@ -137,7 +143,7 @@ function Dashboard() {
     return (
         <UserDashboardProvider value={value}>
             <AnimatePresence>
-                <section className="user-dashboard flex h-full min-h-screen w-screen flex-col !items-center bg-[var(--light-grey)] pb-10">
+                <section className="user-dashboard flex h-full min-h-screen w-screen flex-col !items-center bg-[var(--light-grey)]">
                     <section className="dashboard-wrapper w-full max-w-4xl px-3">
                         <Checkout_Header text={'MY ACCOUNT'} />
                         <section className="dashboard-body mt-3 flex h-full flex-row gap-x-5">
@@ -228,6 +234,9 @@ function Dashboard() {
                                 }`}
                             >
                                 {!loadingState && <Outlet />}
+                                <p className="bg-green-200 p-4">
+                                    this is a text
+                                </p>
                             </motion.div>
                         </section>
                     </section>
@@ -236,6 +245,18 @@ function Dashboard() {
                         setCheck={setModalCheck}
                         ModalContent={view[modalContent.type]}
                     />
+
+                    <footer className="sticky bottom-0 mt-16 flex w-full justify-center bg-white p-5">
+                        <section className="flex  w-full max-w-4xl flex-row px-3">
+                            <div className='flex justify-between flex-1'>
+                                <p>GLAMO Homepage</p>
+                                <p>Terms & Conditions</p>
+
+                                <p>Privacy Policy</p>
+                            </div>
+                            <p className='text-right flex-1'>© GLAMO {dayjs().year()}</p>
+                        </section>
+                    </footer>
                 </section>
             </AnimatePresence>
         </UserDashboardProvider>

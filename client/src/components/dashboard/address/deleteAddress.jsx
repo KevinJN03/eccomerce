@@ -24,7 +24,10 @@ function DeleteAddress() {
         }
     };
 
-    return <DeleteModalContent text={'address'} deleteMethod={deleteMethod} />;
+    return <DeleteModalContent text={'delete address'}
+    buttonText="DELETE"
+    description={'Are you sure you want to delete this address?'}
+    handleClick={deleteMethod}/>;
 }
 
 export default DeleteAddress;

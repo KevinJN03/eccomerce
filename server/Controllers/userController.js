@@ -812,3 +812,47 @@ export const getOrders = [
       .send({ success: true, orders: getUserOrder?.reverse() });
   }),
 ];
+
+export const changePassword = [
+  checkAuthenticated,
+  check('currentPassword')
+    .trim()
+    .escape()
+    .custom(async (value, { req }) => {
+      const userId = req.session.passport?.user;
+      const user = await User.findById(userId, null, {
+        toObject: true,
+        new: true,
+      });
+
+      const match = await bcrypt.compare(value, user?.password);
+
+      if (!match) {
+        throw new Error('Current password does not match');
+      }
+      return match;
+    }),
+  check('newPassword', 'Please enter a Password with 10 or more characters')
+    .trim()
+    .escape()
+    .isLength({ min: 10 }),
+
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    if (currentPassword === newPassword) {
+      return res.status(400).send({
+        error: {
+          newPassword:
+            "Hey! It looks like you've used this password before. Please choose a fresh one.",
+        },
+      });
+    }
+    res.send({ success: true, msg: 'Password successfully changed.' });
+  }),
+];

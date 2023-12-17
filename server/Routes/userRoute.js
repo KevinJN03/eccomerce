@@ -1,7 +1,6 @@
 import {
   create_user,
   dummy_data,
-  
   signUp_user,
   loginUser,
   checkUser,
@@ -21,12 +20,12 @@ import {
   setUpPaypal,
   setUpKlarna,
   getOrders,
+  changePassword,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
 import express from 'express';
 const router = express.Router();
-
 
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
@@ -50,4 +49,5 @@ router.post('/payment-method/changedefault/:id', changeDefaultMethod);
 router.delete('/payment-method/delete/:id', deletePaymentMethod);
 router.get('/payment-method/all', getPaymentMethods);
 router.get('/orders', getOrders);
+router.post('/change-password', changePassword);
 export default router;

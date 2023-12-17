@@ -29,8 +29,10 @@ function DeletePaymentMethod() {
     };
     return (
         <DeleteModalContent
-            text={'payment method'}
-            deleteMethod={deleteMethod}
+        buttonText="DELETE"
+            text={'delete payment method'}
+            description={'Are you sure you want to delete this payment method?'}
+            handleClick={deleteMethod}
         />
     );
 }

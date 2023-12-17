@@ -20,7 +20,7 @@ export function UserDashboardProvider({ value, children }) {
 export const reducer = (state, action) => {
     if (
         action.type == 'deletePaymentMethod' ||
-        action.type == 'deleteAddress'
+        action.type == 'deleteAddress' || action.type == 'unsavedDetails'
     ) {
         return { ...state, ...action };
     }

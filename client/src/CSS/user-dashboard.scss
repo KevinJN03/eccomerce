@@ -35,7 +35,7 @@
     }
 
     .modal-content {
-        @apply w-[400px];
+        @apply w-[400px] rounded-none #{!important};
     }
 
     .daisy-checkbox {

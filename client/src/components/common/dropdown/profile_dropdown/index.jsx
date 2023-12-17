@@ -6,6 +6,7 @@ import info_icon from '../../../../assets/icons/profile-icons/info.png';
 import order_icon from '../../../../assets/icons/profile-icons/package.svg';
 import { useAuth } from '../../../../hooks/useAuth';
 import Dropdown_Option from './dropdown_option';
+import { v4 as uuidv4 } from 'uuid';
 function Profile_Dropdown({}) {
     const { user, authenticated, authDispatch } = useAuth();
 
@@ -71,7 +72,13 @@ function Profile_Dropdown({}) {
                     linkTo: './my-account/contact-preferences',
                 },
             ].map(({ option, linkTo }) => {
-                return <Dropdown_Option option={option} linkTo={linkTo} />;
+                return (
+                    <Dropdown_Option
+                        key={uuidv4()}
+                        option={option}
+                        linkTo={linkTo}
+                    />
+                );
             })}
             {/* <Dropdown_Option
                 option={{ src: dashboard_icon, text: 'Dashboard' }}

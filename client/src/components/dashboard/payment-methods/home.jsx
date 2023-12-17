@@ -105,7 +105,7 @@ function Home({}) {
                                     }
                                     check={defaultCheck == id}
                                     key={id}
-                                    isDefault={idx == 0}
+                                    isDefault={id == paymentMethods[0]?.id}
                                     arrayLength={paymentMethods.length}
                                     icon={
                                         type === 'paypal'
