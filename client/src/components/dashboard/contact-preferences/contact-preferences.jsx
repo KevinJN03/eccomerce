@@ -10,7 +10,7 @@ import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
 function Contact_Preferences({}) {
-    const { contact_preference, setContactPreference } =
+    const { contact_preference, setContactPreference, setFooterMessage } =
         useUserDashboardContext();
 
     const [loading, setLoading] = useState(false);
@@ -81,6 +81,10 @@ function Contact_Preferences({}) {
                     setOnMountValue(() => {
                         return { stockCheck, discountCheck };
                     });
+                    setFooterMessage(() => ({
+                        text: 'Preferences saved',
+                        success: true,
+                    }));
                     setDisable(() => true);
                     setConfirmLoadState(() => false);
                 }, 700);

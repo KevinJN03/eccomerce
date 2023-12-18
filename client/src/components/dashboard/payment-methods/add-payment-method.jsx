@@ -12,10 +12,11 @@ import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useAuth } from '../../../hooks/useAuth';
 import axios from '../../../api/axios';
 import logOutUser from '../../common/logoutUser';
-
+import { loadStripe } from '@stripe/stripe-js';
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 function Add_Payment_Method({}) {
     const navigate = useNavigate();
-
+    // const stripePromise = loadStripe(STRIPE_KEY);
     const { currentLocation } = useCurrentLocation();
     const { authDispatch } = useAuth();
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
@@ -45,8 +46,8 @@ function Add_Payment_Method({}) {
 
     const handlePaymentClick = async ({ type }) => {
         try {
-            const result = await axios.get(`user/payment-method/${type}`);
-
+            // const result = await axios.get(`user/payment-method/${type}`);
+            const result = await axios.post('user/payment-method/digital', {type})
             const { url } = result.data;
             ({ url });
 
@@ -73,24 +74,24 @@ function Add_Payment_Method({}) {
             onClick: () => handlePaymentClick({ type: 'paypal' }),
         },
 
-        // {
-        //     index: 3,
-        //     icon: paypal_icon,
-        //     logo: 'paypal',
-        //     text: 'Pay in 3',
-        //     alt: 'paypal icon',
-        //     description: 'with PayPal Pay Later',
-        //     onClick: () => handlePaymentClick({ type: 'paypal' }),
-        // },
-        // {
-        //     index: 4,
-        //     icon: klarna_logo,
-        //     logo: 'klarna',
-        //     text: 'Pay Later',
-        //     alt: 'klarna logo',
-        //     description: 'with Klarna',
-        //     onClick: () => handlePaymentClick({ type: 'klarna' }),
-        // },
+        {
+            index: 3,
+            icon: paypal_icon,
+            logo: 'paypal',
+            text: 'Pay in 3',
+            alt: 'paypal icon',
+            description: 'with PayPal Pay Later',
+            onClick: () => handlePaymentClick({ type: 'paypal' }),
+        },
+        {
+            index: 4,
+            icon: klarna_logo,
+            logo: 'klarna',
+            text: 'Pay Later',
+            alt: 'klarna logo',
+            description: 'with Klarna',
+            onClick: () => handlePaymentClick({ type: 'klarna' }),
+        },
     ];
     const filteredButtonArray = buttonsArray.filter(
         (item) => !paymentMethods.some((method) => method.type == item.type)

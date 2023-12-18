@@ -1,5 +1,5 @@
-import { useUserDashboardContext } from '../../context/userContext';
-import close_icon from '../../assets/icons/close.png';
+import { useUserDashboardContext } from '../../../context/userContext';
+import close_icon from '../../../assets/icons/close.png';
 function DeleteModalContent({ handleClick, text, description, buttonText }) {
     const { setModalCheck } = useUserDashboardContext();
 

@@ -65,7 +65,7 @@ function ChangePassword({}) {
     const [newPassVisible, setNewPassVisible] = useState(false);
     const [currentPassVisible, setCurrentPassVisible] = useState(false);
 
-    const { isDetailsUnSaved, setIsDetailsUnSaved } = useUserDashboardContext();
+    const { setIsDetailsUnSaved, setFooterMessage } = useUserDashboardContext();
     useEffect(() => {
         if (currentPassword && newPassword) {
             setDisable(() => false);
@@ -89,6 +89,11 @@ function ChangePassword({}) {
             const { data } = await defaultAxios.post('user/change-password', {
                 currentPassword,
                 newPassword,
+            });
+
+            setFooterMessage({
+                type: 'Password change successfully',
+                success: true,
             });
         } catch (error) {
             console.error('error while changing password', error);

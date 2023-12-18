@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { useUserDashboardContext } from '../../../context/userContext';
 import { useAuth } from '../../../hooks/useAuth';
-import DeleteModalContent from '../deleteModalContent';
+import DeleteModalContent from './deleteModalContent';
 
 function DeleteAddress() {
     const { authDispatch } = useAuth();
@@ -24,10 +24,14 @@ function DeleteAddress() {
         }
     };
 
-    return <DeleteModalContent text={'delete address'}
-    buttonText="DELETE"
-    description={'Are you sure you want to delete this address?'}
-    handleClick={deleteMethod}/>;
+    return (
+        <DeleteModalContent
+            text={'delete address'}
+            buttonText="DELETE"
+            description={'Are you sure you want to delete this address?'}
+            handleClick={deleteMethod}
+        />
+    );
 }
 
 export default DeleteAddress;

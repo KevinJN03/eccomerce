@@ -22,7 +22,7 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 import Order from '../Models/order.js';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
+import requestIp from 'request-ip';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -853,6 +853,71 @@ export const changePassword = [
         },
       });
     }
+
+    const userId = req.session.passport?.user;
+    const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
+
+    const hashPassword = bcrypt.hashSync(newPassword, salt);
+
+    await User.findByIdAndUpdate(userId, { password: hashPassword });
     res.send({ success: true, msg: 'Password successfully changed.' });
+  }),
+];
+
+export const addDigitalPaymentMethod = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { type } = req.body;
+    const userId = req.session.passport?.user;
+    const user = await User.findById(userId, null, {
+      lean: { toObject: true },
+    });
+
+    const options = {
+      type,
+      billing_details: {
+        address: {
+          country: 'GB',
+        },
+      },
+    };
+    if (type == 'klarna') {
+      const customerDob = dayjs(user?.dob);
+
+      const dob = {
+        day: customerDob.date(),
+        month: customerDob.month() + 1,
+        year: customerDob.year(),
+      };
+      options.klarna = { dob };
+    }
+    // console.log({ agent: req.headers['user-agent'] });
+    const paymentMethod = await stripe.paymentMethods.create(options);
+
+    const attachToCustomer = await stripe.setupIntents.create({
+      payment_method_types: [type],
+      customer: userId,
+      payment_method: paymentMethod?.id,
+      confirm: true,
+      mandate_data: {
+        customer_acceptance: {
+          type: 'online',
+          online: {
+            ip_address: requestIp.getClientIp(req),
+            user_agent: req.headers['user-agent'],
+          },
+        },
+      },
+      use_stripe_sdk: true,
+      return_url: `${CLIENT_URL}/my-account/payment-methods`,
+    });
+
+    const result = await stripe.handleNextAction({
+      clientSecret: attachToCustomer?.client_secret,
+    });
+
+    // console.log(attachToCustomer);
+    console.log(result);
+    res.send({ success: true, msg: 'payment method successfully added' });
   }),
 ];

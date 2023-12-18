@@ -14,7 +14,7 @@ function Error_Alert({ setError, error, property }) {
 
     return (
         <AnimatePresence>
-            {error[property] && (
+            {error?.[property] && (
                 <motion.div
                     className="alert alert-error my-2  rounded-none"
                     variants={variants}
@@ -41,7 +41,7 @@ function Error_Alert({ setError, error, property }) {
                             d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </motion.svg>
-                    <span>{error[property]}</span>
+                    <span>{error?.[property]}</span>
                 </motion.div>
             )}
         </AnimatePresence>

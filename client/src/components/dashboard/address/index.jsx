@@ -57,7 +57,7 @@ function Index({}) {
                         {newOrdersArray.map((addressItem, idx) => {
                             return (
                                 <Address_Item
-                                setPage={setPage}
+                                    setPage={setPage}
                                     setLoading={setLoading}
                                     isDefaultShippingAddress={
                                         defaultAddresses?.shipping_address ==
@@ -102,7 +102,7 @@ function Index({}) {
         }
     };
     return (
-        <>
+        <section className='w-full'>
             <Header
                 icon={home_icon}
                 text={'ADDRESS BOOK'}
@@ -116,7 +116,7 @@ function Index({}) {
             ) : (
                 <section className="">{content()}</section>
             )}
-        </>
+        </section>
     );
 }
 

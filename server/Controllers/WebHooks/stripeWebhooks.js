@@ -19,6 +19,13 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
   try {
     const event = req.body;
 
+    if (event.type == 'setup_intent.requires_action') {
+      const result = await stripe.handleNextAction({
+        clientSecret: event?.data?.object?.client_secret,
+      });
+      console.log('secret: ', event?.data?.object?.client_secret )
+    }
+
     if (event.type === 'charge.failed') {
       console.log({ process: 'failed' });
       const { payment_intent } = event.data.object;

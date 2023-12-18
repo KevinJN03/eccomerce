@@ -2,7 +2,7 @@ import axios from '../../../api/axios';
 import close_icon from '../../../assets/icons/close.png';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useUserDashboardContext } from '../../../context/userContext';
-import DeleteModalContent from '../deleteModalContent';
+import DeleteModalContent from '../modalContent/deleteModalContent';
 function DeletePaymentMethod() {
     const { setModalCheck } = useUserDashboardContext();
 
@@ -29,7 +29,7 @@ function DeletePaymentMethod() {
     };
     return (
         <DeleteModalContent
-        buttonText="DELETE"
+            buttonText="DELETE"
             text={'delete payment method'}
             description={'Are you sure you want to delete this payment method?'}
             handleClick={deleteMethod}

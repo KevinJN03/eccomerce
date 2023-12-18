@@ -6,7 +6,7 @@ import duplicate_icon from '../../assets/icons/duplicate.png';
 function Returns({}) {
     const options = [{ text: 'Order Issues FAQ' }, { text: 'Returns FAQ' }];
     return (
-        <section className="returns">
+        <section className="returns w-full">
             <Header icon={return_icon} text={'MY RETURNS'} />
             <Empty_Body
                 text={{

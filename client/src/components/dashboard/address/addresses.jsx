@@ -9,7 +9,7 @@ import { Outlet } from 'react-router-dom';
 function Addresses({}) {
     const [customerAddress, setCustomerAddress] = useState(exampleCustomerInfo);
     return (
-        <section className="Addresses">
+        <section className="Addresses w-full">
             <Outlet />
         </section>
     );

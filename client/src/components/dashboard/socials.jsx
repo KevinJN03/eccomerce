@@ -63,7 +63,7 @@ function Socials({}) {
         },
     ];
     return (
-        <section className="socials">
+        <section className="socials w-full">
             <Header
                 text={'SOCIAL ACCOUNTS'}
                 icon={social_icon}

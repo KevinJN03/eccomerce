@@ -34,6 +34,7 @@ function Details({}) {
         setInterest,
         dob,
         setDob,
+        setFooterMessage
     } = useUserDashboardContext();
 
     const [onMountValue, setOnMountValue] = useState({
@@ -88,7 +89,7 @@ function Details({}) {
             authDispatch({ type: 'LOGIN', payload: result.data });
             setOnMountValue(() => data);
             setDisable(true);
-
+            setFooterMessage({ success: true, text: 'Changes saved' });
             return;
         } catch (error) {
             'error here: ', error;

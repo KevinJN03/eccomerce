@@ -21,6 +21,7 @@ import {
   setUpKlarna,
   getOrders,
   changePassword,
+  addDigitalPaymentMethod,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -50,4 +51,6 @@ router.delete('/payment-method/delete/:id', deletePaymentMethod);
 router.get('/payment-method/all', getPaymentMethods);
 router.get('/orders', getOrders);
 router.post('/change-password', changePassword);
+
+router.post('/payment-method/digital', addDigitalPaymentMethod);
 export default router;

@@ -36,7 +36,6 @@ import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
 import { adminLogin } from './Controllers/adminController.js';
-;
 const {
   DBNAME,
   URL,
@@ -62,7 +61,9 @@ db();
 
 const app = express();
 // app.use(cors());
+app.set('trust proxy', true);
 app.use(cors({ origin: true, credentials: true }));
+
 app.use(
   session({
     secret: SECRET,

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import DeleteModalContent from './deleteModalContent';
-import { useUserDashboardContext } from '../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext';
 
 function UnsavedDetails({}) {
     const { modalContent, setIsDetailsUnSaved, setModalCheck } =
