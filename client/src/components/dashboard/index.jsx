@@ -6,7 +6,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../admin/components/modal/modal.jsx';
 import signOut_icon from '../../assets/icons/signout-icon.png';
 import { UserDashboardProvider, reducer } from '../../context/userContext.jsx';
-import DeletePaymentMethod from './payment-methods/delete-payment-method.jsx';
+
 import NavOption from './nav-options/navOptions.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import axios from '../../api/axios.js';
@@ -26,7 +26,8 @@ import UnsavedDetails from './modalContent/unsavedDetails.jsx';
 import close_icon from '../../assets/icons/close.png';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-
+import DeletePaymentMethod from './modalContent/delete-payment-method.jsx';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function Dashboard() {
     disableLayout();
     const { pathname } = useLocation();
@@ -309,13 +310,33 @@ function Dashboard() {
                                             initial={'initial'}
                                             animate={'animate'}
                                             exit={'exit'}
-                                            className={` flex w-full max-w-[568px] flex-row items-center justify-between bg-green-200 px-4 py-6`}
+                                            className={` flex w-full max-w-[568px] flex-row items-center justify-between ${
+                                                footerMessage?.success
+                                                    ? 'bg-green-200'
+                                                    : footerMessage?.success ==
+                                                      false
+                                                    ? 'bg-red-200'
+                                                    : '!bg-black/80 text-white'
+                                            } px-4 py-6`}
                                         >
-                                            {footerMessage?.success && (
+                                            {footerMessage?.success ? (
                                                 <CheckCircleOutlineSharpIcon className="mr-4" />
+                                            ) : (
+                                                footerMessage?.success ==
+                                                    false && (
+                                                    <InfoOutlinedIcon className="mr-4" />
+                                                )
                                             )}
 
-                                            <p className="w-fit flex-1 break-words break-all">
+                                            <p
+                                                className={`w-fit flex-1 break-words break-all ${
+                                                    footerMessage?.success ||
+                                                    footerMessage?.success ==
+                                                        false
+                                                        ? ''
+                                                        : 'text-white'
+                                                }`}
+                                            >
                                                 {footerMessage?.text}
                                             </p>
 
@@ -330,7 +351,13 @@ function Dashboard() {
                                             >
                                                 <CloseSharpIcon
                                                     alt="x icon"
-                                                    className=" h-4 w-4 !fill-dark-gray"
+                                                    className={`h-4 w-4 ${
+                                                        footerMessage?.success ||
+                                                        footerMessage?.success ==
+                                                            false
+                                                            ? '!fill-dark-gray'
+                                                            : '!fill-white'
+                                                    }`}
                                                 />
                                             </button>
                                         </motion.footer>

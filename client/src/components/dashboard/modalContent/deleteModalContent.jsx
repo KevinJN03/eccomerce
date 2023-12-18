@@ -1,6 +1,12 @@
 import { useUserDashboardContext } from '../../../context/userContext';
 import close_icon from '../../../assets/icons/close.png';
-function DeleteModalContent({ handleClick, text, description, buttonText }) {
+function DeleteModalContent({
+    handleClick,
+    text,
+    description,
+    buttonText,
+    loading,
+}) {
     const { setModalCheck } = useUserDashboardContext();
 
     const closeModal = () => {
@@ -23,12 +29,22 @@ function DeleteModalContent({ handleClick, text, description, buttonText }) {
             <div className="bottom flex w-full flex-col gap-y-3">
                 <button
                     onClick={handleClick}
-                    className="!bg-primary py-[10px] font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
+                    className="!bg-primary flex justify-center h-12 items-center font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
                 >
-                    {buttonText}
+                    {loading ? (
+                        <svg
+                            className="spinner-ring spinner-xs [--spinner-color:var(--gray-1)]"
+                            viewBox="25 25 50 50"
+                            strokeWidth="5"
+                        >
+                            <circle cx="50" cy="50" r="20" />
+                        </svg>
+                    ) : (
+                        <>{buttonText}</>
+                    )}
                 </button>
                 <button
-                    className="border-2 bg-white py-[10px] font-bold tracking-wider !text-primary transition-all hover:!bg-[var(--light-grey)]"
+                    className="border-2 bg-white  h-12 flex justify-center items-center font-bold tracking-wider !text-primary transition-all hover:!bg-[var(--light-grey)]"
                     onClick={closeModal}
                 >
                     CANCEL

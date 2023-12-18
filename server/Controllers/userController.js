@@ -876,9 +876,15 @@ export const addDigitalPaymentMethod = [
     const options = {
       type,
       billing_details: {
-        address: {
-          country: 'GB',
-        },
+        // address: {
+        //   line1: '1',
+        //   line2: '1',
+        //   state: '1',
+        //   country: 'GB',
+        //   postal_code: '1235',
+        // },
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.email,
       },
     };
     if (type == 'klarna') {
@@ -891,33 +897,40 @@ export const addDigitalPaymentMethod = [
       };
       options.klarna = { dob };
     }
-    // console.log({ agent: req.headers['user-agent'] });
+
     const paymentMethod = await stripe.paymentMethods.create(options);
 
-    const attachToCustomer = await stripe.setupIntents.create({
-      payment_method_types: [type],
+    const attach = await stripe.paymentMethods.attach(paymentMethod?.id, {
       customer: userId,
-      payment_method: paymentMethod?.id,
-      confirm: true,
-      mandate_data: {
-        customer_acceptance: {
-          type: 'online',
-          online: {
-            ip_address: requestIp.getClientIp(req),
-            user_agent: req.headers['user-agent'],
-          },
-        },
-      },
-      use_stripe_sdk: true,
-      return_url: `${CLIENT_URL}/my-account/payment-methods`,
     });
 
-    const result = await stripe.handleNextAction({
-      clientSecret: attachToCustomer?.client_secret,
-    });
+    // return res.send({ sucess: true, msg: 'payment method added' });
 
-    // console.log(attachToCustomer);
-    console.log(result);
-    res.send({ success: true, msg: 'payment method successfully added' });
+
+    return res.redirect(303, '/api/user/payment-method/all');
+    // const attachToCustomer = await stripe.setupIntents.create({
+    //   payment_method_types: [type],
+    //   customer: userId,
+    //   payment_method: paymentMethod?.id,
+    //   confirm: true,
+    //   mandate_data: {
+    //     customer_acceptance: {
+    //       type: 'online',
+    //       online: {
+    //         ip_address: requestIp.getClientIp(req),
+    //         user_agent: req.headers['user-agent'],
+    //       },
+    //     },
+    //   },
+    //   use_stripe_sdk: true,
+    //   return_url: `${CLIENT_URL}/my-account/payment-methods`,
+    // });
+
+    // res.send({
+    //   success: true,
+    //   msg: 'payment method successfully added',
+    //   clientSecret: attachToCustomer?.client_secret,
+    //   url: attachToCustomer?.return_url,
+    // });
   }),
 ];

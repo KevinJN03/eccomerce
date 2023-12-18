@@ -24,7 +24,9 @@ import Error_Alert from '../../common/error-alert';
 import ElementDiv from '../../checkout/payment/element-div';
 import MountCardComponents from '../../../hooks/mountCardComponents';
 import '../../../CSS/checkout.scss';
+import { useUserDashboardContext } from '../../../context/userContext';
 export function AddCartForm({ clientSecret }) {
+    const { setFooterMessage } = useUserDashboardContext();
     const [errors, setErrors] = useState({});
     const [isDefault, setDefault] = useState(false);
     const [btnLoad, setBtnLoad] = useState(false);
@@ -94,7 +96,6 @@ export function AddCartForm({ clientSecret }) {
                         general: error.message,
                     }));
                 }
-               
             } else {
                 success = true;
                 let paymentMethodArray = [];
@@ -114,14 +115,16 @@ export function AddCartForm({ clientSecret }) {
                     payload: paymentMethodArray,
                 });
             }
-
-           
         } catch (error) {
             console.error('error while adding card', error);
         } finally {
             setTimeout(() => {
                 setBtnLoad(() => false);
                 if (success) {
+                    setFooterMessage({
+                        success: true,
+                        text: 'Payment Method Added',
+                    });
                     navigate('/my-account/payment-methods');
                 }
             }, 800);
@@ -157,7 +160,7 @@ export function AddCartForm({ clientSecret }) {
                     setValue={setName}
                     label={'NAME ON CARD'}
                     property={'name'}
-                    autoComplete={'country'}
+                    autoComplete={'name'}
                     {...errorProps}
                 />
 

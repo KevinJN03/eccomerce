@@ -34,7 +34,7 @@ function Details({}) {
         setInterest,
         dob,
         setDob,
-        setFooterMessage
+        setFooterMessage,
     } = useUserDashboardContext();
 
     const [onMountValue, setOnMountValue] = useState({
@@ -45,7 +45,11 @@ function Details({}) {
         dob,
     });
     // const [lastName, setLastName] = useState(user?.lastName || '');
-
+    const [newEmail, setNewEmail] = useState(email);
+    const [newFirstName, setNewFirstName] = useState(firstName);
+    const [newLastName, setNewLastName] = useState(lastName);
+    const [newDob, setNewDob] = useState(dob);
+    const [newInterest, setNewInterest] = useState(interest);
     const [disable, setDisable] = useState(true);
     const options = {
         error,
@@ -63,7 +67,7 @@ function Details({}) {
         };
 
         const isSame = _.isEqual(onMountValue, newValues);
-        ({ isSame, onMountValue, newValues });
+   
         if (!isSame) {
             setDisable(false);
         } else {
@@ -108,22 +112,22 @@ function Details({}) {
             />
             <div className="w-4/6 bg-white px-4 pb-4">
                 <Input
-                    value={firstName}
-                    setValue={setFirstName}
+                    value={newFirstName}
+                    setValue={setNewFirstName}
                     property={'firstName'}
                     label={'FIRST NAME'}
                     {...options}
                 />
                 <Input
-                    value={lastName}
-                    setValue={setLastName}
+                    value={newLastName}
+                    setValue={setNewLastName}
                     property={'lastName'}
                     label={'LAST NAME'}
                     {...options}
                 />
                 <Input
-                    value={email}
-                    setValue={setEmail}
+                    value={newEmail}
+                    setValue={setNewEmail}
                     property={'email'}
                     label={'Email'}
                     {...options}
@@ -131,12 +135,12 @@ function Details({}) {
                 <DobPicker
                     showDescription={false}
                     error={error}
-                    value={dob}
+                    value={newDob}
                     setError={setError}
-                    setDob={setDob}
+                    setDob={setNewDob}
                 />
 
-                <Interest setInterest={setInterest} interest={interest} />
+                <Interest setInterest={setNewInterest} interest={newInterest} />
 
                 <Button
                     submit={onSubmit}
