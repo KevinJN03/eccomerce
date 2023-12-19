@@ -23,6 +23,12 @@ import Stripe from 'stripe';
 import Order from '../Models/order.js';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import requestIp from 'request-ip';
+
+import * as React from 'react';
+import ChangePassword from '../React Email/emails/changePassword.jsx';
+import { render } from '@react-email/render';
+import transporter from '../utils/nodemailer.js';
+import 'dotenv/config';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -859,7 +865,23 @@ export const changePassword = [
 
     const hashPassword = bcrypt.hashSync(newPassword, salt);
 
-    await User.findByIdAndUpdate(userId, { password: hashPassword });
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { password: hashPassword },
+      { new: true, lean: { toObject: true } },
+    );
+
+    const emailHtml = render(<ChangePassword firstName={user?.firstName} />);
+
+    const SENDER = process.env.SENDER;
+    const mailOptions = {
+      from: SENDER,
+      to: user?.email,
+      subject: 'Password changed!',
+      html: emailHtml,
+    };
+
+    await transporter.sendMail(mailOptions);
     res.send({ success: true, msg: 'Password successfully changed.' });
   }),
 ];
@@ -905,7 +927,6 @@ export const addDigitalPaymentMethod = [
     });
 
     // return res.send({ sucess: true, msg: 'payment method added' });
-
 
     return res.redirect(303, '/api/user/payment-method/all');
     // const attachToCustomer = await stripe.setupIntents.create({
