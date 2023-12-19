@@ -20,16 +20,25 @@ import EmailTailwind from '../components/emailTailwind.jsx';
 import Thanks from '../components/thanks.jsx';
 import Footer from '../components/footer.jsx';
 const CLOUDFRONT_URL = process.env.CLOUDFRONT_URL;
-function ChangePassword({ firstName }) {
+function ChangeEmail({ firstName, newEmail }) {
   return (
     <Html>
       <EmailHead />
       <EmailTailwind>
-        <Preview>
-          All done for you. GLAMO - Discover Fashion Online Password changed Hey{' '}
-          {firstName}, your password's now been changed, so you can get back to
-          doing what you came here for. Didn't do this? If you didn't.
-        </Preview>
+        {!newEmail ? (
+          <Preview>
+            This is where you’ll get emails from us now. Your email address has
+            been updated Hey there {firstName}, you’ve updated your email
+            address so now we’ll keep you posted.
+          </Preview>
+        ) : (
+          <Preview>
+            We’ll send emails to your new account now. Your email address has
+            been updated Hey there {firstName}, you’ve updated your email
+            address to
+            {newEmail}. That me
+          </Preview>
+        )}
         <Body>
           <Container
             className="!bg-light-grey w-full max-w-[600px]"
@@ -46,16 +55,30 @@ function ChangePassword({ firstName }) {
                   align="center"
                 >
                   <Img
-                    src={`${CLOUDFRONT_URL}/files/logos/lock.png`}
-                    className="bg-transparent w-7 h-7 text-center mx-auto"
+                    src={`${CLOUDFRONT_URL}/files/logos/icons8-person-96.png`}
+                    className="bg-transparent w-9 h-9 text-center mx-auto object-cover"
                   />
                   <Text className="font-semibold text-base tracking-wider pb-0 mb-1">
-                    PASSWORD CHANGED
+                    YOUR EMAIL ADDRESS HAS BEEN UPDATED
                   </Text>
-                  <Text className="p-0 m-0">
-                    Hey {firstName}, your password’s now been changed, so you
-                    can get back to doing what you came here for.
-                  </Text>
+                  {!newEmail ? (
+                    <Text className="p-0 m-0">
+                      Hey there {firstName}, you’ve updated your email address
+                      so now we’ll keep you posted on this account. Check back
+                      here for order updates and more.
+                    </Text>
+                  ) : (
+                    <Text className="p-0 m-0">
+                      Hey there {firstName}, you’ve updated your email address
+                      to{' '}
+                      <a className="underline " href={`mailto: ${newEmail}`}>
+                        {newEmail}
+                      </a>
+                      . That means we’ll send emails about order updates and
+                      more to that account now, instead of this one. See you on
+                      the other side!
+                    </Text>
+                  )}
                 </Column>
               </Row>
 
@@ -67,7 +90,7 @@ function ChangePassword({ firstName }) {
                     </Text>
                     <Hr />
                     <Text>
-                      If you didn’t change your password or need to get in
+                      If you didn’t change your email address or need to get in
                       touch with our Customer Care team, use the link below.
                     </Text>
 
@@ -114,4 +137,4 @@ function ChangePassword({ firstName }) {
   );
 }
 
-export default ChangePassword;
+export default ChangeEmail;

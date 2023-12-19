@@ -12,54 +12,33 @@ import OrderCancel from './emails/orderCancelled.jsx';
 import OrderReceived from './emails/orderReceived.jsx';
 import ReturnOrder from './emails/returnOrder.jsx';
 import ChangePassword from './emails/changePassword.jsx';
+import { v4 } from 'uuid';
+import ChangeEmail from './emails/changeEmail.jsx';
 
 const { SENDER } = process.env;
 router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const order = await Order.findById(id, null, {
-      populate: {
-        path: 'items.product customer',
-      },
-      lean: { toObject: true },
-    }).exec();
+    // const order = await Order.findById(id, null, {
+    //   populate: {
+    //     path: 'items.product customer',
+    //   },
+    //   lean: { toObject: true },
+    // }).exec();
 
-    const props = {
-      firstName: 'kevin',
-      orderNumber: '882411829',
-      orderDate: 'Tuesday 28 November 2023',
-      subtotal: 6.9,
-      status: 'cancelled',
-      deliveryCost: 4.5,
-      total: 11.59,
-      paymentType: 'paypal',
-      deliveryName: 'Free Shipping',
-      shipping_address: {
-        name: 'kevin jean',
-        phone: '07432298043',
-        address: {
-          city: 'london',
-          line1: 'flat 2',
-          line2: '14 test road',
-          postal_code: 'tst124',
-          state: 'lewisham',
-          country: 'GB',
-        },
-      },
-      items: order?.items,
-    };
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    const emailHtml = render(<ChangePassword firstName={'Kevin'} />);
+    const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
+    const emailTestId = v4()
     const mailOptions = {
       from: SENDER,
       to: process.env.TEST_EMAIL,
-      // to: 'cahada3632@bayxs.com',
-      subject: 'test ored success betaemail email',
+ 
+      subject: 'test email ' + emailTestId,
       html: emailHtml,
     };
-
-    const sendEmail = await transporter.sendMail(mailOptions);
+console.log({emailTestId})
+   // const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

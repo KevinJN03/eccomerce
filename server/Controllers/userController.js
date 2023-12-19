@@ -29,6 +29,7 @@ import ChangePassword from '../React Email/emails/changePassword.jsx';
 import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
 import 'dotenv/config';
+import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -385,25 +386,131 @@ export const logoutUser = asyncHandler((req, res, next) => {
 export const getAllUserData = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.session.passport.user, {
-      password: 0,
-    })
-      .populate('address')
-      .exec();
+    const user = await User.findById(
+      req.session.passport.user,
+      {
+        password: 0,
+      },
+      {
+        lean: {
+          toObject: true,
+        },
+
+        populate: {
+          path: 'address',
+        },
+      },
+    ).exec();
+    // .populate('address')
     res.send({ user });
   }),
 ];
-//change default address
+
 export const changeDetails = [
   checkAuthenticated,
+  check('firstName', 'Please enter a first name').trim().escape().notEmpty(),
+  check('lastName', 'Please enter a last name').trim().escape().notEmpty(),
+  check('email', 'Please enter a valid email')
+    .trim()
+    .escape()
+    .isEmail()
+    .notEmpty()
+    .custom(async (value, { req }) => {
+      const userId = req.session.passport?.user;
+
+      const currentUser = await User.findById(
+        userId,
+        { email: 1 },
+        { lean: { toObject: true } },
+      );
+
+      const user = await User.findOne(
+        { email: value },
+        { email: 1 },
+        {
+          lean: { toObject: true },
+        },
+      );
+
+      if (currentUser?.email == user?.email) {
+        return true;
+      }
+      if (user) {
+        throw new Error(`${value} is already registered`);
+      }
+
+      return true;
+    }),
+  check('interest', 'Please select a valid interest.')
+    .trim()
+    .escape()
+    .notEmpty(),
+  check('dob', 'Must be 18 years old or older')
+    .trim()
+    .escape()
+    .notEmpty()
+    .custom((value) => {
+      const todayDate = dayjs();
+      const dateOfBirth = dayjs(value);
+
+      const difference = todayDate.diff(dateOfBirth, 'year');
+
+      if (difference >= 18) {
+        return true;
+      }
+
+      return false;
+    }),
   asyncHandler(async (req, res, next) => {
     const body = req.body;
 
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result?.isEmpty()) {
+      return res.status(400).send({ error: result.mapped(), success: false });
+    }
+
     const user = await User.findByIdAndUpdate(req.session.passport.user, body, {
-      select: { password: 0 },
-      returnDocument: 'after',
+      select: { email: 1 },
+      lean: { toObject: true },
+
+      new: false,
+      // returnDocument: 'after',
       runValidators: true,
     });
+
+    if (user?.email != req.body?.email) {
+      const previousEmailHtml = render(
+        <ChangeEmail
+          firstName={req.body?.firstName}
+          newEmail={req.body?.email}
+        />,
+      );
+
+      const newEmailHtml = render(
+        <ChangeEmail firstName={req.body?.firstName} />,
+      );
+
+      const mailOptions = {
+        from: process.env.SENDER,
+
+        subject: 'You’ve updated your email address',
+      };
+
+      const [sendPrevEmail, sendNewEmail] = await Promise.all([
+        transporter.sendMail({
+          ...mailOptions,
+          to: user?.email,
+          html: previousEmailHtml,
+        }),
+        transporter.sendMail({
+          ...mailOptions,
+          to: req.body?.email,
+          html: newEmailHtml,
+        }),
+      ]);
+    }
+
     res.redirect(303, '/api/user/check');
   }),
 ];
