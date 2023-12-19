@@ -20,6 +20,9 @@ const UserSchema = new Schema(
       required: 'Email is required. Please enter your Email.',
       unique: true,
     },
+    lastEmailChange: {
+      type: Schema.Types.Date,
+    },
     password: { type: String, required: true, minlength: 10 },
     dob: {
       type: Date,

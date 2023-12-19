@@ -420,11 +420,10 @@ export const changeDetails = [
 
       const currentUser = await User.findById(
         userId,
-        { email: 1 },
+        { email: 1, lastEmailChange: 1 },
         { lean: { toObject: true } },
       );
-
-      const user = await User.findOne(
+      const findNewEmail = await User.findOne(
         { email: value },
         { email: 1 },
         {
@@ -432,10 +431,28 @@ export const changeDetails = [
         },
       );
 
-      if (currentUser?.email == user?.email) {
+      if (currentUser?.email == findNewEmail?.email) {
         return true;
       }
-      if (user) {
+
+      if (currentUser?.lastEmailChange) {
+        const todayDate = dayjs();
+        const lastTimeEmailChanged = dayjs(currentUser?.lastEmailChange);
+
+        const difference = todayDate.diff(lastTimeEmailChanged, 'minute');
+
+        console.log({ difference });
+
+        if (difference < 30) {
+          throw new Error(
+            `Sorry, you'll need to wait 30 minutes to change your email address again. Come back in ${
+              30 - difference
+            } mins`,
+          );
+        }
+      }
+
+      if (findNewEmail) {
         throw new Error(`${value} is already registered`);
       }
 
@@ -463,14 +480,14 @@ export const changeDetails = [
     }),
   asyncHandler(async (req, res, next) => {
     const body = req.body;
-
+    const userId = req.session.passport.user;
     const result = validationResult(req).formatWith(({ msg }) => msg);
 
     if (!result?.isEmpty()) {
       return res.status(400).send({ error: result.mapped(), success: false });
     }
 
-    const user = await User.findByIdAndUpdate(req.session.passport.user, body, {
+    const user = await User.findByIdAndUpdate(userId, body, {
       select: { email: 1 },
       lean: { toObject: true },
 
@@ -497,7 +514,7 @@ export const changeDetails = [
         subject: 'You’ve updated your email address',
       };
 
-      const [sendPrevEmail, sendNewEmail] = await Promise.all([
+      const promiseResult = await Promise.all([
         transporter.sendMail({
           ...mailOptions,
           to: user?.email,
@@ -508,6 +525,11 @@ export const changeDetails = [
           to: req.body?.email,
           html: newEmailHtml,
         }),
+        User.findByIdAndUpdate(
+          userId,
+          { lastEmailChange: Date.now() },
+          { lean: { toObject: true }, select: { email: 1 } },
+        ),
       ]);
     }
 
