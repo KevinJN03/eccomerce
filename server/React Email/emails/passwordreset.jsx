@@ -61,9 +61,9 @@ function PasswordReset({ url }) {
                   </Text>
                 </Column>
               </Row>
-              <Row className="p-5 pt-0" key={uuidv4()}>
+              <Row className="p-5 pt-0 " key={uuidv4()}>
                 <Column
-                  className="bg-white box-border w-full p-4 pt-0"
+                  className="bg-white box-border !w-full p-4 pt-0 !max-w-full"
                   key={uuidv4()}
                 >
                   <Text
@@ -98,8 +98,8 @@ function PasswordReset({ url }) {
                 </Column>
               </Row>
 
-              <Row className="p-5" key={uuidv4}>
-                <Column className="p-4 pt-0 bg-white" key={uuidv4}>
+              <Row className="p-5 w-full" key={uuidv4}>
+                <Column className="p-4 pt-0 bg-white  !w-full !max-w-full" key={uuidv4}>
                   <Text
                     className="bg-white text-sm font-semibold box-border w-full mb-2"
                     key={uuidv4}

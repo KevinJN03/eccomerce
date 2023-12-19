@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import logOutUser from '../common/logoutUser.js';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
 function Details({}) {
@@ -87,13 +88,12 @@ function Details({}) {
                 dob: newDob,
                 interest: newInterest,
             };
+
+            console.log(data)
             const result = await axios.put('user/changedetails', data);
 
             authDispatch({ type: 'LOGIN', payload: result.data });
 
-            
-
-           
             //update mountValues
             setOnMountValue(() => data);
 
@@ -110,9 +110,25 @@ function Details({}) {
             setFooterMessage(() => ({ success: true, text: 'Changes saved' }));
             return;
         } catch (error) {
-            'error here: ', error;
+            console.error('error while updating details', error);
 
             logOutUser({ error, authDispatch, navigate });
+
+            if (error?.response?.status == 500) {
+                setFooterMessage({
+                    success: false,
+                    text: 'Changes failed to save. Try again later',
+                });
+
+                return;
+            }
+
+            if (error?.response?.status == 400) {
+                setError((prevError) => ({
+                    ...prevError,
+                    ...error.response.data?.error,
+                }));
+            }
         }
     };
     return (
@@ -125,6 +141,8 @@ function Details({}) {
                 }
             />
             <div className="w-4/6 bg-white px-4 pb-4">
+
+                
                 <Input
                     value={newFirstName}
                     setValue={setNewFirstName}

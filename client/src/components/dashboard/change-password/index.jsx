@@ -91,10 +91,14 @@ function ChangePassword({}) {
                 newPassword,
             });
 
+            setCurrentPassword(() => '');
+            setNewPassword(() => '');
             setFooterMessage({
-                type: 'Password change successfully',
+                text: 'Changes saved',
                 success: true,
             });
+
+            setIsDetailsUnSaved(() => false);
         } catch (error) {
             console.error('error while changing password', error);
 

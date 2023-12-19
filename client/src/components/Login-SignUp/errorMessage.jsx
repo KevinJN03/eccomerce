@@ -27,7 +27,7 @@ export function ErrorMessagePointerUp({ msg, className }) {
                 <span className="triangle absolute left-10 top-[-14px] !z-[1] h-0 w-0 border-b-[15px] border-l-[10px] border-r-[10px] border-b-red-500 border-l-transparent border-r-transparent">
                     <span className="inner-triangle relative right-2  top-[-20px] h-0  w-0 border-b-[12px] border-l-[8px] border-r-[8px] border-b-red-100 border-l-transparent border-r-transparent  "></span>
                 </span>
-                <p className="!w-full p-0 !m-0 font-light tracking-wider ">{msg}</p>
+                <p className="!w-full p-1 !m-0 font-light tracking-wider ">{msg}</p>
             </div>
         </section>
     );
