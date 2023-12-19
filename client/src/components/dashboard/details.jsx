@@ -25,16 +25,17 @@ function Details({}) {
     const navigate = useNavigate();
     const {
         firstName,
-        setFirstName,
         lastName,
-        setLastName,
         email,
-        setEmail,
         interest,
-        setInterest,
         dob,
-        setDob,
         setFooterMessage,
+        setIsDetailsUnSaved,
+        setEmail,
+        setDob,
+        setInterest,
+        setFirstName,
+        setLastName,
     } = useUserDashboardContext();
 
     const [onMountValue, setOnMountValue] = useState({
@@ -59,41 +60,54 @@ function Details({}) {
 
     useEffect(() => {
         const newValues = {
-            firstName,
-            lastName,
-            email,
-            interest,
-            dob,
+            firstName: newFirstName,
+            lastName: newLastName,
+            email: newEmail,
+            dob: newDob,
+            interest: newInterest,
         };
 
         const isSame = _.isEqual(onMountValue, newValues);
-   
+        console.log({ isSame, onMountValue, newValues });
         if (!isSame) {
+            setIsDetailsUnSaved(true);
             setDisable(false);
         } else {
             setDisable(true);
+            setIsDetailsUnSaved(() => false);
         }
-    }, [firstName, lastName, email, interest, dob]);
-
-    useEffect(() => {
-        setFirstName(() => user?.firstName);
-    }, []);
+    }, [newFirstName, newLastName, newEmail, newDob, newInterest]);
 
     const onSubmit = async () => {
         try {
             const data = {
-                firstName,
-                lastName,
-                email,
-                dob,
-                interest,
+                firstName: newFirstName,
+                lastName: newLastName,
+                email: newEmail,
+                dob: newDob,
+                interest: newInterest,
             };
             const result = await axios.put('user/changedetails', data);
 
             authDispatch({ type: 'LOGIN', payload: result.data });
+
+            
+
+           
+            //update mountValues
             setOnMountValue(() => data);
-            setDisable(true);
-            setFooterMessage({ success: true, text: 'Changes saved' });
+
+            // update values
+            setEmail(() => newEmail);
+            setInterest(() => newInterest);
+            setDob(() => newDob);
+            setLastName(() => newLastName);
+            setFirstName(() => newFirstName);
+            setDisable(() => true);
+            setIsDetailsUnSaved(() => false);
+
+            // notify user that changes were successfull
+            setFooterMessage(() => ({ success: true, text: 'Changes saved' }));
             return;
         } catch (error) {
             'error here: ', error;
