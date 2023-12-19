@@ -8,12 +8,13 @@ import {
     useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import AddCartForm from '../../common/error-alert';
+import AddCartForm from './addCartForm';
+
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Add_Card({}) {
-    'env: ', STRIPE_KEY;
-    const stripePromise = loadStripe(STRIPE_KEY);
+
+    // const stripePromise = loadStripe(STRIPE_KEY);
 
     const [loading, setLoading] = useState(true);
     const [options, setOptions] = useState({
@@ -78,9 +79,12 @@ function Add_Card({}) {
                         <circle cx="50" cy="50" r="20" />
                     </svg>
                 ) : (
-                    <Elements stripe={stripePromise} options={options}>
-                        <AddCartForm clientSecret={options.clientSecret} />
-                    </Elements>
+                    // <p>
+                    //     ffff
+                    // </p>
+                    // <Elements stripe={stripePromise} options={options}>
+                         <AddCartForm clientSecret={options.clientSecret} />
+                    // </Elements>
                 )}
             </div>
         </section>

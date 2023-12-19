@@ -1,11 +1,12 @@
 .user-dashboard {
-
+  
+  
     .btn {
         @apply rounded-none bg-white;
     }
 
-    .btn-active{
-        @apply bg-primary border-none #{!important};
+    .btn-active {
+        @apply border-none bg-primary #{!important};
     }
     .active-btn {
         @apply bg-gray-50 #{!important};
@@ -35,7 +36,7 @@
     }
 
     .modal-content {
-        @apply w-[400px];
+        @apply w-[400px] rounded-none #{!important};
     }
 
     .daisy-checkbox {
@@ -47,4 +48,7 @@
             //  --chkbg: #FFFFF
         }
     }
+}
+.item-start-container {
+    align-items: start;
 }

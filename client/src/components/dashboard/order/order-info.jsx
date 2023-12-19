@@ -57,7 +57,7 @@ function Order_Info({}) {
 
 
     return (
-        <section className="order-info-wrapper">
+        <section className="order-info-wrapper w-full">
             {findOrder && (
                 <>
                     <section className="top flex flex-col gap-y-1 bg-white p-6 py-8">
@@ -220,7 +220,7 @@ function Order_Info({}) {
                                                         findOrder?.courier?.toLowerCase()
                                                     ]
                                                 }${findOrder?.trackingNumber}`}
-                                                className="w-4/6 mt-2 flex-[1] border-2 py-2  text-center font-gotham tracking-wider transition-all hover:!bg-[var(--light-grey)]"
+                                                className="w-7/12 mt-2 text-sm flex-[1] border-2 py-3  text-center font-gotham transition-all hover:!bg-[var(--light-grey)]"
                                             >
                                                 TRACK PARCEL
                                             </a>

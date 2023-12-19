@@ -12,47 +12,82 @@ import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import { useAuth } from '../../../hooks/useAuth';
 import axios from '../../../api/axios';
 import logOutUser from '../../common/logoutUser';
-
+import { loadStripe } from '@stripe/stripe-js';
+import { useStripe } from '@stripe/react-stripe-js';
+import clearpay_icon from '../../../assets/icons/payment-icons/afterpay.png';
+import logos from './logos';
+import { useUserDashboardContext } from '../../../context/userContext';
+const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 function Add_Payment_Method({}) {
     const navigate = useNavigate();
-
+    const stripe = useStripe();
     const { currentLocation } = useCurrentLocation();
     const { authDispatch } = useAuth();
+
+    const { setFooterMessage } = useUserDashboardContext();
     const { paymentMethods, PaymentMethodsDispatch } = usePaymentMethods();
     const [loadingBtnID, setLoading] = useState();
-    const addPaymentMethod = async (obj) => {
+    // const addPaymentMethod = async (obj) => {
+    //     try {
+    //         const { index } = obj;
+    //         setLoading(() => index);
+
+    //         const result = await axios.post('user/payment-method/add', obj);
+    //         setTimeout(() => {
+    //             PaymentMethodsDispatch({
+    //                 type: 'set',
+    //                 payload: result.data.payment_methods,
+    //             });
+    //             setLoading(() => null);
+
+    //             navigate('/my-account/payment-methods');
+    //         }, 600);
+    //     } catch (error) {
+    //         'error at payment methods: ', error;
+    //         logOutUser({ error, authDispatch, navigate });
+    //     }
+    // };
+
+    const handlePaymentClick = async ({ type, index }) => {
+        let success = false;
+        let allPayments = [];
         try {
-            const { index } = obj;
-            setLoading(() => index);
-            (obj);
+            // const result = await axios.get(`user/payment-method/${type}`);
+            setLoading(index);
+            const { data } = await axios.post('user/payment-method/digital', {
+                type,
+            });
+            // if(data?.clientSecret){
 
-            const result = await axios.post('user/payment-method/add', obj);
-            setTimeout(() => {
-                PaymentMethodsDispatch({
-                    type: 'set',
-                    payload: result.data.payment_methods,
-                });
-                setLoading(() => null);
+            //      const { setupIntent, error } = await stripe.handleNextAction({
+            //         clientSecret: data?.clientSecret,
+            // });
+            // console.log({ error, setupIntent });
+            // }
 
-                navigate('/my-account/payment-methods');
-            }, 600);
-        } catch (error) {
-            ('error at payment methods: ', error);
-            logOutUser({ error, authDispatch, navigate });
-         
-        }
-    };
-
-    const handlePaymentClick = async ({ type }) => {
-        try {
-            const result = await axios.get(`user/payment-method/${type}`);
-
-            const { url } = result.data;
-            ({ url });
-
-            window.open(url, '_self');
+            allPayments.push(...data?.paymentMethods);
+            success = true;
         } catch (error) {
             console.error(error);
+
+            if (error?.response?.status == 401) {
+                logOutUser({ error, authDispatch, navigate });
+            }
+        } finally {
+            setTimeout(() => {
+                if (success) {
+                    PaymentMethodsDispatch({
+                        type: 'set',
+                        payload: allPayments,
+                    });
+                    setFooterMessage({
+                        success: true,
+                        text: 'Payment method added',
+                    });
+                    navigate('/my-account/payment-methods');
+                }
+                setLoading('');
+            }, 800);
         }
     };
     const buttonsArray = [
@@ -70,7 +105,7 @@ function Add_Payment_Method({}) {
             type: 'paypal',
             text: 'PayPal',
             alt: 'paypal icon',
-            onClick: () => handlePaymentClick({ type: 'paypal' }),
+            onClick: () => handlePaymentClick({ type: 'paypal', index: 2 }),
         },
 
         // {
@@ -80,7 +115,7 @@ function Add_Payment_Method({}) {
         //     text: 'Pay in 3',
         //     alt: 'paypal icon',
         //     description: 'with PayPal Pay Later',
-        //     onClick: () => handlePaymentClick({ type: 'paypal' }),
+        //     onClick: () => handlePaymentClick({ type: 'paypal', index: 3 }),
         // },
         // {
         //     index: 4,
@@ -89,7 +124,17 @@ function Add_Payment_Method({}) {
         //     text: 'Pay Later',
         //     alt: 'klarna logo',
         //     description: 'with Klarna',
-        //     onClick: () => handlePaymentClick({ type: 'klarna' }),
+        //     onClick: () => handlePaymentClick({ type: 'klarna', index: 4 }),
+        // },
+
+        // {
+        //     index: 5,
+        //     icon: clearpay_icon,
+        //     logo: 'clearpay',
+        //     text: 'Pay Later',
+        //     alt: 'clearpay logo',
+        //     description: 'with ClearPay',
+        //     onClick: () => handlePaymentClick({ type: 'afterpay_clearpay', index: 5 }),
         // },
     ];
     const filteredButtonArray = buttonsArray.filter(
@@ -105,7 +150,7 @@ function Add_Payment_Method({}) {
         }
     }, []);
 
-    ('filteredButtonArray: ', filteredButtonArray);
+    'filteredButtonArray: ', filteredButtonArray;
     return (
         <section className="add-payment-method bg-white p-4">
             {currentLocation == 'add' ? (

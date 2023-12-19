@@ -14,14 +14,13 @@ function Edit_Address({}) {
     const [notFound, setNotFound] = useState(false);
     const { id } = useParams();
     const [findAddress, setFindAddress] = useState({});
-    const { address, setAddress } = useUserDashboardContext();
+    const { address, setAddress, setFooterMessage } = useUserDashboardContext();
     const [loadState, setLoadState] = useState(true);
 
     const { authDispatch } = useAuth();
 
     const navigate = useNavigate();
     useEffect(() => {
-
         if (address.length > 0) {
             const findAddressItem = address.find((item) => item._id == id);
 
@@ -56,6 +55,8 @@ function Edit_Address({}) {
         setDisable,
         setLoading,
     }) => {
+        let success = false;
+        const errorData = {};
         try {
             setLoading(() => true);
             const result = await axios.put(`user/address/edit/${id}`, {
@@ -65,23 +66,28 @@ function Edit_Address({}) {
                 ...address,
             });
 
-            setTimeout(() => {
-                setAddress(() => result.data.user.address);
-                setLoading(() => false);
-                navigate('/my-account/addresses');
-            });
+            setAddress(() => result.data.user.address);
+            success = true
         } catch (error) {
-            setTimeout(() => {
-                setLoading(() => false);
-                if (error.response.status == 404) {
-                    setNotFound(() => true);
-                }
-                logOutUser({ error, authDispatch, navigate });
-            }, 1500);
+            if (error.response.status == 404) {
+                setNotFound(() => true);
+            }
+            logOutUser({ error, authDispatch, navigate });
 
-            setError(() => error.response.data);
-            setDisable(true);
-            'error when adding address: ', error;
+            Object.assign(errorData, error.response.data);
+          
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+                if (!success) {
+                    setError(() => errorData);
+                    setDisable(true);
+                } else {
+                    navigate('/my-account/addresses');
+
+                    setFooterMessage({ success, text: 'Changes saved' });
+                }
+            }, 1200);
         }
     };
 

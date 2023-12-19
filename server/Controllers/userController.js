@@ -22,7 +22,7 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 import Order from '../Models/order.js';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
+import requestIp from 'request-ip';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -810,5 +810,127 @@ export const getOrders = [
     return res
       .status(200)
       .send({ success: true, orders: getUserOrder?.reverse() });
+  }),
+];
+
+export const changePassword = [
+  checkAuthenticated,
+  check('currentPassword')
+    .trim()
+    .escape()
+    .custom(async (value, { req }) => {
+      const userId = req.session.passport?.user;
+      const user = await User.findById(userId, null, {
+        toObject: true,
+        new: true,
+      });
+
+      const match = await bcrypt.compare(value, user?.password);
+
+      if (!match) {
+        throw new Error('Current password does not match');
+      }
+      return match;
+    }),
+  check('newPassword', 'Please enter a Password with 10 or more characters')
+    .trim()
+    .escape()
+    .isLength({ min: 10 }),
+
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+    if (currentPassword === newPassword) {
+      return res.status(400).send({
+        error: {
+          newPassword:
+            "Hey! It looks like you've used this password before. Please choose a fresh one.",
+        },
+      });
+    }
+
+    const userId = req.session.passport?.user;
+    const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
+
+    const hashPassword = bcrypt.hashSync(newPassword, salt);
+
+    await User.findByIdAndUpdate(userId, { password: hashPassword });
+    res.send({ success: true, msg: 'Password successfully changed.' });
+  }),
+];
+
+export const addDigitalPaymentMethod = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { type } = req.body;
+    const userId = req.session.passport?.user;
+    const user = await User.findById(userId, null, {
+      lean: { toObject: true },
+    });
+
+    const options = {
+      type,
+      billing_details: {
+        // address: {
+        //   line1: '1',
+        //   line2: '1',
+        //   state: '1',
+        //   country: 'GB',
+        //   postal_code: '1235',
+        // },
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.email,
+      },
+    };
+    if (type == 'klarna') {
+      const customerDob = dayjs(user?.dob);
+
+      const dob = {
+        day: customerDob.date(),
+        month: customerDob.month() + 1,
+        year: customerDob.year(),
+      };
+      options.klarna = { dob };
+    }
+
+    const paymentMethod = await stripe.paymentMethods.create(options);
+
+    const attach = await stripe.paymentMethods.attach(paymentMethod?.id, {
+      customer: userId,
+    });
+
+    // return res.send({ sucess: true, msg: 'payment method added' });
+
+
+    return res.redirect(303, '/api/user/payment-method/all');
+    // const attachToCustomer = await stripe.setupIntents.create({
+    //   payment_method_types: [type],
+    //   customer: userId,
+    //   payment_method: paymentMethod?.id,
+    //   confirm: true,
+    //   mandate_data: {
+    //     customer_acceptance: {
+    //       type: 'online',
+    //       online: {
+    //         ip_address: requestIp.getClientIp(req),
+    //         user_agent: req.headers['user-agent'],
+    //       },
+    //     },
+    //   },
+    //   use_stripe_sdk: true,
+    //   return_url: `${CLIENT_URL}/my-account/payment-methods`,
+    // });
+
+    // res.send({
+    //   success: true,
+    //   msg: 'payment method successfully added',
+    //   clientSecret: attachToCustomer?.client_secret,
+    //   url: attachToCustomer?.return_url,
+    // });
   }),
 ];

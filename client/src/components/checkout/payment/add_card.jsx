@@ -15,6 +15,7 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
+import MountCardComponents from '../../../hooks/mountCardComponents';
 
 export default function Add_Card({}) {
     const { setView, setLoading } = usePaymentTypeContext();
@@ -34,59 +35,7 @@ export default function Add_Card({}) {
         asterisk: false,
     };
     const { PaymentMethodsDispatch } = usePaymentMethods();
-    useEffect(() => {
-        const cardNumberElement = elements.create('cardNumber', {
-            classes: {
-                base: 'card-number-input',
-            },
-            placeholder: '',
-        });
-        var cardCvcElement = elements.create('cardCvc', {
-            classes: {
-                base: 'card-number-input card-cvc',
-            },
-
-            placeholder: '',
-        });
-
-        const cardExpiryDateElement = elements.create('cardExpiry', {
-            classes: {
-                base: 'card-number-input',
-            },
-        });
-        cardExpiryDateElement.mount('#cardExpiry');
-        cardNumberElement.mount('#cardNumber');
-        cardCvcElement.mount('#cardCvc');
-
-        cardCvcElement.on('change', () => {
-            setError((prevState) => ({ ...prevState, cvc: null }));
-        });
-
-        cardExpiryDateElement.on('change', () => {
-            setError((prevState) => ({ ...prevState, expiryDate: null }));
-        });
-
-        cardNumberElement.on('change', () => {
-            setError((prevState) => ({ ...prevState, number: null }));
-        });
-
-        return () => {
-            'cleaning up elements', cardNumberElement;
-            cardNumberElement.destroy();
-            cardCvcElement.destroy();
-            cardExpiryDateElement.destroy();
-            // elements.off();
-        };
-    }, []);
-
-    const tenYearsfromNow = dayjs().add(10, 'year').year();
-    const range = (start, stop, step, sliceStart) =>
-        Array.from({ length: (stop - start) / step + 1 }, (_, i) =>
-            ('0' + (start + i * step)).toString().slice(sliceStart)
-        );
-
-    const months = range(1, 12, 1, -2);
-    const years = range(dayjs().year(), tenYearsfromNow, 1, -4);
+    MountCardComponents({ elements, setError: setError });
 
     useEffect(() => {
         axios

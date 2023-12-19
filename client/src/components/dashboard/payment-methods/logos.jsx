@@ -10,6 +10,8 @@ import unionpay from '../../../assets/icons/payment-icons/union-pay.svg';
 import jcb from '../../../assets/icons/payment-icons/jcb-emblem-logo.svg';
 
 import dinersclub from '../../../assets/icons/payment-icons/diners-club-international-2.svg';
+
+
 export default {
     amex,
     visa,
@@ -20,4 +22,5 @@ export default {
     jcb,
     dinersclub,
     paypal,
+
 };

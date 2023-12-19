@@ -25,15 +25,17 @@ function Details({}) {
     const navigate = useNavigate();
     const {
         firstName,
-        setFirstName,
         lastName,
-        setLastName,
         email,
-        setEmail,
         interest,
-        setInterest,
         dob,
+        setFooterMessage,
+        setIsDetailsUnSaved,
+        setEmail,
         setDob,
+        setInterest,
+        setFirstName,
+        setLastName,
     } = useUserDashboardContext();
 
     const [onMountValue, setOnMountValue] = useState({
@@ -44,7 +46,11 @@ function Details({}) {
         dob,
     });
     // const [lastName, setLastName] = useState(user?.lastName || '');
-
+    const [newEmail, setNewEmail] = useState(email);
+    const [newFirstName, setNewFirstName] = useState(firstName);
+    const [newLastName, setNewLastName] = useState(lastName);
+    const [newDob, setNewDob] = useState(dob);
+    const [newInterest, setNewInterest] = useState(interest);
     const [disable, setDisable] = useState(true);
     const options = {
         error,
@@ -54,41 +60,54 @@ function Details({}) {
 
     useEffect(() => {
         const newValues = {
-            firstName,
-            lastName,
-            email,
-            interest,
-            dob,
+            firstName: newFirstName,
+            lastName: newLastName,
+            email: newEmail,
+            dob: newDob,
+            interest: newInterest,
         };
 
         const isSame = _.isEqual(onMountValue, newValues);
-        ({ isSame, onMountValue, newValues });
+        console.log({ isSame, onMountValue, newValues });
         if (!isSame) {
+            setIsDetailsUnSaved(true);
             setDisable(false);
         } else {
             setDisable(true);
+            setIsDetailsUnSaved(() => false);
         }
-    }, [firstName, lastName, email, interest, dob]);
-
-    useEffect(() => {
-        setFirstName(() => user?.firstName);
-    }, []);
+    }, [newFirstName, newLastName, newEmail, newDob, newInterest]);
 
     const onSubmit = async () => {
         try {
             const data = {
-                firstName,
-                lastName,
-                email,
-                dob,
-                interest,
+                firstName: newFirstName,
+                lastName: newLastName,
+                email: newEmail,
+                dob: newDob,
+                interest: newInterest,
             };
             const result = await axios.put('user/changedetails', data);
 
             authDispatch({ type: 'LOGIN', payload: result.data });
-            setOnMountValue(() => data);
-            setDisable(true);
 
+            
+
+           
+            //update mountValues
+            setOnMountValue(() => data);
+
+            // update values
+            setEmail(() => newEmail);
+            setInterest(() => newInterest);
+            setDob(() => newDob);
+            setLastName(() => newLastName);
+            setFirstName(() => newFirstName);
+            setDisable(() => true);
+            setIsDetailsUnSaved(() => false);
+
+            // notify user that changes were successfull
+            setFooterMessage(() => ({ success: true, text: 'Changes saved' }));
             return;
         } catch (error) {
             'error here: ', error;
@@ -107,22 +126,22 @@ function Details({}) {
             />
             <div className="w-4/6 bg-white px-4 pb-4">
                 <Input
-                    value={firstName}
-                    setValue={setFirstName}
+                    value={newFirstName}
+                    setValue={setNewFirstName}
                     property={'firstName'}
                     label={'FIRST NAME'}
                     {...options}
                 />
                 <Input
-                    value={lastName}
-                    setValue={setLastName}
+                    value={newLastName}
+                    setValue={setNewLastName}
                     property={'lastName'}
                     label={'LAST NAME'}
                     {...options}
                 />
                 <Input
-                    value={email}
-                    setValue={setEmail}
+                    value={newEmail}
+                    setValue={setNewEmail}
                     property={'email'}
                     label={'Email'}
                     {...options}
@@ -130,12 +149,12 @@ function Details({}) {
                 <DobPicker
                     showDescription={false}
                     error={error}
-                    value={dob}
+                    value={newDob}
                     setError={setError}
-                    setDob={setDob}
+                    setDob={setNewDob}
                 />
 
-                <Interest setInterest={setInterest} interest={interest} />
+                <Interest setInterest={setNewInterest} interest={newInterest} />
 
                 <Button
                     submit={onSubmit}

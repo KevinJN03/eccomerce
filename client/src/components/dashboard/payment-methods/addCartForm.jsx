@@ -10,7 +10,8 @@ import {
     CardElement,
 } from '@stripe/react-stripe-js';
 import { useEffect, useState } from 'react';
-
+import credit_icon from '../../../assets/icons/credit-card.png';
+import cvv_icon from '../../../assets/icons/cvv-icon.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import Form from './form';
 import Input from '../../Login-SignUp/input';
@@ -19,124 +20,176 @@ import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../../api/axios';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
-import  Error_Alert  from '../../common/error-alert';
-
+import Error_Alert from '../../common/error-alert';
+import ElementDiv from '../../checkout/payment/element-div';
+import MountCardComponents from '../../../hooks/mountCardComponents';
+import '../../../CSS/checkout.scss';
+import { useUserDashboardContext } from '../../../context/userContext';
 export function AddCartForm({ clientSecret }) {
-    const [error, setError] = useState({});
+    const { setFooterMessage } = useUserDashboardContext();
+    const [errors, setErrors] = useState({});
     const [isDefault, setDefault] = useState(false);
     const [btnLoad, setBtnLoad] = useState(false);
-    const [cardNumber, setCardNumber] = useState('');
+
     const { PaymentMethodsDispatch } = usePaymentMethods();
     const [name, setName] = useState('');
-    const [cvc, setCvc] = useState('');
+    const [defaultCheck, setDefaultCheck] = useState();
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
+
+    MountCardComponents({ elements, setError: setErrors });
+    const errorProps = {
+        error: errors,
+        setError: setErrors,
+        asterisk: false,
+    };
+
     const handleClick = async (e) => {
-        e.preventDefault();
+        let success = false;
+        try {
+            if (!stripe || !elements) {
+                return;
+            }
+            if (!name) {
+                setErrors((prevState) => ({
+                    ...prevState,
+                    name: 'Please enter your full name.',
+                }));
+                return;
+            }
+            setBtnLoad(true);
 
-        if (!stripe || !elements) {
-            return;
-        }
-        if (!name) {
-            setError((prevState) => ({
-                ...prevState,
-                name: 'Please enter your full name.',
-            }));
-            return;
-        }
-        setBtnLoad(true);
-
-        stripe
-            .confirmCardSetup(clientSecret, {
-                payment_method: {
-                    card: elements.getElement('card'),
-                    billing_details: {
-                        name,
+            const { error, setupIntent } = await stripe.confirmCardSetup(
+                clientSecret,
+                {
+                    payment_method: {
+                        card: elements.getElement('cardNumber'),
+                        billing_details: {
+                            name,
+                        },
                     },
-                },
-            })
-            .then(({ error, setupIntent }) => {
-                setTimeout(async () => {
-                    try {
-                        let paymentMethodArray = [];
-                        if (isDefault) {
-                            const result = await axios.post(
-                                `user/payment-method/changedefault/${setupIntent.payment_method}`
-                            );
-                            const { paymentMethods } = result.data;
-                            paymentMethodArray = paymentMethods;
-                        } else {
-                            const result = await axios.get(
-                                `user/payment-method/all`
-                            );
-                            const { paymentMethods } = result.data;
-                            paymentMethodArray = paymentMethods;
-                        }
-                        PaymentMethodsDispatch({
-                            type: 'set',
-                            payload: paymentMethodArray,
-                        });
-                        if (error) {
-                            (error);
+                }
+            );
 
-                            if (error.message.includes('card number')) {
-                                setError((prevState) => ({
-                                    ...prevState,
-                                    card: error.message,
-                                }));
-                            }
-                            setError((prevState) => ({
-                                ...prevState,
-                                general: error.message,
-                            }));
-                        } else {
-                            navigate('/my-account/payment-methods');
-                        }
-                        setBtnLoad(() => false);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                }, 1200);
-            });
+            if (error) {
+                console.error(error);
+                const splitCode = error.code.split('_')[1];
+                if (splitCode == 'cvc') {
+                    setErrors((prevState) => ({
+                        ...prevState,
+                        cvc: error.message,
+                    }));
+                } else if (splitCode == 'number') {
+                    setErrors((prevState) => ({
+                        ...prevState,
+                        number: error.message,
+                    }));
+                } else if (splitCode == 'expiry') {
+                    setErrors((prevState) => ({
+                        ...prevState,
+                        expiryDate: error.message,
+                    }));
+                } else {
+                    setErrors((prevState) => ({
+                        ...prevState,
+                        general: error.message,
+                    }));
+                }
+            } else {
+                success = true;
+                let paymentMethodArray = [];
+                if (isDefault) {
+                    const result = await axios.post(
+                        `user/payment-method/changedefault/${setupIntent.payment_method}`
+                    );
+                    const { paymentMethods } = result.data;
+                    paymentMethodArray = paymentMethods;
+                } else {
+                    const result = await axios.get(`user/payment-method/all`);
+                    const { paymentMethods } = result.data;
+                    paymentMethodArray = paymentMethods;
+                }
+                PaymentMethodsDispatch({
+                    type: 'set',
+                    payload: paymentMethodArray,
+                });
+            }
+        } catch (error) {
+            console.error('error while adding card', error);
+        } finally {
+            setTimeout(() => {
+                setBtnLoad(() => false);
+                if (success) {
+                    setFooterMessage({
+                        success: true,
+                        text: 'Payment Method Added',
+                    });
+                    navigate('/my-account/payment-methods');
+                }
+            }, 800);
+        }
     };
 
     return (
-        <>
+        <section className="w-full">
             <Error_Alert
                 property={'general'}
-                error={error}
-                setError={setError}
+                error={errors}
+                setError={setErrors}
             />
-            <div className="relative">
-                <label className="font-semibold tracking-wide">
-                    Card Number :
-                </label>
-                <CardElement
-                    onChange={(e) => setError({})}
-                    className="mb-3 mt-2 border-[1px] border-black px-2 py-5"
-                    options={{ hidePostalCode: true }}
+            <div className="mb-4 mt-4 w-5/6">
+                <ElementDiv
+                    label={'CARD NUMBER'}
+                    id={'cardNumber'}
+                    icon={{ img: credit_icon, alt: 'credit card icon' }}
+                    className={'w-full'}
+                    error={errors}
+                    property={'number'}
                 />
+
+                <ElementDiv
+                    label={'EXPIRY DATE'}
+                    id={'cardExpiry'}
+                    className={'w-2/6'}
+                    error={errors}
+                    property={'expiryDate'}
+                />
+                <Input
+                    value={name}
+                    setValue={setName}
+                    label={'NAME ON CARD'}
+                    property={'name'}
+                    autoComplete={'name'}
+                    {...errorProps}
+                />
+
+                <ElementDiv
+                    label={'CVC'}
+                    id={'cardCvc'}
+                    icon={{ img: cvv_icon, alt: 'cvc icon' }}
+                    className={'w-2/6'}
+                    error={errors}
+                    property={'cvc'}
+                />
+                <div
+                    className="my-6 flex flex-row items-center justify-start gap-x-3 hover:cursor-pointer"
+                    onClick={() => setDefaultCheck((prevState) => !prevState)}
+                >
+                    <input
+                        type="checkbox"
+                        className="daisy-checkbox rounded-none"
+                        name="default"
+                        id="default-payment-check"
+                        checked={defaultCheck}
+                        readOnly={true}
+                        onChange={() => setDefaultCheck(!defaultCheck)}
+                    />
+
+                    <p>Save card details for next time</p>
+                </div>
             </div>
 
-            <Input
-                value={name}
-                error={error}
-                setError={setError}
-                setValue={setName}
-                property={'name'}
-                label={'Name'}
-                className={''}
-            />
-            <div className="my-8 flex items-center gap-x-3">
-                <input
-                    onChange={() => setDefault(!isDefault)}
-                    checked={isDefault}
-                    type="checkbox"
-                    className="daisy-checkbox rounded-none"
-                />
-                <p>Set as default Payment</p>
-            </div>
             <button
                 onClick={handleClick}
                 type="button"
@@ -164,7 +217,7 @@ export function AddCartForm({ clientSecret }) {
                     })}
                 </div>
             </div>
-        </>
+        </section>
     );
 }
 

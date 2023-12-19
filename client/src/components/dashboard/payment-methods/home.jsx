@@ -27,10 +27,11 @@ function Home({}) {
         if (paymentMethods.length < 1) navigate('add');
 
         setLoading(true);
+        setPage(1);
         const timeout = setTimeout(() => {
             setLoading(false);
         }, 500);
-
+       
         return () => {
             clearTimeout(timeout);
         };
@@ -68,68 +69,74 @@ function Home({}) {
             />
             {!loading ? (
                 <div className="mt-2 flex flex-col gap-y-2">
-                    {paymentMethods.slice(3 * page - 3, page * 3).map(
-                        (
-                            {
-                                logo,
-                                text,
-                                description,
-                                id,
-                                type,
-                                brand,
-                                exp_month,
-                                exp_year,
-                                last4,
-                                funding,
-                                name,
-                            },
-                            idx
-                        ) => {
-                            const cardData = { isCard: false };
-                            if (type == 'card') {
-                                cardData.isCard = true;
-                                cardData.name = name;
-                                cardData.exp_month = exp_month;
-                                cardData.exp_year = exp_year;
-                                cardData.icon =
-                                    logos[
-                                        brand.toLowerCase().replaceAll(' ', '_')
-                                    ];
-                            }
+                    {paymentMethods
+                        .slice(3 * page - 3, page * 3)
+                        .map(
+                            (
+                                {
+                                    logo,
+                                    text,
+                                    description,
+                                    id,
+                                    type,
+                                    brand,
+                                    exp_month,
+                                    exp_year,
+                                    last4,
+                                    funding,
+                                    name,
+                                },
+                                idx
+                            ) => {
+                                const cardData = { isCard: false };
+                                if (type == 'card') {
+                                    cardData.isCard = true;
+                                    cardData.name = name;
+                                    cardData.exp_month = exp_month;
+                                    cardData.exp_year = exp_year;
+                                    cardData.icon =
+                                        logos[
+                                            brand
+                                                .toLowerCase()
+                                                .replaceAll(' ', '_')
+                                        ];
+                                }
 
-                            return (
-                                <PaymentMethodItem
-                                    cardData={cardData}
-                                    inputDisable={
-                                        defaultCheck && defaultCheck != id
-                                    }
-                                    check={defaultCheck == id}
-                                    key={id}
-                                    isDefault={idx == 0}
-                                    arrayLength={paymentMethods.length}
-                                    icon={
-                                        type === 'paypal'
-                                            ? paypal_icon
-                                            : type === 'klarna'
-                                            ? klarna_icon
-                                            : cardData.icon || card_icon
-                                    }
-                                    type={type}
-                                    method={
-                                        text
-                                            ? `${text} ${
-                                                  description ? description : ''
-                                              }`
-                                            : `${funding} ${brand} (${last4})`
-                                    }
-                                    handleDefault={() =>
-                                        handleDefaultMethod(id)
-                                    }
-                                    handleDelete={() => handleDelete(id)}
-                                />
-                            );
-                        }
-                    )}
+                                return (
+                                    <PaymentMethodItem
+                                        cardData={cardData}
+                                        inputDisable={
+                                            defaultCheck && defaultCheck != id
+                                        }
+                                        check={defaultCheck == id}
+                                        key={id}
+                                        isDefault={id == paymentMethods[0]?.id}
+                                        arrayLength={paymentMethods.length}
+                                        icon={
+                                            type === 'paypal'
+                                                ? paypal_icon
+                                                : type === 'klarna'
+                                                ? klarna_icon
+                                                : cardData.icon || card_icon
+                                        }
+                                        type={type}
+                                        method={
+                                            text
+                                                ? `${text} ${
+                                                      description
+                                                          ? description
+                                                          : ''
+                                                  }`
+                                                : `${funding} ${brand} (${last4})`
+                                        }
+                                        handleDefault={() =>
+                                            handleDefaultMethod(id)
+                                        }
+                                        handleDelete={() => handleDelete(id)}
+                                    />
+                                );
+                            }
+                        )}
 
                     {divideBy3 > 1 && (
                         <div className="pagination justify-end">

@@ -37,7 +37,7 @@ function My_Orders({}) {
     };
 
     return (
-        <section className="my-orders">
+        <section className="my-orders w-full">
             <Header icon={order_icon} text={'MY ORDERS'} />
             {newOrdersArray.length == 0 && (
                 <Empty_Body
