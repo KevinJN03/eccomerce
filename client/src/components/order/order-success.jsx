@@ -53,7 +53,7 @@ function Tooltip({ text }) {
     );
 }
 function Order_Success({}) {
-    disableLayout();
+   
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [order, setOrder] = useState({});

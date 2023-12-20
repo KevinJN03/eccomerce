@@ -6,6 +6,10 @@ import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import User from '../Models/user.js';
 import oAuthUser from '../Models/oAuthUser.js';
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
+import { myCache } from '../app.js';
+import { v4 as uuidv4 } from 'uuid';
 const verifyCallback = async (email, password, cb) => {
   try {
     const findUser = await User.findOne({ email });
@@ -42,7 +46,6 @@ const googleStrategyOption = {
 // const googleVerifyCallBack = async (accessToken, refreshToken, profile, cb) => {
 const googleVerifyCallBack = async (issuer, profile, cb) => {
   const email = profile.emails[0]?.value;
-  console.log(profile, { email });
 
   const findUser = await User.findOne({ email });
 
@@ -51,17 +54,27 @@ const googleVerifyCallBack = async (issuer, profile, cb) => {
   }
 
   if (!findUser) {
-    const newUser = await oAuthUser.create({
+    const payload = {
       email,
-      issuer: 'google',
+      social_accounts: { google: profile?.id },
       lastName: profile.name?.familyName,
       firstName: profile.name?.givenName,
-    });
-    cb(null, null, newUser?._id);
+    };
+
+    const token = jwt.sign(
+      payload,
+      process.env['OAUTH_REGISTRATION_JWT_SECRET'],
+      { expiresIn: '15m', algorithm: 'HS256' },
+    );
+
+    const id = uuidv4();
+    const ttl = 15 * 60;
+    myCache.set(id, token, ttl);
+
+    cb(null, null, id);
   }
 };
 
-// const GoogleStrategy = GoogleAuthStrategy.Strategy;
 const googleStrategy = new GoogleStrategy(
   googleStrategyOption,
   googleVerifyCallBack,
@@ -73,17 +86,26 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser(async (userId, cb) => {
   try {
-    const findUser = await User.findById(userId, {
-      password: 0,
-      dob: 0,
-      address: 0,
-      __v: 0,
-    });
+    const findUser = await User.findById(
+      userId,
+      {
+        email: 1,
+        firstName: 1,
+        lastName: 1,
+        interest: 1,
+        // adminAccess: 1,
+        // password: 0,
+        // dob: 0,
+        // address: 0,
+        // __v: 0,
+      },
+      { lean: { toObject: true } },
+    );
 
-    const newResult = findUser.toObject({ virtuals: false });
+    // const newResult = findUser.toObject({ virtuals: false });
 
-    delete newResult._id;
-    return cb(null, newResult);
+    // delete newResult._id;
+    return cb(null, findUser);
   } catch (error) {
     return cb(error);
   }

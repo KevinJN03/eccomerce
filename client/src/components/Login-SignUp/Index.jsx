@@ -10,7 +10,7 @@ import disableLayout from '../../hooks/disableLayout';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
-    disableLayout();
+    
     const [option, setOption] = useState(loginorSignup);
 
     const location = useLocation();
@@ -56,7 +56,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
         },
     };
     return (
-        <>
+        <section className='w-screen min-h-screen'>
             <section className="login-signup-page min-h-screen">
                 <section
                     id="login-signup-container"
@@ -131,7 +131,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                     </span>
                 </div>
             </section>
-        </>
+        </section>
     );
 }
 

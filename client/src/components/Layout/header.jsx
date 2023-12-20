@@ -66,10 +66,10 @@ function Header() {
     return (
         <motion.section
             className="header-section flex w-full max-w-full flex-col justify-center"
-            variants={headerVariants}
-            initial={'initial'}
-            animate={'animate'}
-            exit={'exit'}
+            // variants={headerVariants}
+            // initial={'initial'}
+            // animate={'animate'}
+            // exit={'exit'}
         >
             <section id="header-wrapper">
                 <header className="header">

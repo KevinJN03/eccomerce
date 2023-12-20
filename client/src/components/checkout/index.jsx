@@ -1,7 +1,7 @@
 import '../../CSS/checkout.scss';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
-import disableLayout from '../../hooks/disableLayout';
+
 import Address from './address form/address.jsx';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total/Checkout_Total.jsx';
@@ -34,7 +34,7 @@ import dayjs from 'dayjs';
 
 import findAddress from '../common/findaddress.jsx';
 function Checkout() {
-    disableLayout();
+   
 
     const [stripePromise, setStripePromise] = useState(() =>
         loadStripe(STRIPE_KEY)

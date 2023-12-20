@@ -26,7 +26,7 @@ import asyncHandler from 'express-async-handler';
 import transporter from './utils/nodemailer.js';
 import * as React from 'react';
 import { render } from '@react-email/render';
-
+import NodeCache from 'node-cache';
 import Order from './Models/order.js';
 import 'dotenv/config';
 import PasswordReset from './React Email/emails/passwordreset.jsx';
@@ -36,6 +36,7 @@ import { check, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
 import { adminLogin } from './Controllers/adminController.js';
+
 const {
   DBNAME,
   URL,
@@ -46,6 +47,7 @@ const {
   SALT_ROUNDS,
 } = process.env;
 const PORT = 3000;
+
 const db = () => {
   mongoose
     .connect(URL, { dbName: DBNAME })
@@ -60,6 +62,7 @@ const db = () => {
 db();
 
 const app = express();
+export const myCache = new NodeCache();
 // app.use(cors());
 app.set('trust proxy', true);
 app.use(cors({ origin: true, credentials: true }));
@@ -84,10 +87,10 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.get('/api/server-status', (req, res) => {
   res.send('OK');
 });
+
 app.use('/api/admin/login', adminLogin);
 app.use('/api/product', productRoute);
 app.use('/api/coupon', couponRoute);

@@ -24,7 +24,7 @@ function Login({}) {
                     setLoading(() => false);
                 }, 1000);
 
-                'login data: ', res.data;
+            
                 authDispatch({ type: 'LOGIN', payload: res.data });
                 navigate(-1);
             })
@@ -40,6 +40,13 @@ function Login({}) {
     const googleLogin = () => {
         window.open(`${URL}/user/login/google`, '_self');
     };
+
+    const appleLogin = () => {
+
+    }
+   const facebookLogin = () => {
+
+   }
     return (
         <LoginForm
             onSubmit={onSubmit}
@@ -47,8 +54,10 @@ function Login({}) {
             error={error}
             setError={setError}
             googleLogin={googleLogin}
+            appleLogin={appleLogin}
+            facebookLogin={facebookLogin}
         />
     );
-} 
- 
+}
+
 export default Login;

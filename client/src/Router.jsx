@@ -61,6 +61,7 @@ import AdminPortal from './components/admin/home/AdminPortal.jsx';
 import Order_Edit from './components/admin/order/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
 import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
+import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -258,9 +259,13 @@ function Router({ Header, Footer }) {
                         },
                         {
                             path: 'social-register/finaldetails',
-                            element: <SocialRegister/>
-                        }
+                            element: <SocialRegister />,
+                        },
                     ],
+                },
+                {
+                    path: 'portal/redirect',
+                    element: <SocialRedirect />,
                 },
 
                 {

@@ -13,7 +13,7 @@ function Interest({ setInterest, interest }) {
                                 id={option}
                                 value={option}
                                 checked={interest === option}
-                                onClick={(e) =>
+                                onChange={(e) =>
                                     setInterest(() => e.target.value)
                                 }
                             />

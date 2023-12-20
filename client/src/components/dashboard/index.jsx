@@ -1,4 +1,4 @@
-import disableLayout from '../../hooks/disableLayout';
+
 import Checkout_Header from '../checkout/checkout_header.jsx';
 import '../../CSS/user-dashboard.scss';
 import { useEffect, useReducer, useRef, useState } from 'react';
@@ -29,7 +29,7 @@ import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeletePaymentMethod from './modalContent/delete-payment-method.jsx';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function Dashboard() {
-    disableLayout();
+   
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { user, authDispatch } = useAuth();
@@ -44,33 +44,51 @@ function Dashboard() {
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [defaultAddresses, setDefaultAddresses] = useState({});
     const [ordersArray, setOrdersArray] = useState([]);
-
+    const [socialAccounts, setSocialAccounts] = useState({});
     async function fetchResults() {
         try {
-            const userResult = await axios.get('user/userData');
-            const paymentResult = await axios.get('user/payment-method/all');
+            const [userResult, paymentResult, orderResults] =
+                await Promise.allSettled([
+                    axios.get('user/userData'),
+                    axios.get('user/payment-method/all'),
+                    axios.get('user/orders'),
+                ]);
+            // const userResult = await axios.get('user/userData');
+            // const paymentResult = await axios.get('user/payment-method/all');
 
-            const orderResults = await axios.get('user/orders');
-            const { user } = userResult.data;
-            setDob(() => dayjs(user.dob).toISOString());
-            setContactPreference(() => user?.contact_preferences);
-            setAddress(() => user?.address);
-            setUserPaymentMethods(() => [...paymentResult.data.paymentMethods]);
-            setDefaultAddresses(() => user?.default_address);
-            setOrdersArray(() => orderResults.data?.orders);
-            return Promise.resolve('ok');
+            // const orderResults = await axios.get('user/orders');
+            if (userResult.status == 'fulfilled') {
+                const { user } = userResult.value?.data;
+                setDob(() => dayjs(user?.dob).toISOString());
+                console.log('here', { user });
+                setContactPreference(() => user?.contact_preferences);
+                setAddress(() => user?.address);
+                setDefaultAddresses(() => user?.default_address);
+
+                setSocialAccounts(() => user?.social_accounts);
+            }
+
+            if (paymentResult.status == 'fulfilled') {
+                setUserPaymentMethods(() => [
+                    ...paymentResult.value?.data?.paymentMethods,
+                ]);
+            }
+
+            if (orderResults.status == 'fulfilled') {
+                setOrdersArray(() => orderResults.value?.data?.orders);
+            }
         } catch (error) {
             'error while checking if user is authenticated: ', error;
             logOutUser({ error, authDispatch, navigate });
+        } finally {
+            setTimeout(() => {
+                setLoadingState(false);
+            }, 1000);
         }
     }
 
     useEffect(() => {
-        fetchResults().then(() => {
-            setTimeout(() => {
-                setLoadingState(false);
-            }, 1000);
-        });
+        fetchResults();
     }, []);
 
     const getRoute = () => {
@@ -97,7 +115,7 @@ function Dashboard() {
     const [isDetailsUnSaved, setIsDetailsUnSaved] = useState(false);
     const [footerMessage, setFooterMessage] = useState({
         success: null,
-        text: 'null',
+        text: null,
     });
     const ref = useRef();
     const isInView = useInView(ref);
@@ -130,6 +148,7 @@ function Dashboard() {
         setIsDetailsUnSaved,
         footerMessage,
         setFooterMessage,
+        socialAccounts, setSocialAccounts
     };
 
     const view = {

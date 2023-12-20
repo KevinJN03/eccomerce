@@ -3,6 +3,7 @@ import social_icon from '../../assets/icons/guardian.png';
 import apple_icon from '../../assets/icons/apple-icon.png';
 import facebook_icon from '../../assets/icons/facebook-icon.png';
 import google_icon from '../../assets/icons/google-icon.png';
+import { useUserDashboardContext } from '../../context/userContext';
 
 function Social_Item({ icon, title, enable }) {
     return (
@@ -21,7 +22,13 @@ function Social_Item({ icon, title, enable }) {
                 />
             </div>
             <div className="middle my-2 flex flex-[5] flex-col pl-5">
-                <h2 className={`${enable ? 'font-bold tracking-wider' : 'font-light text-sm'}`}>
+                <h2
+                    className={`${
+                        enable
+                            ? 'font-bold tracking-wider'
+                            : 'text-sm font-light'
+                    }`}
+                >
                     {title}
                 </h2>
                 {enable && (
@@ -45,21 +52,22 @@ function Social_Item({ icon, title, enable }) {
     );
 }
 function Socials({}) {
+    const { socialAccounts } = useUserDashboardContext();
     const options = [
         {
             title: 'Google',
             icon: google_icon,
-            enable: false,
+            enable: socialAccounts['google'],
         },
         {
             title: 'Apple',
             icon: apple_icon,
-            enable: false,
+            enable: socialAccounts['apple'],
         },
         {
             title: 'Facebook',
             icon: facebook_icon,
-            enable: false,
+            enable: socialAccounts['facebook'],
         },
     ];
     return (

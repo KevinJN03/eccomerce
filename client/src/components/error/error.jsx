@@ -2,7 +2,7 @@ import disableLayout from '../../hooks/disableLayout';
 import { Link } from 'react-router-dom';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
 export default function Error({message, link, buttonText}) {
-    disableLayout();
+
     return (
         <section className="error-page flex h-screen w-full items-center justify-center">
             <section className="error-container flex max-w-[1366px] flex-col items-center justify-center">

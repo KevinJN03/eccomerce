@@ -31,6 +31,8 @@ import transporter from '../utils/nodemailer.js';
 import 'dotenv/config';
 import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
+
+
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
@@ -360,6 +362,8 @@ export const getAllUserData = [
         },
       },
     ).exec();
+
+    console.log({type: typeof user?.dob})
     // .populate('address')
     res.send({ user });
   }),

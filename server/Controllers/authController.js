@@ -5,9 +5,19 @@ import 'dotenv/config';
 import OAuthUser from '../Models/oAuthUser';
 import userValidators from '../utils/userValidators';
 import { validationResult } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import User from '../Models/user';
+import { myCache } from '../app';
+import bcrypt from 'bcryptjs';
+import Stripe from 'stripe';
+
 const router = express.Router();
-const CLIENT_URL = process.env.CLIENT_URL;
+
+const { CLIENT_URL, OAUTH_REGISTRATION_JWT_SECRET, SALT_ROUNDS, STRIPE_KEY } =
+  process.env;
+const stripe = Stripe(STRIPE_KEY);
 router.get('/login/google', passport.authenticate('google'));
+
 // router.get(
 //   '/login/failed',
 //   asyncHandler((req, res, next) => {
@@ -55,16 +65,26 @@ router.get(
 router.get(
   '/oauth/:id',
   asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    const user = await OAuthUser.findOne({ _id: id }, null, {
-      lean: { toObject: true },
-    });
+      const value = myCache.get(id);
 
-    if (!user) {
-      return res.status(404).json({ success: false, msg: 'record not found' });
+      if (!value) {
+        return res.status(400).send({
+          error: {
+            general:
+              'Failed to register your social account as the time to register has passed.',
+          },
+        });
+      }
+      const payload = await jwt.verify(value, OAUTH_REGISTRATION_JWT_SECRET);
+      console.log({ payload, value, ttl: myCache.getTtl(id) });
+
+      res.json({ success: true, user: payload });
+    } catch (error) {
+      res.status(500).send({ error: { general: error.message } });
     }
-    res.json({ success: true, user });
   }),
 );
 
@@ -72,12 +92,29 @@ router.post('/ouath/user', [
   userValidators,
   asyncHandler(async (req, res, next) => {
     const result = validationResult(req).formatWith(({ msg }) => msg);
-    console.log(req.body);
+
     if (!result.isEmpty()) {
       return res.status(400).send({ success: false, error: result.mapped() });
     }
+    const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
 
-    res.send({ success: true });
+    const hashPassword = bcrypt.hashSync(req.body?.password, salt);
+    const user = await User.create({ ...req.body, password: hashPassword });
+    await stripe.customers.create({
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+    });
+    myCache.del(req.body.key);
+    return req.logIn(user, (error) => {
+      if (error) {
+        return next(err);
+      }
+
+      return res.redirect('/api/user/check');
+    });
+    // res.send({ success: true });
+    // return res.redirect('/api/user/check');
   }),
 ]);
 export default router;

@@ -9,17 +9,14 @@ import Interest from '../Login-SignUp/interest.jsx';
 import Button from '../Login-SignUp/button.jsx';
 import DobPicker from '../Login-SignUp/dobPicker.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
-import { useUserDashboardContext } from '../../context/userContext.jsx';
+
 import _ from 'lodash';
 import axios from '../../api/axios.js';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import objectSupport from 'dayjs/plugin/objectSupport';
 import logOutUser from '../common/logoutUser.js';
-import { faL } from '@fortawesome/free-solid-svg-icons';
-dayjs.extend(objectSupport);
-dayjs.extend(utc);
+import { useUserDashboardContext } from '../../context/userContext.jsx';
+
 function Details({}) {
     const { user, authDispatch } = useAuth();
     const [error, setError] = useState({});
@@ -53,6 +50,8 @@ function Details({}) {
     const [newDob, setNewDob] = useState(dob);
     const [newInterest, setNewInterest] = useState(interest);
     const [disable, setDisable] = useState(true);
+
+    console.log({dob})
     const options = {
         error,
         setError,

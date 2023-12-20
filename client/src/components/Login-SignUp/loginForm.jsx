@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import google_icon from '../../assets/icons/google-icon.png';
 import facebook_icon from '../../assets/icons/facebook-icon.png';
 import apple_icon from '../../assets/icons/apple-icon.png';
-function LoginForm({ onSubmit, loading, error, setError, googleLogin }) {
+function LoginForm({ onSubmit, loading, error, setError, googleLogin,appleLogin,
+    facebookLogin  }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -69,11 +70,11 @@ function LoginForm({ onSubmit, loading, error, setError, googleLogin }) {
                             icon: google_icon,
                             onClick: googleLogin,
                         },
-                        { text: 'APPLE', icon: apple_icon, onClick: null },
+                        { text: 'APPLE', icon: apple_icon, onClick: appleLogin },
                         {
                             text: 'FACEBOOK',
                             icon: facebook_icon,
-                            onClick: null,
+                            onClick: facebookLogin,
                             className:
                                 'brightness-0 invert',
                         },

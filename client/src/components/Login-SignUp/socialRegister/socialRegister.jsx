@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultAxios from '../../../api/axios';
 import Input from '../input';
 import { SetMeal } from '@mui/icons-material';
@@ -9,7 +9,8 @@ import Button from '../button';
 import { PasswordInput } from '../../dashboard/change-password';
 import { AnimatePresence, animate, motion } from 'framer-motion';
 import { initial } from 'lodash';
-
+import ErrorAlert from '../../common/error-alert.jsx';
+import { useAuth } from '../../../hooks/useAuth.jsx';
 function SocialRegister({}) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [user, setUser] = useState({});
@@ -19,7 +20,9 @@ function SocialRegister({}) {
     const [errors, setErrors] = useState({});
     const [password, setPassword] = useState('');
     const [visible, setVisible] = useState('');
-
+    const { authDispatch } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
         const id = searchParams?.get('signin');
 
@@ -32,10 +35,13 @@ function SocialRegister({}) {
             })
             .catch((error) => {
                 console.error('error while getting oauthuser info', error);
+
+                setErrors(() => error?.response?.data?.error);
             });
     }, []);
 
     const submit = async () => {
+        let success = false;
         try {
             const { data } = await defaultAxios.post('user/ouath/user', {
                 ...user,
@@ -43,15 +49,28 @@ function SocialRegister({}) {
                 dob,
                 interest,
                 password,
+                key: searchParams?.get('signin'),
             });
+
+            authDispatch({ type: 'LOGIN', payload: data });
+            setLoading(() => true);
+            success = true;
         } catch (error) {
             console.error('error while creating user', error);
-
             if (error.response?.status == 400) {
                 setErrors((prevError) => ({
                     ...prevError,
                     ...error.response.data?.error,
                 }));
+
+                setLoading(() => false);
+            }
+        } finally {
+            if (success == true) {
+                setTimeout(() => {
+                    navigate('/my-account');
+                    setLoading(() => false);
+                }, 1200);
             }
         }
     };
@@ -85,13 +104,13 @@ function SocialRegister({}) {
             },
         };
     };
-    
+
     const inputProps = {
         error: errors,
         setError: setErrors,
     };
     return (
-        <AnimatePresence mode='wait'>
+        <AnimatePresence mode="wait">
             <section className="social-register flex flex-col justify-center gap-y-5">
                 <p className="text-center font-gotham text-lg tracking-wide">
                     HI {user?.firstName?.toUpperCase()}, WE'RE NEARLY DONE...
@@ -101,7 +120,7 @@ function SocialRegister({}) {
                     variants={variants}
                     initial={'initial'}
                     animate={'animate'}
-                    className="mx-[-12px] my-4 bg-blue-200 px-9 flex flex-col justify-center"
+                    className="mx-[-12px] my-4 flex flex-col justify-center bg-blue-200 px-9"
                 >
                     <motion.p
                         variants={pVariant(0)}
@@ -122,6 +141,12 @@ function SocialRegister({}) {
                     </motion.p>
                 </motion.div>
                 <section className="flex w-8/12 flex-col self-center ">
+                    <ErrorAlert
+                        property={'general'}
+                        error={errors}
+                        setError={setErrors}
+                    />
+
                     <section className="flex flex-col gap-y-3">
                         <Input
                             {...inputProps}
@@ -155,6 +180,7 @@ function SocialRegister({}) {
                         text={'JOIN GLAMO'}
                         error={errors}
                         submit={submit}
+                        loading={loading}
                     />
                 </section>
             </section>

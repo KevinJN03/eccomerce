@@ -12,7 +12,8 @@ const OAuthSchema = new Schema({
     type: Schema.Types.String,
   },
   issuer: {
-    type: Schema.Types.String,
+    type: { type: Schema.Types.String },
+    id: { type: Schema.Types.String },
   },
   timeStamp: {
     type: Schema.Types.Date,
