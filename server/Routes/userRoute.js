@@ -26,8 +26,10 @@ import {
 
 import passport from 'passport';
 import express from 'express';
-const router = express.Router();
+import AuthRoute from '../Controllers/authController';
 
+const router = express.Router();
+router.use('/', AuthRoute);
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
 router.post('/login', loginUser);
@@ -53,4 +55,6 @@ router.get('/orders', getOrders);
 router.post('/change-password', changePassword);
 
 router.post('/payment-method/digital', addDigitalPaymentMethod);
+
+
 export default router;

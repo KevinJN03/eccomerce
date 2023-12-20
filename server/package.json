@@ -72,6 +72,8 @@
     "nodemailer": "^6.9.7",
     "nodemailer-express-handlebars": "^6.1.0",
     "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-google-oidc": "^0.1.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "postcode-validator": "^3.8.20",
