@@ -16,7 +16,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     const location = useLocation();
 
     useEffect(() => {
-        console.log({ location });
+
         const route = location.pathname.split('/').slice(-1)[0];
 
         const routesArray = [
@@ -28,9 +28,9 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
         if (routesArray.includes(route)) {
             setOption(() => 'login');
         } else {
-            setOption(() => route);
+            setOption(() => 'signup');
         }
-        console.log(route);
+   
     }, [location.pathname]);
     const { authenticated } = useAuth();
 

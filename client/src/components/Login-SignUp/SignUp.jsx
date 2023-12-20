@@ -139,7 +139,7 @@ function SignUp() {
                 text={'JOIN GLAMO'}
                 error={error}
                 submit={submit}
-                error={error}
+             
             />
         </section>
     );
