@@ -336,9 +336,9 @@ export const loginUser = [
     }
     passport.authenticate('local', (err, user, info) => {
       if (err) {
-        next(err);
+        return next(err);
       }
-
+    
       if (!user) {
         return res
           .status(400)
@@ -350,7 +350,7 @@ export const loginUser = [
           return next(err);
         }
 
-        return res.status(200).redirect('/api/user/check');
+        return res.redirect('/api/user/check');
       });
     })(req, res, next);
   }),
@@ -445,9 +445,9 @@ export const changeDetails = [
 
         if (difference < 30) {
           throw new Error(
-            `Sorry, you'll need to wait 30 minutes to change your email address again. Come back in ${
+            `Sorry, you'll need to wait ${
               30 - difference
-            } mins`,
+            } minutes to change your email address again.`,
           );
         }
       }

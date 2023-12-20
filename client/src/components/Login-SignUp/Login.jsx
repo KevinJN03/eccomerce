@@ -7,13 +7,14 @@ import ErrorMessage from './errorMessage';
 import Input from './input';
 import { useAuth } from '../../hooks/useAuth';
 import LoginForm from './loginForm';
-function Login({ }) {
-    
+
+const URL = import.meta.env.VITE_BACKEND_URL;
+function Login({}) {
     const [error, setError] = useState({ email: null, password: null });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { authDispatch } = useAuth();
-    const onSubmit = ({email, password, }) => {
+    const onSubmit = ({ email, password }) => {
         setLoading(true);
 
         axios
@@ -35,9 +36,18 @@ function Login({ }) {
                 'error at user login: ', error;
             });
     };
+
+    const googleLogin = () => {
+        window.open(`${URL}/user/login/google`, '_self');
+    };
     return (
-        <LoginForm onSubmit={onSubmit} loading={loading} error={error} setError={setError}/>
-        
+        <LoginForm
+            onSubmit={onSubmit}
+            loading={loading}
+            error={error}
+            setError={setError}
+            googleLogin={googleLogin}
+        />
     );
 }
 

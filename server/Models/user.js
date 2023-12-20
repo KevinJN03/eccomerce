@@ -27,17 +27,6 @@ const UserSchema = new Schema(
     dob: {
       type: Date,
       required: 'DOB is required. Please enter date of birth.',
-      // max: '2003-09-09',
-      validate: {
-        validator(v) {
-          const today = dayjs();
-
-          const difference = today.diff(dayjs(v), 'year');
-
-          return difference >= 18;
-        },
-        message: 'Must be 18 years old or older.',
-      },
     },
     interest: {
       type: String,
@@ -83,6 +72,16 @@ const UserSchema = new Schema(
   },
 );
 
+UserSchema.path('dob').validate({
+  validator: function (value) {
+    const today = dayjs();
+
+    const difference = today.diff(dayjs(value), 'year');
+
+    return difference >= 18;
+  },
+  message: 'Must be 18 years old or older.',
+});
 UserSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });

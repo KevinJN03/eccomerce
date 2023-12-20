@@ -2,9 +2,11 @@ import { useState } from 'react';
 import '../../CSS/login-signup.css';
 import Input from './input';
 import { Link } from 'react-router-dom';
-function LoginForm({onSubmit, loading, error, setError}) {
+function LoginForm({onSubmit, loading, error, setError, googleLogin}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
+
     
     return (
         <section className="flex w-8/12 flex-col flex-nowrap">
@@ -50,6 +52,11 @@ function LoginForm({onSubmit, loading, error, setError}) {
                     <span className="text-white">SIGN IN</span>
                 )}
             </button>
+
+
+            <section>
+                <button className='border-2 p-3' onClick={googleLogin}>Google</button>
+            </section>
         </section>
     );
 }
