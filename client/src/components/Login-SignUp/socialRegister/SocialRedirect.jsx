@@ -25,12 +25,12 @@ function SocialRedirect({}) {
                 } else {
                     navigate('/my-account');
                 }
-            }, 1000);
+            }, 3000);
         }
     };
 
     useEffect(() => {
-        // fetchData();
+        fetchData();
     }, []);
 
     return (

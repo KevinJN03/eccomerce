@@ -1,4 +1,3 @@
-
 import Checkout_Header from '../checkout/checkout_header.jsx';
 import '../../CSS/user-dashboard.scss';
 import { useEffect, useReducer, useRef, useState } from 'react';
@@ -29,7 +28,6 @@ import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import DeletePaymentMethod from './modalContent/delete-payment-method.jsx';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function Dashboard() {
-   
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { user, authDispatch } = useAuth();
@@ -53,10 +51,7 @@ function Dashboard() {
                     axios.get('user/payment-method/all'),
                     axios.get('user/orders'),
                 ]);
-            // const userResult = await axios.get('user/userData');
-            // const paymentResult = await axios.get('user/payment-method/all');
-
-            // const orderResults = await axios.get('user/orders');
+          
             if (userResult.status == 'fulfilled') {
                 const { user } = userResult.value?.data;
                 setDob(() => dayjs(user?.dob).toISOString());
@@ -77,9 +72,18 @@ function Dashboard() {
             if (orderResults.status == 'fulfilled') {
                 setOrdersArray(() => orderResults.value?.data?.orders);
             }
+
+    console.log({userResult})
+
+    if(userResult.status == 'rejected'){
+        logOutUser({ error: userResult.reason, authDispatch, navigate });
+    }
         } catch (error) {
-            'error while checking if user is authenticated: ', error;
-            logOutUser({ error, authDispatch, navigate });
+            console.error(
+                'error while checking if user is authenticated: ',
+                error
+            );
+           
         } finally {
             setTimeout(() => {
                 setLoadingState(false);
@@ -148,7 +152,8 @@ function Dashboard() {
         setIsDetailsUnSaved,
         footerMessage,
         setFooterMessage,
-        socialAccounts, setSocialAccounts
+        socialAccounts,
+        setSocialAccounts,
     };
 
     const view = {

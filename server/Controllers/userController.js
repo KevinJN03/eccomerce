@@ -11,7 +11,7 @@ import { body, check, validationResult } from 'express-validator';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
-import passport from '../utils/passport.js';
+import passport from '../utils/passport/passport.js';
 import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import Address from '../Models/address.js';
 import addressValidator from '../utils/addressValidator.js';
@@ -31,7 +31,6 @@ import transporter from '../utils/nodemailer.js';
 import 'dotenv/config';
 import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
-
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -363,7 +362,7 @@ export const getAllUserData = [
       },
     ).exec();
 
-    console.log({type: typeof user?.dob})
+    console.log({ type: typeof user?.dob });
     // .populate('address')
     res.send({ user });
   }),

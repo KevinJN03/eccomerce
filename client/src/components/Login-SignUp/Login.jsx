@@ -53,9 +53,7 @@ function Login({}) {
             loading={loading}
             error={error}
             setError={setError}
-            googleLogin={googleLogin}
-            appleLogin={appleLogin}
-            facebookLogin={facebookLogin}
+          
         />
     );
 }

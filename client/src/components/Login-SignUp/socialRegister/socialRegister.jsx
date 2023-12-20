@@ -22,6 +22,13 @@ function SocialRegister({}) {
     const [visible, setVisible] = useState('');
     const { authDispatch } = useAuth();
     const [loading, setLoading] = useState(false);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [socialAccount, setSocialAccount] = useState('');
+
+    const [mountFirstName, setMountFirstName] = useState('')
+    const [mountLastName, setMountLastName] = useState('')
     const navigate = useNavigate();
     useEffect(() => {
         const id = searchParams?.get('signin');
@@ -29,9 +36,13 @@ function SocialRegister({}) {
         defaultAxios
             .get(`user/oauth/${id}`)
             .then(({ data }) => {
-                console.log(data?.user);
                 setUser(() => data?.user);
                 setEmail(() => data?.user?.email);
+                setMountFirstName(() => data?.user?.firstName);
+                setMountLastName(() => data?.user?.lastName);
+                setSocialAccount(
+                    () => Object.keys(data?.user?.social_accounts)?.[0]
+                );
             })
             .catch((error) => {
                 console.error('error while getting oauthuser info', error);
@@ -45,6 +56,8 @@ function SocialRegister({}) {
         try {
             const { data } = await defaultAxios.post('user/ouath/user', {
                 ...user,
+                firstName,
+                lastName,
                 email,
                 dob,
                 interest,
@@ -136,8 +149,10 @@ function SocialRegister({}) {
                         animate={'animate'}
                     >
                         Sign in using your existing details and we'll take care
-                        of it so you can use Google or your email address from
-                        now on.
+                        of it so you can use{' '}
+                        {socialAccount[0]?.toUpperCase() +
+                            socialAccount?.substring(1)}{' '}
+                        or your email address from now on.
                     </motion.p>
                 </motion.div>
                 <section className="flex w-8/12 flex-col self-center ">
@@ -155,6 +170,26 @@ function SocialRegister({}) {
                             property={'email'}
                             setValue={setEmail}
                         />
+
+                        {!mountFirstName && (
+                            <Input
+                                {...inputProps}
+                                label={'FIRST NAME'}
+                                value={firstName}
+                                property={'firstName'}
+                                setValue={setFirstName}
+                            />
+                        )}
+
+                        {!mountLastName && (
+                            <Input
+                                {...inputProps}
+                                label={'LAST NAME'}
+                                value={lastName}
+                                property={'lastName'}
+                                setValue={setLastName}
+                            />
+                        )}
                         <PasswordInput
                             value={password}
                             setValue={setPassword}

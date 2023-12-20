@@ -19,7 +19,7 @@ import adminRoute from './Routes/adminRoute.js';
 import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
 import errorHandler from './errorHandler.js';
-import passport from './utils/passport.js';
+import passport from './utils/passport/passport.js';
 import https from 'https';
 import fs from 'fs';
 import asyncHandler from 'express-async-handler';

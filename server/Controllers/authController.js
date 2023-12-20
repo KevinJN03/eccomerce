@@ -17,7 +17,7 @@ const { CLIENT_URL, OAUTH_REGISTRATION_JWT_SECRET, SALT_ROUNDS, STRIPE_KEY } =
   process.env;
 const stripe = Stripe(STRIPE_KEY);
 router.get('/login/google', passport.authenticate('google'));
-
+router.get('/login/facebook', passport.authenticate('facebook'));
 // router.get(
 //   '/login/failed',
 //   asyncHandler((req, res, next) => {
@@ -29,6 +29,33 @@ router.get('/login/google', passport.authenticate('google'));
 //     successRedirect: `/api/user/check`,
 //     failureRedirect: `/api/user/check`,
 //   }
+
+router.get(
+  '/login/facebook/callback',
+  asyncHandler((req, res, next) => {
+    passport.authenticate('facebook', (err, user, info) => {
+      if (err) {
+        next(err);
+      }
+
+      if (user) {
+        return req.logIn(user, (error) => {
+          if (error) {
+            return next(err);
+          }
+          return res.redirect(`${CLIENT_URL}/portal/redirect`);
+        });
+      }
+
+      if (info) {
+        console.log({ info });
+        res.redirect(
+          `${CLIENT_URL}/portal/social-register/finaldetails?signin=${info}`,
+        );
+      }
+    })(req, res, next);
+  }),
+);
 router.get(
   '/login/google/callback',
   asyncHandler((req, res, next) => {
@@ -42,7 +69,7 @@ router.get(
           if (error) {
             return next(err);
           }
-          return res.redirect(`${CLIENT_URL}`);
+          return res.redirect(`${CLIENT_URL}/portal/redirect`);
         });
       }
 

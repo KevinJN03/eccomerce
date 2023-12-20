@@ -49,13 +49,13 @@ export default function NavOption({ selectOption, loadingState }) {
             <section>
                 {options.map((options, index) => {
                     return (
-                        <div className="!m-0 !p-0" key={uuidv4()}>
+                        <motion.div className="!m-0 !p-0" key={index}>
                             {options.map(({ text, icon, link }, idx) => {
                                 return (
                                     <motion.button
-                                        key={uuidv4()}
-                                        // initial={{ opacity: 1 }}
-                                        // animate={{ opacity: 1 }}
+                                        key={index}
+                                        initial={{ opacity: 1 }}
+                                        animate={{ opacity: 1 }}
                                         // key={loadingState}
                                         // variants={variants}
                                         // animate={'animate'}
@@ -86,6 +86,9 @@ export default function NavOption({ selectOption, loadingState }) {
                                                 <motion.div className=" skeleton-pulse min-h-full min-w-full rounded-[50%] p-0 "></motion.div>
                                             ) : (
                                                 <motion.img
+                                                initial={{ opacity: 1 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{duration: 0, delay: 0}}
                                                     className="mr-6 h-9 w-9"
                                                     src={icon}
                                                     alt={
@@ -121,7 +124,7 @@ export default function NavOption({ selectOption, loadingState }) {
                                     </motion.button>
                                 );
                             })}
-                        </div>
+                        </motion.div>
                     );
                 })}
             </section>

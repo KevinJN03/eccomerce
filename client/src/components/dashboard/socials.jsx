@@ -57,17 +57,17 @@ function Socials({}) {
         {
             title: 'Google',
             icon: google_icon,
-            enable: socialAccounts['google'],
+            enable: socialAccounts?.['google'],
         },
         {
             title: 'Apple',
             icon: apple_icon,
-            enable: socialAccounts['apple'],
+            enable: socialAccounts?.['apple'],
         },
         {
             title: 'Facebook',
             icon: facebook_icon,
-            enable: socialAccounts['facebook'],
+            enable: socialAccounts?.['facebook'],
         },
     ];
     return (

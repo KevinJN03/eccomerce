@@ -51,7 +51,6 @@ function Details({}) {
     const [newInterest, setNewInterest] = useState(interest);
     const [disable, setDisable] = useState(true);
 
-    console.log({dob})
     const options = {
         error,
         setError,

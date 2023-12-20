@@ -21,16 +21,14 @@ function Layout() {
     useEffect(() => {
         const splitLocation = location.pathname.split('/');
         console.log(splitLocation);
-
-        if (
-            [
-                'portal',
-                'my-account',
-                'checkout',
-                'admin',
-                'order-success',
-            ].includes(splitLocation[1])
-        ) {
+        const set = new Set([
+            'portal',
+            'my-account',
+            'checkout',
+            'admin',
+            'order-success',
+        ]);
+        if (set.has(splitLocation[1])) {
             console.log('true');
 
             if (layout) {
@@ -86,9 +84,8 @@ function Layout() {
         },
         animate: {
             opacity: 1,
-            transition: { delay: 1, },
+            transition: { delay: 1 },
         },
-       
     };
     return (
         <CartProvider>
@@ -108,14 +105,13 @@ function Layout() {
                                     {layout && <Header />}
                                     <AnimatePresence>
                                         <motion.main
-                                    
                                             variants={betaOutletVariant}
                                             initial={'initial'}
                                             animate={'animate'}
                                             exit={'exit'}
                                             id="main"
                                         >
-                                          { !loadState &&  <Outlet />}
+                                            {!loadState && <Outlet />}
                                         </motion.main>
                                     </AnimatePresence>
 
