@@ -8,7 +8,7 @@ function SocialLogin({ text, description }) {
     };
 
     const appleLogin = () => {
-       
+        window.open(`${URL}/user/login/twitter`, '_self');
     };
     const facebookLogin = () => {
         window.open(`${URL}/user/login/facebook`, '_self');

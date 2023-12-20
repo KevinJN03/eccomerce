@@ -8,6 +8,7 @@ import User from '../../Models/user.js';
 import strategy from './localStrategy.js';
 import googleStrategy from './googleStrategy.js';
 import facebookStrategy from './facebookStrategy.js';
+import twitterStrategy from './twiiterStrategy.js';
 
 passport.serializeUser((user, cb) => {
   return cb(null, user.id);
@@ -43,4 +44,5 @@ passport.deserializeUser(async (userId, cb) => {
 passport.use(strategy);
 passport.use(googleStrategy);
 passport.use(facebookStrategy);
+passport.use(twitterStrategy);
 export default passport;

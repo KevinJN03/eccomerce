@@ -36,6 +36,7 @@ function SocialRegister({}) {
         defaultAxios
             .get(`user/oauth/${id}`)
             .then(({ data }) => {
+                console.log(data?.user)
                 setUser(() => data?.user);
                 setEmail(() => data?.user?.email);
                 setMountFirstName(() => data?.user?.firstName);
