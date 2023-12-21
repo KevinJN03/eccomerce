@@ -375,6 +375,8 @@ function Router({ Header, Footer }) {
         },
     ]);
 
-    return <RouterProvider router={router} />;
+    return (
+        <RouterProvider router={router} fallbackElement={<SocialRedirect />} />
+    );
 }
 export default Router;

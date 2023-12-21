@@ -1,13 +1,14 @@
 import google_icon from '../../../assets/icons/google-icon.png';
 import facebook_icon from '../../../assets/icons/facebook-icon.png';
 import apple_icon from '../../../assets/icons/apple-icon.png';
+import twitter_icon from '../../../assets/icons/twitter.png';
 const URL = import.meta.env.VITE_BACKEND_URL;
 function SocialLogin({ text, description }) {
     const googleLogin = () => {
         window.open(`${URL}/user/login/google`, '_self');
     };
 
-    const appleLogin = () => {
+    const twitterLogin = () => {
         window.open(`${URL}/user/login/twitter`, '_self');
     };
     const facebookLogin = () => {
@@ -25,9 +26,9 @@ function SocialLogin({ text, description }) {
                         onClick: googleLogin,
                     },
                     {
-                        text: 'APPLE',
-                        icon: apple_icon,
-                        onClick: appleLogin,
+                        text: 'TWITTER',
+                        icon: twitter_icon,
+                        onClick: twitterLogin,
                     },
                     {
                         text: 'FACEBOOK',

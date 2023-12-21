@@ -27,8 +27,8 @@ function SocialRegister({}) {
     const [lastName, setLastName] = useState('');
     const [socialAccount, setSocialAccount] = useState('');
 
-    const [mountFirstName, setMountFirstName] = useState('')
-    const [mountLastName, setMountLastName] = useState('')
+    const [mountFirstName, setMountFirstName] = useState('');
+    const [mountLastName, setMountLastName] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
         const id = searchParams?.get('signin');
@@ -36,11 +36,13 @@ function SocialRegister({}) {
         defaultAxios
             .get(`user/oauth/${id}`)
             .then(({ data }) => {
-                console.log(data?.user)
+                console.log(data?.user);
                 setUser(() => data?.user);
                 setEmail(() => data?.user?.email);
                 setMountFirstName(() => data?.user?.firstName);
                 setMountLastName(() => data?.user?.lastName);
+                setFirstName(() => data?.user?.firstName);
+                setLastName(() => data?.user?.lastName);
                 setSocialAccount(
                     () => Object.keys(data?.user?.social_accounts)?.[0]
                 );
@@ -55,6 +57,7 @@ function SocialRegister({}) {
     const submit = async () => {
         let success = false;
         try {
+            setLoading(() => true);
             const { data } = await defaultAxios.post('user/ouath/user', {
                 ...user,
                 firstName,
@@ -67,17 +70,19 @@ function SocialRegister({}) {
             });
 
             authDispatch({ type: 'LOGIN', payload: data });
-            setLoading(() => true);
+
             success = true;
         } catch (error) {
             console.error('error while creating user', error);
             if (error.response?.status == 400) {
-                setErrors((prevError) => ({
-                    ...prevError,
-                    ...error.response.data?.error,
-                }));
+                setTimeout(() => {
+                    setErrors((prevError) => ({
+                        ...prevError,
+                        ...error.response.data?.error,
+                    }));
 
-                setLoading(() => false);
+                    setLoading(() => false);
+                }, 300);
             }
         } finally {
             if (success == true) {

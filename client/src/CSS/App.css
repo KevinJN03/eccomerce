@@ -1,8 +1,9 @@
 #App {
     max-width: 100%;
+    min-width: 300px !important
     @apply m-0 flex flex-col items-center p-0;
     /* background-color: var(--light-grey); */
-    width: 100%;
+
     overflow-x: hidden;
 }
 

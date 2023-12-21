@@ -37,16 +37,6 @@ function Login({}) {
             });
     };
 
-    const googleLogin = () => {
-        window.open(`${URL}/user/login/google`, '_self');
-    };
-
-    const appleLogin = () => {
-
-    }
-   const facebookLogin = () => {
-
-   }
     return (
         <LoginForm
             onSubmit={onSubmit}

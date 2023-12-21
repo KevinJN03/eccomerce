@@ -90,25 +90,25 @@ function Layout() {
     return (
         <CartProvider>
             <ProductsProvider>
-                <AnimatePresence>
+                <AnimatePresence mode='wait'>
                     {!loadState && (
                         <motion.section
                             className="w-screen"
-                            key={layout}
-                            variants={variants}
-                            initial={'initial'}
-                            animate={'animate'}
-                            exit={'exit'}
+                            // key={layout}
+                            // variants={variants}
+                            // initial={'initial'}
+                            // animate={'animate'}
+                            // exit={'exit'}
                         >
                             {
                                 <>
                                     {layout && <Header />}
                                     <AnimatePresence>
                                         <motion.main
-                                            variants={betaOutletVariant}
-                                            initial={'initial'}
-                                            animate={'animate'}
-                                            exit={'exit'}
+                                            // variants={betaOutletVariant}
+                                            // initial={'initial'}
+                                            // animate={'animate'}
+                                            // exit={'exit'}
                                             id="main"
                                         >
                                             {!loadState && <Outlet />}

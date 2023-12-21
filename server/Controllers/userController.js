@@ -535,6 +535,7 @@ export const addUserAddress = [
       success: true,
       address: user.address,
       default_address: user.default_address,
+    
     });
   }),
 ];

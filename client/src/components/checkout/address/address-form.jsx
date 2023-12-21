@@ -17,7 +17,7 @@ function Address_Form({ type }) {
 
         setTemporaryMainAddress,
         temporaryMainAddress,
-        handleClick,
+
         cancel,
         setDefaultAddresses,
         setAddresses,
@@ -25,7 +25,15 @@ function Address_Form({ type }) {
         setLoading,
         addressType,
         enableCancelBtn,
+        setMainAddress,
     } = useAddressContext();
+
+    const {
+        setIsDeliveryAddressFill,
+        setShippingAddress,
+        setBillingAddress,
+        SetDisableOtherComponents,
+    } = useCheckoutContext();
     const { user, authDispatch } = useAuth();
     const { setError, select } = useCheckoutContext();
 
@@ -96,51 +104,78 @@ function Address_Form({ type }) {
     ];
 
     async function handleSubmit(returnTo = 'main', updateMainAddress = true) {
-        var updatedAddress = temporaryMainAddress;
+        let success = false;
 
         try {
             setLoading(true);
-            let result;
+
             if (type == 'edit') {
-                result = await axios.put(
-                    `user/address/edit/${updatedAddress._id}`,
-                    updatedAddress
+                const { data } = await axios.put(
+                    `user/address/edit/${temporaryMainAddress._id}`,
+                    temporaryMainAddress
                 );
 
-                const { address, default_address } = result.data?.user;
+                const { address, default_address } = data?.user;
 
-                console.log(result.data.user);
                 setAddresses(() => address);
+
                 setDefaultAddresses(() => default_address);
+                if (returnTo == 'main') {
+                    setMainAddress(() => temporaryMainAddress);
+                }
             } else if (type == 'add') {
-                result = await axios.post(`user/address/add`, updatedAddress);
-                setAddresses(() => result.data.address);
-                setDefaultAddresses(() => result.data.default_address);
+                const { data } = await axios.post(
+                    `user/address/add`,
+                    temporaryMainAddress
+                );
+                console.log({ 'data.address': data.address });
+                setAddresses(data.address);
+                setDefaultAddresses(() => data.default_address);
+
+                if (returnTo == 'main') {
+                    setMainAddress(() => temporaryMainAddress);
+                }
+                if (data?.address.length < 2) {
+                    setBillingAddress(() => temporaryMainAddress);
+                    setShippingAddress(() => temporaryMainAddress);
+                }
             }
 
-            setTimeout(() => {
-                handleClick(updateMainAddress);
-                setLoading(false);
-                viewDispatch({ type: returnTo });
-            }, 1000);
+            success = true;
         } catch (error) {
             console.error('error while updating/adding address', error);
-            setTimeout(() => {
-                if (error.response.status == 400) {
-                    setInputError(() => ({
-                        ...error.response.data,
-                    }));
-                }
 
-                if (error.response.status == 500) {
-                    setError((prevState) => ({
-                        ...prevState,
-                        msg: error.response.data.msg[0],
-                    }));
-                }
-                setLoading(false);
-                logOutUser({ error, navigate, authDispatch });
-            }, 1000);
+            if (error.response.status == 400) {
+                setInputError(() => ({
+                    ...error.response.data,
+                }));
+            }
+
+            if (error.response.status == 500) {
+                setError((prevState) => ({
+                    ...prevState,
+                    msg: error.response.data.msg[0],
+                }));
+            }
+
+            logOutUser({ error, navigate, authDispatch });
+        } finally {
+            if (success) {
+                setTimeout(() => {
+                    // handleClick(updateMainAddress, addressArray, defaultObj);
+                    setLoading(() => false);
+                    setIsDeliveryAddressFill(() => true);
+                    viewDispatch({ type: returnTo });
+                    SetDisableOtherComponents({
+                        addressType: null,
+                        disable: false,
+                    });
+                }, 1500);
+            } else {
+                setTimeout(() => {
+                    setLoading(() => false);
+                }, 300);
+            }
         }
     }
 

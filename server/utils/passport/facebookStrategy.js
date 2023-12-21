@@ -10,6 +10,8 @@ const facebookStrategyOption = {
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
   callbackURL: '/api/user/login/facebook/callback',
   state: true,
+  includeEmail: true,
+  scope: ['profile', 'email'],
 };
 
 const verifyCallBack = async (accessToken, refreshToken, profile, cb) => {
@@ -33,11 +35,12 @@ const verifyCallBack = async (accessToken, refreshToken, profile, cb) => {
   //   }
 
   if (!findUserByFacebookId) {
+    const displayName = profile.displayName?.split(' ');
     const payload = {
       //   email,
       social_accounts: { facebook: profile?.id },
-      lastName: profile.name?.familyName,
-      firstName: profile.name?.givenName,
+      lastName: displayName[1],
+      firstName: displayName[0],
     };
 
     const token = jwt.sign(payload, process.env.OAUTH_REGISTRATION_JWT_SECRET, {

@@ -149,18 +149,6 @@ function Address({
         disable,
     };
 
-    const view = () => {
-        if (viewContent == 'main') {
-            return <Main />;
-        } else if (viewContent == 'add') {
-            return <Address_Form type={'add'} />;
-        } else if (viewContent == 'edit') {
-            return <Address_Form type={'edit'} />;
-        } else if (viewContent == 'book') {
-            return <Address_Book />;
-        }
-    };
-
     const variants = {
         initial: {
             height: containerRef?.current
@@ -179,6 +167,7 @@ function Address({
 
     useEffect(() => {
         if (isDataSet) {
+            console.log('main address when load:', mainAddress)
             const isAddressEmpty = _.isEmpty(mainAddress);
             console.log({ isAddressEmpty });
             if (isAddressEmpty) {
@@ -240,17 +229,17 @@ function Address({
                                     id="address-container"
                                     ref={containerRef}
                                 >
-                                    {viewContent && (
-                                        <motion.div
-                                            className={`address-header relative`}
-                                            key={viewContent}
-                                            variants={variants}
-                                            animate={'animate'}
-                                            initial={'initial'}
-                                        >
-                                            {views[viewContent]}
-                                        </motion.div>
-                                    )}
+                                    {/* {viewContent && ( */}
+                                    <motion.div
+                                        className={`address-header relative`}
+                                        key={viewContent}
+                                        variants={variants}
+                                        animate={'animate'}
+                                        initial={'initial'}
+                                    >
+                                        {views[viewContent]}
+                                    </motion.div>
+                                    {/* )} */}
                                 </motion.div>
                             )}
                         </AnimatePresence>

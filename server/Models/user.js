@@ -67,7 +67,7 @@ const UserSchema = new Schema(
     },
     social_accounts: {
       google: { type: Schema.Types.String },
-      apple: { type: Schema.Types.String },
+      twitter: { type: Schema.Types.String },
       facebook: { type: Schema.Types.String },
     },
   },

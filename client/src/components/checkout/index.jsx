@@ -2,7 +2,8 @@ import '../../CSS/checkout.scss';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
 
-import Address from './address form/address.jsx';
+import Address from './address/address.jsx';
+import Address_Container from './address/addressContainer.jsx';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total/Checkout_Total.jsx';
 import Country_Picker from './country_picker';
@@ -20,7 +21,7 @@ import {
     useScroll,
     useMotionValueEvent,
 } from 'framer-motion';
-import exampleCustomerInfo from './address form/example-customer-info.jsx';
+import exampleCustomerInfo from './address/example-customer-info.jsx';
 import axios from '../../api/axios.js';
 import variants from '../common/framerMotionVariants.jsx';
 import logOutUser from '../common/logoutUser.js';
@@ -34,8 +35,6 @@ import dayjs from 'dayjs';
 
 import findAddress from '../common/findaddress.jsx';
 function Checkout() {
-   
-
     const [stripePromise, setStripePromise] = useState(() =>
         loadStripe(STRIPE_KEY)
     );
@@ -64,7 +63,7 @@ function Checkout() {
     const [isDeliveryAddressFill, setIsDeliveryAddressFill] = useState(false);
     const [isFirstPaymentSet, setIsFirstPaymentSet] = useState(false);
     const abortControllerRef = useRef(new AbortController());
-
+    
     useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
@@ -101,7 +100,7 @@ function Checkout() {
                 setBillingAddress(() => findBilling);
 
                 setAddresses(() => user.address);
-                setIsDataSet(() => true);
+               
                 if (user?.address?.length >= 1) {
                     setIsDeliveryAddressFill(() => true);
                 }
@@ -112,6 +111,9 @@ function Checkout() {
                 );
 
                 logOutUser({ error, authDispatch, navigate });
+            } finally {
+               
+                setIsDataSet(() => true);
             }
         };
 
@@ -164,6 +166,7 @@ function Checkout() {
                 isDataSet,
                 isFirstPaymentSet,
                 setIsFirstPaymentSet,
+                setIsDeliveryAddressFill
             }}
         >
             <Elements stripe={stripePromise}>
@@ -209,7 +212,7 @@ function Checkout() {
                                                     disableOtherComponents?.disable
                                                 }
                                             />
-                                            <Address
+                                            <Address_Container
                                                 mainAddress={shippingAddress}
                                                 setMainAddress={
                                                     setShippingAddress
@@ -219,6 +222,7 @@ function Checkout() {
                                                 }
                                                 addressType={'DELIVERY'}
                                                 enableAddressEdit={true}
+                                               
                                                 disable={
                                                     disableOtherComponents?.disable &&
                                                     disableOtherComponents.addressType !=

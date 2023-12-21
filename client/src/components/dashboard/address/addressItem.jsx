@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Customer_Info from '../../checkout/address form/customer-info';
+import Customer_Info from '../../checkout/address/customer-info';
 import DeleteButton from '../delete-btn';
 import EditButton from '../edit-btn';
 import axios from '../../../api/axios';
@@ -31,7 +31,7 @@ function Address_Item({
             setTimeout(() => {
                 setDefaultAddresses(() => result.data.default_address);
                 setLoading(false);
-                setPage(1)
+                setPage(1);
             }, 1000);
 
             return;
