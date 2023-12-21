@@ -197,7 +197,7 @@ export default function Add_Card({}) {
                     setValue={setName}
                     label={'NAME ON CARD'}
                     property={'name'}
-                    autoComplete={'country'}
+                    autoComplete={'name'}
                     {...errorProps}
                 />
 
@@ -213,7 +213,7 @@ export default function Add_Card({}) {
                     className="my-6 flex flex-row items-center justify-start gap-x-3 hover:cursor-pointer"
                     onClick={() => setDefaultCheck((prevState) => !prevState)}
                 >
-                    <input
+                    {/* <input
                         type="checkbox"
                         className="daisy-checkbox rounded-none"
                         name="default"
@@ -222,7 +222,7 @@ export default function Add_Card({}) {
                         onChange={() => setDefaultCheck(!defaultCheck)}
                     />
 
-                    <p>Save card details for next time</p>
+                    <p>Save card details for next time</p> */}
                 </div>
                 <button
                     onClick={saveCard}

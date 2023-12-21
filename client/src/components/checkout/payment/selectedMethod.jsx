@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
-import Card_Item from './card_item';
+import Card_Item from './wallet/card_item';
 import { useElements, useStripe } from '@stripe/react-stripe-js';
 import cvv_icon from '../../../assets/icons/cvv-icon.png';
 import ElementDiv from './element-div';

@@ -63,7 +63,7 @@ function Checkout() {
     const [isDeliveryAddressFill, setIsDeliveryAddressFill] = useState(false);
     const [isFirstPaymentSet, setIsFirstPaymentSet] = useState(false);
     const abortControllerRef = useRef(new AbortController());
-    
+
     useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
@@ -100,7 +100,7 @@ function Checkout() {
                 setBillingAddress(() => findBilling);
 
                 setAddresses(() => user.address);
-               
+
                 if (user?.address?.length >= 1) {
                     setIsDeliveryAddressFill(() => true);
                 }
@@ -112,7 +112,6 @@ function Checkout() {
 
                 logOutUser({ error, authDispatch, navigate });
             } finally {
-               
                 setIsDataSet(() => true);
             }
         };
@@ -166,7 +165,7 @@ function Checkout() {
                 isDataSet,
                 isFirstPaymentSet,
                 setIsFirstPaymentSet,
-                setIsDeliveryAddressFill
+                setIsDeliveryAddressFill,
             }}
         >
             <Elements stripe={stripePromise}>
@@ -191,7 +190,7 @@ function Checkout() {
                             exit={'exit'}
                         >
                             <Checkout_Header text={'CHECKOUT'} />
-                            <div className="checkout-body">
+                            <div className="checkout-body relative">
                                 <section id="checkout-body-wrapper">
                                     <section className="left flex flex-col !bg-[var(--light-grey)]">
                                         <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
@@ -222,7 +221,6 @@ function Checkout() {
                                                 }
                                                 addressType={'DELIVERY'}
                                                 enableAddressEdit={true}
-                                               
                                                 disable={
                                                     disableOtherComponents?.disable &&
                                                     disableOtherComponents.addressType !=
@@ -268,7 +266,8 @@ function Checkout() {
                                             <Buy_Now_Btn
                                                 disable={
                                                     disableOtherComponents?.disable ||
-                                                    !isDeliveryAddressFill
+                                                    !isDeliveryAddressFill ||
+                                                    !selectedMethod?.type
                                                 }
                                                 isOrderSubmit={isOrderSubmit}
                                             />

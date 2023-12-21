@@ -25,8 +25,8 @@ function Checkout_Total() {
 
     return (
         <motion.section
-            className="mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
-            style={{ y: screenSize.width > 1024 ? scrollY : '' }}
+            className="mt-5 h-fit sm+md:w-[90vw] lg:w-[400px] fixed left-2/4 ml-[120px]"
+            // style={{ y: screenSize.width > 1024 ? scrollY : '' }}
         >
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">

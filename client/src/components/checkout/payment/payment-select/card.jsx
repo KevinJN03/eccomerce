@@ -1,4 +1,4 @@
-import Card_Item from '../card_item';
+import Card_Item from '../wallet/card_item';
 import ElementDiv from '../element-div';
 import cvv_icon from '../../../../assets/icons/cvv-icon.png';
 import { useEffect } from 'react';

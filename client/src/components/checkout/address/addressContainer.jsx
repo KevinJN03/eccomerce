@@ -7,16 +7,14 @@ function Address_Container({
     disable,
 }) {
     return (
-        <section className="">
-            <Address
-                mainAddress={mainAddress}
-                setMainAddress={setMainAddress}
-                defaultProperty={'shipping_address'}
-                addressType={'DELIVERY'}
-                enableAddressEdit={true}
-                disable={disable}
-            />
-        </section>
+        <Address
+            mainAddress={mainAddress}
+            setMainAddress={setMainAddress}
+            defaultProperty={'shipping_address'}
+            addressType={'DELIVERY'}
+            enableAddressEdit={true}
+            disable={disable}
+        />
     );
 }
 

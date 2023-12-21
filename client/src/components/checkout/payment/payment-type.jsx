@@ -12,7 +12,7 @@ import { Input } from 'postcss';
 import ErrorMessage from '../../Login-SignUp/errorMessage';
 import Add_Card from './add_card';
 import Selected_Method from './selectedMethod';
-import Wallet from './wallet';
+import Wallet from './wallet/wallet';
 import axios from '../../../api/axios';
 import PaymentTypeProvider from '../../../context/paymentTypeContext';
 import { useCheckoutContext } from '../../../context/checkOutContext';
@@ -90,7 +90,12 @@ function Payment_Type({ initialView, setDisableAddress }) {
 
                 // setDisableAddress(() => true);
                 setDisableChangeBtn(true);
-                setEnableCancelBtn(() => false);
+
+                if (selectedMethod?.type) {
+                    setEnableCancelBtn(() => true);
+                } else {
+                    setEnableCancelBtn(() => false);
+                }
             } else {
                 setEnableCancelBtn(() => true);
             }
@@ -113,7 +118,12 @@ function Payment_Type({ initialView, setDisableAddress }) {
 
         if (viewContent == 'selectedMethod') {
             console.log('change to selectedMethod');
-            setNextView('wallet');
+
+            if (paymentMethods.length >= 1) {
+                setNextView('wallet');
+            } else {
+                setNextView('options');
+            }
             setDisableChangeBtn(() => false);
             SetDisableOtherComponents(() => ({
                 disable: false,
