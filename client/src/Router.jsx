@@ -62,6 +62,7 @@ import Order_Edit from './components/admin/order/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
 import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
 import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
+import OrderCancel from './components/order/order-cancel.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -280,6 +281,10 @@ function Router({ Header, Footer }) {
                 {
                     path: 'order-success',
                     element: <Order_Success />,
+                },
+                {
+                    path: 'order-cancel',
+                    element: <OrderCancel />,
                 },
                 {
                     path: '/admin',

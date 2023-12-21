@@ -11,7 +11,7 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import { useWindowSize } from '@uidotdev/usehooks';
 function Checkout_Total() {
     const { cart } = useCart();
-    const { error, setError } = useCheckoutContext();
+   
     const { scrollY } = useScroll();
 
     const { withShipping, withOutShipping, savePercent, amountOff } =
@@ -74,7 +74,7 @@ function Checkout_Total() {
                 </div>
             </section>
 
-            {error.msg && (
+            {/* {error.msg && (
                 <div role="alert" className="alert alert-error rounded-none">
                     <svg
                         onClick={() =>
@@ -97,7 +97,7 @@ function Checkout_Total() {
                     </svg>
                     <span>{error.msg}</span>
                 </div>
-            )}
+            )} */}
         </motion.section>
     );
 }

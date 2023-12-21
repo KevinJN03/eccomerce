@@ -20,6 +20,7 @@ import {
     AnimatePresence,
     useScroll,
     useMotionValueEvent,
+    useInView,
 } from 'framer-motion';
 import exampleCustomerInfo from './address/example-customer-info.jsx';
 import axios from '../../api/axios.js';
@@ -38,9 +39,9 @@ function Checkout() {
     const [stripePromise, setStripePromise] = useState(() =>
         loadStripe(STRIPE_KEY)
     );
-    const [error, setError] = useState({
-        msg: null,
-        positionY: '0px',
+    const [footerMessage, setFooterMessage] = useState({
+        success: null,
+        text: null,
     });
     const { authDispatch } = useAuth();
     const navigate = useNavigate();
@@ -133,13 +134,16 @@ function Checkout() {
         }
     }, [cart]);
 
+
+    const footerRef = useRef();
+    const isInView = useInView(footerRef);
     return (
         <CheckOutProvider
             value={{
                 loading,
                 setLoading,
-                error,
-                setError,
+                footerMessage,
+                setFooterMessage,
                 addresses,
                 setAddresses,
                 shippingAddress,
@@ -148,8 +152,7 @@ function Checkout() {
                 setBillingAddress,
                 defaultAddresses,
                 setDefaultAddresses,
-                error,
-                setError,
+
                 select,
                 setSelect,
                 disableOtherComponents,
@@ -277,7 +280,10 @@ function Checkout() {
 
                                 <Checkout_Total />
                             </div>
-                            <footer className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center">
+                            <footer
+                                ref={footerRef}
+                                className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center"
+                            >
                                 GLAMO Help
                             </footer>
                         </section>

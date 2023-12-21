@@ -12,7 +12,7 @@ import axios from '../../api/axios';
 import { useReducer } from 'react';
 import { useCart } from '../../context/cartContext';
 
-function OrderInfo({ header, text, headerClassName }) {
+export function OrderInfo({ header, text, headerClassName }) {
     return (
         <div className="flex flex-row flex-nowrap">
             <span className="flex-1">
@@ -227,7 +227,7 @@ function Order_Success({}) {
                             )}
 
                             <Link
-                                to={'my-account/cancel-order'}
+                                to={'/order-cancel'}
                                 className="cursor-pointer text-sm font-[400] hover:underline"
                             >
                                 Cancel this order

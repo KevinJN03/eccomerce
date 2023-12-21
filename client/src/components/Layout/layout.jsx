@@ -27,6 +27,7 @@ function Layout() {
             'checkout',
             'admin',
             'order-success',
+            'order-cancel'
         ]);
         if (set.has(splitLocation[1])) {
             console.log('true');
