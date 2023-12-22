@@ -12,7 +12,7 @@ import axios from '../../api/axios';
 import { useReducer } from 'react';
 import { useCart } from '../../context/cartContext';
 
-function OrderInfo({ header, text, headerClassName }) {
+export function OrderInfo({ header, text, headerClassName, pClassName }) {
     return (
         <div className="flex flex-row flex-nowrap">
             <span className="flex-1">
@@ -25,7 +25,7 @@ function OrderInfo({ header, text, headerClassName }) {
                 </h3>
             </span>
 
-            <p className="flex-1 self-center text-sm tracking-wide">{text}</p>
+            <p className={` ${pClassName} flex-1 self-center text-sm tracking-wide`}>{text}</p>
         </div>
     );
 }
@@ -53,7 +53,7 @@ function Tooltip({ text }) {
     );
 }
 function Order_Success({}) {
-    disableLayout();
+   
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [order, setOrder] = useState({});
@@ -227,7 +227,7 @@ function Order_Success({}) {
                             )}
 
                             <Link
-                                to={'my-account/cancel-order'}
+                                to={'/order-cancel'}
                                 className="cursor-pointer text-sm font-[400] hover:underline"
                             >
                                 Cancel this order

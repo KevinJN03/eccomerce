@@ -24,9 +24,10 @@ export function AddressContextProvider({ children, value }) {
         disableOtherComponents,
         SetDisableOtherComponents,
         setIsDeliveryAddressFill,
+        setShippingAddress,
+        setBillingAddress,
     } = useCheckoutContext();
     const handleChange = () => {
-    
         // if (
         //     disableOtherComponents.disable &&
         //     disableOtherComponents.addressType != addressType
@@ -57,23 +58,7 @@ export function AddressContextProvider({ children, value }) {
         }, 500);
     };
 
-    const handleClick = (updateMainAddress = true) => {
-        if (updateMainAddress) {
-            // setMainAddress(() => temporaryMainAddress);
-
-            const foundAddress = findAddress({
-                property: defaultProperty,
-                default_address: defaultAddresses,
-                addresses,
-            });
-            console.log({ foundAddress, defaultAddresses, defaultProperty });
-            setMainAddress(() => foundAddress);
-        }
-        SetDisableOtherComponents({
-            addressType: null,
-            disable: false,
-        });
-    };
+   
 
     const handleEdit = (address) => {
         setTemporaryMainAddress(() => address);
@@ -96,7 +81,7 @@ export function AddressContextProvider({ children, value }) {
                 ...value,
                 cancel,
                 handleChange,
-                handleClick,
+              
                 handleEdit,
                 handleNewAddress,
             }}

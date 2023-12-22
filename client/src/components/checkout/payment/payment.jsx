@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import Change_Btn from '../../common/btn/change-btn';
-import Customer_Info from '../address form/customer-info';
+import Customer_Info from '../address/customer-info';
 import Payment_Type from './payment-type';
-import Address_Form from '../address form/address-form';
-import examplecustomerInfo from '../address form/example-customer-info';
-import Address from '../address form/address';
+import Address_Form from '../address/address-form';
+import examplecustomerInfo from '../address/example-customer-info';
+import Address from '../address/address';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';

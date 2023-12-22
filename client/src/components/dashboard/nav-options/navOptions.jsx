@@ -48,18 +48,18 @@ export default function NavOption({ selectOption, loadingState }) {
         <AnimatePresence>
             <section>
                 {options.map((options, index) => {
-                    console.log('rerender options');
                     return (
-                        <div className="!m-0 !p-0" key={index}>
+                        <motion.div className="!m-0 !p-0" key={index}>
                             {options.map(({ text, icon, link }, idx) => {
                                 return (
                                     <motion.button
-                                        initial={{ opacity: 1 }}
-                                        animate={{opacity: 1}}
+                                        // key={index}
+                                        // initial={{ opacity: 1 }}
+                                        // animate={{ opacity: 1 }}
                                         // key={loadingState}
-                                        // variants={variants}
-                                        // animate={'animate'}
-                                        // initial={'initial'}
+                                        variants={variants}
+                                        animate={'animate'}
+                                        initial={'initial'}
                                         // exit={'exit'}
                                         disabled={loadingState}
                                         onClick={() =>
@@ -86,7 +86,11 @@ export default function NavOption({ selectOption, loadingState }) {
                                                 <motion.div className=" skeleton-pulse min-h-full min-w-full rounded-[50%] p-0 "></motion.div>
                                             ) : (
                                                 <motion.img
-                                                   
+                                                // key={loadingState}
+                                                variants={variants}
+                                                animate={'animate'}
+                                                initial={'initial'}
+                                                transition={{duration: 0, delay: 0}}
                                                     className="mr-6 h-9 w-9"
                                                     src={icon}
                                                     alt={
@@ -109,7 +113,7 @@ export default function NavOption({ selectOption, loadingState }) {
                                                 <div className=" skeleton-pulse min-h-full min-w-full p-0 "></div>
                                             ) : (
                                                 <motion.p
-                                                    key={loadingState}
+                                                    // key={loadingState}
                                                     variants={variants}
                                                     animate={'animate'}
                                                     initial={'initial'}
@@ -122,7 +126,7 @@ export default function NavOption({ selectOption, loadingState }) {
                                     </motion.button>
                                 );
                             })}
-                        </div>
+                        </motion.div>
                     );
                 })}
             </section>

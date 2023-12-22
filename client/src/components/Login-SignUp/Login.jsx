@@ -24,7 +24,7 @@ function Login({}) {
                     setLoading(() => false);
                 }, 1000);
 
-                'login data: ', res.data;
+            
                 authDispatch({ type: 'LOGIN', payload: res.data });
                 navigate(-1);
             })
@@ -37,16 +37,13 @@ function Login({}) {
             });
     };
 
-    const googleLogin = () => {
-        window.open(`${URL}/user/login/google`, '_self');
-    };
     return (
         <LoginForm
             onSubmit={onSubmit}
             loading={loading}
             error={error}
             setError={setError}
-            googleLogin={googleLogin}
+          
         />
     );
 }

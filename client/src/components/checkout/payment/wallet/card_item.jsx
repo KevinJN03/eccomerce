@@ -1,6 +1,6 @@
-import { useCheckoutContext } from '../../../context/checkOutContext';
-import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
-import logos from '../../dashboard/payment-methods/logos';
+import { useCheckoutContext } from '../../../../context/checkOutContext';
+import { usePaymentTypeContext } from '../../../../context/paymentTypeContext';
+import logos from '../../../dashboard/payment-methods/logos';
 
 function Card_Item({
     brand,
@@ -13,10 +13,10 @@ function Card_Item({
     id,
 }) {
     const { selectedMethod, setSelectedMethod } = usePaymentTypeContext();
-    ({ selectedMethod });
+
     return (
         <section
-            className="flex w-full flex-row gap-x-4 py-5"
+            className="flex w-full flex-row gap-x-4 py-5 cursor-pointer"
             onClick={handleClick}
         >
             <div className="left">
@@ -36,6 +36,7 @@ function Card_Item({
                     <input
                         type="radio"
                         name="select-method"
+                        id={id}
                         className="daisy-radio"
                         readOnly={true}
                         checked={selectedMethod.id == id}

@@ -1,4 +1,4 @@
-import disableLayout from '../../../hooks/disableLayout';
+
 
 import './admin.scss';
 import './dark.scss';
@@ -22,7 +22,7 @@ import { getAllData } from './getAllData';
 function Index({}) {
     const { darkMode } = useDarkMode();
     'darkMode', darkMode;
-    disableLayout();
+    
 
     const [loading, setLoading] = useState(true);
 

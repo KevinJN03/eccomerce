@@ -11,7 +11,7 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import { useWindowSize } from '@uidotdev/usehooks';
 function Checkout_Total() {
     const { cart } = useCart();
-    const { error, setError } = useCheckoutContext();
+
     const { scrollY } = useScroll();
 
     const { withShipping, withOutShipping, savePercent, amountOff } =
@@ -25,8 +25,8 @@ function Checkout_Total() {
 
     return (
         <motion.section
-            className="mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
-            style={{ y: screenSize.width > 1024 ? scrollY : '' }}
+            className="fixed left-2/4 ml-[120px] mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
+            // style={{ y: screenSize.width > 1024 ? scrollY : '' }}
         >
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">
@@ -42,8 +42,21 @@ function Checkout_Total() {
                             cart.map((product) => {
                                 return (
                                     <Checkout_Item
-                                        product={product}
+                                        id={product?.id}
+                                        image={product?.images?.[0]}
+                                      
                                         key={product.cartId}
+                                        price={product.price?.current}
+                                        title={product?.title}
+                                        quantity={product?.quantity}
+                                        variation2={
+                                            product?.variationSelect?.variation2
+                                                ?.variation
+                                        }
+                                        variation1={
+                                            product?.variationSelect?.variation1
+                                                ?.variation
+                                        }
                                     />
                                 );
                             })}
@@ -74,7 +87,7 @@ function Checkout_Total() {
                 </div>
             </section>
 
-            {error.msg && (
+            {/* {error.msg && (
                 <div role="alert" className="alert alert-error rounded-none">
                     <svg
                         onClick={() =>
@@ -97,7 +110,7 @@ function Checkout_Total() {
                     </svg>
                     <span>{error.msg}</span>
                 </div>
-            )}
+            )} */}
         </motion.section>
     );
 }

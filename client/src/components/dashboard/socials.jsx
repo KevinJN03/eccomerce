@@ -1,10 +1,15 @@
 import Header from './header';
 import social_icon from '../../assets/icons/guardian.png';
-import apple_icon from '../../assets/icons/apple-icon.png';
+import twitter_icon from '../../assets/icons/twitter.png';
 import facebook_icon from '../../assets/icons/facebook-icon.png';
 import google_icon from '../../assets/icons/google-icon.png';
-
-function Social_Item({ icon, title, enable }) {
+import { useUserDashboardContext } from '../../context/userContext';
+import defaultAxios from '../../api/axios';
+import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import logOutUser from '../common/logoutUser';
+const URL = import.meta.env.VITE_BACKEND_URL;
+function Social_Item({ icon, title, enable, connectSocial, disconnectSocial }) {
     return (
         <section className="mb-2 flex flex-row  flex-wrap bg-white p-4 ">
             <div
@@ -21,7 +26,13 @@ function Social_Item({ icon, title, enable }) {
                 />
             </div>
             <div className="middle my-2 flex flex-[5] flex-col pl-5">
-                <h2 className={`${enable ? 'font-bold tracking-wider' : 'font-light text-sm'}`}>
+                <h2
+                    className={`${
+                        enable
+                            ? 'font-bold tracking-wider'
+                            : 'text-sm font-light'
+                    }`}
+                >
                     {title}
                 </h2>
                 {enable && (
@@ -32,11 +43,17 @@ function Social_Item({ icon, title, enable }) {
             </div>
             <div className="right flex-1">
                 {enable ? (
-                    <button className="border-2 px-3  py-2 text-sm font-bold tracking-wider transition-all hover:bg-gray-200">
+                    <button
+                        onClick={disconnectSocial}
+                        className="border-2 px-3  py-2 text-s font-bold tracking-wider transition-all hover:bg-gray-200"
+                    >
                         DISCONNECT
                     </button>
                 ) : (
-                    <button className="bg-gray-200 px-3 py-2 text-sm font-bold tracking-wider hover:bg-gray-300  ">
+                    <button
+                        onClick={connectSocial}
+                        className="bg-gray-200 px-3 py-2 text-s font-bold tracking-wider hover:bg-gray-300  "
+                    >
                         CONNECT
                     </button>
                 )}
@@ -45,23 +62,47 @@ function Social_Item({ icon, title, enable }) {
     );
 }
 function Socials({}) {
+    const { socialAccounts, setSocialAccounts, setFooterMessage } =
+        useUserDashboardContext();
     const options = [
-        {
-            title: 'Google',
-            icon: google_icon,
-            enable: false,
-        },
-        {
-            title: 'Apple',
-            icon: apple_icon,
-            enable: false,
-        },
+      
         {
             title: 'Facebook',
             icon: facebook_icon,
-            enable: false,
+            enable: socialAccounts?.['facebook'],
+        },
+        {
+            title: 'Google',
+            icon: google_icon,
+            enable: socialAccounts?.['google'],
+        },
+        {
+            title: 'Twitter',
+            icon: twitter_icon,
+            enable: socialAccounts?.['twitter'],
         },
     ];
+
+    const { authDispatch } = useAuth();
+    const navigate = useNavigate();
+
+    const connectSocial = (title) => {
+        window.open(`${URL}/user/login/${title}`, '_self');
+    };
+
+    const disconnectSocial = async (title) => {
+        try {
+            const { data } = await defaultAxios.post('user/oauth/disconnect', {
+                account: title.toLowerCase(),
+            });
+
+            setSocialAccounts(() => data?.socialAccounts);
+            setFooterMessage({ success: true, text: 'Changes saved' });
+        } catch (error) {
+            console.error(error);
+            logOutUser({ error, authDispatch, navigate });
+        }
+    };
     return (
         <section className="socials w-full">
             <Header
@@ -73,9 +114,28 @@ function Socials({}) {
             />
 
             <div className="mt-2 ">
-                {options.map((item) => {
-                    return <Social_Item {...item} key={item.title} />;
-                })}
+                {options
+                    .sort((a, b) => {
+                        if (a.enable) {
+                            return -1;
+                        }
+                        if (b.enable) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    .map((item) => {
+                        return (
+                            <Social_Item
+                                {...item}
+                                key={item.title}
+                                connectSocial={() => connectSocial(item.title)}
+                                disconnectSocial={() =>
+                                    disconnectSocial(item.title)
+                                }
+                            />
+                        );
+                    })}
             </div>
         </section>
     );

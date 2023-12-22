@@ -4,7 +4,7 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import Customer_Info from './customer-info';
 import { useAddressContext } from '../../../context/checkOutAddressContext';
 import { SubHeader } from '../payment/SubHeader';
-
+import _ from 'lodash';
 const mainComponentVariant = generateVariants(1);
 function Main() {
     const {
@@ -14,9 +14,17 @@ function Main() {
         handleChange,
         disableChangeBtn,
         subHeader,
-        disable
+        disable,
     } = useAddressContext();
     const { disableOtherComponents } = useCheckoutContext();
+
+    // useEffect(() => {
+
+    //     console.log({mainAddress})
+    //     if (_.isEmpty(mainAddress)) {
+    //         viewDispatch('add');
+    //     }
+    // }, []);
 
     return (
         <motion.div
@@ -31,9 +39,7 @@ function Main() {
                     <SubHeader
                         {...subHeader}
                         onClick={handleChange}
-                        disable={
-                            disable
-                        }
+                        disable={disable}
                     />{' '}
                 </div>
             )}
@@ -41,9 +47,7 @@ function Main() {
             <Customer_Info customer={mainAddress} />
             {!disableChangeBtn && (
                 <button
-                    disabled={
-                      disable
-                    }
+                    disabled={disable}
                     type="button"
                     id="checkout-change-btn"
                     onClick={handleChange}

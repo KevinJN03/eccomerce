@@ -1,8 +1,9 @@
 import '../../CSS/checkout.scss';
 
 import RedirectImage from '../../assets/icons/forwarding.png';
-import disableLayout from '../../hooks/disableLayout';
-import Address from './address form/address.jsx';
+
+import Address from './address/address.jsx';
+import Address_Container from './address/addressContainer.jsx';
 import Checkout_Header from './checkout_header';
 import Checkout_Total from './checkout_total/Checkout_Total.jsx';
 import Country_Picker from './country_picker';
@@ -19,8 +20,9 @@ import {
     AnimatePresence,
     useScroll,
     useMotionValueEvent,
+    useInView,
 } from 'framer-motion';
-import exampleCustomerInfo from './address form/example-customer-info.jsx';
+import exampleCustomerInfo from './address/example-customer-info.jsx';
 import axios from '../../api/axios.js';
 import variants from '../common/framerMotionVariants.jsx';
 import logOutUser from '../common/logoutUser.js';
@@ -34,14 +36,12 @@ import dayjs from 'dayjs';
 
 import findAddress from '../common/findaddress.jsx';
 function Checkout() {
-    disableLayout();
-
     const [stripePromise, setStripePromise] = useState(() =>
         loadStripe(STRIPE_KEY)
     );
-    const [error, setError] = useState({
-        msg: null,
-        positionY: '0px',
+    const [footerMessage, setFooterMessage] = useState({
+        success: null,
+        text: null,
     });
     const { authDispatch } = useAuth();
     const navigate = useNavigate();
@@ -101,7 +101,7 @@ function Checkout() {
                 setBillingAddress(() => findBilling);
 
                 setAddresses(() => user.address);
-                setIsDataSet(() => true);
+
                 if (user?.address?.length >= 1) {
                     setIsDeliveryAddressFill(() => true);
                 }
@@ -112,6 +112,8 @@ function Checkout() {
                 );
 
                 logOutUser({ error, authDispatch, navigate });
+            } finally {
+                setIsDataSet(() => true);
             }
         };
 
@@ -132,13 +134,16 @@ function Checkout() {
         }
     }, [cart]);
 
+
+    const footerRef = useRef();
+    const isInView = useInView(footerRef);
     return (
         <CheckOutProvider
             value={{
                 loading,
                 setLoading,
-                error,
-                setError,
+                footerMessage,
+                setFooterMessage,
                 addresses,
                 setAddresses,
                 shippingAddress,
@@ -147,8 +152,7 @@ function Checkout() {
                 setBillingAddress,
                 defaultAddresses,
                 setDefaultAddresses,
-                error,
-                setError,
+
                 select,
                 setSelect,
                 disableOtherComponents,
@@ -164,6 +168,7 @@ function Checkout() {
                 isDataSet,
                 isFirstPaymentSet,
                 setIsFirstPaymentSet,
+                setIsDeliveryAddressFill,
             }}
         >
             <Elements stripe={stripePromise}>
@@ -188,7 +193,7 @@ function Checkout() {
                             exit={'exit'}
                         >
                             <Checkout_Header text={'CHECKOUT'} />
-                            <div className="checkout-body">
+                            <div className="checkout-body relative">
                                 <section id="checkout-body-wrapper">
                                     <section className="left flex flex-col !bg-[var(--light-grey)]">
                                         <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
@@ -209,7 +214,7 @@ function Checkout() {
                                                     disableOtherComponents?.disable
                                                 }
                                             />
-                                            <Address
+                                            <Address_Container
                                                 mainAddress={shippingAddress}
                                                 setMainAddress={
                                                     setShippingAddress
@@ -264,7 +269,8 @@ function Checkout() {
                                             <Buy_Now_Btn
                                                 disable={
                                                     disableOtherComponents?.disable ||
-                                                    !isDeliveryAddressFill
+                                                    !isDeliveryAddressFill ||
+                                                    !selectedMethod?.type
                                                 }
                                                 isOrderSubmit={isOrderSubmit}
                                             />
@@ -274,7 +280,10 @@ function Checkout() {
 
                                 <Checkout_Total />
                             </div>
-                            <footer className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center">
+                            <footer
+                                ref={footerRef}
+                                className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center"
+                            >
                                 GLAMO Help
                             </footer>
                         </section>

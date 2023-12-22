@@ -7,7 +7,7 @@ import ErrorMessage, {
 import defaultAxios from '../../../api/axios.js';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 
-function PasswordInput({
+export function PasswordInput({
     error,
     property,
     label,

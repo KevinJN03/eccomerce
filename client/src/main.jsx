@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 // import ReactDom from 'react-dom@experimental'
 import './index.css';
 import App from './App';
-import { AuthContextProvider } from './context/authContext';
+import { AuthContextProvider } from './context/AuthContext.jsx';
 import LayoutProvider from './context/layoutContext';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

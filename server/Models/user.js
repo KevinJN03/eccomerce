@@ -65,6 +65,11 @@ const UserSchema = new Schema(
         email: { type: Schema.Types.Boolean, default: false },
       },
     },
+    social_accounts: {
+      google: { type: Schema.Types.String },
+      twitter: { type: Schema.Types.String },
+      facebook: { type: Schema.Types.String },
+    },
   },
   {
     toJSON: { virtuals: true },

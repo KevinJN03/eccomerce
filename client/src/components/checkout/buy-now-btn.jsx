@@ -73,9 +73,8 @@ function Buy_Now_Btn({ disable }) {
     const submitOrder = async () => {
         let isCardPaymentSuccessful = false;
         try {
-            console.log({ deliveryOption });
             setOrderSubmit(() => true);
-            if (true) {
+            if (!paymentIntentInfo?.current?.clientSecret) {
                 const info = await fetchPaymentIntent();
 
                 paymentIntentInfo.current = info;
@@ -83,8 +82,6 @@ function Buy_Now_Btn({ disable }) {
                 //     id: info.id,
                 //     clientSecret: info.clientSecret,
                 // });
-            } else {
-                clientSecret = paymentIntentInfo.clientSecret;
             }
             const billing_details = {
                 address: {
@@ -112,7 +109,7 @@ function Buy_Now_Btn({ disable }) {
                     }
                 );
             }
-            const return_url = `${CLIENT_URL}/order-success?order-number=${paymentIntentInfo.current.orderNumber.toLowerCase()}`;
+            const return_url = `${CLIENT_URL}/order-success?order-number=${paymentIntentInfo.current?.orderNumber.toLowerCase()}`;
             if (selectedMethod['type'] == 'paypal') {
                 var { error, paymentIntent } =
                     await stripe.confirmPayPalPayment(
@@ -165,7 +162,7 @@ function Buy_Now_Btn({ disable }) {
             if (error) {
                 console.error('error with payment intent', error);
                 const splitErrorCode = error.code?.split('_')?.[1];
-                
+
                 if (splitErrorCode == 'cvc') {
                     setError((prevState) => ({
                         ...prevState,
@@ -179,10 +176,12 @@ function Buy_Now_Btn({ disable }) {
                 }
 
                 setOrderSubmit(() => false);
-            } else {
-                if (selectedMethod?.type == 'card') {
-                    isCardPaymentSuccessful = true;
-                }
+
+                return;
+            }
+
+            if (selectedMethod?.type == 'card') {
+                isCardPaymentSuccessful = true;
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);

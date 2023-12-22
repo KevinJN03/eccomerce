@@ -1,7 +1,7 @@
 import Footer from './footer/footer';
 import Header from './header';
 import { useLayoutContext } from '../../context/layoutContext';
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useRef } from 'react';
 import { ProductsProvider } from '../../hooks/genderCategory.jsx';
 import { Outlet, useLocation } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
@@ -11,74 +11,114 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import variants from '../common/framerMotionVariants.jsx';
 function Layout() {
-    const { layout } = useLayoutContext();
-    'layout:', layout;
+    const { layout, setLayout } = useLayoutContext();
+
     const [loading, setLoading] = useState(false);
+
+    const [loadState, setLoadState] = useState(true);
     const location = useLocation();
-    // useEffect(() => {
-    //     let timout = setTimeout(() => {
-    //         setLoading(false);
-    //     }, 1500);
+    const outletRef = useRef(false);
+    useEffect(() => {
+        const splitLocation = location.pathname.split('/');
+        console.log(splitLocation);
+        const set = new Set([
+            'portal',
+            'my-account',
+            'checkout',
+            'admin',
+            'order-success',
+            'order-cancel'
+        ]);
+        if (set.has(splitLocation[1])) {
+            console.log('true');
 
-    //     return () => {
-    //         setLoading(true);
-    //         clearTimeout(timout);
-    //     };
-    // }, []);
-    function Loader() {
-        return <span className="loading loading-infinity loading-lg"></span>;
-    }
+            if (layout) {
+                outletRef.current = false;
+                setLoadState(() => true);
+            }
 
-    const outletVariants = {
+            setLayout(() => false);
+            setTimeout(() => {
+                setLoadState(() => false);
+                outletRef.current = true;
+            }, 1000);
+        } else {
+            if (!layout) {
+                setLoadState(() => true);
+            }
+            setLayout(() => true);
+            // setLoadState(() => false);
+            setTimeout(() => {
+                setLoadState(() => false);
+                outletRef.current = true;
+            }, 1000);
+        }
+    }, [location?.pathname]);
+
+    const variants = {
         initial: {
-            opacity: 1,
-            y: 50,
+            opacity: 0,
         },
         animate: {
             opacity: 1,
-            y: 0,
 
-            transition: { duration: 0.5 },
+            transition: {
+                opacity: {
+                    delay: 1,
+                },
+            },
         },
 
         exit: {
+            opacity: 1,
+
+            transition: {
+                opacity: {
+                    duration: 0,
+                },
+            },
+        },
+    };
+    const betaOutletVariant = {
+        initial: {
             opacity: 0,
-            // y: -0,
-            transition: { duration: 0.5 },
+        },
+        animate: {
+            opacity: 1,
+            transition: { delay: 1 },
         },
     };
     return (
         <CartProvider>
             <ProductsProvider>
-                <AnimatePresence>
-                    {layout && (
+                <AnimatePresence mode='wait'>
+                    {!loadState && (
                         <motion.section
-                            className={'w-full'}
+                            className="w-screen"
+                            // key={layout}
                             // variants={variants}
                             // initial={'initial'}
                             // animate={'animate'}
-                            exit={'exit'}
+                            // exit={'exit'}
                         >
-                            <Header />
+                            {
+                                <>
+                                    {layout && <Header />}
+                                    <AnimatePresence>
+                                        <motion.main
+                                            // variants={betaOutletVariant}
+                                            // initial={'initial'}
+                                            // animate={'animate'}
+                                            // exit={'exit'}
+                                            id="main"
+                                        >
+                                            {!loadState && <Outlet />}
+                                        </motion.main>
+                                    </AnimatePresence>
 
-                            <main id="main">
-                                {/* {children} */}
-                                {loading ? <Loader /> : <Outlet />}
-                            </main>
-
-                            <Footer />
-                        </motion.section>
-                    )}{' '}
-                    {!layout && (
-                        <motion.section
-                            // key={layout}
-                            className={'w-full'}
-                            variants={outletVariants}
-                            initial={'initial'}
-                            animate={'animate'}
-                            exit={'exit'}
-                        >
-                            {loading ? <Loader /> : <Outlet />}
+                                    {layout && <Footer />}
+                                </>
+                            }
                         </motion.section>
                     )}
                 </AnimatePresence>

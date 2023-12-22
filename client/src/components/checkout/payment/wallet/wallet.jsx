@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from 'react';
-import logos from '../../dashboard/payment-methods/logos';
-import { usePaymentMethods } from '../../../context/paymentMethodContext';
+import logos from '../../../dashboard/payment-methods/logos';
+import { usePaymentMethods } from '../../../../context/paymentMethodContext';
 import Card_Item from './card_item';
-import { usePaymentTypeContext } from '../../../context/paymentTypeContext';
-
+import { usePaymentTypeContext } from '../../../../context/paymentTypeContext';
+import PaypalItem from './paypal-item.jsx';
 function Wallet({}) {
     const { paymentMethods } = usePaymentMethods();
 
@@ -18,20 +18,27 @@ function Wallet({}) {
             <div className="flex flex-col flex-nowrap gap-y-3">
                 {paymentMethods.map((method, idx) => {
                     return (
-                        method.type == 'card' && (
-                            <Fragment key={method.id}>
+                        <Fragment key={method?.id}>
+                            {method.type == 'card' && (
                                 <Card_Item
                                     {...method}
                                     handleClick={() => handleClick(method)}
                                 />
-                                <div className="border-b-[1px]"></div>
-                            </Fragment>
-                        )
+                            )}
+
+                            {method.type == 'paypal' && (
+                                <PaypalItem
+                                    method={method}
+                                    handleClick={() => handleClick(method)}
+                                />
+                            )}
+                            <div className="border-b-[1px]"></div>
+                        </Fragment>
                     );
                 })}
             </div>
 
-            <div className="m-0 my-6 flex flex-row justify-between p-0 items-center">
+            <div className="m-0 my-6 flex flex-row items-center justify-between p-0">
                 <button
                     // disabled={loading || disableRef.current}
                     onClick={() => setView('options')}
@@ -41,7 +48,7 @@ function Wallet({}) {
                 </button>
                 <button
                     // disabled={loading || disableRef.current}
-                    className='h-fit !py-2'
+                    className="h-fit !py-2"
                     id="checkout-change-btn"
                     onClick={() => setView('selectedMethod')}
                 >

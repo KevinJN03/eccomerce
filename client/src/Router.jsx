@@ -60,6 +60,9 @@ import AdminOrder from './components/admin/order/admin-order.jsx';
 import AdminPortal from './components/admin/home/AdminPortal.jsx';
 import Order_Edit from './components/admin/order/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
+import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
+import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
+import OrderCancel from './components/order/order-cancel.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -255,7 +258,15 @@ function Router({ Header, Footer }) {
                             path: 'reset-password',
                             element: <ResetPassword />,
                         },
+                        {
+                            path: 'social-register/finaldetails',
+                            element: <SocialRegister />,
+                        },
                     ],
+                },
+                {
+                    path: 'portal/redirect',
+                    element: <SocialRedirect />,
                 },
 
                 {
@@ -270,6 +281,10 @@ function Router({ Header, Footer }) {
                 {
                     path: 'order-success',
                     element: <Order_Success />,
+                },
+                {
+                    path: 'order-cancel',
+                    element: <OrderCancel />,
                 },
                 {
                     path: '/admin',
@@ -365,6 +380,8 @@ function Router({ Header, Footer }) {
         },
     ]);
 
-    return <RouterProvider router={router} />;
+    return (
+        <RouterProvider router={router} fallbackElement={<SocialRedirect />} />
+    );
 }
 export default Router;

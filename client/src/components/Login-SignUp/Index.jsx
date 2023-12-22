@@ -10,27 +10,25 @@ import disableLayout from '../../hooks/disableLayout';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
-    disableLayout();
     const [option, setOption] = useState(loginorSignup);
 
     const location = useLocation();
 
     useEffect(() => {
-        console.log({ location });
         const route = location.pathname.split('/').slice(-1)[0];
 
-        const routesArray = [
+        const routesSet = new Set([
             'portal',
             'forget-password',
             'sent',
             'reset-password',
-        ];
-        if (routesArray.includes(route)) {
+            'login',
+        ]);
+        if (routesSet.has(route)) {
             setOption(() => 'login');
         } else {
-            setOption(() => route);
+            setOption(() => 'signup');
         }
-        console.log(route);
     }, [location.pathname]);
     const { authenticated } = useAuth();
 
@@ -56,12 +54,9 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
         },
     };
     return (
-        <>
+        <section className="min-h-screen w-screen">
             <section className="login-signup-page min-h-screen">
-                <section
-                    id="login-signup-container"
-                    className="w-full"
-                >
+                <section id="login-signup-container" className="w-full">
                     <Link
                         to={!admin && '/'}
                         className="login-logo mt-10 flex w-40 flex-nowrap items-center"
@@ -106,15 +101,12 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                             SIGN IN
                         </Link>
                     </div>
-                    <AnimatePresence
-                    
-                    >
+                    <AnimatePresence>
                         <motion.section
-                        key={location?.pathname}
+                            key={location?.pathname}
                             variants={outletVariant}
                             initial={'initial'}
                             animate={'animate'}
-                           
                             className="mt-10 flex w-full flex-col items-center justify-center"
                         >
                             <Outlet />
@@ -131,7 +123,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                     </span>
                 </div>
             </section>
-        </>
+        </section>
     );
 }
 
