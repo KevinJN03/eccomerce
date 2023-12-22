@@ -15,15 +15,19 @@ function OrderCancel({}) {
     const [select, setSelect] = useState('');
 
     useEffect(() => {
-        defaultAxios
-            .get(`order/${searchParams.get('order-number')}`)
-            .then(({ data }) => {
+        const fetchOrder = async () => {
+            try {
+                const { data } = await defaultAxios.get(
+                    `order/${searchParams.get('order-number')}`
+                );
                 setOrder(() => data?.order);
-            })
-            .catch((error) => {
+            } catch (error) {
                 console.error('error message', error);
-            })
-            .finally(() => {});
+            } finally {
+            }
+        };
+
+        fetchOrder();
     }, []);
     return (
         <Template>
@@ -119,7 +123,7 @@ function OrderCancel({}) {
                     </div>
                 </div>
                 {order?.items && (
-                    <div className="right flex-[0.5] mt-3 flex flex-col gap-y-4 ">
+                    <div className="right mt-3 flex flex-[0.5] flex-col gap-y-4 ">
                         <p className="font-gotham text-lg">
                             {order.items?.length}{' '}
                             {order.items?.length > 1 ? 'ITEMS' : 'ITEM'}
@@ -138,6 +142,7 @@ function OrderCancel({}) {
                             ) => {
                                 return (
                                     <Checkout_Item
+                                        className={'!text-dark-gray'}
                                         key={index}
                                         image={product?.images?.[0]}
                                         price={price}

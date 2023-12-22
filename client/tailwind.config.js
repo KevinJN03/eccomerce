@@ -15,7 +15,8 @@ export default {
                 primary: '#2d2d2d',
                 'primary-green': '#018849',
                 'grey-100': '#dddddd46;',
-                'dark-gray': '#676666',
+                // 'dark-gray': '#676666',
+                'dark-gray': '#939393',
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],

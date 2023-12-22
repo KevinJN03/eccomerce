@@ -1,9 +1,7 @@
 import disableLayout from '../../hooks/disableLayout';
 import Checkout_Header from '../checkout/checkout_header';
 import recycle_logo from '../../assets/icons/recycle.png';
-import snapchat_icon from '../../assets/icons/Snapchat-Ghost-Outlined-Logo.wine (1).svg';
-import facebook_icon from '../../assets/icons/facebook.svg';
-import instagram_icon from '../../assets/icons/instagram.svg';
+
 
 import image from '../../assets/images/order-photo-women.jpg';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -11,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
 import { useReducer } from 'react';
 import { useCart } from '../../context/cartContext';
+import SocialIcons from './social-icons';
 
 export function OrderInfo({ header, text, headerClassName, pClassName }) {
     return (
@@ -19,7 +18,7 @@ export function OrderInfo({ header, text, headerClassName, pClassName }) {
                 <h3
                     className={`${
                         headerClassName || ''
-                    } font-gotham !text-gray-500 text-opacity-5`}
+                    } font-gotham !text-dark-gray text-opacity-5`}
                 >
                     {header}
                 </h3>
@@ -280,36 +279,7 @@ function Order_Success({}) {
                             </button>
                         </div>
 
-                        <div className="middle mt-5 flex flex-col items-center">
-                            <h3 className="font-gotham text-lg">
-                                GET MORE GLAMO ON:
-                            </h3>
-
-                            <div className="mt-3 flex flex-row flex-nowrap gap-x-3">
-                                <div className="flex h-10 w-10  cursor-pointer items-center justify-center rounded-full bg-violet-500 p-1 transition-all hover:bg-opacity-70">
-                                    <img
-                                        src={instagram_icon}
-                                        alt="snapchat icon"
-                                        className="h-[80%] w-[80%]"
-                                    />
-                                </div>
-
-                                <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#3b5998] p-2 transition-all hover:bg-opacity-70">
-                                    <img
-                                        src={facebook_icon}
-                                        alt="snapchat icon"
-                                        className="h-[80%] w-[80%]"
-                                    />
-                                </div>
-                                <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-[#FFFC00] transition-all hover:bg-opacity-70">
-                                    <img
-                                        src={snapchat_icon}
-                                        alt="snapchat icon"
-                                        className="h-[80%] w-[80%]"
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                       <SocialIcons/>
                         <div className="bottom relative mt-4 h-[340px] w-full ">
                             <img
                                 src={image}
