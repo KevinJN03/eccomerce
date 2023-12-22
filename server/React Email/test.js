@@ -20,25 +20,25 @@ router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    // const order = await Order.findById(id, null, {
-    //   populate: {
-    //     path: 'items.product customer',
-    //   },
-    //   lean: { toObject: true },
-    // }).exec();
-
+    const order = await Order.findById(id, null, {
+      populate: {
+        path: 'items.product customer',
+      },
+      lean: { toObject: true },
+    }).exec();
+    const emailHtml = render(<OrderCancel order={order} />);
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
-    const emailTestId = v4()
+    // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
+    const emailTestId = v4();
     const mailOptions = {
       from: SENDER,
       to: process.env.TEST_EMAIL,
- 
+
       subject: 'test email ' + emailTestId,
       html: emailHtml,
     };
-console.log({emailTestId})
-   // const sendEmail = await transporter.sendMail(mailOptions);
+    console.log({ emailTestId });
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

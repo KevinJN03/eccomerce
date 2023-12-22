@@ -100,7 +100,7 @@ function Order_Info({}) {
                                     REASON FOR CANCELLATION:
                                 </h3>
                                 <p className="mt-2 text-sm ">
-                                    No longer required
+                                    {findOrder?.cancel?.reason}
                                 </p>
                             </div>
                         )}

@@ -20,12 +20,10 @@ function My_Orders({}) {
     const { ordersArray } = useUserDashboardContext();
     const newOrdersArray = useMemo(
         () => ordersArray.slice(3 * page - 3, page * 3),
-        [page]
+        [page, ordersArray]
     );
 
     const divideBy3 = Math.ceil(ordersArray.length / 3);
-
-
 
     return (
         <section className="my-orders w-full">
