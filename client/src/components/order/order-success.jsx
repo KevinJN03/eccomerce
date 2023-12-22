@@ -103,7 +103,7 @@ function Order_Success({}) {
         //             />
         //         </div>
         <Template>
-            <section className="flex flex-row sm+md:flex-col sm:px-4  flex-nowrap gap-3 ">
+            <section className="flex flex-row flex-nowrap gap-3  sm:px-4 sm+md:flex-col ">
                 <div className="left flex max-w-[580px] flex-1 flex-col flex-nowrap">
                     <div className=" bg-white px-8 py-6">
                         <h3 className="mb-4 font-gotham text-lg tracking-wider !text-primary">
@@ -226,7 +226,7 @@ function Order_Success({}) {
                         )}
 
                         <Link
-                            to={'/order-cancel'}
+                            to={`/order-cancel?order-number=${order?._id}`}
                             className="cursor-pointer text-sm font-[400] hover:underline"
                         >
                             Cancel this order
