@@ -49,7 +49,7 @@ import Add_GiftCard from './components/dashboard/gift-card-voucher/card.jsx';
 import Add_Voucher from './components/dashboard/gift-card-voucher/voucher.jsx';
 import PayPalHome from './components/dashboard/payment-methods/Paypal/paypal-home.jsx';
 import Cancel_Payment from './components/dashboard/payment-methods/cancelPayment.jsx';
-import Order_Success from './components/order/social-icons.jsx';
+import Order_Success from './components/order/order-success.jsx';
 import Order_Info from './components/dashboard/order/order-info.jsx';
 import ForgetPassword from './components/forget-password/forget-password.jsx';
 import Login from './components/Login-SignUp/Login.jsx';

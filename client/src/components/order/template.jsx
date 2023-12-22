@@ -3,8 +3,8 @@ import Checkout_Header from '../checkout/checkout_header';
 function Template({children}) {
     return (
         <section className="flex h-full min-h-screen w-full flex-wrap justify-center bg-[var(--light-grey)]">
-            <section className="mb-10 flex w-full max-w-4xl flex-col flex-nowrap">
-                <div className="mb-5 max-w-[580px]">
+            <section className="mb-10 flex w-full max-w-4xl flex-col flex-nowrap md:px-20">
+                <div className="mb-5 lg:max-w-[580px]">
                     <Checkout_Header
                         text={'CHECKOUT'}
                         disableIcon={true}

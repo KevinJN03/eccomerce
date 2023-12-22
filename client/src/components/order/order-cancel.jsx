@@ -31,10 +31,10 @@ function OrderCancel({}) {
     }, []);
     return (
         <Template>
-            <section className="flex flex-row flex-nowrap gap-x-3 ">
+            <section className="flex flex-row sm+md:flex-col-reverse sm:px-5 flex-nowrap gap-3 ">
                 <div className="left flex max-w-[580px] flex-1 flex-col flex-nowrap">
                     <div className=" bg-white px-8 py-6">
-                        <section className="w-8/12">
+                        <section className="lg:w-8/12">
                             {' '}
                             <h3 className="mb-4 font-gotham text-lg tracking-wider !text-primary">
                                 CANCEL YOUR ORDER

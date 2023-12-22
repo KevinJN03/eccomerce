@@ -25,10 +25,10 @@ function OrderCancelled({}) {
     }, []);
     return (
         <Template>
-            <section>
-                <section className="flex w-full flex-row flex-nowrap gap-x-3 ">
+            <section className='w-full'>
+                <section className="flex w-full flex-nowrap gap-x-3 sm+md:flex-col lg:flex-row ">
                     <div className="left flex w-full flex-1 flex-col flex-nowrap">
-                        <div className=" bg-white px-8 py-6">
+                        <div className=" bg-white px-8 py-6 sm+md:mx-3">
                             <h3 className="mb-4 font-gotham text-lg tracking-wider !text-primary">
                                 CANCEL YOUR ORDER
                             </h3>
@@ -37,7 +37,7 @@ function OrderCancelled({}) {
                                 recieved. Cancellation will be confirmed by
                                 email to {order?.email}
                             </p>
-                            <section className="mb-6 mt-6 flex w-8/12 flex-col gap-y-2">
+                            <section className="mb-6 mt-6 flex flex-col gap-y-2 lg:w-8/12">
                                 <OrderInfo
                                     header={'ORDER TOTAL:'}
                                     pClassName={'pl-14'}
@@ -76,11 +76,11 @@ function OrderCancelled({}) {
                     </div>
                 </section>
 
-                <div className="mt-7 flex w-full flex-row flex-nowrap justify-end gap-x-4 pl-20">
+                <div className="mt-7 flex w-full sm:flex-col  flex-row flex-nowrap  gap-4 sm+md:px-2 sm+md:self-center lg:justify-end lg:pl-20">
                     <a
                         href={'/'}
                         type="button"
-                        className="flex-1 !bg-primary py-3 text-center  font-gotham text-sm tracking-wide text-white transition-all hover:!bg-black"
+                        className="flex-1 !bg-primary border-primary border-2 py-3 text-center  font-gotham text-sm tracking-wide text-white transition-all hover:!bg-black hover:border-black"
                     >
                         CONTINUE SHOPPING
                     </a>
