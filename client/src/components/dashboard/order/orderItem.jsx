@@ -11,7 +11,7 @@ import axios from '../../../api/axios';
 import logOutUser from '../../common/logoutUser';
 import { useAuth } from '../../../hooks/useAuth';
 import { useUserDashboardContext } from '../../../context/userContext';
-import { GLoader } from '../../Login-SignUp/socialRegister/SocialRedirect';
+import GLoader from '../../Login-SignUp/socialRegister/gloader';
 import CancelContainer from './cancelContainer';
 import submitCancellation from './handleCancelOrder';
 function OrderItem({ order }) {

@@ -12,7 +12,7 @@ function submitCancellation({ setLoading, setError, setShow, orderNumber }) {
     const navigate = useNavigate();
     useEffect(() => {
         console.log('handleCancelOrder');
-        const fetchFunction = async ({ reason, extraInfo, }) => {
+        const fetchFunction = async ({ reason, extraInfo }) => {
             let success = false;
 
             try {
@@ -30,6 +30,7 @@ function submitCancellation({ setLoading, setError, setShow, orderNumber }) {
                     orderNumber,
                     reason,
                     additional_information: extraInfo,
+                    redirect: true,
                 });
                 success = true;
                 setOrdersArray(() => data?.orders);
@@ -58,7 +59,7 @@ function submitCancellation({ setLoading, setError, setShow, orderNumber }) {
                             });
                         }, 2000);
                     }, 1000);
-                }else {
+                } else {
                     setLoading(false);
                 }
             }

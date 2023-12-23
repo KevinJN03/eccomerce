@@ -1056,12 +1056,13 @@ export const cancelOrder = [
     .trim()
     .escape()
     .notEmpty(),
+  check('redirect').trim().escape(),
   check('additional_information', 'Please enter under 500 characters')
     .trim()
     .escape()
     .isLength({ max: 500 }),
   asyncHandler(async (req, res, next) => {
-    const { orderNumber, additional_information } = req.body;
+    const { orderNumber, additional_information, redirect } = req.body;
     const userId = req.user?.id;
 
     const result = validationResult(req).formatWith(({ msg }) => msg);
@@ -1108,7 +1109,10 @@ export const cancelOrder = [
       html: emailHtml,
     };
     await transporter.sendMail(mailOptions);
-
-    res.redirect('/api/user/orders');
+    if (redirect) {
+      res.redirect('/api/user/orders');
+    } else {
+      res.status(200).send({ msg: 'successfully cancelled', success: true });
+    }
   }),
 ];

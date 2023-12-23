@@ -291,6 +291,7 @@ function Dashboard() {
                             >
                                 {!loadingState && <Outlet />}
                                 <MessageFooter
+                                className={'max-w-[568px]'}
                                     isInView={isInView}
                                     footerMessage={footerMessage}
                                     setFooterMessage={setFooterMessage}

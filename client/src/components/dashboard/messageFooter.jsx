@@ -2,7 +2,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-function MessageFooter({footerMessage, setFooterMessage, isInView}) {
+function MessageFooter({
+    footerMessage,
+    setFooterMessage,
+    isInView,
+    className,
+}) {
     const footerVariant = {
         initial: {
             opacity: 0,
@@ -50,12 +55,14 @@ function MessageFooter({footerMessage, setFooterMessage, isInView}) {
                     initial={'initial'}
                     animate={'animate'}
                     exit={'exit'}
-                    className={` flex w-full max-w-[568px] flex-row items-center justify-between ${
+                    className={`${
+                        className || ''
+                    } flex w-full flex-row items-center justify-between ${
                         footerMessage?.success
                             ? 'bg-green-200'
                             : footerMessage?.success == false
-                            ? 'bg-red-200'
-                            : '!bg-black/80 text-white'
+                              ? 'bg-red-200'
+                              : '!bg-black/80 text-white'
                     } px-4 py-6`}
                 >
                     {footerMessage?.success ? (

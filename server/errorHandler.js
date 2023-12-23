@@ -26,12 +26,12 @@ export default async function errorHandler(error, req, res, next) {
   if (error.name === 'ValidationError') {
     error.message = customValidationError(error);
   }
-  
+
   if (error.name == 'MulterError') {
     error.message =
       'Error occurs while adding or deleting images. Please contact Administrator for asssistance.';
   }
-  res.status(error.statusCode).json({
+  res.status(500).json({
     // if js an array is ann object
     msg: typeof error.message === 'object' ? error.message : [error.message],
     success: false,
