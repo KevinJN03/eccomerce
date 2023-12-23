@@ -5,11 +5,16 @@ import duplicate_icon from '../../../assets/icons/duplicate.png';
 import logos from '../payment-methods/logos.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import Product from './product.jsx';
 import { find } from 'lodash';
+import CancelContainer from './cancelContainer.jsx';
+import courierLinksObject from './courierLinks.js';
+import { AnimatePresence } from 'framer-motion';
+import submitCancellation from './handleCancelOrder.js';
+import { GLoader } from '../../Login-SignUp/socialRegister/SocialRedirect.jsx';
 export function OrderNumberDate({ icon, title, text, className }) {
     return (
         <div className="flex w-full flex-row items-center">
@@ -30,8 +35,9 @@ export function OrderNumberDate({ icon, title, text, className }) {
 function Order_Info({}) {
     const { ordersArray } = useUserDashboardContext();
     const { id } = useParams();
-    const [findOrder, setFindOrder] = useState(() =>
-        ordersArray.find((item) => item?._id == id)
+    const findOrder = useMemo(
+        () => ordersArray.find((item) => item?._id == id),
+        [ordersArray]
     );
 
     // if (findOrder) {
@@ -40,22 +46,25 @@ function Order_Info({}) {
 
     const shipDate = dayjs(findOrder?.shipDate).format('dddd, D MMMM, YYYY');
     const orderDate = dayjs(findOrder?.createdAt).format('dddd, D MMMM, YYYY');
+    const [error, setError] = useState({});
+    const [show, setShow] = useState(false);
+    const [courierLinks, setCourierLinks] = useState(courierLinksObject);
+    const [loading, setLoading] = useState();
 
+    const { handleCancelOrder } = submitCancellation({
+        setLoading,
+        setError,
+        setShow,
+        orderNumber: findOrder?._id,
+    });
 
-    const courierLinks = {
-        'royal mail':
-            'https://www.royalmail.com/track-your-item#/tracking-results/',
-        ups: 'https://www.ups.com/track?track=yes&trackNums=',
-        fedex: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
-        dhl: 'https://www.dhl.com/en/express/tracking.html?AWB=',
-        hermes: 'https://www.evri.com/track/parcel/',
-        'parcelforce worldwide':
-            'https://www.parcelforce.com/track-trace?trackNumber=',
-        yodel: 'https://www.yodel.co.uk/track/?parcelNumber=',
-        tnt: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
+    const cancelContainerProps = {
+        loading,
+        setError,
+        error,
+        setShow,
+        handleCancelOrder,
     };
-
-
     return (
         <section className="order-info-wrapper w-full">
             {findOrder && (
@@ -67,8 +76,15 @@ function Order_Info({}) {
                         </p>
                     </section>
 
-                    <section className="middle mt-3">
-                        <div className="flex flex-col gap-y-4 bg-white p-6">
+                    <section className="middle relative mt-3">
+                        
+                        <div className="flex flex-col gap-y-4 bg-white p-6 relative">
+
+                        {loading && (
+                            <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] ">
+                                <GLoader />
+                            </div>
+                        )}
                             <OrderNumberDate
                                 text={findOrder?._id}
                                 title={'ORDER NO.:'}
@@ -82,12 +98,34 @@ function Order_Info({}) {
 
                             <div className="border-t-[1px]"></div>
 
-                            <button
-                                type="button"
-                                className="self-start border-2 px-6 py-[10px] font-gotham tracking-wider !text-primary hover:!bg-[var(--light-grey)]"
-                            >
-                                RETURNS INFORMATION
-                            </button>
+                            <div className="btn-wrapper flex w-6/12 flex-col gap-2">
+                                {findOrder?.status == 'received' && !show && (
+                                    <button
+                                        disabled={loading}
+                                        onClick={() => setShow(true)}
+                                        className="hover:!bg-light-grey w-full self-start border-2 px-6 py-[10px] font-gotham text-sm tracking-wider !text-primary"
+                                    >
+                                        CANCEL ORDER
+                                    </button>
+                                )}
+
+                                <button
+                                    type="button"
+                                    className="hover:!bg-light-grey w-full self-start border-2 px-6 py-[10px] font-gotham text-sm tracking-wider !text-primary"
+                                >
+                                    RETURNS INFORMATION
+                                </button>
+                            </div>
+                            <AnimatePresence>
+                                {show && (
+                                    <CancelContainer
+                                        {...cancelContainerProps}
+                                        className={
+                                            'mt-[-16px] !items-start !justify-start'
+                                        }
+                                    />
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {findOrder?.status == 'cancelled' && (
@@ -171,8 +209,6 @@ function Order_Info({}) {
 
                             <div className="middle flex w-full flex-row gap-x-4 overflow-x-scroll hide-scrollbar">
                                 {findOrder.items?.map((item) => {
-                                   
-
                                     return (
                                         <Product
                                             key={uuidv4()}
@@ -193,7 +229,9 @@ function Order_Info({}) {
 
                             <div className="flex w-full flex-col gap-y-2">
                                 <p className="flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
-                                    <span className='flex-1'>DELIVERY METHOD:</span>
+                                    <span className="flex-1">
+                                        DELIVERY METHOD:
+                                    </span>
                                     <span className=" flex-[2.5] text-s font-light">
                                         {findOrder?.shipping_option?.name}
                                     </span>
@@ -201,30 +239,37 @@ function Order_Info({}) {
 
                                 <p className=" flex w-full items-baseline gap-x-10 text-xs font-semibold text-dark-gray">
                                     {findOrder?.status == 'shipped' && (
-                                        <span className='flex-1'>SHIPPED DATE:</span>
+                                        <span className="flex-1">
+                                            SHIPPED DATE:
+                                        </span>
                                     )}
                                     {findOrder?.status == 'received' && (
-                                        <span className=" flex-1" >ORDER DATE:</span>
+                                        <span className=" flex-1">
+                                            ORDER DATE:
+                                        </span>
                                     )}
-                                    <span className="text-s font-light flex-[2.5]">
+                                    <span className="flex-[2.5] text-s font-light">
                                         {findOrder?.status == 'shipped' &&
                                             shipDate}
                                         {findOrder?.status == 'received' &&
                                             orderDate}
                                     </span>
                                 </p>
-                                <a
-                                                target="_blank"
-                                                href={`${
-                                                    courierLinks?.[
-                                                        findOrder?.courier?.toLowerCase()
-                                                    ]
-                                                }${findOrder?.trackingNumber}`}
-                                                className="w-7/12 mt-2 text-sm flex-[1] border-2 py-3  text-center font-gotham transition-all hover:!bg-[var(--light-grey)]"
-                                            >
-                                                TRACK PARCEL
-                                            </a>
-                                
+                                {['shipped', 'delivered'].includes(
+                                    findOrder?.status
+                                ) && (
+                                    <a
+                                        target="_blank"
+                                        href={`${
+                                            courierLinks?.[
+                                                findOrder?.courier?.toLowerCase()
+                                            ]
+                                        }${findOrder?.trackingNumber}`}
+                                        className="mt-2 w-7/12 flex-[1] border-2 py-3 text-center  font-gotham text-sm transition-all hover:!bg-[var(--light-grey)]"
+                                    >
+                                        TRACK PARCEL
+                                    </a>
+                                )}
                             </div>
                         </div>
 
