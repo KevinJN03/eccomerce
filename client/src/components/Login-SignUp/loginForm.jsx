@@ -21,6 +21,7 @@ function LoginForm({ onSubmit, loading, error, setError }) {
                     error={error}
                     setError={setError}
                     label={'EMAIL ADDRESS'}
+                    autoComplete={'email'}
                 />
                 <Input
                     value={password}
@@ -30,6 +31,7 @@ function LoginForm({ onSubmit, loading, error, setError }) {
                     setError={setError}
                     label={'PASSWORD'}
                     type={'password'}
+                    autoComplete={'current-password'}
                 />
 
                 <Link

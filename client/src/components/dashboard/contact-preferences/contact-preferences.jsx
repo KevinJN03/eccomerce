@@ -9,11 +9,12 @@ import Alert_Item from './alert.item.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
+import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx'
 function Contact_Preferences({}) {
     const { contact_preference, setContactPreference, setFooterMessage } =
         useUserDashboardContext();
 
-    const [loading, setLoading] = useState(false);
+  
     const [confirmLoadState, setConfirmLoadState] = useState(false);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [discountCheck, setDiscountCheck] = useState(
@@ -99,7 +100,10 @@ function Contact_Preferences({}) {
             <Header text={'CONTACT PREFERENCES'} icon={chat_icon} />
             <section className="relative mt-2 bg-white p-4">
                 {confirmLoadState && (
-                    <div class="spinner-circle spinner-lg absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%]  [--spinner-color:var(--slate-12)]"></div>
+                    <div className='absolute top-2/4 left-2/4 translate-x-[-50%] translate-y-[-50%] '>
+                        <GLoader /> 
+                    </div>
+                   
                 )}
                 <div className="top mb-8 ">
                     <h2 className="mb-3 text-lg font-bold tracking-wide">

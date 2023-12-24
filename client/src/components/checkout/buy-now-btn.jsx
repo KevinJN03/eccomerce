@@ -22,8 +22,7 @@ function Buy_Now_Btn({ disable }) {
         billingAddress,
         shippingAddress,
         selectedMethod,
-        setError,
-        error,
+        setError: setCheckOutError,
 
         klarnaDob,
         setKlarnaDob,
@@ -164,12 +163,12 @@ function Buy_Now_Btn({ disable }) {
                 const splitErrorCode = error.code?.split('_')?.[1];
 
                 if (splitErrorCode == 'cvc') {
-                    setError((prevState) => ({
+                    setCheckOutError((prevState) => ({
                         ...prevState,
                         cvc: error.message,
                     }));
                 } else {
-                    setError((prevState) => ({
+                    setCheckOutError((prevState) => ({
                         ...prevState,
                         msg: error.message,
                     }));

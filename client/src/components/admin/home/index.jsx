@@ -1,5 +1,3 @@
-
-
 import './admin.scss';
 import './dark.scss';
 
@@ -17,40 +15,76 @@ import axios, { adminAxios } from '../../../api/axios';
 import { get6MonthsData } from '../../common/months';
 import { useNavigate } from 'react-router-dom';
 import { getAllData } from './getAllData';
+import LoadingPage from '../../order/loadingPage';
 // import List from '../components/list/list';
 
 function Index({}) {
     const { darkMode } = useDarkMode();
     'darkMode', darkMode;
-    
 
     const [loading, setLoading] = useState(true);
 
     const [dashBoardData, setDashBoardData] = useState({});
     const [chartData, setChartData] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
-    const [allProducts, setAllPoducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const [orders, setOrders] = useState({});
-
     const [deliveryData, setDeliveryData] = useState([]);
-    const navigate = useNavigate();
-  
-    useEffect(() => {
-        getAllData({
-            setAllPoducts,
-            setAllUsers,
-            setChartData,
-            setOrders,
-            setDeliveryData,
-            setDashBoardData,
-        });
-        const timeout = setTimeout(() => {
-            setLoading(false);
-        }, 1000);
 
-        return () => {
-            clearTimeout(timeout);
+    const navigate = useNavigate();
+    useEffect(() => {
+        // getAllData({
+        //     setAllProducts,
+        //     setAllUsers,
+        //     setChartData,
+        //     setOrders,
+        //     setDeliveryData,
+        //     setDashBoardData,
+        //     setLoading,
+        //     navigate
+
+        // });
+
+        const fetchData = async () => {
+            try {
+                const [
+                    counts,
+                    usersData,
+                    productsData,
+                    ordersData,
+                    deliveryData,
+                ] = await Promise.all([
+                    adminAxios.get('/count'),
+                    adminAxios.get('/user/all'),
+                    adminAxios.get('/product'),
+                    adminAxios.get('/orders'),
+                    adminAxios.get('/delivery/all'),
+                ]);
+
+                setDashBoardData(() => counts.data);
+                setChartData(() =>
+                    get6MonthsData(counts.data?.getOrdersByMonth)
+                );
+
+                setAllUsers(() => usersData?.data);
+                setAllProducts(() => productsData?.data);
+
+                setOrders(() => ordersData?.data?.orders);
+                setDeliveryData(() => deliveryData?.data);
+            } catch (error) {
+                console.log('error while trying to get data');
+
+                if (error?.response?.status == 401) {
+                    navigate('/admin/login');
+                }
+            } finally {
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
+            }
         };
+
+        fetchData();
     }, []);
 
     const newValue = {
@@ -61,7 +95,7 @@ function Index({}) {
         allUsers,
         setAllUsers,
         allProducts,
-        setAllPoducts,
+        setAllProducts,
         orders,
         setOrders,
         deliveryData,
@@ -69,19 +103,14 @@ function Index({}) {
     };
     return (
         <AdminContextProvider newValue={newValue}>
-            {loading ? (
-                <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
-                    <svg
-                        className="spinner-ring spinner-sm [--spinner-color:var(--slate-11)]"
-                        viewBox="25 25 50 50"
-                        strokeWidth="5"
-                    >
-                        <circle cx="50" cy="50" r="20" />
-                    </svg>
-                </div>
-            ) : (
-                <Admin />
-            )}
+            <section className="bg-white w-full">
+                {loading ? (
+                    <LoadingPage />
+                ) : (
+                 
+                    <Admin />
+                )}
+            </section>
         </AdminContextProvider>
     );
 }

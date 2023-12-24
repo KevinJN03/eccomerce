@@ -328,7 +328,8 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 
 export const checkUser = asyncHandler(async (req, res, next) => {
   if (req.isAuthenticated()) {
-    return res.status(200).send({ authenticated: true, user: req.user });
+    return res.status(200).send({ authenticated: true, user: req.user 
+    });
   }
   return res.status(401).send({ authenticated: false });
 });

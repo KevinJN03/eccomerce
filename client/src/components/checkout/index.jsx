@@ -35,6 +35,7 @@ const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 import dayjs from 'dayjs';
 
 import findAddress from '../common/findaddress.jsx';
+import PaymentMethodProvider from '../../context/paymentMethodContext.jsx';
 function Checkout() {
     const [stripePromise, setStripePromise] = useState(() =>
         loadStripe(STRIPE_KEY)
@@ -63,18 +64,36 @@ function Checkout() {
     const [isDataSet, setIsDataSet] = useState(false);
     const [isDeliveryAddressFill, setIsDeliveryAddressFill] = useState(false);
     const [isFirstPaymentSet, setIsFirstPaymentSet] = useState(false);
+    const [userPaymentMethods, setUserPaymentMethods] = useState([]);
+    const [initialView, setInitialView] = useState(null);
     const abortControllerRef = useRef(new AbortController());
-
+    const [error, setError] = useState({})
     useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
 
         const fetchData = async () => {
             try {
-                const result = await axios.get('user/userData', {
-                    signal: abortControllerRef.current.signal,
-                });
-
+                // const result = await axios.get('user/userData', {
+                //     signal: abortControllerRef.current.signal,
+                // });
+                const [result, { data: paymentData }] = await Promise.all([
+                    axios.get('user/userData', {
+                        signal: abortControllerRef.current.signal,
+                    }),
+                    axios.get('user/payment-method/all', {
+                        signal: abortControllerRef.current.signal,
+                    }),
+                ]);
+                console.log({ paymentData });
+                setUserPaymentMethods(() => paymentData?.paymentMethods);
+                if (paymentData.paymentMethods?.[0]) {
+                    // setSelectedMethod(() => data.paymentMethods[0]);
+                    setSelectedMethod(() => paymentData.paymentMethods?.[0]);
+                    setInitialView(() => 'selectedMethod');
+                } else {
+                    setInitialView(() => 'options');
+                }
                 const { user } = result.data;
 
                 const dobDayjs = dayjs(user.dob);
@@ -134,7 +153,6 @@ function Checkout() {
         }
     }, [cart]);
 
-
     const footerRef = useRef();
     const isInView = useInView(footerRef);
     return (
@@ -169,6 +187,9 @@ function Checkout() {
                 isFirstPaymentSet,
                 setIsFirstPaymentSet,
                 setIsDeliveryAddressFill,
+                initialView,
+                setInitialView,
+                error, setError
             }}
         >
             <Elements stripe={stripePromise}>
@@ -246,17 +267,23 @@ function Checkout() {
                                             )}
 
                                             {isDeliveryAddressFill ? (
-                                                <Payment
-                                                    defaultProperty={
-                                                        'billing_address'
+                                                <PaymentMethodProvider
+                                                    userPaymentMethods={
+                                                        userPaymentMethods
                                                     }
-                                                    billingAddress={
-                                                        billingAddress
-                                                    }
-                                                    setBillingAddress={
-                                                        setBillingAddress
-                                                    }
-                                                />
+                                                >
+                                                    <Payment
+                                                        defaultProperty={
+                                                            'billing_address'
+                                                        }
+                                                        billingAddress={
+                                                            billingAddress
+                                                        }
+                                                        setBillingAddress={
+                                                            setBillingAddress
+                                                        }
+                                                    />
+                                                </PaymentMethodProvider>
                                             ) : (
                                                 <div className="border-2 px-6 py-4">
                                                     <p className="text-lg font-bold opacity-20">

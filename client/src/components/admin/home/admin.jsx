@@ -52,7 +52,7 @@ function Admin({}) {
                     <section className="home">
                         <SideBar />
                         <div className="homeContainer">
-                            <Navbar />
+                            {/* <Navbar /> */}
                             <Outlet />
                             {modalCheck && (
                                 <Modal

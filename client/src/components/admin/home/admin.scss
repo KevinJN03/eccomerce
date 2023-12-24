@@ -4,6 +4,8 @@
     --CircularProgress-size: 5004px;
     --CircularProgress-trackThickness: '16px';
     --CircularProgress-progressThickness: '18px';
+  
+
 }
 h1 {
     font-size: 30px;
@@ -207,5 +209,13 @@ h1 {
     &.failed {
         color: red;
         background-color: rgba(255, 0, 0, 0.205);
+    }
+}
+.order-page {
+    .daisy-checkbox:checked,
+    .daisy-checkbox[checked='true'],
+    .daisy-checkbox[aria-checked='true'] {
+  
+    //     @apply border-orange-400 [--chkbg:theme(colors.indigo.600)] [--chkfg:orange] checked:border-indigo-800;
     }
 }

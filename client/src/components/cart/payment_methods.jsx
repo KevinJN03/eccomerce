@@ -18,13 +18,13 @@ const payment_icons = [
 function Payment_Methods({ className }) {
     return (
         <div className="payment-icons">
-            {payment_icons.map((img) => {
+            {payment_icons.map((img, index) => {
                 return (
                     <img
                         src={img}
                         alt={img.split('/', 6).slice(-1)}
                         className={`${className} bg-white` }
-                        key={uuidv4()}
+                        key={index}
                     />
                 );
             })}

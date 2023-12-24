@@ -4,7 +4,8 @@ import { adminAxios } from '../../../api/axios';
 import { useAdminContext } from '../../../context/adminContext.jsx';
 
 import { useNavigate } from 'react-router-dom';
-import { getAllData } from './getAllData.js';
+import { get6MonthsData } from '../../common/months.js';
+
 function AdminLogin({}) {
     const [error, setError] = useState({ email: null, password: null });
     const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ function AdminLogin({}) {
     const {
         authAdminUser,
         authAdminUserDispatch,
-        setAllPoducts,
+        setAllProducts,
         setAllUsers,
         setChartData,
         setOrders,
@@ -21,6 +22,7 @@ function AdminLogin({}) {
     } = useAdminContext();
 
     const navigate = useNavigate();
+
     const onSubmit = async ({ email, password }) => {
         console.log('test');
         let success = false;
@@ -33,14 +35,24 @@ function AdminLogin({}) {
             console.log({ data });
 
             authAdminUserDispatch({ type: 'LOGIN', payload: data });
-            getAllData({
-                setAllPoducts,
-                setAllUsers,
-                setChartData,
-                setOrders,
-                setDeliveryData,
-                setDashBoardData,
-            });
+
+            const [counts, usersData, productsData, ordersData, deliveryData] =
+                await Promise.all([
+                    adminAxios.get('/count'),
+                    adminAxios.get('/user/all'),
+                    adminAxios.get('/product'),
+                    adminAxios.get('/orders'),
+                    adminAxios.get('/delivery/all'),
+                ]);
+
+            setDashBoardData(() => counts.data);
+            setChartData(() => get6MonthsData(counts.data?.getOrdersByMonth));
+
+            setAllUsers(() => usersData?.data);
+            setAllProducts(() => productsData?.data);
+
+            setOrders(() => ordersData?.data?.orders);
+            setDeliveryData(() => deliveryData?.data);
             success = true;
         } catch (error) {
             console.error('error while login in admin', error);
@@ -49,12 +61,14 @@ function AdminLogin({}) {
                 ...error?.response?.data?.error,
             }));
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-                if (success) {
+            if (success) {
+                return setTimeout(() => {
+                    setLoading(false);
+
                     navigate('/admin');
-                }
-            }, 1000);
+                }, 1000);
+            }
+            setLoading(false);
         }
     };
     return (
