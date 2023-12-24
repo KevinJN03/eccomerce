@@ -66,6 +66,10 @@ function OrderCancelContainer({
                                     }
                                 />
                             </div>
+                            {
+                                <>
+                                </>
+                            }
                             <h6 className="mt-2 font-gotham text-sm !text-dark-gray text-opacity-5">
                                 REASON FOR CANCELLATION
                             </h6>

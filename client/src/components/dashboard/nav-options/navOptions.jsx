@@ -49,7 +49,7 @@ export default function NavOption({ selectOption, loadingState }) {
             <section>
                 {options.map((options, index) => {
                     return (
-                        <motion.div className="!m-0 !p-0" key={index}>
+                        <motion.div className="!mb-1 !p-0" key={index}>
                             {options.map(({ text, icon, link }, idx) => {
                                 return (
                                     <motion.button
@@ -106,7 +106,7 @@ export default function NavOption({ selectOption, loadingState }) {
                                         <div
                                             className={`justify-left mr-[-12px] flex h-full w-full items-center text-s font-light underline-offset-2 hover:underline ${
                                                 options.length - 1 != idx &&
-                                                'border-b-[1px]'
+                                                '!border-b-[1px]'
                                             }`}
                                         >
                                             {loadingState ? (

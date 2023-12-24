@@ -1,5 +1,6 @@
 import Template from './template';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
+import { Link } from 'react-router-dom';
 function ErrorTemplate({}) {
     return (
         <Template>
@@ -11,12 +12,18 @@ function ErrorTemplate({}) {
                     you're looking for. You can continue or return to your bag.
                 </p>
                 <div className=" flex flex-row gap-2 ">
-                    <button className="!bg-primary px-20 py-3 font-gotham tracking-wider text-white hover:!bg-black">
+                    <Link
+                        to={'/'}
+                        className="!bg-primary px-20 py-3 font-gotham tracking-wider text-white hover:!bg-black"
+                    >
                         HOME
-                    </button>
-                    <button className="!bg-primary px-20 py-3 font-gotham tracking-wider text-white hover:!bg-black">
+                    </Link>
+                    <Link
+                        to={'/cart'}
+                        className="!bg-primary px-20 py-3 font-gotham tracking-wider text-white hover:!bg-black"
+                    >
                         MY BAG
-                    </button>
+                    </Link>
                 </div>
             </section>
         </Template>
