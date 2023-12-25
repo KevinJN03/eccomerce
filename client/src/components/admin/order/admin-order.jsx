@@ -11,6 +11,9 @@ import Header from './header';
 import SubHeader from './subheader';
 
 import PageOptions from './pageOption';
+import OrderItem from './orderItem';
+import Containers from './containers';
+import SideContainer from './sideContainer';
 function AdminOrder({}) {
     const { orders, setModalCheck, adminDispatch } = useAdminContext();
 
@@ -41,7 +44,7 @@ function AdminOrder({}) {
     return (
         <section className="order-page w-full">
             <Header />
-            <section className="flex flex-row">
+            <section className="flex flex-row gap-7">
                 <section className="left flex-[4]">
                     <SubHeader />
                     <section className="flex flex-row gap-x-5 border-b-2 px-5">
@@ -52,8 +55,10 @@ function AdminOrder({}) {
                     </section>
 
                     <PageOptions />
+
+                    <Containers />
                 </section>
-                <section className="right flex-1 p-5"></section>
+                <SideContainer />
             </section>
         </section>
     );

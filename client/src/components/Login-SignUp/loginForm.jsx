@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../CSS/login-signup.css';
 import Input from './input';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,16 @@ function LoginForm({ onSubmit, loading, error, setError }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            console.log('hi', e.key, {password, email});
+
+            if (e.key == 'Enter') {
+                onSubmit({ password, email });
+            }
+        };
+        document.addEventListener('keydown', handleKeyPress);
+    }, []);
     return (
         <section className="flex w-full flex-col flex-nowrap justify-center">
             <section className="flex w-8/12 flex-col flex-nowrap  self-center">

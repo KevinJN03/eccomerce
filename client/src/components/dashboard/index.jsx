@@ -54,6 +54,10 @@ function Dashboard() {
 
             if (userResult.status == 'fulfilled') {
                 const { user } = userResult.value?.data;
+
+                setFirstName(() => user?.firstName);
+
+                setLastName(() => user?.lastName);
                 setDob(() => dayjs(user?.dob).toISOString());
                 console.log('here', { user });
                 setContactPreference(() => user?.contact_preferences);
@@ -216,9 +220,9 @@ function Dashboard() {
                                                     className="user-initial flex h-full w-full items-center justify-center rounded-full !bg-primary text-center font-gotham text-4xl !font-extrabold text-white"
                                                 >
                                                     {` ${
-                                                        user?.firstName?.toUpperCase()[0]
+                                                        firstName?.toUpperCase()[0]
                                                     }${
-                                                        user?.lastName?.toUpperCase()[0]
+                                                        lastName?.toUpperCase()[0]
                                                     }`}
                                                 </motion.span>
                                             )}
@@ -240,7 +244,7 @@ function Dashboard() {
                                                 <div className="skeleton-pulse h-5 "></div>
                                             ) : (
                                                 <motion.span className="block font-gotham text-lg tracking-wider">
-                                                    {`${user?.firstName} ${user?.lastName}`}
+                                                    {`${firstName} ${lastName}`}
                                                 </motion.span>
                                             )}
                                         </motion.div>
@@ -291,7 +295,7 @@ function Dashboard() {
                             >
                                 {!loadingState && <Outlet />}
                                 <MessageFooter
-                                className={'max-w-[568px]'}
+                                    className={'max-w-[568px]'}
                                     isInView={isInView}
                                     footerMessage={footerMessage}
                                     setFooterMessage={setFooterMessage}
