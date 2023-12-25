@@ -14,6 +14,8 @@ import PageOptions from './pageOption';
 import OrderItem from './orderItem';
 import Containers from './containers';
 import SideContainer from './sideContainer';
+import NewComplete from './new-complete';
+
 function AdminOrder({}) {
     const { orders, setModalCheck, adminDispatch } = useAdminContext();
 
@@ -47,12 +49,7 @@ function AdminOrder({}) {
             <section className="flex flex-row gap-7">
                 <section className="left flex-[4]">
                     <SubHeader />
-                    <section className="flex flex-row gap-x-5 border-b-2 px-5">
-                        <p className="border-b-2 pb-3 text-base">
-                            New <span className="text-sm">0</span>
-                        </p>
-                        <p className="text-base">Completed</p>
-                    </section>
+                    <NewComplete/>
 
                     <PageOptions />
 
