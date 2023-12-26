@@ -201,19 +201,21 @@ export const getOrderDetails = [
 
     const order = await Order.findById(id.toUpperCase())
       .populate('items.product', ['images', 'title', 'variations'])
+      .lean({ toObject: true })
       .exec();
     if (order) {
       if (order.customer.toString() === userId) {
+        order.email = req?.user?.email;
         return res.status(200).send({
           order,
           success: false,
         });
-      } else {
-        res.status(404).send({
-          msg: 'You are not authorized.',
-          success: false,
-        });
       }
+
+      res.status(404).send({
+        msg: 'You are not authorized.',
+        success: false,
+      });
     } else {
       return res.status(404).send({
         msg: 'Not Found',
@@ -222,3 +224,4 @@ export const getOrderDetails = [
     }
   }),
 ];
+

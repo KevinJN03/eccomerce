@@ -77,6 +77,10 @@ const OrderSchema = new Schema({
   ship_date: { type: Schema.Types.Date },
   return_date: { type: Schema.Types.Date },
   cancel_date: { type: Schema.Types.Date },
+  cancel: {
+    reason: { type: Schema.Types.String },
+    additional_information: { type: Schema.Types.String, maxlength: 500 },
+  },
 });
 
 export default mongoose.model('order', OrderSchema);

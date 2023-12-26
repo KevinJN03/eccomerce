@@ -25,7 +25,7 @@ function Selected_Method({}) {
     };
 
     return (
-        <section className="mb-8 mt-4">{content[selectedMethod.type]}</section>
+        <section className="mb-0 mt-4">{content[selectedMethod.type]}</section>
     );
 }
 

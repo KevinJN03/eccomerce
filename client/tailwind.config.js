@@ -15,7 +15,9 @@ export default {
                 primary: '#2d2d2d',
                 'primary-green': '#018849',
                 'grey-100': '#dddddd46;',
-                'dark-gray': '#676666',
+                // 'dark-gray': '#676666',
+                'dark-gray': '#939393',
+                'light-grey': '#eee'
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
@@ -34,6 +36,7 @@ export default {
 
             boxShadow: {
                 'my-shadow': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
+                '3xl': '0px 5px 15px rgba(0, 0, 0, 0.35)'
             },
 
             spacing: {

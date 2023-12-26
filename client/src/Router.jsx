@@ -63,6 +63,9 @@ import ChangePassword from './components/dashboard/change-password/index.jsx';
 import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
 import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
 import OrderCancel from './components/order/order-cancel.jsx';
+import OrderCancelled from './components/order/order-cancelled.jsx';
+import TemplateProvider from './context/templeteContext.jsx';
+import ErrorTemplate from './components/order/error.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -284,7 +287,16 @@ function Router({ Header, Footer }) {
                 },
                 {
                     path: 'order-cancel',
+
                     element: <OrderCancel />,
+                },
+                {
+                    path: 'order-cancelled',
+                    element: <OrderCancelled />,
+                },
+                {
+                    path: 'test',
+                    element: <ErrorTemplate />,
                 },
                 {
                     path: '/admin',

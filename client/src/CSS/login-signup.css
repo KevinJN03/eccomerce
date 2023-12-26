@@ -9,7 +9,7 @@
     /* max-width: 600px; */
     /* width: clamp(300px, 00px, 600px); */
     width: clamp(300px, 90vw, 600px);
-    border: thin solid black;
+    /* border: thin solid black; */
 
     margin-top: 80px;
     padding: 12px;

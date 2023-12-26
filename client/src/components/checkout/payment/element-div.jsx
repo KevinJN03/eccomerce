@@ -15,18 +15,14 @@ export function ElementDiv({ label, id, icon, className, error, property }) {
                         className="absolute right-3 top-2/4 h-6 w-6 translate-y-[-50%]"
                     />
                 )}
-               
             </section>
-            {error && (
-                    <div>
-                        {error[property] && (
-                            <ErrorMessagePointerUp
-                                msg={error[property]}
-                                className={'!top-3 !relative'}
-                            />
-                        )}
-                    </div>
-                )}
+
+            {error[property] && (
+                <ErrorMessagePointerUp
+                    msg={error[property]}
+                    className={'!relative !top-3'}
+                />
+            )}
         </div>
     );
 }

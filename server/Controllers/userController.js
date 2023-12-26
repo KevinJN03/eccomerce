@@ -31,6 +31,8 @@ import transporter from '../utils/nodemailer.js';
 import 'dotenv/config';
 import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
+import OrderCancel from '../React Email/emails/orderCancelled.jsx';
+import { addListener } from 'nodemon';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -325,9 +327,11 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
-  return res
-    .status(200)
-    .send({ user: req.user, authenticated: req.isAuthenticated() });
+  if (req.isAuthenticated()) {
+    return res.status(200).send({ authenticated: true, user: req.user 
+    });
+  }
+  return res.status(401).send({ authenticated: false });
 });
 
 export const logoutUser = asyncHandler((req, res, next) => {
@@ -535,7 +539,6 @@ export const addUserAddress = [
       success: true,
       address: user.address,
       default_address: user.default_address,
-    
     });
   }),
 ];
@@ -1045,5 +1048,73 @@ export const addDigitalPaymentMethod = [
     //   clientSecret: attachToCustomer?.client_secret,
     //   url: attachToCustomer?.return_url,
     // });
+  }),
+];
+
+export const cancelOrder = [
+  checkAuthenticated,
+  check('orderNumber').trim().escape(),
+  check('reason', 'Please select a reason for cancellation')
+    .trim()
+    .escape()
+    .notEmpty(),
+  check('redirect').trim().escape(),
+  check('additional_information', 'Please enter under 500 characters')
+    .trim()
+    .escape()
+    .isLength({ max: 500 }),
+  asyncHandler(async (req, res, next) => {
+    const { orderNumber, additional_information, redirect } = req.body;
+    const userId = req.user?.id;
+
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      orderNumber,
+      {
+        status: 'cancelled',
+        cancel: {
+          ...req.body,
+        },
+        cancel_date: new Date(),
+      },
+      {
+        new: true,
+        lean: {
+          toObject: true,
+        },
+        populate: {
+          path: 'items.product customer',
+        },
+      },
+    );
+
+    if (order?.payment_intent_id) {
+      const refund = await stripe.refunds.create({
+        payment_intent: order?.payment_intent_id,
+      });
+
+      await Order.findByIdAndUpdate(orderNumber, { refund_id: refund.id });
+    }
+
+    const emailHtml = render(<OrderCancel order={order} />);
+
+    const { SENDER } = process.env;
+    const mailOptions = {
+      from: SENDER,
+      to: order?.customer?.email,
+      subject: 'Your GLAMO order has been cancelled',
+      html: emailHtml,
+    };
+    await transporter.sendMail(mailOptions);
+    if (redirect) {
+      res.redirect('/api/user/orders');
+    } else {
+      res.status(200).send({ msg: 'successfully cancelled', success: true });
+    }
   }),
 ];

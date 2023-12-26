@@ -16,7 +16,7 @@ import Wallet from './wallet/wallet';
 import axios from '../../../api/axios';
 import PaymentTypeProvider from '../../../context/paymentTypeContext';
 import { useCheckoutContext } from '../../../context/checkOutContext';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, easeIn, easeOut, motion } from 'framer-motion';
 import { generateVariants } from '../address/address-item';
 import variants from '../address/variants';
 
@@ -161,8 +161,8 @@ function Payment_Type({ initialView, setDisableAddress }) {
 
     const containerVariants = {
         initial: {
-            height: containerRef?.current
-                ? containerRef.current.clientHeight + 'px'
+            height: containerRef?.current?.clientHeight
+                ? `${containerRef?.current?.clientHeight}px`
                 : 'auto',
             opacity: 0.5,
         },
@@ -173,29 +173,40 @@ function Payment_Type({ initialView, setDisableAddress }) {
 
             transition: { duration: 0.5 },
         },
+        exit: {
+            height: 'auto',
+            transition: { duration: 0.5 },
+        },
     };
 
     const viewVariants = {
         initial: {
             opacity: 0,
-            translateX: -50,
+      
+            // translateY: -100,
+            translateX: -100,
+            height: containerRef?.current?.clientHeight
+                ? `${containerRef?.current?.clientHeight}px`
+                : 'auto',
         },
         animate: {
             opacity: 1,
+            translateY: 0,
             translateX: 0,
+            height: 'auto',
+          
             transition: {
-                duration: 0.7,
-                ease: 'easeInOut',
-                delay: 0.3,
+                duration: 0.4,
+                ease: easeIn,
             },
         },
 
         exit: {
             opacity: 0,
-            translateX: 50,
+translateY: -100,
             transition: {
-                duration: 0.2,
-                ease: 'easeOut',
+                duration: 0.5,
+                ease: easeOut,
             },
         },
     };
@@ -222,17 +233,17 @@ function Payment_Type({ initialView, setDisableAddress }) {
     return (
         <PaymentTypeProvider value={value}>
             <ClickAwayListener onClickAway={onClickAway}>
-                <motion.div>
+                <div className='w-full h-full' >
                     {initialView && (
-                        <motion.section
+                        <section
                             id="payment-type"
-                            className={`relative mt-4 px-6 ${
+                            className={`relative mt-4 px-6  h-full ${
                                 disable
                                     ? 'disable-component'
                                     : 'display-component'
                             }`}
                         >
-                            <section className={`relative `}>
+                            <section className={`relative mb-0 max-h-fit pb-0`}>
                                 {loading && (
                                     <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
                                         <svg
@@ -250,7 +261,7 @@ function Payment_Type({ initialView, setDisableAddress }) {
                                         loading ? 'opacity-40' : ''
                                     }`}
                                 >
-                                    <div className="relative mb-6 mt-3">
+                                    <div className="relative mb-6 mt-3 ">
                                         <SubHeader
                                             disable={disable}
                                             disablePadding={true}
@@ -261,41 +272,44 @@ function Payment_Type({ initialView, setDisableAddress }) {
                                             cancelBtnClick={cancelBtnClick}
                                         />
                                     </div>
-                                    <AnimatePresence mode="wait">
-                                        <motion.section
-                                            ref={containerRef}
-                                            key={viewContent}
-                                            variants={containerVariants}
-                                            animate={'animate'}
-                                            initial={'initial'}
-                                            exit={'exit'}
-                                        >
-                                            <motion.div>
-                                                {viewContent && (
-                                                    <motion.div
-                                                        variants={viewVariants}
-                                                        animate={'animate'}
-                                                        initial={'initial'}
-                                                        exit={'exit'}
-                                                    >
-                                                        {views[viewContent]}
-                                                    </motion.div>
-                                                )}
-                                            </motion.div>
-                                        </motion.section>
-                                    </AnimatePresence>
+
+                                    <section
+                                 className=''
+                                        ref={containerRef}
+                                        
+                                        // key={viewContent}
+                                        // variants={containerVariants}
+                                        // animate={'animate'}
+                                        // initial={'initial'}
+                                        // exit={'exit'}
+                                    >
+                                  
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+
+                                            
+                                                key={viewContent}
+                                                variants={viewVariants}
+                                                animate={'animate'}
+                                                initial={'initial'}
+                                                exit={'exit'}
+                                            >
+                                                {views[viewContent]}
+                                            </motion.div>{' '}
+                                        </AnimatePresence>
+                                    </section>
                                 </section>
                             </section>
 
-                            <div className="checkout-payment-methods">
+                            <div className="checkout-payment-methods z-20 mt-6">
                                 <h2 className="font-semibold tracking-widest">
                                     WE ACCEPT:
                                 </h2>
                                 <Payment_Methods className="w-10" />
                             </div>
-                        </motion.section>
+                        </section>
                     )}
-                </motion.div>
+                </div>
             </ClickAwayListener>
         </PaymentTypeProvider>
     );

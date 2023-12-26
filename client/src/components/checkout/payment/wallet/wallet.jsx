@@ -13,7 +13,7 @@ function Wallet({}) {
         setView(() => 'selectedMethod');
     };
     return (
-        <section className="flex flex-col">
+        <section className="flex flex-col ">
             <h2 className="mb-3 font-gotham ">MY WALLET</h2>
             <div className="flex flex-col flex-nowrap gap-y-3">
                 {paymentMethods.map((method, idx) => {
@@ -38,7 +38,7 @@ function Wallet({}) {
                 })}
             </div>
 
-            <div className="m-0 my-6 flex flex-row items-center justify-between p-0">
+            <div className="m-0 mt-6 flex flex-row items-center justify-between p-0">
                 <button
                     // disabled={loading || disableRef.current}
                     onClick={() => setView('options')}

@@ -1,7 +1,7 @@
 import Card_Item from '../wallet/card_item';
 import ElementDiv from '../element-div';
 import cvv_icon from '../../../../assets/icons/cvv-icon.png';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useElements } from '@stripe/react-stripe-js';
 import { usePaymentTypeContext } from '../../../../context/paymentTypeContext';
 import { useCheckoutContext } from '../../../../context/checkOutContext';
@@ -10,7 +10,9 @@ function CardSelect({}) {
 
     const { selectedMethod, setNextView } = usePaymentTypeContext();
 
-    const { error, setError } = useCheckoutContext();
+    const { footerMessage, setFooterMessage ,error, setError} = useCheckoutContext();
+
+   
     useEffect(() => {
         if (elements) {
             console.log('create cardcvc');
@@ -39,7 +41,7 @@ function CardSelect({}) {
 
     const handleClick = () => {};
     return (
-        <section>
+        <section className='h-fit'>
             <h2 className="font-gotham text-sm">CREDIT / DEBIT CARD</h2>
             <Card_Item
                 {...selectedMethod}
@@ -53,7 +55,7 @@ function CardSelect({}) {
                 icon={{ img: cvv_icon, alt: 'cvc icon' }}
                 error={error}
                 property={'cvc'}
-                className={'w-3/12'}
+                className={'w-3/12 m-0 p-0'}
             />
         </section>
     );
