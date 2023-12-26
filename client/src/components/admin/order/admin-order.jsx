@@ -15,6 +15,7 @@ import OrderItem from './orderItem';
 import Containers from './containers';
 import SideContainer from './sideContainer';
 import NewComplete from './new-complete';
+import EmptyOrders from './empty-orders';
 
 function AdminOrder({}) {
     const { orders, setModalCheck, adminDispatch } = useAdminContext();
@@ -49,11 +50,12 @@ function AdminOrder({}) {
             <section className="flex flex-row gap-7">
                 <section className="left flex-[4]">
                     <SubHeader />
-                    <NewComplete/>
+                    <NewComplete />
 
                     <PageOptions />
 
                     <Containers />
+                    {/* <EmptyOrders /> */}
                 </section>
                 <SideContainer />
             </section>

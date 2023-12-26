@@ -3,16 +3,16 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 function OrderItem({}) {
     return (
         <section className="w-full rounded-sm  border-[1px] border-gray-400">
-            <div className="flex items-center gap-4 border-b-[1px] border-gray-400 bg-light-grey px-5 py-2">
+            <div className="flex items-center gap-4 border-b-[1px] border-gray-400 bg-light-grey/30 px-5 py-2">
                 <p className="font-medium">Completed 22 Dec, 2023</p>
                 <p className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-center text-s">
                     1
                 </p>
-                <p className="text-dark-gray underline underline-offset-1">
+                <p className="text-gray-500 underline underline-offset-1">
                     Select all
                 </p>
             </div>
-            <div className="flex w-full flex-row p-5">
+            <label htmlFor = 'my-drawer-4' className="flex w-full flex-row p-5 hover:bg-light-grey/30 cursor-pointer" >
                 <div className="left flex flex-[2] flex-row gap-3">
                     <input
                         type="checkbox"
@@ -88,7 +88,7 @@ function OrderItem({}) {
                     </div>
                     <div className="right flex-1 p-2"></div>
                 </div>
-            </div>
+            </label>
         </section>
     );
 }

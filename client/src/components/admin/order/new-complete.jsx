@@ -8,7 +8,7 @@ function NewComplete({}) {
         return {
             initial: { scaleX: active == value ? 1 : 0 },
             animate: {
-                backgroundColor: hover ? '#000000' : '',
+                backgroundColor: active == value ? '#000000' : hover ? 'rgba(0, 0, 0, 0.5)' : '',
                 scaleX: 1,
                 transition: {
                     duration: 0.2,

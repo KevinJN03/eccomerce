@@ -73,7 +73,7 @@ function SideContainer({}) {
     };
     return (
         <section className="side-container relative mt-4 flex flex-1 flex-col justify-start gap-5">
-            <div className=" absolute top-0 h-fit rounded-full bg-white">
+            <div className=" absolute top-0 h-fit rounded-full bg-white z-[1]">
                 <AnimatePresence>
                     {' '}
                     {!show && (
