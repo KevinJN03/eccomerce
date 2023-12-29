@@ -29,3 +29,4 @@ export const checkAdminAuthenticated = AsyncHandler(async (req, res, next) => {
     .clearCookie('connect.sid')
     .send({ msg: 'User is not Authenticated' });
 });
+    
