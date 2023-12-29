@@ -12,6 +12,9 @@ import Order from '../Models/order.js';
 import DeliveryProfile from '../Models/deliveryProfile.js';
 import mongoose from 'mongoose';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+
+dayjs(customParseFormat);
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const createPaymentIntent = [
@@ -243,6 +246,22 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
           $match: { status: { $in: newValueArray } },
         }
       : { $match: { status: { $nin: newValueArray } } };
+
+  const monthMap = {
+    January: 0,
+    February: 1,
+    March: 2,
+    April: 3,
+    May: 4,
+    June: 5,
+    July: 6,
+    August: 7,
+    September: 8,
+    October: 9,
+    November: 10,
+    December: 11,
+  };
+
   const ordersByDate = await Order.aggregate([
     matchObj,
 
@@ -276,13 +295,62 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
       $unset: 'productLookup',
     },
     {
+      $addFields: {
+        dateArray: {
+          $split: ['$shipping_option.delivery_date', ', '],
+        },
+        monthMap: {
+          January: 1,
+          February: 2,
+          March: 3,
+          April: 4,
+          May: 5,
+          June: 6,
+          July: 7,
+          August: 8,
+          September: 9,
+          October: 10,
+          November: 11,
+          December: 12,
+        },
+      },
+    },
+
+    {
+      $addFields: {
+        newDate: {
+          $concat: [
+            { $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 0, 2] },
+            ' ',
+            {
+              $getField: {
+                $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 3, -1],
+              },
+            },
+
+            ' ',
+            { $arrayElemAt: ['$dateArray', 2] },
+          ],
+        },
+      },
+    },
+    {
+      $addFields: {
+        updatedDate: dayjs('$newDate', {
+          format: 'D MMMM, YYYY',
+        }).toDate(),
+      },
+    },
+
+    {
       $group: {
         _id: {
           $dateToString: {
             format: '%Y-%m-%d',
-            date: dayjs('$shipping_option.delivery_date').toDate(),
+            date: '$updatedDate',
           },
         },
+
         totalDocuments: { $sum: 1 },
         orders: {
           $push: '$$ROOT',
