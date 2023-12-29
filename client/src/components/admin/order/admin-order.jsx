@@ -18,53 +18,70 @@ import NewComplete from './new-complete';
 import EmptyOrders from './empty-orders';
 import userLogout from '../../../hooks/userLogout';
 
+import AdminOrderContextProvider from '../../../context/adminOrder';
+
 function AdminOrder({}) {
     const { setModalCheck, adminDispatch } = useAdminContext();
 
     const [loading, setLoading] = useState(false);
 
     const [selection, setSelection] = useState([]);
-    const [orders, setOrders] = useState([]);
-
+    const [ordersByDate, setOrdersByDate] = useState([]);
+    const [status, setStatus] = useState('New');
     const { logoutUser } = userLogout();
-
+    const [totalOrders, setTotalOrders] = useState(0);
+    console.log({ logoutUser });
     useEffect(() => {
-        adminAxios('/orders/all')
+        adminAxios
+            .post('/orders/all', { status })
             .then(({ data }) => {
-                setOrders(() => data?.orders || []);
+                setOrdersByDate(() => data?.ordersByDate || []);
+                setTotalOrders(() => data?.totalCount);
             })
             .catch((error) => {
                 console.error('error while getting orders', error);
                 logoutUser({ error });
             });
     }, []);
-    function secondBtnClick(id) {
-        adminDispatch({ type: 'order', id });
-        setModalCheck(true);
-    }
-    const dataTableActionColumn = actionColumn({
-        selection,
-        viewBtn: false,
-        secondBtnClick: (id) => secondBtnClick(id),
-        disableDelete: true,
-        buttonText: 'Update',
-    });
+    // function secondBtnClick(id) {
+    //     adminDispatch({ type: 'order', id });
+    //     setModalCheck(true);
+    // }
+    // const dataTableActionColumn = actionColumn({
+    //     selection,
+    //     viewBtn: false,
+    //     secondBtnClick: (id) => secondBtnClick(id),
+    //     disableDelete: true,
+    //     buttonText: 'Update',
+    // });
+
+    const value = {
+        loading,
+        setLoading,
+        ordersByDate,
+        setOrdersByDate,
+        status,
+        setStatus,
+        totalOrders, setTotalOrders
+    };
     return (
-        <section className="order-page w-full">
-            <Header />
-            <section className="flex flex-row gap-7">
-                <section className="left flex-[4]">
-                    <SubHeader />
-                    <NewComplete />
+        <AdminOrderContextProvider value={value}>
+            <section className="order-page w-full">
+                <Header />
+                <section className="flex flex-row gap-7">
+                    <section className="left flex-[4]">
+                        <SubHeader />
+                        <NewComplete />
 
-                    <PageOptions />
+                        <PageOptions />
 
-                    <Containers />
-                    {/* <EmptyOrders /> */}
+                        <Containers ordersByDate={ordersByDate} />
+                        {/* <EmptyOrders /> */}
+                    </section>
+                    <SideContainer />
                 </section>
-                <SideContainer />
             </section>
-        </section>
+        </AdminOrderContextProvider>
     );
 }
 

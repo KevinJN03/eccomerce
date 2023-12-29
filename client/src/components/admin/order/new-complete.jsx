@@ -1,14 +1,21 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import { useAdminOrderContext } from '../../../context/adminOrder';
 function NewComplete({}) {
     const [hoverNew, setHoverNew] = useState(false);
     const [hoverComplete, setHoverComplete] = useState(false);
-    const [active, setActive] = useState('New');
+
+    const { status, setStatus, totalOrders } = useAdminOrderContext();
     const variant = (hover, value) => {
         return {
-            initial: { scaleX: active == value ? 1 : 0 },
+            initial: { scaleX: status == value ? 1 : 0 },
             animate: {
-                backgroundColor: active == value ? '#000000' : hover ? 'rgba(0, 0, 0, 0.5)' : '',
+                backgroundColor:
+                    status == value
+                        ? '#000000'
+                        : hover
+                          ? 'rgba(0, 0, 0, 0.5)'
+                          : '',
                 scaleX: 1,
                 transition: {
                     duration: 0.2,
@@ -25,16 +32,16 @@ function NewComplete({}) {
         <section className="mb-4 flex flex-col gap-x-5 px-5">
             <div className="flex flex-row gap-6">
                 <div
-                    onClick={() => setActive('New')}
+                    onClick={() => setStatus('New')}
                     className="relative"
                     onMouseEnter={() => setHoverNew(() => true)}
                     onMouseLeave={() => setHoverNew(() => false)}
                 >
                     <p className="pb-3 text-base">
-                        New <span className="text-sm">0</span>{' '}
+                        New <span className="text-sm">{totalOrders}</span>{' '}
                     </p>
                     <AnimatePresence>
-                        {(hoverNew || active == 'New') && (
+                        {(hoverNew || status == 'New') && (
                             <motion.div
                                 key={hoverNew}
                                 variants={variant(hoverNew, 'New')}
@@ -42,7 +49,7 @@ function NewComplete({}) {
                                 initial={'initial'}
                                 exit={'exit'}
                                 className={`bottom-[calc(0px - 2px)] absolute h-[2px] w-full ${
-                                    active === 'New' ? 'bg-black' : ''
+                                    status === 'New' ? 'bg-black' : ''
                                 }`}
                             />
                         )}
@@ -50,13 +57,13 @@ function NewComplete({}) {
                 </div>
                 <div
                     className="relative"
-                    onClick={() => setActive('Completed')}
+                    onClick={() => setStatus('Completed')}
                     onMouseEnter={() => setHoverComplete(() => true)}
                     onMouseLeave={() => setHoverComplete(() => false)}
                 >
                     <p className="pb-3 text-base">Completed</p>
                     <AnimatePresence>
-                        {(hoverComplete || active == 'Completed') && (
+                        {(hoverComplete || status == 'Completed') && (
                             <motion.div
                                 key={hoverComplete}
                                 variants={variant(hoverComplete, 'Completed')}
@@ -64,7 +71,7 @@ function NewComplete({}) {
                                 initial={'initial'}
                                 exit={'exit'}
                                 className={`bottom-[calc(0px - 2px)] absolute h-[2px] w-full ${
-                                    active === 'Completed' ? 'bg-black' : ''
+                                    status === 'Completed' ? 'bg-black' : ''
                                 }`}
                             />
                         )}

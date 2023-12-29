@@ -10,6 +10,8 @@ import _ from 'lodash';
 import generateOrderNumber from '../utils/generateOrderNumber.js';
 import Order from '../Models/order.js';
 import DeliveryProfile from '../Models/deliveryProfile.js';
+import mongoose from 'mongoose';
+import dayjs from 'dayjs';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 export const createPaymentIntent = [
@@ -226,13 +228,74 @@ export const getOrderDetails = [
 ];
 
 export const getAdminOrders = asyncHandler(async (req, res, next) => {
-  const orders = await Order.find(null, null, {
-    sort: { createdAt: -1, _id: 1 },
-    populate: {
-      path: 'items.product',
-select: 'title _id images'
-    },
-  });
+  //   const orders = await Order.find(null, null, {
+  //     sort: { createdAt: -1, _id: 1 },
+  //     populate: {
+  //       path: 'items.product',
+  // select: 'title _id images'
+  //     },
+  //   });
+  const { status } = req.body;
+  const newValueArray = ['received', 'processing'];
+  const matchObj =
+    status.toLowerCase() === 'new'
+      ? {
+          $match: { status: { $in: newValueArray } },
+        }
+      : { $match: { status: { $nin: newValueArray } } };
+  const ordersByDate = await Order.aggregate([
+    matchObj,
 
-  res.status(200).send({ orders, success: true });
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'items.product',
+        foreignField: '_id',
+        as: 'productLookup',
+      },
+    },
+    {
+      $project: {
+        productLookup: {
+          variations: 0,
+          reviews: 0,
+          detail: 0,
+          category: 0,
+          gender: 0,
+          price: 0,
+          delivery: 0,
+        },
+      },
+    },
+    {
+      $addFields: {
+        'items.product': { $arrayElemAt: ['$productLookup', 0] },
+      },
+    },
+    {
+      $unset: 'productLookup',
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: {
+            format: '%Y-%m-%d',
+            date: dayjs('$shipping_option.delivery_date').toDate(),
+          },
+        },
+        totalDocuments: { $sum: 1 },
+        orders: {
+          $push: '$$ROOT',
+        },
+      },
+    },
+
+    { $sort: { _id: -1 } },
+  ]);
+
+  const totalCount = ordersByDate.reduce(
+    (total, obj) => total + obj.totalDocuments,
+    0,
+  );
+  res.status(200).send({ ordersByDate, success: true, totalCount });
 });

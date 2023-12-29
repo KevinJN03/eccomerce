@@ -6,20 +6,15 @@ function userLogout() {
     const { authDispatch } = useAuth();
 
     const navigate = useNavigate();
-    const [logout, setLogout] = useState();
+
     const logoutRef = useRef(null);
-
-    useEffect(() => {
-        const logoutFunction = ({ error }) => {
-            if (error?.response?.status == 401) {
-                authDispatch({ type: 'LOGOUT' });
-                return navigate('/portal/login');
-            }
-        };
-        setLogout(() => logoutFunction);
-
-        logoutRef.current = logoutFunction;
-    }, []);
+    const logoutFunction = ({ error }) => {
+        if (error?.response?.status == 401) {
+            authDispatch({ type: 'LOGOUT' });
+            return navigate('/portal/login');
+        }
+    };
+    logoutRef.current = logoutFunction;
 
     return { logoutUser: logoutRef.current };
 }

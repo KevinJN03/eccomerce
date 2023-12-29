@@ -60,7 +60,7 @@ router.get('/product', get_all_products);
 
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
-router.get('/orders/all', getAdminOrders);
+router.post('/orders/all', getAdminOrders);
 
 // router.get('/check', checkLogin)
 export default router;
