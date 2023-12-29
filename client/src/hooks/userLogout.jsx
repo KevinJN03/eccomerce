@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ function userLogout() {
 
     const navigate = useNavigate();
     const [logout, setLogout] = useState();
+    const logoutRef = useRef(null);
 
     useEffect(() => {
         const logoutFunction = ({ error }) => {
@@ -16,9 +17,11 @@ function userLogout() {
             }
         };
         setLogout(() => logoutFunction);
+
+        logoutRef.current = logoutFunction;
     }, []);
 
-    return { logoutUser: logout };
+    return { logoutUser: logoutRef.current };
 }
 
 export default userLogout;

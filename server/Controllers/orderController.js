@@ -225,3 +225,14 @@ export const getOrderDetails = [
   }),
 ];
 
+export const getAdminOrders = asyncHandler(async (req, res, next) => {
+  const orders = await Order.find(null, null, {
+    sort: { createdAt: -1, _id: 1 },
+    populate: {
+      path: 'items.product',
+select: 'title _id images'
+    },
+  });
+
+  res.status(200).send({ orders, success: true });
+});

@@ -1,5 +1,5 @@
 import LoginForm from '../../Login-SignUp/loginForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminAxios } from '../../../api/axios';
 import { useAdminContext } from '../../../context/adminContext.jsx';
 
@@ -9,6 +9,7 @@ import { get6MonthsData } from '../../common/months.js';
 function AdminLogin({}) {
     const [error, setError] = useState({ email: null, password: null });
     const [loading, setLoading] = useState(false);
+    const [pageLoad, setPageLoad] = useState(true);
 
     const {
         authAdminUser,
@@ -23,6 +24,7 @@ function AdminLogin({}) {
 
     const navigate = useNavigate();
 
+ 
     const onSubmit = async ({ email, password }) => {
         console.log('test');
         let success = false;
@@ -72,6 +74,7 @@ function AdminLogin({}) {
         }
     };
     return (
+     
         <LoginForm
             onSubmit={onSubmit}
             error={error}

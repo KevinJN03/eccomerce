@@ -65,50 +65,50 @@ const productSchema = new Schema(
 
 productSchema.virtual('id');
 
-productSchema
-  .virtual('minVariationPrice', { localField: 'id', foreignField: 'id' })
-  .get(function () {
-    let minVariationPrice = 10000000;
-    const variations = this.variations;
-    variations.map((item) => {
-      if (item.priceHeader.on) {
-        const { options } = item;
-        for (const [key, value] of options) {
-          minVariationPrice = Math.min(minVariationPrice, value?.price);
-        }
-      }
-    });
+// productSchema
+//   .virtual('minVariationPrice', { localField: 'id', foreignField: 'id' })
+//   .get(function () {
+//     let minVariationPrice = 10000000;
+//     const variations = this.variations;
+//     variations.map((item) => {
+//       if (item.priceHeader.on) {
+//         const { options } = item;
+//         for (const [key, value] of options) {
+//           minVariationPrice = Math.min(minVariationPrice, value?.price);
+//         }
+//       }
+//     });
 
-    if (minVariationPrice == 10000000) {
-      return null;
-    }
-    return parseFloat(minVariationPrice).toFixed(2);
-  });
-productSchema.virtual('isSizePresent').get(function () {
-  const variations = this.variations;
+//     if (minVariationPrice == 10000000) {
+//       return null;
+//     }
+//     return parseFloat(minVariationPrice).toFixed(2);
+//   });
+// productSchema.virtual('isSizePresent').get(function () {
+//   const variations = this.variations;
 
-  let isPresent = false;
+//   let isPresent = false;
 
-  variations.map((variation) => {
-    if (variation.name == 'Size') {
-      isPresent = true;
-    }
-  });
+//   variations.map((variation) => {
+//     if (variation.name == 'Size') {
+//       isPresent = true;
+//     }
+//   });
 
-  return isPresent;
-});
+//   return isPresent;
+// });
 
-productSchema.virtual('isColorPresent').get(function () {
-  const variations = this.variations;
+// productSchema.virtual('isColorPresent').get(function () {
+//   const variations = this.variations;
 
-  let isPresent = false;
+//   let isPresent = false;
 
-  variations.map((variation) => {
-    if (variation.name == 'Colour') {
-      isPresent = true;
-    }
-  });
+//   variations.map((variation) => {
+//     if (variation.name == 'Colour') {
+//       isPresent = true;
+//     }
+//   });
 
-  return isPresent;
-});
+//   return isPresent;
+// });
 export default mongoose.model('product', productSchema);

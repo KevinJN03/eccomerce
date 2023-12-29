@@ -33,6 +33,7 @@ import {
   update_single_delivery_profile,
   getAllOrders,
 } from '../Controllers/deliveryProfileController.js';
+import { getAdminOrders } from '../Controllers/orderController.js';
 const router = express.Router();
 router.get('/product/:id', get_single_admin_product);
 router.get('/product/:id/variation', getVariations);
@@ -59,5 +60,7 @@ router.get('/product', get_all_products);
 
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
+router.get('/orders/all', getAdminOrders);
+
 // router.get('/check', checkLogin)
 export default router;

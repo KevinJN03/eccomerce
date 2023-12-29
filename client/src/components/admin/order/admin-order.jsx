@@ -16,23 +16,28 @@ import Containers from './containers';
 import SideContainer from './sideContainer';
 import NewComplete from './new-complete';
 import EmptyOrders from './empty-orders';
+import userLogout from '../../../hooks/userLogout';
 
 function AdminOrder({}) {
-    const { orders, setModalCheck, adminDispatch } = useAdminContext();
+    const { setModalCheck, adminDispatch } = useAdminContext();
 
     const [loading, setLoading] = useState(false);
 
     const [selection, setSelection] = useState([]);
+    const [orders, setOrders] = useState([]);
 
-    // useEffect(() => {
-    //     adminAxios('/orders')
-    //         .then(({ data }) => {
-    //             setOrders(() => data?.orders);
-    //         })
-    //         .catch((error) => {
-    //             console.error('error while getting orders', error);
-    //         });
-    // }, []);
+    const { logoutUser } = userLogout();
+
+    useEffect(() => {
+        adminAxios('/orders/all')
+            .then(({ data }) => {
+                setOrders(() => data?.orders || []);
+            })
+            .catch((error) => {
+                console.error('error while getting orders', error);
+                logoutUser({ error });
+            });
+    }, []);
     function secondBtnClick(id) {
         adminDispatch({ type: 'order', id });
         setModalCheck(true);

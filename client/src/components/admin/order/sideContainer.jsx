@@ -82,7 +82,7 @@ function SideContainer({}) {
                             animate={{ scale: 1 }}
                             transition={{ duration: 0.1 }}
                             onClick={() => setShow((prevState) => !prevState)}
-                            className="rounded-full border-2 border-black !shadow-lg transition-all active:scale-95"
+                            className="rounded-full border-2 border-black hover:!shadow-my-shadow transition-all active:scale-95"
                         >
                             <Label option={option} />
                         </motion.button>

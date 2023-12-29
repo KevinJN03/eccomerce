@@ -20,7 +20,7 @@ export const checkAdminAuthenticated = AsyncHandler(async (req, res, next) => {
       { adminAccess: 1 },
       { lean: { toObject: true } },
     );
-    if ( findUser?.adminAccess) {
+    if (findUser?.adminAccess) {
       return next();
     }
   }
@@ -29,4 +29,3 @@ export const checkAdminAuthenticated = AsyncHandler(async (req, res, next) => {
     .clearCookie('connect.sid')
     .send({ msg: 'User is not Authenticated' });
 });
-    
