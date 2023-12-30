@@ -2,9 +2,9 @@ function SingleItem({ itemObj }) {
     return (
         <div className="mt-2 flex flex-row gap-3 single-item border-black">
             <img
-                className="h-20 w-20 rounded-md object-cover object-center"
-                src="https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/products/65678b9cd4593491cfa021c3/primary.png
-"
+                className="h-20 w-20 rounded-sm object-cover object-center"
+                src={itemObj.product?.images[0]}
+
                 alt=""
             />
             <div className="product-order-info flex max-w-[400px] flex-col gap-[2px] ">

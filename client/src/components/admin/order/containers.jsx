@@ -4,6 +4,7 @@ import OrderItem from './orderItem';
 import { ClickAwayListener } from '@mui/material';
 
 import Drawer from './drawer';
+import OrderList from './orderList';
 function Containers({ ordersByDate }) {
     const onClickAway = () => {
         if (check) {
@@ -16,7 +17,7 @@ function Containers({ ordersByDate }) {
     return (
         <section className="flex w-full flex-col gap-4 p-5">
             {ordersByDate?.map((item) => {
-                return <OrderItem orderObj={item} key={item?._id} />;
+                return <OrderList orderObj={item} key={item?._id} />;
             })}
 
             <Drawer />

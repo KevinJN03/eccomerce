@@ -216,8 +216,13 @@ h1 {
         //     @apply border-orange-400 [--chkbg:theme(colors.indigo.600)] [--chkfg:orange] checked:border-indigo-800;
     }
     .box-shadow {
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+        box-shadow:
+            rgba(0, 0, 0, 0.16) 0px 3px 6px,
+            rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
-    
-}
 
+    .tooltip-top::before,
+    .tooltip-top::after {
+        // margin: 0;
+    }
+}
