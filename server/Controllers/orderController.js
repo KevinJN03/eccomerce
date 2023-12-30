@@ -249,7 +249,7 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
 
   const ordersByDate = await Order.aggregate([
     matchObj,
-
+    { $unwind: '$items' },
     {
       $lookup: {
         from: 'products',
@@ -271,6 +271,53 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
         },
       },
     },
+    // {
+    //   $unwind: '$productLookup',
+    // },
+    // {
+    //   $addFields: {
+    //     // 'items.product': '$productLookup',
+    //     // 'items.product': { $arrayElemAt: ['$productLookup', 0] },
+    //     $map: {
+    //       input: '$items',
+    //       as: 'singleItem',
+    //       in: {},
+    //     },
+    //   },
+    // },
+
+    // {
+    //   $unset: 'productLookup',
+    // },
+    {
+      $addFields: {
+        dateArray: {
+          $split: ['$shipping_option.delivery_date', ', '],
+        },
+      },
+    },
+
+    // {
+    //   $addFields: {
+    //     newDate: {
+    //       $concat: [
+    //         { $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 0, 2] },
+    //         ' ',
+    //         {
+    //           $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 3, -1],
+    //         },
+
+    //         ' ',
+    //         { $arrayElemAt: ['$dateArray', 2] },
+    //       ],
+    //     },
+    //   },
+    // },
+    // {
+    //   $addFields: {
+    //     updatedDate: { $toDate: '$newDate' },
+    //   },
+    // },
     {
       $addFields: {
         'items.product': { $arrayElemAt: ['$productLookup', 0] },
@@ -280,32 +327,15 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
       $unset: 'productLookup',
     },
     {
-      $addFields: {
-        dateArray: {
-          $split: ['$shipping_option.delivery_date', ', '],
-        },
-      },
-    },
-
-    {
-      $addFields: {
-        newDate: {
-          $concat: [
-            { $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 0, 2] },
-            ' ',
-            {
-              $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 3, -1],
-            },
-
-            ' ',
-            { $arrayElemAt: ['$dateArray', 2] },
-          ],
-        },
+      $group: {
+        _id: '$_id',
+        itemsArray: { $push: '$items' },
+        detail: { $first: '$$ROOT' },
       },
     },
     {
-      $addFields: {
-        updatedDate: { $toDate: '$newDate' },
+      $replaceRoot: {
+        newRoot: { $mergeObjects: ['$detail', { items: '$itemsArray' }] },
       },
     },
 
@@ -329,9 +359,13 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
     { $sort: { _id: -1 } },
   ]);
 
-  const totalCount = ordersByDate.reduce(
-    (total, obj) => total + obj.totalDocuments,
-    0,
-  );
-  res.status(200).send({ ordersByDate, success: true, totalCount });
+  // const totalCount = ordersByDate.reduce(
+  //   (total, obj) => total + obj.totalDocuments,
+  //   0,
+  // );
+  res.status(200).send({
+    ordersByDate,
+    success: true,
+    // totalCount
+  });
 });

@@ -19,12 +19,12 @@ function DrawerContainer() {
                 ?.country
     );
     return (
-        <div className="relative box-border flex h-full w-full max-w-[750px] flex-row gap-1">
+        <div className="relative box-border flex h-full w-full max-w-[800px] flex-row gap-1">
             <div
                 onClick={() => setOpenDrawer(false)}
-                className="cursor-pointer h-fit w-fit rounded-md border-2 border-white bg-transparent p-2"
+                className="h-fit w-fit cursor-pointer rounded-md border-2 border-white bg-transparent p-2"
             >
-                <CloseSharpIcon className='!fill-primary/80'/>
+                <CloseSharpIcon className="!fill-primary/80" />
             </div>
             <div className="h-full w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
@@ -137,20 +137,21 @@ function DrawerContainer() {
                         <p className="flex w-full justify-between font-medium">
                             Standard Delivery <span>£4.99</span>
                         </p>
-                        <div className="flex flex-row gap-3">
-                            <img
-                                src="https://i.etsystatic.com/28351927/r/il/5cf205/4297201722/il_75x75.4297201722_tole.jpg"
-                                className="h-10 w-10 rounded-md"
-                                alt=""
-                            />
-                            <p>
-                                Warm Dog Harness Lead Set Soft Adjustable Fleece
-                                Pet Puppy Vest with Fur Collar
-                            </p>
-                            <p className="flex flex-nowrap gap-2">
-                                Qty <span>1</span>
-                            </p>
-                        </div>
+                        {orderInfo.items?.map((item, idx) => {
+                            return (
+                                <div className="flex flex-row gap-3" key={idx}>
+                                    <img
+                                        src={item.product?.images[0]}
+                                        className="h-10 w-10 rounded-md"
+                                        alt=""
+                                    />
+                                    <p>{item.product?.title}</p>
+                                    <p className="flex flex-nowrap gap-2">
+                                        Qty <span>{item?.quantity}</span>
+                                    </p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </section>
             </div>

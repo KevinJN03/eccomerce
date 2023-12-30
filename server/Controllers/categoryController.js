@@ -32,10 +32,10 @@ export const query_category_products_by_gender = AsyncHandler(
       .populate({
         path: gender.toLowerCase(),
 
-        populate: {
-          model: 'product',
-          path: 'minVariationPrice',
-        },
+        // populate: {
+        //   model: 'product',
+        //   path: 'minVariationPrice',
+        // },
       })
       .exec();
 
