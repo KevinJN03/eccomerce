@@ -3,7 +3,7 @@ import OrderItem from './orderItem';
 
 import { ClickAwayListener } from '@mui/material';
 
-import Drawer from './drawer';
+import Drawer from './drawerContainer';
 import OrderList from './orderList';
 function Containers({ ordersByDate }) {
     const onClickAway = () => {
@@ -20,7 +20,7 @@ function Containers({ ordersByDate }) {
                 return <OrderList orderObj={item} key={item?._id} />;
             })}
 
-            <Drawer />
+            
         </section>
     );
 }

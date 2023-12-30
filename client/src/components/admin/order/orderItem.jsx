@@ -4,19 +4,53 @@ import dayjs from 'dayjs';
 import SingleItem from './singleItem';
 import { useAdminOrderContext } from '../../../context/adminOrder';
 import countryLookup from 'country-code-lookup';
-import { useState } from 'react';
-function OrderItem({ order, date }) {
-    const [showFullAddress, setShowFullAddress] = useState(false);
+import { useRef, useState } from 'react';
+import { adminAxios } from '../../../api/axios';
+import userLogout from '../../../hooks/userLogout';
 
+function OrderItem({ order, date, lastOrderInArray }) {
+    const { setOpenDrawer, setOrderInfo } = useAdminOrderContext();
+    const [showFullAddress, setShowFullAddress] = useState(false);
+    const [copyAddress, setCopyAddress] = useState(false);
     const [address, setAddress] = useState(
         order?.shipping_address?.address || {}
     );
+    const addressRef = useRef(null);
 
+    const { logoutUser } = userLogout();
+    const handleCopy = () => {
+        const addressHtml = addressRef.current?.innerHTML;
+
+        const addressText = addressHtml.replaceAll('<br>', ' ');
+        console.log({ addressText, addressHtml });
+
+        navigator.clipboard.writeText(addressText);
+        setCopyAddress(true);
+    };
+
+    const handleCLick = async () => {
+        let success = false;
+        try {
+            const { data } = await adminAxios.get(`order/${order?._id}`);
+            console.log({ data }, 'here');
+            setOrderInfo(() => data?.order);
+            success = true;
+        } catch (error) {
+            logoutUser({ error });
+            console.error('errow while fetching order', error);
+        } finally {
+            if (success) {
+                setOpenDrawer(true);
+            }
+        }
+    };
     return (
-        <label
-            key={order?._id}
-            htmlFor="my-drawer-4"
-            className="flex w-full cursor-pointer flex-row border-b-2 px-5 py-6 hover:bg-light-grey/30"
+        <section
+            // htmlFor="my-drawer-4"
+            onClick={handleCLick}
+            className={`${
+                lastOrderInArray ? '' : 'border-b-2'
+            } flex w-full cursor-pointer flex-row  px-5 py-6 hover:bg-light-grey/30 `}
         >
             <div className="left ml-5 flex flex-[2] flex-row gap-5">
                 <input
@@ -103,14 +137,13 @@ function OrderItem({ order, date }) {
                         {showFullAddress && (
                             <div>
                                 {' '}
-                                <p>
+                                <p ref={addressRef}>
                                     {address?.line1}
                                     <br />
-                                    {address?.line2 && (
-                                        <>
-                                            {address?.line2} <br />
-                                        </>
-                                    )}
+
+                                    {address?.line2 || ''}
+
+                                    {address?.line2 && <br />}
                                     {`${address?.city}, ${address?.state} ${address?.postal_code}`}
                                     <br />
                                     {
@@ -120,9 +153,24 @@ function OrderItem({ order, date }) {
                                 </p>
                                 <span
                                     className="tooltip tooltip-top"
-                                    data-tooltip="Click to copy to clipboard"
+                                    data-tooltip={
+                                        copyAddress
+                                            ? 'Copied'
+                                            : 'Click to copy to clipboard'
+                                    }
                                 >
-                                    <button className="text-xs text-primary/70 underline underline-offset-1">
+                                    <button
+                                        onMouseLeave={() => {
+                                            if (copyAddress) {
+                                                setCopyAddress(false);
+                                                return;
+                                            }
+
+                                            return;
+                                        }}
+                                        onClick={handleCopy}
+                                        className="text-xs text-primary/70 underline underline-offset-1"
+                                    >
                                         {' '}
                                         Copy address
                                     </button>
@@ -133,7 +181,7 @@ function OrderItem({ order, date }) {
                 </div>
                 <div className="right flex-1 p-2"></div>
             </div>
-        </label>
+        </section>
     );
 }
 

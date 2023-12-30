@@ -11,22 +11,22 @@ const adminAxios = axios.create({
     withCredentials: true,
 });
 
-adminAxios.interceptors.response.use(
-    function (response) {
-        console.log('response: ', response);
+// adminAxios.interceptors.response.use(
+//     function (response) {
+//         // console.log('response: ', response);
 
-        return response;
-    },
-    function (error) {
-        console.log('error here: ', { error });
-        // if (error.response?.status == 401) {
-        //     console.log({ 401: true });
-        //     window.location.replace(`/admin/login`);
-        // }
+//         return response;
+//     },
+//     function (error) {
+//         console.log('error here: ', { error });
+//         // if (error.response?.status == 401) {
+//         //     console.log({ 401: true });
+//         //     window.location.replace(`/admin/login`);
+//         // }
 
-        return Promise.reject(error);
-    }
-);
+//         return Promise.reject(error);
+//     }
+// );
 
 // defaultAxios.interceptors.response.use(function (response) {
 //     console.log('response: ', response);

@@ -23,8 +23,9 @@ function OrderList({ orderObj }) {
                 </p>
             </div>
 
-            {orderObj?.orders?.map((order) => {
-                return <OrderItem order={order} date={date} />;
+            {orderObj?.orders?.map((order, idx) => {
+
+                return <OrderItem order={order} date={date} lastOrderInArray={idx + 1 == orderObj?.totalDocuments}/>;
             })}
         </section>
     );

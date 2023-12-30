@@ -19,6 +19,8 @@ import EmptyOrders from './empty-orders';
 import userLogout from '../../../hooks/userLogout';
 
 import AdminOrderContextProvider from '../../../context/adminOrder';
+import { Drawer } from '@mui/material';
+import DrawerContainer from './drawerContainer';
 
 function AdminOrder({}) {
     const { setModalCheck, adminDispatch } = useAdminContext();
@@ -30,7 +32,8 @@ function AdminOrder({}) {
     const [status, setStatus] = useState('New');
     const { logoutUser } = userLogout();
     const [totalOrders, setTotalOrders] = useState(0);
-    console.log({ logoutUser });
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [orderInfo, setOrderInfo] = useState({});
     useEffect(() => {
         adminAxios
             .post('/orders/all', { status })
@@ -62,7 +65,12 @@ function AdminOrder({}) {
         setOrdersByDate,
         status,
         setStatus,
-        totalOrders, setTotalOrders
+        totalOrders,
+        setTotalOrders,
+        openDrawer,
+        setOpenDrawer,
+        orderInfo,
+        setOrderInfo,
     };
     return (
         <AdminOrderContextProvider value={value}>
@@ -81,6 +89,23 @@ function AdminOrder({}) {
                     <SideContainer />
                 </section>
             </section>
+            <Drawer
+                anchor="right"
+                open={openDrawer}
+                onClose={() => setOpenDrawer(false)}
+                PaperProps={{
+                    sx: {
+                        backgroundColor: 'transparent',
+                        boxShadow: 'none'
+                    },
+                }}
+
+                //  sx={{
+                //     backgroundColor: '#eee'
+                //  }}
+            >
+                <DrawerContainer />
+            </Drawer>
         </AdminOrderContextProvider>
     );
 }
