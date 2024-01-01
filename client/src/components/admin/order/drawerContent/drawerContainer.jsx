@@ -1,14 +1,20 @@
-import secure_icon from '../../../assets/icons/secure-document.png';
-import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
-import PersonOutlineTwoToneIcon from '@mui/icons-material/PersonOutlineTwoTone';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { useAdminContext } from '../../../context/adminContext';
-import { useAdminOrderContext } from '../../../context/adminOrder';
+import secure_icon from '../../../../assets/icons/secure-document.png';
+
+import { useAdminContext } from '../../../../context/adminContext';
+import { useAdminOrderContext } from '../../../../context/adminOrder';
 import countryLookup from 'country-code-lookup';
-import CloseSharpIcon from '@mui/icons-material/CloseSharp';
+// import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import { useState } from 'react';
 import dayjs from 'dayjs';
+import AddressContainer from './addressContainer';
+import Receipt from './reciept';
+import {
+    CloseSharp,
+    PersonOutlineTwoTone,
+    AddRounded,
+    ArrowDropDownSharp,
+    CheckRounded,
+} from '@mui/icons-material';
 function DrawerContainer() {
     const { orderInfo, setOpenDrawer } = useAdminOrderContext();
     console.log({ orderInfo });
@@ -19,14 +25,14 @@ function DrawerContainer() {
                 ?.country
     );
     return (
-        <div className="relative box-border flex h-full w-full max-w-[800px] flex-row gap-1">
+        <div className=" flex w-full flex-row gap-1">
             <div
                 onClick={() => setOpenDrawer(false)}
-                className="h-fit w-fit cursor-pointer rounded-md border-2 border-white bg-transparent p-2"
+                className="h-fit w-fit cursor-pointer rounded-md border-2  border-white bg-transparent p-2"
             >
-                <CloseSharpIcon className="!fill-primary/80" />
+                <CloseSharp className="!fill-primary/80" />
             </div>
-            <div className="h-full w-full !bg-white p-8">
+            <div className="!h-full w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">
                         <h3 className="text-xl font-semibold ">
@@ -58,7 +64,7 @@ function DrawerContainer() {
 
                 <div className="flex flex-row gap-5">
                     <span className="flex flex-row flex-nowrap items-center gap-3">
-                        <CheckRoundedIcon />
+                        <CheckRounded />
                         <p className="text-lg font-semibold">Completed</p>
                     </span>
 
@@ -67,13 +73,13 @@ function DrawerContainer() {
                         className="rounded-full border-2 border-black px-4 py-3 font-semibold transition-all hover:scale-x-105 hover:shadow-3xl"
                     >
                         More actions
-                        <ArrowDropDownSharpIcon />
+                        <ArrowDropDownSharp />
                     </button>
                 </div>
 
                 <div className="my-3 flex flex-row gap-3 rounded-sm border-[1px] border-dark-gray p-4">
                     <div className="h-fit w-fit rounded-full bg-dark-gray/50 p-2">
-                        <PersonOutlineTwoToneIcon />
+                        <PersonOutlineTwoTone />
                     </div>
                     <div>
                         <div className="flex flex-row items-center gap-3">
@@ -81,7 +87,7 @@ function DrawerContainer() {
                                 <p className="underline underline-offset-1">
                                     {orderInfo.shipping_address?.name}
                                 </p>
-                                <ArrowDropDownSharpIcon />
+                                <ArrowDropDownSharp />
                             </button>{' '}
                             <p className="underline underline-offset-1">
                                 {orderInfo?.customer}
@@ -104,7 +110,7 @@ function DrawerContainer() {
                         <p>Only you can see this note</p>
                     </div>
                     <button className="flex flex-nowrap items-center gap-1 rounded border-[1px] border-dark-gray/60 px-2 py-2 hover:bg-light-grey/100">
-                        <AddRoundedIcon className="!text-sm" />
+                        <AddRounded className="!text-sm" />
                         <p className="text-xs">Add a private note</p>
                     </button>
                 </div>
@@ -113,47 +119,8 @@ function DrawerContainer() {
                     <p className="text-sm font-semibold">Pre-transit</p>
                     <p className="text-xs">Estimated delivery: 27 Dec-18 Jan</p>
                 </div>
-
-                <section className="flex flex-row justify-between gap-10 border-[1px] border-dark-gray p-4">
-                    <div className="left flex-[1]">
-                        <p className="text-xs text-gray-700/70">Deliver to</p>
-                        <p className="font-medium">
-                            {orderInfo.shipping_address?.name}
-                        </p>
-
-                        <p>{orderInfo.shipping_address?.address?.line1}</p>
-
-                        <p>{`${orderInfo.shipping_address?.address?.city}, ${orderInfo.shipping_address?.address?.state}`}</p>
-                        <p>
-                            {orderInfo.shipping_address?.address?.postal_code}
-                        </p>
-
-                        <p>{country}</p>
-                    </div>
-                    <div className="right flex flex-[3] flex-col gap-1">
-                        <p className="text-xs text-gray-700/70">
-                            Selected by buyer
-                        </p>
-                        <p className="flex w-full justify-between font-medium">
-                            Standard Delivery <span>£4.99</span>
-                        </p>
-                        {orderInfo.items?.map((item, idx) => {
-                            return (
-                                <div className="flex flex-row gap-3" key={idx}>
-                                    <img
-                                        src={item.product?.images[0]}
-                                        className="h-10 w-10 rounded-md"
-                                        alt=""
-                                    />
-                                    <p>{item.product?.title}</p>
-                                    <p className="flex flex-nowrap gap-2">
-                                        Qty <span>{item?.quantity}</span>
-                                    </p>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
+                <AddressContainer country={country} />
+                <Receipt />
             </div>
         </div>
     );

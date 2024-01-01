@@ -20,7 +20,7 @@ import userLogout from '../../../hooks/userLogout';
 
 import AdminOrderContextProvider from '../../../context/adminOrder';
 import { Drawer } from '@mui/material';
-import DrawerContainer from './drawerContainer';
+import DrawerContainer from './drawerContent/drawerContainer';
 
 function AdminOrder({}) {
     const { setModalCheck, adminDispatch } = useAdminContext();
@@ -96,7 +96,10 @@ function AdminOrder({}) {
                 PaperProps={{
                     sx: {
                         backgroundColor: 'transparent',
-                        boxShadow: 'none'
+                        boxShadow: 'none',
+                        width: '50%',
+                        minHeight: '100vh',
+                        
                     },
                 }}
 
