@@ -164,8 +164,13 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
 
   const order = await Order.findOne({ _id: id?.toUpperCase() }, null, {
     populate: {
-      path: 'items.product',
+      path: 'items.product customer',
+      select: 'tittle _id images firstName lastName email',
     },
+    // populate: {
+    //   path: 'customer',
+    //   select: 'firstName'
+    // }
   });
 
   if (!order) {

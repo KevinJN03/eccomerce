@@ -239,7 +239,7 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
   //     },
   //   });
   const { status } = req.body;
-  const newValueArray = ['received', 'processing'];
+  const newValueArray = ['received'];
   const matchObj =
     status.toLowerCase() === 'new'
       ? {
@@ -359,13 +359,13 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
     { $sort: { _id: -1 } },
   ]);
 
-  // const totalCount = ordersByDate.reduce(
-  //   (total, obj) => total + obj.totalDocuments,
-  //   0,
-  // );
+  const totalCount = ordersByDate.reduce(
+    (total, obj) => total + obj.totalDocuments,
+    0,
+  );
   res.status(200).send({
     ordersByDate,
     success: true,
-    // totalCount
+    totalCount,
   });
 });

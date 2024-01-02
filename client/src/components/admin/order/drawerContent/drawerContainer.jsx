@@ -89,8 +89,8 @@ function DrawerContainer() {
                                 </p>
                                 <ArrowDropDownSharp />
                             </button>{' '}
-                            <p className="underline underline-offset-1">
-                                {orderInfo?.customer}
+                            <p className="underline underline-offset-1 text-xxs align-baseline">
+                                {orderInfo.customer?._id}
                             </p>
                         </div>
 
