@@ -171,7 +171,7 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
     //   path: 'customer',
     //   select: 'firstName'
     // }
-  });
+  });   
 
   if (!order) {
     return res.status(404).send({ msg: 'Order not dfound.', success: false });
