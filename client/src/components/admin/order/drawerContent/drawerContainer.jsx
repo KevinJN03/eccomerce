@@ -15,6 +15,8 @@ import {
     ArrowDropDownSharp,
     CheckRounded,
 } from '@mui/icons-material';
+import PrivateNote from './privateNote';
+import UserInfo from './userInfo';
 function DrawerContainer() {
     const { orderInfo, setOpenDrawer } = useAdminOrderContext();
     console.log({ orderInfo });
@@ -25,12 +27,14 @@ function DrawerContainer() {
                 ?.country
     );
     return (
-        <div className=" flex w-full flex-row gap-1">
-            <div
-                onClick={() => setOpenDrawer(false)}
-                className="h-fit w-fit cursor-pointer rounded-md border-2  border-white bg-transparent p-2"
-            >
-                <CloseSharp className="!fill-primary/80" />
+        <div className=" relative flex w-full flex-row gap-1 ">
+            <div className="relative h-fit w-12 bg-transparent">
+                <div
+                    onClick={() => setOpenDrawer(false)}
+                    className="flex cursor-pointer items-center justify-center  rounded-md border-2 border-white p-2 fixed top-2"
+                >
+                    <CloseSharp className="!fill-primary/80" />
+                </div>
             </div>
             <div className="!h-full w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
@@ -77,43 +81,9 @@ function DrawerContainer() {
                     </button>
                 </div>
 
-                <div className="my-3 flex flex-row gap-3 rounded-sm border-[1px] border-dark-gray p-4">
-                    <div className="h-fit w-fit rounded-full bg-dark-gray/50 p-2">
-                        <PersonOutlineTwoTone />
-                    </div>
-                    <div>
-                        <div className="flex flex-row items-center gap-3">
-                            <button className="flex flex-row items-center">
-                                <p className="underline underline-offset-1">
-                                    {orderInfo.shipping_address?.name}
-                                </p>
-                                <ArrowDropDownSharp />
-                            </button>{' '}
-                            <p className="underline underline-offset-1 text-xxs align-baseline">
-                                {orderInfo.customer?._id}
-                            </p>
-                        </div>
+               <UserInfo/>
 
-                        <p className="underline underline-offset-1 hover:no-underline">
-                            Order history
-                        </p>
-                    </div>
-                </div>
-
-                <div className="my-3 flex flex-row justify-between gap-3 rounded-sm border-[1px] border-dark-gray p-4">
-                    <div className="left flex items-center gap-3">
-                        <img
-                            src={secure_icon}
-                            alt="secure document icon"
-                            className="h-6 w-6"
-                        />
-                        <p>Only you can see this note</p>
-                    </div>
-                    <button className="flex flex-nowrap items-center gap-1 rounded border-[1px] border-dark-gray/60 px-2 py-2 hover:bg-light-grey/100">
-                        <AddRounded className="!text-sm" />
-                        <p className="text-xs">Add a private note</p>
-                    </button>
-                </div>
+                <PrivateNote />
 
                 <div className="mb-3">
                     <p className="text-sm font-semibold">Pre-transit</p>

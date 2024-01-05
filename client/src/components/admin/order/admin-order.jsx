@@ -21,11 +21,12 @@ import userLogout from '../../../hooks/userLogout';
 import AdminOrderContextProvider from '../../../context/adminOrder';
 import { Drawer } from '@mui/material';
 import DrawerContainer from './drawerContent/drawerContainer';
+import GLoader from '../../Login-SignUp/socialRegister/gloader';
 
 function AdminOrder({}) {
     const { setModalCheck, adminDispatch } = useAdminContext();
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [selection, setSelection] = useState([]);
     const [ordersByDate, setOrdersByDate] = useState([]);
@@ -34,29 +35,83 @@ function AdminOrder({}) {
     const [totalOrders, setTotalOrders] = useState(0);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [orderInfo, setOrderInfo] = useState({});
+
+    const [selectionSet, setSelectionSet] = useState(() => new Set());
+    const [checkAllSelection, setCheckAllSelection] = useState(false);
+    const [orderPerPage, setOrderPerPage] = useState(20);
+    const [allOrderPerPage, setAllOrderPerPage] = useState([]);
+    const [numberOfPage, setNumberOfPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const getResultForPage = (orderArray) => {
+        const resultArray = [];
+        let remainingAmount = orderPerPage;
+        const newOrdersArray = orderArray;
+        for (let i = 0; i < newOrdersArray.length; i++) {
+            // get remain value of order
+            if (remainingAmount <= 0) {
+                break;
+            }
+            if (newOrdersArray[i].totalDocuments <= remainingAmount) {
+                resultArray.push(newOrdersArray[i]);
+                remainingAmount -= newOrdersArray[i].totalDocuments;
+            } else {
+                const newOrders = newOrdersArray[i].orders.slice(
+                    0,
+                    remainingAmount
+                );
+
+                resultArray.push({
+                    ...newOrdersArray[i],
+                    orders: newOrders,
+                });
+
+                remainingAmount -= newOrders.length;
+            }
+        }
+
+        return resultArray;
+    };
+
+    const fetchData = async () => {
+        try {
+            const { data } = await adminAxios.post('/orders/all', { status });
+            setOrdersByDate(() => data?.ordersByDate || []);
+            setTotalOrders(() => data?.totalCount);
+            const resultForPage = getResultForPage(data?.ordersByDate);
+            setAllOrderPerPage(resultForPage);
+            setNumberOfPage(Math.ceil(data?.totalCount / orderPerPage));
+        } catch (error) {
+            console.error('error while getting orders', error);
+            logoutUser({ error });
+        } finally {
+            setTimeout(() => {
+                setLoading(false);
+            }, 1200);
+        }
+    };
     useEffect(() => {
-        adminAxios
-            .post('/orders/all', { status })
-            .then(({ data }) => {
-                setOrdersByDate(() => data?.ordersByDate || []);
-                setTotalOrders(() => data?.totalCount);
-            })
-            .catch((error) => {
-                console.error('error while getting orders', error);
-                logoutUser({ error });
-            });
+        if (ordersByDate.length > 0) {
+            setLoading(() => true);
+            const resultForPage = getResultForPage(ordersByDate);
+            setAllOrderPerPage(resultForPage);
+
+            const totalNumberOfPage = Math.ceil(totalOrders / orderPerPage)
+            console.log({totalNumberOfPage})
+            setNumberOfPage(totalNumberOfPage);
+            setTimeout(() => {
+                setLoading(() => false);
+            }, 1200);
+        }
+    }, [orderPerPage]);
+
+    useEffect(() => {
+        setLoading(true);
+
+        fetchData();
+    }, [status]);
+    useEffect(() => {
+        fetchData();
     }, []);
-    // function secondBtnClick(id) {
-    //     adminDispatch({ type: 'order', id });
-    //     setModalCheck(true);
-    // }
-    // const dataTableActionColumn = actionColumn({
-    //     selection,
-    //     viewBtn: false,
-    //     secondBtnClick: (id) => secondBtnClick(id),
-    //     disableDelete: true,
-    //     buttonText: 'Update',
-    // });
 
     const value = {
         loading,
@@ -71,6 +126,14 @@ function AdminOrder({}) {
         setOpenDrawer,
         orderInfo,
         setOrderInfo,
+        selectionSet,
+        setSelectionSet,
+        checkAllSelection,
+        setCheckAllSelection,
+        orderPerPage,
+        setOrderPerPage,
+        numberOfPage,
+        setNumberOfPage,
     };
     return (
         <AdminOrderContextProvider value={value}>
@@ -80,11 +143,17 @@ function AdminOrder({}) {
                     <section className="left flex-[4]">
                         <SubHeader />
                         <NewComplete />
+                        {loading ? (
+                            <section className="mt-14 flex min-w-full justify-center">
+                                <GLoader />
+                            </section>
+                        ) : (
+                            <>
+                                <PageOptions />
 
-                        <PageOptions />
-
-                        <Containers ordersByDate={ordersByDate} />
-                        {/* <EmptyOrders /> */}
+                                <Containers ordersByDate={allOrderPerPage} />
+                            </>
+                        )}
                     </section>
                     <SideContainer />
                 </section>
@@ -99,13 +168,8 @@ function AdminOrder({}) {
                         boxShadow: 'none',
                         width: '50%',
                         minHeight: '100vh',
-                        
                     },
                 }}
-
-                //  sx={{
-                //     backgroundColor: '#eee'
-                //  }}
             >
                 <DrawerContainer />
             </Drawer>
@@ -114,17 +178,3 @@ function AdminOrder({}) {
 }
 
 export default AdminOrder;
-{
-    /* {Object.keys(orders).length > 0 && (
-                <Datatable
-                    type={'Order'}
-                    column={column}
-                    row={orders}
-                    loading={loading}
-                    setLoading={setLoading}
-                    actionColumn={dataTableActionColumn}
-                    setSelection={setSelection}
-                    selection={selection}
-                />
-            )} */
-}

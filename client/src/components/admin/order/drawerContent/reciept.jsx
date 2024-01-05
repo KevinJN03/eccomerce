@@ -19,7 +19,7 @@ function Receipt({}) {
                 Receipt <span className=" align-top font-gotham">#</span>
                 {orderInfo?._id}
             </h3>
-            <section className=" border-[1px] p-4">
+            <section className=" border-[1px] p-4 rounded-sm">
                 {/* <p className='font-medium'>{orderInfo?.items?.length} Item(s)</p> */}
                 <table className="w-full ">
                     <colgroup>
@@ -122,7 +122,7 @@ function Receipt({}) {
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={3} className="border-b-2 pb-4 pt-1">
+                            <td colSpan={3} className="border-b-[1px]  pb-4 pt-1">
                                 <p className="flex justify-between font-medium">
                                     Subtotal
                                     <span className="!text-right">
@@ -136,7 +136,7 @@ function Receipt({}) {
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={3} className=" border-b-2 py-4">
+                            <td colSpan={3} className=" border-b-[1px] py-4">
                                 <p className="flex justify-between">
                                     Postage price
                                     <span className="!text-right">

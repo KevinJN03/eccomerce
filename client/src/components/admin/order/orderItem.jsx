@@ -9,7 +9,8 @@ import { adminAxios } from '../../../api/axios';
 import userLogout from '../../../hooks/userLogout';
 
 function OrderItem({ order, date, lastOrderInArray }) {
-    const { setOpenDrawer, setOrderInfo } = useAdminOrderContext();
+    const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
+        useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
     const [address, setAddress] = useState(
@@ -28,9 +29,27 @@ function OrderItem({ order, date, lastOrderInArray }) {
         setCopyAddress(true);
     };
 
-    const handleCLick = async () => {
+    const isOrderInSet = selectionSet?.has(order?._id);
+
+    const toggleSelection = () => {
+        setSelectionSet((prevSet) => {
+            const newSet = new Set(prevSet);
+            if (prevSet?.has(order?._id)) {
+                newSet.delete(order._id);
+            } else {
+                newSet.add(order?._id);
+            }
+            return newSet;
+        });
+    };
+
+    const handleClick = async (e) => {
         let success = false;
         try {
+ 
+            if (e.target.classList?.contains('disable-drawer')) {
+                return;
+            }
             const { data } = await adminAxios.get(`order/${order?._id}`);
             console.log({ data }, 'here');
             setOrderInfo(() => data?.order);
@@ -44,19 +63,26 @@ function OrderItem({ order, date, lastOrderInArray }) {
             }
         }
     };
+    
     return (
         <section
             // htmlFor="my-drawer-4"
-            onClick={handleCLick}
+            onClick={handleClick}
             className={`${
                 lastOrderInArray ? '' : 'border-b-2'
-            } flex w-full cursor-pointer flex-row  px-5 py-6 hover:bg-light-grey/30 `}
+            } flex w-full cursor-pointer flex-row  px-5 py-6 ${
+                isOrderInSet
+                    ? 'bg-green-400/20 hover:bg-green-400/30'
+                    : '  hover:bg-light-grey/30'
+            }`}
         >
             <div className="left ml-5 flex flex-[2] flex-row gap-5">
                 <input
+                    checked={isOrderInSet}
+                    onChange={toggleSelection}
                     type="checkbox"
                     id=""
-                    className="daisy-checkbox  daisy-checkbox-sm mt-2 rounded-sm"
+                    className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
                 />
                 <div className="flex-col">
                     <p className="flex flex-row items-center gap-1">
@@ -116,10 +142,11 @@ function OrderItem({ order, date, lastOrderInArray }) {
                             onClick={() =>
                                 setShowFullAddress((prevState) => !prevState)
                             }
-                            className="text-s active:border-2 active:border-light-grey"
+                            id="deliver-to"
+                            className="disable-drawer w-fit text-s active:border-2 active:border-light-grey"
                         >
                             Deliver To{' '}
-                            <ExpandMoreRoundedIcon className="!text-lg" />
+                            <ExpandMoreRoundedIcon className="!text-lg disable-drawer" />
                         </button>
                         <p className="text-xs font-semibold">
                             {order.shipping_address?.name}
@@ -160,6 +187,7 @@ function OrderItem({ order, date, lastOrderInArray }) {
                                     }
                                 >
                                     <button
+                                        id="copy-address"
                                         onMouseLeave={() => {
                                             if (copyAddress) {
                                                 setCopyAddress(false);
@@ -169,7 +197,7 @@ function OrderItem({ order, date, lastOrderInArray }) {
                                             return;
                                         }}
                                         onClick={handleCopy}
-                                        className="text-xs text-primary/70 underline underline-offset-1"
+                                        className="disable-drawer text-xs text-primary/70 underline underline-offset-1"
                                     >
                                         {' '}
                                         Copy address

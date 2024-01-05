@@ -3,7 +3,7 @@ import { useAdminOrderContext } from '../../../../context/adminOrder';
 function AddressContainer({country}) {
     const { orderInfo } = useAdminOrderContext();
     return (
-        <section className="flex flex-row justify-between gap-10 border-[1px] border-dark-gray p-4">
+        <section className="flex flex-row justify-between gap-10 border-[1px] p-4 rounded-sm">
             <div className="left flex-[1]">
                 <p className="mb-1 text-xs text-gray-700/70">Deliver to</p>
                 <p className="font-medium">

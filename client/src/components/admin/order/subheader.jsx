@@ -1,22 +1,38 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useState } from 'react';
+import { useAdminOrderContext } from '../../../context/adminOrder';
+import { forEach } from 'lodash';
 
 function SubHeader({}) {
     const [check, setCheck] = useState(false);
+
+    const { selectionSet, setSelectionSet } = useAdminOrderContext();
+
+    const toggleSelection = () => {
+        const orderNumberArray = [];
+        if (selectionSet?.size > 0) {
+            setSelectionSet(() => new Set());
+        }else {
+            
+        }
+    };
+
     return (
         <section className="subheader flex flex-row gap-x-3 px-5 pb-6 pt-5">
             <div
                 className={`${
-                    check ? 'bg-black text-white' : ''
+                    selectionSet?.size ? 'bg-black text-white' : ''
                 } flex max-w-20 flex-row items-center rounded-sm border-[1px] p-2`}
             >
                 <input
-                    checked={check}
-                    onChange={() => setCheck((prevState) => !prevState)}
+                    checked={selectionSet?.size}
+                    onChange={toggleSelection}
                     type="checkbox"
                     className="daisy-checkbox daisy-checkbox-xs mr-2 rounded-sm checked:border-orange-400"
                 />
-                <p className="font-gotham text-sm text-inherit">0</p>
+                <p className="font-gotham text-sm text-inherit">
+                    {selectionSet?.size}
+                </p>
                 <ArrowDropDownSharpIcon className="!fill-dark-gray" />
             </div>
             <button
