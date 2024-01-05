@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import { check, validationResult } from 'express-validator';
 import User from '../Models/user';
 import jwt from 'jsonwebtoken';
-import PasswordReset from '../React Email/emails/passwordreset';
+import PasswordReset from '../React Email/emails/passwordreset.jsx';
 import 'dotenv/config';
 import transporter from '../utils/nodemailer';
 import bcrypt from 'bcryptjs';
