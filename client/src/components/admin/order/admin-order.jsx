@@ -42,6 +42,47 @@ function AdminOrder({}) {
     const [allOrderPerPage, setAllOrderPerPage] = useState([]);
     const [numberOfPage, setNumberOfPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+
+    const getCurrentPageResult = (totalNumberOfPage) => {
+        // need a start and end point
+        // 0 - 1
+        // current -1 * order per page
+        let remainingAmount = orderPerPage;
+        let startingPoint = null;
+
+        if (totalNumberOfPage >= currentPage) {
+            startingPoint = (orderPerPage * (currentPage - 1));
+        } else {
+            startingPoint = 0;
+            setCurrentPage(1);
+        }
+
+        const resultArray = [];
+
+        for (let i = 0; i < ordersByDate.length; i++) {
+            if (remainingAmount <= 0) {
+                break;
+            }
+            if (ordersByDate[i].totalDocuments <= startingPoint) {
+                startingPoint -= ordersByDate[i].totalDocuments;
+                continue;
+            } else {
+                const newOrders = ordersByDate[i].orders.slice(
+                    startingPoint,
+                    remainingAmount
+                );
+
+                resultArray.push({
+                    ...ordersByDate[i],
+                    orders: newOrders,
+                });
+                startingPoint = 0;
+                remainingAmount -= newOrders.length;
+            }
+        }
+
+        return resultArray;
+    };
     const getResultForPage = (orderArray) => {
         const resultArray = [];
         let remainingAmount = orderPerPage;
@@ -80,6 +121,7 @@ function AdminOrder({}) {
             const resultForPage = getResultForPage(data?.ordersByDate);
             setAllOrderPerPage(resultForPage);
             setNumberOfPage(Math.ceil(data?.totalCount / orderPerPage));
+            setCurrentPage(1);
         } catch (error) {
             console.error('error while getting orders', error);
             logoutUser({ error });
@@ -92,11 +134,12 @@ function AdminOrder({}) {
     useEffect(() => {
         if (ordersByDate.length > 0) {
             setLoading(() => true);
-            const resultForPage = getResultForPage(ordersByDate);
-            setAllOrderPerPage(resultForPage);
+            // const resultForPage = getResultForPage(ordersByDate);
+            // setAllOrderPerPage(resultForPage);
+            const totalNumberOfPage = Math.ceil(totalOrders / orderPerPage);
+            setAllOrderPerPage(() => getCurrentPageResult(totalNumberOfPage));
 
-            const totalNumberOfPage = Math.ceil(totalOrders / orderPerPage)
-            console.log({totalNumberOfPage})
+            console.log({ totalNumberOfPage });
             setNumberOfPage(totalNumberOfPage);
             setTimeout(() => {
                 setLoading(() => false);
@@ -112,6 +155,16 @@ function AdminOrder({}) {
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        setLoading(true);
+
+        setAllOrderPerPage(() => getCurrentPageResult(numberOfPage));
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 1200);
+    }, [currentPage]);
 
     const value = {
         loading,
@@ -134,6 +187,8 @@ function AdminOrder({}) {
         setOrderPerPage,
         numberOfPage,
         setNumberOfPage,
+        currentPage,
+        setCurrentPage,
     };
     return (
         <AdminOrderContextProvider value={value}>

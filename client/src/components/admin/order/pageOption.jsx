@@ -3,16 +3,29 @@ import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import { useAdminOrderContext } from '../../../context/adminOrder';
 import { v4 as uuidv4 } from 'uuid';
 function PageOptions({}) {
-    const { orderPerPage, setOrderPerPage, numberOfPage } =
-        useAdminOrderContext();
+    const {
+        orderPerPage,
+        setOrderPerPage,
+        numberOfPage,
+        currentPage,
+        setCurrentPage,
+    } = useAdminOrderContext();
 
-        const previousPage = () => {
-
+    const previousPage = () => {
+        if (currentPage == 1) {
+            return;
         }
 
-        const nextPage = () => {
+        setCurrentPage((prevPage) => prevPage - 1);
+    };
 
+    const nextPage = () => {
+        if (currentPage == numberOfPage) {
+            return;
         }
+
+        setCurrentPage((prevPage) => prevPage + 1);
+    };
     return (
         <section className="flex w-full flex-row items-center justify-end gap-3 px-5 py-3">
             <select
@@ -34,13 +47,18 @@ function PageOptions({}) {
                     <div className="flex flex-row items-center gap-2">
                         <p className="text-base">Page</p>
                         <select
+                            onChange={(e) => setCurrentPage(e.target.value)}
                             name="page"
                             id="page-select"
                             className="rounded-sm border-[1px] border-dark-gray p-2 "
                         >
                             {[...Array(numberOfPage).keys()].map((value) => {
                                 return (
-                                    <option value={value + 1} key={uuidv4()}>
+                                    <option
+                                        value={value + 1}
+                                        selected={value + 1 == currentPage}
+                                        key={uuidv4()}
+                                    >
                                         {value + 1}
                                     </option>
                                 );
@@ -48,9 +66,21 @@ function PageOptions({}) {
                         </select>
                     </div>
                     <p className="text-base">of {numberOfPage}</p>
-                    <div className="flex flex-row items-center gap-5">
-                        <ArrowBackIosRoundedIcon />
-                        <ArrowForwardIosRoundedIcon />
+                    <div className="flex flex-row items-center gap-4">
+                        <button
+                            onClick={previousPage}
+                            disabled={currentPage == 1}
+                            className="disabled:opacity-50"
+                        >
+                            <ArrowBackIosRoundedIcon className="!fill-dark-gray !text-xl hover:!fill-dark-gray/90" />
+                        </button>
+                        <button
+                            onClick={nextPage}
+                            disabled={currentPage == numberOfPage}
+                            className="disabled:opacity-50"
+                        >
+                            <ArrowForwardIosRoundedIcon className="!fill-dark-gray !text-xl hover:!fill-dark-gray/90" />
+                        </button>
                     </div>
                 </>
             )}
