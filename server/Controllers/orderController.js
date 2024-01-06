@@ -249,7 +249,7 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
 
   const ordersByDate = await Order.aggregate([
     matchObj,
-    { $unwind: '$items' },
+    { $unwind: '$items' },   
     {
       $lookup: {
         from: 'products',
