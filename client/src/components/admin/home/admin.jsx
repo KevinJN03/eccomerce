@@ -24,24 +24,24 @@ import UpdateOrder from '../order/updateOrder';
 
 function Admin({}) {
     const { darkMode } = useDarkMode();
-    'darkMode', darkMode;
-    const {
-        modalCheck,
-        setModalCheck,
-        loading,
-        setLoading,
-        modalContent,
-        adminDispatch,
-    } = useAdminContext();
 
-    const location = useLocation();
-    const views = {
-        manage: <Manage />,
-        select: <SelectVariation />,
-        main: <Main />,
-        update: <Update />,
-        order: <UpdateOrder />,
-    };
+    // const {
+    //     modalCheck,
+    //     setModalCheck,
+    //     loading,
+    //     setLoading,
+    //     modalContent,
+    //     adminDispatch,
+    // } = useAdminContext();
+
+    // const location = useLocation();
+    // const views = {
+    //     manage: <Manage />,
+    //     select: <SelectVariation />,
+    //     main: <Main />,
+    //     update: <Update />,
+    //     order: <UpdateOrder />,
+    // };
 
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
@@ -54,7 +54,7 @@ function Admin({}) {
                         <div className="homeContainer">
                             {/* <Navbar /> */}
                             <Outlet />
-                            {modalCheck && (
+                            {/* {modalCheck && (
                                 <Modal
                                     check={modalCheck}
                                     setCheck={setModalCheck}
@@ -62,7 +62,7 @@ function Admin({}) {
                                     loading={loading}
                                     setLoading={setLoading}
                                 />
-                            )}
+                            )} */}
                         </div>
                     </section>
                 )}

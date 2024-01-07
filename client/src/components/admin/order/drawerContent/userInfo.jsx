@@ -6,26 +6,12 @@ import {
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-
+import variant from '../variant';
 import { ClickAwayListener } from '@mui/material';
 function UserInfo({}) {
     const { orderInfo } = useAdminOrderContext();
 
     const [show, setShow] = useState(false);
-    const variant = {
-        initial: {
-            opacity: 0,
-        },
-        animate: {
-            opacity: 1,
-            transition: {
-                duration: 0.3,
-            },
-        },
-        exit: {
-            opacity: 0,
-        },
-    };
 
     const toggleShow = () => {
         setShow((prevState) => !prevState);

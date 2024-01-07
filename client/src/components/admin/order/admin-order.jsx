@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import Datatable from '../components/users/datatable/datatable';
 import axios, { adminAxios } from '../../../api/axios';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
@@ -22,12 +22,12 @@ import AdminOrderContextProvider from '../../../context/adminOrder';
 import { Drawer } from '@mui/material';
 import DrawerContainer from './drawerContent/drawerContainer';
 import GLoader from '../../Login-SignUp/socialRegister/gloader';
-
+import { adminOrderModalReducer } from '../../../hooks/adminOrderModalReducer';
+import Modal from '../components/modal/modal';
+import views from './modalView/modalView';
+import '../home/admin.scss';
 function AdminOrder({}) {
-    const { setModalCheck, adminDispatch } = useAdminContext();
-
     const [loading, setLoading] = useState(true);
-
     const [selection, setSelection] = useState([]);
     const [ordersByDate, setOrdersByDate] = useState([]);
     const [status, setStatus] = useState('New');
@@ -35,14 +35,19 @@ function AdminOrder({}) {
     const [totalOrders, setTotalOrders] = useState(0);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [orderInfo, setOrderInfo] = useState({});
-
     const [selectionSet, setSelectionSet] = useState(() => new Set());
     const [checkAllSelection, setCheckAllSelection] = useState(false);
     const [orderPerPage, setOrderPerPage] = useState(20);
     const [allOrderPerPage, setAllOrderPerPage] = useState([]);
     const [numberOfPage, setNumberOfPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [currentPageOrders, setCurrentPageOrders] = useState([]);
+    const [modalCheck, setModalCheck] = useState(true);
+    const [modalContent, adminOrderModalContentDispatch] = useReducer(
+        adminOrderModalReducer,
+        'printOrder'
+    );
+    const [modalLoad, setModalLoad] = useState(false);
     const getCurrentPageResult = (totalNumberOfPage) => {
         // need a start and end point
         // 0 - 1
@@ -51,7 +56,7 @@ function AdminOrder({}) {
         let startingPoint = null;
 
         if (totalNumberOfPage >= currentPage) {
-            startingPoint = (orderPerPage * (currentPage - 1));
+            startingPoint = orderPerPage * (currentPage - 1);
         } else {
             startingPoint = 0;
             setCurrentPage(1);
@@ -117,7 +122,11 @@ function AdminOrder({}) {
         try {
             const { data } = await adminAxios.post('/orders/all', { status });
             setOrdersByDate(() => data?.ordersByDate || []);
-            setTotalOrders(() => data?.totalCount);
+
+            if (status == 'New') {
+                setTotalOrders(() => data?.totalCount);
+            }
+
             const resultForPage = getResultForPage(data?.ordersByDate);
             setAllOrderPerPage(resultForPage);
             setNumberOfPage(Math.ceil(data?.totalCount / orderPerPage));
@@ -189,10 +198,19 @@ function AdminOrder({}) {
         setNumberOfPage,
         currentPage,
         setCurrentPage,
+        currentPageOrders,
+        setCurrentPageOrders,
+        allOrderPerPage,
+        modalContent,
+        adminOrderModalContentDispatch,
+        setModalCheck,
     };
     return (
         <AdminOrderContextProvider value={value}>
-            <section className="order-page w-full">
+            <section className='order-page '>
+
+           
+            <section className="w-full">
                 <Header />
                 <section className="flex flex-row gap-7">
                     <section className="left flex-[4]">
@@ -228,6 +246,16 @@ function AdminOrder({}) {
             >
                 <DrawerContainer />
             </Drawer>
+            {modalCheck && (
+                <Modal
+                    check={modalCheck}
+                    setCheck={setModalCheck}
+                    ModalContent={views[modalContent]}
+                    loading={modalLoad}
+                    setLoading={setModalLoad}
+                />
+            )}
+             </section>
         </AdminOrderContextProvider>
     );
 }
