@@ -272,3 +272,8 @@
 p {
     @apply text-s;
 }
+
+.modal-content::-webkit-scrollbar,
+.dropdown-menu::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
