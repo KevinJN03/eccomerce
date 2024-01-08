@@ -46,7 +46,7 @@ function Admin({}) {
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
             <ContentProvider>
-                {location.pathname.split('/')[2] == 'login' ? (
+                {location.pathname.split('/')[2] == 'login' || location.pathname.split('/')[3] == 'download'  ? (
                     <Outlet />
                 ) : (
                     <section className="home">

@@ -66,6 +66,7 @@ import OrderCancel from './components/order/order-cancel.jsx';
 import OrderCancelled from './components/order/order-cancelled.jsx';
 import TemplateProvider from './context/templeteContext.jsx';
 import ErrorTemplate from './components/order/error.jsx';
+import Pdf from './components/admin/order/pdf/pdf.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -298,6 +299,10 @@ function Router({ Header, Footer }) {
                     path: 'test',
                     element: <ErrorTemplate />,
                 },
+                // {
+                //     path: '/admin/orders/download/:id',
+                //     element: <Pdf/>
+                // },
                 {
                     path: '/admin',
                     element: <Admin />,
@@ -315,6 +320,10 @@ function Router({ Header, Footer }) {
                             children: [
                                 { index: true, element: <AdminLogin /> },
                             ],
+                        },
+                        {
+                            path: 'orders/download/:id',
+                            element: <Pdf />,
                         },
                         {
                             path: 'orders',

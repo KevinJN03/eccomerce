@@ -1,7 +1,7 @@
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { useState } from 'react';
 
-function PackingSlipOption({handleClick}) {
+function PackingSlipOption({ handleClick }) {
     const [checks, setChecks] = useState({ 'personalise-note': false });
     return (
         <section className="flex flex-col text-xs">
@@ -16,8 +16,12 @@ function PackingSlipOption({handleClick}) {
                 <KeyboardArrowDownRounded className="relative top-[-2px]" />
             </button>
             <div className="flex w-7/12 flex-col gap-2 self-end  bg-light-grey/40 p-2">
-                <p className='text-xs'>Add anything below to your packing slips.</p>
-                <p className='text-xs'>For gift receipts, only a coupon code can be added.</p>
+                <p className="text-xs">
+                    Add anything below to your packing slips.
+                </p>
+                <p className="text-xs">
+                    For gift receipts, only a coupon code can be added.
+                </p>
 
                 <p className="text-xs font-medium">Shop info</p>
                 <section className="grid grid-cols-2">
@@ -82,6 +86,13 @@ function PackingSlipOption({handleClick}) {
                     <div className="grid grid-cols-2 gap-2 ">
                         <div className="flex flex-row flex-nowrap gap-2">
                             <input
+                            checked={checks?.coupon}
+                                onClick={() => {
+                                    setChecks((prevState) => ({
+                                        ...prevState,
+                                        coupon: !prevState?.coupon,
+                                    }));
+                                }}
                                 type="checkbox"
                                 id={'add-coupon-code'}
                                 className="daisy-checkbox daisy-checkbox-xs rounded"
@@ -89,6 +100,7 @@ function PackingSlipOption({handleClick}) {
                             <p>Add coupon code</p>
                         </div>
                         <select
+                            disabled={checks?.['coupon'] != true}
                             className="daisy-select daisy-select-bordered daisy-select-sm h-fit rounded text-xs"
                             name="promotion-code-option"
                             id="promotion-code-option"
