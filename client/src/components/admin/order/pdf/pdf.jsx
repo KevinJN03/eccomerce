@@ -68,11 +68,13 @@ function Pdf({}) {
             {order?._id && (
                 <Document {...documentProps}>
                     <Page size="A4" className={'p-5'} style={styles.page} wrap >
-                        {/* {order?._id && (
-                            <Html>{html(<OrderReceipt order={order} />)}</Html>
-                        )} */}
+                      
                         <PackingSlip order={order} />
                     </Page>
+                    <Page size="A4" className={'p-5'} style={styles.page} wrap >
+                      
+                      <OrderReceipt order={order} />
+                  </Page>
                 </Document>
             )}
         </PDFViewer>

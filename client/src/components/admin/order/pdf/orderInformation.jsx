@@ -19,7 +19,7 @@ function OrderInformation({ order, feature }) {
             <View
                 id="order-information"
                 style={{
-                    marginTop: '48pt',
+                    marginTop: '40pt',
                     display: 'flex',
                     flexDirection: 'row',
                     flexWrap: 'nowrap',
@@ -186,32 +186,38 @@ function OrderInformation({ order, feature }) {
                                         flexDirection: 'row',
                                         flexWrap: 'nowrap',
                                         borderBottom: '1pt solid black',
-                                        padding: '16pt',
+                                        paddingVertical: '16pt',
                                         width: '100%',
+                                        boxSizing: 'border-box'
                                     }}
                                 >
                                     <View
                                         style={{
                                             height: '40pt',
                                             width: '40pt',
+                                            boxSizing: 'border-box',
+                                            // marginRight: '16pt'
                                         }}
                                     >
                                         <Image
+                                    
                                             src={item.product?.images[0]}
                                             style={{
-                                                height: '100%',
-                                                width: '100%',
+                                                height: '40pt',
+                                                width: '40pt',
                                                 objectFit: 'cover',
                                                 objectPosition: 'center',
                                             }}
                                         />
                                     </View>
                                     <View
-                                        className="py-4 pl-4 pr-24 align-top"
+                                 
                                         style={{
-                                            marginLeft: '16pt',
-                                            paddingRight: '96pt',
+                                            paddingLeft: '24pt',
+                                            paddingRight: '60pt',
                                             verticalAlign: 'top',
+                                            boxSizing: 'border-box',
+                                           
                                         }}
                                     >
                                         <Text
