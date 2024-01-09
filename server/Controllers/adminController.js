@@ -2,11 +2,10 @@
 import User from '../Models/user.js';
 import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
-import { body, check, validationResult } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 import Order from '../Models/order.js';
 import passport from 'passport';
 import 'dotenv/config.js';
-
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
 import OrderShipped from '../React Email/emails/orderShipped.jsx';
@@ -15,8 +14,13 @@ import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import ReturnOrder from '../React Email/emails/returnOrder.jsx';
+import { renderToStream, renderToBuffer } from '@react-pdf/renderer';
+import Pdf from '../pdf/pdf.jsx';
+import { s3PdfUpload } from '../s3Service.js';
+import randomString from 'randomstring';
+import encryptPdf from '../utils/encryptPdf.js';
+import pdfKit from 'pdfkit';
 const stripe = Stripe(process.env.STRIPE_KEY);
-
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
   const todayDate = dayjs()
@@ -167,10 +171,6 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
       path: 'items.product customer',
       select: 'tittle _id images firstName lastName email title',
     },
-    // populate: {
-    //   path: 'customer',
-    //   select: 'firstName'
-    // }
   });
 
   if (!order) {
@@ -322,5 +322,53 @@ export const updateOrder = [
     }
     // res.status(302).redirect('/api/admin/orders');
     res.status(200).send({ success: true, msg: 'order successfully updated!' });
+  }),
+];
+
+export const exportPdf = [
+  asyncHandler(async (req, res, next) => {
+    const { ids } = req.body;
+    console.log({ ids });
+
+    const orders = await Order.find({ _id: { $in: ids } }, null, {
+      populate: {
+        path: 'items.product customer',
+        select: 'tittle _id images firstName lastName email title',
+      },
+
+      lean: { toObject: true },
+    });
+    const sortedOrders = orders?.sort(
+      (a, b) => ids.indexOf(a?._id) - ids.indexOf(b?._id),
+    );
+    const title = randomString.generate({ length: 12, charset: 'numeric' });
+    const generateStream = async () => {
+      return await renderToBuffer(<Pdf orders={sortedOrders} title={title} />);
+    };
+
+    const pdfStream = await generateStream();
+
+    const options = {
+      keyLength: 128,
+      password: 'YOUR_PASSWORD_TO_ENCRYPT',
+      restrictions: {
+        print: 'low',
+        useAes: 'y',
+      },
+    };
+
+    const encryptPdfStream = await encryptPdf(pdfStream, {
+      userPassword: '123',
+      version: 17,
+      compress: true,
+      userProtectionFlag: 4,
+    });
+
+    const sendToS3 = await s3PdfUpload({
+      pdfStream: encryptPdfStream,
+      fileName: `${title}.pdf`,
+    });
+
+    res.status(200).send({ success: true, s3Data: sendToS3 });
   }),
 ];

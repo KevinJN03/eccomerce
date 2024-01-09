@@ -1,3 +1,5 @@
+import { Upload } from '@aws-sdk/lib-storage';
+
 import {
   S3Client,
   PutObjectCommand,
@@ -7,6 +9,32 @@ import {
 } from '@aws-sdk/client-s3';
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
+const s3Client = new S3Client();
+export const s3PdfUpload = async ({ pdfStream, fileName }) => {
+  try {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `files/pdf/${fileName}`,
+      Body: pdfStream,
+
+      ContentType: 'application/pdf',
+    };
+
+    const parallelUploads3 = new Upload({
+      client: s3Client,
+      params,
+    });
+
+    parallelUploads3.on('httpUploadProgress', (progress) => {
+      console.log(progress);
+    });
+
+    const response = await parallelUploads3.done();
+    return response;
+  } catch (error) {
+    console.error('error at s3PdfUpload', error);
+  }
+};
 const s3Upload = async (files, isProfile, folderId = uuidv4()) => {
   // console.log("file:", file)
   let counter = 0;

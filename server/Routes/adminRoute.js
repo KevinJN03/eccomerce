@@ -6,6 +6,7 @@ import {
   getAllUsers,
   getSingleOrder,
   updateOrder,
+  exportPdf,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -61,6 +62,6 @@ router.get('/product', get_all_products);
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
 router.post('/orders/all', getAdminOrders);
-
+router.post('/pdf/export/', exportPdf);
 // router.get('/check', checkLogin)
 export default router;
