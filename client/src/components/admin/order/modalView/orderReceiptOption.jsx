@@ -1,6 +1,34 @@
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 
-function OrderReceiptOption({ handleClick }) {
+function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
+    
+
+    const toggleCheck = (e) => {
+        setPrintChecks((prevState) => ({
+            ...prevState,
+            [property]: {
+                ...prevState?.[property],
+                checks: {
+                    ...prevState?.[property]?.checks,
+                    [e.target.value]:
+                        !prevState?.[property]?.checks?.[e.target.value],
+                },
+            },
+        }));
+    };
+
+    const toggleShopInfo = (e) => {
+        setPrintChecks((prevState) => ({
+            ...prevState,
+            [property]: {
+                ...prevState?.[property],
+                checks: {
+                    ...prevState?.[property]?.checks,
+                    ['shop_info']: (prevState?.[property]?.checks?.['shop_info'] == e.target?.value ? 'none' : e.target?.value )
+                },
+            },
+        }));
+    }
     return (
         <section className="flex flex-col">
             <button
@@ -18,10 +46,14 @@ function OrderReceiptOption({ handleClick }) {
 
                 <div className="flex flex-row flex-nowrap gap-2">
                     <input
+                    onChange={toggleShopInfo}
                         type="checkbox"
+                        checked={checks?.shop_info == 'order_receipt_banner'}
                         name="order-receipt-banner"
                         id="order-receipt-banner"
+                        value={'order_receipt_banner'}
                         className="daisy-checkbox daisy-checkbox-xs rounded"
+                        
                     />
                     <p className="w-20">Order receipt banner</p>
                 </div>
@@ -34,12 +66,18 @@ function OrderReceiptOption({ handleClick }) {
                         'Private notes',
                         'Cost breakdown',
                     ].map((option) => {
+                        const convertOption = option
+                            .replaceAll(' ', '_')
+                            .toLowerCase();
                         return (
                             <div
                                 key={option}
                                 className="flex flex-row flex-nowrap gap-2"
                             >
                                 <input
+                                    onChange={toggleCheck}
+                                    value={convertOption}
+                                    checked={checks?.[convertOption]}
                                     type="checkbox"
                                     id={option?.replaceAll(' ', '-')}
                                     className="daisy-checkbox daisy-checkbox-xs rounded"
@@ -50,10 +88,17 @@ function OrderReceiptOption({ handleClick }) {
                     })}
                 </section>
 
-                <div className="border-t-[1px] border-dark-gray/50 pt-3 mt-2 flex gap-2 flex-nowrap">
-                    <input type="checkbox" id='save-settings' className="daisy-checkbox daisy-checkbox-xs rounded" />
-                    <p className='text-xxs'>
-                    Save these settings for next time
+                <div className="mt-2 flex flex-nowrap gap-2 border-t-[1px] border-dark-gray/50 pt-3">
+                    <input
+                    onChange={toggleCheck}
+                    checked={checks?.save_setting}
+                        type="checkbox"
+                        id="save-settings"
+                        value={'save_setting'}
+                        className="daisy-checkbox daisy-checkbox-xs rounded"
+                    />
+                    <p className="text-xxs">
+                        Save these settings for next time
                     </p>
                 </div>
             </div>

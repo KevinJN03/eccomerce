@@ -38,7 +38,7 @@ Font.register({
   ],
 });
 
-function Pdf({ orders, title }) {
+function Pdf({ orders, title, printChecks }) {
   const documentProps = {
     title,
     author: WEBSITE_URL,
@@ -55,21 +55,31 @@ function Pdf({ orders, title }) {
       password: '123',
     },
   };
+
   return (
-    <Document {...documentProps}>
-      {orders.map((order) => {
-        return (
-          <>
-            <Page size="A4" className={'p-5'} style={styles.page} wrap>
-              <PackingSlip order={order} />
-            </Page>
-            <Page size="A4" className={'p-5'} style={styles.page} wrap>
-              <OrderReceipt order={order} />
-            </Page>
-          </>
-        );
-      })}
-    </Document>
+   
+      <Document {...documentProps}>
+        {orders.map((order) => {
+          return (
+            <>
+              {printChecks.packing_slip?.on && (
+                <Page size="A4" className={'p-5'} style={styles.page} wrap>
+                  <PackingSlip
+                    order={order}
+                    checks={printChecks.packing_slip?.checks}
+                  />
+                </Page>
+              )}
+              {printChecks?.order_receipt?.on && (
+                <Page size="A4" className={'p-5'} style={styles.page} wrap>
+                  <OrderReceipt order={order}  checks={printChecks.order_receipt?.checks}/>
+                </Page>
+              )}
+            </>
+          );
+        })}
+      </Document>
+ 
   );
 }
 

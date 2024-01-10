@@ -7,6 +7,7 @@ function MessageFooter({
     setFooterMessage,
     isInView,
     className,
+    delay,
 }) {
     const footerVariant = {
         initial: {
@@ -21,13 +22,12 @@ function MessageFooter({
             bottom: isInView ? '-64px' : '0px',
 
             transition: {
+                delay: delay || 0,
                 position: {
                     duration: 0,
-                    delay: 0,
                 },
                 bottom: {
                     duration: 0,
-                    delay: 0,
                 },
                 translateY: {
                     duration: 0.5,
@@ -41,7 +41,6 @@ function MessageFooter({
             transition: {
                 translateY: {
                     duration: 0.5,
-                    delay: 0,
                 },
             },
         },

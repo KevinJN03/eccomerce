@@ -1,8 +1,29 @@
 import { KeyboardArrowDownRounded } from '@mui/icons-material';
 import { useState } from 'react';
 
-function PackingSlipOption({ handleClick }) {
-    const [checks, setChecks] = useState({ 'personalise-note': false });
+function PackingSlipOption({
+    handleClick,
+    setPrintChecks,
+    printChecks,
+    property,
+    checks,
+}) {
+    const toggleCheck = (e) => {
+        setPrintChecks((prevState) => ({
+            ...prevState,
+            [property]: {
+                ...prevState?.[property],
+                checks: {
+                    ...prevState?.[property]?.checks,
+                    [e.target.value]:
+                        !prevState?.[property]?.checks?.[e.target.value],
+                },
+            },
+        }));
+    };
+
+    
+
     return (
         <section className="flex flex-col text-xs">
             <button
@@ -28,16 +49,39 @@ function PackingSlipOption({ handleClick }) {
                     <section className="shop-info-option flex flex-col gap-2">
                         {['Shop icon', 'Order receipt banner', 'None'].map(
                             (text) => {
+                                const convertText = text
+                                    .replaceAll(' ', '_')
+                                    .toLowerCase();
                                 return (
                                     <div
                                         key={text}
                                         className="flex flex-nowrap gap-2"
                                     >
                                         <input
+                                            onChange={(e) => {
+                                                setPrintChecks((prevState) => ({
+                                                    ...prevState,
+                                                    [property]: {
+                                                        ...prevState?.[
+                                                            property
+                                                        ],
+                                                        checks: {
+                                                            ...prevState?.[
+                                                                property
+                                                            ]?.checks,
+                                                            ['shop_info']: 
+                                                                e.target.value,
+                                                            
+                                                        },
+                                                    },
+                                                }));
+                                            }}
                                             id={text?.replaceAll(' ', '-')}
                                             type="radio"
                                             className="daisy-radio daisy-radio-xs"
                                             name="shop-info-option"
+                                            checked={checks?.shop_info == convertText}
+                                            value={convertText}
                                         />
                                         <p className="max-w-28">{text}</p>
                                     </div>
@@ -52,6 +96,9 @@ function PackingSlipOption({ handleClick }) {
                             name="dispatch-from"
                             id="dispatch-from"
                             className="daisy-checkbox daisy-checkbox-xs rounded"
+                            value={'dispatch_from'}
+                            onChange={toggleCheck}
+                            checked={checks?.dispatch_from}
                         />
                         <p>Dispatches from</p>
                     </div>
@@ -65,6 +112,10 @@ function PackingSlipOption({ handleClick }) {
                         'Private notes',
                         'Cost breakdown',
                     ].map((option) => {
+
+                        const convertOption = option
+                        .replaceAll(' ', '_')
+                        .toLowerCase();
                         return (
                             <div
                                 key={option}
@@ -74,6 +125,9 @@ function PackingSlipOption({ handleClick }) {
                                     type="checkbox"
                                     id={option?.replaceAll(' ', '-')}
                                     className="daisy-checkbox daisy-checkbox-xs rounded"
+                                    checked={checks?.[convertOption]}
+                                    onChange={toggleCheck}
+                                    value={convertOption}
                                 />
                                 <p>{option}</p>
                             </div>
@@ -86,7 +140,7 @@ function PackingSlipOption({ handleClick }) {
                     <div className="grid grid-cols-2 gap-2 ">
                         <div className="flex flex-row flex-nowrap gap-2">
                             <input
-                            checked={checks?.coupon}
+                                checked={checks?.coupon}
                                 onClick={() => {
                                     setChecks((prevState) => ({
                                         ...prevState,
@@ -121,9 +175,9 @@ function PackingSlipOption({ handleClick }) {
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row flex-nowrap gap-2">
                             <input
-                                checked={checks?.['personalise-note']}
+                                checked={checks?.note}
                                 onChange={() =>
-                                    setChecks((prevState) => ({
+                                    setPrintChecks((prevState) => ({
                                         ...prevState,
                                         'personalise-note':
                                             !prevState?.['personalise-note'],

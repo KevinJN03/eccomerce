@@ -42,7 +42,7 @@ function AdminOrder({}) {
     const [numberOfPage, setNumberOfPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageOrders, setCurrentPageOrders] = useState([]);
-    const [modalCheck, setModalCheck] = useState(true);
+    const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, adminOrderModalContentDispatch] = useReducer(
         adminOrderModalReducer,
         'printOrder'

@@ -3,7 +3,7 @@ import GenerateAddress from './generateAddress.jsx';
 import dayjs from 'dayjs';
 
 import { Text, View, Image, renderToStream } from '@react-pdf/renderer';
-function OrderInformation({ order, feature }) {
+function OrderInformation({ order, feature, checks }) {
   const [fromAddress, setFromAddress] = useState({
     name: 'Kevin Jean',
     address: {
@@ -66,7 +66,7 @@ function OrderInformation({ order, feature }) {
           </Text>
         </View>
 
-        {feature?.fromAddress && (
+        {checks?.dispatch_from && (
           <View id="from-address">
             <Text
               style={{
@@ -143,6 +143,14 @@ function OrderInformation({ order, feature }) {
           flexDirection: 'column',
         }}
       >
+        {checks?.note && (
+          <View style={{ marginBottom: '8pt' }}>
+            <Text style={{ fontWeight: 'semibold' }}>A note from the shop</Text>
+            <Text style={{ width: '100%', whiteSpace: 'normal' }}>
+              {checks?.note}
+            </Text>
+          </View>
+        )}
         <Text
           style={{
             fontWeight: 'semibold',
@@ -168,27 +176,29 @@ function OrderInformation({ order, feature }) {
                   boxSizing: 'border-box',
                 }}
               >
-                <View
-                  style={{
-                    height: '40pt',
-                    width: '40pt',
-                    boxSizing: 'border-box',
-                    // marginRight: '16pt'
-                  }}
-                >
-                  <Image
-                    src={item.product?.images[0]}
+                {checks?.listing_photos && (
+                  <View
                     style={{
                       height: '40pt',
                       width: '40pt',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
+                      boxSizing: 'border-box',
+                      marginRight: '27pt',
+                      // marginRight: '16pt'
                     }}
-                  />
-                </View>
+                  >
+                    <Image
+                      src={item.product?.images[0]}
+                      style={{
+                        height: '40pt',
+                        width: '40pt',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                      }}
+                    />
+                  </View>
+                )}
                 <View
                   style={{
-                    paddingLeft: '24pt',
                     paddingRight: '60pt',
                     verticalAlign: 'top',
                     boxSizing: 'border-box',
@@ -228,89 +238,99 @@ function OrderInformation({ order, feature }) {
           })}
         </View>
 
-        <View
-          id="footer"
-          className=""
-          style={{
-            marginTop: '16pt',
-            width: '50%',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4pt',
-            alignSelf: 'flex-end',
-          }}
-        >
+        {checks?.cost_breakdown && (
           <View
+            id="footer"
+            className=""
             style={{
+              marginVertical: '16pt',
+              width: '50%',
               display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'nowrap',
-              alignItems: 'flex-start',
-              flexDirection: 'row',
+              flexDirection: 'column',
+              gap: '4pt',
+              alignSelf: 'flex-end',
             }}
           >
-            <Text
-            // className="flex w-full justify-between"
-            // style={{
-            //     display: 'flex',
-            //     justifyContent: 'space-between',
-            //     flexWrap: 'nowrap',
-            // }}
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'nowrap',
+                alignItems: 'flex-start',
+                flexDirection: 'row',
+              }}
             >
-              item total
-            </Text>
-            <Text style={{ textAlign: 'right' }}>
-              £
-              {order.items
-                ?.reduce(
-                  (total, currentItem) => (total += currentItem?.price),
-                  0,
-                )
-                ?.toFixed(2)}
-            </Text>
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'nowrap',
-              alignItems: 'flex-start',
-              flexDirection: 'row',
-            }}
-          >
-            <Text>Subtotal</Text>
-            <Text style={{ textAlign: 'right' }}>
-              £{order.transaction_cost?.subtotal?.toFixed(2)}
-            </Text>
-          </View>
+              <Text
+              // className="flex w-full justify-between"
+              // style={{
+              //     display: 'flex',
+              //     justifyContent: 'space-between',
+              //     flexWrap: 'nowrap',
+              // }}
+              >
+                item total
+              </Text>
+              <Text style={{ textAlign: 'right' }}>
+                £
+                {order.items
+                  ?.reduce(
+                    (total, currentItem) => (total += currentItem?.price),
+                    0,
+                  )
+                  ?.toFixed(2)}
+              </Text>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'nowrap',
+                alignItems: 'flex-start',
+                flexDirection: 'row',
+              }}
+            >
+              <Text>Subtotal</Text>
+              <Text style={{ textAlign: 'right' }}>
+                £{order.transaction_cost?.subtotal?.toFixed(2)}
+              </Text>
+            </View>
 
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'nowrap',
-              alignItems: 'flex-start',
-              flexDirection: 'row',
-            }}
-          >
-            <Text>Delivery total</Text>
-            <Text>£{order.shipping_option?.cost?.toFixed(2)}</Text>
-          </View>
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'nowrap',
+                alignItems: 'flex-start',
+                flexDirection: 'row',
+              }}
+            >
+              <Text>Delivery total</Text>
+              <Text>£{order.shipping_option?.cost?.toFixed(2)}</Text>
+            </View>
 
-          <View
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'nowrap',
-              alignItems: 'flex-start',
-              flexDirection: 'row',
-              fontWeight: 'semibold',
-            }}
-          >
-            <Text>Order total</Text>
-            <Text>£{order.transaction_cost?.total?.toFixed(2)}</Text>
+            <View
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'nowrap',
+                alignItems: 'flex-start',
+                flexDirection: 'row',
+                fontWeight: 'semibold',
+              }}
+            >
+              <Text>Order total</Text>
+              <Text>£{order.transaction_cost?.total?.toFixed(2)}</Text>
+            </View>
           </View>
-        </View>
+        )}
+
+        {checks?.note_from_buyer && (
+         <View style={{ }}>
+         <Text style={{ fontWeight: 'semibold' }}>Note from buyer
+</Text>
+            <Text>{checks?.note_from_buyer}</Text>
+          </View>
+        )}
       </View>
     </View>
   );

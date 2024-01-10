@@ -1,5 +1,5 @@
 import { Upload } from '@aws-sdk/lib-storage';
-
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
   S3Client,
   PutObjectCommand,
@@ -10,6 +10,14 @@ import {
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 const s3Client = new S3Client();
+
+export const generateSignedUrl = async (filePath) => {
+  const params = { Bucket: process.env.AWS_BUCKET_NAME, Key: filePath };
+  const command = new GetObjectCommand(params);
+  const url = await getSignedUrl(s3Client, command);
+
+  return url;
+};
 export const s3PdfUpload = async ({ pdfStream, fileName }) => {
   try {
     const params = {
