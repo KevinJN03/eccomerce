@@ -326,11 +326,11 @@ export const updateOrder = [
 
 export const exportPdf = [
   check('ids').escape(),
-  check('printChecks'),
+  check('printChecks.packing_slip.checks.note.text').trim(),
   asyncHandler(async (req, res, next) => {
     const { ids, printChecks } = req.body;
 
-    console.log({ ids, printChecks });
+    console.log({ ids, printChecks: printChecks.packing_slip.checks?.note });
     if (ids.length < 1 || typeof ids != 'object') {
       return res.status(400).send({ success: false });
     }

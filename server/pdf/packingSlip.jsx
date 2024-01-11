@@ -17,7 +17,7 @@ function PackingSlip({ order, checks }) {
  
   return (
     <View style={{ height: '100%', width: '100%' }}>
-      {checks?.shop_icon == 'order_receipt_banner' && (
+      {checks?.shop_info == 'order_receipt_banner' && (
         <View
           style={{
             width: '100%',
@@ -34,7 +34,7 @@ function PackingSlip({ order, checks }) {
       )}
 
       <View style={{display: 'flex', flexDirection: 'row' , alignItems: 'center', gap: '10pt'}}> 
-        {checks?.shop_icon == 'shop_icon' && (
+        {checks?.shop_info == 'shop_icon' && (
           <Image
             src={`${CLOUDFRONT_URL}/files/logos/glamo-black-logo.png`}
             style={{ height: '40pt', width: '40pt', objectFit: 'cover' }}

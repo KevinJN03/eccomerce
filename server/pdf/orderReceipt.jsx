@@ -18,7 +18,7 @@ function OrderReceipt({ order, checks }) {
         width: '100%',
       }}
     >
-      {checks?.shop_icon == 'order_receipt_banner' && (
+      {checks?.shop_info == 'order_receipt_banner' && (
         <View
           style={{
             width: '100%',

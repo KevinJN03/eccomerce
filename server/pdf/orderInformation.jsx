@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GenerateAddress from './generateAddress.jsx';
 import dayjs from 'dayjs';
-
+import{isEmpty }from 'lodash';
 import { Text, View, Image, renderToStream } from '@react-pdf/renderer';
 function OrderInformation({ order, feature, checks }) {
   const [fromAddress, setFromAddress] = useState({
@@ -143,14 +143,15 @@ function OrderInformation({ order, feature, checks }) {
           flexDirection: 'column',
         }}
       >
-        {checks?.note && (
+        {!isEmpty(checks.note?.text) && (
           <View style={{ marginBottom: '8pt' }}>
             <Text style={{ fontWeight: 'semibold' }}>A note from the shop</Text>
             <Text style={{ width: '100%', whiteSpace: 'normal' }}>
-              {checks?.note}
+              {`${checks.note.text}`}
             </Text>
           </View>
         )}
+
         <Text
           style={{
             fontWeight: 'semibold',
@@ -325,9 +326,8 @@ function OrderInformation({ order, feature, checks }) {
         )}
 
         {checks?.note_from_buyer && (
-         <View style={{ }}>
-         <Text style={{ fontWeight: 'semibold' }}>Note from buyer
-</Text>
+          <View style={{}}>
+            <Text style={{ fontWeight: 'semibold' }}>Note from buyer</Text>
             <Text>{checks?.note_from_buyer}</Text>
           </View>
         )}

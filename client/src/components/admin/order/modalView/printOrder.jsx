@@ -20,52 +20,25 @@ function PrintOrder({}) {
     const [printChecks, setPrintChecks] = useState({
         ...defaultChecks,
     });
-    const [footerMessage, setFooterMessage] = useState({
-        success: null,
-        text: null,
-    });
 
     const handleClick = async () => {
         try {
-            setFooterMessage(() => ({
-                success: null,
-                text: 'PDF is getting generated',
-            }));
             const { data } = await adminAxios.post('pdf/export', {
                 ids: Array.from(selectionSet),
 
                 printChecks,
             });
 
-            setFooterMessage(() => ({
-                success: true,
-                text: 'PDF generated, you will be redirected in 3s',
-            }));
-
-            setTimeout(() => {
-                window.open(
-                    `./orders/download/${data.file}`,
-                    '_blank',
-                    'noreferrer'
-                );
-            }, 3000);
+            window.open(
+                `./orders/download/${data.file}`,
+                '_blank',
+                'noreferrer'
+            );
         } catch (error) {
             console.error('error when trying to generatePdf');
-            setFooterMessage(() => ({
-                success: false,
-                text: 'PDF failed to generate!',
-            }));
+        } finally {
+            setModalCheck(() => false);
         }
-    };
-
-    const variants = {
-        initial: {
-            marginBottom: '0px',
-        },
-        animate: {
-            marginBottom: footerMessage?.text ? '60px' : '0px',
-            transition: { duration: 0.6 },
-        },
     };
 
     const cancel = () => {
@@ -151,12 +124,7 @@ function PrintOrder({}) {
                 </section>
             </section>
 
-            <motion.section
-                variants={variants}
-                initial={'initial'}
-                animate={'animate'}
-                className=" flex justify-end gap-3 px-4 py-3"
-            >
+            <section className=" flex justify-end gap-3 px-4 py-3">
                 <button
                     type="button"
                     className="rounded border-[1px] border-light-grey px-3 py-2 text-sm font-medium"
@@ -174,15 +142,7 @@ function PrintOrder({}) {
                 >
                     Print Order(s)
                 </button>
-            </motion.section>
-
-            <MessageFooter
-                className={'!py-4'}
-                delay={0.5}
-                isInView={false}
-                footerMessage={footerMessage}
-                setFooterMessage={setFooterMessage}
-            />
+            </section>
         </section>
     );
 }

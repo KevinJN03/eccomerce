@@ -22,8 +22,6 @@ function PackingSlipOption({
         }));
     };
 
-    
-
     return (
         <section className="flex flex-col text-xs">
             <button
@@ -69,9 +67,8 @@ function PackingSlipOption({
                                                             ...prevState?.[
                                                                 property
                                                             ]?.checks,
-                                                            ['shop_info']: 
+                                                            ['shop_info']:
                                                                 e.target.value,
-                                                            
                                                         },
                                                     },
                                                 }));
@@ -80,7 +77,9 @@ function PackingSlipOption({
                                             type="radio"
                                             className="daisy-radio daisy-radio-xs"
                                             name="shop-info-option"
-                                            checked={checks?.shop_info == convertText}
+                                            checked={
+                                                checks?.shop_info == convertText
+                                            }
                                             value={convertText}
                                         />
                                         <p className="max-w-28">{text}</p>
@@ -112,10 +111,9 @@ function PackingSlipOption({
                         'Private notes',
                         'Cost breakdown',
                     ].map((option) => {
-
                         const convertOption = option
-                        .replaceAll(' ', '_')
-                        .toLowerCase();
+                            .replaceAll(' ', '_')
+                            .toLowerCase();
                         return (
                             <div
                                 key={option}
@@ -175,14 +173,25 @@ function PackingSlipOption({
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row flex-nowrap gap-2">
                             <input
-                                checked={checks?.note}
-                                onChange={() =>
+                                onChange={() => {
                                     setPrintChecks((prevState) => ({
                                         ...prevState,
-                                        'personalise-note':
-                                            !prevState?.['personalise-note'],
-                                    }))
-                                }
+                                        [property]: {
+                                            ...prevState?.[property],
+                                            checks: {
+                                                ...prevState?.[property]
+                                                    ?.checks,
+                                                ['note']: {
+                                                    ...prevState?.[property]
+                                                        .checks?.note,
+                                                    on: !prevState?.[property]
+                                                        .checks.note?.on,
+                                                },
+                                            },
+                                        },
+                                    }));
+                                }}
+                                checked={checks?.note?.on}
                                 type="checkbox"
                                 id={'add-coupon-code'}
                                 className="daisy-checkbox daisy-checkbox-xs rounded"
@@ -190,12 +199,27 @@ function PackingSlipOption({
                             <p>Add a personalised note</p>
                         </div>
 
-                        {checks?.['personalise-note'] && (
+                        {checks.note?.on && (
                             <textarea
+                                onChange={(e) => {
+                                    setPrintChecks((prevState) => ({
+                                        ...prevState,
+                                        [property]: {
+                                            ...prevState?.[property],
+                                            checks: {
+                                                ...prevState?.[property]
+                                                    ?.checks,
+                                                ['note']: {...prevState?.[property]
+                                                    .checks?.note ,text: e.target.value},
+                                            },
+                                        },
+                                    }));
+                                }}
+                                value={checks.note?.text}
                                 name="personalize-note"
                                 id="personalize-note"
                                 rows="3"
-                                className="w-full rounded border-[1px] border-dark-gray/50 focus:outline-4"
+                                className="w-full rounded border-[1px] border-dark-gray/50 p-2 focus:outline-4"
                             ></textarea>
                         )}
                     </div>
