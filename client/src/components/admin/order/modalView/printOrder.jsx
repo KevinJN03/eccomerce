@@ -8,11 +8,12 @@ import { adminAxios } from '../../../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import MessageFooter from '../../../dashboard/messageFooter';
 import { AnimatePresence, motion } from 'framer-motion';
+import UserLogout from '../../../../hooks/userLogout.jsx';
 import defaultChecks from './defaultChecks';
 
 function PrintOrder({}) {
     const { selectionSet, setModalCheck } = useAdminOrderContext();
-
+    const [coupons, setCoupons] = useState({});
     const [showOptions, setShowOptions] = useState({
         packing_slip: false,
         order_receipt: false,
@@ -21,6 +22,19 @@ function PrintOrder({}) {
         ...defaultChecks,
     });
 
+    const { logoutUser } = UserLogout();
+
+    useEffect(() => {
+        adminAxios
+            .get('coupon/all')
+            .then(({ data }) => {
+                setCoupons(() => data?.coupons);
+            })
+            .catch((error) => {
+                console.error('fetching coupons', error);
+                logoutUser({ error });
+            });
+    }, []);
     const handleClick = async () => {
         try {
             const { data } = await adminAxios.post('pdf/export', {
@@ -74,6 +88,7 @@ function PrintOrder({}) {
                         {showOptions?.packing_slip &&
                             printChecks?.['packing_slip']?.on && (
                                 <PackingSlipOption
+                                    coupons={coupons}
                                     setPrintChecks={setPrintChecks}
                                     checks={
                                         printChecks?.['packing_slip']?.checks

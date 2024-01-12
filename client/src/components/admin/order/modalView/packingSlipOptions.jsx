@@ -7,6 +7,7 @@ function PackingSlipOption({
     printChecks,
     property,
     checks,
+    coupons,
 }) {
     const toggleCheck = (e) => {
         setPrintChecks((prevState) => ({
@@ -139,12 +140,8 @@ function PackingSlipOption({
                         <div className="flex flex-row flex-nowrap gap-2">
                             <input
                                 checked={checks?.coupon}
-                                onClick={() => {
-                                    setChecks((prevState) => ({
-                                        ...prevState,
-                                        coupon: !prevState?.coupon,
-                                    }));
-                                }}
+                                onChange={toggleCheck}
+                                value={'coupon'}
                                 type="checkbox"
                                 id={'add-coupon-code'}
                                 className="daisy-checkbox daisy-checkbox-xs rounded"
@@ -152,7 +149,19 @@ function PackingSlipOption({
                             <p>Add coupon code</p>
                         </div>
                         <select
-                            disabled={checks?.['coupon'] != true}
+                            onChange={(e) => {
+                                setPrintChecks((prevState) => ({
+                                    ...prevState,
+                                    [property]: {
+                                        ...prevState?.[property],
+                                        checks: {
+                                            ...prevState?.[property]?.checks,
+                                            ['coupon']: e.target.value,
+                                        },
+                                    },
+                                }));
+                            }}
+                            disabled={!checks?.coupon}
                             className="daisy-select daisy-select-bordered daisy-select-sm h-fit rounded text-xs"
                             name="promotion-code-option"
                             id="promotion-code-option"
@@ -160,10 +169,14 @@ function PackingSlipOption({
                             <option disabled selected>
                                 Select a coupon...
                             </option>
-                            {[1, 2, 3, 4].map((coupon) => {
+                            {coupons?.map((coupon) => {
                                 return (
-                                    <option key={coupon} option value={coupon}>
-                                        {coupon}
+                                    <option
+                                    selected={checks?.coupon == coupon?._id}
+                                        key={coupon?._id}
+                                        value={coupon?._id}
+                                    >
+                                        {coupon?.code}
                                     </option>
                                 );
                             })}
@@ -209,8 +222,11 @@ function PackingSlipOption({
                                             checks: {
                                                 ...prevState?.[property]
                                                     ?.checks,
-                                                ['note']: {...prevState?.[property]
-                                                    .checks?.note ,text: e.target.value},
+                                                ['note']: {
+                                                    ...prevState?.[property]
+                                                        .checks?.note,
+                                                    text: e.target.value,
+                                                },
                                             },
                                         },
                                     }));

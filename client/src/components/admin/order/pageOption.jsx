@@ -27,7 +27,7 @@ function PageOptions({}) {
         setCurrentPage((prevPage) => prevPage + 1);
     };
     return (
-        <section className="flex w-full flex-row items-center justify-end gap-3 px-5 py-3">
+        <section className="flex w-full flex-row items-center justify-end gap-3  py-3">
             <select
                 onChange={(e) => setOrderPerPage(parseInt(e.target.value))}
                 className="select w-full max-w-[220px] rounded-sm border-[1px] border-dark-gray font-semibold"

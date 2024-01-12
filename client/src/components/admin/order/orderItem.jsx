@@ -8,7 +8,7 @@ import { useRef, useState } from 'react';
 import { adminAxios } from '../../../api/axios';
 import userLogout from '../../../hooks/userLogout';
 
-function OrderItem({ order, date, lastOrderInArray }) {
+function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
         useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
@@ -46,7 +46,6 @@ function OrderItem({ order, date, lastOrderInArray }) {
     const handleClick = async (e) => {
         let success = false;
         try {
- 
             if (e.target.classList?.contains('disable-drawer')) {
                 return;
             }
@@ -63,7 +62,7 @@ function OrderItem({ order, date, lastOrderInArray }) {
             }
         }
     };
-    
+
     return (
         <section
             // htmlFor="my-drawer-4"
@@ -77,13 +76,18 @@ function OrderItem({ order, date, lastOrderInArray }) {
             }`}
         >
             <div className="left ml-5 flex flex-[2] flex-row gap-5">
-                <input
-                    checked={isOrderInSet}
-                    onChange={toggleSelection}
-                    type="checkbox"
-                    id=""
-                    className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
-                />
+                <div className='w-5 h-5'>
+                     {!disableCheckBox && (
+                    <input
+                        checked={isOrderInSet}
+                        onChange={toggleSelection}
+                        type="checkbox"
+                        id=""
+                        className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
+                    />
+                )}
+                </div>
+               
                 <div className="flex-col">
                     <p className="flex flex-row items-center gap-1">
                         <span className="underline underline-offset-1">
@@ -119,7 +123,10 @@ function OrderItem({ order, date, lastOrderInArray }) {
                               ).format('MMM DD, YYYY')}`
                             : 'Ordered'}
                     </p>
-                    <p>Ordered {date}</p>
+                    <p>
+                        Ordered{' '}
+                        {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
+                    </p>
                     <p className="my-3">
                         {['received', 'processing'].includes(order?.status)
                             ? `${
@@ -146,7 +153,7 @@ function OrderItem({ order, date, lastOrderInArray }) {
                             className="disable-drawer w-fit text-s active:border-2 active:border-light-grey"
                         >
                             Deliver To{' '}
-                            <ExpandMoreRoundedIcon className="!text-lg disable-drawer" />
+                            <ExpandMoreRoundedIcon className="disable-drawer !text-lg" />
                         </button>
                         <p className="text-xs font-semibold">
                             {order.shipping_address?.name}

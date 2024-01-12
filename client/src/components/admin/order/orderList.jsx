@@ -56,6 +56,7 @@ function OrderList({ orderObj }) {
             {orderObj?.orders?.map((order, idx) => {
                 return (
                     <OrderItem
+                    disableCheckBox={false}
                         order={order}
                         date={date}
                         lastOrderInArray={idx + 1 == orderObj?.totalDocuments}

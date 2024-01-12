@@ -26,6 +26,7 @@ import { adminOrderModalReducer } from '../../../hooks/adminOrderModalReducer';
 import Modal from '../components/modal/modal';
 import views from './modalView/modalView';
 import '../home/admin.scss';
+import SearchOrder from './searchOrder';
 function AdminOrder({}) {
     const [loading, setLoading] = useState(true);
     const [selection, setSelection] = useState([]);
@@ -48,6 +49,10 @@ function AdminOrder({}) {
         'printOrder'
     );
     const [modalLoad, setModalLoad] = useState(false);
+    const [isSearchingOrder, setSearchingOrder] = useState(true);
+    const [searchResult, setSearchResult] = useState([]);
+
+    const [searchText, setSearchText] = useState('');
     const getCurrentPageResult = (totalNumberOfPage) => {
         // need a start and end point
         // 0 - 1
@@ -204,58 +209,67 @@ function AdminOrder({}) {
         modalContent,
         adminOrderModalContentDispatch,
         setModalCheck,
+        isSearchingOrder,
+        setSearchingOrder,
+        searchText,
+        setSearchText,
+        searchResult, setSearchResult
     };
     return (
         <AdminOrderContextProvider value={value}>
-            <section className='order-page '>
+            <section className="order-page ">
+                <section className="w-full">
+                    <Header />
+                    {isSearchingOrder ? (
+                        <SearchOrder />
+                    ) : (
+                        <section className="flex flex-row gap-7">
+                            <section className="left flex-[4] px-5">
+                                <SubHeader />
+                                <NewComplete />
+                                {loading ? (
+                                    <section className="mt-14 flex min-w-full justify-center">
+                                        <GLoader />
+                                    </section>
+                                ) : (
+                                    <>
+                                        <PageOptions />
 
-           
-            <section className="w-full">
-                <Header />
-                <section className="flex flex-row gap-7">
-                    <section className="left flex-[4]">
-                        <SubHeader />
-                        <NewComplete />
-                        {loading ? (
-                            <section className="mt-14 flex min-w-full justify-center">
-                                <GLoader />
+                                        <Containers
+                                            ordersByDate={allOrderPerPage}
+                                        />
+                                    </>
+                                )}
                             </section>
-                        ) : (
-                            <>
-                                <PageOptions />
-
-                                <Containers ordersByDate={allOrderPerPage} />
-                            </>
-                        )}
-                    </section>
-                    <SideContainer />
+                            <SideContainer />
+                        </section>
+                    )}
                 </section>
+                <Drawer
+                    anchor="right"
+                    open={openDrawer}
+                    onClose={() => setOpenDrawer(false)}
+                    PaperProps={{
+                        sx: {
+                            backgroundColor: 'transparent',
+                            boxShadow: 'none',
+                            width: '50%',
+                            minHeight: '100vh',
+                        },
+                    }}
+                >
+                    <DrawerContainer />
+                </Drawer>
+                {modalCheck && (
+                    <Modal
+                        check={modalCheck}
+                        setCheck={setModalCheck}
+                        ModalContent={views[modalContent]}
+                        loading={modalLoad}
+                        setLoading={setModalLoad}
+                    />
+                )}
             </section>
-            <Drawer
-                anchor="right"
-                open={openDrawer}
-                onClose={() => setOpenDrawer(false)}
-                PaperProps={{
-                    sx: {
-                        backgroundColor: 'transparent',
-                        boxShadow: 'none',
-                        width: '50%',
-                        minHeight: '100vh',
-                    },
-                }}
-            >
-                <DrawerContainer />
-            </Drawer>
-            {modalCheck && (
-                <Modal
-                    check={modalCheck}
-                    setCheck={setModalCheck}
-                    ModalContent={views[modalContent]}
-                    loading={modalLoad}
-                    setLoading={setModalLoad}
-                />
-            )}
-             </section>
         </AdminOrderContextProvider>
     );
 }

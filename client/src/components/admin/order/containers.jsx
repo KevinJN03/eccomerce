@@ -17,7 +17,7 @@ function Containers({ ordersByDate }) {
         }
     };
     return (
-        <section className="flex w-full flex-col gap-4 p-5">
+        <section className="flex w-full flex-col gap-4">
             {ordersByDate?.map((item) => {
                 return <OrderList orderObj={item} key={item?._id} />;
             })}

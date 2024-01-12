@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
 
-function userLogout() {
+function UserLogout() {
     const { authDispatch } = useAuth();
 
     const navigate = useNavigate();
@@ -19,4 +19,4 @@ function userLogout() {
     return { logoutUser: logoutRef.current };
 }
 
-export default userLogout;
+export default UserLogout;

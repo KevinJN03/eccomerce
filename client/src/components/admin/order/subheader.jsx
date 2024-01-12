@@ -79,7 +79,7 @@ function SubHeader({}) {
         setShowAction(() => false);
     };
     return (
-        <section className="subheader flex flex-row gap-x-3 px-5 pb-6 pt-5">
+        <section className="subheader flex flex-row gap-x-3  pb-6 pt-5">
             <section className="relative">
                 <div
                     onClick={handleClick}

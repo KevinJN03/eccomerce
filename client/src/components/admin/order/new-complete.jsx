@@ -29,7 +29,7 @@ function NewComplete({}) {
     };
 
     return (
-        <section className="mb-4 flex flex-col gap-x-5 px-5">
+        <section className="mb-4 flex flex-col gap-x-5 ">
             <div className="flex flex-row gap-6">
                 <div
                     onClick={() => setStatus('New')}
