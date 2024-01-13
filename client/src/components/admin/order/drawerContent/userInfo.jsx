@@ -29,14 +29,14 @@ function UserInfo({}) {
                 <div className="flex flex-row items-center gap-3">
                     <button
                         onClick={toggleShow}
-                        className="flex flex-row items-center"
+                        className="flex flex-row items-center gap-[2px]"
                     >
-                        <p className="underline underline-offset-1">
+                        <p className="underline underline-offset-1 text-xxs">
                             {orderInfo.customer?.fullName}
                         </p>
-                        <ArrowDropDownSharp />
-                    </button>{' '}
-                    <p className="align-baseline text-xxs underline underline-offset-1">
+                        <ArrowDropDownSharp className='!text-xl'/>
+                    </button>
+                    <p className="align-baseline !text-xxs underline underline-offset-1">
                         {orderInfo.customer?._id}
                     </p>
                 </div>
@@ -77,7 +77,7 @@ function UserInfo({}) {
                     )}
                 </AnimatePresence>
 
-                <p className="underline underline-offset-1 hover:no-underline">
+                <p className="underline underline-offset-1 hover:no-underline text-xxs">
                     Order history
                 </p>
             </section>

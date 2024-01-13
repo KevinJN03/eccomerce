@@ -19,11 +19,11 @@ import EmptyOrders from './empty-orders';
 import userLogout from '../../../hooks/userLogout';
 
 import AdminOrderContextProvider from '../../../context/adminOrder';
-import { Drawer } from '@mui/material';
+import { Box, Drawer, Modal } from '@mui/material';
 import DrawerContainer from './drawerContent/drawerContainer';
 import GLoader from '../../Login-SignUp/socialRegister/gloader';
 import { adminOrderModalReducer } from '../../../hooks/adminOrderModalReducer';
-import Modal from '../components/modal/modal';
+// import Modal from '../components/modal/modal';
 import views from './modalView/modalView';
 import '../home/admin.scss';
 import SearchOrder from './searchOrder';
@@ -46,10 +46,10 @@ function AdminOrder({}) {
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, adminOrderModalContentDispatch] = useReducer(
         adminOrderModalReducer,
-        'printOrder'
+        { type: 'printOrder' }
     );
     const [modalLoad, setModalLoad] = useState(false);
-    const [isSearchingOrder, setSearchingOrder] = useState(true);
+    const [isSearchingOrder, setSearchingOrder] = useState(false);
     const [searchResult, setSearchResult] = useState([]);
 
     const [searchText, setSearchText] = useState('');
@@ -213,7 +213,8 @@ function AdminOrder({}) {
         setSearchingOrder,
         searchText,
         setSearchText,
-        searchResult, setSearchResult
+        searchResult,
+        setSearchResult,
     };
     return (
         <AdminOrderContextProvider value={value}>
@@ -260,7 +261,7 @@ function AdminOrder({}) {
                 >
                     <DrawerContainer />
                 </Drawer>
-                {modalCheck && (
+                {/* {modalCheck && (
                     <Modal
                         check={modalCheck}
                         setCheck={setModalCheck}
@@ -268,7 +269,25 @@ function AdminOrder({}) {
                         loading={modalLoad}
                         setLoading={setModalLoad}
                     />
-                )}
+                )} */}
+                <Modal
+                    open={modalCheck}
+                    onClose={() => setModalCheck(() => false)}
+                >
+                    <Box
+                        sx={{
+                            backgroundColor: 'white',
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '100%',
+                            maxWidth: '600px',
+                        }}
+                    >
+                        {views[modalContent?.type]}
+                    </Box>
+                </Modal>
             </section>
         </AdminOrderContextProvider>
     );

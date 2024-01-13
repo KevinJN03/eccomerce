@@ -6,24 +6,24 @@ function AddressContainer({country}) {
         <section className="flex flex-row justify-between gap-10 border-[1px] p-4 rounded-sm">
             <div className="left flex-[1]">
                 <p className="mb-1 text-xs text-gray-700/70">Deliver to</p>
-                <p className="font-medium">
+                <p className="font-medium text-xs">
                     {orderInfo.shipping_address?.name}
                 </p>
 
-                <p>{orderInfo.shipping_address?.address?.line1}</p>
+                <p className='text-xxs'>{orderInfo.shipping_address?.address?.line1}</p>
                 {orderInfo.shipping_address?.address?.line2 && (
-                    <p>{orderInfo.shipping_address?.address?.line2}</p>
+                    <p className='text-xxs'>{orderInfo.shipping_address?.address?.line2}</p>
                 )}
-                <p>{`${orderInfo.shipping_address?.address?.city}, ${orderInfo.shipping_address?.address?.state}`}</p>
-                <p>{orderInfo.shipping_address?.address?.postal_code}</p>
+                <p className='text-xxs'>{`${orderInfo.shipping_address?.address?.city}, ${orderInfo.shipping_address?.address?.state}`}</p>
+                <p className='text-xxs'>{orderInfo.shipping_address?.address?.postal_code}</p>
 
-                <p>{country}</p>
+                <p className='text-xxs'>{country}</p>
             </div>
             <div className="right flex flex-[3] flex-col gap-1">
                 <p className="text-xs text-gray-700/70">Selected by buyer</p>
-                <p className="flex w-full justify-between font-medium">
+                <p className="flex w-full justify-between text-xs font-medium">
                     {orderInfo.shipping_option?.name}{' '}
-                    <span>
+                    <span className='text-xs'>
                         £
                         {parseFloat(orderInfo.shipping_option?.cost)?.toFixed(
                             2
@@ -40,10 +40,10 @@ function AddressContainer({country}) {
                                     alt=""
                                 />
                                 <div className="flex w-full flex-row flex-nowrap justify-between">
-                                    <p className="texts text-gray-700/70">
+                                    <p className="text-xs text-gray-700/70 ">
                                         {item.product?.title}
                                     </p>
-                                    <p className="flex flex-nowrap gap-2 text-gray-700/70">
+                                    <p className="flex flex-nowrap gap-2 text-gray-700/70 text-xs">
                                         Qty{' '}
                                         <span className=" text-gray-700/70">
                                             {item?.quantity}

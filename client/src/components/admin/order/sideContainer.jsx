@@ -3,6 +3,7 @@ import { useState } from 'react';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { AnimatePresence, motion } from 'framer-motion';
 import '../home/admin.scss';
+import containerVariants from './containerVariants';
 function Label({ option }) {
     return (
         <label
@@ -37,31 +38,7 @@ function SideContainer({}) {
         setShow(() => false);
     };
 
-    const containerVariant = {
-        initial: {
-            // opacity: 0,
-            scale: 0.95,
-        },
-        animate: {
-            opacity: 1,
-            scale: 1,
-            transition: {
-                duration: 0.1,
-                ease: 'easeIn',
-            },
-        },
-        exit: {
-            scale: 0,
-            translateY: -120,
-            translateX: -80,
-            opacity: 0,
-            transition: {
-                duration: 0.3,
-
-                ease: 'easeOut',
-            },
-        },
-    };
+    
     const reset = () => {
         setDestination(() => 'All');
         setDispatchBy(() => 'All');
@@ -90,7 +67,7 @@ function SideContainer({}) {
                     {show && (
                         <motion.div
                             className="box-shadow  h-full w-fit rounded-lg bg-white"
-                            variants={containerVariant}
+                            variants={containerVariants}
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}

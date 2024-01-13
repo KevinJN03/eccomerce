@@ -3,13 +3,19 @@ import { useAdminOrderContext } from '../../../context/adminOrder';
 import OrderItem from './orderItem';
 
 function SearchOrder({}) {
-    const { searchResult, setSearchingOrder, searchText } =
-        useAdminOrderContext();
+    const { searchResult, setSearchingOrder, searchText , setSearchText} = useAdminOrderContext();
     const [searchedTerm, setSearchTerm] = useState(searchText);
 
     useEffect(() => {
         setSearchTerm(() => searchText);
     }, [searchResult]);
+
+    const clearSearch = () => {
+        setSearchingOrder(() => false)
+        setSearchText(()=> '')
+    }
+
+
     return (
         <section className="search-order flex w-full flex-row flex-nowrap p-5">
             <section className="left flex flex-[4] flex-col gap-2">
@@ -19,8 +25,8 @@ function SearchOrder({}) {
                         across all your progress steps
                     </p>
                     <p
-                        className="text-xxs text-black/95 underline underline-offset-1 hover:text-gray-700/70 "
-                        onClick={() => setSearchingOrder(false)}
+                        className="text-xxs cursor-pointer text-black/95 underline underline-offset-1 hover:text-gray-700/70 "
+                        onClick={clearSearch}
                     >
                         Clear search
                     </p>

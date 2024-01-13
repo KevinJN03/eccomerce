@@ -15,7 +15,7 @@ function Header({}) {
                 `searchOrder?searchText=${searchText}`
             );
 
-            setSearchResult(() => data?.searchResult);
+            setSearchResult(() => data.searchResult);
         } catch (error) {
             console.error('error while getting search result', error);
             logoutUser({ error });

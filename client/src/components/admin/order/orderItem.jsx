@@ -23,7 +23,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
         const addressHtml = addressRef.current?.innerHTML;
 
         const addressText = addressHtml.replaceAll('<br>', ' ');
-        console.log({ addressText, addressHtml });
+        
 
         navigator.clipboard.writeText(addressText);
         setCopyAddress(true);
@@ -71,7 +71,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                 lastOrderInArray ? '' : 'border-b-2'
             } flex w-full cursor-pointer flex-row  px-5 py-6 ${
                 isOrderInSet
-                    ? 'bg-green-400/20 hover:bg-green-400/30'
+                    ? 'bg-green-100/60 hover:bg-green-400/30'
                     : '  hover:bg-light-grey/30'
             }`}
         >
@@ -144,16 +144,16 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                   
                                 </div> */}
 
-                    <div>
+                    <div className='flex flex-col relative'>
                         <button
                             onClick={() =>
                                 setShowFullAddress((prevState) => !prevState)
                             }
                             id="deliver-to"
-                            className="disable-drawer w-fit text-s active:border-2 active:border-light-grey"
+                            className="disable-drawer w-fit relative flex flex-row flex-nowrap gap-[2px] items-center left-[-6px] border-2 border-transparent h-5 pl-1   focus:border-light-grey active:border-light-grey"
                         >
-                            Deliver To{' '}
-                            <ExpandMoreRoundedIcon className="disable-drawer !text-lg" />
+                            <p className='disable-drawer text-xxs hover:underline underline-offset-1 text-black/85'>Deliver To</p>
+                            <ExpandMoreRoundedIcon className={`disable-drawer !text-s !fill-black/85 ${showFullAddress ? 'rotate-180' : 'rotate-0'}`} />
                         </button>
                         <p className="text-xs font-semibold">
                             {order.shipping_address?.name}

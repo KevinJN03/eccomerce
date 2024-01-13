@@ -15,7 +15,7 @@ function PrivateNote({}) {
                     alt="secure document icon"
                     className={`h-5 w-5 ${open ? 'self-start' : 'self-center'}`}
                 />
-                {!open && <p className=''>Only you can see this note</p>}
+                {!open && <p className='text-xxs'>Only you can see this note</p>}
             </div>
             {!open && (
                 <button
@@ -23,7 +23,7 @@ function PrivateNote({}) {
                     className="flex flex-nowrap items-center gap-1 rounded border-[1px] border-dark-gray/60 px-2 py-2 hover:bg-light-grey/100"
                 >
                     <AddRounded className="!text-sm" />
-                    <p className="text-xs">Add a private note</p>
+                    <p className="text-xxs">Add a private note</p>
                 </button>
             )}
             {open && (

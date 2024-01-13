@@ -1,4 +1,4 @@
-import { KeyboardArrowDownRounded } from '@mui/icons-material';
+import { KeyboardArrowUpRounded } from '@mui/icons-material';
 
 function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
     
@@ -39,7 +39,7 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
                 <p className="whitespace-nowrap underline-offset-1 hover:underline ">
                     Customize options
                 </p>
-                <KeyboardArrowDownRounded className="relative top-[-2px]" />
+                <KeyboardArrowUpRounded className="relative top-[-2px]" />
             </button>
             <div className="flex  w-7/12 flex-col gap-2 self-end  bg-light-grey/40 p-2">
                 <p className="text-xs font-medium">Shop info</p>

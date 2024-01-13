@@ -12,7 +12,8 @@ import UserLogout from '../../../../hooks/userLogout.jsx';
 import defaultChecks from './defaultChecks';
 
 function PrintOrder({}) {
-    const { selectionSet, setModalCheck } = useAdminOrderContext();
+    const { setModalCheck, modalContent } = useAdminOrderContext();
+    const [loading, setLoading] = useState(false);
     const [coupons, setCoupons] = useState({});
     const [showOptions, setShowOptions] = useState({
         packing_slip: false,
@@ -25,6 +26,7 @@ function PrintOrder({}) {
     const { logoutUser } = UserLogout();
 
     useEffect(() => {
+        
         adminAxios
             .get('coupon/all')
             .then(({ data }) => {
@@ -37,8 +39,10 @@ function PrintOrder({}) {
     }, []);
     const handleClick = async () => {
         try {
+            console.log('loaded')
+            setLoading(() => true)
             const { data } = await adminAxios.post('pdf/export', {
-                ids: Array.from(selectionSet),
+                ids: modalContent?.orders,
 
                 printChecks,
             });
@@ -51,6 +55,7 @@ function PrintOrder({}) {
         } catch (error) {
             console.error('error when trying to generatePdf');
         } finally {
+            setLoading(() => false);
             setModalCheck(() => false);
         }
     };
@@ -61,7 +66,7 @@ function PrintOrder({}) {
     return (
         <section className="relative w-full">
             <p className="min-w-full border-b-[1px] border-dark-gray/30 bg-light-grey/30 px-4 py-3 font-medium">
-                You're about to print {selectionSet?.size} order(s)
+                You're about to print {modalContent.orders?.length} order(s)
             </p>
 
             <section className="px-4 py-3">
@@ -141,8 +146,9 @@ function PrintOrder({}) {
 
             <section className=" flex justify-end gap-3 px-4 py-3">
                 <button
+            
                     type="button"
-                    className="rounded border-[1px] border-light-grey px-3 py-2 text-sm font-medium"
+                    className="rounded border-[1px] border-light-grey px-3 py-2 text-s font-medium hover:bg-light-grey/30"
                     onClick={cancel}
                 >
                     Cancel
@@ -151,11 +157,17 @@ function PrintOrder({}) {
                     onClick={handleClick}
                     disabled={Object.values(printChecks).every(
                         (item) => item?.on != true
-                    )}
+                    ) || loading}
                     type="button"
-                    className=" rounded bg-black px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+                    className=" rounded flex justify-center items-center bg-black w-[90px]  box-content px-3 py-2 hover:opacity-70   text-center text-s font-medium text-white disabled:opacity-50"
                 >
-                    Print Order(s)
+             
+                    {loading ? (
+                        <span className="daisy-loading daisy-loading-xs daisy-loading-spinner  !text-white"></span>
+                    ) : (
+                        <p className='whitespace-nowrap !text-white'> Print Order(s)</p>
+                    )}
+                
                 </button>
             </section>
         </section>
