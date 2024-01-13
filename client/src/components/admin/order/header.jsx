@@ -1,19 +1,23 @@
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAdminOrderContext } from '../../../context/adminOrder';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
 function Header({}) {
     const { searchText, setSearchText, setSearchResult, setSearchingOrder } =
         useAdminOrderContext();
+
     const { logoutUser } = UserLogout();
+    const inputRef = useRef(null);
     const handleClick = async () => {
         try {
+            document.activeElement.blur();
+            setSearchResult(() => []);
             setSearchingOrder(true);
-            const { data } = await adminAxios.get(
-                `searchOrder?searchText=${searchText}`
-            );
+            const { data } = await adminAxios.post(`searchOrder`, {
+                searchText,
+            });
 
             setSearchResult(() => data.searchResult);
         } catch (error) {
@@ -21,6 +25,7 @@ function Header({}) {
             logoutUser({ error });
         }
     };
+
     return (
         <header className="flex w-full flex-row items-center justify-between border-b-2 py-4 pl-6 pr-12">
             <h2 className="flex-1 text-2xl font-semibold">Orders & Delivery</h2>
@@ -28,9 +33,16 @@ function Header({}) {
                 <div className=" search-box border- flex w-full flex-row items-center rounded border-[1px] border-dark-gray pl-3 ">
                     <SearchRoundedIcon className="mr-1 !text-xl" />
                     <input
+                        ref={inputRef}
                         value={searchText}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter') {
+                                handleClick();
+                            }
+                        }}
                         onChange={(e) => setSearchText(e.target.value)}
                         type="text"
+                        tabIndex="0"
                         className="mr-5 w-full border-none py-2 text-s outline-none"
                         placeholder="Search your orders "
                     />

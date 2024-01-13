@@ -23,6 +23,7 @@ import UserInfo from './userInfo';
 import { AnimatePresence, motion } from 'framer-motion';
 import containerVariants from '../containerVariants';
 import { ClickAwayListener } from '@mui/material';
+import { adminAxios } from '../../../../api/axios';
 
 function Label({ setShowActions }) {
     return (
@@ -37,8 +38,15 @@ function Label({ setShowActions }) {
     );
 }
 function DrawerContainer() {
-    const { orderInfo, setOpenDrawer } = useAdminOrderContext();
-    console.log({ orderInfo });
+    const {
+        orderInfo,
+        setOpenDrawer,
+        setSearchText,
+        setSearchingOrder,
+        setSearchResult,
+    } = useAdminOrderContext();
+
+    const { logoutUser } = useAdminContext();
     const { setModalCheck, adminOrderModalContentDispatch } =
         useAdminOrderContext();
     const [country, setCountry] = useState(
@@ -56,7 +64,23 @@ function DrawerContainer() {
             orders: [orderInfo?._id],
         });
         setModalCheck(true);
-        setShowActions(false)
+        setShowActions(false);
+    };
+
+    const orderHistory = async () => {
+        try {
+            setOpenDrawer(() => false);
+            setSearchingOrder(() => true);
+            setSearchText(() => orderInfo.customer?._id);
+
+            const { data } = await adminAxios('searchOrder', {
+                searchText: orderInfo.customer?._id,
+            });
+
+            setSearchResult(() => data.searchResult);
+        } catch (error) {
+            logoutUser({ error });
+        }
     };
     return (
         <div className=" relative flex w-full flex-row gap-1 ">
@@ -109,11 +133,13 @@ function DrawerContainer() {
                                 <Label setShowActions={setShowActions} />
 
                                 {showActions && (
-                                    <ClickAwayListener onClickAway={()=> {
-                                        if(showActions){
-                                            setShowActions(()=> false)
-                                        }
-                                    }}>
+                                    <ClickAwayListener
+                                        onClickAway={() => {
+                                            if (showActions) {
+                                                setShowActions(() => false);
+                                            }
+                                        }}
+                                    >
                                         <motion.div
                                             key={'more-action'}
                                             variants={containerVariants}

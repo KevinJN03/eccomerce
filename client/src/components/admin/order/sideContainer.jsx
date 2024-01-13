@@ -4,6 +4,7 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { AnimatePresence, motion } from 'framer-motion';
 import '../home/admin.scss';
 import containerVariants from './containerVariants';
+import { ClickAwayListener } from '@mui/material';
 function Label({ option }) {
     return (
         <label
@@ -65,6 +66,8 @@ function SideContainer({}) {
                         </motion.button>
                     )}
                     {show && (
+                        <ClickAwayListener onClickAway={() =>  setShow(() => false)}>
+
                         <motion.div
                             className="box-shadow  h-full w-fit rounded-lg bg-white"
                             variants={containerVariants}
@@ -108,6 +111,7 @@ function SideContainer({}) {
                                 })}
                             </div>
                         </motion.div>
+                        </ClickAwayListener>
                     )}
                 </AnimatePresence>
             </div>

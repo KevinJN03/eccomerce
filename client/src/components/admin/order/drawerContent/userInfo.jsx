@@ -8,9 +8,12 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import variant from '../variant';
 import { ClickAwayListener } from '@mui/material';
+import { useAdminContext } from '../../../../context/adminContext';
+import { adminAxios } from '../../../../api/axios';
 function UserInfo({}) {
-    const { orderInfo } = useAdminOrderContext();
-
+    const { orderInfo, setOpenDrawer, setSearchResult, setSearchText,  setSearchingOrder } =
+        useAdminOrderContext();
+    const { logoutUser } = useAdminContext();
     const [show, setShow] = useState(false);
 
     const toggleShow = () => {
@@ -19,6 +22,28 @@ function UserInfo({}) {
 
     const onClickAway = () => {
         setShow(() => false);
+    };
+
+    const orderHistory = async () => {
+        try {
+          console.log('clickedd')
+          
+           
+            setSearchText(() => orderInfo.customer?._id);
+
+            const { data } = await adminAxios.post('searchOrder', {
+                searchText: orderInfo.customer?._id,
+            });
+
+            setSearchResult(() => data.searchResult);
+          
+        } catch (error) {
+            console.error('error while fetching order history: ', error)
+            logoutUser({ error });
+        }finally{
+             setOpenDrawer(() => false); 
+             setSearchingOrder(() => true);
+        }
     };
     return (
         <div className="my-3 flex flex-row gap-3 rounded-sm border-[1px]  p-4">
@@ -31,10 +56,10 @@ function UserInfo({}) {
                         onClick={toggleShow}
                         className="flex flex-row items-center gap-[2px]"
                     >
-                        <p className="underline underline-offset-1 text-xxs">
+                        <p className="text-xxs underline underline-offset-1">
                             {orderInfo.customer?.fullName}
                         </p>
-                        <ArrowDropDownSharp className='!text-xl'/>
+                        <ArrowDropDownSharp className="!text-xl" />
                     </button>
                     <p className="align-baseline !text-xxs underline underline-offset-1">
                         {orderInfo.customer?._id}
@@ -60,8 +85,8 @@ function UserInfo({}) {
                                 </div>
 
                                 <p
-                                    onClick={toggleShow}
-                                    className="px-5 py-2 text-s underline underline-offset-1 hover:bg-dark-gray/20"
+                                    onClick={orderHistory}
+                                    className="px-5 py-2 text-s underline cursor-pointer underline-offset-1 hover:bg-dark-gray/20"
                                 >
                                     Order history
                                 </p>
@@ -77,9 +102,9 @@ function UserInfo({}) {
                     )}
                 </AnimatePresence>
 
-                <p className="underline underline-offset-1 hover:no-underline text-xxs">
+                <button onClick={orderHistory} className="text-xxs underline underline-offset cursor-pointer-1 hover:no-underline">
                     Order history
-                </p>
+                </button>
             </section>
         </div>
     );
