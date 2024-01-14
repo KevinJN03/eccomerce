@@ -5,11 +5,17 @@ import { useRef, useState } from 'react';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
 function Header({}) {
-    const { searchText, setSearchText, setSearchResult, setSearchingOrder } =
-        useAdminOrderContext();
+    const {
+        setSearchResult,
+        setSearchingOrder,
+        setSearchTerm,
+        searchText,
+        setSearchText,
+    } = useAdminOrderContext();
 
     const { logoutUser } = UserLogout();
     const inputRef = useRef(null);
+
     const handleClick = async () => {
         try {
             document.activeElement.blur();
@@ -18,7 +24,7 @@ function Header({}) {
             const { data } = await adminAxios.post(`searchOrder`, {
                 searchText,
             });
-
+            setSearchTerm(() => searchText);
             setSearchResult(() => data.searchResult);
         } catch (error) {
             console.error('error while getting search result', error);
@@ -40,7 +46,9 @@ function Header({}) {
                                 handleClick();
                             }
                         }}
-                        onChange={(e) => setSearchText(e.target.value)}
+                        onChange={(e) => {
+                            setSearchText(e.target.value);
+                        }}
                         type="text"
                         tabIndex="0"
                         className="mr-5 w-full border-none py-2 text-s outline-none"

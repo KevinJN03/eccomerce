@@ -7,27 +7,69 @@ import { adminAxios } from '../../../../api/axios';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import dayjs from 'dayjs';
 
-function Note({ idx, note, date, _id }) {
+function Note({ idx, note, date, _id, lastIdx }) {
+    const [error, setError] = useState({});
     const [edit, setEdit] = useState(false);
     const [text, setText] = useState(note);
-    const { orderInfo, setOrderInfo } = useAdminOrderContext();
+    const {
+        orderInfo,
+        setOrderInfo,
+        status,
+        setOrderData,
+        setSearchResult,
+        searchedTerm,
+        setSearchTerm,
+        isSearchingOrder,
+    } = useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
     const saveEdit = async () => {
         try {
+            if (text.trim().length == 0) {
+                setError(() => ({ msg: "Note can't be empty" }));
+                return;
+            }
             const { data } = await adminAxios.post('privateNote/edit', {
                 noteId: _id,
                 orderId: orderInfo?._id,
                 note: text,
             });
 
-            console.log({ data });
+            // const { data: orderResult } = await adminAxios.post('/orders/all', {
+            //     status,
+            // });
 
+            // const { data: searchDataResult } = await adminAxios.post(
+            //     `searchOrder`,
+            //     {
+            //         searchText: searchedTerm,
+            //     }
+            // );
+
+            const [{ data: orderResult }, searchDataResult] = await Promise.all(
+                [
+                    adminAxios.post('/orders/all', {
+                        status,
+                    }),
+                    (() => {
+                        if (isSearchingOrder) {
+                            return adminAxios.post(`searchOrder`, {
+                                searchText: searchedTerm,
+                            });
+                        }
+                    })(),
+                ]
+            );
+            if (isSearchingOrder) {
+                setSearchResult(
+                    () => searchDataResult.data?.searchResult || []
+                );
+            }
+            setOrderData(() => orderResult || {});
+            setEdit(() => false);
             setOrderInfo(() => data.order);
         } catch (error) {
             logoutUser({ error });
-        } finally {
-            setEdit(() => false);
         }
     };
     const deleteNote = async () => {
@@ -35,15 +77,35 @@ function Note({ idx, note, date, _id }) {
             const { data } = await adminAxios.delete(
                 `privateNote/delete?noteId=${_id}&orderId=${orderInfo?._id}`
             );
+            const [{ data: orderResult }, searchDataResult] = await Promise.all(
+                [
+                    adminAxios.post('/orders/all', {
+                        status,
+                    }),
+                    (() => {
+                        if (isSearchingOrder) {
+                            return adminAxios.post(`searchOrder`, {
+                                searchText: searchedTerm,
+                            });
+                        }
+                    })(),
+                ]
+            );
+            if (isSearchingOrder) {
+                setSearchResult(
+                    () => searchDataResult.data?.searchResult || []
+                );
+            }
 
+            setOrderData(() => orderResult || {});
             setOrderInfo(() => data.order);
         } catch (error) {
-            console.error(error)
+            console.error(error);
             logoutUser({ error });
         }
     };
     return (
-        <div className={`w-full pb-2 ${idx % 2 != 0 ? 'border-b-[1px] ' : ''}`}>
+        <div className={`w-full pb-2 ${lastIdx ? '' : 'border-b-[1px]'}`}>
             {!edit ? (
                 <>
                     <p className="text-xxs">{note}</p>
@@ -57,22 +119,39 @@ function Note({ idx, note, date, _id }) {
                         >
                             Edit
                         </button>
-                        <button onClick={deleteNote} className="text-xxs text-black/70 underline underline-offset-1 hover:!text-black/50 ">
+                        <button
+                            onClick={deleteNote}
+                            className="text-xxs text-black/70 underline underline-offset-1 hover:!text-black/50 "
+                        >
                             Delete
                         </button>
                     </div>
                 </>
             ) : (
-                <div className="flex w-full flex-col">
+                <div className="flex w-full flex-col gap-3">
                     <textarea
-                        onChange={(e) => setText(() => e.target.value)}
+                        onChange={(e) => {
+                            setText(() => e.target.value);
+
+                            if (e.target.value.length == 0) {
+                                setError(() => ({
+                                    msg: "Note can't be empty",
+                                }));
+                            } else {
+                                setError(() => ({ msg: '' }));
+                            }
+                        }}
                         value={text}
                         className="border-[1px] p-2 text-xs"
                         name="private-note"
                         id="private-note"
                         rows="3"
                     ></textarea>
-                    <div className="mt-3 flex flex-row justify-end gap-2">
+
+                    {error?.msg && (
+                        <p className="text-xxs text-red-700">{error.msg}</p>
+                    )}
+                    <div className=" flex flex-row justify-end gap-2">
                         <button
                             onClick={() => setEdit(false)}
                             className="rounded-sm border-[1px] px-2 py-1 text-xxs"
@@ -111,7 +190,16 @@ function PrivateNote({}) {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState({});
     const [note, setNote] = useState('');
-    const { orderInfo, setOrderInfo } = useAdminOrderContext();
+    const {
+        orderInfo,
+        setOrderInfo,
+        status,
+        ordersData,
+        setOrderData,
+        isSearchingOrder,
+        searchedTerm,
+        setSearchResult,
+    } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const toggle = () => {
         setOpen((prevState) => !prevState);
@@ -129,7 +217,28 @@ function PrivateNote({}) {
                 orderId: orderInfo?._id,
             });
 
+            const [{ data: orderResult }, searchDataResult] = await Promise.all(
+                [
+                    adminAxios.post('/orders/all', {
+                        status,
+                    }),
+                    (() => {
+                        if (isSearchingOrder) {
+                            return adminAxios.post(`searchOrder`, {
+                                searchText: searchedTerm,
+                            });
+                        }
+                    })(),
+                ]
+            );
+         
+            if (isSearchingOrder) {
+                setSearchResult(
+                    () => searchDataResult.data?.searchResult || []
+                );
+            }
             setOrderInfo(() => data.order);
+            setOrderData(() => orderResult || {});
             setOpen(() => false);
             setNote(() => '');
         } catch (error) {
@@ -152,7 +261,14 @@ function PrivateNote({}) {
                         <section className="flex flex-col gap-2">
                             {orderInfo.private_note?.map((note, idx) => {
                                 return (
-                                    <Note key={note._id} {...note} idx={idx} />
+                                    <Note
+                                        key={note._id}
+                                        {...note}
+                                        lastIdx={
+                                            idx ==
+                                            orderInfo.private_note?.length - 1
+                                        }
+                                    />
                                 );
                             })}
                         </section>

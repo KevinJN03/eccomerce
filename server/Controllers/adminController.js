@@ -158,7 +158,7 @@ export const adminLogin = [
 ];
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-  console.log('in here');
+
   const users = await User.find({});
   res.status(200).send(users);
 });
@@ -534,11 +534,11 @@ export const searchOrder = [
       {
         $sort: { _id: 1 },
       },
-      {
-        $limit: 5,
-      },
+      // {
+      //   $limit: 5,
+      // },
     ]);
-
+console.log({searchText ,should, searchResult})
     res.status(200).send({ searchResult, success: true });
   }),
 ];

@@ -335,6 +335,9 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
       },
     },
     {
+      $sort: { _id: 1 },
+    },
+    {
       $replaceRoot: {
         newRoot: { $mergeObjects: ['$detail', { items: '$itemsArray' }] },
       },
@@ -383,7 +386,7 @@ export const addPrivateNote = [
     }
     // const privateNote = await PrivateNote.create({ note });
     // const privateNote = { note, date: Date.now(), id: crypto.randomUUID() };
-    const updateOrder = await Order.findByIdAndUpdate(
+    await Order.findByIdAndUpdate(
       orderId,
       {
         $push: { private_note: { note } },
@@ -391,7 +394,6 @@ export const addPrivateNote = [
       { upsert: true, new: true, lean: { toObject: true } },
     );
 
-    console.log(updateOrder);
     return res.redirect(`/api/admin/order/${orderId}`);
   }),
 ];
@@ -409,7 +411,7 @@ export const editPrivateNote = [
       return res.status(400).send({ error: result.mapped() });
     }
 
-    const updateOrder = await Order.findOneAndUpdate(
+    await Order.findOneAndUpdate(
       { _id: orderId, 'private_note._id': noteId },
       { $set: { 'private_note.$.note': note } },
       { upsert: true, new: true, lean: { toObject: true } },
@@ -430,7 +432,7 @@ export const deletePrivateNote = [
       return res.status(400).send({ error: result.mapped() });
     }
 
-    const updateOrder = await Order.findOneAndUpdate(
+    await Order.findOneAndUpdate(
       { _id: orderId },
       { $pull: { private_note: { _id: new mongoose.Types.ObjectId(noteId) } } },
       { upsert: true, new: true, lean: { toObject: true } },

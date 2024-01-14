@@ -35,7 +35,9 @@ function OrderList({ orderObj }) {
             return newSet;
         });
     };
-    const isAllItemInSelection = orderIDArray.every((id) => selectionSet.has(id))
+    const isAllItemInSelection = orderIDArray.every((id) =>
+        selectionSet.has(id)
+    );
     return (
         <section className="w-full rounded-md  border-[1px] border-gray-400">
             <div className="flex items-center gap-4 border-b-[1px] border-gray-400 bg-light-grey/30 px-5 py-2">
@@ -46,7 +48,7 @@ function OrderList({ orderObj }) {
                     {orderObj.orders?.length}
                 </p>
                 <p
-                    className="text-gray-500 underline underline-offset-1 cursor-pointer"
+                    className="cursor-pointer text-gray-500 underline underline-offset-1"
                     onClick={toggleSelection}
                 >
                     {isAllItemInSelection ? 'Deselect all' : 'Select all'}
@@ -56,7 +58,8 @@ function OrderList({ orderObj }) {
             {orderObj?.orders?.map((order, idx) => {
                 return (
                     <OrderItem
-                    disableCheckBox={false}
+                       
+                        disableCheckBox={false}
                         order={order}
                         date={date}
                         lastOrderInArray={idx + 1 == orderObj?.totalDocuments}

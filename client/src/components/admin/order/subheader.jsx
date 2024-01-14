@@ -1,5 +1,5 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAdminOrderContext } from '../../../context/adminOrder';
 import { forEach } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -8,16 +8,24 @@ import variant from './variant';
 import { useAdminContext } from '../../../context/adminContext';
 
 function SubHeader({}) {
+    const {
+        selectionSet,
+        setSelectionSet,
+        allOrderPerPage,
+        setModalCheck,
+        adminOrderModalContentDispatch,
+        resultMap,
+        currentPage,
+    } = useAdminOrderContext();
+
     const [check, setCheck] = useState(false);
     const [show, setShow] = useState(false);
     const [showAction, setShowAction] = useState(false);
-
-    const { selectionSet, setSelectionSet, allOrderPerPage , setModalCheck, adminOrderModalContentDispatch} =
-        useAdminOrderContext();
+    const [allOrderIds, setAllOrdersId] = useState();
 
     const getIdsFromPage = () => {
         const orderIdArray = [];
-        const newAllOrderPerPage = [...allOrderPerPage];
+        const newAllOrderPerPage = [...resultMap.get(currentPage)];
         newAllOrderPerPage.forEach((obj) => {
             const getOnlyIds = obj.orders?.map((order) => order?._id);
 
@@ -26,13 +34,19 @@ function SubHeader({}) {
 
         return orderIdArray;
     };
+    useEffect(() => {
+        if(resultMap.size > 0){
+            setAllOrdersId(() => getIdsFromPage());
+        }
+        
+    }, [currentPage, resultMap]);
+
     const toggleSelection = () => {
         const orderNumberArray = [];
         if (selectionSet?.size > 0) {
             setSelectionSet(() => new Set());
         } else {
-            const ids = getIdsFromPage();
-            setSelectionSet(() => new Set(ids));
+            setSelectionSet(() => new Set([...allOrderIds]));
         }
     };
     const toggleShow = () => {
@@ -49,10 +63,7 @@ function SubHeader({}) {
     };
 
     const selectAll = () => {
-        const ids = getIdsFromPage();
-        const newArray = [...selectionSet, ...ids];
-        console.log({ newArray });
-        setSelectionSet(() => new Set(newArray));
+        setSelectionSet((prevSet) => new Set([...prevSet, ...allOrderIds]));
     };
 
     const handleClick = (e) => {
@@ -69,8 +80,12 @@ function SubHeader({}) {
     };
 
     const printOrders = () => {
-        adminOrderModalContentDispatch({type: 'printOrder', orders: Array.from(selectionSet)})
-        setModalCheck(true)
+        console.log('clikced')
+        adminOrderModalContentDispatch({
+            type: 'printOrder',
+            orders: Array.from(selectionSet),
+        });
+        setModalCheck(true);
     };
 
     const markAsGift = () => {};
@@ -160,7 +175,7 @@ function SubHeader({}) {
                                 exit={'exit'}
                                 className="absolute top-11 z-10 flex flex-col rounded-sm border-[1px] bg-white py-2"
                             >
-                                <div className="flex flex-row cursor-pointer flex-nowrap items-center gap-1 px-5 py-2 hover:bg-dark-gray/20">
+                                <div className="flex cursor-pointer flex-row flex-nowrap items-center gap-1 px-5 py-2 hover:bg-dark-gray/20">
                                     <p
                                         onClick={printOrders}
                                         className="whitespace-nowrap pr-12 text-s"
@@ -171,7 +186,7 @@ function SubHeader({}) {
 
                                 <p
                                     onClick={markAsGift}
-                                    className="whitespace-nowrap px-5 py-2 text-s cursor-pointer hover:bg-dark-gray/20"
+                                    className="cursor-pointer whitespace-nowrap px-5 py-2 text-s hover:bg-dark-gray/20"
                                 >
                                     Mark as gift(s)
                                 </p>

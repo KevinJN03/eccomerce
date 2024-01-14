@@ -3,14 +3,20 @@ import { useAdminOrderContext } from '../../../context/adminOrder';
 import OrderItem from './orderItem';
 
 function SearchOrder({}) {
-    const { searchResult, setSearchingOrder, searchText, setSearchText, setSearchResult } =
-        useAdminOrderContext();
-    const [searchedTerm, setSearchTerm] = useState(searchText);
+    const {
+        searchResult,
+        setSearchingOrder,
+        searchText,
+        setSearchText,
+        setSearchResult,
+        searchedTerm,
+        setSearchTerm,
+    } = useAdminOrderContext();
+    // const [searchedTerm, setSearchTerm] = useState(searchText);
     useEffect(() => {
-        window.scrollTo(0, 0)
-      }, [])
+        window.scrollTo(0, 0);
+    }, []);
 
-      
     useEffect(() => {
         setSearchTerm(() => searchText);
     }, [searchResult]);
@@ -18,10 +24,8 @@ function SearchOrder({}) {
     const clearSearch = () => {
         setSearchingOrder(() => false);
         setSearchText(() => '');
-setSearchResult(()=> [])
+        setSearchResult(() => []);
     };
-    
-
 
     return (
         <section className="search-order flex w-full flex-row flex-nowrap gap-7 p-5">

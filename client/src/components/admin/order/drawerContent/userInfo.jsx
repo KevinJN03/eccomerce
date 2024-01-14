@@ -11,8 +11,13 @@ import { ClickAwayListener } from '@mui/material';
 import { useAdminContext } from '../../../../context/adminContext';
 import { adminAxios } from '../../../../api/axios';
 function UserInfo({}) {
-    const { orderInfo, setOpenDrawer, setSearchResult, setSearchText,  setSearchingOrder } =
-        useAdminOrderContext();
+    const {
+        orderInfo,
+        setOpenDrawer,
+        setSearchResult,
+        setSearchingOrder,
+        setSearchText,
+    } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const [show, setShow] = useState(false);
 
@@ -26,23 +31,17 @@ function UserInfo({}) {
 
     const orderHistory = async () => {
         try {
-          console.log('clickedd')
-          
-           
-            setSearchText(() => orderInfo.customer?._id);
-
             const { data } = await adminAxios.post('searchOrder', {
                 searchText: orderInfo.customer?._id,
             });
-
+            setSearchText(() => orderInfo.customer?._id);
             setSearchResult(() => data.searchResult);
-          
         } catch (error) {
-            console.error('error while fetching order history: ', error)
+            console.error('error while fetching order history: ', error);
             logoutUser({ error });
-        }finally{
-             setOpenDrawer(() => false); 
-             setSearchingOrder(() => true);
+        } finally {
+            setOpenDrawer(() => false);
+            setSearchingOrder(() => true);
         }
     };
     return (
@@ -86,7 +85,7 @@ function UserInfo({}) {
 
                                 <p
                                     onClick={orderHistory}
-                                    className="px-5 py-2 text-s underline cursor-pointer underline-offset-1 hover:bg-dark-gray/20"
+                                    className="cursor-pointer px-5 py-2 text-s underline underline-offset-1 hover:bg-dark-gray/20"
                                 >
                                     Order history
                                 </p>
@@ -102,7 +101,10 @@ function UserInfo({}) {
                     )}
                 </AnimatePresence>
 
-                <button onClick={orderHistory} className="text-xxs underline underline-offset cursor-pointer-1 hover:no-underline">
+                <button
+                    onClick={orderHistory}
+                    className="underline-offset cursor-pointer-1 text-xxs underline hover:no-underline"
+                >
                     Order history
                 </button>
             </section>

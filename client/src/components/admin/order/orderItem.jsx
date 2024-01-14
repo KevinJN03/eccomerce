@@ -7,6 +7,7 @@ import countryLookup from 'country-code-lookup';
 import { useRef, useState } from 'react';
 import { adminAxios } from '../../../api/axios';
 import userLogout from '../../../hooks/userLogout';
+import secure_icon from '../../../assets/icons/secure-document.png';
 
 function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
@@ -23,7 +24,6 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
         const addressHtml = addressRef.current?.innerHTML;
 
         const addressText = addressHtml.replaceAll('<br>', ' ');
-        
 
         navigator.clipboard.writeText(addressText);
         setCopyAddress(true);
@@ -51,7 +51,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
             }
             const { data } = await adminAxios.get(`order/${order?._id}`);
             console.log({ data }, 'here');
-            setOrderInfo(() => data?.order);
+            setOrderInfo(() => ({...data?.order}));
             success = true;
         } catch (error) {
             logoutUser({ error });
@@ -67,7 +67,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
         <section
             // htmlFor="my-drawer-4"
             onClick={handleClick}
-            className={`${
+            className={`flex flex-row gap-3 ${
                 lastOrderInArray ? '' : 'border-b-2'
             } flex w-full cursor-pointer flex-row  px-5 py-6 ${
                 isOrderInSet
@@ -76,146 +76,182 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
             }`}
         >
             <div className="left ml-5 flex flex-[2] flex-row gap-5">
-                <div className='w-5 h-5'>
-                     {!disableCheckBox && (
-                    <input
-                        checked={isOrderInSet}
-                        onChange={toggleSelection}
-                        type="checkbox"
-                        id=""
-                        className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
-                    />
-                )}
-                </div>
-               
-                <div className="flex-col">
-                    <p className="flex flex-row items-center gap-1">
-                        <span className="underline underline-offset-1">
-                            {order.shipping_address?.name}
-                        </span>{' '}
-                        <ArrowDropDownSharpIcon />
-                    </p>
-                    <p>
-                        <span className="underline underline-offset-1">
-                            #{order?._id}
-                        </span>
-                        <span className="ml-3">
-                            £
-                            {parseFloat(order.transaction_cost?.total).toFixed(
-                                2
-                            )}
-                        </span>
-                    </p>
-
-                    <div className="flex flex-col">
-                        {order.items?.map((itemObj, idx) => {
-                            return <SingleItem itemObj={itemObj} key={idx} />;
-                        })}
-                    </div>
+                <div className="h-5 w-5">
+                    {!disableCheckBox && (
+                        <input
+                            checked={isOrderInSet}
+                            onChange={toggleSelection}
+                            type="checkbox"
+                            id=""
+                            className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
+                        />
+                    )}
                 </div>
             </div>
-            <div className="right flex flex-1 flex-row">
-                <div className="left flex-[5]">
-                    <p className="text-sm font-medium">
-                        {['received', 'processing'].includes(order?.status)
-                            ? `Ship by ${dayjs(
-                                  order.shipping_option?.delivery_date
-                              ).format('MMM DD, YYYY')}`
-                            : 'Ordered'}
-                    </p>
-                    <p>
-                        Ordered{' '}
-                        {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
-                    </p>
-                    <p className="my-3">
-                        {['received', 'processing'].includes(order?.status)
-                            ? `${
-                                  order.shipping_option?.name
-                              } (£${order.shipping_option?.cost?.toFixed(2)})`
-                            : ''}
-                    </p>
-                    {/* <div className="my-3 rounded-sm border-[1px] border-gray-400 bg-light-grey p-3">
-                                    <p className="text-xxs underline underline-offset-1">
-                                        4206245192748903396184000008292471
-                                    </p>
-                                    <p className="text-xxs font-semibold">
-                                        Dispatched on 22 Dec
-                                    </p>
-                                  
-                                </div> */}
 
-                    <div className='flex flex-col relative'>
-                        <button
-                            onClick={() =>
-                                setShowFullAddress((prevState) => !prevState)
-                            }
-                            id="deliver-to"
-                            className="disable-drawer w-fit relative flex flex-row flex-nowrap gap-[2px] items-center left-[-6px] border-2 border-transparent h-5 pl-1   focus:border-light-grey active:border-light-grey"
-                        >
-                            <p className='disable-drawer text-xxs hover:underline underline-offset-1 text-black/85'>Deliver To</p>
-                            <ExpandMoreRoundedIcon className={`disable-drawer !text-s !fill-black/85 ${showFullAddress ? 'rotate-180' : 'rotate-0'}`} />
-                        </button>
-                        <p className="text-xs font-semibold">
-                            {order.shipping_address?.name}
+            <section className="middle flex w-full flex-col gap-3 ">
+                <section className="flex w-full flex-row">
+                    <div className="w-full flex-[3] flex-col">
+                        <p className="flex flex-row items-center gap-1 ">
+                            <span className="underline underline-offset-1">
+                                {order.shipping_address?.name}
+                            </span>{' '}
+                            <ArrowDropDownSharpIcon />
                         </p>
-                        {!showFullAddress && (
-                            <p>
-                                {order.shipping_address.address?.city},{' '}
-                                {
-                                    countryLookup.byIso(
-                                        order.shipping_address.address?.country
-                                    )?.country
+                        <p>
+                            <span className="underline underline-offset-1 text-xxs">
+                                #{order?._id}
+                            </span>
+                            <span className="ml-2 text-xxs">
+                                £
+                                {parseFloat(
+                                    order.transaction_cost?.total
+                                ).toFixed(2)}
+                            </span>
+                        </p>
+
+                        <div className="flex flex-col ">
+                            {order.items?.map((itemObj, idx) => {
+                                return (
+                                    <SingleItem itemObj={itemObj} key={idx} />
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div className="flex flex-1 flex-col">
+                        <p className="text-xs font-medium">
+                            {['received', 'processing'].includes(order?.status)
+                                ? `Ship by ${dayjs(
+                                      order.shipping_option?.delivery_date
+                                  ).format('MMM DD, YYYY')}`
+                                : 'Ordered'}
+                        </p>
+                        <p className='text-xxs'>
+                            Ordered{' '}
+                            {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
+                        </p>
+                        <p className="my-3 text-xxs">
+                            {['received', 'processing'].includes(order?.status)
+                                ? `${
+                                      order.shipping_option?.name
+                                  } (£${order.shipping_option?.cost?.toFixed(
+                                      2
+                                  )})`
+                                : ''}
+                        </p>
+
+                        <div className="relative flex flex-col ">
+                            <button
+                                onClick={() =>
+                                    setShowFullAddress(
+                                        (prevState) => !prevState
+                                    )
                                 }
+                                id="deliver-to"
+                                className="disable-drawer relative left-[-6px] flex h-5 w-fit flex-row flex-nowrap items-center gap-[2px] border-2 border-transparent pl-1   focus:border-light-grey active:border-light-grey"
+                            >
+                                <p className="disable-drawer text-xxs text-black/85 underline-offset-1 hover:underline">
+                                    Deliver To
+                                </p>
+                                <ExpandMoreRoundedIcon
+                                    className={`disable-drawer !fill-black/85 !text-s ${
+                                        showFullAddress
+                                            ? 'rotate-180'
+                                            : 'rotate-0'
+                                    }`}
+                                />
+                            </button>
+                            <p className="text-xxs font-semibold">
+                                {order.shipping_address?.name}
                             </p>
-                        )}
-                        {showFullAddress && (
-                            <div>
-                                {' '}
-                                <p ref={addressRef}>
-                                    {address?.line1}
-                                    <br />
-
-                                    {address?.line2 || ''}
-
-                                    {address?.line2 && <br />}
-                                    {`${address?.city}, ${address?.state} ${address?.postal_code}`}
-                                    <br />
+                            {!showFullAddress && (
+                                <p className='text-xxs'>
+                                    {order.shipping_address.address?.city},{' '}
                                     {
-                                        countryLookup.byIso(address?.country)
-                                            ?.country
+                                        countryLookup.byIso(
+                                            order.shipping_address.address
+                                                ?.country
+                                        )?.country
                                     }
                                 </p>
-                                <span
-                                    className="tooltip tooltip-top"
-                                    data-tooltip={
-                                        copyAddress
-                                            ? 'Copied'
-                                            : 'Click to copy to clipboard'
-                                    }
-                                >
-                                    <button
-                                        id="copy-address"
-                                        onMouseLeave={() => {
-                                            if (copyAddress) {
-                                                setCopyAddress(false);
-                                                return;
-                                            }
+                            )}
+                            {showFullAddress && (
+                                <div>
+                                    {' '}
+                                    <p className='text-xxs' ref={addressRef}>
+                                        {address?.line1}
+                                        <br />
 
-                                            return;
-                                        }}
-                                        onClick={handleCopy}
-                                        className="disable-drawer text-xs text-primary/70 underline underline-offset-1"
+                                        {address?.line2 || ''}
+
+                                        {address?.line2 && <br />}
+                                        {`${address?.city}, ${address?.state} ${address?.postal_code}`}
+                                        <br />
+                                        {
+                                            countryLookup.byIso(
+                                                address?.country
+                                            )?.country
+                                        }
+                                    </p>
+                                    <span
+                                        className="tooltip tooltip-top"
+                                        data-tooltip={
+                                            copyAddress
+                                                ? 'Copied'
+                                                : 'Click to copy to clipboard'
+                                        }
                                     >
-                                        {' '}
-                                        Copy address
-                                    </button>
-                                </span>
-                            </div>
-                        )}
+                                        <button
+                                            id="copy-address"
+                                            onMouseLeave={() => {
+                                                if (copyAddress) {
+                                                    setCopyAddress(false);
+                                                    return;
+                                                }
+
+                                                return;
+                                            }}
+                                            onClick={handleCopy}
+                                            className="disable-drawer text-xs text-primary/70 underline underline-offset-1"
+                                        >
+                                            {' '}
+                                            Copy address
+                                        </button>
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-                <div className="right flex-1 p-2"></div>
-            </div>
+                </section>
+
+                {order.private_note?.length >= 1 && (
+                    <div className="private-note flex flex-row gap-2 rounded-sm border px-4 py-3">
+                        <span className="">
+                            <img
+                                src={secure_icon}
+                                alt="secure file icon"
+                                className="h-5 w-6 object-contain"
+                            />
+                        </span>
+                        <div className="flex w-full flex-col gap-2">
+                            {order.private_note?.map((item, idx) => {
+                                return (
+                                    <p 
+                                        className={`pb-2 ${
+                                            (idx == order.private_note?.length - 1)
+                                                ? ''
+                                                : 'border-b'
+                                        } w-full`}
+                                    >
+                                        {item?.note}
+                                    </p>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </section>
+            <div className="right flex flex-1  flex-row p-5"></div>
         </section>
     );
 }

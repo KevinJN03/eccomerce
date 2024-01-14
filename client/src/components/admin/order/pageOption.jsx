@@ -9,6 +9,7 @@ function PageOptions({}) {
         numberOfPage,
         currentPage,
         setCurrentPage,
+        resultMap
     } = useAdminOrderContext();
 
     const previousPage = () => {
@@ -20,7 +21,7 @@ function PageOptions({}) {
     };
 
     const nextPage = () => {
-        if (currentPage == numberOfPage) {
+        if (currentPage == resultMap?.size) {
             return;
         }
 
@@ -41,18 +42,18 @@ function PageOptions({}) {
                     );
                 })}
             </select>
-            {numberOfPage > 1 && (
+            {resultMap?.size > 1 && (
                 <>
                     {' '}
                     <div className="flex flex-row items-center gap-2">
                         <p className="text-base">Page</p>
                         <select
-                            onChange={(e) => setCurrentPage(e.target.value)}
+                            onChange={(e) => setCurrentPage(parseInt(e.target.value))}
                             name="page"
                             id="page-select"
                             className="rounded-sm border-[1px] border-dark-gray p-2 "
                         >
-                            {[...Array(numberOfPage).keys()].map((value) => {
+                            {[...Array(resultMap?.size).keys()].map((value) => {
                                 return (
                                     <option
                                         value={value + 1}
@@ -65,7 +66,7 @@ function PageOptions({}) {
                             })}
                         </select>
                     </div>
-                    <p className="text-base">of {numberOfPage}</p>
+                    <p className="text-base">of {resultMap?.size}</p>
                     <div className="flex flex-row items-center gap-4">
                         <button
                             onClick={previousPage}
@@ -76,7 +77,7 @@ function PageOptions({}) {
                         </button>
                         <button
                             onClick={nextPage}
-                            disabled={currentPage == numberOfPage}
+                            disabled={currentPage == resultMap?.size}
                             className="disabled:opacity-50"
                         >
                             <ArrowForwardIosRoundedIcon className="!fill-dark-gray !text-xl hover:!fill-dark-gray/90" />

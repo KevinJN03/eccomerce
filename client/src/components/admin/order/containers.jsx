@@ -2,7 +2,7 @@ import { useState } from 'react';
 import OrderItem from './orderItem';
 
 import { ClickAwayListener } from '@mui/material';
-
+import { v4 as uuidV4 } from 'uuid';
 import Drawer from './drawerContent/drawerContainer';
 import OrderList from './orderList';
 import { useAdminOrderContext } from '../../../context/adminOrder';
@@ -18,8 +18,14 @@ function Containers({ ordersByDate }) {
     };
     return (
         <section className="flex w-full flex-col gap-4">
-            {ordersByDate?.map((item) => {
-                return <OrderList orderObj={item} key={item?._id} />;
+            {ordersByDate?.map((item, idx) => {
+                return (
+                    <OrderList
+                        orderObj={item}
+                        key={item?._id}
+                        orderListIndex={idx}
+                    />
+                );
             })}
         </section>
     );
