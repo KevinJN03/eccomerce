@@ -13,6 +13,7 @@ import DeliveryProfile from '../Models/deliveryProfile.js';
 import mongoose from 'mongoose';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import PrivateNote from '../Models/privateNote.js';
 
 dayjs(customParseFormat);
 const stripe = Stripe(process.env.STRIPE_KEY);
@@ -249,7 +250,7 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
 
   const ordersByDate = await Order.aggregate([
     matchObj,
-    { $unwind: '$items' },   
+    { $unwind: '$items' },
     {
       $lookup: {
         from: 'products',
@@ -369,3 +370,71 @@ export const getAdminOrders = asyncHandler(async (req, res, next) => {
     totalCount,
   });
 });
+
+export const addPrivateNote = [
+  check('note', 'invalid note').trim().escape().notEmpty(),
+  check('orderId', 'invalid orderId').trim().escape().notEmpty(),
+
+  asyncHandler(async (req, res, next) => {
+    const { note, orderId } = req.body;
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+    // const privateNote = await PrivateNote.create({ note });
+    // const privateNote = { note, date: Date.now(), id: crypto.randomUUID() };
+    const updateOrder = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $push: { private_note: { note } },
+      },
+      { upsert: true, new: true, lean: { toObject: true } },
+    );
+
+    console.log(updateOrder);
+    return res.redirect(`/api/admin/order/${orderId}`);
+  }),
+];
+
+export const editPrivateNote = [
+  check('noteId').trim().escape().notEmpty(),
+  check('orderId').trim().escape().notEmpty(),
+  check('note').trim().escape().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { note, orderId, noteId } = req.body;
+
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+
+    const updateOrder = await Order.findOneAndUpdate(
+      { _id: orderId, 'private_note._id': noteId },
+      { $set: { 'private_note.$.note': note } },
+      { upsert: true, new: true, lean: { toObject: true } },
+    );
+
+    return res.redirect(`/api/admin/order/${orderId}`);
+  }),
+];
+
+export const deletePrivateNote = [
+  check('noteId', 'invalid noteId').trim().escape().notEmpty(),
+  check('orderId', 'invalid orderId').trim().escape().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+    const { noteId, orderId } = req.query;
+
+    if (!result.isEmpty()) {
+      return res.status(400).send({ error: result.mapped() });
+    }
+
+    const updateOrder = await Order.findOneAndUpdate(
+      { _id: orderId },
+      { $pull: { private_note: { _id: new mongoose.Types.ObjectId(noteId) } } },
+      { upsert: true, new: true, lean: { toObject: true } },
+    );
+    res.status(200).redirect(303, `/api/admin/order/${orderId}`);
+  }),
+];

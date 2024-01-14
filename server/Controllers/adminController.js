@@ -19,6 +19,7 @@ import Pdf from '../pdf/pdf.jsx';
 import { generateSignedUrl, s3PdfUpload } from '../s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
+import mongoose from 'mongoose';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -343,9 +344,6 @@ export const exportPdf = [
       lean: { toObject: true },
     });
 
-
-
-
     if (orders.length < 1) {
       return res.status(400).send({ success: false });
     }
@@ -409,7 +407,7 @@ export const testPdf = asyncHandler(async (req, res, next) => {
           'Hello, the name I have given is in Kevin. I hope you can do that. If not please let me know. Thanks',
       },
     },
-    order_receipt: { on: true, checks: { shop_icon: 'order_receipt_banner',} },
+    order_receipt: { on: true, checks: { shop_icon: 'order_receipt_banner' } },
   };
 
   if (printChecks.packing_slip.checks?.coupon) {
@@ -442,3 +440,105 @@ export const testPdf = asyncHandler(async (req, res, next) => {
 
   pdfStream.pipe(res);
 });
+
+// search orders
+
+export const searchOrder = [
+  check('searchText').trim('#').trim().escape(),
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = req.body;
+    let objectId = null;
+
+    const should = [
+      {
+        autocomplete: {
+          query: searchText,
+          path: 'shipping_address.name',
+        },
+      },
+
+      {
+        text: {
+          query: searchText,
+          path: '_id',
+        },
+      },
+    ];
+
+    try {
+      const objectId = new mongoose.Types.ObjectId(searchText);
+      should.push({
+        equals: {
+          value: objectId,
+          path: 'customer',
+        },
+      });
+    } catch (error) {
+      objectId = null;
+      console.error('parse string to objectId failed: ', error?.message, );
+    }
+
+    const searchResult = await Order.aggregate([
+      {
+        $search: {
+          index: 'orders_search_index',
+          compound: {
+            should,
+          },
+        },
+      },
+
+      { $unwind: '$items' },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'items.product',
+          foreignField: '_id',
+          as: 'productLookup',
+        },
+      },
+      {
+        $project: {
+          productLookup: {
+            variations: 0,
+            reviews: 0,
+            detail: 0,
+            category: 0,
+            gender: 0,
+            price: 0,
+            delivery: 0,
+            stock: 0,
+          },
+        },
+      },
+      {
+        $addFields: {
+          'items.product': { $arrayElemAt: ['$productLookup', 0] },
+        },
+      },
+      {
+        $unset: 'productLookup',
+      },
+      {
+        $group: {
+          _id: '$_id',
+          itemsArray: { $push: '$items' },
+          doc: { $first: '$$ROOT' },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+
+    res.status(200).send({ searchResult, success: true });
+  }),
+];

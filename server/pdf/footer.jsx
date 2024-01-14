@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, Image } from '@react-pdf/renderer';
 
 import 'dotenv/config';
+import coupon from '../Models/coupon';
 
 const { CLOUDFRONT_URL } = process.env;
 function Footer({ checks }) {
@@ -44,15 +45,13 @@ function Footer({ checks }) {
             }}
           >
             <View
-            
               style={{
                 position: 'relative',
                 width: '120pt',
                 height: '41pt',
                 // maxWidth: '120pt',
                 // maxHeight: '40pt',
-                borderTop: '1pt solid black'
-               
+                borderTop: '1pt solid black',
               }}
             >
               <Image
@@ -62,39 +61,36 @@ function Footer({ checks }) {
                   width: '100%',
                   height: '100%',
                   position: 'relative',
-                
                 }}
               />
               <View
-              
-                   style={{
-                 
+                style={{
                   position: 'absolute',
                   left: 0,
                   top: 0,
-                  
+
                   zIndex: '2',
                   width: '120pt',
                   height: '41pt',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center'
-                 
-                }}>
-
-              <Text  
-                      style={{
-                        fontSize: '12pt',
-                        fontWeight: 'semibold',}}
-            
+                  alignItems: 'center',
+                }}
               >
-                10% OFF
-              </Text>
+                <Text
+                  style={{
+                    fontSize: '12pt',
+                    fontWeight: 'semibold',
+                  }}
+                >
+                  {`${checks.coupon?.type == 'fixed' ? '£' : ''}${
+                    checks.coupon?.amount
+                  }${checks.coupon?.type != 'fixed' ? '%' : ''} OFF`}
+                </Text>
               </View>
-            
             </View>
 
-            <Text style={{ alignSelf: 'baseline', paddingBottom: '5pt',  }}>
+            <Text style={{ alignSelf: 'baseline', paddingBottom: '5pt' }}>
               Enter this coupon code at checkout: {checks.coupon?.code}
             </Text>
           </View>
@@ -110,7 +106,7 @@ function Footer({ checks }) {
           alignContent: 'center',
           borderTop: '1pt solid black',
           paddingTop: '12pt',
-          marginBottom: '12pt'
+          marginBottom: '12pt',
         }}
       >
         <View id="left" style={{ height: '100%' }}>
