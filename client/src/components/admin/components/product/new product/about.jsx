@@ -53,7 +53,7 @@ function About() {
                         min={1}
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className={titleError && 'bg-red-100'}
+                        className={`input ${titleError ? 'bg-red-100' : ''}`}
                     />
                 </section>
 

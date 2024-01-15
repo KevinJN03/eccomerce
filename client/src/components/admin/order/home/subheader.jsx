@@ -1,11 +1,11 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useEffect, useState } from 'react';
-import { useAdminOrderContext } from '../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrder';
 import { forEach } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ClickAwayListener } from '@mui/material';
 import variant from './variant';
-import { useAdminContext } from '../../../context/adminContext';
+import { useAdminContext } from '../../../../context/adminContext';
 
 function SubHeader({}) {
     const {
@@ -35,10 +35,9 @@ function SubHeader({}) {
         return orderIdArray;
     };
     useEffect(() => {
-        if(resultMap.size > 0){
+        if (resultMap.size > 0) {
             setAllOrdersId(() => getIdsFromPage());
         }
-        
     }, [currentPage, resultMap]);
 
     const toggleSelection = () => {
@@ -80,7 +79,7 @@ function SubHeader({}) {
     };
 
     const printOrders = () => {
-        console.log('clikced')
+        console.log('clikced');
         adminOrderModalContentDispatch({
             type: 'printOrder',
             orders: Array.from(selectionSet),

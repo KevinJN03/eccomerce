@@ -2,7 +2,7 @@ import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useState } from 'react';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { AnimatePresence, motion } from 'framer-motion';
-import '../home/admin.scss';
+
 import containerVariants from './containerVariants';
 import { ClickAwayListener } from '@mui/material';
 function Label({ option }) {

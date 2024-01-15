@@ -6,7 +6,7 @@ import {
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import variant from '../variant';
+import variant from '../home/variant';
 import { ClickAwayListener } from '@mui/material';
 import { useAdminContext } from '../../../../context/adminContext';
 import { adminAxios } from '../../../../api/axios';

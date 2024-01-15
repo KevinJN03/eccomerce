@@ -21,9 +21,10 @@ import {
 import PrivateNote from './privateNote';
 import UserInfo from './userInfo';
 import { AnimatePresence, motion } from 'framer-motion';
-import containerVariants from '../containerVariants';
+import containerVariants from '../home/containerVariants';
 import { ClickAwayListener } from '@mui/material';
 import { adminAxios } from '../../../../api/axios';
+import Actions from './action';
 
 function Label({ setShowActions }) {
     return (
@@ -160,7 +161,7 @@ function DrawerContainer() {
                                                 <ArrowDropDownSharp />
                                             </button>
 
-                                            {[
+                                            {/* {[
                                                 {
                                                     text: 'Print',
                                                     icon: (
@@ -205,7 +206,11 @@ function DrawerContainer() {
                                                         </button>
                                                     );
                                                 }
-                                            )}
+                                            )} */}
+                                            <Actions
+                                                setShowActions={setShowActions}
+                                                orderId={orderInfo?._id}
+                                            />
                                         </motion.div>
                                     </ClickAwayListener>
                                 )}

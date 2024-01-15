@@ -7,20 +7,20 @@ import PageOptions from './pageOption';
 import Containers from './containers';
 import SideContainer from './sideContainer';
 import NewComplete from './new-complete';
-import userLogout from '../../../hooks/userLogout';
+import userLogout from '../../../../hooks/userLogout';
 
 import AdminOrderContextProvider, {
     useAdminOrderContext,
-} from '../../../context/adminOrder';
+} from '../../../../context/adminOrder';
 import { Box, Drawer, Modal } from '@mui/material';
-import DrawerContainer from './drawerContent/drawerContainer';
-import GLoader from '../../Login-SignUp/socialRegister/gloader';
-import { adminOrderModalReducer } from '../../../hooks/adminOrderModalReducer';
+import DrawerContainer from '../drawerContent/drawerContainer';
+import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import { adminOrderModalReducer } from '../../../../hooks/adminOrderModalReducer';
 // import Modal from '../components/modal/modal';
-import views from './modalView/modalView';
-import '../home/admin.scss';
+import views from '../modalView/modalView';
+import '../../home/admin.scss';
 import SearchOrder from './searchOrder';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../../api/axios';
 
 function OrderPageContent({}) {
     const {

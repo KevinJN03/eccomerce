@@ -1,9 +1,6 @@
 .side-bar {
-    flex: 1;
-    border-right: 0.5px solid var(--primary-2);
-    min-height: 100vh;
-    background-color: white;
-    width: 300px;
+    @apply flex-1;
+
     .top {
         height: 50px;
         @apply flex items-center justify-center;
@@ -13,7 +10,7 @@
 
  
     .center {
-        padding-left: 10px;
+
 
         ul {
             .title {
@@ -25,14 +22,14 @@
             }
 
             a, button {
-                @apply flex cursor-pointer items-center p-1 w-full;
+                @apply flex cursor-pointer items-center w-full;
 
                 &:hover {
-                    background-color: rgb(177, 235, 177);
+                    @apply bg-light-grey;
                 }
 
                 .icons {
-                    font-size: 42px;
+                    font-size: 36px !important;
                     color: green;
                 }
 

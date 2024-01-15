@@ -17,11 +17,12 @@ export default {
                 'grey-100': '#dddddd46;',
                 // 'dark-gray': '#676666',
                 'dark-gray': '#939393',
-                'light-grey': '#eee'
+                'light-grey': '#eee',
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],
-                raleway: ['Raleway', ' sans-serif'],
+                raleway: ['Raleway', 'sans-serif'],
+                EBGaramond: ['EB Garamond', 'sans-serif'],
             },
             letterSpacing: {
                 tightest: '-.099em',
@@ -36,7 +37,7 @@ export default {
 
             boxShadow: {
                 'my-shadow': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
-                '3xl': '0px 5px 10px rgba(0, 0, 0, 0.35)'
+                '3xl': '0px 5px 10px rgba(0, 0, 0, 0.35)',
             },
 
             spacing: {

@@ -56,9 +56,9 @@ import Login from './components/Login-SignUp/Login.jsx';
 import SignUp from './components/Login-SignUp/SignUp.jsx';
 import ResetSent from './components/forget-password/sent.jsx';
 import ResetPassword from './components/forget-password/reset.password.jsx';
-import AdminOrder from './components/admin/order/admin-order.jsx';
+import AdminOrder from './components/admin/order/home/admin-order.jsx';
 import AdminPortal from './components/admin/home/AdminPortal.jsx';
-import Order_Edit from './components/admin/order/edit_order.jsx';
+import Order_Edit from './components/admin/order/home/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
 import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
 import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
@@ -67,6 +67,7 @@ import OrderCancelled from './components/order/order-cancelled.jsx';
 import TemplateProvider from './context/templeteContext.jsx';
 import ErrorTemplate from './components/order/error.jsx';
 import Pdf from './components/admin/order/pdf/pdf.jsx';
+import CancelOrder from './components/admin/order/cancelOrder.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -328,6 +329,11 @@ function Router({ Header, Footer }) {
                         {
                             path: 'orders',
                             element: <AdminOrder />,
+                        },
+                     
+                        {
+                            path: 'orders/:id/cancel_order',
+                            element: <CancelOrder />,
                         },
                         {
                             path: 'orders/edit/:id',

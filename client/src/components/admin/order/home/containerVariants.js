@@ -13,8 +13,8 @@ const containerVariants = {
     },
     exit: {
         scale: 0,
-        translateY: -120,
-        translateX: -80,
+        translateY: -100,
+        translateX: -60,
         opacity: 0,
         transition: {
             duration: 0.3,

@@ -1,19 +1,19 @@
-import { useAdminContext } from '../../../context/adminContext';
-import { OrderNumberDate } from '../../dashboard/order/order-info';
-import order_icon from '../../../assets/icons/profile-icons/package.svg';
-import calendar_icon from '../../../assets/icons/profile-icons/calender.png';
+import { useAdminContext } from '../../../../context/adminContext.jsx';
+import { OrderNumberDate } from '../../../dashboard/order/order-info.jsx';
+import order_icon from '../../../../assets/icons/profile-icons/package.svg';
+import calendar_icon from '../../../../assets/icons/profile-icons/calender.png';
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import logos from '../../dashboard/payment-methods/logos';
+import logos from '../../../dashboard/payment-methods/logos.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import animationVariant from '../home/animationVariant';
+import animationVariant from '../../home/animationVariant.js';
 
 import ErrorMessage, {
     BetaErrorMessage,
-} from '../../Login-SignUp/errorMessage.jsx';
-import OptionError from '../components/product/new product/variation/error/optionError.jsx';
+} from '../../../Login-SignUp/errorMessage.jsx';
+import OptionError from '../../components/product/new product/variation/error/optionError.jsx';
 import { ClickAwayListener } from '@mui/material';
 
 const shippingCarriers = [
@@ -45,7 +45,7 @@ function UpdateOrder({}) {
     const [status, setStatus] = useState('');
     const [submitState, setSubmitState] = useState(false);
 
-    const [updateStatus, setUpdateStatus] = useState(false)
+    const [updateStatus, setUpdateStatus] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         adminAxios
@@ -53,7 +53,9 @@ function UpdateOrder({}) {
             .then(({ data }) => {
                 setOrder(() => data?.order);
 
-                setUpdateStatus(() => (['received', 'shipped'].includes(data?.order?.status)) )
+                setUpdateStatus(() =>
+                    ['received', 'shipped'].includes(data?.order?.status)
+                );
             })
             .catch((error) => {
                 console.error('get order details: ', error);

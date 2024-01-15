@@ -1,20 +1,20 @@
-import { OrderNumberDate } from '../../dashboard/order/order-info';
-import order_icon from '../../../assets/icons/profile-icons/package.svg';
-import calendar_icon from '../../../assets/icons/profile-icons/calender.png';
+import { OrderNumberDate } from '../../../dashboard/order/order-info';
+import order_icon from '../../../../assets/icons/profile-icons/package.svg';
+import calendar_icon from '../../../../assets/icons/profile-icons/calender.png';
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../../api/axios';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import logos from '../../dashboard/payment-methods/logos';
+import logos from '../../../dashboard/payment-methods/logos';
 import { AnimatePresence, motion } from 'framer-motion';
-import animationVariant from '../home/animationVariant';
-import { useAdminContext } from '../../../context/adminContext';
+import animationVariant from '../../home/animationVariant';
+import { useAdminContext } from '../../../../context/adminContext';
 function Order_Edit({}) {
     const [order, setOrder] = useState({});
 
     const { id } = useParams();
     const { modalContent } = useAdminContext();
-    console.log('id: ', id, modalContent?.id)
+    console.log('id: ', id, modalContent?.id);
     useEffect(() => {
         adminAxios
             .get(`order/${id || modalContent?.id}`)
