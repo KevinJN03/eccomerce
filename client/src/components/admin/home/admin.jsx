@@ -90,7 +90,7 @@ function Admin({}) {
                         </AnimatePresence>
 
                         <SideBar />
-                        <div className="homeContainer">
+                        <div className="homeContainer ml-56">
                             {/* <Navbar /> */}
                             <Outlet />
                             {/* {modalCheck && (

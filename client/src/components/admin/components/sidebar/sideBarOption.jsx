@@ -10,9 +10,11 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
+import { HomeOutlined, InterestsOutlined } from '@mui/icons-material';
+import clipboard_icon from '../../../../assets/icons/clipboard.png'
 const optionsArray = [
     {
-        icon: <DashboardIcon className="icons" />,
+        icon: <HomeOutlined className="icons" />,
         title: 'DashBoard',
         link: '/admin',
     },
@@ -23,12 +25,13 @@ const optionsArray = [
         link: '/admin/users',
     },
     {
-        icon: <StoreRoundedIcon className="icons" />,
-        title: 'Products',
+        icon: <InterestsOutlined className="icons" />,
+        title: 'Listings',
         link: '/admin/products',
     },
     {
-        icon: <CreditCardRoundedIcon className="icons" />,
+        icon: <img src={clipboard_icon} className='icons w-[30px] h-[30px]'/>,
+        // icon: <CreditCardRoundedIcon className="icons" />,
         title: 'Orders',
         link: '/admin/orders',
     },

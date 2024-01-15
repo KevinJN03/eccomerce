@@ -1,12 +1,7 @@
 .side-bar {
     @apply flex-1;
 
-    .top {
-        height: 50px;
-        @apply flex items-center justify-center;
-        border-bottom: 0.5px solid var(--primary-2);
-      
-    }
+   
 
  
     .center {
@@ -29,7 +24,7 @@
                 }
 
                 .icons {
-                    font-size: 36px !important;
+                    font-size: 30px !important;
                     color: green;
                 }
 
