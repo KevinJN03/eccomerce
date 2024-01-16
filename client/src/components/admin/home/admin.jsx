@@ -14,7 +14,7 @@ import {
 import { useContext } from 'react';
 import { ContentProvider } from '../../../context/ContentContext';
 import { useAdminContext } from '../../../context/adminContext';
-import Modal from '../components/modal/modal';
+
 import Manage from '../components/product/new product/variation/manage/manage';
 import SelectVariation from '../components/product/new product/variation/selectVariation';
 import Main from '../components/product/new product/variation/main';
@@ -24,15 +24,26 @@ import UpdateOrder from '../order/home/updateOrder';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CloseSharp, MoodBad, MoodBadTwoTone } from '@mui/icons-material';
 
-import sadEmoji from '../../../assets/icons/sad-emoji.svg'
+import sadEmoji from '../../../assets/icons/sad-emoji.svg';
+import { Box, Modal } from '@mui/material';
+import Delete from '../components/product/modalContent/delete';
+import ChangeSection from '../components/product/modalContent/changeSection';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
     const [showAlert, setShowAlert] = useState({
         msg: '111111111111111',
-        on: true,
+        on: false,
     });
+    const [open, setOpen] = useState(true);
 
+    const [modalCheck, setModalCheck] = useState(true);
+    const [modalContent, setModalContent] = useState({ type: 'delete' });
+
+    const views = {
+        delete: <Delete />,
+        changeSection: <ChangeSection />,
+    };
     const alertVariant = {
         initial: {
             // y: 0,
@@ -54,7 +65,14 @@ function Admin({}) {
     };
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
-            <ContentProvider>
+            <ContentProvider
+                value={{
+                    modalCheck,
+                    modalContent,
+                    setModalCheck,
+                    setModalContent,
+                }}
+            >
                 {location.pathname.split('/')[2] == 'login' ||
                 location.pathname.split('/')[3] == 'download' ? (
                     <Outlet />
@@ -63,17 +81,20 @@ function Admin({}) {
                         <AnimatePresence>
                             {showAlert?.on && (
                                 <motion.section
-                                    className="fixed left-0 flex w-full justify-center z-50"
+                                    className="fixed left-0 z-50 flex w-full justify-center"
                                     variants={alertVariant}
                                     initial={'initial'}
                                     animate={'animate'}
                                     exit={'exit'}
                                 >
-                                    <div className="flex w-full max-w-md flex-row rounded !bg-red-800 p-3 gap-3 ">
-                                       <span>
-                                        <img src={sadEmoji} alt="sad mode emoji" />
-                                       </span>
-                                       
+                                    <div className="flex w-full max-w-md flex-row gap-3 rounded !bg-red-800 p-3 ">
+                                        <span>
+                                            <img
+                                                src={sadEmoji}
+                                                alt="sad mode emoji"
+                                            />
+                                        </span>
+
                                         <p className="text-white">
                                             {showAlert?.msg}
                                         </p>
@@ -89,19 +110,35 @@ function Admin({}) {
                             )}
                         </AnimatePresence>
 
-                        <SideBar />
-                        <div className="homeContainer ml-56">
+                        <SideBar open={open} setOpen={setOpen} />
+                        <div
+                            className={`homeContainer ${
+                                open ? 'ml-56' : 'ml-[3.875rem]'
+                            }`}
+                        >
                             {/* <Navbar /> */}
                             <Outlet />
-                            {/* {modalCheck && (
-                                <Modal
-                                    check={modalCheck}
-                                    setCheck={setModalCheck}
-                                    ModalContent={views[modalContent?.type]}
-                                    loading={loading}
-                                    setLoading={setLoading}
-                                />
-                            )} */}
+
+                            <Modal
+                                open={modalCheck}
+                                onClose={() => setModalCheck(false)}
+                            >
+                                <Box
+                                    sx={{
+                                        // backgroundColor: 'white',
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        boxSizing: 'border-box', 
+                                        maxWidth: '600px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                    }}
+                                >
+                                    {views?.[modalContent?.type]}
+                                </Box>
+                            </Modal>
                         </div>
                     </section>
                 )}

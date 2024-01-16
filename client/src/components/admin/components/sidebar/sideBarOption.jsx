@@ -10,9 +10,10 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
-import { HomeOutlined, InterestsOutlined } from '@mui/icons-material';
+import { HomeOutlined, InterestsOutlined , SearchOutlined} from '@mui/icons-material';
 import clipboard_icon from '../../../../assets/icons/clipboard.png'
 const optionsArray = [
+   
     {
         icon: <HomeOutlined className="icons" />,
         title: 'DashBoard',

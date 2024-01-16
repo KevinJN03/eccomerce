@@ -1,0 +1,160 @@
+import {
+    ArrowDropDownSharp,
+    SettingsRounded,
+    StarRateRounded,
+} from '@mui/icons-material';
+import { ClickAwayListener } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import variant from '../../order/home/variant';
+import { useContent } from '../../../../context/ContentContext';
+
+function ProductItem({ product, setSelectionSet, selectionSet }) {
+    const [hover, setHover] = useState(false);
+    const [favorite, setFavorite] = useState(product?.favorite || false);
+
+    const [showAction, setShowAction] = useState(false);
+
+    const { setModalCheck, setModalContent } = useContent();
+
+    const handleDelete = () => {
+        setModalContent(() => ({ type: 'delete' }));
+        setModalCheck(() => true);
+        setShowAction(() => false);
+    };
+
+    const changeSection = () => {
+        setModalContent(() => ({ type: 'changeSection' }));
+        setModalCheck(() => true);
+        setShowAction(() => false);
+    }
+    return (
+        <section className="relative h-fit w-full max-w-48">
+            <div
+                key={product?._id}
+                className={`${
+                    selectionSet?.has(product?._id)
+                        ? 'border-green-400/50 bg-green-50'
+                        : 'border-dark-gray/50 bg-transparent'
+                } relative flex h-fit w-full flex-col rounded border`}
+            >
+                <Link to={`edit/${product._id}`} className="group">
+                    <div className="top w-full p-0.5 ">
+                        <img
+                            src={product?.images[0]}
+                            className="h-40 w-full object-cover"
+                        />
+                    </div>
+                    <div className="middle flex w-full flex-col  gap-0.5 p-2 pb-14">
+                        <p
+                            title={product.title}
+                            className={`truncate font-medium text-black decoration-1 underline-offset-1 group-hover:underline`}
+                        >
+                            {product.title}
+                        </p>
+                        <p className="text-xs text-black/75">199 in stock</p>
+
+                        <p className="text-xs text-black/75">£29.99-£49.99</p>
+                    </div>
+                </Link>
+
+                <div
+                    className={`${
+                        selectionSet?.has(product?._id)
+                            ? 'border-green-400/50'
+                            : 'border-dark-gray/50'
+                    } bottom flex w-full flex-row items-center justify-between border-t`}
+                >
+                    <div className="flex w-full items-center justify-center py-2">
+                        <input
+                            checked={selectionSet?.has(product?._id)}
+                            onChange={() => {
+                                setSelectionSet((prevSet) => {
+                                    const newSet = new Set(prevSet);
+                                    if (newSet.has(product?._id)) {
+                                        newSet.delete(product._id);
+                                    } else {
+                                        newSet.add(product?._id);
+                                    }
+
+                                    return newSet;
+                                });
+                            }}
+                            type="checkbox"
+                            className="daisy-checkbox daisy-checkbox-xs rounded"
+                            name={`${product?._id}-checkbox`}
+                            id={`${product?._id}-checkbox`}
+                        />
+                    </div>
+
+                    <div
+                        className="group flex w-full items-center justify-center py-2"
+                        onClick={() => setFavorite((prevState) => !prevState)}
+                    >
+                        <StarRateRounded
+                            className={`${
+                                favorite ? '!fill-orange-400' : ''
+                            } group-hover:!opacity-70`}
+                        />
+                    </div>
+
+                    <div
+                        onClick={() => setShowAction((prevState) => !prevState)}
+                        className="flex w-full  flex-row flex-nowrap items-center justify-center"
+                    >
+                        <SettingsRounded className="!text-[20px]" />
+                        <ArrowDropDownSharp className="relative left-[-0.3rem] !text-[20px]" />
+                    </div>
+                </div>
+            </div>
+            <AnimatePresence>
+                {showAction && (
+                    <ClickAwayListener
+                        onClickAway={() => setShowAction(() => false)}
+                    >
+                        <motion.div
+                            variants={variant}
+                            animate={'animate'}
+                            initial={'initial'}
+                            exit={'exit'}
+                            className=" absolute bottom-0 right-0 z-10 -translate-y-[-101%] rounded border border-dark-gray/50 bg-white py-2"
+                        >
+                            <div className="border-b border-dark-gray/50 pb-2 ">
+                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
+                                    View on glamo
+                                </p>
+                                <p className=" cursor-pointer py-2 pl-4 pr-20 hover:bg-light-grey/50">
+                                    View stats
+                                </p>
+                            </div>
+                            <div className="border-b border-dark-gray/50 py-2">
+                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
+                                    Edit
+                                </p>
+                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
+                                    Copy
+                                </p>
+                            </div>
+
+                            <div className="border-b border-dark-gray/50 py-2">
+                                <p onClick={changeSection} className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
+                                    Change Section
+                                </p>
+                            </div>
+
+                            <p
+                                onClick={handleDelete}
+                                className=" mt-2 cursor-pointer py-2 pl-4 hover:bg-light-grey/50"
+                            >
+                                Delete
+                            </p>
+                        </motion.div>
+                    </ClickAwayListener>
+                )}
+            </AnimatePresence>
+        </section>
+    );
+}
+
+export default ProductItem;
