@@ -16,10 +16,12 @@ import {
     StarRateRounded,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import ProductItem from './productItem.jsx';
+import ProductItem from './gridItem.jsx';
 import SelectionInput from '../../order/home/selectionIput.jsx';
 import SideContainer from './sideContainer.jsx';
 import { Box, Modal } from '@mui/material';
+import GridProduct from './gridProducts.jsx';
+import VerticalProducts from './verticalProducts.jsx';
 function All_Products() {
     const [loading, setLoading] = useState(false);
 
@@ -27,6 +29,7 @@ function All_Products() {
     const { allProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
 
+    const [checks, setChecks] = useState({ format: 'vertical' });
     const [productIds, setProductIds] = useState(() =>
         allProducts?.map((product) => product?._id)
     );
@@ -101,33 +104,35 @@ function All_Products() {
                         </div>
 
                         <button
-                        disabled={!selectionSet?.size}
+                            disabled={!selectionSet?.size}
                             type="button"
                             className="flex flex-row items-center rounded border border-dark-gray/50 px-3 text-xs font-medium  hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
                         >
-                            <p className='text-black/70'>Editing options</p>
+                            <p className="text-black/70">Editing options</p>
                             <ArrowDropDownSharp />
                         </button>
                     </div>
-                    <section className="flex w-full flex-row flex-wrap gap-4 overflow-y-hidden">
-                        {allProducts.map((product) => {
-                            return (
-                                <ProductItem
-                                    {...{
-                                        product,
-                                        setSelectionSet,
-                                        selectionSet,
-                                    }}
-                                />
-                            );
-                        })}
+                    <section className="w-full">
+                        {checks.format === 'grid' ? (
+                            <GridProduct
+                                {...{
+                                    selectionSet,
+                                    setSelectionSet,
+                                }}
+                            />
+                        ) : (
+                            <VerticalProducts
+                                {...{
+                                    selectionSet,
+                                    setSelectionSet,
+                                }}
+                            />
+                        )}
                     </section>
                 </section>
 
-               <SideContainer/>
+                <SideContainer {...{ checks, setChecks }} />
             </section>
-
-          
         </section>
     );
 }

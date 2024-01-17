@@ -6,11 +6,13 @@ import {
 import { ClickAwayListener } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import variant from '../../order/home/variant';
 import { useContent } from '../../../../context/ContentContext';
+import Actions from './actions';
 
-function ProductItem({ product, setSelectionSet, selectionSet }) {
+function GridItem({ product, setSelectionSet, selectionSet }) {
+    const navigate = useNavigate();
     const [hover, setHover] = useState(false);
     const [favorite, setFavorite] = useState(product?.favorite || false);
 
@@ -18,17 +20,8 @@ function ProductItem({ product, setSelectionSet, selectionSet }) {
 
     const { setModalCheck, setModalContent } = useContent();
 
-    const handleDelete = () => {
-        setModalContent(() => ({ type: 'delete' }));
-        setModalCheck(() => true);
-        setShowAction(() => false);
-    };
+    const [format, setFormat] = useState('grid');
 
-    const changeSection = () => {
-        setModalContent(() => ({ type: 'changeSection' }));
-        setModalCheck(() => true);
-        setShowAction(() => false);
-    }
     return (
         <section className="relative h-fit w-full max-w-48">
             <div
@@ -108,53 +101,16 @@ function ProductItem({ product, setSelectionSet, selectionSet }) {
                     </div>
                 </div>
             </div>
-            <AnimatePresence>
-                {showAction && (
-                    <ClickAwayListener
-                        onClickAway={() => setShowAction(() => false)}
-                    >
-                        <motion.div
-                            variants={variant}
-                            animate={'animate'}
-                            initial={'initial'}
-                            exit={'exit'}
-                            className=" absolute bottom-0 right-0 z-10 -translate-y-[-101%] rounded border border-dark-gray/50 bg-white py-2"
-                        >
-                            <div className="border-b border-dark-gray/50 pb-2 ">
-                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
-                                    View on glamo
-                                </p>
-                                <p className=" cursor-pointer py-2 pl-4 pr-20 hover:bg-light-grey/50">
-                                    View stats
-                                </p>
-                            </div>
-                            <div className="border-b border-dark-gray/50 py-2">
-                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
-                                    Edit
-                                </p>
-                                <p className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
-                                    Copy
-                                </p>
-                            </div>
-
-                            <div className="border-b border-dark-gray/50 py-2">
-                                <p onClick={changeSection} className=" cursor-pointer py-2 pl-4 hover:bg-light-grey/50">
-                                    Change Section
-                                </p>
-                            </div>
-
-                            <p
-                                onClick={handleDelete}
-                                className=" mt-2 cursor-pointer py-2 pl-4 hover:bg-light-grey/50"
-                            >
-                                Delete
-                            </p>
-                        </motion.div>
-                    </ClickAwayListener>
-                )}
-            </AnimatePresence>
+            <Actions
+                {...{
+                    product,
+                    showAction,
+                    setShowAction,
+                    className: '-translate-y-[-101%]',
+                }}
+            />
         </section>
     );
 }
 
-export default ProductItem;
+export default GridItem;
