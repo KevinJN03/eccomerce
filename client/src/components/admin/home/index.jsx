@@ -33,17 +33,6 @@ function Index({}) {
 
     const navigate = useNavigate();
     useEffect(() => {
-        // getAllData({
-        //     setAllProducts,
-        //     setAllUsers,
-        //     setChartData,
-        //     setOrders,
-        //     setDeliveryData,
-        //     setDashBoardData,
-        //     setLoading,
-        //     navigate
-
-        // });
 
         const fetchData = async () => {
             try {

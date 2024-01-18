@@ -4,10 +4,13 @@ import { convertToRaw } from 'draft-js';
 import { adminAxios } from '../../../../../../api/axios';
 import { useEffect, useState, useRef } from 'react';
 import formatFormData from '../utils/formatFormData';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAdminContext } from '../../../../../../context/adminContext';
 
 function Footer({ type }) {
     const { id } = useParams();
+const navigate = useNavigate()
+    const { setAllProducts } = useAdminContext();
     const {
         description,
         title,
@@ -28,7 +31,6 @@ function Footer({ type }) {
     } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
-        
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
     }, [publish]);
 
@@ -63,15 +65,11 @@ function Footer({ type }) {
                 publishData(formData);
             }, 1000);
 
-            
             if (publishError?.size > 0) {
-                
                 clearTimeout(timeout);
                 setLoading(() => false);
             }
-        } catch (error) {
-            
-        }
+        } catch (error) {}
     };
 
     async function publishData(formData) {
@@ -79,19 +77,21 @@ function Footer({ type }) {
             type == 'update' ? `/product/${type}/${id}` : '/product/create';
 
         try {
-            await adminAxios({
+            const { data } = await adminAxios({
                 method: type == 'update' ? 'put' : 'post',
                 url: url,
                 data: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-
+            setAllProducts(()=> data)
             setLoading(() => false);
+
+            navigate('/admin/products')
         } catch (error) {
             setLoading(() => false);
 
             const errorData = error.response.data;
-            
+
             errorData?.[0]?.type == 'field'
                 ? publishErrorDispatch({ type: 'set', data: errorData })
                 : publishErrorDispatch({
@@ -118,7 +118,11 @@ function Footer({ type }) {
             >
                 {!loading && (
                     <span className="whitespace-nowrap text-white">
-                        {type == 'update' ? 'Publish Changes' : 'Publish'}
+                        {type == 'update'
+                            ? 'Publish Changes'
+                            : type == 'copy'
+                              ? 'Copy'
+                              : 'Publish'}
                     </span>
                 )}
                 {loading && (

@@ -3,17 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import variant from './variant';
 import { ArrowDropDownSharp } from '@mui/icons-material';
 import { useState } from 'react';
-function SelectionInput({
-    allIds,
-    selectionSet,
-    setSelectionSet,
 
-   
-}) {
-
+function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
     const [show, setShow] = useState(false);
     const selectAll = () => {
         setSelectionSet((prevSet) => new Set([...prevSet, ...allIds]));
+        setShow(() => false);
     };
 
     const toggleSelection = () => {
@@ -30,8 +25,6 @@ function SelectionInput({
     };
 
     const handleClick = (e) => {
-        
-
         if (e.target?.type == 'checkbox') {
             return;
         }
@@ -77,7 +70,7 @@ function SelectionInput({
                             >
                                 <p
                                     onClick={selectAll}
-                                    className="whitespace-nowrap text-s"
+                                    className="cursor-pointer whitespace-nowrap text-s "
                                 >
                                     Select all on page
                                 </p>
@@ -85,7 +78,7 @@ function SelectionInput({
 
                             <p
                                 onClick={deselect}
-                                className="whitespace-nowrap px-5 py-2 text-s hover:bg-dark-gray/20"
+                                className=" cursor-pointer whitespace-nowrap px-5 py-2 text-s hover:bg-dark-gray/20"
                             >
                                 Deselect all
                             </p>

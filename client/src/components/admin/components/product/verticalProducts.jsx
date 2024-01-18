@@ -6,10 +6,11 @@ import {
 import { useAdminContext } from '../../../../context/adminContext';
 import { useState } from 'react';
 import VerticalItem from './verticalItem';
+import { useListingPageContext } from '../../../../context/listingPageContext';
 
-function VerticalProducts({ selectionSet, setSelectionSet }) {
+function VerticalProducts() {
     const { allProducts } = useAdminContext();
-
+    const { selectionSet, setSelectionSet } = useListingPageContext();
 
     return (
         <section className="w-full ">

@@ -6,11 +6,14 @@ import {
 import { useState } from 'react';
 import Actions from './actions';
 import { Link } from 'react-router-dom';
+import { useListingPageContext } from '../../../../context/listingPageContext';
 
-function VerticalItem({ product, selectionSet, setSelectionSet, idx }) {
+function VerticalItem({ product, idx }) {
     const [favorite, setFavorite] = useState(false);
 
     const [showAction, setShowAction] = useState(false);
+
+    const { selectionSet, setSelectionSet} = useListingPageContext()
     return (
         <section
             className={`${

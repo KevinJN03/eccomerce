@@ -86,11 +86,14 @@ export const s3Delete = async (prefix, id) => {
   const response = await client.send(listCommand);
   if (!response.Contents) return 'empty response Content or Keys';
 
-  const listParams = response.Contents.map(({ Key }) => {
-    return {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key,
-    };
+  const listParams = [];
+  response.Contents.forEach(({ Key }) => {
+    if (Key !== `products/${id}/primary.png`) {
+      listParams.push({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key,
+      });
+    }
   });
 
   const result = await Promise.all(

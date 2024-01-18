@@ -117,7 +117,7 @@ function Admin({}) {
                                 open ? 'ml-56' : 'ml-[3.875rem]'
                             }`}
                         >
-                            {/* <Navbar /> */}
+                         
                             <Outlet />
 
                             <Modal

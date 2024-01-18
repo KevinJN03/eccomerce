@@ -7,7 +7,7 @@ import {
     useNewProduct,
 } from '../../../../../context/newProductContext';
 
-function Product_Single({}) {
+function EditProduct({ type }) {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
     const [singleValue, setSingleValue] = useState({});
@@ -15,8 +15,7 @@ function Product_Single({}) {
         adminAxios
             .get(`/product/${id}`)
             .then((res) => {
-
-                console.log(res.data)
+                console.log(res.data);
                 setSingleValue(() => res.data);
 
                 setTimeout(() => {
@@ -28,7 +27,6 @@ function Product_Single({}) {
             });
     }, []);
 
-    
     return (
         <NewProductProvider singleValue={singleValue}>
             {loading ? (
@@ -37,10 +35,10 @@ function Product_Single({}) {
             ) : (
                 // </section>
 
-                <New_Product type={'update'} />
+                <New_Product type={type} />
             )}
         </NewProductProvider>
     );
 }
 
-export default Product_Single;
+export default EditProduct;

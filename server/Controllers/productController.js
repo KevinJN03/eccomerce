@@ -148,38 +148,21 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
 });
 
 export const delete_product = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const { ids } = req.params;
 
-  const product = await Product.findById(id);
+  const idsArray = ids.split(',');
 
-  const { gender, category } = product;
-
-  await Product.findByIdAndDelete(id);
-  await Category.updateOne(
-    { _id: category },
-    {
-      $pull: { [gender]: id },
-    },
-  );
-  await await ('products', id);
-  res.status(200).json({
-    msg: 'Product deleted.',
-    product,
-  });
-});
-
-export const delete_many_product = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const idArr = id.split(',');
-  const deleteProductsImages = idArr.map((item) => {
+  console.log(idsArray);
+  const deleteProductsImages = idsArray.map((item) => {
     return s3Delete('products', item);
   });
 
   const result = await Promise.all([
-    Product.deleteMany({ _id: idArr }),
-    deleteProductsImages,
+    Product.deleteMany({ _id: idsArray }),
+    ...deleteProductsImages,
   ]);
-  res.status(200).send(result);
+
+  res.redirect(303, '/api/admin/product');
 });
 
 // create a new Product
@@ -279,7 +262,7 @@ export const create_new_product = [
       await s3Upload(sharpResult, false, newProduct.id);
 
       await newProduct.save();
-      return res.status(201).send('Product successfully created!!!');
+      return res.redirect(303, '/api/admin/product');
     } catch (error) {
       const deleteId = newProduct.id;
 
@@ -333,7 +316,7 @@ export const update_product = [
 
     await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
 
-    res.status(200).send('Product successfully updated.');
+    res.redirect(303, '/api/admin/product');
   }),
 ];
 

@@ -53,7 +53,7 @@ function New_Product({ Content, type }) {
                     <section className="flex justify-center">
                         <div className="product-listing">
                             <div className=" mb-6 ml-4 font-gotham text-3xl font-bold tracking-wider">
-                                {type == 'update' ? title : 'New Listing'}
+                                {!type ? 'New Listing' : title}
                             </div>
                             <div className="subheader mb-3">
                                 <a href="#about">About</a>
@@ -101,7 +101,7 @@ function New_Product({ Content, type }) {
                                 <Delivery />
                             </section>
 
-                            <Footer type={type ? type : ''} />
+                            <Footer type={type} />
                         </div>
                     </section>
                 </div>
