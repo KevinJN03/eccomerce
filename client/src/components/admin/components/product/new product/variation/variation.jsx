@@ -30,53 +30,20 @@ const views = {
 };
 
 function Variation() {
-    // const { variations, setVariations } = useNewProduct();
-    // const [loading, setLoading] = useState(false);
-    // const [check, setCheck] = useState(false);
-    // const [error, setError] = useState('');
-    // const [content, dispatch] = useReducer(variationReducer, {
-    //     type: 'main',
-    // });
+    const { temporaryVariation } = useVariation();
 
-    // const [temporaryVariation, setTemporaryVariation] = useState([]);
-  
+    const { setModalCheck, contentDispatch, variations, setVariations } =
+        useNewProduct();
 
-    // useEffect(() => {
-    //     setTemporaryVariation(() => variations);
-    // }, [check]);
-
-    // useEffect(() => {
-    //     if (content.type == 'update') return;
-
-    //     if (variations.length < 1) {
-    //         return dispatch({ type: 'main' });
-    //     } else {
-    //         return dispatch({ type: 'manage' });
-    //     }
-    // }, [check]);
-
-    // useEffect(() => {
-    //     if (check == false) {
-    //         resetDefaultMap();
-    //     }
-    // }, [check]);
-
-    const {
-        temporaryVariation,
-    
-    } = useVariation();
-
-    const {setModalCheck, contentDispatch, variations, setVariations} = useNewProduct()
- 
-      const toggle = () => {
+    const toggle = () => {
         // setCheck(() => !check);
 
-        if(variations.length > 0){
-            contentDispatch({type: 'manage'})
-        }else {
-            contentDispatch({type: 'main'}) 
+        if (variations.length > 0) {
+            contentDispatch({ type: 'manage' });
+        } else {
+            contentDispatch({ type: 'main' });
         }
-        setModalCheck((prevState)=> !prevState)
+        setModalCheck((prevState) => !prevState);
     };
     return (
         <section
@@ -90,7 +57,7 @@ function Variation() {
                         'If your item is offered in different colours, sizes, materials,etc.'
                     }
                 />
-                <button type="button" onClick={toggle} className="theme-btn">
+                <button type="button" onClick={toggle} className="theme-btn text-s">
                     {temporaryVariation.length == 0 ? (
                         <>
                             <AddRoundedIcon />
@@ -102,15 +69,6 @@ function Variation() {
                 </button>
                 <VariationList />
             </section>
-            {/* {check && (
-                <Modal
-                    check={check}
-                    setCheck={setCheck}
-                    ModalContent={views[content.type]}
-                    loading={loading}
-                    setLoading={setLoading}
-                />
-            )} */}
         </section>
     );
 }

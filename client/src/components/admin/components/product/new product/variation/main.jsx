@@ -81,8 +81,8 @@ export default function Main() {
 
     'defaultMap: ', defaultMap;
     return (
-        <section className="variation-main relative h-full ">
-            <h1 className="mb-2">What type of variation is it?</h1>
+        <section className="variation-main relative h-full bg-white">
+            <h1 className="mb-2 font-semibold text-lg">What type of variation is it?</h1>
             <p>
                 You can add up to 2 variations. Use the variation types listed
                 here for peak discoverability. You can add a custom variation,

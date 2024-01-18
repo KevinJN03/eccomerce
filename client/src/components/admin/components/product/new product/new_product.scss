@@ -25,8 +25,7 @@
         flex: 6;
 
         .product-listing {
-            @apply m-6 w-full  max-w-[1366px] p-6;
-            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            @apply w-full  max-w-[1366px] p-6;
 
             .subheader {
                 @apply flex max-w-[1366px] flex-row flex-nowrap gap-x-10;
@@ -45,39 +44,6 @@
 
     #delivery {
         border-radius: 10px;
-    }
-
-    .cancel-btn {
-        transition: background-color 0.2s linear;
-        @apply rounded-full px-3 py-2;
-        &:hover {
-            @apply bg-[var(--light-grey)];
-        }
-    }
-
-    .variation-footer {
-        // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
-        // sticky
-        @apply bottom-0 flex w-full flex-row justify-between bg-white;
-        // bottom: -4px !important;
-
-        .apply-btn {
-            @apply relative flex h-full items-center justify-center rounded-full bg-black px-3 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50;
-
-            &::after,
-            &::before {
-                content: '';
-
-                background: inherit;
-            }
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.821);
-            }
-
-            // &:hover {
-            //     @apply opacity-80 scale-105
-            // }
-        }
     }
 
     .about,
@@ -120,7 +86,6 @@
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
 
-   
     .variations {
         .result-table {
             .checkbox {
@@ -171,33 +136,38 @@
     // .dropdown-menu::-webkit-scrollbar {
     //     display: none; /* Safari and Chrome */
     // }
+}
 
-    .options-btn {
-        @apply rounded-full px-5 py-3 text-center font-gotham transition-all;
+.outline {
+    @apply input rounded-md p-3;
+    height: 48px;
+}
 
-        background-color: var(--light-grey) !important;
-        &:disabled {
-            @apply opacity-40;
+// Price & Inventory Section
 
-            &::before {
-                content: '';
-                display: block;
-                background: url('../../../../../assets/icons/tick.png');
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: contain;
-                width: 20px;
-                height: 100%;
-                float: left;
-                margin: 0 6px 0 0;
-            }
-        }
+.title {
+    @apply text-xl font-medium;
+}
+p {
+    @apply text-s;
+}
 
+.product_modal {
+    @apply h-full w-full overflow-y-scroll;
+}
+.modal-content {
+    @apply w-full max-w-[600px] rounded-3xl  bg-white px-7 pt-8 #{!important};
+    &::-webkit-scrollbar,
+    .dropdown-menu::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    .cancel-btn {
+        transition: background-color 0.2s linear;
+        @apply rounded-full px-3 py-2;
         &:hover {
-            @apply bg-gray-300 shadow-lg #{!important};
+            @apply bg-[var(--light-grey)];
         }
     }
-
     .single-variation {
         .single-variation-btn {
             @apply h-10 w-10 rounded-full  bg-[var(--light-grey)]  p-3 #{!important};
@@ -229,34 +199,60 @@
         }
     }
 
-    .modal-content {
-        @apply min-h-fit w-full max-w-[600px] rounded-3xl px-7 pt-8 #{!important};
+    .variation-footer {
+        // @apply sticky bottom-0 flex w-full flex-row justify-between bg-white;
+        // sticky
+        @apply bottom-0 flex w-full flex-row justify-between bg-white;
+        // bottom: -4px !important;
 
-        // -ms-overflow-style: none; /* Internet Explorer 10+ */
+        .apply-btn {
+            @apply relative flex h-full items-center justify-center rounded-full bg-black px-3 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50;
 
-        // scrollbar-width: none;
+            &::after,
+            &::before {
+                content: '';
+
+                background: inherit;
+            }
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.821);
+            }
+
+            // &:hover {
+            //     @apply opacity-80 scale-105
+            // }
+        }
     }
-    .modal-content::-webkit-scrollbar,
-    .dropdown-menu::-webkit-scrollbar {
-        display: none; /* Safari and Chrome */
+}
+
+.options-btn {
+    @apply rounded-full px-5 py-3 text-center font-gotham transition-all;
+
+    background-color: var(--light-grey) !important;
+    &:disabled {
+        @apply opacity-40;
+
+        &::before {
+            content: '';
+            display: block;
+            background: url('../../../../../assets/icons/tick.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            width: 20px;
+            height: 100%;
+            float: left;
+            margin: 0 6px 0 0;
+        }
+    }
+
+    &:hover {
+        @apply bg-gray-300 shadow-lg #{!important};
     }
 }
 
-.outline {
-    @apply input rounded-md p-3;
-    height: 48px;
-}
-
-// Price & Inventory Section
-
-.title {
-    @apply text-xl font-medium;
-}
-p {
-    @apply text-s;
-}
-
-.modal-content::-webkit-scrollbar,
-.dropdown-menu::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+.input-number::-webkit-outer-spin-button,
+.input-number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

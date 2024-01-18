@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import variant from '../../order/home/variant';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ClickAwayListener } from '@mui/material';
 import { useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
@@ -49,9 +49,11 @@ function Actions({ showAction, setShowAction, className, product }) {
                             >
                                 Edit
                             </p>
-                            <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
-                                Copy
-                            </p>
+                            <Link to={`copy/${product?._id}`} target="_blank">
+                                <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
+                                    Copy
+                                </p>
+                            </Link>
                         </div>
 
                         <div className="border-b border-dark-gray/50 py-2">

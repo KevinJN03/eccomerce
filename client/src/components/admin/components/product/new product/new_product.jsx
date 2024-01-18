@@ -14,17 +14,23 @@ import {
 } from '../../../../../context/newProductContext';
 import Footer from './variation/footer';
 import { VariationProvider } from '../../../../../context/variationContext';
-import Modal from '../../modal/modal';
+// import Modal from '../../modal/modal';
 import Manage from './variation/manage/manage';
 import SelectVariation from './variation/selectVariation';
 import Main from './variation/main';
 import Update from './variation/update';
+import { Box, Modal } from '@mui/material';
+import Delivery_Main from './delivery/Main.jsx';
+import Delivery_New from './delivery/New.jsx';
 
 const views = {
     manage: <Manage />,
     select: <SelectVariation />,
     main: <Main />,
     update: <Update />,
+    delivery_main: <Delivery_Main />,
+    delivery_new: <Delivery_New edit={false} />,
+    delivery_edit: <Delivery_New edit={true} />,
 };
 
 function New_Product({ Content, type }) {
@@ -99,15 +105,23 @@ function New_Product({ Content, type }) {
                         </div>
                     </section>
                 </div>
-                {modalCheck && (
-                    <Modal
-                        check={modalCheck}
-                        setCheck={setModalCheck}
-                        ModalContent={views[modalContent.type]}
-                        loading={loading}
-                        setLoading={setLoading}
-                    />
-                )}
+
+                <Modal
+                    open={modalCheck}
+                    onClose={() => setModalCheck(() => false)}
+                >
+                    <Box
+                        className="modal-content"
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                        }}
+                    >
+                        {views?.[modalContent?.type]}
+                    </Box>
+                </Modal>
             </section>
         </VariationProvider>
     );

@@ -37,12 +37,13 @@ function Admin({}) {
     });
     const [open, setOpen] = useState(true);
 
-    const [modalCheck, setModalCheck] = useState(true);
+    const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, setModalContent] = useState({ type: 'delete' });
 
     const views = {
         delete: <Delete />,
         changeSection: <ChangeSection />,
+        delivery_main: <Main/>
     };
     const alertVariant = {
         initial: {
@@ -130,7 +131,7 @@ function Admin({}) {
                                         top: '50%',
                                         left: '50%',
                                         transform: 'translate(-50%, -50%)',
-                                        boxSizing: 'border-box', 
+                                        boxSizing: 'border-box',
                                         maxWidth: '600px',
                                         borderRadius: '4px',
                                         border: 'none',

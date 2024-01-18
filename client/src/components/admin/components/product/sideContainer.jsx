@@ -42,9 +42,9 @@ function SideContainer({ checks, setChecks }) {
                             className={` flex cursor-pointer flex-row flex-nowrap items-center rounded border border-dark-gray/50`}
                         >
                             {[
-                                { icon: <GridViewSharp />, label: 'grid' },
-                                { icon: <MenuSharp />, label: 'vertical' },
-                            ].map(({ icon, label }) => {
+                                { icon: <GridViewSharp />, label: 'grid', className: 'rounded-l' },
+                                { icon: <MenuSharp />, label: 'vertical', className: 'rounded-r-inherit' },
+                            ].map(({ icon, label, className }) => {
                                 return (
                                     <span
                                         onClick={() =>
@@ -53,11 +53,11 @@ function SideContainer({ checks, setChecks }) {
                                                 format: label,
                                             }))
                                         }
-                                        className={`${
+                                        className={` ${className} ${
                                             checks?.format == label
                                                 ? 'bg-light-grey'
                                                 : 'bg-white'
-                                        } flex h-full cursor-pointer items-center justify-center border-r border-dark-gray/50 px-3`}
+                                        } flex h-full cursor-pointer items-center justify-center px-3`}
                                     >
                                         {icon}
                                     </span>

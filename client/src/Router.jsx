@@ -68,6 +68,7 @@ import TemplateProvider from './context/templeteContext.jsx';
 import ErrorTemplate from './components/order/error.jsx';
 import Pdf from './components/admin/order/pdf/pdf.jsx';
 import CancelOrder from './components/admin/order/cancelOrder.jsx';
+import CopyProduct from './components/admin/components/product/copyProduct.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -330,7 +331,7 @@ function Router({ Header, Footer }) {
                             path: 'orders',
                             element: <AdminOrder />,
                         },
-                     
+
                         {
                             path: 'orders/:id/cancel_order',
                             element: <CancelOrder />,
@@ -398,6 +399,10 @@ function Router({ Header, Footer }) {
                                 {
                                     path: 'edit/:id',
                                     element: <Product_Single />,
+                                },
+                                {
+                                    path: 'copy/:id',
+                                    element: <CopyProduct />,
                                 },
                             ],
                         },

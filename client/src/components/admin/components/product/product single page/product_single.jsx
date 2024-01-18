@@ -15,6 +15,8 @@ function Product_Single({}) {
         adminAxios
             .get(`/product/${id}`)
             .then((res) => {
+
+                console.log(res.data)
                 setSingleValue(() => res.data);
 
                 setTimeout(() => {
@@ -26,9 +28,7 @@ function Product_Single({}) {
             });
     }, []);
 
-    function Content() {
-        return <section>testde</section>;
-    }
+    
     return (
         <NewProductProvider singleValue={singleValue}>
             {loading ? (

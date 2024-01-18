@@ -13,8 +13,14 @@ import fetchProfile from './fetchDeliveryProfile';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function MainContent() {
-    const { dispatch, setModalCheck, loading, setLoading } = useContent();
-    const { setProfile, profile } = useNewProduct();
+    const {
+        setProfile,
+        profile,
+        setModalCheck,
+        loading,
+        setLoading,
+        contentDispatch,
+    } = useNewProduct();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
     const [profileReplacement, setProfileReplacement] = useState(
         JSON.parse(JSON.stringify(profile))
@@ -25,11 +31,9 @@ function MainContent() {
     }, []);
 
     useEffect(() => {
-
-        if(JSON.stringify(profile) != JSON.stringify(profileReplacement)){
-          setDisable(false);  
+        if (JSON.stringify(profile) != JSON.stringify(profileReplacement)) {
+            setDisable(false);
         }
-        
     }, [profileReplacement]);
 
     useEffect(() => {
@@ -58,13 +62,12 @@ function MainContent() {
     };
     return (
         <div className="delivery-profile flex w-full flex-col">
-            
             <div className="modal-header flex items-center justify-between">
                 <h2 className="font-gotham text-xl font-bold">
                     DELIVERY PROFILES
                 </h2>
                 <button
-                    onClick={() => dispatch({ type: 'New' })}
+                    onClick={() => contentDispatch({ type: 'delivery_new' })}
                     className="flex items-center justify-center gap-1 rounded-2xl border-2 px-2 py-1 font-medium transition-all hover:!px-6"
                 >
                     <span className="text-3xl">+</span> Create New
@@ -151,7 +154,7 @@ function MainContent() {
 
                         {deliveryProfiles.length > 0 && (
                             <div className="flex w-full flex-row gap-x-2">
-                                 <button
+                                <button
                                     type="button"
                                     onClick={() => setModalCheck(false)}
                                     className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-500"
@@ -161,12 +164,11 @@ function MainContent() {
                                 <button
                                     type="button"
                                     onClick={confirm}
-                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-slate-100"
                                     disabled={disable}
                                 >
                                     Confirm
                                 </button>
-                              
                             </div>
                         )}
                     </>
