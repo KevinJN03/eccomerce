@@ -13,7 +13,7 @@ function VerticalItem({ product, idx }) {
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet} = useListingPageContext()
+    const { selectionSet, setSelectionSet, checks} = useListingPageContext()
     return (
         <section
             className={`${

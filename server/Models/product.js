@@ -60,7 +60,7 @@ export const productSchema = new Schema(
       type: Schema.Types.String,
       default: 'active',
       enum: {
-        values: ['active', 'inactive'],
+        values: ['active', 'inactive', 'draft'],
         message: ['{VALUE} is not support, please inter a accepted type'],
       },
     },

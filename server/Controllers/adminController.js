@@ -578,7 +578,7 @@ export const createDaftProduct = [
     );
 
     Object.assign(draftProducts, productData);
-
+    draftProducts.status = 'draft';
     try {
       await s3Upload({
         files: sharpResult,
@@ -598,3 +598,19 @@ export const createDaftProduct = [
     }
   }),
 ];
+
+export const getDraft = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const draftProduct = await DraftProducts.findOne({ _id: id })
+    .populate([{ path: 'delivery' }, { path: 'category' }])
+    .exec();
+
+  if (!draftProduct) {
+    return res.status(404).send('product not found');
+  }
+
+  // await s3Get(id);
+
+  return res.status(200).send({ draftProduct });
+});

@@ -12,6 +12,7 @@ import {
   searchOrder,
   getDraftProducts,
   createDaftProduct,
+  getDraft,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -82,5 +83,7 @@ router.delete('/privateNote/delete', deletePrivateNote);
 
 router.get('/draftProducts/all', getDraftProducts);
 router.post('/draftProducts/save', createDaftProduct);
+
+router.get('/draftProduct/:id', getDraft);
 // router.get('/check', checkLogin)
 export default router;
