@@ -96,7 +96,7 @@ function Layout() {
                 <AnimatePresence mode="wait">
                     {!loadState && (
                         <motion.section
-                            className="w-screen"
+                            className=""
                             // key={layout}
                             // variants={variants}
                             // initial={'initial'}

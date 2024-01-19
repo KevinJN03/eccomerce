@@ -1,12 +1,10 @@
 import './new_product.scss';
-import SideBar from '../../sidebar/sidebar';
-import Navbar from '../../navbar/navbar';
 import About from './about.jsx';
 import Price_Inventory from './price-inventory';
 import Details from './details';
 import Delivery from './delivery/delivery';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
 import Variation from './variation/variation';
 import {
     NewProductProvider,
@@ -22,7 +20,12 @@ import Update from './variation/update';
 import { Box, Modal } from '@mui/material';
 import Delivery_Main from './delivery/Main.jsx';
 import Delivery_New from './delivery/New.jsx';
+import { KeyboardBackspaceRounded, SettingsRounded } from '@mui/icons-material';
+import { motion } from 'framer-motion';
 
+import { inView } from 'framer-motion';
+import dayjs from 'dayjs';
+import useScrollpsy from '../../../../../hooks/useScrollpsy.jsx';
 const views = {
     manage: <Manage />,
     select: <SelectVariation />,
@@ -45,84 +48,147 @@ function New_Product({ Content, type }) {
         publishError,
         publishErrorDispatch,
         title,
+        product,
+        currentSection,
+        setCurrentSection,
     } = useNewProduct();
+
+    const [mountTitle, setMountTitle] = useState(title);
+    const activeId = useScrollpsy(
+        ['about', 'price-inventory', 'variations', 'details', 'delivery'],
+        200
+    );
+
+    console.log({ activeId });
     return (
         <VariationProvider>
-            <section className="new-product">
-                <div className="new-product-container">
-                    <section className="flex justify-center">
-                        <div className="product-listing">
-                            <div className=" mb-6 ml-4 font-gotham text-3xl font-bold tracking-wider">
-                                {!type ? 'New Listing' : title}
-                            </div>
-                            <div className="subheader mb-3">
-                                <a href="#about">About</a>
-                                <a href="#price-inventory">Price & Inventory</a>
-                                <a href="#variations">Variations</a>
-                                <a href="#details">Details</a>
-                                <a href="#delivery">Delivery</a>
-                                <a href="#settings">Settings</a>
-                            </div>
-
-                            <section className="new-product-wrapper mx-[-24px] flex flex-col gap-y-3 !rounded-none bg-[var(--light-grey)] py-4 pl-6">
-                                {publishError.get('default') && (
-                                    <div className="alert alert-error">
-                                        <svg
-                                            onClick={() =>
-                                                publishErrorDispatch({
-                                                    type: 'clear',
-                                                    path: 'default',
-                                                })
-                                            }
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-6 w-6 shrink-0 cursor-pointer stroke-current transition-all hover:scale-110"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                        <span>
-                                            {publishError.get('default')}
-                                        </span>
-                                    </div>
-                                )}
-                                <About />
-                                <Price_Inventory />
-
-                                <Variation />
-
-                                <Details />
-
-                                <Delivery />
-                            </section>
-
-                            <Footer type={type} />
+            <div className="product-listing flex h-full min-h-screen flex-col justify-start ">
+                <section className="mb-6 flex h-fit flex-col gap-6 pl-16 pr-20 pt-6">
+                    <div className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1">
+                        <div className="flex items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
+                            <KeyboardBackspaceRounded fontSize="small" />
                         </div>
-                    </section>
+
+                        <Link
+                            to={'/admin/products'}
+                            className="text-sm font-semibold"
+                        >
+                            Back to listings
+                        </Link>
+                    </div>
+                    <div>
+                        <h3 className=" text-lg font-semibold tracking-wider">
+                            {!type ? 'New Listing' : mountTitle}
+                        </h3>
+
+                        <div className="flex flex-nowrap items-center gap-3">
+                            <p className="w-fit rounded-full bg-green-200 px-2 py-1">
+                                Active
+                            </p>
+
+                            <p>
+                                Listed on{' '}
+                                {dayjs(product?.timestamp).format(
+                                    'DD MMM, YYYY'
+                                )}
+                                .
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <div
+                    id={'stickyElement'}
+                    className=" subheader !sticky !top-0 z-50 flex h-12 w-full flex-row flex-nowrap  items-center gap-x-10 bg-white pl-16 "
+                >
+                    {[
+                        { text: 'About', id: 'about' },
+                        {
+                            text: 'Price & Inventory',
+                            id: 'price-inventory',
+                        },
+                        { text: 'Variations', id: 'variations' },
+                        { text: 'Details', id: 'details' },
+                        { text: 'Delivery', id: 'delivery' },
+                    ].map((section) => {
+                        return (
+                            <a
+                                key={section.text}
+                                href={`#${section.id}`}
+                                className={`${
+                                    activeId == section.id
+                                        ? 'text-admin-accent !border-b-admin-accent bg-green-50'
+                                        : '!border-white'
+                                }hover:text-admin-accent hover:border-admin-accent flex h-full items-center justify-center border-b-2  text-sm`}
+                            >
+                                {section.text}
+                            </a>
+                        );
+                    })}
+                    <a
+                        href="#settings"
+                        className="hover:text-admin-accent hover:border-admin-accent flex h-full flex-nowrap items-center justify-center gap-2 border-b-2 border-transparent text-sm "
+                    >
+                        <SettingsRounded fontSize="small" />
+                        Settings
+                    </a>
                 </div>
 
-                <Modal
-                    open={modalCheck}
-                    onClose={() => setModalCheck(() => false)}
+                <section className="flex w-full max-w-[1366px] flex-col gap-y-3 rounded-none bg-[var(--light-grey)] py-4 pl-16 pr-20">
+                    {publishError.get('default') && (
+                        <div className="alert alert-error">
+                            <svg
+                                onClick={() =>
+                                    publishErrorDispatch({
+                                        type: 'clear',
+                                        path: 'default',
+                                    })
+                                }
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 shrink-0 cursor-pointer stroke-current transition-all hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                            </svg>
+                            <span>{publishError.get('default')}</span>
+                        </div>
+                    )}
+                    <About />
+                    <Price_Inventory />
+
+                    <Variation />
+
+                    <Details />
+
+                    <Delivery />
+
+                    {/* <div className='h-[1000px]'>
+
+                    </div> */}
+                </section>
+
+                <Footer type={type} />
+            </div>
+
+            <Modal open={modalCheck} onClose={() => setModalCheck(() => false)}>
+                <Box
+                    className="modal-content"
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                    }}
                 >
-                    <Box
-                        className="modal-content"
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                        }}
-                    >
-                        {views?.[modalContent?.type]}
-                    </Box>
-                </Modal>
-            </section>
+                    {views?.[modalContent?.type]}
+                </Box>
+            </Modal>
         </VariationProvider>
     );
 }

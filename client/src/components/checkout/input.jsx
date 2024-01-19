@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import '../../index.css';
+
 import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage';
 function Input({ header, button_text, handleClick, setText, error, setError }) {
     const msg = {

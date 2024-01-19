@@ -55,6 +55,15 @@ const productSchema = new Schema(
     images: { type: Schema.Types.Array, default: [] },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
     delivery: [{ type: Schema.Types.ObjectId, ref: 'deliveryProfile' }],
+    timestamp: { type: Schema.Types.Date, default: Date.now },
+    status: {
+      type: Schema.Types.String,
+      default: 'active',
+      enum: {
+        values: ['active', 'inactive'],
+        message: ['{VALUE} is not support, please inter a accepted type'],
+      },
+    },
   },
   {
     strict: false,

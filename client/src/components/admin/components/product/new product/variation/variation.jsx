@@ -2,7 +2,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import New_Product_Header from '../header';
 import Modal from '../../../modal/modal';
 
-import { useEffect, useReducer, useState } from 'react';
+import { forwardRef, useEffect, useReducer, useState } from 'react';
 
 import SelectVariation from './selectVariation';
 import Manage from './manage/manage';
@@ -57,7 +57,11 @@ function Variation() {
                         'If your item is offered in different colours, sizes, materials,etc.'
                     }
                 />
-                <button type="button" onClick={toggle} className="theme-btn text-s">
+                <button
+                    type="button"
+                    onClick={toggle}
+                    className="theme-btn text-s"
+                >
                     {temporaryVariation.length == 0 ? (
                         <>
                             <AddRoundedIcon />

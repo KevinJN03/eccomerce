@@ -43,7 +43,7 @@ function Admin({}) {
     const views = {
         delete: <Delete />,
         changeSection: <ChangeSection />,
-        delivery_main: <Main/>
+        delivery_main: <Main />,
     };
     const alertVariant = {
         initial: {
@@ -112,12 +112,20 @@ function Admin({}) {
                         </AnimatePresence>
 
                         <SideBar open={open} setOpen={setOpen} />
-                        <div
+                        <motion.div
                             className={`homeContainer ${
                                 open ? 'ml-56' : 'ml-[3.875rem]'
                             }`}
+                            initial={false}
+                            animate={{
+                                marginLeft:  open ? '14rem' : '3.875rem',
+
+                                transition: {
+                                    duration: open ? '0.7' : '0.7'
+                                    // ease: 'easeInOut'
+                                }
+                            }}
                         >
-                         
                             <Outlet />
 
                             <Modal
@@ -140,7 +148,7 @@ function Admin({}) {
                                     {views?.[modalContent?.type]}
                                 </Box>
                             </Modal>
-                        </div>
+                        </motion.div>
                     </section>
                 )}
             </ContentProvider>

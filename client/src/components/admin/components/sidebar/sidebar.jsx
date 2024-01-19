@@ -14,6 +14,7 @@ import {
     SearchOutlined,
 } from '@mui/icons-material';
 import { Tooltip } from '@mui/material';
+import { AnimatePresence, motion } from 'framer-motion';
 function SideBar({ open, setOpen }) {
     const { darkMode, dispatch } = useDarkMode();
     const navigate = useNavigate();
@@ -31,13 +32,28 @@ function SideBar({ open, setOpen }) {
     const route = location?.pathname?.split('/').slice(0, 3).join('/');
     // .substring(1);
 
+    const variant = {
+        initial: {
+            maxWidth: open ? '14rem' : '3.875rem',
+        },
+        animate: {
+            maxWidth: open ? '14rem' : '3.875rem',
+            transition: {
+                duration: 0.7,
+                // ease: 'easeInOut',
+            },
+        },
+    };
     return (
-        <section
+        <motion.section
+            variants={variant}
+            animate={'animate'}
+            initial={'initial'}
             className={`fixed left-0 top-0 flex h-screen w-full ${
                 open ? 'max-w-56' : 'max-w-[3.875rem]'
             } flex-col`}
         >
-            <section className="side-bar h-full w-full overflow-y-auto  border-r border-dark-gray/50 ">
+            <section className="side-bar h-full w-full overflow-y-auto overflow-x-hidden  border-r border-dark-gray/50 ">
                 <div className="top my-5 flex pl-4">
                     <Link
                         to="/admin"
@@ -84,7 +100,7 @@ function SideBar({ open, setOpen }) {
                                 }}
                             >
                                 <SearchOutlined className="!text-[30px]" />
-                                <p className='ml-3'>Search</p>
+                                <p className="ml-3">Search</p>
                             </Tooltip>
                         </div>
                         {optionsArray.map(({ link, title, icon }) => {
@@ -116,9 +132,31 @@ function SideBar({ open, setOpen }) {
                                         }}
                                     >
                                         {icon}
-                                        {open && (
-                                            <p className="ml-3">{title}</p>
-                                        )}
+                                        <AnimatePresence>
+                                            {open && (
+                                                <motion.p
+                                                    initial={{
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        transition: {
+                                                            duration: 0.7,
+                                                        },
+                                                    }}
+
+                                                    exit={{
+                                                        opacity: 0,
+                                                        transition: {
+                                                            duration: 0.7,
+                                                        },
+                                                    }}
+                                                    className="ml-3 whitespace-nowrap"
+                                                >
+                                                    {title}
+                                                </motion.p>
+                                            )}
+                                        </AnimatePresence>
                                     </Tooltip>
                                 </Link>
                             );
@@ -165,7 +203,7 @@ function SideBar({ open, setOpen }) {
                     />
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }
 

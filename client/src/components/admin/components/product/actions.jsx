@@ -14,7 +14,7 @@ function Actions({ showAction, setShowAction, className, product }) {
         setShowAction(() => false);
     };
     const handleDelete = () => {
-        setModalContent(() => ({ type: 'delete', ids: [product._id] }));
+        setModalContent(() => ({ type: 'delete', ids: [product._id]}));
         setModalCheck(() => true);
         setShowAction(() => false);
     };

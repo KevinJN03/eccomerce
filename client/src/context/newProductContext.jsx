@@ -62,6 +62,8 @@ export const NewProductProvider = (props) => {
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
         type: 'main',
     });
+
+    const [currentSection, setCurrentSection] = useState('available');
     UpdateProduct(props, {
         setTitle,
         setCategory,
@@ -110,6 +112,9 @@ export const NewProductProvider = (props) => {
         setModalCheck,
         modalContent,
         contentDispatch,
+        product: props?.singleValue,
+        currentSection,
+        setCurrentSection,
     };
 
     return (

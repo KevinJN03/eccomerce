@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminAxios } from '../../../../../api/axios';
 import { useContent } from '../../../../../context/ContentContext';
 import { useAdminContext } from '../../../../../context/adminContext';
 import UserLogout from '../../../../../hooks/userLogout';
 
 function Delete({}) {
-    const { setModalCheck, modalContent } = useContent();
+    const { setModalCheck, modalContent, contentDispatch } = useContent();
 
     const { setAllProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
 
     const [loading, setLoading] = useState(false);
+
     const handleDelete = async () => {
         try {
             setLoading(() => true);
@@ -21,7 +22,13 @@ function Delete({}) {
             );
 
             setAllProducts(() => data);
+
+            if (modalContent?.setSelectionSet) {
+                modalContent.setSelectionSet(() => new Set());
+            }
+
             setModalCheck(() => false);
+            contentDispatch({ type: 'clear' });
         } catch (error) {
             console.error(error);
 
@@ -50,7 +57,7 @@ function Delete({}) {
                     disabled={loading}
                     onClick={() => setModalCheck(() => false)}
                     type="button"
-                    className="rounded border px-3 py-2 text-xs font-medium disabled:bg-light-grey disabled:opacity-50"
+                    className="rounded border px-3 py-2 text-xs font-medium hover:bg-light-grey/50 disabled:bg-light-grey disabled:opacity-50"
                 >
                     Cancel
                 </button>
@@ -58,7 +65,7 @@ function Delete({}) {
                     onClick={handleDelete}
                     disabled={loading}
                     type="button"
-                    className=" flex items-center justify-center rounded border border-black bg-black px-3 py-2 text-xs font-medium  text-white disabled:opacity-50"
+                    className=" flex items-center justify-center rounded border border-black bg-black px-3 py-2 text-xs font-medium  text-white hover:opacity-80 disabled:opacity-50"
                 >
                     {loading ? (
                         <span className="daisy-loading daisy-loading-spinner daisy-loading-xs !text-white"></span>

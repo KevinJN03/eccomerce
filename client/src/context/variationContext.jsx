@@ -53,7 +53,6 @@ export function VariationProvider({ children }) {
 
     const [temporaryVariation, setTemporaryVariation] = useState([]);
 
-
     useEffect(() => {
         setTemporaryVariation(() => variations);
     }, [modalCheck]);
@@ -72,7 +71,13 @@ export function VariationProvider({ children }) {
     };
     return (
         <VariationContext.Provider value={value}>
-            {children}
+            <section className="new-product">
+                <div className="new-product-container">
+                    <section className="flex justify-center">
+                        {children}
+                    </section>
+                </div>
+            </section>
         </VariationContext.Provider>
     );
 }

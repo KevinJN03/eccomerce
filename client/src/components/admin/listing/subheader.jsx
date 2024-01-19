@@ -17,6 +17,7 @@ function SubHeader({}) {
         setModalContent({
             type: 'delete',
             ids: Array.from(selectionSet),
+            setSelectionSet,
         });
         setModalCheck(() => true);
     };

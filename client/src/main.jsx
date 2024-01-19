@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // import ReactDom from 'react-dom@experimental'
-import './index.css';
+import './CSS/index.css';
 import App from './App';
 import { AuthContextProvider } from './context/AuthContext.jsx';
 import LayoutProvider from './context/layoutContext';

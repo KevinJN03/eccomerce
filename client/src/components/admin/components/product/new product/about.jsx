@@ -3,12 +3,21 @@ import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import useNewProductError from '../../../../../useNewProductError';
 
-import { useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Description from './description';
 import OptionError from './variation/error/optionError';
+import { useInView } from 'framer-motion';
+import useHighlightSection from '../../../../../hooks/useScrollpsy';
 function About() {
-    const { title, setTitle, publishError, files, publishErrorDispatch } =
-        useNewProduct();
+    const {
+        title,
+        setTitle,
+        publishError,
+        files,
+        publishErrorDispatch,
+        setCurrentSection,
+        currentSection,
+    } = useNewProduct();
     const [titleError, setTitleError] = useState('');
     const [filesError, setFilesError] = useState('');
 
@@ -27,7 +36,7 @@ function About() {
 
     return (
         <section className="new-product-wrapper">
-            <div className="about">
+            <div className="about" id="about">
                 <New_Product_Header
                     title={'About'}
                     text="Tell the world all about your item and why they’ll love it."

@@ -232,7 +232,7 @@ h1 {
 }
 
 .theme-btn {
-    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all enabled:hover:scale-105 enabled:hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50;
+    @apply rounded-full border-2 border-black  px-3 py-2 text-base font-semibold transition-all enabled:hover:scale-105 enabled:hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .input {

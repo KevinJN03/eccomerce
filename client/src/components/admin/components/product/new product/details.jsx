@@ -2,7 +2,7 @@ import { Modal, buttonBaseClasses } from '@mui/material';
 import New_Product_Header from './header';
 import MultipleSelect from './select/select';
 import CategorySelect from './select/select';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import axios from '../../../../../api/axios';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import OptionError from './variation/error/optionError';
@@ -56,7 +56,7 @@ function Details() {
 
     const handleFetchCategory = () => {
         const data = fetchData('category');
-        
+
         data.then((res) => {
             setAllCategory(res);
         });

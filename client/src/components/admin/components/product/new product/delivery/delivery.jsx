@@ -4,7 +4,7 @@ import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 import New from './New';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import MainContent from './Main';
 
@@ -19,7 +19,7 @@ import OptionError from '../variation/error/optionError';
 import useNewProductError from '../../../../../../useNewProductError';
 import { useContent } from '../../../../../../context/ContentContext';
 
-export default function Delivery() {
+function Delivery() {
   
     const { profile, publishErrorDispatch, publishError, setModalCheck, contentDispatch, } = useNewProduct();
     const [deliveryError, setDeliveryError] = useState('');
@@ -34,8 +34,8 @@ export default function Delivery() {
         setModalCheck(() => true);
     };
     return (
-        <section className="new-product-wrapper">
-            <section id="delivery">
+        <section className="new-product-wrapper" id='delivery' >
+            <section className='p-5' >
                 <New_Product_Header title={'Delivery'} />
                 {deliveryError && (
                     <OptionError
@@ -65,3 +65,4 @@ export default function Delivery() {
         </section>
     );
 }
+export default Delivery

@@ -18,6 +18,7 @@ export default {
                 // 'dark-gray': '#676666',
                 'dark-gray': '#939393',
                 'light-grey': '#eee',
+                'admin-accent': '#4d6bc6',
             },
             fontFamily: {
                 gotham: ['Gotham', 'sans-serif'],

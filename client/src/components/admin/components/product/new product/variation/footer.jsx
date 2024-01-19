@@ -102,28 +102,28 @@ const navigate = useNavigate()
     }
 
     return (
-        <div className="new-product-footer flex gap-2 p-6 font-medium">
+        <div className="max-w-full w-full flex gap-2 px-6 py-4 font-medium sticky bottom-0 bg-white border-t border-dark-gray/50">
             <button
                 className="cancel-btn"
                 onClick={() => navigate('/admin/products')}
             >
                 Cancel
             </button>
-            <button className="theme-btn ml-auto">Preview</button>
-            <button className="theme-btn">Save as draft</button>
+            <button className="theme-btn ml-auto !text-sm">Preview</button>
+            <button className="theme-btn !text-sm">Save as draft</button>
             <button
                 className={`theme-btn  flex w-fit items-center justify-center bg-black`}
                 disabled={publishError?.size > 0}
                 onClick={publishProduct}
             >
                 {!loading && (
-                    <span className="whitespace-nowrap text-white">
+                    <p className="whitespace-nowrap text-white text-sm">
                         {type == 'update'
                             ? 'Publish Changes'
                             : type == 'copy'
                               ? 'Copy'
                               : 'Publish'}
-                    </span>
+                    </p>
                 )}
                 {loading && (
                     <div className="w-full">

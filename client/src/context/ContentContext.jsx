@@ -16,6 +16,9 @@ const reducer = (state, action) => {
     if (action.type === 'Main' || action.type === 'New') {
         return { ...state, type: action.type, profile: null };
     }
+    if (action.type == 'clear') {
+        return null;
+    }
 };
 export function ContentProvider({ children, value }) {
     const [content, dispatch] = useReducer(reducer, { type: 'Main' });
@@ -37,7 +40,7 @@ export function ContentProvider({ children, value }) {
     const newValue = {
         // content,
         // dispatch,
-      ...value, 
+        ...value,
         profile,
         setProfile,
         loading,
