@@ -10,6 +10,8 @@ import {
   generatePresignUrl,
   testPdf,
   searchOrder,
+  getDraftProducts,
+  createDaftProduct,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -74,9 +76,11 @@ router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
 router.get('/pdf/test', testPdf);
 router.post('/searchOrder', searchOrder);
-router.post('/privateNote/add', addPrivateNote);
 
 router.post('/privateNote/edit', editPrivateNote);
 router.delete('/privateNote/delete', deletePrivateNote);
+
+router.get('/draftProducts/all', getDraftProducts);
+router.post('/draftProducts/save', createDaftProduct);
 // router.get('/check', checkLogin)
 export default router;

@@ -44,7 +44,11 @@ const handleProfilePhoto = async (file, id) => {
   if (file) {
     const compressImg = await sharpify(file, 'profile');
     compressImg.id = id;
-    await s3Upload([compressImg], true);
+    await s3Upload({
+      files: [compressImg],
+      isProfile: true,
+      endPoint: 'user',
+    });
     const profileImg = `${process.env.UPLOAD_URL}/user/${id}.${compressImg.format}`;
     const updateUser = await User.findByIdAndUpdate(
       id,
@@ -328,8 +332,7 @@ export const userLogout = asyncHandler(async (req, res, next) => {
 
 export const checkUser = asyncHandler(async (req, res, next) => {
   if (req.isAuthenticated()) {
-    return res.status(200).send({ authenticated: true, user: req.user 
-    });
+    return res.status(200).send({ authenticated: true, user: req.user });
   }
   return res.status(401).send({ authenticated: false });
 });

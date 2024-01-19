@@ -43,15 +43,15 @@ export const s3PdfUpload = async ({ pdfStream, fileName }) => {
     console.error('error at s3PdfUpload', error);
   }
 };
-const s3Upload = async (files, isProfile, folderId = uuidv4()) => {
+const s3Upload = async ({ files, isProfile, folderId, endPoint }) => {
   // console.log("file:", file)
-  let counter = 0;
+
   const params = files.map((file) => {
     const result = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: isProfile
-        ? `user/${file.id}.${file.format}`
-        : `products/${folderId}/${file.fileName}.${file.format}`,
+        ? `${endPoint}/${file.id}.${file.format}`
+        : `${endPoint}/${folderId}/${file.fileName}.${file.format}`,
       Body: file.buffer,
 
       ContentDisposition: 'inline',
@@ -59,8 +59,6 @@ const s3Upload = async (files, isProfile, folderId = uuidv4()) => {
       ResponseCacheControl: 'no-cache',
       CacheControl: 'no-cache',
     };
-
-    counter += 1;
     return result;
   });
   const s3Client = new S3Client();
@@ -130,7 +128,6 @@ export const s3Get = async (id) => {
       return getResponse;
     }),
   );
-  console.log(result);
   return result;
 };
 export default s3Upload;

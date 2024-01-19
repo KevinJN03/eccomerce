@@ -24,7 +24,7 @@ variationSchema.set('toJSON', {
   virtuals: true,
 });
 
-const productSchema = new Schema(
+export const productSchema = new Schema(
   {
     title: {
       type: Schema.Types.String,

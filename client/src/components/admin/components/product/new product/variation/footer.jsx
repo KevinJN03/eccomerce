@@ -9,7 +9,7 @@ import { useAdminContext } from '../../../../../../context/adminContext';
 
 function Footer({ type }) {
     const { id } = useParams();
-const navigate = useNavigate()
+    const navigate = useNavigate();
     const { setAllProducts } = useAdminContext();
     const {
         description,
@@ -34,7 +34,7 @@ const navigate = useNavigate()
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
     }, [publish]);
 
-    const publishProduct = (e) => {
+    const publishProduct = (e, draft = false) => {
         e.preventDefault();
 
         setPublish((prevState) => ({
@@ -62,7 +62,7 @@ const navigate = useNavigate()
                     minVariationPrice,
                 };
                 const formData = formatFormData(value);
-                publishData(formData);
+                publishData(formData, draft);
             }, 1000);
 
             if (publishError?.size > 0) {
@@ -72,21 +72,24 @@ const navigate = useNavigate()
         } catch (error) {}
     };
 
-    async function publishData(formData) {
-        const url =
-            type == 'update' ? `/product/${type}/${id}` : '/product/create';
+    async function publishData(formData, draft) {
+        const url = draft
+            ? '/draftProducts/save'
+            : type == 'update'
+              ? `/product/${type}/${id}`
+              : '/product/create';
 
         try {
             const { data } = await adminAxios({
-                method: type == 'update' ? 'put' : 'post',
+                method: draft ? 'post' : type == 'update' ? 'put' : 'post',
                 url: url,
                 data: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            setAllProducts(()=> data)
+            setAllProducts(() => data);
             setLoading(() => false);
 
-            navigate('/admin/products')
+            navigate('/admin/products');
         } catch (error) {
             setLoading(() => false);
 
@@ -102,7 +105,7 @@ const navigate = useNavigate()
     }
 
     return (
-        <div className="max-w-full w-full flex gap-2 px-6 py-4 font-medium sticky bottom-0 bg-white border-t border-dark-gray/50">
+        <div className="sticky bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <button
                 className="cancel-btn"
                 onClick={() => navigate('/admin/products')}
@@ -110,14 +113,19 @@ const navigate = useNavigate()
                 Cancel
             </button>
             <button className="theme-btn ml-auto !text-sm">Preview</button>
-            <button className="theme-btn !text-sm">Save as draft</button>
+            <button
+                className="theme-btn !text-sm"
+                onClick={(e) => publishProduct(e, true)}
+            >
+                Save as draft
+            </button>
             <button
                 className={`theme-btn  flex w-fit items-center justify-center bg-black`}
                 disabled={publishError?.size > 0}
                 onClick={publishProduct}
             >
                 {!loading && (
-                    <p className="whitespace-nowrap text-white text-sm">
+                    <p className="whitespace-nowrap text-sm text-white">
                         {type == 'update'
                             ? 'Publish Changes'
                             : type == 'copy'

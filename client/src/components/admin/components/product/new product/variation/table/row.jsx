@@ -249,7 +249,7 @@ function Row({
                                 // animate={inputCheck ? 'inputCheck' : 'uncheck'}
                                 // initial={false}
                                 type="checkbox"
-                                className={`no-animation daisy-checkbox !rounded-[3px]`}
+                                className={`daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2  border-dark-gray`}
                                 /* inputCheck && !variation.disabled */
                                 checked={inputCheck && visible}
                                 onChange={handleCheck}
@@ -266,18 +266,28 @@ function Row({
                 ${!visible && '!opacity-60 '}
                 `}
                     >
-                        {singleVariation?.variation}
+                        <p className="text-sm font-light">
+                            {singleVariation?.variation}
+                        </p>
                     </motion.td>
 
                     {isCombine && (
                         <td
-                            className={`  ${
-                                (error.price || error.stock) && '!align-top'
-                            } align-middle
+                            className={`!pt-6 pl-4  ${
+                                (error.price || error.stock) && ' !align-top'
+                            } 
+                        
                 ${!visible && '!opacity-60 '}
                 `}
+                            //             className={`  ${
+                            //                 (error.price || error.stock) && '!align-top'
+                            //             } align-middle
+                            // ${!visible && '!opacity-60 '}
+                            // `}
                         >
-                            {singleVariation?.variation2}
+                            <p className="text-sm font-light">
+                                {singleVariation?.variation2}
+                            </p>
                         </td>
                     )}
 

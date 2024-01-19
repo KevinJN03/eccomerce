@@ -16,10 +16,19 @@ import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import ReturnOrder from '../React Email/emails/returnOrder.jsx';
 import { renderToStream, renderToBuffer } from '@react-pdf/renderer';
 import Pdf from '../pdf/pdf.jsx';
-import { generateSignedUrl, s3PdfUpload } from '../s3Service.js';
+import s3Upload, {
+  generateSignedUrl,
+  s3Delete,
+  s3PdfUpload,
+} from '../s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
+
+import multerUpload from '../utils/multerUpload.js';
+import DraftProducts from '../Models/draftProducts.js';
+import productValidator from '../utils/productValidator.js';
+import generateProduct from '../utils/generateProduct.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -158,7 +167,6 @@ export const adminLogin = [
 ];
 
 export const getAllUsers = asyncHandler(async (req, res, next) => {
-
   const users = await User.find({});
   res.status(200).send(users);
 });
@@ -475,7 +483,7 @@ export const searchOrder = [
       });
     } catch (error) {
       objectId = null;
-      console.error('parse string to objectId failed: ', error?.message, );
+      console.error('parse string to objectId failed: ', error?.message);
     }
 
     const searchResult = await Order.aggregate([
@@ -538,7 +546,55 @@ export const searchOrder = [
       //   $limit: 5,
       // },
     ]);
-console.log({searchText ,should, searchResult})
+    console.log({ searchText, should, searchResult });
     res.status(200).send({ searchResult, success: true });
+  }),
+];
+
+export const getDraftProducts = asyncHandler(async (req, res, next) => {
+  const draftProducts = await DraftProducts.find({});
+
+  res.send({ draftProducts });
+});
+
+export const createDaftProduct = [
+  multerUpload.array('files', 6),
+  productValidator,
+  asyncHandler(async (req, res, next) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      res.status(400).send(result.errors);
+      return;
+    }
+
+    const { gender, category } = req.body;
+    const draftProducts = new DraftProducts();
+
+    const { productData, sharpResult } = await generateProduct(
+      req,
+      draftProducts.id,
+      'draftProducts',
+    );
+
+    Object.assign(draftProducts, productData);
+
+    try {
+      await s3Upload({
+        files: sharpResult,
+        isProfile: false,
+        folderId: draftProducts.id,
+        endPoint: 'draftProducts',
+      });
+
+      await draftProducts.save();
+      return res.redirect(303, '/api/admin/product');
+    } catch (error) {
+      const deleteId = draftProducts.id;
+
+      await s3Delete('products', deleteId);
+
+      next(error);
+    }
   }),
 ];

@@ -14,7 +14,10 @@ import s3Upload, { s3Delete } from '../s3Service.js';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
 import _ from 'lodash';
+import multerUpload from '../utils/multerUpload';
 import sortCombineVariation from '../utils/sortCOmbineVariations.js';
+import generateProduct from '../utils/generateProduct.js';
+import { Endpoint } from 'aws-sdk';
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
   res.send(products);
@@ -165,72 +168,67 @@ export const delete_product = asyncHandler(async (req, res, next) => {
   res.redirect(303, '/api/admin/product');
 });
 
-// create a new Product
-const storage = multer.memoryStorage();
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 1000000000, files: 6 },
-});
+// // create a new Product
 
-// work on adding variations
+// const upload = multerUpload;
+// // work on adding variations
 
-async function generateProduct(req, id) {
-  let counter = 0;
-  const imageArr = [];
-  const { files } = req;
+// export async function generateProduct(req, id) {
+//   let counter = 0;
+//   const imageArr = [];
+//   const { files } = req;
 
-  const { variations } = req.body;
-  const { title, delivery, gender, price, stock, category, detail } = req.body;
+//   const { variations } = req.body;
+//   const { title, delivery, gender, price, stock, category, detail } = req.body;
 
-  const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
-  const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
-  const parseVariations = variations?.map((item) => {
-    const data = JSON.parse(item);
-    delete data.id;
-    data.options = new Map(data.options);
+//   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
+//   const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
+//   const parseVariations = variations?.map((item) => {
+//     const data = JSON.parse(item);
+//     delete data.id;
+//     data.options = new Map(data.options);
 
-    return data;
-  });
+//     return data;
+//   });
 
-  const productData = {
-    title,
-    delivery,
-    gender,
-    category,
-    detail,
-    variations: parseVariations,
-    images: imageArr,
-  };
-  if (newStock.on) {
-    productData.stock = newStock.value;
-  }
+//   const productData = {
+//     title,
+//     delivery,
+//     gender,
+//     category,
+//     detail,
+//     variations: parseVariations,
+//     images: imageArr,
+//   };
+//   if (newStock.on) {
+//     productData.stock = newStock.value;
+//   }
 
-  if (newPrice.on) {
-    productData.price = { current: newPrice.value };
-  }
+//   if (newPrice.on) {
+//     productData.price = { current: newPrice.value };
+//   }
 
-  // const newFiles = files.map(async (item) => {
-  //   const sharpen = await sharpify(item);
-  //   sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-  //   imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
-  //   counter += 1;
-  //   return sharpen;
-  // });
-  const sharpResult = [];
-  for (const item of files) {
-    const sharpen = await sharpify(item);
-    sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-    imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
-    counter += 1;
-    sharpResult.push(sharpen);
-  }
+//   // const newFiles = files.map(async (item) => {
+//   //   const sharpen = await sharpify(item);
+//   //   sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+//   //   imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+//   //   counter += 1;
+//   //   return sharpen;
+//   // });
+//   const sharpResult = [];
+//   for (const item of files) {
+//     const sharpen = await sharpify(item);
+//     sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+//     imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+//     counter += 1;
+//     sharpResult.push(sharpen);
+//   }
 
-  // const sharpResult = await Promise.all(newFiles);
-  return { productData, sharpResult };
-}
+//   // const sharpResult = await Promise.all(newFiles);
+//   return { productData, sharpResult };
+// }
 export const create_new_product = [
-  upload.array('files', 6),
+  multerUpload.array('files', 6),
   productValidator,
   async function (req, res, next) {
     const resultValidation = validationResult(req);
@@ -259,7 +257,12 @@ export const create_new_product = [
         { $push: { [gender]: newProduct.id } },
       );
 
-      await s3Upload(sharpResult, false, newProduct.id);
+      await s3Upload({
+        files: sharpResult,
+        isProfile: false,
+        folderId: newProduct.id,
+        endpoint: 'products',
+      });
 
       await newProduct.save();
       return res.redirect(303, '/api/admin/product');
@@ -273,7 +276,7 @@ export const create_new_product = [
   },
 ];
 export const update_product = [
-  upload.array('files', 6),
+  multerUpload.array('files', 6),
 
   productValidator,
   asyncHandler(async (req, res, next) => {
@@ -298,7 +301,12 @@ export const update_product = [
     });
 
     await s3Delete('products', id);
-    await s3Upload(sharpResult, false, id);
+    await s3Upload({
+      files: sharpResult,
+      isProfile: false,
+      folderId: id,
+      endPoint: 'products',
+    });
 
     const newPrice = {
       current: productData?.price?.current,

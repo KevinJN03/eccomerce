@@ -1,8 +1,10 @@
 import { GridViewSharp, MenuSharp } from '@mui/icons-material';
 import { Switch, styled, colors, alpha } from '@mui/material';
 import { green, pink } from '@mui/material/colors';
+import { useListingPageContext } from '../../../../context/listingPageContext';
 
-function SideContainer({ checks, setChecks }) {
+function SideContainer({}) {
+    const { checks, setChecks, drafts } = useListingPageContext();
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         '& .MuiSwitch-switchBase.Mui-checked': {
             color: green[600],
@@ -42,8 +44,16 @@ function SideContainer({ checks, setChecks }) {
                             className={` flex cursor-pointer flex-row flex-nowrap items-center rounded border border-dark-gray/50`}
                         >
                             {[
-                                { icon: <GridViewSharp />, label: 'grid', className: 'rounded-l' },
-                                { icon: <MenuSharp />, label: 'vertical', className: 'rounded-r-inherit' },
+                                {
+                                    icon: <GridViewSharp />,
+                                    label: 'grid',
+                                    className: 'rounded-l',
+                                },
+                                {
+                                    icon: <MenuSharp />,
+                                    label: 'vertical',
+                                    className: 'rounded-r-inherit',
+                                },
                             ].map(({ icon, label, className }) => {
                                 return (
                                     <span
@@ -93,15 +103,38 @@ function SideContainer({ checks, setChecks }) {
                 <p className="font-semibold ">Listing Status</p>
 
                 <div className="flex flex-col gap-2">
-                    {['Active', 'Draft', 'Sold Out', 'Inactive'].map((item) => {
+                    {[
+                        { text: 'Active', amount: 0 },
+                        { text: 'Draft', amount: drafts?.length || 0 },
+                        { text: 'Sold Out', amount: 0 },
+                        { text: 'Inactive', amount: 0 },
+                    ].map(({ text, amount }) => {
+                        const lowerCaseText = text
+                            .replaceAll(' ', '')
+                            .toLowerCase();
+
                         return (
                             <div className="flex flex-row flex-nowrap gap-2">
                                 <input
+                                    onChange={() => {
+                                        setChecks((prevState) => ({
+                                            ...prevState,
+                                            listing_status: lowerCaseText,
+                                        }));
+                                    }}
+                                    checked={
+                                        checks?.listing_status == lowerCaseText
+                                    }
                                     type="radio"
                                     className="daisy-radio daisy-radio-xs"
                                     name="listing-status"
                                 />
-                                <p className="text-xxs">{item}</p>
+                                <p className="text-xxs">
+                                    {text}
+                                    <span className="ml-1 font-semibold text-black/60">
+                                        {amount}
+                                    </span>
+                                </p>
                             </div>
                         );
                     })}
