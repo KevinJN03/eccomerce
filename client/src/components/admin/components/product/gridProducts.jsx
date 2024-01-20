@@ -3,21 +3,11 @@ import { useListingPageContext } from '../../../../context/listingPageContext';
 import GridItem from './gridItem';
 
 function GridProduct() {
-    const { allProducts } = useAdminContext();
-
-    const { selectionSet, setSelectionSet } = useListingPageContext();
+    const { selectionSet, setSelectionSet, products } = useListingPageContext();
     return (
         <section className="flex w-full flex-row flex-wrap gap-4 overflow-y-hidden">
-            {allProducts.map((product) => {
-                return (
-                    <GridItem
-                        {...{
-                            product,
-                            setSelectionSet,
-                            selectionSet,
-                        }}
-                    />
-                );
+            {products.map((product) => {
+                return <GridItem product={product} key={product._id} />;
             })}
         </section>
     );

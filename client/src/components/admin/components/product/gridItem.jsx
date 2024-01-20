@@ -10,14 +10,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import variant from '../../order/home/variant';
 import { useContent } from '../../../../context/ContentContext';
 import Actions from './actions';
+import { useListingPageContext } from '../../../../context/listingPageContext';
 
-function GridItem({ product, setSelectionSet, selectionSet }) {
+function GridItem({ product }) {
     const navigate = useNavigate();
     const [hover, setHover] = useState(false);
     const [favorite, setFavorite] = useState(product?.favorite || false);
 
     const [showAction, setShowAction] = useState(false);
-
+    const { setSelectionSet, selectionSet } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [format, setFormat] = useState('grid');
@@ -25,14 +26,18 @@ function GridItem({ product, setSelectionSet, selectionSet }) {
     return (
         <section className="relative h-fit w-full max-w-48">
             <div
-                key={product?._id}
                 className={`${
                     selectionSet?.has(product?._id)
                         ? 'border-green-400/50 bg-green-50'
                         : 'border-dark-gray/50 bg-transparent'
                 } relative flex h-fit w-full flex-col rounded border`}
             >
-                <Link to={`edit/${product._id}`} className="group">
+                <Link
+                    to={`edit/${product?._id}${
+                        product?.status == 'draft' ? '?draft=true' : ''
+                    }`}
+                    className="group"
+                >
                     <div className="top w-full p-0.5 ">
                         <img
                             src={product?.images[0]}
@@ -75,7 +80,7 @@ function GridItem({ product, setSelectionSet, selectionSet }) {
                                 });
                             }}
                             type="checkbox"
-                            className="daisy-checkbox daisy-checkbox-xs rounded"
+                            className="daisy-checkbox daisy-checkbox-xs rounded border hover:!bg-light-grey/50 hover:border-dark-gray"
                             name={`${product?._id}-checkbox`}
                             id={`${product?._id}-checkbox`}
                         />
@@ -94,7 +99,7 @@ function GridItem({ product, setSelectionSet, selectionSet }) {
 
                     <div
                         onClick={() => setShowAction((prevState) => !prevState)}
-                        className="flex w-full  flex-row flex-nowrap items-center justify-center"
+                        className="flex w-full  flex-row flex-nowrap items-center justify-center hover:!opacity-70"
                     >
                         <SettingsRounded className="!text-[20px]" />
                         <ArrowDropDownSharp className="relative left-[-0.3rem] !text-[20px]" />

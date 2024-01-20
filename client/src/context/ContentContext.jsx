@@ -21,7 +21,7 @@ const reducer = (state, action) => {
     }
 };
 export function ContentProvider({ children, value }) {
-    const [content, dispatch] = useReducer(reducer, { type: 'Main' });
+    const [content, contentDispatch] = useReducer(reducer, { type: 'Main' });
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -38,8 +38,7 @@ export function ContentProvider({ children, value }) {
     }, [content]);
 
     const newValue = {
-        // content,
-        // dispatch,
+       
         ...value,
         profile,
         setProfile,

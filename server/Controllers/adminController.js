@@ -29,6 +29,8 @@ import multerUpload from '../utils/multerUpload.js';
 import DraftProducts from '../Models/draftProducts.js';
 import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
+import Product from '../Models/product.js';
+import draftProducts from '../Models/draftProducts.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -614,3 +616,75 @@ export const getDraft = asyncHandler(async (req, res, next) => {
 
   return res.status(200).send({ draftProduct });
 });
+
+export const delete_drafts = asyncHandler(async (req, res, next) => {
+  const { ids } = req.params;
+
+  const idsArray = ids.split(',');
+
+  const deleteProductsImages = idsArray.map((id) => {
+    return s3Delete('draftProducts', id);
+  });
+
+  const result = await Promise.all([
+    DraftProducts.deleteMany({ _id: idsArray }),
+    ...deleteProductsImages,
+  ]);
+
+  res.redirect(303, '/api/admin/product');
+});
+
+export const getAllProducts = [
+  check('checks.sort.title').trim().escape().toInt(),
+  // check('checks.sort.price').trim().escape().toInt(),
+  // check('checks.sort.stock').trim().escape().toInt(),
+  asyncHandler(async (req, res, next) => {
+    const { checks } = req.body;
+    console.log(checks);
+
+    const drafts = await DraftProducts.find({}, null, {
+      sort: { ...checks.sort },
+    }).collation({
+      locale: 'en',
+      caseLevel: true,
+    });
+    const products = await Product.aggregate([
+      { $sort: { _id: 1, ...checks.sort } },
+      // {
+      //   $project: {
+      //     title: 1,
+      //     _id: 1,
+      //     status: 1,
+      //   },
+      // },
+      {
+        $group: {
+          _id: '$status',
+          products: { $push: '$$ROOT' },
+        },
+      },
+
+      {
+        $addFields: {
+          products: {
+            $sortArray: { input: '$products', sortBy: { ...checks.sort } },
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]).collation({ locale: 'en', caseLevel: true });
+
+    const allProducts = products.reduce(
+      (obj, item) => ((obj[item._id] = item.products), obj),
+      {},
+    );
+
+    allProducts.draft = drafts;
+    res.send({
+      success: true,
+      products: allProducts,
+    });
+  }),
+];

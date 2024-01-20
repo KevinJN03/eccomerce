@@ -70,18 +70,17 @@ function New_Product({ Content, type }) {
         <VariationProvider>
             <div className="product-listing flex h-full min-h-screen flex-col justify-start ">
                 <section className="mb-6 flex h-fit w-full flex-col gap-6 pl-16 pr-20 pt-6">
-                    <div className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1">
+                    <Link
+                      to={'/admin/products'}
+                    className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1">
                         <div className="flex items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
                             <KeyboardBackspaceRounded fontSize="small" />
                         </div>
 
-                        <Link
-                            to={'/admin/products'}
-                            className="text-sm font-semibold"
-                        >
+                        <p className="text-sm font-semibold">
                             Back to listings
-                        </Link>
-                    </div>
+                        </p>
+                    </Link>
                     <div className="flex w-full flex-col">
                         <div className="flex-no-wrap flex w-full flex-row justify-between">
                             <div>
@@ -89,7 +88,15 @@ function New_Product({ Content, type }) {
                                     {!type ? 'New Listing' : mountTitle}
                                 </h3>
                                 <div className="flex flex-nowrap items-center gap-3">
-                                    <p className={`w-fit rounded-full font-light ${product?.status == 'active' ? 'bg-green-200' : product?.status == 'draft' ? 'bg-black/80 text-white' : 'bg-dark-gray/50'}  px-3 py-1`}>
+                                    <p
+                                        className={`w-fit rounded-full font-light ${
+                                            product?.status == 'active'
+                                                ? 'bg-green-200'
+                                                : product?.status == 'draft'
+                                                  ? 'bg-black/80 text-white'
+                                                  : 'bg-dark-gray/50'
+                                        }  px-3 py-1`}
+                                    >
                                         {product?.status}
                                     </p>
 
@@ -111,7 +118,7 @@ function New_Product({ Content, type }) {
                                         className="theme-btn flex h-fit w-fit flex-row items-center gap-2 rounded-full !border-none bg-light-grey px-4 py-2"
                                     >
                                         <CallMadeRounded fontSize="small" />
-                                        <p className="text-s font-semibold whitespace-nowrap">
+                                        <p className="whitespace-nowrap text-s font-semibold">
                                             {type == 'copy'
                                                 ? 'View original on glamo'
                                                 : 'View on glamo'}

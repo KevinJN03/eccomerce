@@ -13,6 +13,7 @@ export default {
             },
             colors: {
                 primary: '#2d2d2d',
+                'admin-primary': '#003e29',
                 'primary-green': '#018849',
                 'grey-100': '#dddddd46;',
                 // 'dark-gray': '#676666',

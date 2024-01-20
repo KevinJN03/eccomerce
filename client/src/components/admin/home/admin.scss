@@ -250,3 +250,15 @@ h1 {
         outline-color: var(--about-primary) !important;
     }
 }
+
+.daisy-progress {
+    @apply bg-white #{!important};
+    &::-webkit-progress-value {
+        @apply bg-admin-primary rounded-none #{!important};
+    }
+
+    &::-moz-progress-bar,
+    &::-webkit-progress-bar {
+        @apply bg-white #{!important};
+    }
+}

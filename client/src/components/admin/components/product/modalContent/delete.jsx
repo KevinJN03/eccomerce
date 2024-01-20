@@ -5,7 +5,7 @@ import { useAdminContext } from '../../../../../context/adminContext';
 import UserLogout from '../../../../../hooks/userLogout';
 
 function Delete({}) {
-    const { setModalCheck, modalContent, contentDispatch } = useContent();
+    const { setModalCheck, modalContent, setModalContent } = useContent();
 
     const { setAllProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
@@ -17,24 +17,31 @@ function Delete({}) {
             setLoading(() => true);
 
             console.log({ modalContent });
-            const { data } = await adminAxios.delete(
-                `delete/product/${modalContent?.ids}`
-            );
 
-            setAllProducts(() => data);
+            if (modalContent?.draft) {
+                const { data } = await adminAxios.delete(
+                    `delete/draftProduct/${modalContent?.ids}`
+                );
+                setAllProducts(() => data);
+            } else {
+                const { data } = await adminAxios.delete(
+                    `delete/product/${modalContent?.ids}`
+                );
+                setAllProducts(() => data);
+            }
 
             if (modalContent?.setSelectionSet) {
                 modalContent.setSelectionSet(() => new Set());
             }
 
             setModalCheck(() => false);
-            contentDispatch({ type: 'clear' });
         } catch (error) {
             console.error(error);
 
             logoutUser({ error });
         } finally {
             setLoading(() => false);
+            setModalContent({ type: null });
         }
     };
     return (

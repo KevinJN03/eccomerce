@@ -2,9 +2,12 @@ import { GridViewSharp, MenuSharp } from '@mui/icons-material';
 import { Switch, styled, colors, alpha } from '@mui/material';
 import { green, pink } from '@mui/material/colors';
 import { useListingPageContext } from '../../../../context/listingPageContext';
+import { useAdminContext } from '../../../../context/adminContext';
 
 function SideContainer({}) {
-    const { checks, setChecks, drafts } = useListingPageContext();
+    const { checks, setChecks } = useListingPageContext();
+    const { allProducts } = useAdminContext();
+
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         '& .MuiSwitch-switchBase.Mui-checked': {
             color: green[600],
@@ -23,6 +26,13 @@ function SideContainer({}) {
             color: green[800],
         },
     }));
+
+    const handleSort = (e) => {
+        const { dataset, value } = e.target[e.target.selectedIndex];
+        console.log(value, dataset);
+
+        setChecks((prevChecks) => ({ ...prevChecks, [dataset.title]: value }));
+    };
 
     return (
         <section className=" right flex w-full flex-1 flex-col gap-3">
@@ -82,19 +92,32 @@ function SideContainer({}) {
                 <p className="font-semibold">Sort</p>
 
                 <select
+                    onChange={handleSort}
                     className="daisy-select daisy-select-sm !rounded border border-dark-gray/50"
                     name="sort-product"
                     id="sort-product"
                 >
                     <optgroup label="Select a sort order" className="text-xs">
-                        <option value="">Title: A to Z</option>
-                        <option value="">Title: Z to A</option>
+                        <option value={1} data-title="title">
+                            Title: A to Z
+                        </option>
+                        <option value={-1} data-title="title">
+                            Title: Z to A
+                        </option>
 
-                        <option value="">Stock: low to high</option>
-                        <option value="">Stock: high to low</option>
+                        <option data-title="stock" value={1}>
+                            Stock: low to high
+                        </option>
+                        <option data-title="stock" value={-1}>
+                            Stock: high to low
+                        </option>
 
-                        <option value="">Price: low to high</option>
-                        <option value="">Price: high to low</option>
+                        <option data-title="price" value={1}>
+                            Price: low to high
+                        </option>
+                        <option value={-1} data-title="price">
+                            Price: high to low
+                        </option>
                     </optgroup>
                 </select>
             </div>
@@ -104,11 +127,11 @@ function SideContainer({}) {
 
                 <div className="flex flex-col gap-2">
                     {[
-                        { text: 'Active', amount: 0 },
-                        { text: 'Draft', amount: drafts?.length || 0 },
-                        { text: 'Sold Out', amount: 0 },
-                        { text: 'Inactive', amount: 0 },
-                    ].map(({ text, amount }) => {
+                        { text: 'Active' },
+                        { text: 'Draft' },
+                        { text: 'Sold Out' },
+                        { text: 'Inactive' },
+                    ].map(({ text }) => {
                         const lowerCaseText = text
                             .replaceAll(' ', '')
                             .toLowerCase();
@@ -128,11 +151,24 @@ function SideContainer({}) {
                                     type="radio"
                                     className="daisy-radio daisy-radio-xs"
                                     name="listing-status"
+                                    disabled={
+                                        !allProducts[lowerCaseText]?.length
+                                    }
                                 />
-                                <p className="text-xxs">
-                                    {text}
+                                <p className={`text-xxs`}>
+                                    <span
+                                        className={`text-xxs ${
+                                            !allProducts[lowerCaseText]?.length
+                                                ? 'text-dark-gray'
+                                                : ''
+                                        }`}
+                                    >
+                                        {text}
+                                    </span>
+
                                     <span className="ml-1 font-semibold text-black/60">
-                                        {amount}
+                                        {allProducts[lowerCaseText]?.length ||
+                                            0}
                                     </span>
                                 </p>
                             </div>
@@ -189,6 +225,7 @@ function SideContainer({}) {
                     </optgroup>
                 </select>
             </div>
+            <div className="h-70"></div>
         </section>
     );
 }

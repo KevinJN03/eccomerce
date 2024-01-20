@@ -6,18 +6,16 @@ import { ArrowDropDownSharp } from '@mui/icons-material';
 import { useContent } from '../../../context/ContentContext';
 
 function SubHeader({}) {
-    const { selectionSet, setSelectionSet } = useListingPageContext();
+    const { selectionSet, setSelectionSet, checks , productIds} = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
-    const { allProducts } = useAdminContext();
-    const [productIds, setProductIds] = useState(() =>
-        allProducts?.map((product) => product?._id)
-    );
+
 
     const handleDelete = () => {
         setModalContent({
             type: 'delete',
             ids: Array.from(selectionSet),
             setSelectionSet,
+            draft: checks?.listing_status == 'draft',
         });
         setModalCheck(() => true);
     };

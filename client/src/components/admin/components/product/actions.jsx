@@ -15,7 +15,11 @@ function Actions({ showAction, setShowAction, className, product }) {
         setShowAction(() => false);
     };
     const handleDelete = () => {
-        setModalContent(() => ({ type: 'delete', ids: [product._id] }));
+        setModalContent(() => ({
+            type: 'delete',
+            ids: [product._id],
+            draft: true,
+        }));
         setModalCheck(() => true);
         setShowAction(() => false);
     };
@@ -84,7 +88,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                         <div className="border-b border-dark-gray/50 py-2">
                             <p
                                 onClick={changeSection}
-                                className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50 pr-14"
+                                className="cursor-pointer whitespace-nowrap py-2 pl-4 pr-14 hover:bg-light-grey/50"
                             >
                                 Change Section
                             </p>

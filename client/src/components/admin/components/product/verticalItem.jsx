@@ -13,7 +13,7 @@ function VerticalItem({ product, idx }) {
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks} = useListingPageContext()
+    const { selectionSet, setSelectionSet, checks } = useListingPageContext();
     return (
         <section
             className={`${
@@ -43,7 +43,9 @@ function VerticalItem({ product, idx }) {
             />
 
             <Link
-                to={`edit/${product?._id}`}
+                to={`edit/${product?._id}${
+                    product?.status == 'draft' ? '?draft=true' : ''
+                }`}
                 className="h-16 max-h-16 w-16 max-w-16"
             >
                 <img
@@ -52,7 +54,11 @@ function VerticalItem({ product, idx }) {
                 />
             </Link>
             <div className="flex h-full flex-[5] flex-col">
-                <Link to={`edit/${product?._id}`}>
+                <Link
+                    to={`edit/${product?._id}${
+                        product?.status == 'draft' ? '?draft=true' : ''
+                    }`}
+                >
                     <p title={product?.title} className="font-medium underline">
                         {product?.title}
                     </p>

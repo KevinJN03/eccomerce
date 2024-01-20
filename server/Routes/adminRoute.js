@@ -13,6 +13,8 @@ import {
   getDraftProducts,
   createDaftProduct,
   getDraft,
+  getAllProducts,
+  delete_drafts,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -57,7 +59,7 @@ router.get('/orders', getAllOrders);
 router.get('/coupon/all', get_all_coupons);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:ids', delete_product);
-
+router.delete('/delete/draftProduct/:ids', delete_drafts);
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
@@ -85,5 +87,7 @@ router.get('/draftProducts/all', getDraftProducts);
 router.post('/draftProducts/save', createDaftProduct);
 
 router.get('/draftProduct/:id', getDraft);
+
+router.post('/products/all', getAllProducts);
 // router.get('/check', checkLogin)
 export default router;
