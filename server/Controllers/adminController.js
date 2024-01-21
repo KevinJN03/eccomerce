@@ -590,7 +590,7 @@ export const createDaftProduct = [
       });
 
       await draftProducts.save();
-      return res.redirect(303, '/api/admin/product');
+      return res.send({ success: true, msg: 'draft saved' });
     } catch (error) {
       const deleteId = draftProducts.id;
 
@@ -631,13 +631,26 @@ export const delete_drafts = asyncHandler(async (req, res, next) => {
     ...deleteProductsImages,
   ]);
 
-  res.redirect(303, '/api/admin/product');
+  res.send({ msg: 'deletion successful' });
 });
 
 export const getAllProducts = [
-  check('checks.sort.title').trim().escape().toInt(),
-  // check('checks.sort.price').trim().escape().toInt(),
-  // check('checks.sort.stock').trim().escape().toInt(),
+  check('checks.sort.title')
+    .trim()
+    .escape()
+    .toInt()
+    .optional({ checkFalsy: true, null: true, undefined: true }),
+
+  check('checks.sort.price')
+    .trim()
+    .escape()
+    .toInt()
+    .optional({ checkFalsy: true, null: true, undefined: true }),
+  check('checks.sort.stock')
+    .trim()
+    .escape()
+    .toInt()
+    .optional({ checkFalsy: true, null: true, undefined: true }),
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
     console.log(checks);
@@ -648,15 +661,235 @@ export const getAllProducts = [
       locale: 'en',
       caseLevel: true,
     });
+
     const products = await Product.aggregate([
-      { $sort: { _id: 1, ...checks.sort } },
       // {
-      //   $project: {
-      //     title: 1,
-      //     _id: 1,
-      //     status: 1,
+      //   $match: {
+      //     _id: new mongoose.Types.ObjectId('656689dc7eb2edb00729970f'),
+      //     // _id: new mongoose.Types.ObjectId('65678b9cd4593491cfa021c3'),
+
+      //     // _id: new mongoose.Types.ObjectId('65ace5838f9aa588e0e6d225'),
       //   },
       // },
+      { $sort: { _id: 1, ...checks.sort } },
+      {
+        $addFields: {
+          totalVariations: { $size: '$variations' },
+        },
+      },
+
+      {
+        $unwind: { path: '$variations', includeArrayIndex: 'variationNumber' },
+      },
+
+      {
+        $addFields: {
+          variationOptions: {
+            $objectToArray: '$variations.options',
+          },
+        },
+      },
+
+      {
+        $addFields: {
+          priceArray: {
+            $cond: {
+              if: { $eq: ['$variations.priceHeader.on', true] },
+              then: {
+                $map: {
+                  input: '$variationOptions',
+                  as: 'option',
+                  in: '$$option.v.price',
+                },
+              },
+              else: '$$REMOVE',
+            },
+          },
+          stockArray: {
+            $cond: {
+              if: { $eq: ['$variations.quantityHeader.on', true] },
+              then: {
+                $map: {
+                  input: '$variationOptions',
+                  as: 'option',
+                  in: '$$option.v.stock',
+                },
+              },
+              else: '$$REMOVE',
+            },
+          },
+        },
+      },
+
+      /* group here */
+
+      {
+        $group: {
+          _id: '$_id',
+          doc: { $first: '$$ROOT' },
+          variationsArray: { $push: '$variations' },
+
+          stockArrays: {
+            $push: {
+              $cond: {
+                if: {
+                  $and: [
+                    {
+                      $eq: ['$variations.quantityHeader.on', true],
+                    },
+                    {
+                      $eq: ['$variations.combine', true],
+                    },
+                  ],
+                },
+                then: {
+                  $cond: {
+                    if: {
+                      $eq: ['$variationNumber', 2],
+                    },
+                    then: {
+                      min: { $toInt: { $min: '$stockArray' } },
+                      max: { $toInt: { $max: '$stockArray' } },
+                      array: '$stockArray',
+                      total: {
+                        $sum: {
+                          $map: {
+                            input: '$stockArray',
+                            as: 'item',
+                            in: { $toInt: '$$item' },
+                          },
+                        },
+                      },
+                    },
+
+                    else: '$$REMOVE',
+                  },
+                },
+                else: {
+                  $cond: {
+                    if: {
+                      $eq: ['$variations.quantityHeader.on', true],
+                    },
+                    then: {
+                      min: { $toInt: { $min: '$stockArray' } },
+                      max: { $toInt: { $max: '$stockArray' } },
+                      array: '$stockArray',
+                      total: {
+                        $sum: {
+                          $map: {
+                            input: '$stockArray',
+                            as: 'item',
+                            in: { $toInt: '$$item' },
+                          },
+                        },
+                      },
+                    },
+                    else: '$$REMOVE',
+                  },
+                },
+              },
+            },
+          },
+          priceArrays: {
+            $push: {
+              $cond: {
+                if: {
+                  $and: [
+                    {
+                      $eq: ['$variations.priceHeader.on', true],
+                    },
+                    {
+                      $eq: ['$variations.combine', true],
+                    },
+                  ],
+                },
+                then: {
+                  $cond: {
+                    if: {
+                      $eq: ['$variationNumber', 2],
+                    },
+                    then: {
+                      min: { $min: '$priceArray' },
+                      max: { $max: '$priceArray' },
+                    },
+
+                    else: '$$REMOVE',
+                  },
+                },
+                else: {
+                  $cond: {
+                    if: {
+                      $eq: ['$variations.priceHeader.on', true],
+                    },
+                    then: {
+                      min: { $min: '$priceArray' },
+                      max: { $max: '$priceArray' },
+                    },
+                    else: '$$REMOVE',
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              '$doc',
+              {
+                additional_data: {
+                  price: {
+                    $cond: {
+                      if: { $gt: [{ $size: '$priceArrays' }, 0] },
+                      then: { $arrayElemAt: ['$priceArrays', 0] },
+                      else: {
+                        min: '$doc.price.current',
+                        max: '$doc.price.current',
+                      },
+                    },
+                  },
+                  stock: {
+                    $cond: {
+                      if: { $gt: [{ $size: '$stockArrays' }, 0] },
+                      then: { $arrayElemAt: ['$stockArrays', 0] },
+                      else: {
+                        min: '$doc.stock',
+                        max: '$doc.stock',
+                        total: '$doc.stock',
+                      },
+                    },
+                  },
+                },
+              },
+              { variations: '$variationsArray' },
+            ],
+          },
+        },
+      },
+      {
+        $unset: [
+          'variationOptions',
+          'priceArrays',
+          'stockArrays',
+          'priceArray',
+          'stockArray',
+        ],
+      },
+
+      {
+        $set: {
+          status: {
+            $cond: {
+              if: { $gt: ['$additional_data.stock.total', 0] },
+              then: '$status',
+              else: 'soldout',
+            },
+          },
+        },
+      },
       {
         $group: {
           _id: '$status',
@@ -674,15 +907,17 @@ export const getAllProducts = [
       {
         $sort: { _id: 1 },
       },
-    ]).collation({ locale: 'en', caseLevel: true });
+    ])
+      .collation({ locale: 'en', caseLevel: true })
+      .exec();
 
     const allProducts = products.reduce(
       (obj, item) => ((obj[item._id] = item.products), obj),
       {},
     );
 
-    allProducts.draft = drafts;
-    res.send({
+    // allProducts.draft = drafts;
+    res.status(200).send({
       success: true,
       products: allProducts,
     });

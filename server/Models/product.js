@@ -67,32 +67,32 @@ export const productSchema = new Schema(
   },
   {
     strict: false,
-    toObject: { virtuals: true },
     toJSON: { virtuals: true },
   },
 );
-
+/*  toObject: { virtuals: true },
+    , */
 productSchema.virtual('id');
 
-// productSchema
-//   .virtual('minVariationPrice', { localField: 'id', foreignField: 'id' })
-//   .get(function () {
-//     let minVariationPrice = 10000000;
-//     const variations = this.variations;
-//     variations.map((item) => {
-//       if (item.priceHeader.on) {
-//         const { options } = item;
-//         for (const [key, value] of options) {
-//           minVariationPrice = Math.min(minVariationPrice, value?.price);
-//         }
+// productSchema.virtual('additional_data').get(function () {
+//   const data = { minPrice: [], minStock: [] };
+//   const { variations, id } = this;
+//   console.log({ variations, id });
+//   variations.map(({ options, priceHeader, quantityHeader }) => {
+//     if (priceHeader.on) {
+//       for (const [key, value] of options) {
+//         data.minPrice.push(value.price);
 //       }
-//     });
-
-//     if (minVariationPrice == 10000000) {
-//       return null;
 //     }
-//     return parseFloat(minVariationPrice).toFixed(2);
+//     if (quantityHeader.on) {
+//       for (const [key, value] of options) {
+//         data.minStock.push(value.stock);
+//       }
+//     }
 //   });
+
+//   return 'hi';
+// });
 // productSchema.virtual('isSizePresent').get(function () {
 //   const variations = this.variations;
 

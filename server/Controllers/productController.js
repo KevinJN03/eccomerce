@@ -165,7 +165,7 @@ export const delete_product = asyncHandler(async (req, res, next) => {
     ...deleteProductsImages,
   ]);
 
-  res.redirect(303, '/api/admin/product');
+  res.send({msg: 'deletion successful'});
 });
 
 // // create a new Product
@@ -265,7 +265,7 @@ export const create_new_product = [
       });
 
       await newProduct.save();
-      return res.redirect(303, '/api/admin/product');
+      return res.send({ success: true, msg: 'product saved' });
     } catch (error) {
       const deleteId = newProduct.id;
 
@@ -324,7 +324,7 @@ export const update_product = [
 
     await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
 
-    res.redirect(303, '/api/admin/product');
+    res.send({ msg: 'product updated', success: true });
   }),
 ];
 
