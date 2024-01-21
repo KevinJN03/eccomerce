@@ -1,7 +1,7 @@
 import SideBar from '../components/sidebar/sidebar.jsx';
 import Navbar from '../components/navbar/navbar.jsx';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import actionColumn from '../components/users/datatable/actionColumn.jsx';
 import { useAdminContext } from '../../../context/adminContext.jsx';
@@ -37,21 +37,19 @@ function ListingPage() {
             title: 1,
         },
     });
-
-    const navigate = useNavigate();
+    
     const { logoutUser } = UserLogout();
-
     useEffect(() => {
-
+        let id = null;
         const fetchData = async () => {
             try {
                 let complete = false;
                 let speed = 1;
                 const data = {};
                 var intervalId = setInterval(handleInterval, 30);
-
+                id = intervalId;
                 function handleInterval() {
-                    console.log('interval');
+                    console.log('interval', intervalId);
 
                     setProgressValue((prevValue) => {
                         if (prevValue >= 100) {
@@ -91,6 +89,7 @@ function ListingPage() {
                 Object.assign(data, productResult);
             } catch (error) {
                 console.error(error);
+                clearInterval(id);
                 logoutUser({ error });
             } finally {
             }
@@ -98,27 +97,35 @@ function ListingPage() {
 
         fetchData();
 
-        return()=> {
+        return () => {
+            console.log({ id });
+            clearInterval(id);
+        };
+    }, [checks?.listing_status, checks?.sort]);
 
-        }
-    }, [checks?.listing_status]);
+
+
+
+
+
+
+
 
     const deleteButtonClick = () => {};
-
     const handleClick = () => {};
-
     const value = {
         checks,
         setChecks,
-
         products,
         setProducts,
         productIds,
     };
+
+
     return (
         <ListingPageProvider newValue={value}>
             <section className="progress-bar z-50 flex min-h-screen w-full flex-col">
-                <div className="sticky top-0 flex h-1 w-full items-start self-start">
+                <div className="sticky top-0 flex h-0.5 w-full items-start self-start">
                     <AnimatePresence>
                         {progressValue > 0 && (
                             <motion.progress

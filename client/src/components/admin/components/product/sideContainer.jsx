@@ -31,7 +31,10 @@ function SideContainer({}) {
         const { dataset, value } = e.target[e.target.selectedIndex];
         console.log(value, dataset);
 
-        setChecks((prevChecks) => ({ ...prevChecks, [dataset.title]: value }));
+        setChecks((prevChecks) => ({
+            ...prevChecks,
+            sort: { [dataset.title]: value },
+        }));
     };
 
     return (

@@ -22,7 +22,9 @@ function EditProduct({ type }) {
         const fetchData = async () => {
             try {
                 if (searchQuery == 'true') {
-                    const { data } = await adminAxios.get(`/draftProduct/${id}`);
+                    const { data } = await adminAxios.get(
+                        `/draftProduct/${id}`
+                    );
                     setSingleValue(() => data?.draftProduct);
                 } else {
                     const { data } = await adminAxios.get(`/product/${id}`);
@@ -39,18 +41,15 @@ function EditProduct({ type }) {
             }
         };
 
-        fetchData()
+        fetchData();
     }, []);
 
     return (
         <NewProductProvider singleValue={singleValue}>
             {loading ? (
-
                 <div className="spinner-circle  spinner-xl mx-auto mt-44 [--spinner-color:var(--gray-8)]"></div>
             ) : (
-        
-
-                <New_Product type={type} />
+                <New_Product type={searchQuery == 'true' ? 'draft' : type} />
             )}
         </NewProductProvider>
     );

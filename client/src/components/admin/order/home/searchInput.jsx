@@ -2,7 +2,7 @@ import { SearchRounded } from "@mui/icons-material";
 
 function SearchInput({searchText, setSearchText, handleClick, placeHolder}){
   return (
-    <div className=" search-box border- flex w-full flex-row items-center rounded border-[1px] border-dark-gray pl-3 ">
+    <div className=" search-box border- flex w-full flex-row items-center rounded border-[1px] z-[inherit] border-dark-gray pl-3 ">
     <SearchRounded className="mr-1 !text-xl" />
     <input
     
@@ -17,7 +17,7 @@ function SearchInput({searchText, setSearchText, handleClick, placeHolder}){
         }}
         type="text"
         tabIndex="0"
-        className="mr-5 w-full border-none py-2 text-s outline-none"
+        className="mr-5 w-full border-none py-2 z-[inherit] text-s outline-none"
         placeholder={placeHolder}
     />
     {searchText && (

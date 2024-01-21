@@ -10,7 +10,7 @@ import { useAdminContext } from '../../../../../../context/adminContext';
 function Footer({ type }) {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { setAllProducts } = useAdminContext();
+
     const {
         description,
         title,
@@ -28,6 +28,7 @@ function Footer({ type }) {
         setPublish,
         isAllInputValid,
         minVariationPrice,
+        product,
     } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -80,13 +81,13 @@ function Footer({ type }) {
               : '/product/create';
 
         try {
-            const { data } = await adminAxios({
+            await adminAxios({
                 method: draft ? 'post' : type == 'update' ? 'put' : 'post',
                 url: url,
                 data: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            setAllProducts(() => data);
+
             setLoading(() => false);
 
             navigate('/admin/products');
@@ -122,7 +123,7 @@ function Footer({ type }) {
             <button
                 className={`theme-btn  flex w-fit items-center justify-center bg-black`}
                 disabled={publishError?.size > 0}
-                onClick={publishProduct}
+                onClick={(e) => publishProduct(e, false)}
             >
                 {!loading && (
                     <p className="whitespace-nowrap text-sm text-white">

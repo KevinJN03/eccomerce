@@ -39,7 +39,7 @@ function Admin({}) {
 
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, setModalContent] = useState({ type: 'delete' });
-
+    const [openSearch, setOpenSearch] = useState(false);
     const views = {
         delete: <Delete />,
         changeSection: <ChangeSection />,
@@ -72,6 +72,10 @@ function Admin({}) {
                     modalContent,
                     setModalCheck,
                     setModalContent,
+                    open,
+                    setOpen,
+                    openSearch,
+                    setOpenSearch,
                 }}
             >
                 {location.pathname.split('/')[2] == 'login' ||
@@ -111,19 +115,19 @@ function Admin({}) {
                             )}
                         </AnimatePresence>
 
-                        <SideBar open={open} setOpen={setOpen} />
+                        <SideBar/>
                         <motion.div
                             className={`homeContainer ${
                                 open ? 'ml-56' : 'ml-[3.875rem]'
                             }`}
                             initial={false}
                             animate={{
-                                marginLeft:  open ? '14rem' : '3.875rem',
+                                marginLeft: open ? '14rem' : '3.875rem',
 
                                 transition: {
-                                    duration: open ? '0.7' : '0.7'
+                                    duration: open ? '0.7' : '0.7',
                                     // ease: 'easeInOut'
-                                }
+                                },
                             }}
                         >
                             <Outlet />

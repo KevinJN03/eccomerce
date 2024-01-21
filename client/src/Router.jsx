@@ -388,10 +388,9 @@ function Router({ Header, Footer }) {
                                 },
                                 {
                                     path: 'new',
-                                    // element: <New type="Product" title="Add New Product"/>
                                     element: (
                                         <NewProductProvider>
-                                            <New_Product />
+                                            <New_Product type={'new'} />
                                         </NewProductProvider>
                                     ),
                                 },

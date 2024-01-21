@@ -65,8 +65,17 @@ function VerticalItem({ product, idx }) {
                 </Link>
 
                 <div className="mt-4 flex w-full max-w-xs flex-row justify-between">
-                    <p>131 in stock</p>
-                    <p>£29.96-£46.63</p>
+                    <p className='underline text-black/70 text-xs'>{product.additional_data.stock?.total} in stock</p>
+                    {/* <p>{`${product.additional_data.price?.min == product.additional_data.price?.min ? `${product.additional_data.price?.min}`  }</p> */}
+
+
+                    {
+                        product.additional_data.price?.min == product.additional_data.price?.max ? <p className='underline text-black/70 text-xs'>
+                            £{product.additional_data.price?.min}
+                        </p> : <p className='underline text-black/70 text-xs'>
+                        £{product.additional_data.price?.min}-£{product.additional_data.price?.max}
+                        </p>
+                    }
                 </div>
             </div>
 

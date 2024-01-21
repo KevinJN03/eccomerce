@@ -9,6 +9,7 @@ import { useListingPageContext } from '../../../../context/listingPageContext';
 function Actions({ showAction, setShowAction, className, product }) {
     const navigate = useNavigate();
     const { setModalCheck, setModalContent } = useContent();
+    const { checks } = useListingPageContext();
     const changeSection = () => {
         setModalContent(() => ({ type: 'changeSection' }));
         setModalCheck(() => true);
@@ -19,12 +20,11 @@ function Actions({ showAction, setShowAction, className, product }) {
             type: 'delete',
             ids: [product._id],
             draft: true,
+            checks,
         }));
         setModalCheck(() => true);
         setShowAction(() => false);
     };
-
-    const { checks } = useListingPageContext();
 
     return (
         <AnimatePresence>

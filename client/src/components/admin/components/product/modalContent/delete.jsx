@@ -6,30 +6,31 @@ import UserLogout from '../../../../../hooks/userLogout';
 
 function Delete({}) {
     const { setModalCheck, modalContent, setModalContent } = useContent();
-
     const { setAllProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
-
     const [loading, setLoading] = useState(false);
 
     const handleDelete = async () => {
         try {
             setLoading(() => true);
 
-            console.log({ modalContent });
-
             if (modalContent?.draft) {
                 const { data } = await adminAxios.delete(
                     `delete/draftProduct/${modalContent?.ids}`
                 );
-                setAllProducts(() => data);
+                // setAllProducts(() => data.products);
             } else {
                 const { data } = await adminAxios.delete(
                     `delete/product/${modalContent?.ids}`
                 );
-                setAllProducts(() => data);
+                // setAllProducts(() => data.products);
             }
 
+            const { data: productData } = await adminAxios.post('products/all', {
+                checks: modalContent.checks,
+            });
+
+            setAllProducts(() => productData.products);
             if (modalContent?.setSelectionSet) {
                 modalContent.setSelectionSet(() => new Set());
             }
