@@ -10,7 +10,7 @@ import { AddRounded, ArrowDropDownSharp } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductItem from '../components/product/gridItem.jsx';
 import SelectionInput from '../order/home/selectionIput.jsx';
-import SideContainer from '../components/product/sideContainer.jsx';
+import SideContainer from './sideContainer.jsx';
 import { Box, Modal } from '@mui/material';
 import GridProduct from '../components/product/gridProducts.jsx';
 import VerticalProducts from '../components/product/verticalProducts.jsx';
@@ -24,7 +24,7 @@ import { AnimatePresence, motion, progress } from 'framer-motion';
 function ListingPage() {
     const [loading, setLoading] = useState(false);
 
-    const [selection, setSelection] = useState([]);
+    const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
     const [products, setProducts] = useState([]);
@@ -37,7 +37,7 @@ function ListingPage() {
             title: 1,
         },
     });
-    
+
     const { logoutUser } = UserLogout();
     useEffect(() => {
         let id = null;
@@ -46,6 +46,8 @@ function ListingPage() {
                 let complete = false;
                 let speed = 1;
                 const data = {};
+
+                setSelectionSet(() => new Set());
                 var intervalId = setInterval(handleInterval, 30);
                 id = intervalId;
                 function handleInterval() {
@@ -103,14 +105,6 @@ function ListingPage() {
         };
     }, [checks?.listing_status, checks?.sort]);
 
-
-
-
-
-
-
-
-
     const deleteButtonClick = () => {};
     const handleClick = () => {};
     const value = {
@@ -119,8 +113,9 @@ function ListingPage() {
         products,
         setProducts,
         productIds,
+        selectionSet,
+        setSelectionSet,
     };
-
 
     return (
         <ListingPageProvider newValue={value}>

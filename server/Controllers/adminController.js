@@ -19,6 +19,7 @@ import Pdf from '../pdf/pdf.jsx';
 import s3Upload, {
   generateSignedUrl,
   s3Delete,
+  s3Get,
   s3PdfUpload,
 } from '../s3Service.js';
 import randomString from 'randomstring';
@@ -31,6 +32,8 @@ import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
 import draftProducts from '../Models/draftProducts.js';
+import productAggregateStage from '../utils/productAggregateStage.js';
+import { JsonWebTokenError } from 'jsonwebtoken';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -641,12 +644,12 @@ export const getAllProducts = [
     .toInt()
     .optional({ checkFalsy: true, null: true, undefined: true }),
 
-  check('checks.sort.price')
+  check("checks.sort.['additional_data.stock.total']")
     .trim()
     .escape()
     .toInt()
     .optional({ checkFalsy: true, null: true, undefined: true }),
-  check('checks.sort.stock')
+  check("checks.sort.['additional_data.price.max']")
     .trim()
     .escape()
     .toInt()
@@ -655,230 +658,26 @@ export const getAllProducts = [
     const { checks } = req.body;
     console.log(checks);
 
-    const drafts = await DraftProducts.find({}, null, {
-      sort: { ...checks.sort },
-    }).collation({
+    // const drafts = await DraftProducts.find({}, null, {
+    //   sort: { ...checks.sort },
+    // }).collation({
+    //   locale: 'en',
+    //   caseLevel: true,
+    // });
+    const drafts = await DraftProducts.aggregate([
+      {
+        $set: {
+          status: 'draft',
+        },
+      },
+      ...productAggregateStage(),
+    ]).collation({
       locale: 'en',
       caseLevel: true,
     });
 
     const products = await Product.aggregate([
-      // {
-      //   $match: {
-      //     _id: new mongoose.Types.ObjectId('656689dc7eb2edb00729970f'),
-      //     // _id: new mongoose.Types.ObjectId('65678b9cd4593491cfa021c3'),
-
-      //     // _id: new mongoose.Types.ObjectId('65ace5838f9aa588e0e6d225'),
-      //   },
-      // },
-      { $sort: { _id: 1, ...checks.sort } },
-      {
-        $addFields: {
-          totalVariations: { $size: '$variations' },
-        },
-      },
-
-      {
-        $unwind: { path: '$variations', includeArrayIndex: 'variationNumber' },
-      },
-
-      {
-        $addFields: {
-          variationOptions: {
-            $objectToArray: '$variations.options',
-          },
-        },
-      },
-
-      {
-        $addFields: {
-          priceArray: {
-            $cond: {
-              if: { $eq: ['$variations.priceHeader.on', true] },
-              then: {
-                $map: {
-                  input: '$variationOptions',
-                  as: 'option',
-                  in: '$$option.v.price',
-                },
-              },
-              else: '$$REMOVE',
-            },
-          },
-          stockArray: {
-            $cond: {
-              if: { $eq: ['$variations.quantityHeader.on', true] },
-              then: {
-                $map: {
-                  input: '$variationOptions',
-                  as: 'option',
-                  in: '$$option.v.stock',
-                },
-              },
-              else: '$$REMOVE',
-            },
-          },
-        },
-      },
-
-      /* group here */
-
-      {
-        $group: {
-          _id: '$_id',
-          doc: { $first: '$$ROOT' },
-          variationsArray: { $push: '$variations' },
-
-          stockArrays: {
-            $push: {
-              $cond: {
-                if: {
-                  $and: [
-                    {
-                      $eq: ['$variations.quantityHeader.on', true],
-                    },
-                    {
-                      $eq: ['$variations.combine', true],
-                    },
-                  ],
-                },
-                then: {
-                  $cond: {
-                    if: {
-                      $eq: ['$variationNumber', 2],
-                    },
-                    then: {
-                      min: { $toInt: { $min: '$stockArray' } },
-                      max: { $toInt: { $max: '$stockArray' } },
-                      array: '$stockArray',
-                      total: {
-                        $sum: {
-                          $map: {
-                            input: '$stockArray',
-                            as: 'item',
-                            in: { $toInt: '$$item' },
-                          },
-                        },
-                      },
-                    },
-
-                    else: '$$REMOVE',
-                  },
-                },
-                else: {
-                  $cond: {
-                    if: {
-                      $eq: ['$variations.quantityHeader.on', true],
-                    },
-                    then: {
-                      min: { $toInt: { $min: '$stockArray' } },
-                      max: { $toInt: { $max: '$stockArray' } },
-                      array: '$stockArray',
-                      total: {
-                        $sum: {
-                          $map: {
-                            input: '$stockArray',
-                            as: 'item',
-                            in: { $toInt: '$$item' },
-                          },
-                        },
-                      },
-                    },
-                    else: '$$REMOVE',
-                  },
-                },
-              },
-            },
-          },
-          priceArrays: {
-            $push: {
-              $cond: {
-                if: {
-                  $and: [
-                    {
-                      $eq: ['$variations.priceHeader.on', true],
-                    },
-                    {
-                      $eq: ['$variations.combine', true],
-                    },
-                  ],
-                },
-                then: {
-                  $cond: {
-                    if: {
-                      $eq: ['$variationNumber', 2],
-                    },
-                    then: {
-                      min: { $min: '$priceArray' },
-                      max: { $max: '$priceArray' },
-                    },
-
-                    else: '$$REMOVE',
-                  },
-                },
-                else: {
-                  $cond: {
-                    if: {
-                      $eq: ['$variations.priceHeader.on', true],
-                    },
-                    then: {
-                      min: { $min: '$priceArray' },
-                      max: { $max: '$priceArray' },
-                    },
-                    else: '$$REMOVE',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [
-              '$doc',
-              {
-                additional_data: {
-                  price: {
-                    $cond: {
-                      if: { $gt: [{ $size: '$priceArrays' }, 0] },
-                      then: { $arrayElemAt: ['$priceArrays', 0] },
-                      else: {
-                        min: '$doc.price.current',
-                        max: '$doc.price.current',
-                      },
-                    },
-                  },
-                  stock: {
-                    $cond: {
-                      if: { $gt: [{ $size: '$stockArrays' }, 0] },
-                      then: { $arrayElemAt: ['$stockArrays', 0] },
-                      else: {
-                        min: '$doc.stock',
-                        max: '$doc.stock',
-                        total: '$doc.stock',
-                      },
-                    },
-                  },
-                },
-              },
-              { variations: '$variationsArray' },
-            ],
-          },
-        },
-      },
-      {
-        $unset: [
-          'variationOptions',
-          'priceArrays',
-          'stockArrays',
-          'priceArray',
-          'stockArray',
-        ],
-      },
-
+      ...productAggregateStage(),
       {
         $set: {
           status: {
@@ -890,6 +689,7 @@ export const getAllProducts = [
           },
         },
       },
+
       {
         $group: {
           _id: '$status',
@@ -916,10 +716,23 @@ export const getAllProducts = [
       {},
     );
 
-    // allProducts.draft = drafts;
+    allProducts.draft = drafts;
     res.status(200).send({
       success: true,
       products: allProducts,
     });
   }),
 ];
+
+export const getProductFiles = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  console.log({ id });
+  const result = await s3Get(id);
+  const parseResult = result.map((file) => file.Body);
+  // console.log({parseResult})
+
+  res.json({
+    parseResult,
+  });
+});

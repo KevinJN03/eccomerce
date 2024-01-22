@@ -1,8 +1,8 @@
 import { GridViewSharp, MenuSharp } from '@mui/icons-material';
 import { Switch, styled, colors, alpha } from '@mui/material';
 import { green, pink } from '@mui/material/colors';
-import { useListingPageContext } from '../../../../context/listingPageContext';
-import { useAdminContext } from '../../../../context/adminContext';
+import { useListingPageContext } from '../../../context/listingPageContext';
+import { useAdminContext } from '../../../context/adminContext';
 
 function SideContainer({}) {
     const { checks, setChecks } = useListingPageContext();
@@ -108,17 +108,17 @@ function SideContainer({}) {
                             Title: Z to A
                         </option>
 
-                        <option data-title="stock" value={1}>
+                        <option data-title="additional_data.stock.total" value={1}>
                             Stock: low to high
                         </option>
-                        <option data-title="stock" value={-1}>
+                        <option data-title="additional_data.stock.total" value={-1}>
                             Stock: high to low
                         </option>
 
-                        <option data-title="price" value={1}>
+                        <option data-title="additional_data.price.max" value={1}>
                             Price: low to high
                         </option>
-                        <option value={-1} data-title="price">
+                        <option value={-1} data-title="additional_data.price.max">
                             Price: high to low
                         </option>
                     </optgroup>

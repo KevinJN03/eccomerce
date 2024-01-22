@@ -47,13 +47,25 @@ function GridItem({ product }) {
                     <div className="middle flex w-full flex-col  gap-0.5 p-2 pb-14">
                         <p
                             title={product.title}
-                            className={`truncate font-medium text-black decoration-1 underline-offset-1 group-hover:underline`}
+                            className={`mb-1 truncate font-medium text-black decoration-1 underline-offset-1 group-hover:underline`}
                         >
                             {product.title}
                         </p>
-                        <p className="text-xs text-black/75">199 in stock</p>
+                        <p className=" text-xs text-black/70">
+                            {product.additional_data.stock?.total} in stock
+                        </p>
 
-                        <p className="text-xs text-black/75">£29.99-£49.99</p>
+                        {product.additional_data.price?.min ==
+                        product.additional_data.price?.max ? (
+                            <p className="text-xs text-black/70">
+                                £{product.additional_data.price?.min}
+                            </p>
+                        ) : (
+                            <p className=" text-xs text-black/70">
+                                £{product.additional_data.price?.min}-£
+                                {product.additional_data.price?.max}
+                            </p>
+                        )}
                     </div>
                 </Link>
 
@@ -80,7 +92,7 @@ function GridItem({ product }) {
                                 });
                             }}
                             type="checkbox"
-                            className="daisy-checkbox daisy-checkbox-xs rounded border hover:!bg-light-grey/50 hover:border-dark-gray"
+                            className="daisy-checkbox daisy-checkbox-xs rounded border hover:border-dark-gray hover:!bg-light-grey/50"
                             name={`${product?._id}-checkbox`}
                             id={`${product?._id}-checkbox`}
                         />

@@ -36,21 +36,42 @@ function SideBar({}) {
     // .substring(1);
 
     const variant = {
-        initial: {
-            maxWidth: open ? '14rem' : '3.875rem',
+        section: {
+            initial: {
+                maxWidth: open ? '14rem' : '3.875rem',
+            },
+            animate: {
+                maxWidth: open ? '14rem' : '3.875rem',
+                transition: {
+                    duration: 0.7,
+                    // ease: 'easeInOut',
+                },
+            },
         },
-        animate: {
-            maxWidth: open ? '14rem' : '3.875rem',
-            transition: {
-                duration: 0.7,
-                // ease: 'easeInOut',
+
+        p: {
+            initial: {
+                opacity: 0,
+            },
+            animate: {
+                opacity: 1,
+                transition: {
+                    duration: 0.7,
+                },
+            },
+            exit: {
+                opacity: 0,
+                transition: {
+                    duration: 0.7,
+                },
             },
         },
     };
+
     return (
         <section className="fixed left-0 z-[2] w-screen">
             <motion.section
-                variants={variant}
+                variants={variant.section}
                 animate={'animate'}
                 initial={'initial'}
                 className={`fixed left-0 top-0 z-[3] flex h-screen w-full ${
@@ -103,7 +124,19 @@ function SideBar({}) {
                                     }}
                                 >
                                     <SearchOutlined className="!text-[30px]" />
-                                    <p className="ml-3">Search</p>
+
+                                    <AnimatePresence>
+     {
+                                        open && <motion.p 
+                                
+                                    variants={variant.p}
+                                        initial={'initial'}
+                                        animate={'animate'}
+                                        exit={'exit'}
+                                    
+                                    className="ml-3">Search</motion.p>
+                                    }
+</AnimatePresence>
                                 </Tooltip>
                             </div>
                             {optionsArray.map(({ link, title, icon }) => {
@@ -138,21 +171,10 @@ function SideBar({}) {
                                             <AnimatePresence>
                                                 {open && (
                                                     <motion.p
-                                                        initial={{
-                                                            opacity: 0,
-                                                        }}
-                                                        animate={{
-                                                            opacity: 1,
-                                                            transition: {
-                                                                duration: 0.7,
-                                                            },
-                                                        }}
-                                                        exit={{
-                                                            opacity: 0,
-                                                            transition: {
-                                                                duration: 0.7,
-                                                            },
-                                                        }}
+                                                        variants={variant.p}
+                                                        initial={'initial'}
+                                                        animate={'animate'}
+                                                        exit={'exit'}
                                                         className="ml-3 whitespace-nowrap"
                                                     >
                                                         {title}
