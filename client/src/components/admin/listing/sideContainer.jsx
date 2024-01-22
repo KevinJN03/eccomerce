@@ -108,17 +108,29 @@ function SideContainer({}) {
                             Title: Z to A
                         </option>
 
-                        <option data-title="additional_data.stock.total" value={1}>
+                        <option
+                            data-title="additional_data.stock.total"
+                            value={1}
+                        >
                             Stock: low to high
                         </option>
-                        <option data-title="additional_data.stock.total" value={-1}>
+                        <option
+                            data-title="additional_data.stock.total"
+                            value={-1}
+                        >
                             Stock: high to low
                         </option>
 
-                        <option data-title="additional_data.price.max" value={1}>
+                        <option
+                            data-title="additional_data.price.max"
+                            value={1}
+                        >
                             Price: low to high
                         </option>
-                        <option value={-1} data-title="additional_data.price.max">
+                        <option
+                            value={-1}
+                            data-title="additional_data.price.max"
+                        >
                             Price: high to low
                         </option>
                     </optgroup>
@@ -180,8 +192,23 @@ function SideContainer({}) {
                 </div>
             </div>
 
-            <div className="flex flex-row flex-nowrap gap-2">
-                <input type="checkbox" name="featured" id="featured" />
+            <div
+                className="flex w-fit flex-row flex-nowrap gap-2"
+                onClick={() =>
+                    setChecks((prevChecks) => ({
+                        ...prevChecks,
+                        featured: !prevChecks?.featured,
+                    }))
+                }
+            >
+                <input
+                className='daisy-checkbox daisy-checkbox-xs rounded-sm'
+                    type="checkbox"
+                    name="featured"
+                    id="featured"
+                    readOnly
+                    checked={checks?.featured}
+                />
                 <p>Featured listings</p>
             </div>
 

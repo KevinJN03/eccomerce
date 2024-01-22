@@ -638,6 +638,11 @@ export const delete_drafts = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllProducts = [
+  check('check.featured')
+    .trim()
+    .escape()
+    .toBoolean()
+    .optional({ checkFalsy: true, null: true, undefined: true }),
   check('checks.sort.title')
     .trim()
     .escape()
@@ -656,7 +661,6 @@ export const getAllProducts = [
     .optional({ checkFalsy: true, null: true, undefined: true }),
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
-    console.log(checks);
 
     // const drafts = await DraftProducts.find({}, null, {
     //   sort: { ...checks.sort },
@@ -664,19 +668,19 @@ export const getAllProducts = [
     //   locale: 'en',
     //   caseLevel: true,
     // });
-    const drafts = await DraftProducts.aggregate([
+
+    const draftPipeline = [
       {
         $set: {
           status: 'draft',
         },
       },
       ...productAggregateStage(),
-    ]).collation({
-      locale: 'en',
-      caseLevel: true,
-    });
 
-    const products = await Product.aggregate([
+      { $sort: { _id: 1, ...checks.sort } },
+    ];
+
+    const productPipeline = [
       ...productAggregateStage(),
       {
         $set: {
@@ -707,7 +711,18 @@ export const getAllProducts = [
       {
         $sort: { _id: 1 },
       },
-    ])
+    ];
+    if (checks?.featured) {
+      productPipeline.unshift({ $match: { featured: true } });
+      draftPipeline.unshift({ $match: { featured: true } });
+    }
+
+    const drafts = await DraftProducts.aggregate(draftPipeline).collation({
+      locale: 'en',
+      caseLevel: true,
+    });
+
+    const products = await Product.aggregate(productPipeline)
       .collation({ locale: 'en', caseLevel: true })
       .exec();
 
@@ -736,3 +751,25 @@ export const getProductFiles = asyncHandler(async (req, res, next) => {
     parseResult,
   });
 });
+
+export const updateProductFeature = [
+  check('featured').escape().trim().toBoolean(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { featured } = req.query;
+
+    const product = await Product.findOneAndUpdate(
+      { _id: id },
+      { featured },
+      {
+        upsert: true,
+        new: true,
+        lean: {
+          toObject: true,
+        },
+      },
+    );
+
+    res.status(200).send({ success: true, featured: product?.featured });
+  }),
+];

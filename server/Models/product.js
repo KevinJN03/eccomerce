@@ -1,6 +1,4 @@
-import mongoose, { SchemaType } from 'mongoose';
-
-const { Schema } = mongoose;
+import { model, Schema } from 'mongoose';
 
 const variationSchema = new Schema(
   {
@@ -30,6 +28,8 @@ export const productSchema = new Schema(
       type: Schema.Types.String,
       maxlength: [140, 'Title must be under 140 characters'],
     },
+
+    featured: { type: Schema.Types.Boolean, default: false },
     category: {
       type: Schema.Types.ObjectId,
       ref: 'category',
@@ -120,4 +120,4 @@ productSchema.virtual('id');
 
 //   return isPresent;
 // });
-export default mongoose.model('product', productSchema);
+export default model('product', productSchema);

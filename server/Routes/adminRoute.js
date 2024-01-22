@@ -16,6 +16,7 @@ import {
   getAllProducts,
   delete_drafts,
   getProductFiles,
+  updateProductFeature,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -91,5 +92,6 @@ router.get('/draftProduct/:id', getDraft);
 
 router.post('/products/all', getAllProducts);
 router.get('/products/productFiles/:id', getProductFiles);
+router.get('/product/featured/:id', updateProductFeature);
 // router.get('/check', checkLogin)
 export default router;

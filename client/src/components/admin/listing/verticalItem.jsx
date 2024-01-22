@@ -4,16 +4,34 @@ import {
     StarRateRounded,
 } from '@mui/icons-material';
 import { useState } from 'react';
-import Actions from './actions';
+import Actions from '../components/product/actions';
 import { Link } from 'react-router-dom';
-import { useListingPageContext } from '../../../../context/listingPageContext';
-
+import { useListingPageContext } from '../../../context/listingPageContext';
+import qs from 'qs';
+import UserLogout from '../../../hooks/userLogout';
+import { adminAxios } from '../../../api/axios';
 function VerticalItem({ product, idx }) {
-    const [favorite, setFavorite] = useState(false);
-
+    const [featured, setFeatured] = useState(product?.featured || false);
+    const { logoutUser } = UserLogout();
     const [showAction, setShowAction] = useState(false);
 
     const { selectionSet, setSelectionSet, checks } = useListingPageContext();
+
+    const handleFeatured = async () => {
+        // console.log({ query: qs.stringify(checks) });
+
+        try {
+            const { data } = await adminAxios.get(
+                `product/featured/${product?._id}?featured=${!featured}`
+            );
+
+            setFeatured(() => data?.featured);
+        } catch (error) {
+            console.error(error);
+
+            logoutUser({ error });
+        }
+    };
     return (
         <section
             className={`${
@@ -65,28 +83,33 @@ function VerticalItem({ product, idx }) {
                 </Link>
 
                 <div className="mt-4 flex w-full max-w-xs flex-row justify-between">
-                    <p className='underline text-black/70 text-xs'>{product.additional_data.stock?.total} in stock</p>
+                    <p className="text-xs text-black/70 underline">
+                        {product.additional_data.stock?.total} in stock
+                    </p>
                     {/* <p>{`${product.additional_data.price?.min == product.additional_data.price?.min ? `${product.additional_data.price?.min}`  }</p> */}
 
-
-                    {
-                        product.additional_data.price?.min == product.additional_data.price?.max ? <p className='underline text-black/70 text-xs'>
+                    {product.additional_data.price?.min ==
+                    product.additional_data.price?.max ? (
+                        <p className="text-xs text-black/70 underline">
                             £{product.additional_data.price?.min}
-                        </p> : <p className='underline text-black/70 text-xs'>
-                        £{product.additional_data.price?.min}-£{product.additional_data.price?.max}
                         </p>
-                    }
+                    ) : (
+                        <p className="text-xs text-black/70 underline">
+                            £{product.additional_data.price?.min}-£
+                            {product.additional_data.price?.max}
+                        </p>
+                    )}
                 </div>
             </div>
 
             <section className="flex flex-1 flex-row flex-nowrap gap-3">
                 <div
                     className="group flex w-full items-center justify-center py-2"
-                    onClick={() => setFavorite((prevState) => !prevState)}
+                    onClick={handleFeatured}
                 >
                     <StarRateRounded
                         className={`${
-                            favorite ? '!fill-orange-400' : ''
+                            featured ? '!fill-orange-400' : ''
                         } group-hover:!opacity-70`}
                     />
                 </div>

@@ -1,5 +1,5 @@
-import { useAdminContext } from '../../../../context/adminContext';
-import { useListingPageContext } from '../../../../context/listingPageContext';
+import { useAdminContext } from '../../../context/adminContext';
+import { useListingPageContext } from '../../../context/listingPageContext';
 import GridItem from './gridItem';
 
 function GridProduct() {

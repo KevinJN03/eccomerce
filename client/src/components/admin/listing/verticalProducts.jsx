@@ -3,10 +3,10 @@ import {
     SettingsRounded,
     StarRateRounded,
 } from '@mui/icons-material';
-import { useAdminContext } from '../../../../context/adminContext';
+import { useAdminContext } from '../../../context/adminContext';
 import { useEffect, useState } from 'react';
 import VerticalItem from './verticalItem';
-import { useListingPageContext } from '../../../../context/listingPageContext';
+import { useListingPageContext } from '../../../context/listingPageContext';
 
 function VerticalProducts() {
     const { allProducts } = useAdminContext();

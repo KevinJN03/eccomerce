@@ -7,21 +7,36 @@ import { ClickAwayListener } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import variant from '../../order/home/variant';
-import { useContent } from '../../../../context/ContentContext';
-import Actions from './actions';
-import { useListingPageContext } from '../../../../context/listingPageContext';
+import variant from '../order/home/variant';
+import { useContent } from '../../../context/ContentContext';
+import Actions from '../components/product/actions';
+import { useListingPageContext } from '../../../context/listingPageContext';
+import UserLogout from '../../../hooks/userLogout';
+import { adminAxios } from '../../../api/axios';
 
 function GridItem({ product }) {
     const navigate = useNavigate();
     const [hover, setHover] = useState(false);
-    const [favorite, setFavorite] = useState(product?.favorite || false);
-
+    const [featured, setFeatured] = useState(product?.featured || false);
+    const { logoutUser } = UserLogout();
     const [showAction, setShowAction] = useState(false);
     const { setSelectionSet, selectionSet } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [format, setFormat] = useState('grid');
+
+    const handleFeatured = async () => {
+        try {
+            const { data } = await adminAxios.get(
+                `product/featured/${product?._id}?featured=${!featured}`
+            );
+            setFeatured(() => data?.featured);
+        } catch (error) {
+            console.error(error);
+
+            logoutUser({ error });
+        }
+    };
 
     return (
         <section className="relative h-fit w-full max-w-48">
@@ -100,11 +115,11 @@ function GridItem({ product }) {
 
                     <div
                         className="group flex w-full items-center justify-center py-2"
-                        onClick={() => setFavorite((prevState) => !prevState)}
+                        onClick={handleFeatured}
                     >
                         <StarRateRounded
                             className={`${
-                                favorite ? '!fill-orange-400' : ''
+                                featured ? '!fill-orange-400' : ''
                             } group-hover:!opacity-70`}
                         />
                     </div>

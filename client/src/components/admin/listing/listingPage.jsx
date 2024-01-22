@@ -8,12 +8,12 @@ import { useAdminContext } from '../../../context/adminContext.jsx';
 import SearchInput from '../order/home/searchInput.jsx';
 import { AddRounded, ArrowDropDownSharp } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import ProductItem from '../components/product/gridItem.jsx';
+import ProductItem from './gridItem.jsx';
 import SelectionInput from '../order/home/selectionIput.jsx';
 import SideContainer from './sideContainer.jsx';
 import { Box, Modal } from '@mui/material';
-import GridProduct from '../components/product/gridProducts.jsx';
-import VerticalProducts from '../components/product/verticalProducts.jsx';
+import GridProduct from './gridProducts.jsx';
+import VerticalProducts from './verticalProducts.jsx';
 import SubHeader from './subheader.jsx';
 import Header from './header.jsx';
 import ListingPageProvider from '../../../context/listingPageContext.jsx';
@@ -33,6 +33,7 @@ function ListingPage() {
     const [checks, setChecks] = useState({
         format: 'vertical',
         listing_status: 'active',
+        featured: false,
         sort: {
             title: 1,
         },
@@ -103,7 +104,7 @@ function ListingPage() {
             console.log({ id });
             clearInterval(id);
         };
-    }, [checks?.listing_status, checks?.sort]);
+    }, [checks?.listing_status, checks?.sort, checks?.featured]);
 
     const deleteButtonClick = () => {};
     const handleClick = () => {};
