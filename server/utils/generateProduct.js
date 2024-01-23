@@ -5,7 +5,7 @@ import 'dotenv/config.js';
 import sharpify from '../Upload/sharpify.js';
 
 async function generateProduct(req, id, endPoint = 'products') {
-  const url = `${process.env.UPLOAD_URL}/${endPoint}`;
+  const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
   let counter = 0;
   const imageArr = [];
   const { files } = req;

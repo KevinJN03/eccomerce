@@ -26,8 +26,9 @@ import { CloseSharp, MoodBad, MoodBadTwoTone } from '@mui/icons-material';
 
 import sadEmoji from '../../../assets/icons/sad-emoji.svg';
 import { Box, Modal } from '@mui/material';
-import Delete from '../components/product/modalContent/delete';
-import ChangeSection from '../components/product/modalContent/changeSection';
+import Delete from '../listing/modalContent/delete.jsx';
+import ChangeSection from '../listing/modalContent/changeSection.jsx';
+import Edit_Title from '../listing/modalContent/edit_title';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -37,13 +38,15 @@ function Admin({}) {
     });
     const [open, setOpen] = useState(true);
 
-    const [modalCheck, setModalCheck] = useState(false);
-    const [modalContent, setModalContent] = useState({ type: 'delete' });
+    const [modalCheck, setModalCheck] = useState(true);
+    const [modalContent, setModalContent] = useState({ type: 'edit_title' });
     const [openSearch, setOpenSearch] = useState(false);
     const views = {
         delete: <Delete />,
         changeSection: <ChangeSection />,
         delivery_main: <Main />,
+
+        edit_title: <Edit_Title />,
     };
     const alertVariant = {
         initial: {
@@ -115,7 +118,7 @@ function Admin({}) {
                             )}
                         </AnimatePresence>
 
-                        <SideBar/>
+                        <SideBar />
                         <motion.div
                             className={`homeContainer ${
                                 open ? 'ml-56' : 'ml-[3.875rem]'
@@ -145,6 +148,7 @@ function Admin({}) {
                                         transform: 'translate(-50%, -50%)',
                                         boxSizing: 'border-box',
                                         maxWidth: '600px',
+                                        width:'100%',
                                         borderRadius: '4px',
                                         border: 'none',
                                     }}

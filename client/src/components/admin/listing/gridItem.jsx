@@ -14,29 +14,19 @@ import { useListingPageContext } from '../../../context/listingPageContext';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
 
-function GridItem({ product }) {
+function GridItem({ product, index}) {
     const navigate = useNavigate();
     const [hover, setHover] = useState(false);
     const [featured, setFeatured] = useState(product?.featured || false);
     const { logoutUser } = UserLogout();
     const [showAction, setShowAction] = useState(false);
-    const { setSelectionSet, selectionSet } = useListingPageContext();
+    const { setSelectionSet, selectionSet, handleFeatured } =
+        useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [format, setFormat] = useState('grid');
 
-    const handleFeatured = async () => {
-        try {
-            const { data } = await adminAxios.get(
-                `product/featured/${product?._id}?featured=${!featured}`
-            );
-            setFeatured(() => data?.featured);
-        } catch (error) {
-            console.error(error);
 
-            logoutUser({ error });
-        }
-    };
 
     return (
         <section className="relative h-fit w-full max-w-48">
@@ -115,7 +105,9 @@ function GridItem({ product }) {
 
                     <div
                         className="group flex w-full items-center justify-center py-2"
-                        onClick={handleFeatured}
+                        onClick={() =>
+                            handleFeatured({ product, setFeatured, featured , index})
+                        }
                     >
                         <StarRateRounded
                             className={`${

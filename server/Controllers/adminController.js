@@ -754,22 +754,40 @@ export const getProductFiles = asyncHandler(async (req, res, next) => {
 
 export const updateProductFeature = [
   check('featured').escape().trim().toBoolean(),
+  check('draft').escape().trim().toBoolean(),
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const { featured } = req.query;
+    const { featured, draft } = req.query;
+    let product = null;
 
-    const product = await Product.findOneAndUpdate(
-      { _id: id },
-      { featured },
-      {
-        upsert: true,
-        new: true,
-        lean: {
-          toObject: true,
+
+    if (draft) {
+      product = await DraftProducts.findOneAndUpdate(
+        { _id: id },
+        { featured },
+        {
+          upsert: false,
+          new: true,
+          lean: {
+            toObject: true,
+          },
         },
-      },
-    );
+      );
+    } else {
+      product = await Product.findOneAndUpdate(
+        { _id: id },
+        { featured },
+        {
+          upsert: false,
+          new: true,
+          lean: {
+            toObject: true,
+          },
+        },
+      );
+    }
 
+  console.log(product?.featured)
     res.status(200).send({ success: true, featured: product?.featured });
   }),
 ];

@@ -40,6 +40,9 @@ function ListingPage() {
     });
 
     const { logoutUser } = UserLogout();
+
+
+
     useEffect(() => {
         let id = null;
         const fetchData = async () => {
@@ -116,6 +119,7 @@ function ListingPage() {
         productIds,
         selectionSet,
         setSelectionSet,
+      
     };
 
     return (

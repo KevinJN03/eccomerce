@@ -10,28 +10,14 @@ import { useListingPageContext } from '../../../context/listingPageContext';
 import qs from 'qs';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
-function VerticalItem({ product, idx }) {
+function VerticalItem({ product, index}) {
     const [featured, setFeatured] = useState(product?.featured || false);
-    const { logoutUser } = UserLogout();
+
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks } = useListingPageContext();
+    const { selectionSet, setSelectionSet, checks, handleFeatured } =
+        useListingPageContext();
 
-    const handleFeatured = async () => {
-        // console.log({ query: qs.stringify(checks) });
-
-        try {
-            const { data } = await adminAxios.get(
-                `product/featured/${product?._id}?featured=${!featured}`
-            );
-
-            setFeatured(() => data?.featured);
-        } catch (error) {
-            console.error(error);
-
-            logoutUser({ error });
-        }
-    };
     return (
         <section
             className={`${
@@ -105,7 +91,7 @@ function VerticalItem({ product, idx }) {
             <section className="flex flex-1 flex-row flex-nowrap gap-3">
                 <div
                     className="group flex w-full items-center justify-center py-2"
-                    onClick={handleFeatured}
+                    onClick={() => handleFeatured({product, setFeatured, featured, index})}
                 >
                     <StarRateRounded
                         className={`${

@@ -20,7 +20,7 @@ import {
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
-  get_single_admin_product,
+  getProductsInfo,
   getVariations,
   delete_many_product,
   update_product,
@@ -52,7 +52,7 @@ import {
 } from '../Controllers/orderController.js';
 import { get_all_coupons } from '../Controllers/couponController.js';
 const router = express.Router();
-router.get('/product/:id', get_single_admin_product);
+router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
 
 router.get('/count', count_all);

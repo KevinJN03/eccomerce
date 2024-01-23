@@ -32,14 +32,14 @@ export const get_all_products = asyncHandler(async (req, res) => {
 //   }
 // });
 
-export const get_single_admin_product = asyncHandler(async (req, res, next) => {
+export const getProductsInfo = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-
-  const product = await Product.findOne({ _id: id })
+  const ids = id.split(',');
+  const product = await Product.find({ _id: ids })
     .populate([{ path: 'delivery' }, { path: 'category' }])
     .exec();
 
-  if (!product) {
+  if (product.length < 1) {
     return res.status(404).send('product not found');
   }
 
@@ -165,7 +165,7 @@ export const delete_product = asyncHandler(async (req, res, next) => {
     ...deleteProductsImages,
   ]);
 
-  res.send({msg: 'deletion successful'});
+  res.send({ msg: 'deletion successful' });
 });
 
 // // create a new Product

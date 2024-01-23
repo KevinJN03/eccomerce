@@ -15,12 +15,12 @@ function VerticalProducts() {
 
     return (
         <section className="w-full ">
-            {products?.map((product, idx) => {
+            {products?.map((product, index) => {
                 return (
                     <VerticalItem
                         key={product._id}
                         product={product}
-                        idx={idx}
+                        index={index}
                     />
                 );
             })}

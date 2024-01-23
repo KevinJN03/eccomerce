@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../../../api/axios';
-import { useContent } from '../../../../../context/ContentContext';
-import { useAdminContext } from '../../../../../context/adminContext';
-import UserLogout from '../../../../../hooks/userLogout';
+import { adminAxios } from '../../../../api/axios';
+import { useContent } from '../../../../context/ContentContext';
+import { useAdminContext } from '../../../../context/adminContext';
+import UserLogout from '../../../../hooks/userLogout';
 
 function Delete({}) {
     const { setModalCheck, modalContent, setModalContent } = useContent();
