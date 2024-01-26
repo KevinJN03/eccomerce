@@ -18,6 +18,8 @@ import multerUpload from '../utils/multerUpload';
 import sortCombineVariation from '../utils/sortCOmbineVariations.js';
 import generateProduct from '../utils/generateProduct.js';
 import { Endpoint } from 'aws-sdk';
+import productAggregateStage from '../utils/productAggregateStage.js';
+import mongoose from 'mongoose';
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
   res.send(products);
@@ -34,18 +36,58 @@ export const get_all_products = asyncHandler(async (req, res) => {
 
 export const getProductsInfo = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const ids = id.split(',');
-  const product = await Product.find({ _id: ids })
-    .populate([{ path: 'delivery' }, { path: 'category' }])
-    .exec();
+  const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
+  // const product = await Product.find({ _id: ids })
+  //   .populate([{ path: 'delivery' }, { path: 'category' }])
 
-  if (product.length < 1) {
+  //   .exec();
+
+  const newProduct = await Product.aggregate([
+    {
+      $match: {
+        _id: {
+          $in: ids,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'deliveryprofiles',
+        localField: 'delivery',
+        foreignField: '_id',
+        as: 'delivery',
+      },
+    },
+    {
+      $set: {
+        category: { $arrayElemAt: ['$category', 0] },
+      },
+    },
+    ...productAggregateStage(),
+  ]);
+  if (newProduct.length < 1) {
     return res.status(404).send('product not found');
   }
 
   // await s3Get(id);
 
-  return res.status(200).send(product);
+  return res.status(200).send(newProduct);
 });
 
 export const get_single_product = asyncHandler(async (req, res, next) => {

@@ -91,7 +91,7 @@ function SubHeader({}) {
                                     },
                                     {
                                         title: 'Change section',
-                                        id: 'edit_section',
+                                        id: 'change_section',
                                     },
                                 ].map(({ title, id }) => {
                                     return (

@@ -30,6 +30,7 @@ import Delete from '../listing/modalContent/delete.jsx';
 import ChangeSection from '../listing/modalContent/changeSection.jsx';
 import Edit_Title from '../listing/modalContent/edit_title';
 import EditDescription from '../listing/modalContent/edit_description.jsx';
+import EditPrice from '../listing/modalContent/edit_price.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -40,15 +41,16 @@ function Admin({}) {
     const [open, setOpen] = useState(true);
 
     const [modalCheck, setModalCheck] = useState(true);
-    const [modalContent, setModalContent] = useState({ type: 'edit_description' });
+    const [modalContent, setModalContent] = useState({ type: 'change_section' });
     const [openSearch, setOpenSearch] = useState(false);
     const views = {
         delete: <Delete />,
-        changeSection: <ChangeSection />,
+        change_section: <ChangeSection />,
         delivery_main: <Main />,
 
         edit_title: <Edit_Title />,
         edit_description: <EditDescription />,
+        edit_price: <EditPrice />,
     };
     const alertVariant = {
         initial: {
@@ -150,7 +152,7 @@ function Admin({}) {
                                         transform: 'translate(-50%, -20%)',
                                         boxSizing: 'border-box',
                                         maxWidth: '600px',
-                                        width: '100%',
+                                        // width: '100%',
                                         borderRadius: '4px',
                                         border: 'none',
                                     }}

@@ -107,7 +107,7 @@ function ListingPage() {
             console.log({ id });
             clearInterval(id);
         };
-    }, [checks?.listing_status, checks?.sort, checks?.featured]);
+    }, [checks?.listing_status, checks?.sort, checks?.featured, checks?.section]);
 
     const deleteButtonClick = () => {};
     const handleClick = () => {};

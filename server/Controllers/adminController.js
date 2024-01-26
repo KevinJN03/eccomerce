@@ -661,7 +661,7 @@ export const getAllProducts = [
     .optional({ checkFalsy: true, null: true, undefined: true }),
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
-
+    console.log({ checks });
     // const drafts = await DraftProducts.find({}, null, {
     //   sort: { ...checks.sort },
     // }).collation({
@@ -712,6 +712,24 @@ export const getAllProducts = [
         $sort: { _id: 1 },
       },
     ];
+    if (checks?.section) {
+      try {
+        const newObjectId = new mongoose.Types.ObjectId(checks.section);
+      } catch (error) {
+        console.log('error converting section id to objectId', error.message);
+      }
+    }
+
+    if (checks?.section) {
+      try {
+        const newObjectId = new mongoose.Types.ObjectId(checks.section);
+        productPipeline.unshift({ $match: { category: newObjectId } });
+
+        draftPipeline.unshift({ $match: { category: newObjectId } });
+      } catch (error) {
+        console.log('error converting section id to objectId', error.message);
+      }
+    }
     if (checks?.featured) {
       productPipeline.unshift({ $match: { featured: true } });
       draftPipeline.unshift({ $match: { featured: true } });
@@ -760,7 +778,6 @@ export const updateProductFeature = [
     const { featured, draft } = req.query;
     let product = null;
 
-
     if (draft) {
       product = await DraftProducts.findOneAndUpdate(
         { _id: id },
@@ -787,7 +804,7 @@ export const updateProductFeature = [
       );
     }
 
-  console.log(product?.featured)
+    console.log(product?.featured);
     res.status(200).send({ success: true, featured: product?.featured });
   }),
 ];

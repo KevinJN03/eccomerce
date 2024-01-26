@@ -3,10 +3,29 @@ import { Switch, styled, colors, alpha } from '@mui/material';
 import { green, pink } from '@mui/material/colors';
 import { useListingPageContext } from '../../../context/listingPageContext';
 import { useAdminContext } from '../../../context/adminContext';
+import { useEffect, useState } from 'react';
+import { adminAxios } from '../../../api/axios';
+import UserLogout from '../../../hooks/userLogout';
 
 function SideContainer({}) {
     const { checks, setChecks } = useListingPageContext();
     const { allProducts } = useAdminContext();
+    const { logoutUser } = UserLogout();
+    const [categoryArray, setCategories] = useState([]);
+
+    useEffect(() => {
+        adminAxios
+            .get('category/all')
+            .then(({ data }) => {
+                setCategories(() =>
+                    data.map(({ _id, name }) => ({ _id, name }))
+                );
+            })
+            .catch((error) => {
+                console.error({ error });
+                logoutUser({ error });
+            });
+    }, []);
 
     const GreenSwitch = styled(Switch)(({ theme }) => ({
         '& .MuiSwitch-switchBase.Mui-checked': {
@@ -202,7 +221,7 @@ function SideContainer({}) {
                 }
             >
                 <input
-                className='daisy-checkbox daisy-checkbox-xs rounded-sm'
+                    className="daisy-checkbox daisy-checkbox-xs rounded-sm"
                     type="checkbox"
                     name="featured"
                     id="featured"
@@ -220,6 +239,12 @@ function SideContainer({}) {
                 </p>
 
                 <select
+                    onChange={(e) =>
+                        setChecks((prevState) => ({
+                            ...prevState,
+                            section: e.target.value,
+                        }))
+                    }
                     name="sections"
                     id="sections"
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
@@ -227,8 +252,15 @@ function SideContainer({}) {
                     <optgroup label="Sections">
                         <option>All</option>
 
-                        {[1, 2, 3].map((item) => {
-                            return <option value={item}>{item}</option>;
+                        {categoryArray.map(({ _id, name }) => {
+                            return (
+                                <option
+                                    selected={checks?.select == _id}
+                                    value={_id}
+                                >
+                                    {name}
+                                </option>
+                            );
                         })}
                     </optgroup>
                 </select>
