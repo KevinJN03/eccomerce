@@ -29,6 +29,7 @@ import { Box, Modal } from '@mui/material';
 import Delete from '../listing/modalContent/delete.jsx';
 import ChangeSection from '../listing/modalContent/changeSection.jsx';
 import Edit_Title from '../listing/modalContent/edit_title';
+import EditDescription from '../listing/modalContent/edit_description.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -39,7 +40,7 @@ function Admin({}) {
     const [open, setOpen] = useState(true);
 
     const [modalCheck, setModalCheck] = useState(true);
-    const [modalContent, setModalContent] = useState({ type: 'edit_title' });
+    const [modalContent, setModalContent] = useState({ type: 'edit_description' });
     const [openSearch, setOpenSearch] = useState(false);
     const views = {
         delete: <Delete />,
@@ -47,6 +48,7 @@ function Admin({}) {
         delivery_main: <Main />,
 
         edit_title: <Edit_Title />,
+        edit_description: <EditDescription />,
     };
     const alertVariant = {
         initial: {
@@ -143,12 +145,12 @@ function Admin({}) {
                                     sx={{
                                         // backgroundColor: 'white',
                                         position: 'absolute',
-                                        top: '50%',
+                                        top: '20%',
                                         left: '50%',
-                                        transform: 'translate(-50%, -50%)',
+                                        transform: 'translate(-50%, -20%)',
                                         boxSizing: 'border-box',
                                         maxWidth: '600px',
-                                        width:'100%',
+                                        width: '100%',
                                         borderRadius: '4px',
                                         border: 'none',
                                     }}
