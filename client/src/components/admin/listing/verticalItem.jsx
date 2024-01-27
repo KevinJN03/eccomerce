@@ -10,12 +10,12 @@ import { useListingPageContext } from '../../../context/listingPageContext';
 import qs from 'qs';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
-function VerticalItem({ product, index}) {
+function VerticalItem({ product, index }) {
     const [featured, setFeatured] = useState(product?.featured || false);
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks, handleFeatured } =
+    const { selectionSet, setSelectionSet, checks, handleFeatured, showStats } =
         useListingPageContext();
 
     return (
@@ -67,45 +67,111 @@ function VerticalItem({ product, index}) {
                         {product?.title}
                     </p>
                 </Link>
-
-                <div className="mt-4 flex w-full max-w-xs flex-row justify-between">
-                    <p className="text-xs text-black/70 underline">
-                        {product.additional_data.stock?.total} in stock
-                    </p>
-                    {/* <p>{`${product.additional_data.price?.min == product.additional_data.price?.min ? `${product.additional_data.price?.min}`  }</p> */}
-
-                    {product.additional_data.price?.min ==
-                    product.additional_data.price?.max ? (
+                <section className="flex w-full flex-col">
+                    <div className="mt-4 flex w-full max-w-xs flex-row justify-between">
                         <p className="text-xs text-black/70 underline">
-                            £{product.additional_data.price?.min}
+                            {product.additional_data.stock?.total} in stock
                         </p>
-                    ) : (
-                        <p className="text-xs text-black/70 underline">
-                            £{product.additional_data.price?.min}-£
-                            {product.additional_data.price?.max}
-                        </p>
+                        {/* <p>{`${product.additional_data.price?.min == product.additional_data.price?.min ? `${product.additional_data.price?.min}`  }</p> */}
+
+                        {product.additional_data.price?.min ==
+                        product.additional_data.price?.max ? (
+                            <p className="text-xs text-black/70 underline">
+                                £{product.additional_data.price?.min}
+                            </p>
+                        ) : (
+                            <p className="text-xs text-black/70 underline">
+                                £{product.additional_data.price?.min}-£
+                                {product.additional_data.price?.max}
+                            </p>
+                        )}
+                    </div>
+
+                    {showStats && (
+                        <div className="mt-8 flex w-full flex-row">
+                            <div className="left flex w-full flex-1 flex-col gap-3">
+                                <h6 className="text-sm font-semibold">
+                                    LAST 30 DAYS
+                                </h6>
+                                <section className="flex w-full flex-row">
+                                    <div className="flex-1 ">
+                                        <p className="text-xs text-black/70">
+                                            0
+                                        </p>
+                                        <p className="text-xs text-black/70">
+                                            visits
+                                        </p>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs text-black/70">
+                                            0
+                                        </p>
+                                        <p className="text-xs text-black/70">
+                                            favorites
+                                        </p>
+                                    </div>
+                                </section>
+                            </div>
+                            <div className="right flex w-full flex-1 flex-col gap-3">
+                                <h6 className="text-sm font-semibold">
+                                    ALL TIME
+                                </h6>
+                                <section className="flex w-full flex-row">
+                                    <div className="flex-1">
+                                        <p className="text-xs text-black/70">
+                                            {product.stats?.sales}
+                                        </p>
+                                        <p className="text-xs text-black/70">
+                                            sales
+                                        </p>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs text-black/70">
+                                            £
+                                            {parseFloat(
+                                                product.stats?.revenue
+                                            ).toFixed(2)}
+                                        </p>
+                                        <p className="text-xs text-black/70">
+                                            revenue
+                                        </p>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
                     )}
-                </div>
+                </section>
             </div>
 
-            <section className="flex flex-1 flex-row flex-nowrap gap-3">
+            <section className="flex h-fit flex-1 flex-row flex-nowrap items-center gap-3">
                 <div
-                    className="group flex w-full items-center justify-center py-2"
-                    onClick={() => handleFeatured({product, setFeatured, featured, index})}
+                    className="group flex h-fit items-center justify-center rounded border border-transparent px-4 w-fit py-2  outline-2 outline-offset-2 outline-green-500  focus:border-dark-gray focus:outline  active:border-dark-gray active:outline "
+                    onClick={() =>
+                        handleFeatured({
+                            product,
+                            setFeatured,
+                            featured,
+                            index,
+                        })
+                    }
                 >
                     <StarRateRounded
                         className={`${
-                            featured ? '!fill-orange-400' : ''
-                        } group-hover:!opacity-70`}
+                            featured ? '!fill-orange-400' : '!fill-black/70'
+                        } group-hover:!opacity-70 `}
                     />
                 </div>
-                <section className="relative flex items-center justify-center">
+                <section className="relative flex  justify-center">
                     <div
                         onClick={() => setShowAction((prevState) => !prevState)}
-                        className="flex w-full  flex-row flex-nowrap items-center justify-center"
+                        className={`relative flex w-full  flex-row flex-nowrap items-center justify-center rounded border py-2 pl-3  pr-1 outline-2 outline-offset-2 outline-green-500  focus:border-dark-gray focus:outline border-transparent active:border-dark-gray active:outline  ${
+                            showAction
+                                ? '!border-dark-gray !outline'
+                                : ''
+                        }`}
                     >
-                        <SettingsRounded className="!text-[20px]" />
-                        <ArrowDropDownSharp className="relative left-[-0.3rem] !text-[20px]" />
+                        <SettingsRounded className="!fill-black/70 !text-[1.25rem]" />
+                        <ArrowDropDownSharp className="relative  left-[-0.2rem] !fill-black/70 !text-[1.25rem]" />
                     </div>
 
                     <Actions
@@ -113,7 +179,7 @@ function VerticalItem({ product, index}) {
                             product,
                             showAction,
                             setShowAction,
-                            className: '-translate-y-[-95%]',
+                            className: 'translate-y-2',
                         }}
                     />
                 </section>

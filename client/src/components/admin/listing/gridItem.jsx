@@ -92,6 +92,7 @@ function GridItem({ product, index }) {
                                 </p>
                                 <div className="h-3 w-[1px] bg-dark-gray/50"></div>
                                 <p className="right overflow-hidden text-ellipsis whitespace-nowrap text-black/70">
+                                    £
                                     {parseFloat(
                                         product.stats?.revenue
                                     )?.toFixed(2)}{' '}
@@ -107,7 +108,7 @@ function GridItem({ product, index }) {
                         selectionSet?.has(product?._id)
                             ? 'border-green-400/50'
                             : 'border-dark-gray/50'
-                    } bottom flex w-full flex-row items-center justify-between border-t`}
+                    } bottom flex w-full flex-row items-center justify-between gap-2 border-t py-0.5`}
                 >
                     <div className="flex w-full items-center justify-center py-2">
                         <input
@@ -132,7 +133,8 @@ function GridItem({ product, index }) {
                     </div>
 
                     <div
-                        className="group flex w-full items-center justify-center py-2"
+                        // className="group flex w-full items-center justify-center py-2"
+                        className="group flex h-10 w-fit items-center justify-center rounded border border-transparent px-4 py-1  outline-2 outline-offset-2 outline-green-500  focus:border-dark-gray focus:outline  active:border-dark-gray active:outline "
                         onClick={() =>
                             handleFeatured({
                                 product,
@@ -148,24 +150,30 @@ function GridItem({ product, index }) {
                             } group-hover:!opacity-70`}
                         />
                     </div>
+                    <section className="relative flex  justify-center">
+                        <div
+                            onClick={() =>
+                                setShowAction((prevState) => !prevState)
+                            }
+                            className={`relative flex h-10 w-fit  flex-row flex-nowrap items-center justify-center rounded border border-transparent  pl-3 pr-1 outline-2 outline-offset-2  outline-green-500 focus:border-dark-gray focus:outline active:border-dark-gray active:outline  ${
+                                showAction ? '!border-dark-gray !outline' : ''
+                            }`}
+                        >
+                            <SettingsRounded className="!text-[20px]" />
+                            <ArrowDropDownSharp className="relative left-[-0.3rem] !text-[20px]" />
+                        </div>
 
-                    <div
-                        onClick={() => setShowAction((prevState) => !prevState)}
-                        className="flex w-full  flex-row flex-nowrap items-center justify-center hover:!opacity-70"
-                    >
-                        <SettingsRounded className="!text-[20px]" />
-                        <ArrowDropDownSharp className="relative left-[-0.3rem] !text-[20px]" />
-                    </div>
+                        <Actions
+                            {...{
+                                product,
+                                showAction,
+                                setShowAction,
+                                className: 'translate-y-2',
+                            }}
+                        />
+                    </section>
                 </div>
             </div>
-            <Actions
-                {...{
-                    product,
-                    showAction,
-                    setShowAction,
-                    className: '-translate-y-[-101%]',
-                }}
-            />
         </section>
     );
 }

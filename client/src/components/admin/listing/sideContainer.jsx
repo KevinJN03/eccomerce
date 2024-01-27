@@ -178,14 +178,17 @@ function SideContainer({}) {
                             .toLowerCase();
 
                         return (
-                            <div className="flex flex-row flex-nowrap gap-2">
+                            <div
+                                onClick={() => {
+                                    setChecks((prevState) => ({
+                                        ...prevState,
+                                        listing_status: lowerCaseText,
+                                    }));
+                                }}
+                                className="flex w-fit cursor-pointer flex-row flex-nowrap gap-2"
+                            >
                                 <input
-                                    onChange={() => {
-                                        setChecks((prevState) => ({
-                                            ...prevState,
-                                            listing_status: lowerCaseText,
-                                        }));
-                                    }}
+                                    readOnly
                                     checked={
                                         checks?.listing_status == lowerCaseText
                                     }
@@ -219,7 +222,7 @@ function SideContainer({}) {
             </div>
 
             <div
-                className="flex w-fit flex-row flex-nowrap gap-2"
+                className="flex w-fit flex-row flex-nowrap gap-2 cursor-pointer "
                 onClick={() =>
                     setChecks((prevChecks) => ({
                         ...prevChecks,

@@ -39,7 +39,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                         exit={'exit'}
                         className={` ${
                             className || ''
-                        } absolute bottom-0 right-0 z-10  rounded border border-dark-gray/50 bg-white py-2`}
+                        } absolute top-full right-0 z-10  rounded border border-dark-gray/50 bg-white py-2`}
                     >
                         {' '}
                         {product?.status == 'active' && (
