@@ -21,18 +21,22 @@ import { adminAxios } from '../../../api/axios.js';
 import UserLogout from '../../../hooks/userLogout.jsx';
 
 import { AnimatePresence, motion, progress } from 'framer-motion';
+
 function ListingPage() {
     const [loading, setLoading] = useState(false);
-
+    const [categoryQuantity, setCategoryQuantity] = useState({});
     const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
     const [products, setProducts] = useState([]);
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
+
+    const [showStats, setShowStats] = useState(false);
     const [checks, setChecks] = useState({
         format: 'vertical',
         listing_status: 'active',
+
         featured: false,
         sort: {
             title: 1,
@@ -40,8 +44,6 @@ function ListingPage() {
     });
 
     const { logoutUser } = UserLogout();
-
-
 
     useEffect(() => {
         let id = null;
@@ -52,7 +54,7 @@ function ListingPage() {
                 const data = {};
 
                 setSelectionSet(() => new Set());
-                var intervalId = setInterval(handleInterval, 30);
+                var intervalId = setInterval(handleInterval, 1);
                 id = intervalId;
                 function handleInterval() {
                     console.log('interval', intervalId);
@@ -63,7 +65,17 @@ function ListingPage() {
                             const newProducts =
                                 data.products?.[checks?.listing_status] || [];
                             setProducts(() => newProducts);
+                            const countObj = {};
 
+                            newProducts?.forEach(({ category }) => {
+                                if (countObj?.[category]) {
+                                    countObj[category] += 1;
+                                } else {
+                                    countObj[category] = 1;
+                                }
+                            });
+                            console.log({ countObj });
+                            setCategoryQuantity(() => countObj);
                             setProductIds(() =>
                                 newProducts?.map((item) => item._id)
                             );
@@ -76,9 +88,9 @@ function ListingPage() {
                             } else if (complete) {
                                 speed += 0.5;
 
-                                return (prevValue += speed);
+                                return (prevValue += 2);
                             } else {
-                                return (prevValue += speed);
+                                return (prevValue += 2);
                             }
                         }
                     });
@@ -107,7 +119,12 @@ function ListingPage() {
             console.log({ id });
             clearInterval(id);
         };
-    }, [checks?.listing_status, checks?.sort, checks?.featured, checks?.section]);
+    }, [
+        checks?.listing_status,
+        checks?.sort,
+        checks?.featured,
+        checks?.section,
+    ]);
 
     const deleteButtonClick = () => {};
     const handleClick = () => {};
@@ -119,7 +136,9 @@ function ListingPage() {
         productIds,
         selectionSet,
         setSelectionSet,
-      
+        categoryQuantity,
+        showStats,
+        setShowStats,
     };
 
     return (

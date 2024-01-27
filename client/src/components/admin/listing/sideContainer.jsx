@@ -8,7 +8,8 @@ import { adminAxios } from '../../../api/axios';
 import UserLogout from '../../../hooks/userLogout';
 
 function SideContainer({}) {
-    const { checks, setChecks } = useListingPageContext();
+    const { checks, setChecks, categoryQuantity, showStats, setShowStats } =
+        useListingPageContext();
     const { allProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
     const [categoryArray, setCategories] = useState([]);
@@ -70,7 +71,13 @@ function SideContainer({}) {
                     <p className="font-semibold">Stats</p>
 
                     <section className="flex w-full flex-row flex-nowrap justify-between">
-                        <GreenSwitch defaultChecked />
+                        <GreenSwitch
+                            defaultChecked
+                            checked={showStats}
+                            onChange={() =>
+                                setShowStats((prevState) => !prevState)
+                            }
+                        />
 
                         <div
                             className={` flex cursor-pointer flex-row flex-nowrap items-center rounded border border-dark-gray/50`}
@@ -249,16 +256,20 @@ function SideContainer({}) {
                     id="sections"
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
                 >
-                    <optgroup label="Sections">
-                        <option>All</option>
+                    <optgroup label="Sections" className="text-s font-medium">
+                        <option className="text-xs">All</option>
 
                         {categoryArray.map(({ _id, name }) => {
                             return (
                                 <option
+                                    disabled={!categoryQuantity?.[_id]}
+                                    className="text-xs"
                                     selected={checks?.select == _id}
                                     value={_id}
                                 >
-                                    {name}
+                                    {`${name} (${
+                                        categoryQuantity?.[_id] || 0
+                                    })`}
                                 </option>
                             );
                         })}

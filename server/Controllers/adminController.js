@@ -682,6 +682,7 @@ export const getAllProducts = [
 
     const productPipeline = [
       ...productAggregateStage(),
+
       {
         $set: {
           status: {

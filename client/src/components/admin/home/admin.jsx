@@ -40,8 +40,10 @@ function Admin({}) {
     });
     const [open, setOpen] = useState(true);
 
-    const [modalCheck, setModalCheck] = useState(true);
-    const [modalContent, setModalContent] = useState({ type: 'change_section' });
+    const [modalCheck, setModalCheck] = useState(false);
+    const [modalContent, setModalContent] = useState({
+        type: 'change_section',
+    });
     const [openSearch, setOpenSearch] = useState(false);
     const views = {
         delete: <Delete />,

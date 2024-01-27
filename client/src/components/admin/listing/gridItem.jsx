@@ -14,19 +14,17 @@ import { useListingPageContext } from '../../../context/listingPageContext';
 import UserLogout from '../../../hooks/userLogout';
 import { adminAxios } from '../../../api/axios';
 
-function GridItem({ product, index}) {
+function GridItem({ product, index }) {
     const navigate = useNavigate();
     const [hover, setHover] = useState(false);
     const [featured, setFeatured] = useState(product?.featured || false);
     const { logoutUser } = UserLogout();
     const [showAction, setShowAction] = useState(false);
-    const { setSelectionSet, selectionSet, handleFeatured } =
+    const { setSelectionSet, selectionSet, handleFeatured, showStats } =
         useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [format, setFormat] = useState('grid');
-
-
 
     return (
         <section className="relative h-fit w-full max-w-48">
@@ -46,7 +44,7 @@ function GridItem({ product, index}) {
                     <div className="top w-full p-0.5 ">
                         <img
                             src={product?.images[0]}
-                            className="h-40 w-full object-cover"
+                            className="h-40 w-full rounded-t object-cover"
                         />
                     </div>
                     <div className="middle flex w-full flex-col  gap-0.5 p-2 pb-14">
@@ -72,6 +70,36 @@ function GridItem({ product, index}) {
                             </p>
                         )}
                     </div>
+
+                    {showStats && (
+                        <div className="stats border-t border-dark-gray/5 p-2">
+                            <h6 className="text-sm font-semibold">
+                                LAST 30 DAYS
+                            </h6>
+                            <div className="flex w-full flex-nowrap items-center gap-2">
+                                <p className="left whitespace-nowrap text-black/70">
+                                    0 visits
+                                </p>
+                                <div className="h-3 w-[1px] bg-dark-gray/50"></div>
+                                <p className="right whitespace-nowrap text-black/70 ">
+                                    0 favourites
+                                </p>
+                            </div>
+                            <h6 className="text-sm font-semibold">ALL TIME</h6>
+                            <div className="flex w-full flex-nowrap items-center  gap-2">
+                                <p className="left whitespace-nowrap text-black/70">
+                                    {product.stats?.sales} sales
+                                </p>
+                                <div className="h-3 w-[1px] bg-dark-gray/50"></div>
+                                <p className="right overflow-hidden text-ellipsis whitespace-nowrap text-black/70">
+                                    {parseFloat(
+                                        product.stats?.revenue
+                                    )?.toFixed(2)}{' '}
+                                    revenue
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </Link>
 
                 <div
@@ -106,7 +134,12 @@ function GridItem({ product, index}) {
                     <div
                         className="group flex w-full items-center justify-center py-2"
                         onClick={() =>
-                            handleFeatured({ product, setFeatured, featured , index})
+                            handleFeatured({
+                                product,
+                                setFeatured,
+                                featured,
+                                index,
+                            })
                         }
                     >
                         <StarRateRounded

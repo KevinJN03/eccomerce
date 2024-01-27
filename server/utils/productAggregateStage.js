@@ -186,7 +186,68 @@ function productAggregateStage() {
       },
     },
     {
+      $lookup: {
+        from: 'orders',
+        localField: '_id',
+        foreignField: 'items.product',
+        as: 'orders_docs',
+        // let: { total_sales: 0, total_sales_amount: 0.0 },
+        let: { productId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              status: { $ne: 'processing' },
+            },
+          },
+          {
+            $addFields: {
+              prices: {
+                $sum: {
+                  $map: {
+                    input: '$items',
+                    as: 'item',
+                    in: {
+                      $cond: {
+                        if: {
+                          $eq: ['$$item.product', '$$productId'],
+                        },
+                        then: '$$item.price',
+                        else: '$$REMOVE',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              status: 1,
+              prices: 1,
+
+              // price: {
+              //   items: {
+              //     $elemMatch: { product: '$$productId' },
+              //   },
+              // },
+            },
+          },
+        ],
+      },
+    },
+
+    {
+      $addFields: {
+        stats: {
+          revenue: { $toDouble: { $sum: '$orders_docs.prices' } },
+          sales: { $toInt: { $size: '$orders_docs' } },
+        },
+      },
+    },
+    {
       $unset: [
+        'orders_docs',
         'variationOptions',
         'priceArrays',
         'stockArrays',

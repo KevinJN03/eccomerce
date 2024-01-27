@@ -13,7 +13,7 @@ function SubHeader({}) {
         useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
-    const [showAction, setShowAction] = useState(true);
+    const [showAction, setShowAction] = useState(false);
 
     const handleDelete = () => {
         setModalContent({
@@ -95,18 +95,19 @@ function SubHeader({}) {
                                     },
                                 ].map(({ title, id }) => {
                                     return (
-                                        <p
+                                        <p 
                                             onClick={() => {
-                                                setModalContent({
+                                                setShowAction(() => false);
+                                                setModalCheck(() => true);
+                                                setModalContent(() => ({
                                                     type: id,
                                                     products:
                                                         Array.from(
                                                             selectionSet
                                                         ),
-                                                });
-                                                setModalCheck(true);
+                                                }));
                                             }}
-                                            className="whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20"
+                                            className="whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20 cursor-pointer"
                                             id={id}
                                             key={id}
                                         >
