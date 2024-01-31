@@ -17,6 +17,7 @@ import {
   delete_drafts,
   getProductFiles,
   updateProductFeature,
+  searchProduct,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -53,6 +54,8 @@ import {
 import { get_all_coupons } from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
 const router = express.Router();
+router.get('/category/all', get_all_category)
+ router.get('/product/search', searchProduct)
 router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
 
@@ -94,6 +97,6 @@ router.get('/draftProduct/:id', getDraft);
 router.post('/products/all', getAllProducts);
 router.get('/products/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);
-router.get('/category/all', get_all_category)
+
 // router.get('/check', checkLogin)
 export default router;

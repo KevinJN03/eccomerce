@@ -662,12 +662,7 @@ export const getAllProducts = [
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
     console.log({ checks });
-    // const drafts = await DraftProducts.find({}, null, {
-    //   sort: { ...checks.sort },
-    // }).collation({
-    //   locale: 'en',
-    //   caseLevel: true,
-    // });
+    
 
     const draftPipeline = [
       {
@@ -713,13 +708,6 @@ export const getAllProducts = [
         $sort: { _id: 1 },
       },
     ];
-    if (checks?.section) {
-      try {
-        const newObjectId = new mongoose.Types.ObjectId(checks.section);
-      } catch (error) {
-        console.log('error converting section id to objectId', error.message);
-      }
-    }
 
     if (checks?.section) {
       try {
@@ -807,5 +795,82 @@ export const updateProductFeature = [
 
     console.log(product?.featured);
     res.status(200).send({ success: true, featured: product?.featured });
+  }),
+];
+
+export const searchProduct = [
+  asyncHandler(async (req, res, next) => {
+    const { searchText , sort} = req.query;
+
+    const should = [
+      {
+        autocomplete: {
+          query: searchText,
+          path: 'title',
+        },
+      },
+
+      {
+        text: {
+          query: searchText,
+          path: '_id',
+        },
+      },
+    ];
+
+    try {
+      const objectId = new mongoose.Types.ObjectId(searchText);
+      should.push({
+        equals: {
+          value: objectId,
+          path: 'customer',
+        },
+      });
+    } catch (error) {
+     
+      console.error('parse string to objectId failed: ', error?.message);
+    }
+
+    const products = await Product.aggregate([
+      {
+        $search: {
+          index: 'products_search_index',
+          compound: {
+            should,
+          },
+        },
+      },
+      ...productAggregateStage(),
+      {
+        $set: {
+          status: {
+            $cond: {
+              if: { $gt: ['$additional_data.stock.total', 0] },
+              then: '$status',
+              else: 'soldout',
+            },
+          },
+        },
+      },
+
+      {
+        $group: {
+          _id: '$status',
+          products: { $push: '$$ROOT' },
+        },
+      },
+
+      {
+        $addFields: {
+          products: {
+            $sortArray: { input: '$products', sortBy: { ...checks.sort } },
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+    res.send({ success: true, searchText, products });
   }),
 ];
