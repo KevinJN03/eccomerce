@@ -37,12 +37,15 @@ function Header({}) {
             <h2 className="flex-1 text-2xl font-semibold">Orders & Delivery</h2>
             <section className="flex flex-[0.6] flex-row gap-x-6 self-end">
                 <SearchInput
+                    handleOnchange={(e) => {
+                        setSearchText(e.target.value);
+                    }}
                     placeHolder={'Search your orders'}
                     handleClick={handleClick}
                     searchText={searchText}
-                    setSearchText={setSearchText}
+          
                 />
-              
+
                 <div className="flex w-fit flex-row items-center gap-x-1">
                     <SettingsRoundedIcon className="!text-xl" />
                     <p className="whitespace-nowrap text-xs font-medium">

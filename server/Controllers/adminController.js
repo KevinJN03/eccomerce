@@ -737,7 +737,7 @@ export const getAllProducts = [
         should.push({
           equals: {
             value: objectId,
-            path: 'customer',
+            path: '_id',
           },
         });
       }

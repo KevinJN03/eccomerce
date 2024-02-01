@@ -28,6 +28,7 @@ function ListingPage() {
     const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
+    const [triggerSearch, setTriggerSearch] = useState(false)
     const [products, setProducts] = useState([]);
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
@@ -124,6 +125,7 @@ function ListingPage() {
         checks?.sort,
         checks?.featured,
         checks?.section,
+        triggerSearch
     ]);
 
     const deleteButtonClick = () => {};
@@ -139,6 +141,7 @@ function ListingPage() {
         categoryQuantity,
         showStats,
         setShowStats,
+        triggerSearch, setTriggerSearch
     };
 
     return (
