@@ -55,7 +55,7 @@ import { get_all_coupons } from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
 const router = express.Router();
 router.get('/category/all', get_all_category)
- router.get('/product/search', searchProduct)
+//  router.get('/product/search', searchProduct)
 router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
 
