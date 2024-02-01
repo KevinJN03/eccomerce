@@ -14,22 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import animationVariant from './animationVariant';
 
 function Admin_Dashboard() {
-    // const [data, setData] = useState({});
-    // const [chartData, setChartData] = useState([]);
-    // useEffect(() => {
-    //     adminAxios.get('/count')
-    //         .then((res) => {
-    //             if (res.status == 200) {
-    //                 setData(() => res.data);
-    //                 setChartData(() =>
-    //                     get6MonthsData(res.data?.getOrdersByMonth)
-    //                 );
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             'error at admin while fetching counts: ', error;
-    //         });
-    // }, []);
+
 
     const { dashBoardData, chartData } = useAdminContext();
     const variants = {
@@ -61,10 +46,7 @@ function Admin_Dashboard() {
                         />
                     );
                 })}
-                {/* <Widget type="user" amount={dashBoardData?.userCount} />
-                <Widget type="order" amount={dashBoardData?.orderCount} />
-                <Widget type="earning" />
-                <Widget type="balance" amount={dashBoardData?.balance} /> */}
+       
             </div>
             <div className="charts">
                 <Featured todayAmount={dashBoardData?.todayAmount} />

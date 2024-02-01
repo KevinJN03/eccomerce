@@ -1,6 +1,4 @@
-import mongoose, { SchemaType } from 'mongoose';
-
-const { Schema } = mongoose;
+import { model, Schema } from 'mongoose';
 
 const variationSchema = new Schema(
   {
@@ -24,12 +22,14 @@ variationSchema.set('toJSON', {
   virtuals: true,
 });
 
-const productSchema = new Schema(
+export const productSchema = new Schema(
   {
     title: {
       type: Schema.Types.String,
       maxlength: [140, 'Title must be under 140 characters'],
     },
+
+    featured: { type: Schema.Types.Boolean, default: false },
     category: {
       type: Schema.Types.ObjectId,
       ref: 'category',
@@ -55,60 +55,69 @@ const productSchema = new Schema(
     images: { type: Schema.Types.Array, default: [] },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
     delivery: [{ type: Schema.Types.ObjectId, ref: 'deliveryProfile' }],
+    timestamp: { type: Schema.Types.Date, default: Date.now },
+    status: {
+      type: Schema.Types.String,
+      default: 'active',
+      enum: {
+        values: ['active', 'inactive', 'draft'],
+        message: ['{VALUE} is not support, please inter a accepted type'],
+      },
+    },
   },
   {
     strict: false,
-    toObject: { virtuals: true },
     toJSON: { virtuals: true },
   },
 );
-
+/*  toObject: { virtuals: true },
+    , */
 productSchema.virtual('id');
 
-productSchema
-  .virtual('minVariationPrice', { localField: 'id', foreignField: 'id' })
-  .get(function () {
-    let minVariationPrice = 10000000;
-    const variations = this.variations;
-    variations.map((item) => {
-      if (item.priceHeader.on) {
-        const { options } = item;
-        for (const [key, value] of options) {
-          minVariationPrice = Math.min(minVariationPrice, value?.price);
-        }
-      }
-    });
+// productSchema.virtual('additional_data').get(function () {
+//   const data = { minPrice: [], minStock: [] };
+//   const { variations, id } = this;
+//   console.log({ variations, id });
+//   variations.map(({ options, priceHeader, quantityHeader }) => {
+//     if (priceHeader.on) {
+//       for (const [key, value] of options) {
+//         data.minPrice.push(value.price);
+//       }
+//     }
+//     if (quantityHeader.on) {
+//       for (const [key, value] of options) {
+//         data.minStock.push(value.stock);
+//       }
+//     }
+//   });
 
-    if (minVariationPrice == 10000000) {
-      return null;
-    }
-    return parseFloat(minVariationPrice).toFixed(2);
-  });
-productSchema.virtual('isSizePresent').get(function () {
-  const variations = this.variations;
+//   return 'hi';
+// });
+// productSchema.virtual('isSizePresent').get(function () {
+//   const variations = this.variations;
 
-  let isPresent = false;
+//   let isPresent = false;
 
-  variations.map((variation) => {
-    if (variation.name == 'Size') {
-      isPresent = true;
-    }
-  });
+//   variations.map((variation) => {
+//     if (variation.name == 'Size') {
+//       isPresent = true;
+//     }
+//   });
 
-  return isPresent;
-});
+//   return isPresent;
+// });
 
-productSchema.virtual('isColorPresent').get(function () {
-  const variations = this.variations;
+// productSchema.virtual('isColorPresent').get(function () {
+//   const variations = this.variations;
 
-  let isPresent = false;
+//   let isPresent = false;
 
-  variations.map((variation) => {
-    if (variation.name == 'Colour') {
-      isPresent = true;
-    }
-  });
+//   variations.map((variation) => {
+//     if (variation.name == 'Colour') {
+//       isPresent = true;
+//     }
+//   });
 
-  return isPresent;
-});
-export default mongoose.model('product', productSchema);
+//   return isPresent;
+// });
+export default model('product', productSchema);

@@ -14,7 +14,12 @@ import s3Upload, { s3Delete } from '../s3Service.js';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
 import _ from 'lodash';
+import multerUpload from '../utils/multerUpload';
 import sortCombineVariation from '../utils/sortCOmbineVariations.js';
+import generateProduct from '../utils/generateProduct.js';
+import { Endpoint } from 'aws-sdk';
+import productAggregateStage from '../utils/productAggregateStage.js';
+import mongoose from 'mongoose';
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
   res.send(products);
@@ -29,20 +34,60 @@ export const get_all_products = asyncHandler(async (req, res) => {
 //   }
 // });
 
-export const get_single_admin_product = asyncHandler(async (req, res, next) => {
+export const getProductsInfo = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
+  const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
+  // const product = await Product.find({ _id: ids })
+  //   .populate([{ path: 'delivery' }, { path: 'category' }])
 
-  const product = await Product.findOne({ _id: id })
-    .populate([{ path: 'delivery' }, { path: 'category' }])
-    .exec();
+  //   .exec();
 
-  if (!product) {
+  const newProduct = await Product.aggregate([
+    {
+      $match: {
+        _id: {
+          $in: ids,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'deliveryprofiles',
+        localField: 'delivery',
+        foreignField: '_id',
+        as: 'delivery',
+      },
+    },
+    {
+      $set: {
+        category: { $arrayElemAt: ['$category', 0] },
+      },
+    },
+    ...productAggregateStage(),
+  ]);
+  if (newProduct.length < 1) {
     return res.status(404).send('product not found');
   }
 
   // await s3Get(id);
 
-  return res.status(200).send(product);
+  return res.status(200).send(newProduct);
 });
 
 export const get_single_product = asyncHandler(async (req, res, next) => {
@@ -148,106 +193,84 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
 });
 
 export const delete_product = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const { ids } = req.params;
 
-  const product = await Product.findById(id);
+  const idsArray = ids.split(',');
 
-  const { gender, category } = product;
-
-  await Product.findByIdAndDelete(id);
-  await Category.updateOne(
-    { _id: category },
-    {
-      $pull: { [gender]: id },
-    },
-  );
-  await await ('products', id);
-  res.status(200).json({
-    msg: 'Product deleted.',
-    product,
-  });
-});
-
-export const delete_many_product = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const idArr = id.split(',');
-  const deleteProductsImages = idArr.map((item) => {
+  console.log(idsArray);
+  const deleteProductsImages = idsArray.map((item) => {
     return s3Delete('products', item);
   });
 
   const result = await Promise.all([
-    Product.deleteMany({ _id: idArr }),
-    deleteProductsImages,
+    Product.deleteMany({ _id: idsArray }),
+    ...deleteProductsImages,
   ]);
-  res.status(200).send(result);
+
+  res.send({ msg: 'deletion successful' });
 });
 
-// create a new Product
-const storage = multer.memoryStorage();
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 1000000000, files: 6 },
-});
+// // create a new Product
 
-// work on adding variations
+// const upload = multerUpload;
+// // work on adding variations
 
-async function generateProduct(req, id) {
-  let counter = 0;
-  const imageArr = [];
-  const { files } = req;
+// export async function generateProduct(req, id) {
+//   let counter = 0;
+//   const imageArr = [];
+//   const { files } = req;
 
-  const { variations } = req.body;
-  const { title, delivery, gender, price, stock, category, detail } = req.body;
+//   const { variations } = req.body;
+//   const { title, delivery, gender, price, stock, category, detail } = req.body;
 
-  const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
-  const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
-  const parseVariations = variations?.map((item) => {
-    const data = JSON.parse(item);
-    delete data.id;
-    data.options = new Map(data.options);
+//   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
+//   const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
+//   const parseVariations = variations?.map((item) => {
+//     const data = JSON.parse(item);
+//     delete data.id;
+//     data.options = new Map(data.options);
 
-    return data;
-  });
+//     return data;
+//   });
 
-  const productData = {
-    title,
-    delivery,
-    gender,
-    category,
-    detail,
-    variations: parseVariations,
-    images: imageArr,
-  };
-  if (newStock.on) {
-    productData.stock = newStock.value;
-  }
+//   const productData = {
+//     title,
+//     delivery,
+//     gender,
+//     category,
+//     detail,
+//     variations: parseVariations,
+//     images: imageArr,
+//   };
+//   if (newStock.on) {
+//     productData.stock = newStock.value;
+//   }
 
-  if (newPrice.on) {
-    productData.price = { current: newPrice.value };
-  }
+//   if (newPrice.on) {
+//     productData.price = { current: newPrice.value };
+//   }
 
-  // const newFiles = files.map(async (item) => {
-  //   const sharpen = await sharpify(item);
-  //   sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-  //   imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
-  //   counter += 1;
-  //   return sharpen;
-  // });
-  const sharpResult = [];
-  for (const item of files) {
-    const sharpen = await sharpify(item);
-    sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
-    imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
-    counter += 1;
-    sharpResult.push(sharpen);
-  }
+//   // const newFiles = files.map(async (item) => {
+//   //   const sharpen = await sharpify(item);
+//   //   sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+//   //   imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+//   //   counter += 1;
+//   //   return sharpen;
+//   // });
+//   const sharpResult = [];
+//   for (const item of files) {
+//     const sharpen = await sharpify(item);
+//     sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+//     imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+//     counter += 1;
+//     sharpResult.push(sharpen);
+//   }
 
-  // const sharpResult = await Promise.all(newFiles);
-  return { productData, sharpResult };
-}
+//   // const sharpResult = await Promise.all(newFiles);
+//   return { productData, sharpResult };
+// }
 export const create_new_product = [
-  upload.array('files', 6),
+  multerUpload.array('files', 6),
   productValidator,
   async function (req, res, next) {
     const resultValidation = validationResult(req);
@@ -276,10 +299,15 @@ export const create_new_product = [
         { $push: { [gender]: newProduct.id } },
       );
 
-      await s3Upload(sharpResult, false, newProduct.id);
+      await s3Upload({
+        files: sharpResult,
+        isProfile: false,
+        folderId: newProduct.id,
+        endpoint: 'products',
+      });
 
       await newProduct.save();
-      return res.status(201).send('Product successfully created!!!');
+      return res.send({ success: true, msg: 'product saved' });
     } catch (error) {
       const deleteId = newProduct.id;
 
@@ -290,7 +318,7 @@ export const create_new_product = [
   },
 ];
 export const update_product = [
-  upload.array('files', 6),
+  multerUpload.array('files', 6),
 
   productValidator,
   asyncHandler(async (req, res, next) => {
@@ -315,7 +343,12 @@ export const update_product = [
     });
 
     await s3Delete('products', id);
-    await s3Upload(sharpResult, false, id);
+    await s3Upload({
+      files: sharpResult,
+      isProfile: false,
+      folderId: id,
+      endPoint: 'products',
+    });
 
     const newPrice = {
       current: productData?.price?.current,
@@ -333,7 +366,7 @@ export const update_product = [
 
     await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
 
-    res.status(200).send('Product successfully updated.');
+    res.send({ msg: 'product updated', success: true });
   }),
 ];
 

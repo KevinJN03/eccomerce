@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const { Schema } = mongoose;
+import { Schema, model } from 'mongoose';
 
 const AddressSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
@@ -15,4 +13,4 @@ const AddressSchema = new Schema({
   country: { type: Schema.Types.String, required: true },
 });
 
-export default mongoose.model('address', AddressSchema);
+export default model('address', AddressSchema);

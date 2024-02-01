@@ -90,4 +90,8 @@ UserSchema.path('dob').validate({
 UserSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
+UserSchema.virtual('fullName').get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+
 export default mongoose.model('Users', UserSchema);

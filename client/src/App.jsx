@@ -1,6 +1,6 @@
 import LayoutProvider from './context/layoutContext';
 import './CSS/App.css';
-import './index.css';
+
 import Router from './Router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';

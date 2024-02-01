@@ -26,6 +26,7 @@
     "@babel/plugin-syntax-jsx",
     "@babel/plugin-transform-arrow-functions",
     "@babel/plugin-proposal-private-property-in-object",
-    "babel-plugin-module-resolver"
+    "babel-plugin-module-resolver",
+    "@babel/plugin-transform-runtime"
   ]
 }

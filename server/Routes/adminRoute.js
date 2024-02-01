@@ -6,10 +6,22 @@ import {
   getAllUsers,
   getSingleOrder,
   updateOrder,
+  exportPdf,
+  generatePresignUrl,
+  testPdf,
+  searchOrder,
+  getDraftProducts,
+  createDaftProduct,
+  getDraft,
+  getAllProducts,
+  delete_drafts,
+  getProductFiles,
+  updateProductFeature,
+  searchProduct,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
-  get_single_admin_product,
+  getProductsInfo,
   getVariations,
   delete_many_product,
   update_product,
@@ -33,17 +45,27 @@ import {
   update_single_delivery_profile,
   getAllOrders,
 } from '../Controllers/deliveryProfileController.js';
+import {
+  addPrivateNote,
+  deletePrivateNote,
+  editPrivateNote,
+  getAdminOrders,
+} from '../Controllers/orderController.js';
+import { get_all_coupons } from '../Controllers/couponController.js';
+import { get_all_category } from '../Controllers/categoryController.js';
 const router = express.Router();
-router.get('/product/:id', get_single_admin_product);
+router.get('/category/all', get_all_category)
+ router.get('/product/search', searchProduct)
+router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
 
 router.get('/count', count_all);
 router.get('/order/:id', getSingleOrder);
 router.get('/orders', getAllOrders);
-
+router.get('/coupon/all', get_all_coupons);
 router.delete('/delete/user/:id', delete_user);
-router.delete('/delete/product/:id', delete_product);
-router.delete('/delete/product/many/:id', delete_many_product);
+router.delete('/delete/product/:ids', delete_product);
+router.delete('/delete/draftProduct/:ids', delete_drafts);
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
@@ -56,8 +78,25 @@ router.get('/user/:id', get_single_user);
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);
-
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
+router.post('/orders/all', getAdminOrders);
+router.post('/pdf/export', exportPdf);
+router.post('/pdf/url', generatePresignUrl);
+router.get('/pdf/test', testPdf);
+router.post('/searchOrder', searchOrder);
+
+router.post('/privateNote/edit', editPrivateNote);
+router.delete('/privateNote/delete', deletePrivateNote);
+
+router.get('/draftProducts/all', getDraftProducts);
+router.post('/draftProducts/save', createDaftProduct);
+
+router.get('/draftProduct/:id', getDraft);
+
+router.post('/products/all', getAllProducts);
+router.get('/products/productFiles/:id', getProductFiles);
+router.get('/product/featured/:id', updateProductFeature);
+
 // router.get('/check', checkLogin)
 export default router;

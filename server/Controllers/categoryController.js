@@ -6,7 +6,59 @@ const router = express.Router();
 
 export const get_all_category = AsyncHandler(async (req, res, next) => {
   const categories = await Category.find().populate(['men', 'women']).exec();
-  res.send(categories);
+
+  const newCategories = await Category.aggregate([
+    // {
+    //   $unwind: {
+    //     path: '$men',
+    //   },
+    // },
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: 'category',
+
+        let: {
+          gender: '$gender',
+        },
+        pipeline: [
+          {
+            $match: {
+              gender: 'men',
+            },
+          },
+        ],
+        as: 'men',
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: '_id',
+        foreignField: 'category',
+
+        let: {
+          gender: '$gender',
+        },
+        pipeline: [
+          {
+            $match: {
+              gender: 'women',
+            },
+          },
+        ],
+        as: 'women',
+      },
+    },
+
+    {
+      $addFields: {
+        count: { $sum: [{ $size: '$men' }, { $size: '$women' }] },
+      },
+    },
+  ]);
+  res.send(newCategories);
 });
 
 export const get_singleCategory = AsyncHandler(async (req, res, next) => {
@@ -32,10 +84,10 @@ export const query_category_products_by_gender = AsyncHandler(
       .populate({
         path: gender.toLowerCase(),
 
-        populate: {
-          model: 'product',
-          path: 'minVariationPrice',
-        },
+        // populate: {
+        //   model: 'product',
+        //   path: 'minVariationPrice',
+        // },
       })
       .exec();
 

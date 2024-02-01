@@ -22,7 +22,7 @@ export const useNewProduct = () => {
 
 export const NewProductProvider = (props) => {
     const [variations, setVariations] = useState([]);
-
+    const [loading, setLoading] = useState(false);
     const [combine, combineDispatch] = useReducer(combineReducer, {
         id: uuidV4(),
         on: false,
@@ -44,7 +44,6 @@ export const NewProductProvider = (props) => {
         new Map()
     );
 
-    
     const [priceValue, setPriceValue] = useState({
         value: '',
         on: false,
@@ -63,6 +62,8 @@ export const NewProductProvider = (props) => {
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
         type: 'main',
     });
+
+    const [currentSection, setCurrentSection] = useState('available');
     UpdateProduct(props, {
         setTitle,
         setCategory,
@@ -78,7 +79,8 @@ export const NewProductProvider = (props) => {
         setDescription,
     });
     const value = {
-       
+        loading,
+        setLoading,
         variations,
         setVariations,
         title,
@@ -110,6 +112,9 @@ export const NewProductProvider = (props) => {
         setModalCheck,
         modalContent,
         contentDispatch,
+        product: props?.singleValue,
+        currentSection,
+        setCurrentSection,
     };
 
     return (

@@ -2,8 +2,8 @@ import { Modal, buttonBaseClasses } from '@mui/material';
 import New_Product_Header from './header';
 import MultipleSelect from './select/select';
 import CategorySelect from './select/select';
-import { useEffect, useState } from 'react';
-import axios from '../../../../../api/axios';
+import { forwardRef, useEffect, useState } from 'react';
+import axios, { adminAxios } from '../../../../../api/axios';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import OptionError from './variation/error/optionError';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
@@ -39,31 +39,34 @@ function Details() {
 
     const fetchData = async (route) => {
         try {
-            const result = await axios.get(route);
+            const result = await adminAxios.get('category/all');
+        
             const status = result.status;
+            console.log({ result });
             if (status == 200) {
                 setCategoryError('');
-                return result.data;
             }
+            setAllCategory(() =>
+                result.data?.map(({ _id, name }) => ({ _id, name }))
+            );
         } catch (error) {
             setCategoryError({
                 msg: 'Failed to fetch Categories. Please try again',
                 restart: true,
             });
-            return [];
         }
     };
 
-    const handleFetchCategory = () => {
-        const data = fetchData('category');
-        
-        data.then((res) => {
-            setAllCategory(res);
-        });
-    };
+    // const handleFetchCategory = () => {
+    //     const data = fetchData('category');
+
+    //     data.then((res) => {
+    //         setAllCategory(res);
+    //     });
+    // };
 
     useEffect(() => {
-        handleFetchCategory();
+        fetchData();
     }, []);
 
     const restartVariants = {
@@ -121,7 +124,7 @@ function Details() {
                                 />
                                 {categoryError?.restart && (
                                     <motion.button
-                                        onClick={handleFetchCategory}
+                                        onClick={fetchData}
                                         className="popover-trigger flex h-full"
                                         variants={restartVariants}
                                         animate="animate"

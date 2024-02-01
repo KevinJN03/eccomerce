@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useState } from 'react';
 import { AdminReducer } from '../hooks/adminReducer';
+import { useNavigate } from 'react-router-dom';
 
 const AdminContext = createContext(null);
 
@@ -13,7 +14,7 @@ const reducer = (state, action) => {
         return { ...action?.payload };
     }
     if (action.type == 'LOGOUT') {
-        return;
+        return {};
     }
 
     throw new Error(
@@ -27,12 +28,21 @@ export function AdminContextProvider({ children, newValue }) {
         reducer,
         getAdminUser
     );
+    const navigate = useNavigate();
     const [modalCheck, setModalCheck] = useState(false);
     const [loading, setLoading] = useState(false);
     const [modalContent, adminDispatch] = useReducer(AdminReducer, {
         type: 'main',
     });
+
+    const logoutUser = ({ error }) => {
+        if (error?.response?.status == 401) {
+            authAdminUserDispatch({ type: 'LOGOUT' });
+            return navigate('/admin/login');
+        }
+    };
     const value = {
+        logoutUser,
         modalCheck,
         setModalCheck,
         loading,
@@ -42,7 +52,7 @@ export function AdminContextProvider({ children, newValue }) {
         authAdminUser,
         adminDispatch,
         ...newValue,
-        authAdminUserDispatch
+        authAdminUserDispatch,
     };
     return (
         <AdminContext.Provider

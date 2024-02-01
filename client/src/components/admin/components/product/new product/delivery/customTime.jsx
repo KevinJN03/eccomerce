@@ -33,7 +33,7 @@ export default function CustomTime({ setProcessingTime, processingTime, setDisab
             <span className=" mt-3 flex w-full flex-row items-center justify-end gap-6">
                 <input
                     type="number"
-                    className="border-1 w-16 px-3 py-2"
+                    className="border-1 w-16 px-3 py-2 daisy-select daisy-select-bordered daisy-select-md rounded"
                     defaultValue={ processingTime ? processingTime.start : '1'}
                     min="1"
                     value={processingTime.start}
@@ -44,7 +44,7 @@ export default function CustomTime({ setProcessingTime, processingTime, setDisab
                 min={processingTime.start.toString()}
                
                     type="number"
-                    className="border-1 w-16 px-3 py-2"
+                    className="border-1 w-16 px-3 py-2 daisy-select daisy-select-bordered daisy-select-md rounded"
                     value={processingTime.end}
                     defaultValue={ processingTime ? processingTime.end : '1'}
                     onChange={(e) => handleEnd(e.target.value)}

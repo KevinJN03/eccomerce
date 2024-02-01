@@ -19,6 +19,7 @@ function Layout() {
     const location = useLocation();
     const outletRef = useRef(false);
     useEffect(() => {
+        // window.scroll(0, 0);
         const splitLocation = location.pathname.split('/');
         console.log(splitLocation);
         const set = new Set([
@@ -92,10 +93,10 @@ function Layout() {
     return (
         <CartProvider>
             <ProductsProvider>
-                <AnimatePresence mode='wait'>
+                <AnimatePresence mode="wait">
                     {!loadState && (
                         <motion.section
-                            className="w-screen"
+                            className=""
                             // key={layout}
                             // variants={variants}
                             // initial={'initial'}

@@ -19,8 +19,8 @@ import Single_User from './components/admin/components/users/single/single';
 import Users from './components/admin/components/users/users';
 import New from './components/admin/components/new/new';
 import Admin_Product from './components/admin/components/product/admin_product';
-import All_Products from './components/admin/components/product/all_product';
-import Product_Single from './components/admin/components/product/product single page/product_single';
+import All_Products from './components/admin/listing/listingPage.jsx';
+
 import New_Product from './components/admin/components/product/new product/new_product';
 import Error from './components/error/error';
 import Layout from './components/Layout/layout';
@@ -34,7 +34,6 @@ import Details from './components/dashboard/details';
 import Addresses from './components/dashboard/address/addresses.jsx';
 import Contact_Preferences from './components/dashboard/contact-preferences/contact-preferences.jsx';
 import Socials from './components/dashboard/socials.jsx';
-
 import GiftCard_Home from './components/dashboard/gift-card-voucher/gift-card-and-voucher.jsx';
 import GiftCard_Index from './components/dashboard/gift-card-voucher/index.jsx';
 import Edit_Address from './components/dashboard/address/edit-address.jsx';
@@ -56,16 +55,20 @@ import Login from './components/Login-SignUp/Login.jsx';
 import SignUp from './components/Login-SignUp/SignUp.jsx';
 import ResetSent from './components/forget-password/sent.jsx';
 import ResetPassword from './components/forget-password/reset.password.jsx';
-import AdminOrder from './components/admin/order/admin-order.jsx';
+import AdminOrder from './components/admin/order/home/admin-order.jsx';
 import AdminPortal from './components/admin/home/AdminPortal.jsx';
-import Order_Edit from './components/admin/order/edit_order.jsx';
+import Order_Edit from './components/admin/order/home/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
 import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
 import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
 import OrderCancel from './components/order/order-cancel.jsx';
 import OrderCancelled from './components/order/order-cancelled.jsx';
-import TemplateProvider from './context/templeteContext.jsx';
+
 import ErrorTemplate from './components/order/error.jsx';
+import Pdf from './components/admin/order/pdf/pdf.jsx';
+import CancelOrder from './components/admin/order/cancelOrder.jsx';
+
+import EditProduct from './components/admin/components/product/product single page/editProduct.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -298,6 +301,10 @@ function Router({ Header, Footer }) {
                     path: 'test',
                     element: <ErrorTemplate />,
                 },
+                // {
+                //     path: '/admin/orders/download/:id',
+                //     element: <Pdf/>
+                // },
                 {
                     path: '/admin',
                     element: <Admin />,
@@ -317,8 +324,17 @@ function Router({ Header, Footer }) {
                             ],
                         },
                         {
+                            path: 'orders/download/:id',
+                            element: <Pdf />,
+                        },
+                        {
                             path: 'orders',
                             element: <AdminOrder />,
+                        },
+
+                        {
+                            path: 'orders/:id/cancel_order',
+                            element: <CancelOrder />,
                         },
                         {
                             path: 'orders/edit/:id',
@@ -372,17 +388,20 @@ function Router({ Header, Footer }) {
                                 },
                                 {
                                     path: 'new',
-                                    // element: <New type="Product" title="Add New Product"/>
                                     element: (
                                         <NewProductProvider>
-                                            <New_Product />
+                                            <New_Product type={'new'} />
                                         </NewProductProvider>
                                     ),
                                 },
 
                                 {
                                     path: 'edit/:id',
-                                    element: <Product_Single />,
+                                    element: <EditProduct type={'update'} />,
+                                },
+                                {
+                                    path: 'copy/:id',
+                                    element: <EditProduct type={'copy'} />,
                                 },
                             ],
                         },

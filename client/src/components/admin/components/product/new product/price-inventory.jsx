@@ -6,15 +6,15 @@ import { Input } from './utils/Input';
 import './new_product.scss';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './variation/formatData';
-import { useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import OptionError from './variation/error/optionError';
 import { useEffect } from 'react';
 import useNewProductError from '../../../../../useNewProductError';
 import handleValue from './utils/handleValue';
 import { quantityOptions, priceOptions } from './utils/handleValueOptions';
 import { v4 as uuidv4 } from 'uuid';
-export default function Price_Inventory() {
- 
+import useHighlightSection from '../../../../../hooks/useScrollpsy.jsx';
+function Price_Inventory() {
     const {
         globalUpdate,
         setGlobalUpdate,
@@ -33,19 +33,17 @@ export default function Price_Inventory() {
     useNewProductError('stock', setError, { obj: true, property: 'stock' });
 
     useEffect(() => {
-    
         publishErrorDispatch({ type: 'clear', path: 'price' });
     }, [priceValue.value]);
 
     useEffect(() => {
-       
         publishErrorDispatch({ type: 'clear', path: 'stock' });
     }, [stockValue.value]);
 
     const onStockClickAwayRef = useClickAway(() => {
         if (!stockValue.value) return;
         const formatStock = formatData(stockValue.value, 0);
-       
+
         setStockValue({ value: formatStock, on: true });
         // setGlobalUpdate((prev) => {
         //     return { ...prev, stock: formatStock };
@@ -54,7 +52,7 @@ export default function Price_Inventory() {
 
     const onPriceClickAwayRef = useClickAway(() => {
         if (!priceValue.value) return;
-        
+
         const formatPrice = formatData(priceValue.value, 2);
 
         setPriceValue({ value: formatPrice, on: true });
@@ -67,7 +65,6 @@ export default function Price_Inventory() {
     );
     const checkPrice = variations.some((item) => item.priceHeader.on == true);
     const handlePriceChange = (value) => {
-  
         const options = {
             ...priceOptions,
             value,
@@ -148,7 +145,6 @@ export default function Price_Inventory() {
         </section>
     );
 }
-
 function DisableInput({ text }) {
     return (
         <div className="mt-3 flex flex-col flex-nowrap gap-2">
@@ -166,14 +162,13 @@ function InventoryInput(props) {
     const { setValue, value } = props;
 
     useEffect(() => {
-      
         setValue((obj) => ({ ...obj, on: true }));
 
         return () => {
-          
             setValue((obj) => ({ ...obj, on: false }));
         };
     }, []);
 
     return <Input {...props} />;
 }
+export default Price_Inventory;

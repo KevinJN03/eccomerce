@@ -14,7 +14,7 @@ const couponSchema = new Schema({
   expires: { type: Schema.Types.Date, default: tomorrowDate },
   amount: Schema.Types.Mixed,
   type: { type: Schema.Types.String, default: 'fixed' },
-  total_use: { type: Schema.Types.Number, dafault: 5 },
+  total_use: { type: Schema.Types.Number, default: 5 },
 });
 
 couponSchema.post('save', (error, doc, next) => {

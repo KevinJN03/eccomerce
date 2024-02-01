@@ -1,6 +1,5 @@
-import mongoose, { SchemaType } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
-const { Schema } = mongoose;
 const enum_states = {
   values: [
     'received',
@@ -81,6 +80,13 @@ const OrderSchema = new Schema({
     reason: { type: Schema.Types.String },
     additional_information: { type: Schema.Types.String, maxlength: 500 },
   },
+  private_note: [
+    {
+      _id: { type: Schema.Types.ObjectId, index: true, required: true, auto: true },
+      note: { required: true, type: Schema.Types.String },
+      date: { required: true, type: Schema.Types.Date, default: Date.now },
+    },
+  ],
 });
 
-export default mongoose.model('order', OrderSchema);
+export default model('order', OrderSchema);

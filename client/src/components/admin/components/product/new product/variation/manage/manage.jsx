@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
-
+import '../../new_product.scss'
 import _ from 'lodash';
 function Manage({}) {
     const {
@@ -179,7 +179,7 @@ function Manage({}) {
         notDisabled,
     };
     return (
-        <section className="variation-manage relative flex min-h-full w-full flex-col">
+        <section className="variation-manage relative flex min-h-full w-full flex-col bg-white">
             <h2 className="mb-2 text-left text-2xl font-semibold">
                 Manage variations
             </h2>
@@ -192,10 +192,10 @@ function Manage({}) {
             {notDisabled < 2 && (
                 <button
                     onClick={() => contentDispatch({ type: 'main' })}
-                    className="mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-[2px] border-black px-3 py-3 transition-all ease-in-out hover:!px-5"
+                    className="mb-4 mt-3 box-border flex max-w-fit flex-row flex-nowrap items-center justify-start self-start rounded-full border-[2px] border-black p-2 transition-all ease-in-out hover:!px-4"
                 >
                     <AddRoundedIcon className="bg-transparent" />
-                    <span className="bg-transparent text-base font-semibold">
+                    <span className="bg-transparent text-sm font-semibold">
                         Add a variation
                     </span>
                 </button>

@@ -51,7 +51,7 @@ function Table({
                     <th>
                         <input
                             type="checkbox"
-                            className="daisy-checkbox no-animation !rounded-[3px]"
+                            className="daisy-checkbox h-4 w-4 border-2 border-dark-gray no-animation !rounded-[3px]"
                             // defaultChecked={checkAll}
                             checked={checkAll}
                             onChange={handleCheckAll}

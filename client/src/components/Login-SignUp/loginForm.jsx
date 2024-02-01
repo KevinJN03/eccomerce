@@ -13,18 +13,24 @@ function LoginForm({ onSubmit, loading, error, setError }) {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
-            console.log('hi', e.key, {password, email});
+            console.log('hi', e.key, { password, email });
 
             if (e.key == 'Enter') {
                 onSubmit({ password, email });
             }
         };
         document.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
     }, []);
+
     return (
         <section className="flex w-full flex-col flex-nowrap justify-center">
             <section className="flex w-8/12 flex-col flex-nowrap  self-center">
                 <Input
+                
                     value={email}
                     property={'email'}
                     setValue={setEmail}

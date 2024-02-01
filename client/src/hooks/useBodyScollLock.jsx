@@ -1,31 +1,31 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
-const useBodyScollLock = () => {
-    const bodyStyle = document.body.style;
+// const useBodyScollLock = () => {
+//     const bodyStyle = document.body.style;
 
-    const [isLocked, setIsLocked] = useState(false);
+//     const [isLocked, setIsLocked] = useState(false);
 
-    useEffect(() => {
-        bodyStyle.overflowY = isLocked == 'hidden' ? 'hidden' : 'auto';
+//     useEffect(() => {
+//         bodyStyle.overflowY = isLocked == 'hidden' ? 'hidden' : 'auto';
 
-        if (isLocked) {
-            bodyStyle.overflowY = 'hidden';
-        } else {
-            bodyStyle.overflowY = 'auto';
-        }
+//         if (isLocked) {
+//             bodyStyle.overflowY = 'hidden';
+//         } else {
+//             bodyStyle.overflowY = 'auto';
+//         }
 
-        return () => {
+//         return () => {
 
-            // bodyStyle.overflowY = null;
-        };
-    }, [isLocked]);
+//             // bodyStyle.overflowY = null;
+//         };
+//     }, [isLocked]);
 
-    const toggle = () => {
-        setIsLocked(!isLocked);
-    };
+//     const toggle = () => {
+//         setIsLocked(!isLocked);
+//     };
 
-    return [isLocked, toggle];
-};
+//     return [isLocked, toggle];
+// };
 
-export default useBodyScollLock;
+// export default useBodyScollLock;
  

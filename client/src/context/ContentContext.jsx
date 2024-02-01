@@ -14,38 +14,39 @@ const reducer = (state, action) => {
         return { ...state, type: action.type, profile: action.profile };
     }
     if (action.type === 'Main' || action.type === 'New') {
-        return { ...state, type: action.type,  profile: null };
+        return { ...state, type: action.type, profile: null };
+    }
+    if (action.type == 'clear') {
+        return null;
     }
 };
-export function ContentProvider({ children }) {
-    const [content, dispatch] = useReducer(reducer, { type: 'Main' });
-    const [modalCheck, setModalCheck] = useState(false);
+export function ContentProvider({ children, value }) {
+    const [content, contentDispatch] = useReducer(reducer, { type: 'Main' });
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(()=> {
-setLoading(true)
+    useEffect(() => {
+        setLoading(true);
 
-const timeout = setTimeout(() => {
-setLoading(false)
-}, 1000)
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
 
-return()=> {
-    clearTimeout(timeout)
-}
-    }, [content])
-    const value = {
-        content,
-        dispatch,
-        modalCheck,
-        setModalCheck,
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [content]);
+
+    const newValue = {
+       
+        ...value,
         profile,
         setProfile,
         loading,
         setLoading,
     };
     return (
-        <ContentContext.Provider value={value}>
+        <ContentContext.Provider value={newValue}>
             {children}
         </ContentContext.Provider>
     );

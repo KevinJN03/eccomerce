@@ -16,7 +16,7 @@ export default function CategorySelect({
         <select
             id="options"
             name="options"
-            className="category-select daisy-select my-0 !min-w-[160px] outline"
+            className="category-select !rounded-md daisy-select my-0 !min-w-[160px] outline input"
             defaultValue={title}
             value={state}
             onChange={handleChange}

@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useContent } from '../../../../../../context/ContentContext';
-// import InputLabel from '../inputLabel';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+
 import CustomTime from './customTime';
-import CurrencyPoundSharpIcon from '@mui/icons-material/CurrencyPoundSharp';
-import axios, { adminAxios } from '../../../../../../api/axios';
+
+import { adminAxios } from '../../../../../../api/axios';
 import defaultTimes from './defaultTimes';
 import { v4 as uuidv4 } from 'uuid';
 
 import handleError, { closeError } from '../../../../../common/handleError';
-function New({ setModalState }) {
-    const { dispatch, content } = useContent();
+import { useNewProduct } from '../../../../../../context/newProductContext';
+function New({ setModalState, edit }) {
+    const { contentDispatch, modalContent } = useNewProduct();
     const [disable, setDisable] = useState();
-    const { profile } = content;
+    console.log({ modalContent });
     const [customRange, setCustomRange] = useState(false);
-    const [name, setName] = useState(profile?.name || '');
-    const [cost, setCost] = useState(profile?.cost || 0);
+    const [name, setName] = useState('');
+    const [cost, setCost] = useState(0);
     const [processingTime, setProcessingTime] = useState(
         defaultTimes[1].processingTime
     );
@@ -25,8 +24,12 @@ function New({ setModalState }) {
 
     useEffect(() => {
         setDisable(() => true);
-      
-        if (profile) {
+
+        if (edit) {
+            const { profile } = modalContent;
+
+            setName(() => profile?.name);
+            setCost(() => profile?.cost);
             setFetchRoute(() => 'update');
             const newArr = defaultTimes.slice(1, 4);
             const findTime = newArr.find(({ start, end, type }) => {
@@ -37,7 +40,7 @@ function New({ setModalState }) {
                     type == profile?.processingTime.type
                 ) {
                     profile.processingTime.start == start;
-                
+
                     return time;
                 }
             });
@@ -53,13 +56,14 @@ function New({ setModalState }) {
         }
     }, []);
 
-    const handleCost = (value) => {
-        const newValue = parseFloat(value).toFixed(2);
-        setCost(newValue);
+    const handleCost = (e) => {
+        // const newValue = parseFloat(value).toFixed(2);
+        setCost(() => e.target.value);
+        setDisable(() => false);
     };
     const save = () => {
         const url = `/delivery/${fetchRoute}`;
-        const fetchUrl = profile ? `${url}/${profile._id}` : url;
+        const fetchUrl = modal?.profile ? `${url}/${modal?.profile._id}` : url;
         const fetchOptions = {
             name,
             processingTime,
@@ -69,11 +73,10 @@ function New({ setModalState }) {
             if (res.status == 200 || 201) {
                 setModalState
                     ? setModalState(() => false)
-                    : dispatch({ type: 'Main' });
+                    : contentDispatch({ type: 'delivery_main' });
             }
         };
         const axiosCatch = (error) => {
-       
             setError(handleError(error));
         };
 
@@ -83,7 +86,7 @@ function New({ setModalState }) {
                 .catch((error) => axiosCatch(error));
         };
 
-        if (profile) {
+        if (modal?.profile) {
             axiosFetch(adminAxios.put(fetchUrl, fetchOptions));
         } else {
             axiosFetch(adminAxios.post(fetchUrl, fetchOptions));
@@ -91,7 +94,6 @@ function New({ setModalState }) {
     };
 
     const handleOnchange = (e, value) => {
-   
         const fetchProfile = value[e.target.selectedIndex].dataset.profile;
         const profileToJson = JSON.parse(fetchProfile);
 
@@ -139,12 +141,12 @@ function New({ setModalState }) {
                     })}
             </div>
             <h3 className="text-center font-gotham text-lg">
-                {profile
+                {modalContent?.profile
                     ? 'EDIT A DELIVERY PROFILE'
                     : 'CREATE A DELIVERY PROFILE'}
             </h3>
             <input
-                className="font-poppins border-1 w-full border-black p-2 text-sm font-light"
+                className="font-poppins w-full  rounded border border-dark-gray p-2 text-sm font-light"
                 type="text"
                 placeholder="Name Your Delivery Profile"
                 onChange={(e) => {
@@ -160,7 +162,7 @@ function New({ setModalState }) {
                     id="options"
                     name="options"
                     key={uuidv4()}
-                    className="!border-1 select max-w-[50%] appearance-none  rounded-none"
+                    className=" !border-1 daisy-select daisy-select-bordered daisy-select-md rounded "
                     onChange={(e) => {
                         handleOnchange(e, e.target.options);
                         setDisable(() => false);
@@ -193,24 +195,25 @@ function New({ setModalState }) {
             </div>
             <span className="flex flex-row items-center justify-between">
                 <label htmlFor="cost">Cost</label>
-                <span className="relative">
+                <div className="relative flex !h-fit flex-nowrap items-center">
+                    <p className="pound absolute left-3 z-10 items-center text-sm font-medium">
+                        £
+                    </p>
+
                     <input
-                        type="number"
+                        type="text"
                         id="cost-input"
                         min="0"
-                        defaultValue={cost}
-                        onChange={(e) => {
-                            handleCost(e.target.value);
-                            setDisable(() => false);
-                        }}
-                        className="border-1 cost-input relative py-2 pl-7 pr-4"
+                        value={cost}
+                        onChange={handleCost}
+                        className="border-1 input-number daisy-input  daisy-input-bordered daisy-input-md relative !rounded pl-7 pr-4"
                         step=".01"
                     />
-                    <CurrencyPoundSharpIcon
+                    {/* <CurrencyPoundSharpIcon
                         fontSize="small"
                         className="absolute left-2 top-[25%]"
-                    />
-                </span>
+                    /> */}
+                </div>
             </span>
 
             <section className="flex flex-row gap-x-2">
@@ -218,7 +221,7 @@ function New({ setModalState }) {
                     onClick={() => {
                         setModalState
                             ? setModalState(() => false)
-                            : dispatch({ type: 'Main' });
+                            : contentDispatch({ type: 'delivery_main' });
                     }}
                     className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-400"
                 >

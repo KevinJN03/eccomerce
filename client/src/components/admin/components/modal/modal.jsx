@@ -43,7 +43,7 @@ function Modal({
     };
 
     return (
-        <section>
+        <section className='z-50'>
             <input
                 className="modal-state  "
                 id="modal-3"

@@ -1,24 +1,7 @@
-
-
 :root {
     --about-primary: #4d6bc6;
 }
 
-.input {
-    @apply rounded-lg;
-
-    border-width: 1px !important;
-    border-color: transparent;
-    box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
-    transition: all 0.4s ease-in-out;
-    &:hover {
-        border-color: black;
-    }
-    &:focus {
-        border: 1px solid black !important;
-        outline-color: var(--about-primary) !important;
-    }
-}
 .spinner-dot-pulse {
     --white: 255 255 255;
 }
@@ -27,7 +10,6 @@
     @apply m-4 w-7/12 rounded-xl;
 }
 .new-product {
-   
     @apply flex w-full;
 
     .input-number::-webkit-outer-spin-button,
@@ -37,39 +19,159 @@
     }
 
     .new-product-wrapper {
-        @apply rounded-xl  p-6;
+        @apply w-full rounded-xl bg-white p-6 border border-dark-gray/50;
+
+        section{
+            @apply bg-white
+        }
     }
     .new-product-container {
         flex: 6;
 
         .product-listing {
-            @apply m-6 w-full  max-w-[1366px] p-6;
-            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
-            .subheader {
-                @apply flex max-w-[1366px] flex-row flex-nowrap gap-x-10;
-
-                a {
-                    height: 30px;
-                }
-
-                a:hover {
-                    color: var(--about-primary);
-                    border-bottom: 2px solid var(--about-primary);
-                }
-            }
+            @apply w-full  max-w-[1366px] ;
+            align-items: start;
+        
         }
     }
 
     #delivery {
         border-radius: 10px;
     }
-    
+
+    .about,
+    #description,
+    #details {
+        @apply format bg-white;
+
+        input {
+            @apply mb-8 mt-3 min-w-full outline;
+        }
+    }
+
+    #price-inventory {
+        @apply format;
+
+        input {
+            @apply w-64 outline #{!important};
+        }
+
+        .price-input,
+        .quantity-input {
+            // width: 30px !important;
+            width: 50%;
+        }
+    }
+
+    .category-select {
+        width: 50%;
+    }
+
+  
+
+   
+
+    .searchBody {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+
+    .variations {
+        .result-table {
+            .checkbox {
+                @apply rounded-md border-gray-600;
+            }
+        }
+        .pound {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        table {
+            @apply my-6  self-center;
+            width: 100%;
+            table-layout: fixed;
+            td {
+                @apply w-full px-4 py-4 text-left align-top;
+            }
+
+            th {
+                @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
+            }
+        }
+    }
+
+    .asterisk {
+        @apply ml-[2px] text-red-800;
+    }
+
+    .dropdown-menu {
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+        scrollbar-width: none; /* Firefox */
+    }
+
+
+}
+
+.outline {
+    @apply input rounded-md p-3;
+    height: 48px;
+}
+
+// Price & Inventory Section
+
+.title {
+    @apply text-xl font-medium;
+}
+p {
+    @apply text-s;
+}
+
+
+.modal-content {
+    @apply w-full max-w-[600px] rounded-3xl  bg-white px-7 pt-8 #{!important};
+    &::-webkit-scrollbar,
+    .dropdown-menu::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
     .cancel-btn {
         transition: background-color 0.2s linear;
         @apply rounded-full px-3 py-2;
         &:hover {
             @apply bg-[var(--light-grey)];
+        }
+    }
+    .single-variation {
+        .single-variation-btn {
+            @apply h-10 w-10 rounded-full  bg-[var(--light-grey)]  p-3 #{!important};
+
+            &:hover {
+                @apply scale-105  bg-gray-300 transition-all #{!important};
+            }
+        }
+
+        .single-variation-options {
+            @apply relative;
+        }
+
+        .single-variation-options::after {
+            content: '';
+            position: absolute;
+            z-index: 1;
+            bottom: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 80%,
+                rgba(255, 255, 255, 1) 100%
+            ) !important;
+            width: 100%;
+            // height: 4em;
+            @apply h-full;
         }
     }
 
@@ -78,124 +180,26 @@
         // sticky
         @apply bottom-0 flex w-full flex-row justify-between bg-white;
         // bottom: -4px !important;
-    
-       
-    
+
         .apply-btn {
             @apply relative flex h-full items-center justify-center rounded-full bg-black px-3 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50;
-    
+
             &::after,
             &::before {
                 content: '';
-    
+
                 background: inherit;
             }
             &:hover {
                 background-color: rgba(0, 0, 0, 0.821);
             }
-    
+
             // &:hover {
             //     @apply opacity-80 scale-105
             // }
         }
     }
-
-
-.about,
-#description,
-#details {
-    @apply format bg-white;
-
-    input {
-        @apply mb-8 mt-3 min-w-full outline;
-    }
 }
-
-#price-inventory {
-    @apply format;
-
-    input {
-        @apply w-64 outline #{!important};
-    }
-
-    .price-input,
-    .quantity-input {
-        // width: 30px !important;
-        width: 50%;
-    }
-}
-
-.category-select {
-    width: 50%;
-}
-
-.new-product-wrapper section {
-    @apply max-w-[1366px] bg-white;
-}
-
-.new-product-footer {
-    @apply max-w-[1366px];
-}
-
-.searchBody {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-
-.theme-btn {
-    @apply rounded-full border-2 border-black  px-4 py-3 text-base font-semibold transition-all enabled:hover:scale-105 enabled:hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50;
-}
-.variations {
-    .result-table {
-        .checkbox {
-            @apply rounded-md border-gray-600;
-        }
-    }
-    .pound {
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-
-    table {
-        @apply my-6  self-center;
-        width: 100%;
-        table-layout: fixed;
-        td {
-            @apply w-full px-4 py-4 text-left align-top;
-        }
-
-        th {
-            @apply px-4 pb-5 text-left text-sm font-medium underline underline-offset-2;
-        }
-    }
-
-   
-}
-
-.asterisk {
-    @apply ml-[2px] text-red-800;
-}
-
-// .modal-content {
-//     @apply min-h-fit w-full max-w-[600px] rounded-3xl px-7 pt-8 #{!important};
-
-//     // -ms-overflow-style: none; /* Internet Explorer 10+ */
-
-//     // scrollbar-width: none;
-// }
-
-.dropdown-menu {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-}
-
-// .modal-content::-webkit-scrollbar,
-// .dropdown-menu::-webkit-scrollbar {
-//     display: none; /* Safari and Chrome */
-// }
 
 .options-btn {
     @apply rounded-full px-5 py-3 text-center font-gotham transition-all;
@@ -221,69 +225,10 @@
     &:hover {
         @apply bg-gray-300 shadow-lg #{!important};
     }
-};
-
-.single-variation {
-    .single-variation-btn {
-        @apply h-10 w-10 rounded-full  p-3  bg-[var(--light-grey)] #{!important};
-
-        &:hover {
-            @apply scale-105  transition-all bg-gray-300 #{!important};
-        }
-    }
-
-    .single-variation-options {
-        @apply relative;
-    }
-
-    .single-variation-options::after {
-        content: '';
-        position: absolute;
-        z-index: 1;
-        bottom: 0;
-        left: 0;
-        pointer-events: none;
-        background-image: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0) 80%,
-            rgba(255, 255, 255, 1) 100%
-        ) !important;
-        width: 100%;
-        // height: 4em;
-        @apply h-full;
-    }
 }
 
-}
-
-.outline {
-
-    @apply  input rounded-md p-3;
-   height: 48px;
-}
-
-
-
-// Price & Inventory Section
-
-
-
-
-.title {
-    @apply text-xl font-medium;
-}
-p {
-    @apply text-s;
-}
-
-.modal-content {
-    @apply min-h-fit w-full max-w-[600px] rounded-3xl px-7 pt-8 #{!important};
-
-    // -ms-overflow-style: none; /* Internet Explorer 10+ */
-
-    // scrollbar-width: none;
-}
-.modal-content::-webkit-scrollbar,
-.dropdown-menu::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+.input-number::-webkit-outer-spin-button,
+.input-number::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

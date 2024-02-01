@@ -1,7 +1,7 @@
 import { Fragment, useRef, useState, useEffect } from 'react';
 import search_icon from '../../assets/search.svg';
 import { SearchRounded, CloseRounded } from '@mui/icons-material';
-import useBodyScollLock from '../../hooks/useBodyScollLock';
+
 import axios from '../../api/axios';
 import { useDebounce, useWindowSize } from '@uidotdev/usehooks';
 import { Link, useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 function Search({ search }) {
     const [open, setOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [isLocked, toggle] = useBodyScollLock();
+   
     const [suggestions, setSuggestions] = useState([]);
     const debounceValue = useDebounce(searchText, 500);
 
@@ -38,7 +38,7 @@ function Search({ search }) {
 
     const openSearch = () => {
         setOpen(true);
-        toggle();
+        // toggle();
     };
 
     const mobileSearch = () => {
@@ -49,7 +49,7 @@ function Search({ search }) {
     'searchText: ', searchText;
     const closeSearch = () => {
         setOpen(false);
-        toggle();
+        // toggle();
     };
 
     const clearInput = () => {

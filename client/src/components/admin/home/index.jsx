@@ -30,21 +30,8 @@ function Index({}) {
     const [allProducts, setAllProducts] = useState([]);
     const [orders, setOrders] = useState({});
     const [deliveryData, setDeliveryData] = useState([]);
-
     const navigate = useNavigate();
     useEffect(() => {
-        // getAllData({
-        //     setAllProducts,
-        //     setAllUsers,
-        //     setChartData,
-        //     setOrders,
-        //     setDeliveryData,
-        //     setDashBoardData,
-        //     setLoading,
-        //     navigate
-
-        // });
-
         const fetchData = async () => {
             try {
                 const [
@@ -56,7 +43,7 @@ function Index({}) {
                 ] = await Promise.all([
                     adminAxios.get('/count'),
                     adminAxios.get('/user/all'),
-                    adminAxios.get('/product'),
+                    adminAxios.post('/products/all', { checks: { sort: {title: 1} } }),
                     adminAxios.get('/orders'),
                     adminAxios.get('/delivery/all'),
                 ]);
@@ -67,7 +54,7 @@ function Index({}) {
                 );
 
                 setAllUsers(() => usersData?.data);
-                setAllProducts(() => productsData?.data);
+                setAllProducts(() => productsData.data?.products);
 
                 setOrders(() => ordersData?.data?.orders);
                 setDeliveryData(() => deliveryData?.data);
@@ -103,13 +90,8 @@ function Index({}) {
     };
     return (
         <AdminContextProvider newValue={newValue}>
-            <section className="bg-white w-full">
-                {loading ? (
-                    <LoadingPage />
-                ) : (
-                 
-                    <Admin />
-                )}
+            <section className="w-full bg-white">
+                {loading ? <LoadingPage /> : <Admin />}
             </section>
         </AdminContextProvider>
     );
