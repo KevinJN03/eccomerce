@@ -12,7 +12,7 @@ import { useWindowSize } from '@uidotdev/usehooks';
 function Checkout_Total() {
     const { cart } = useCart();
 
-    const { scrollY } = useScroll();
+    
 
     const { withShipping, withOutShipping, savePercent, amountOff } =
         calculateTotal();
@@ -21,11 +21,11 @@ function Checkout_Total() {
     const { deliveryOption } = useCart();
     const { promo } = useCart();
 
-    const screenSize = useWindowSize();
+    
 
     return (
         <motion.section
-            className="fixed left-2/4 ml-[120px] mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
+            className="sticky top-10 mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
             // style={{ y: screenSize.width > 1024 ? scrollY : '' }}
         >
             <section id="checkout-total">
@@ -67,7 +67,7 @@ function Checkout_Total() {
                     <p className="flex justify-between">
                         Subtotal <span>£ {withOutShipping}</span>
                     </p>
-                    {promo[0].bool && (
+                    {promo[0]?.bool && (
                         <p className="flex justify-between">
                             Promo <span>-£ {amountOff}</span>
                         </p>

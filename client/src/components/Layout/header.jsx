@@ -20,11 +20,12 @@ import Search from './search';
 import { useCart } from '../../context/cartContext';
 import variants from '../common/framerMotionVariants.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Box, Modal } from '@mui/material';
 function Header() {
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
     const [state, dispatch] = useGenderCategory();
-    'state', state;
+    const [open, setOpen] = useState(false);
     const search = (e) => {
         e;
     };
@@ -116,6 +117,11 @@ function Header() {
                     </section>
 
                     <section className="header-middle">
+                        {/* <Modal open={true} onClose={() => setOpen(() => false)}>
+                            <Box>
+                                <Search />
+                            </Box>
+                        </Modal> */}
                         <Search />
                     </section>
 
