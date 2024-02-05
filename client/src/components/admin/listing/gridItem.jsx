@@ -47,27 +47,35 @@ function GridItem({ product, index }) {
                             className="h-40 w-full rounded-t object-cover"
                         />
                     </div>
-                    <div className="middle flex w-full flex-col  gap-0.5 p-2 pb-14">
-                        <p
-                            title={product.title}
-                            className={`mb-1 truncate font-medium text-black decoration-1 underline-offset-1 group-hover:underline`}
-                        >
-                            {product.title}
-                        </p>
-                        <p className=" text-xs text-black/70">
-                            {product.additional_data.stock?.total} in stock
-                        </p>
-
-                        {product.additional_data.price?.min ==
-                        product.additional_data.price?.max ? (
-                            <p className="text-xs text-black/70">
-                                £{product.additional_data.price?.min}
+                    <div className="middle flex w-full flex-col  gap-0.5 p-2">
+                        {product?.note ? (
+                            <p className="pb-4 text-xs text-black/75">
+                                {product.note}
                             </p>
                         ) : (
-                            <p className=" text-xs text-black/70">
-                                £{product.additional_data.price?.min}-£
-                                {product.additional_data.price?.max}
-                            </p>
+                            <div className="pb-10 flex flex-col gap-0.5">
+                                <p
+                                    title={product.title}
+                                    className={`mb-1 truncate font-medium text-black decoration-1 underline-offset-1 group-hover:underline`}
+                                >
+                                    {product.title}
+                                </p>
+                                <p className=" text-xs text-black/70">
+                                    {product.additional_data.stock?.total} in
+                                    stock
+                                </p>
+                                {product.additional_data.price?.min ==
+                                product.additional_data.price?.max ? (
+                                    <p className="text-xs text-black/70">
+                                        £{product.additional_data.price?.min}
+                                    </p>
+                                ) : (
+                                    <p className=" text-xs text-black/70">
+                                        £{product.additional_data.price?.min}-£
+                                        {product.additional_data.price?.max}
+                                    </p>
+                                )}
+                            </div>
                         )}
                     </div>
 
@@ -103,7 +111,7 @@ function GridItem({ product, index }) {
                     )}
                 </Link>
 
-                <div
+                {!product?.note && <div
                     className={`${
                         selectionSet?.has(product?._id)
                             ? 'border-green-400/50'
@@ -172,7 +180,7 @@ function GridItem({ product, index }) {
                             }}
                         />
                     </section>
-                </div>
+                </div>}
             </div>
         </section>
     );

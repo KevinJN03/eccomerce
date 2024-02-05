@@ -4,11 +4,14 @@ import Template from './template';
 import UserLogout from '../../../../hooks/userLogout';
 
 import { adminAxios } from '../../../../api/axios';
+import { useAdminContext } from '../../../../context/adminContext';
+import { check } from 'prettier';
+import updateProduct from './updateProduct';
 
 function Deactivate({}) {
     const { modalContent, setModalCheck } = useContent();
     const abortControllerRef = useRef(new AbortController());
-
+    const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
     const { logoutUser } = UserLogout();
     useEffect(() => {
@@ -24,22 +27,34 @@ function Deactivate({}) {
             abortControllerRef.current = new AbortController();
 
             const { data } = await adminAxios.get(
-                `/product/deactivate/${modalContent?.productIds}?status=inactive`,
+                `/product/status/${modalContent?.productIds}?status=inactive`,
                 { signal: abortControllerRef.current?.signal }
             );
         } catch (error) {
             console.error('error at Deactivate: ', error?.message);
             logoutUser({ error });
         } finally {
+            const generateUpdateProduct = updateProduct({
+                listing_status: modalContent.checks?.listing_status,
+                allProducts,
+                productIds: modalContent?.productIds,
+                note: 'Moved to inactive listings',
+            });
             setTimeout(() => {
                 setLoading(() => false);
                 setModalCheck(() => false);
+                setAllProducts((prevState) => ({
+                    ...prevState,
+                    [modalContent.checks?.listing_status]:
+                        generateUpdateProduct ||
+                        prevState[modalContent.checks?.listing_status],
+                }));
+                modalContent?.clearSelection();
             }, 1000);
         }
     };
     return (
         <Template
-          
             submit={{
                 text: 'Deactivate',
                 handleClick: handleDeactivate,

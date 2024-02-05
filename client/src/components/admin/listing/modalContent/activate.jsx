@@ -3,11 +3,13 @@ import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
+import updateProduct from './updateProduct';
+import { useAdminContext } from '../../../../context/adminContext';
 
 function Activate({}) {
     const { modalContent, setModalCheck } = useContent();
     const abortControllerRef = useRef(new AbortController());
-
+    const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
     const { logoutUser } = UserLogout();
     useEffect(() => {
@@ -23,16 +25,29 @@ function Activate({}) {
             abortControllerRef.current = new AbortController();
 
             const { data } = await adminAxios.get(
-                `/product/deactivate/${modalContent?.productIds}?status=active`,
+                `/product/status/${modalContent?.productIds}?status=active`,
                 { signal: abortControllerRef.current?.signal }
             );
         } catch (error) {
             console.error('error at Deactivate: ', error?.message);
             logoutUser({ error });
         } finally {
+            const generateUpdateProduct = updateProduct({
+                listing_status: modalContent.checks?.listing_status,
+                allProducts,
+                productIds: modalContent?.productIds,
+                note: 'Moved to active listings',
+            });
             setTimeout(() => {
                 setLoading(() => false);
                 setModalCheck(() => false);
+                setAllProducts((prevState) => ({
+                    ...prevState,
+                    [modalContent.checks?.listing_status]:
+                        generateUpdateProduct ||
+                        prevState[modalContent.checks?.listing_status],
+                }));
+                modalContent?.clearSelection();
             }, 1000);
         }
     };

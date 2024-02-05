@@ -18,7 +18,7 @@ import {
   getProductFiles,
   updateProductFeature,
   searchProduct,
-  deactivateProduct,
+  updateStatus,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -98,6 +98,6 @@ router.get('/draftProduct/:id', getDraft);
 router.post('/products/all', getAllProducts);
 router.get('/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);
-router.get('/product/deactivate/:id', deactivateProduct);
+router.get('/product/status/:id', updateStatus);
 // router.get('/check', checkLogin)
 export default router;

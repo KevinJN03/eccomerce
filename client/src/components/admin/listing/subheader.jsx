@@ -32,13 +32,16 @@ function SubHeader({}) {
         draft: 'Publish',
     };
 
-    const handleDeActivate = () => {
+    const handleOptionClick = () => {
         setModalContent({
             type: text[checks?.listing_status]?.toLowerCase(),
             productIds: Array.from(selectionSet),
             setSelectionSet,
             // draft: checks?.listing_status == 'draft',
             checks,
+            clearSelection: () => {
+                setSelectionSet(() => new Set());
+            },
         });
         setModalCheck(() => true);
     };
@@ -59,7 +62,7 @@ function SubHeader({}) {
                 </button>
                 {text[checks?.listing_status] && (
                     <button
-                        onClick={handleDeActivate}
+                        onClick={handleOptionClick}
                         disabled={!selectionSet?.size}
                         type="button"
                         className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
