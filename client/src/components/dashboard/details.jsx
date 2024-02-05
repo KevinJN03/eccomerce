@@ -67,7 +67,7 @@ function Details({}) {
         };
 
         const isSame = _.isEqual(onMountValue, newValues);
-        console.log({ isSame, onMountValue, newValues });
+      
         if (!isSame) {
             setIsDetailsUnSaved(true);
             setDisable(false);
@@ -87,7 +87,7 @@ function Details({}) {
                 interest: newInterest,
             };
 
-            console.log(data)
+        
             const result = await axios.put('user/changedetails', data);
 
             authDispatch({ type: 'LOGIN', payload: result.data });

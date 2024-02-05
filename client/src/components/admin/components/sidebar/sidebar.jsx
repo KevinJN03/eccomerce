@@ -10,15 +10,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 import optionsArray from './sideBarOption';
 import {
+    ArrowDropUpSharp,
     KeyboardDoubleArrowRightRounded,
     SearchOutlined,
 } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import { ClickAwayListener, Tooltip } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchSideBar from './searchSideBar';
 import { useContent } from '../../../../context/ContentContext';
+import { useState } from 'react';
 function SideBar({}) {
     const { darkMode, dispatch } = useDarkMode();
+
+    const [showAction, setShowAction] = useState(false);
     const navigate = useNavigate();
     const logout = async () => {
         try {
@@ -38,10 +42,10 @@ function SideBar({}) {
     const variant = {
         section: {
             initial: {
-                maxWidth: open ? '14rem' : '3.875rem',
+                maxWidth: open ? '15rem' : '3.875rem',
             },
             animate: {
-                maxWidth: open ? '14rem' : '3.875rem',
+                maxWidth: open ? '15rem' : '3.875rem',
                 transition: {
                     duration: 0.7,
                     // ease: 'easeInOut',
@@ -74,9 +78,7 @@ function SideBar({}) {
                 variants={variant.section}
                 animate={'animate'}
                 initial={'initial'}
-                className={`fixed left-0 top-0 z-[3] flex h-screen w-full ${
-                    open ? 'max-w-56' : 'max-w-[3.875rem]'
-                } flex-col`}
+                className={`fixed left-0 top-0 z-[3] flex h-screen !w-full  flex-col`}
             >
                 <section className="side-bar h-full w-full overflow-y-auto overflow-x-hidden  border-r border-dark-gray/50 ">
                     <div className="top my-5 flex pl-4">
@@ -126,17 +128,18 @@ function SideBar({}) {
                                     <SearchOutlined className="!text-[30px]" />
 
                                     <AnimatePresence>
-     {
-                                        open && <motion.p 
-                                
-                                    variants={variant.p}
-                                        initial={'initial'}
-                                        animate={'animate'}
-                                        exit={'exit'}
-                                    
-                                    className="ml-3">Search</motion.p>
-                                    }
-</AnimatePresence>
+                                        {open && (
+                                            <motion.p
+                                                variants={variant.p}
+                                                initial={'initial'}
+                                                animate={'animate'}
+                                                exit={'exit'}
+                                                className="ml-3"
+                                            >
+                                                Search
+                                            </motion.p>
+                                        )}
+                                    </AnimatePresence>
                                 </Tooltip>
                             </div>
                             {optionsArray.map(({ link, title, icon }) => {
@@ -198,58 +201,105 @@ function SideBar({}) {
                     </div>{' '}
                 </section>
 
-                {/* 
-
-                   animate={{
-                        flexDirection: open ? 'row' : 'col',
-                        paddingLeft: open ? '1rem' : '0rem',
-                        justifyContent: open ? 'center' : 'flex-start',
-                    }}
-
-                      ${
-                        open ? 'flex-row pl-4' : 'flex-col justify-center'
-                    } 
-
-                 */}
                 <motion.div
-                    key={open}
-                    animate={{
-                        flexDirection: open ? 'row' : 'col',
-                        paddingLeft: open ? '1rem' : '0rem',
-                        justifyContent: open ? 'center' : 'flex-start',
-                    }}
-                    className={`
-                    
-                    
-                   
-                    
-                    
-                    flex w-full  flex-nowrap items-center border border-dark-gray/50 `}
+                    // justifyContent: open ? 'center' : 'flex-start',
+                    //${open ? '1rem flex-row' : '0rem !flex-col '}
+                    className={`relative flex w-full items-center gap-3 border border-dark-gray/50 ${
+                        open ? '!flex-row' : '!flex-col'
+                    } `}
                 >
+                    {showAction && (
+                        <ClickAwayListener
+                            onClickAway={() => setShowAction(() => false)}
+                        >
+                            <div className="show-action absolute bottom-16 left-3 z-[2] flex flex-col rounded-md border border-dark-gray/50 bg-white py-3">
+                                {[
+                                    {
+                                        text: 'Account Information',
+                                    },
+                                    {
+                                        text: 'Your Profile',
+                                    },
+                                    {
+                                        text: 'Logout',
+                                        handleClick: logout,
+                                    },
+                                ].map(({ text, handleClick }) => {
+                                    return (
+                                        <button
+                                            onClick={handleClick}
+                                            className={`px-5 py-3 hover:bg-dark-gray/30`}
+                                        >
+                                            <p className="text-left  text-s">
+                                                {text}
+                                            </p>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </ClickAwayListener>
+                    )}
                     <div
-                        className={`${
-                            !open
-                                ? 'w-full justify-center border-b border-dark-gray/50'
-                                : 'border-none'
-                        } left flex flex-row flex-nowrap items-center gap-3 py-3`}
+                        className={`border-b border-dark-gray/50 py-2 ${
+                            open ? ' !min-h-8 ml-4 !min-w-8' : 'w-full'
+                        } flex items-center justify-center `}
                     >
-                        <div className="h-6 w-6 rounded-full bg-black"></div>
-                        {open && <p className="text-xs">Kevin Jean</p>}
-                    </div>
-                    <div
-                        onClick={() => setOpen((prevState) => !prevState)}
-                        className={`cursor-pointer py-3 ${
-                            open
-                                ? 'right ml-auto border-l px-2'
-                                : 'h-full w-full text-center'
-                        }`}
-                    >
-                        <KeyboardDoubleArrowRightRounded
-                            className={`cursor-pointer ${
-                                open ? '!rotate-180' : ''
-                            } `}
+                        <img
+                            className="h-8 w-8  rounded-full object-cover"
+                            src="https://aws-glamo-upload-bucket.s3.eu-west-2.amazonaws.com/products/65678b9cd4593491cfa021c3/primary.png"
+                            alt=""
                         />
                     </div>
+                    {open && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{
+                                opacity: 1,
+                                transition: {
+                                    duration: 0.1,
+                                    delay: 0.7,
+                                },
+                            }}
+                            exit={{ opacity: 0 }}
+                            onClick={() =>
+                                setShowAction((prevState) => !prevState)
+                            }
+                            className="flex w-full cursor-pointer flex-row flex-nowrap items-center justify-between"
+                        >
+                            <p className="whitespace-nowrap text-xs">
+                                Kevin Jean
+                            </p>
+
+                            <ArrowDropUpSharp />
+                        </motion.div>
+                    )}
+
+                    <motion.div
+                        key={open}
+                        initial={{ opacity: 1 }}
+                        animate={{
+                            rotate: open ? '180deg' : '0deg',
+                            opacity: [0, 1],
+                            transition: {
+                                opacity: {
+                                    duration: 0.7,
+                                },
+                                rotate: {
+                                    delay: 0.7,
+                                },
+                            },
+                        }}
+                        onClick={() => setOpen((prevState) => !prevState)}
+                        className={`!w-fit max-w-fit cursor-pointer px-3 py-2
+                        
+                      
+                        
+                        `}
+                    >
+                        <KeyboardDoubleArrowRightRounded
+                            className={`cursor-pointer  `}
+                        />
+                    </motion.div>
                 </motion.div>
             </motion.section>{' '}
             <SearchSideBar />

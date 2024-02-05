@@ -21,7 +21,7 @@ import s3Upload, {
   s3Delete,
   s3Get,
   s3PdfUpload,
-} from '../s3Service.js';
+} from '../utils/s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
@@ -740,8 +740,7 @@ export const getAllProducts = [
             path: '_id',
           },
         });
-      }
-       catch (error) {
+      } catch (error) {
         console.error('parse string to objectId failed: ', error?.message);
       }
 
@@ -781,14 +780,29 @@ export const getAllProducts = [
 export const getProductFiles = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  console.log({ id });
   const result = await s3Get(id);
-  const parseResult = result.map((file) => file.Body);
-  // console.log({parseResult})
+  // const parseResult = result.map((file) => file.Body);
 
-  res.json({
-    parseResult,
-  });
+  const files = await Promise.all(
+    (result || [])?.map(async ({ data, key }) => {
+      // const file = new File([Body.read()], ContentType, {
+      //   type: ContentType,
+      // });
+
+      const base64String = await data.Body.transformToString('base64');
+
+      const obj = {
+        ContentType: data.ContentType,
+        fileName: key,
+        ContentLength: data.ContentLength,
+        buffer: base64String,
+      };
+
+      return obj;
+    }),
+  );
+
+  res.send({ files });
 });
 
 export const updateProductFeature = [
@@ -905,3 +919,14 @@ export const updateProductFeature = [
 //     res.send({ success: true, searchText, products });
 //   }),
 // ];
+
+export const deactivateProduct = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const { status } = req.query;
+  const ids = id.split(',');
+  console.log({ ids, status });
+
+  const products = await Product.updateMany({ _id: ids }, { status });
+  res.send({ success: true, msg: `${id} status has been updated` });
+});

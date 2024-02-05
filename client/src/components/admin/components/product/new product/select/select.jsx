@@ -9,23 +9,22 @@ export default function CategorySelect({
     isCategory,
 }) {
     const handleChange = (e) => {
-        
         setState(e.target.value);
     };
     return (
         <select
             id="options"
             name="options"
-            className="category-select !rounded-md daisy-select my-0 !min-w-[160px] outline input"
+            className="category-select daisy-select input my-0 !min-w-[160px] !rounded-md outline"
             defaultValue={title}
             value={state}
             onChange={handleChange}
         >
-            <option disabled selected key={uuidV4()}>
+            <option disabled key={uuidV4()}>
                 {title}
             </option>
             {options.map((option, index) => {
-                // 
+                //
                 return (
                     <option
                         key={index}

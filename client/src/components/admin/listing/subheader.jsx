@@ -25,6 +25,24 @@ function SubHeader({}) {
         });
         setModalCheck(() => true);
     };
+
+    const text = {
+        inactive: 'Activate',
+        active: 'Deactivate',
+        draft: 'Publish',
+    };
+
+    const handleDeActivate = () => {
+        setModalContent({
+            type: text[checks?.listing_status]?.toLowerCase(),
+            productIds: Array.from(selectionSet),
+            setSelectionSet,
+            // draft: checks?.listing_status == 'draft',
+            checks,
+        });
+        setModalCheck(() => true);
+    };
+
     return (
         <div className="subheader mb-3 flex flex-row  flex-nowrap gap-3">
             <SelectionInput
@@ -39,13 +57,16 @@ function SubHeader({}) {
                 >
                     Renew
                 </button>
-                <button
-                    disabled={!selectionSet?.size}
-                    type="button"
-                    className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
-                >
-                    Deactivate
-                </button>
+                {text[checks?.listing_status] && (
+                    <button
+                        onClick={handleDeActivate}
+                        disabled={!selectionSet?.size}
+                        type="button"
+                        className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
+                    >
+                        {text[checks?.listing_status]}
+                    </button>
+                )}
                 <button
                     onClick={handleDelete}
                     disabled={!selectionSet?.size}
@@ -95,7 +116,7 @@ function SubHeader({}) {
                                     },
                                 ].map(({ title, id }) => {
                                     return (
-                                        <p 
+                                        <p
                                             onClick={() => {
                                                 setShowAction(() => false);
                                                 setModalCheck(() => true);
@@ -107,7 +128,7 @@ function SubHeader({}) {
                                                         ),
                                                 }));
                                             }}
-                                            className="whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20 cursor-pointer"
+                                            className="cursor-pointer whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20"
                                             id={id}
                                             key={id}
                                         >

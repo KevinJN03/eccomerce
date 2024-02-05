@@ -6,7 +6,7 @@ import sharpify from '../Upload/sharpify.js';
 
 async function generateProduct(req, id, endPoint = 'products') {
   const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
-  let counter = 0;
+  let counter = 1;
   const imageArr = [];
   const { files } = req;
 
@@ -43,7 +43,7 @@ async function generateProduct(req, id, endPoint = 'products') {
   const sharpResult = [];
   for (const item of files) {
     const sharpen = await sharpify(item);
-    sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+    sharpen.fileName = counter ;
     imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
     counter += 1;
     sharpResult.push(sharpen);

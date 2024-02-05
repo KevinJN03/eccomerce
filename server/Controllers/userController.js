@@ -5,7 +5,7 @@ import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
 import sharpify from '../Upload/sharpify.js';
 import bcrypt from 'bcryptjs';
-import s3Upload, { s3Delete } from '../s3Service.js';
+import s3Upload, { s3Delete } from '../utils/s3Service.js';
 import 'dotenv/config';
 import { body, check, validationResult } from 'express-validator';
 import timezone from 'dayjs/plugin/timezone.js';

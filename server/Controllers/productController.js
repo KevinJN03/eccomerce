@@ -9,7 +9,7 @@ import productValidator from '../utils/productValidator.js';
 import sharpify from '../Upload/sharpify.js';
 import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
-import s3Upload, { s3Delete } from '../s3Service.js';
+import s3Upload, { s3Delete } from '../utils/s3Service.js';
 // eslint-disable-next-line import/prefer-default-export
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';

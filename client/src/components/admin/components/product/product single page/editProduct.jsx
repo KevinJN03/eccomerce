@@ -27,9 +27,13 @@ function EditProduct({ type }) {
                     );
                     setSingleValue(() => data?.draftProduct);
                 } else {
-                    const { data } = await adminAxios.get(`/product/${id}`);
+                    const [{ data }, { data: fileResult }] = await Promise.all([
+                        adminAxios.get(`/product/${id}`),
 
-                    setSingleValue(() => data);
+                        adminAxios.get(`/productFiles/${id}`),
+                    ]);
+                    console.log({ data });
+                    setSingleValue(() => ({ ...data[0], fileResult : fileResult?.files }));
                 }
 
                 setTimeout(() => {

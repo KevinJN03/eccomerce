@@ -8,7 +8,6 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import 'dotenv/config';
-import { v4 as uuidv4 } from 'uuid';
 const s3Client = new S3Client();
 
 export const generateSignedUrl = async (filePath) => {
@@ -86,7 +85,7 @@ export const s3Delete = async (prefix, id) => {
 
   const listParams = [];
   response.Contents.forEach(({ Key }) => {
-    if (Key !== `products/${id}/primary.png`) {
+    if (Key !== `products/${id}/1.png`) {
       listParams.push({
         Bucket: process.env.AWS_BUCKET_NAME,
         Key,
@@ -104,30 +103,38 @@ export const s3Delete = async (prefix, id) => {
 };
 
 export const s3Get = async (id) => {
-  const client = new S3Client();
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Prefix: `products/${id}`,
-  };
-  const listCommand = new ListObjectsCommand(params);
-  const response = await client.send(listCommand);
-  if (!response?.Contents > 0) return;
+  try {
+    const client = new S3Client();
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Prefix: `products/${id}`,
+    };
+    const listCommand = new ListObjectsCommand(params);
+    const response = await client.send(listCommand);
+    if (!response?.Contents > 0) return;
 
-  const keys = response.Contents.map((item) => item.Key);
+    const keys = response.Contents.map((item) => item.Key);
 
-  const result = await Promise.all(
-    keys.map((item) => {
-      const newParams = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: item,
-      };
+    const result = await Promise.all(
+      keys.map(async (item) => {
+        const newParams = {
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: item,
+        };
 
-      const getCommand = new GetObjectCommand(newParams);
-      const getResponse = client.send(getCommand);
+        const getCommand = new GetObjectCommand(newParams);
+        const getResponse = await client.send(getCommand);
 
-      return getResponse;
-    }),
-  );
-  return result;
+        return {
+          key: item.split('/')[2],
+          data: getResponse,
+        };
+      }),
+    );
+
+    return result;
+  } catch (error) {
+    console.log('error: ', error);
+  }
 };
 export default s3Upload;

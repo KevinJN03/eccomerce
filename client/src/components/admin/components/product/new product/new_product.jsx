@@ -65,7 +65,7 @@ function New_Product({ Content, type }) {
         200
     );
 
-    console.log({ activeId });
+    
     return (
         <VariationProvider>
             <div className="product-listing flex h-full min-h-screen flex-col justify-start ">

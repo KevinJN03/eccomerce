@@ -23,13 +23,11 @@ function VariationList({}) {
                 variations.length > 0 &&
                 variations.map((variation) => {
                     return (
-                        <>
-                            <SingleList
-                                key={variation.id}
-                                variation={variation}
-                                isCombine={false}
-                            />
-                        </>
+                        <SingleList
+                            key={variation._id}
+                            variation={variation}
+                            isCombine={false}
+                        />
                     );
                 })}
         </>

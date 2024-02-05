@@ -69,10 +69,11 @@ function UpdateProduct(props, value) {
 
                 const response = await fetch(imgurl);
                 const blob = await response.blob();
+
                 const file = new File([blob], `image-${counter}.` + imgext, {
                     type: blob.type,
                 });
-
+                console.log({ blob });
                 return file;
             };
             let counter = 0;
@@ -118,7 +119,48 @@ function UpdateProduct(props, value) {
                 )
             );
 
-            createFiles();
+            // createFiles();
+
+            const generateFiles = () => {
+                const newFiles = (singleValue?.fileResult || [])?.map(
+                    ({ ContentType, fileName, buffer }) => {
+                        const newBuffer = Uint8Array.from(atob(buffer), (c) =>
+                            c.charCodeAt(0)
+                        );
+                        // const file = new File(blob, fileName, {
+                        //     type: ContentType,
+                        // });
+
+                        const blob = new Blob([newBuffer], {
+                            type: ContentType,
+                        });
+
+                        console.log({ blob });
+
+                        const file = new File([blob], fileName, {
+                            type: ContentType,
+                        });
+
+                        const obj = {
+                            file,
+                            img: URL.createObjectURL(blob),
+                            isDragDisabled: false,
+                            id: uuidV4(),
+                        };
+
+                        return obj;
+                    }
+                );
+
+                for (let i = newFiles.length; i < 6; i++) {
+                    newFiles.push({ id: uuidV4(), isDragDisabled: true });
+                }
+
+                setFiles(() => newFiles);
+            };
+
+            generateFiles();
+            // createFiles();
         }, [props?.singleValue]);
 }
 

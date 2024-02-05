@@ -132,7 +132,7 @@ function Price_Inventory() {
 
                                     <InventoryInput
                                         {...props}
-                                        ref={props?.ref}
+                                        ref={props.ref}
                                     />
                                 </>
                             ) : (
@@ -158,7 +158,7 @@ function DisableInput({ text }) {
     );
 }
 
-function InventoryInput(props) {
+const InventoryInput = forwardRef(function InventoryInput(props, ref) {
     const { setValue, value } = props;
 
     useEffect(() => {
@@ -169,6 +169,10 @@ function InventoryInput(props) {
         };
     }, []);
 
-    return <Input {...props} />;
-}
+    return (
+        // <div className="h-fit w-fit bg-transparent" ref={ref}>
+        <Input {...props} ref={ref} />
+        // </div>
+    );
+});
 export default Price_Inventory;

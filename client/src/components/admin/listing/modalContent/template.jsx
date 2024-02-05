@@ -2,13 +2,21 @@ import { Input } from 'postcss';
 import { useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 
-function Template({ children, title, small, footerChildren, headerChildren }) {
+function Template({
+    children,
+    title,
+    small,
+    footerChildren,
+    headerChildren,
+
+    submit,
+}) {
     const { setModalCheck } = useContent();
 
     return (
         <section
             className={`w-full rounded-sm bg-white ${
-                small ? `!min-w-[24rem]` : 'min-w-[37.5rem]'
+                small ? `!min-w-[24rem] max-w-[24rem]` : 'min-w-[37.5rem]'
             }`}
         >
             <header className="border-b border-b-dark-gray/50 p-3">
@@ -29,10 +37,16 @@ function Template({ children, title, small, footerChildren, headerChildren }) {
                             Cancel
                         </button>
                         <button
+                            disabled={submit?.loading}
+                            onClick={submit?.handleClick}
                             type="button"
-                            className="rounded-sm border border-black bg-black px-3 py-2 text-xs font-semibold text-white hover:opacity-70"
+                            className="flex disabled:opacity-50 items-center justify-center rounded-sm border border-black bg-black px-3 py-2 text-xs font-semibold text-white hover:opacity-70"
                         >
-                            Apply
+                            {submit?.loading ? (
+                                <div class=" daisy-loading daisy-loading-spinner daisy-loading-xs !text-white "></div>
+                            ) : (
+                                submit?.text || 'Apply'
+                            )}
                         </button>
                     </>
                 )}

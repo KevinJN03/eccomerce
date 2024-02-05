@@ -31,6 +31,8 @@ import ChangeSection from '../listing/modalContent/changeSection.jsx';
 import Edit_Title from '../listing/modalContent/edit_title';
 import EditDescription from '../listing/modalContent/edit_description.jsx';
 import EditPrice from '../listing/modalContent/edit_price.jsx';
+import Deactivate from '../listing/modalContent/deactivate.jsx';
+import Activate from '../listing/modalContent/activate.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -53,6 +55,8 @@ function Admin({}) {
         edit_title: <Edit_Title />,
         edit_description: <EditDescription />,
         edit_price: <EditPrice />,
+        deactivate: <Deactivate />,
+        activate: <Activate />,
     };
     const alertVariant = {
         initial: {
@@ -126,12 +130,10 @@ function Admin({}) {
 
                         <SideBar />
                         <motion.div
-                            className={`homeContainer ${
-                                open ? 'ml-56' : 'ml-[3.875rem]'
-                            }`}
+                            className={`homeContainer`}
                             initial={false}
                             animate={{
-                                marginLeft: open ? '14rem' : '3.875rem',
+                                marginLeft: open ? '15rem' : '3.875rem',
 
                                 transition: {
                                     duration: open ? '0.7' : '0.7',
@@ -142,6 +144,7 @@ function Admin({}) {
                             <Outlet />
 
                             <Modal
+                                className="!overflow-y-auto"
                                 open={modalCheck}
                                 onClose={() => setModalCheck(false)}
                             >
@@ -151,6 +154,7 @@ function Admin({}) {
                                         position: 'absolute',
                                         top: '20%',
                                         left: '50%',
+
                                         transform: 'translate(-50%, -20%)',
                                         boxSizing: 'border-box',
                                         maxWidth: '600px',

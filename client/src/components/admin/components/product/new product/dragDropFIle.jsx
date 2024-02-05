@@ -64,7 +64,7 @@ function DragDropFile({ filesError }) {
                         multiple
                         onChange={(e) => handleInput(e)}
                         hidden
-                        accept="image/png, image/jpeg"
+                        accept="image/png, image/jpeg, image/webp"
                         ref={inputRef}
                     />
                     <button
