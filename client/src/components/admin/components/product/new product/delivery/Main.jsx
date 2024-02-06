@@ -202,14 +202,14 @@ function MainContent() {
                         )}
 
                         {deliveryProfiles.length > 0 && (
-                            <div className="mt-10 flex w-full flex-row items-center justify-between gap-x-2">
+                            <div className="mt-5 flex w-full flex-row items-center justify-between gap-x-2">
                                 <CancelButton
                                     handleClick={() => setModalCheck(false)}
                                 />
                                 <button
                                     type="button"
                                     onClick={confirm}
-                                    className=" theme-btn disabled:bg-black-50 rounded-full bg-black px-5 py-3 text-white disabled:cursor-not-allowed"
+                                    className=" theme-btn  text-base font-medium disabled:bg-black-50 rounded-full bg-black px-5 py-3 text-white disabled:cursor-not-allowed"
                                     // disabled={disable}
                                 >
                                     Confirm
