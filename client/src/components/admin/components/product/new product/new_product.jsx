@@ -32,6 +32,7 @@ import { motion } from 'framer-motion';
 import { inView } from 'framer-motion';
 import dayjs from 'dayjs';
 import useScrollpsy from '../../../../../hooks/useScrollpsy.jsx';
+import Delete from './delivery/delete.jsx';
 const views = {
     manage: <Manage />,
     select: <SelectVariation />,
@@ -40,6 +41,7 @@ const views = {
     delivery_main: <Delivery_Main />,
     delivery_new: <Delivery_New edit={false} />,
     delivery_edit: <Delivery_New edit={true} />,
+    delivery_delete: <Delete/>
 };
 
 function New_Product({ Content, type }) {

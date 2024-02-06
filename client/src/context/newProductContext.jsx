@@ -60,7 +60,8 @@ export const NewProductProvider = (props) => {
 
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
-        type: 'main',
+         type: 'main',
+      
     });
 
     const [currentSection, setCurrentSection] = useState('available');

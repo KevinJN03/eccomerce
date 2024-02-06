@@ -1,11 +1,12 @@
 export function contentReducer(state, action) {
     const acceptedTypes = new Set([
         'main',
-        ' update',
+        'update',
         'manage',
         'delivery_main',
         'delivery_new',
         'delivery_edit',
+        'delivery_delete',
     ]);
 
     if (action.type == 'select' || action.type == 'update') {
@@ -32,11 +33,8 @@ export function contentReducer(state, action) {
     // }
 
     if (acceptedTypes.has(action?.type)) {
-
         return { ...state, ...action, currentVariation: null };
     }
-
-   
 
     throw new Error(
         `Invalid type for Variation Reducer ${JSON.stringify(action)}`

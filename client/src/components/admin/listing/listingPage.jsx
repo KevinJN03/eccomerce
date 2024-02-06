@@ -33,7 +33,11 @@ function ListingPage() {
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
 
+    const [deliveryProfile, setDeliveryProfile] = useState([]);
+
     const [showStats, setShowStats] = useState(false);
+
+    const abortControllerRef = useRef(new AbortController());
     const [checks, setChecks] = useState({
         format: 'vertical',
         listing_status: 'active',
@@ -47,13 +51,15 @@ function ListingPage() {
     const { logoutUser } = UserLogout();
 
     useEffect(() => {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
         let id = null;
         const fetchData = async () => {
             try {
                 let complete = false;
                 let speed = 1;
                 const data = {};
-
+                const deliveryProfileData = [];
                 setSelectionSet(() => new Set());
                 var intervalId = setInterval(handleInterval, 1);
                 id = intervalId;
@@ -62,6 +68,7 @@ function ListingPage() {
 
                     setProgressValue((prevValue) => {
                         if (prevValue >= 100) {
+                            setDeliveryProfile(() => deliveryProfileData);
                             setAllProducts(() => data.products);
                             const newProducts =
                                 data.products?.[checks?.listing_status] || [];
@@ -100,15 +107,27 @@ function ListingPage() {
                     });
                 }
 
-                const { data: productResult } = await adminAxios.post(
-                    'products/all',
-                    {
-                        checks,
-                    }
-                );
+                const [
+                    { data: productResult },
+                    { data: deliveryProfileResult },
+                ] = await Promise.all([
+                    adminAxios.post(
+                        'products/all',
+                        {
+                            checks,
+                        },
+                        { signal: abortControllerRef.current?.signal }
+                    ),
+
+                    adminAxios.get('delivery/all', {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                ]);
+
                 complete = productResult.success;
 
                 Object.assign(data, productResult);
+                deliveryProfileData.push(...deliveryProfileResult);
             } catch (error) {
                 console.error(error);
                 clearInterval(id);
@@ -122,6 +141,8 @@ function ListingPage() {
         return () => {
             console.log({ id });
             clearInterval(id);
+
+            abortControllerRef.current?.abort();
         };
     }, [
         checks?.listing_status,
@@ -146,7 +167,8 @@ function ListingPage() {
         setShowStats,
         triggerSearch,
         setTriggerSearch,
-        setProductIds
+        setProductIds,
+        deliveryProfile,
     };
 
     return (

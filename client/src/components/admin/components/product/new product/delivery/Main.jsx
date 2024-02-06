@@ -1,16 +1,13 @@
-import New from './New';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import Popover from './edit';
-import { useContent } from '../../../../../../context/ContentContext';
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
-import Edit from './edit';
-import { adminAxios } from '../../../../../../api/axios';
 import { useState, useEffect } from 'react';
 import Delete from './delete';
 import fetchProfile from './fetchDeliveryProfile';
 import { useNewProduct } from '../../../../../../context/newProductContext';
+import {
+    AddCircleOutlineRounded,
+    DeleteForeverSharp,
+    ModeEditOutlineOutlined,
+    RemoveCircleOutlineRounded,
+} from '@mui/icons-material';
 
 function MainContent() {
     const {
@@ -121,7 +118,7 @@ function MainContent() {
                                             className="flex items-center justify-center gap-2"
                                         >
                                             {findProfile ? (
-                                                <RemoveCircleOutlineRoundedIcon
+                                                <RemoveCircleOutlineRounded
                                                     className="box-content rounded-full p-1 hover:bg-slate-100"
                                                     onClick={() =>
                                                         removeProfile(
@@ -130,7 +127,7 @@ function MainContent() {
                                                     }
                                                 />
                                             ) : (
-                                                <AddCircleOutlineRoundedIcon
+                                                <AddCircleOutlineRounded
                                                     className="box-content rounded-full p-1 hover:bg-slate-100"
                                                     onClick={() =>
                                                         handleClick(delivery)
@@ -138,8 +135,29 @@ function MainContent() {
                                                 />
                                             )}
 
-                                            <Edit profile={delivery} />
-                                            <Delete id={delivery._id} />
+                                            <button
+                                                className="box-content rounded-full p-1 hover:bg-slate-100"
+                                                onClick={() => {
+                                                    contentDispatch({
+                                                        type: 'delivery_edit',
+                                                        profile: delivery,
+                                                    });
+                                                }}
+                                            >
+                                                <ModeEditOutlineOutlined />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    contentDispatch({
+                                                        type: 'delivery_delete',
+                                                        deliveryProfileId:
+                                                            delivery._id,
+                                                    });
+                                                }}
+                                                className="box-content rounded-full p-1 hover:bg-slate-100"
+                                            >
+                                                <DeleteForeverSharp />
+                                            </button>
                                         </section>
                                     </div>
                                 );

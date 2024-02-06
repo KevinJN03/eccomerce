@@ -707,20 +707,56 @@ export const getAllProducts = [
       },
     ];
 
-    if (checks?.section) {
+    if (checks?.section || checks?.featured || checks?.deliveryProfile) {
+      const matchObj = {};
+
+      const matchArray = [];
+
+      if (checks?.featured) {
+        matchObj.featured = true;
+
+        matchArray.push({ featured: true });
+      }
+
       try {
         const newObjectId = new mongoose.Types.ObjectId(checks.section);
-        productPipeline.unshift({ $match: { category: newObjectId } });
 
-        draftPipeline.unshift({ $match: { category: newObjectId } });
+        matchArray.push({ category: newObjectId });
       } catch (error) {
         console.log('error converting section id to objectId', error.message);
       }
+
+      try {
+        const newObjectId = new mongoose.Types.ObjectId(
+          checks?.deliveryProfile,
+        );
+        matchArray.push({ delivery: { $eq: newObjectId } });
+      } catch (error) {
+        console.log(
+          'error converting deliveryProfile id to objectId',
+          error.message,
+        );
+      }
+
+      productPipeline.unshift({ $match: { $and: matchArray } });
+
+      draftPipeline.unshift({ $match: { $and: matchArray } });
+
+      console.log({ matchArray });
     }
-    if (checks?.featured) {
-      productPipeline.unshift({ $match: { featured: true } });
-      draftPipeline.unshift({ $match: { featured: true } });
-    }
+    // if (checks?.featured) {
+    //   productPipeline.unshift({ $match: { featured: true } });
+    //   draftPipeline.unshift({ $match: { featured: true } });
+    // }
+
+    // if(checks?.deliveryProfile){
+    //   try {
+    //     const newObjectId = new mongoose.Types.ObjectId(checks?.deliveryProfile);
+
+    //   } catch (error) {
+    //     console.log('error converting section id to objectId', error.message);
+    //   }
+    // }
 
     if (checks?.searchText) {
       const should = [

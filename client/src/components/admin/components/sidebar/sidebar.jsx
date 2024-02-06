@@ -93,10 +93,19 @@ function SideBar({}) {
                                     className="h-5 w-5 invert"
                                 />
                             </div>
-
-                            {open && (
-                                <p className="font-gotham text-xl">glamo</p>
-                            )}
+                            <AnimatePresence>
+                                {open && (
+                                    <motion.p
+                                        variants={variant.p}
+                                        initial={'initial'}
+                                        animate={'animate'}
+                                        exit={'exit'}
+                                        className="font-gotham text-xl"
+                                    >
+                                        glamo
+                                    </motion.p>
+                                )}
+                            </AnimatePresence>
                         </Link>
                     </div>
                     <div className="center w-full">
