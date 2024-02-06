@@ -150,6 +150,8 @@ function ListingPage() {
         checks?.featured,
         checks?.section,
         triggerSearch,
+        ,
+        checks?.deliveryProfile,
     ]);
 
     const deleteButtonClick = () => {};

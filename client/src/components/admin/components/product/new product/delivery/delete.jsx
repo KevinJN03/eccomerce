@@ -1,14 +1,52 @@
 import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
 import Modal from '../../../modal/modal.jsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../../../../context/ContentContext.jsx';
 import { useNewProduct } from '../../../../../../context/newProductContext.jsx';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import UserLogout from '../../../../../../hooks/userLogout.jsx';
+import { adminAxios } from '../../../../../../api/axios.js';
+import CancelButton from '../../../../../buttons/cancelButton.jsx';
 function Delete({ id }) {
     const [check, setCheck] = useState(false);
-    const { loading, setLoading, setModalCheck } = useNewProduct();
+    const {
+        loading,
+        setLoading,
+        setModalCheck,
+        modalContent,
+        contentDispatch,
+    } = useNewProduct();
     const [isHover, setIsHover] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
+    const { logoutUser } = UserLogout();
+
+    const abortControllerRef = useRef(new AbortController());
+
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
+
+    const handleDelete = async () => {
+        try {
+            setBtnLoading(() => true);
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+
+            adminAxios.delete(
+                `/delete/delivery/${modalContent?.deliveryProfileId}`
+            );
+        } catch (error) {
+            console.error('error while fetching', error.message);
+        } finally {
+            setTimeout(() => {
+                setLoading(() => false);
+                contentDispatch({ type: 'delivery_main' });
+            }, 1000);
+        }
+    };
 
     const variant = {
         initial: {
@@ -22,11 +60,12 @@ function Delete({ id }) {
         exit: {
             scale: 0,
             opacity: 0,
-            transition:{
-                duration: 0.3
-            }
+            transition: {
+                duration: 0.3,
+            },
         },
     };
+
     return (
         <section className="delete-delivery-profile flex w-full flex-col items-center gap-7">
             <h1 className="font-EBGaramond text-3xl">
@@ -37,38 +76,18 @@ function Delete({ id }) {
             </p>
 
             <div className="relative flex w-full max-w-xs flex-row flex-nowrap items-center justify-between">
-                <motion.button
-                    onMouseEnter={() => {
-                        setIsHover(() => true);
-                    }}
-                    onMouseLeave={() => {
-                        setIsHover(() => false);
-                    }}
-                    className="left relative rounded-full  px-5 py-3 "
-                    onClick={() => {
-                        setModalCheck(() => false);
-                    }}
+                <CancelButton handleClick={() => setModalCheck(() => false)} />
+          
+                <button
+                    disabled={btnLoading}
+                    onClick={handleDelete}
+                    className="right theme-btn flex min-w-32 items-center justify-center rounded-full bg-black px-5 py-3 font-medium tracking-wide "
                 >
-                    <span className=" relative !z-[3] w-full text-base font-medium">
-                        Cancel
-                    </span>
-                    <AnimatePresence>
-                        {isHover && (
-                            <motion.div
-                                variants={variant}
-                                initial={'initial'}
-                                animate={'animate'}
-                                exit={'exit'}
-                                className=" absolute left-0 top-0 z-0  h-full w-full rounded-inherit bg-light-grey"
-                            ></motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.button>
-                <button 
-                
-                
-                className="right theme-btn rounded-full bg-black px-5 py-3 font-medium tracking-wide text-white">
-                    Delete Profile
+                    {btnLoading ? (
+                        <div className="daisy-loading daisy-loading-spinner daisy-loading-sm !text-white"></div>
+                    ) : (
+                        <span className="text-white">Delete Profile</span>
+                    )}
                 </button>
             </div>
         </section>

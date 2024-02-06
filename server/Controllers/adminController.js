@@ -707,17 +707,9 @@ export const getAllProducts = [
       },
     ];
 
-    if (checks?.section || checks?.featured || checks?.deliveryProfile) {
-      const matchObj = {};
+    const matchArray = [];
 
-      const matchArray = [];
-
-      if (checks?.featured) {
-        matchObj.featured = true;
-
-        matchArray.push({ featured: true });
-      }
-
+    if (checks?.section) {
       try {
         const newObjectId = new mongoose.Types.ObjectId(checks.section);
 
@@ -725,11 +717,15 @@ export const getAllProducts = [
       } catch (error) {
         console.log('error converting section id to objectId', error.message);
       }
+    }
 
+    if (checks?.featured) {
+      matchArray.push({ featured: true });
+    }
+
+    if (checks?.deliveryProfile) {
       try {
-        const newObjectId = new mongoose.Types.ObjectId(
-          checks?.deliveryProfile,
-        );
+        const newObjectId = new mongoose.Types.ObjectId(checks.deliveryProfile);
         matchArray.push({ delivery: { $eq: newObjectId } });
       } catch (error) {
         console.log(
@@ -737,13 +733,14 @@ export const getAllProducts = [
           error.message,
         );
       }
+    }
 
+    if (matchArray.length > 0) {
       productPipeline.unshift({ $match: { $and: matchArray } });
 
       draftPipeline.unshift({ $match: { $and: matchArray } });
-
-      console.log({ matchArray });
     }
+
     // if (checks?.featured) {
     //   productPipeline.unshift({ $match: { featured: true } });
     //   draftPipeline.unshift({ $match: { featured: true } });
