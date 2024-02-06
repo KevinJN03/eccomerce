@@ -28,7 +28,7 @@ function ListingPage() {
     const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
-    const [triggerSearch, setTriggerSearch] = useState(false)
+    const [triggerSearch, setTriggerSearch] = useState(false);
     const [products, setProducts] = useState([]);
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
@@ -77,8 +77,11 @@ function ListingPage() {
                             });
                             console.log({ countObj });
                             setCategoryQuantity(() => countObj);
-                            setProductIds(() =>
-                                newProducts?.map((item) => item._id)
+                            setProductIds(
+                                () =>
+                                    new Set(
+                                        newProducts?.map((item) => item._id)
+                                    )
                             );
                             clearInterval(intervalId);
 
@@ -125,7 +128,7 @@ function ListingPage() {
         checks?.sort,
         checks?.featured,
         checks?.section,
-        triggerSearch
+        triggerSearch,
     ]);
 
     const deleteButtonClick = () => {};
@@ -141,7 +144,9 @@ function ListingPage() {
         categoryQuantity,
         showStats,
         setShowStats,
-        triggerSearch, setTriggerSearch
+        triggerSearch,
+        setTriggerSearch,
+        setProductIds
     };
 
     return (

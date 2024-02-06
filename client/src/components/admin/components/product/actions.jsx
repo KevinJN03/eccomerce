@@ -10,10 +10,14 @@ function Actions({ showAction, setShowAction, className, product }) {
     const navigate = useNavigate();
     const { setModalCheck, setModalContent } = useContent();
     const { checks } = useListingPageContext();
+
+    const closeAction = () => {
+        setShowAction(() => false);
+    };
     const changeSection = () => {
         setModalContent(() => ({ type: 'changeSection' }));
         setModalCheck(() => true);
-        setShowAction(() => false);
+        closeAction();
     };
     const handleDelete = () => {
         setModalContent(() => ({
@@ -23,15 +27,13 @@ function Actions({ showAction, setShowAction, className, product }) {
             checks,
         }));
         setModalCheck(() => true);
-        setShowAction(() => false);
+        closeAction();
     };
 
     return (
         <AnimatePresence>
             {showAction && (
-                <ClickAwayListener
-                    onClickAway={() => setShowAction(() => false)}
-                >
+                <ClickAwayListener onClickAway={closeAction}>
                     <motion.div
                         variants={variant}
                         animate={'animate'}
@@ -39,15 +41,15 @@ function Actions({ showAction, setShowAction, className, product }) {
                         exit={'exit'}
                         className={` ${
                             className || ''
-                        } absolute top-full right-0 z-10  rounded border border-dark-gray/50 bg-white py-2`}
+                        } absolute right-0 top-full z-10  rounded border border-dark-gray/50 bg-white py-2`}
                     >
                         {' '}
                         {product?.status == 'active' && (
                             <div className="w-full border-b border-dark-gray/50 pb-2">
                                 <Link
+                                    onClick={closeAction}
                                     to={`/product/${product?._id}`}
                                     target="_blank"
-                                    onClick={() => setShowAction()}
                                 >
                                     <p className="!w-full !min-w-full cursor-pointer whitespace-nowrap py-2  pl-4 text-s hover:bg-light-grey/50">
                                         View on glamo
@@ -61,6 +63,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                         )}
                         <div className="border-b border-dark-gray/50 py-2">
                             <Link
+                                onClick={closeAction}
                                 to={`edit/${product._id}${
                                     checks?.listing_status == 'draft'
                                         ? '?draft=true'
@@ -73,6 +76,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                             </Link>
 
                             <Link
+                                onClick={closeAction}
                                 to={`copy/${product?._id}${
                                     checks?.listing_status == 'draft'
                                         ? '?draft=true'

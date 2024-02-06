@@ -162,8 +162,8 @@ function productAggregateStage() {
                     if: { $gt: [{ $size: '$priceArrays' }, 0] },
                     then: { $arrayElemAt: ['$priceArrays', 0] },
                     else: {
-                      min: '$doc.price.current',
-                      max: '$doc.price.current',
+                      min: { $toDouble: '$doc.price.current' },
+                      max: { $toDouble: '$doc.price.current' },
                     },
                   },
                 },

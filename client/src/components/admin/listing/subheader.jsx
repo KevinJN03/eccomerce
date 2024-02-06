@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import variant from '../order/home/variant';
 function SubHeader({}) {
-    const { selectionSet, setSelectionSet, checks, productIds } =
+    const { selectionSet, setSelectionSet, checks, productIds, setProductIds } =
         useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
@@ -18,10 +18,11 @@ function SubHeader({}) {
     const handleDelete = () => {
         setModalContent({
             type: 'delete',
-            ids: Array.from(selectionSet),
+            productIds: Array.from(selectionSet),
             setSelectionSet,
             draft: checks?.listing_status == 'draft',
             checks,
+            setProductIds,
         });
         setModalCheck(() => true);
     };

@@ -3,54 +3,72 @@ import { adminAxios } from '../../../../api/axios';
 import { useContent } from '../../../../context/ContentContext';
 import { useAdminContext } from '../../../../context/adminContext';
 import UserLogout from '../../../../hooks/userLogout';
+import updateProduct from './updateProduct';
 
 function Delete({}) {
     const { setModalCheck, modalContent, setModalContent } = useContent();
-    const { setAllProducts } = useAdminContext();
+    const { setAllProducts, allProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
     const [loading, setLoading] = useState(false);
+
+    const { setProductIds, draft, productIds, checks, setSelectionSet } =
+        modalContent;
 
     const handleDelete = async () => {
         try {
             setLoading(() => true);
 
-            if (modalContent?.draft) {
+            if (draft) {
                 const { data } = await adminAxios.delete(
-                    `delete/draftProduct/${modalContent?.ids}`
+                    `delete/draftProduct/${productIds}`
                 );
                 // setAllProducts(() => data.products);
             } else {
                 const { data } = await adminAxios.delete(
-                    `delete/product/${modalContent?.ids}`
+                    `delete/product/${productIds}`
                 );
                 // setAllProducts(() => data.products);
             }
-
-            const { data: productData } = await adminAxios.post('products/all', {
-                checks: modalContent.checks,
-            });
-
-            setAllProducts(() => productData.products);
-            if (modalContent?.setSelectionSet) {
-                modalContent.setSelectionSet(() => new Set());
-            }
-
-            setModalCheck(() => false);
         } catch (error) {
             console.error(error);
 
             logoutUser({ error });
         } finally {
-            setLoading(() => false);
-            setModalContent({ type: null });
+            const generateUpdateProduct = updateProduct({
+                listing_status: checks?.listing_status,
+                allProducts,
+                productIds: modalContent?.productIds,
+                note: 'Deleted',
+                newProperty: { deleted: true },
+            });
+            setTimeout(() => {
+                setLoading(() => false);
+                setModalCheck(() => false);
+                setModalContent({ type: null });
+                setAllProducts((prevState) => ({
+                    ...prevState,
+                    [checks?.listing_status]:
+                        generateUpdateProduct ||
+                        prevState[checks?.listing_status],
+                }));
+                setSelectionSet(() => new Set());
+
+                setProductIds((prevState) => {
+                    const newSet = new Set([...prevState]);
+
+                    productIds.forEach((id) => {
+                        newSet.delete(id);
+                    });
+debugger
+                    return newSet;
+                });
+            }, 1000);
         }
     };
     return (
         <section className="w-full max-w-xs bg-white ">
             <div className="w-full bg-light-grey/50 px-4 py-3 font-medium">
-                <p>
-                    You are about to delete {modalContent.ids?.length} listing
-                </p>
+                <p>You are about to delete {productIds?.length} listing</p>
             </div>
 
             <p className="px-4 py-4">
