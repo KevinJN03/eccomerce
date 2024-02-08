@@ -9,7 +9,9 @@ import { useListingPageContext } from '../../../../context/listingPageContext';
 function Actions({ showAction, setShowAction, className, product }) {
     const navigate = useNavigate();
     const { setModalCheck, setModalContent } = useContent();
-    const { checks } = useListingPageContext();
+
+    const { selectionSet, setSelectionSet, setProductIds, checks } =
+        useListingPageContext();
 
     const closeAction = () => {
         setShowAction(() => false);
@@ -19,15 +21,17 @@ function Actions({ showAction, setShowAction, className, product }) {
         setModalCheck(() => true);
         closeAction();
     };
+
     const handleDelete = () => {
-        setModalContent(() => ({
+        setModalContent({
             type: 'delete',
-            ids: [product._id],
-            draft: true,
+            productIds: [product?._id],
+            setSelectionSet,
+            draft: checks?.listing_status == 'draft',
             checks,
-        }));
+            setProductIds,
+        });
         setModalCheck(() => true);
-        closeAction();
     };
 
     return (

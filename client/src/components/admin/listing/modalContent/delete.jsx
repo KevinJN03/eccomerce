@@ -17,6 +17,7 @@ function Delete({}) {
     const handleDelete = async () => {
         try {
             setLoading(() => true);
+     
 
             if (draft) {
                 const { data } = await adminAxios.delete(
@@ -59,7 +60,7 @@ function Delete({}) {
                     productIds.forEach((id) => {
                         newSet.delete(id);
                     });
-debugger
+                    debugger;
                     return newSet;
                 });
             }, 1000);

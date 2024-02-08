@@ -19,7 +19,7 @@ import Header from './header.jsx';
 import ListingPageProvider from '../../../context/listingPageContext.jsx';
 import { adminAxios } from '../../../api/axios.js';
 import UserLogout from '../../../hooks/userLogout.jsx';
-
+import illustration from './illustration.png';
 import { AnimatePresence, motion, progress } from 'framer-motion';
 
 function ListingPage() {
@@ -204,10 +204,37 @@ function ListingPage() {
                     <section className="left flex w-full flex-[5] flex-col">
                         <SubHeader />
                         <section className="w-full">
-                            {checks.format === 'grid' ? (
-                                <GridProduct />
+                            {products?.length > 0 ? (
+                                <>
+                                    {checks.format === 'grid' ? (
+                                        <GridProduct />
+                                    ) : (
+                                        <VerticalProducts />
+                                    )}
+                                </>
                             ) : (
-                                <VerticalProducts />
+                                <div className="flex w-full flex-col items-center justify-center gap-4">
+                                    <img src={illustration} />
+                                    <p className="text-lg">
+                                        No listings matched your search query.
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            setChecks((prevState) => {
+                                                const { searchText, ...rest } =
+                                                    prevState;
+
+                                                return { ...rest };
+                                            });
+                                            setTriggerSearch(
+                                                (prevState) => !prevState
+                                            );
+                                        }}
+                                        className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
+                                    >
+                                        Clear Search
+                                    </button>
+                                </div>
                             )}
                         </section>
                     </section>
