@@ -4,9 +4,9 @@ import { useGenderCategory } from '../../../hooks/genderCategory';
 
 import variants from '../../common/framerMotionVariants';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
-import { random } from 'lodash'
+import { random } from 'lodash';
 function Item({ image, text, url, loading, product }) {
     const [state] = useGenderCategory();
 
@@ -16,10 +16,14 @@ function Item({ image, text, url, loading, product }) {
 
     const [isHoverFavorite, setIsHoverFavorite] = useState(false);
     const [showAnimation, setShowAnimation] = useState(false);
+
+    const [randomNum, setRandomNum] = useState(() => random(-3, 1));
     const navigate = useNavigate();
 
-    const randomNum = random(-100, 100)
-   console.log(randomNum)
+    useEffect(() => {
+        setRandomNum(() => random(-3, 1));
+    }, [showAnimation]);
+    console.log(randomNum);
     return (
         <div
             onClick={(e) => {
@@ -76,7 +80,9 @@ function Item({ image, text, url, loading, product }) {
                         <AnimatePresence>
                             {showAnimation && (
                                 <div className="absolute left-1 top-1">
-                                    {/* <motion.span
+                                 
+
+                                 <motion.span
                                         initial={{
                                             opacity: 1,
                                             left: '0rem',
@@ -86,17 +92,17 @@ function Item({ image, text, url, loading, product }) {
                                             scale: 0,
                                             opacity: 0,
 
-                                            translateX: '40%',
-                                            translateY: `${randomNum}%`,
+                                            translateX: `1.5rem`,
+                                            translateY: `2rem`,
                                             transition: {
                                                 duration: 1.5,
                                                 ease: 'easeInOut',
                                             },
                                         }}
-                                        className="absolute left-0 top-0"
+                                        className="absolute"
                                     >
-                                        <Favorite className="" />
-                                    </motion.span> */}
+                                        <Favorite className='!fill-dark-gray'/>
+                                    </motion.span>
 
                                     <motion.span
                                         initial={{
@@ -108,16 +114,16 @@ function Item({ image, text, url, loading, product }) {
                                             scale: 0,
                                             opacity: 0,
 
-                                            translateX: `${random(-100, 100) + 100}%`,
-                                            translateY: `${random(-100, 100)}%`,
+                                            translateX: `0.5rem`,
+                                            translateY: `1.5rem`,
                                             transition: {
                                                 duration: 1.5,
                                                 ease: 'easeInOut',
                                             },
                                         }}
-                                        className="absolute left-0 top-0"
+                                        className="absolute"
                                     >
-                                        <Favorite className="" />
+                                        <Favorite />
                                     </motion.span>
                                 </div>
                             )}
