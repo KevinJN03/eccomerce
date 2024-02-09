@@ -8,6 +8,7 @@ import {
     genKey,
     characterList,
 } from 'draft-js';
+import dayjs from 'dayjs';
 function UpdateProduct(props, value) {
     const {
         setTitle,
@@ -127,22 +128,20 @@ function UpdateProduct(props, value) {
                         const newBuffer = Uint8Array.from(atob(buffer), (c) =>
                             c.charCodeAt(0)
                         );
-                        // const file = new File(blob, fileName, {
-                        //     type: ContentType,
-                        // });
 
                         const blob = new Blob([newBuffer], {
                             type: ContentType,
                         });
 
-                        console.log({ blob });
+                        console.log({ fileName });
+                        
 
                         const file = new File([blob], fileName, {
-                            type: ContentType,
+                            type: ContentType || 'image/png',
                         });
 
                         const obj = {
-                            file,
+                            file: file,
                             img: URL.createObjectURL(blob),
                             isDragDisabled: false,
                             id: uuidV4(),

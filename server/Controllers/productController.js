@@ -272,27 +272,24 @@ export const delete_product = asyncHandler(async (req, res, next) => {
 export const create_new_product = [
   multerUpload.array('files', 6),
   productValidator,
-  async function (req, res, next) {
+
+  asyncHandler(async (req, res, next) => {
     const resultValidation = validationResult(req);
     if (!resultValidation.isEmpty()) {
       res.status(400).send(resultValidation.errors);
       return;
     }
     const { gender, category } = req.body;
-    const newProduct = new Product();
+    const { isDraft } = req.query;
+    const newProduct = new Product({ status: isDraft ? 'draft' : 'active' });
 
     const { productData, sharpResult } = await generateProduct(
       req,
       newProduct.id,
     );
+    console.log({ productId: newProduct.id });
 
     Object.assign(newProduct, productData);
-
-    // console.log(
-    //   '--------------------------------\r\n',
-    //   'newProduct: ',
-    //   newProduct,
-    // );
     try {
       await Category.updateOne(
         { _id: category },
@@ -303,7 +300,7 @@ export const create_new_product = [
         files: sharpResult,
         isProfile: false,
         folderId: newProduct.id,
-        endpoint: 'products',
+        endPoint: 'products',
       });
 
       await newProduct.save();
@@ -315,7 +312,7 @@ export const create_new_product = [
 
       next(error);
     }
-  },
+  }),
 ];
 export const update_product = [
   multerUpload.array('files', 6),

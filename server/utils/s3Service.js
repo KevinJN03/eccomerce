@@ -43,8 +43,7 @@ export const s3PdfUpload = async ({ pdfStream, fileName }) => {
   }
 };
 const s3Upload = async ({ files, isProfile, folderId, endPoint }) => {
-  // console.log("file:", file)
-
+  console.log({endPoint})
   const params = files.map((file) => {
     const result = {
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -60,9 +59,6 @@ const s3Upload = async ({ files, isProfile, folderId, endPoint }) => {
     };
     return result;
   });
-  const s3Client = new S3Client();
-
-  //   const result = await s3Client.send(command);
 
   const results = await Promise.all(
     params.map((param) => {

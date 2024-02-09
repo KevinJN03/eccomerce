@@ -60,9 +60,7 @@ function GridItem({ product, index }) {
                 }`}
             >
                 <Link
-                    to={`edit/${product?._id}${
-                        product?.status == 'draft' ? '?draft=true' : ''
-                    }`}
+                    to={`edit/${product?._id}`}
                     className="group"
                     onMouseEnter={() => setShowOverlay(() => true)}
                     onMouseLeave={() => setShowOverlay(() => false)}

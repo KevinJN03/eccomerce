@@ -661,7 +661,7 @@ export const getAllProducts = [
     .optional({ checkFalsy: true, null: true, undefined: true }),
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
-    console.log({ checks });
+
 
     const draftPipeline = [
       {
@@ -738,23 +738,8 @@ export const getAllProducts = [
     if (matchArray.length > 0) {
       productPipeline.unshift({ $match: { $and: matchArray } });
 
-      draftPipeline.unshift({ $match: { $and: matchArray } });
+      // draftPipeline.unshift({ $match: { $and: matchArray } });
     }
-
-    // if (checks?.featured) {
-    //   productPipeline.unshift({ $match: { featured: true } });
-    //   draftPipeline.unshift({ $match: { featured: true } });
-    // }
-
-    // if(checks?.deliveryProfile){
-    //   try {
-    //     const newObjectId = new mongoose.Types.ObjectId(checks?.deliveryProfile);
-
-    //   } catch (error) {
-    //     console.log('error converting section id to objectId', error.message);
-    //   }
-    // }
-
     if (checks?.searchText) {
       const should = [
         {
@@ -802,7 +787,7 @@ export const getAllProducts = [
       {},
     );
 
-    allProducts.draft = drafts;
+
     res.status(200).send({
       success: true,
       products: allProducts,

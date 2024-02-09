@@ -266,14 +266,16 @@ function SideContainer({}) {
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
                 >
                     <optgroup label="Sections" className="text-s font-medium">
-                        <option className="text-xs">All</option>
+                        <option selected={!checks?.section} className="text-xs">
+                            All
+                        </option>
 
                         {categoryArray.map(({ _id, name }) => {
                             return (
                                 <option
                                     disabled={!categoryQuantity?.[_id]}
                                     className="text-xs"
-                                    selected={checks?.select == _id}
+                                    selected={checks?.section == _id}
                                     value={_id}
                                 >
                                     {`${name} (${
@@ -305,11 +307,18 @@ function SideContainer({}) {
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
                 >
                     <optgroup label="Sections">
-                        <option>All</option>
+                        <option selected={!checks?.deliveryProfile}>All</option>
 
                         {deliveryProfile.map((item) => {
                             return (
-                                <option value={item._id}>{item.name}</option>
+                                <option
+                                    selected={
+                                        item._id == checks?.deliveryProfile
+                                    }
+                                    value={item._id}
+                                >
+                                    {item.name}
+                                </option>
                             );
                         })}
                     </optgroup>

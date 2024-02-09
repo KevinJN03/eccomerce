@@ -11,25 +11,12 @@ function Delete({}) {
     const { logoutUser } = UserLogout();
     const [loading, setLoading] = useState(false);
 
-    const { setProductIds, draft, productIds, checks, setSelectionSet } =
-        modalContent;
+    const { setProductIds, productIds, checks, setSelectionSet } = modalContent;
 
     const handleDelete = async () => {
         try {
             setLoading(() => true);
-     
-
-            if (draft) {
-                const { data } = await adminAxios.delete(
-                    `delete/draftProduct/${productIds}`
-                );
-                // setAllProducts(() => data.products);
-            } else {
-                const { data } = await adminAxios.delete(
-                    `delete/product/${productIds}`
-                );
-                // setAllProducts(() => data.products);
-            }
+            await adminAxios.delete(`delete/product/${productIds}`);
         } catch (error) {
             console.error(error);
 

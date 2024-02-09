@@ -25,7 +25,7 @@ export const delete_single_delivery_profile = asyncHandler(
 export const update_single_delivery_profile = asyncHandler(
   async (req, res, next) => {
     const { id } = req.params;
-    console.log(req.body);
+
     const profile = await DeliveryProfile.updateOne({ _id: id }, req.body, {
       new: true,
       context: 'query',

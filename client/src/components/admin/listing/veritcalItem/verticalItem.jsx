@@ -53,9 +53,7 @@ function VerticalItem({ product, index }) {
             />
 
             <Link
-                to={`edit/${product?._id}${
-                    product?.status == 'draft' ? '?draft=true' : ''
-                }`}
+                to={`edit/${product?._id}`}
                 className="h-16 max-h-16 w-16 max-w-16 rounded"
             >
                 <img
@@ -67,9 +65,7 @@ function VerticalItem({ product, index }) {
                 <section className="top flex w-full flex-row gap-16">
                     <div className="flex-[5] flex-col">
                         <Link
-                            to={`edit/${product?._id}${
-                                product?.status == 'draft' ? '?draft=true' : ''
-                            }`}
+                            to={`edit/${product?._id}`}
                         >
                             <p
                                 title={product?.title}

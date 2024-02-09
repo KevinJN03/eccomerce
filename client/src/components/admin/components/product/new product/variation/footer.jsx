@@ -76,7 +76,7 @@ function Footer({ type }) {
 
     async function publishData(formData, draft) {
         const url = draft
-            ? '/draftProducts/save'
+            ? '/product/create?isDraft=true'
             : type == 'update'
               ? `/product/${type}/${id}`
               : '/product/create';

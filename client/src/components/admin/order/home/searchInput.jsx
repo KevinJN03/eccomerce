@@ -2,7 +2,6 @@ import { SearchRounded } from '@mui/icons-material';
 
 function SearchInput({
     searchText,
- 
     handleClick,
     placeHolder,
     handleOnchange,

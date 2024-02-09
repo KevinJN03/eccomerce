@@ -86,15 +86,11 @@ router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
 router.get('/pdf/test', testPdf);
 router.post('/searchOrder', searchOrder);
-
 router.post('/privateNote/edit', editPrivateNote);
 router.delete('/privateNote/delete', deletePrivateNote);
-
 router.get('/draftProducts/all', getDraftProducts);
 router.post('/draftProducts/save', createDaftProduct);
-
 router.get('/draftProduct/:id', getDraft);
-
 router.post('/products/all', getAllProducts);
 router.get('/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);

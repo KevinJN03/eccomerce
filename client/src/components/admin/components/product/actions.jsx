@@ -27,7 +27,7 @@ function Actions({ showAction, setShowAction, className, product }) {
             type: 'delete',
             productIds: [product?._id],
             setSelectionSet,
-            draft: checks?.listing_status == 'draft',
+
             checks,
             setProductIds,
         });
