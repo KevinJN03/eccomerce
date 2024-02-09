@@ -2,6 +2,7 @@
 import express from 'express';
 import AsyncHandler from 'express-async-handler';
 import Category from '../Models/category.js';
+import productAggregateStage from '../utils/productAggregateStage.js';
 const router = express.Router();
 
 export const get_all_category = AsyncHandler(async (req, res, next) => {
@@ -91,6 +92,42 @@ export const query_category_products_by_gender = AsyncHandler(
       })
       .exec();
 
-    res.send(result);
+    const categoryResult = await Category.aggregate([
+      {
+        $match: { name: name.toLowerCase() },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: gender.toLowerCase(),
+          foreignField: '_id',
+          as: 'products',
+          pipeline: [
+            {
+              $match: { status: 'active' },
+            },
+
+            ...productAggregateStage({ stats: false }),
+          ],
+        },
+      },
+      {
+        $project: {
+          products: 1,
+        },
+      },
+    ]);
+
+    res.send(categoryResult[0].products);
   },
 );
+
+export const getCategoryIds = AsyncHandler(async (req, res, next) => {
+  const categoryResult = await Category.find(
+    {},
+    { name: 1 },
+    { lean: { toObject: true } },
+  );
+
+  res.send(categoryResult);
+});

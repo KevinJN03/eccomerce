@@ -111,7 +111,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
     })
     .exec();
 
-  if (!product) {
+  if (!product || product?.status != 'active') {
     return res.status(404).send('product not found');
   }
 

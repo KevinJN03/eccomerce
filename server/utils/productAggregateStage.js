@@ -1,4 +1,4 @@
-function productAggregateStage() {
+function productAggregateStage({ stats }) {
   return [
     {
       $unwind: { path: '$variations', includeArrayIndex: 'variationNumber' },
@@ -34,7 +34,13 @@ function productAggregateStage() {
               $map: {
                 input: '$variationOptions',
                 as: 'option',
-                in: { $toInt: '$$option.v.stock' },
+                in: {
+                  $cond: {
+                    if: { $eq: ['$$option.v.visible', true] },
+                    then: { $toInt: '$$option.v.stock' },
+                    else: 0,
+                  },
+                },
               },
             },
             else: '$$REMOVE',
@@ -240,8 +246,14 @@ function productAggregateStage() {
     {
       $addFields: {
         stats: {
-          revenue: { $toDouble: { $sum: '$orders_docs.prices' } },
-          sales: { $toInt: { $size: '$orders_docs' } },
+          $cond: {
+            if: { $eq: [stats, true] },
+            then: {
+              revenue: { $toDouble: { $sum: '$orders_docs.prices' } },
+              sales: { $toInt: { $size: '$orders_docs' } },
+            },
+            else: '$$REMOVE',
+          },
         },
       },
     },

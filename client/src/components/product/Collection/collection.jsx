@@ -3,14 +3,18 @@ import { AnimatePresence, motion } from 'framer-motion';
 import variants from '../../common/framerMotionVariants';
 function Collection({ products, loading }) {
     return (
-        <motion.section id="collection-section">
+        <motion.section 
+      
+        className='md+lg:mx-5 sm:mx-3 sm+md:gap-x-3 sm+md:gap-y-5 lg:gap-y-4 lg:gap-x-3 flex-[2_2_80%]'
+        >
             {!loading ? (
-                <>
+                <section className='flex flex-row !gap-5 !flex-wrap '>
                     {products.map((product) => {
                         return (
                             <Item
+                            product={product}
                                 key={product._id}
-                                image={product.images[0]}
+                                image={product.images}
                                 price={
                                     product?.price?.current ||
                                     product?.minVariationPrice
@@ -20,7 +24,7 @@ function Collection({ products, loading }) {
                             />
                         );
                     })}
-                </>
+                </section>
             ) : (
                 <>
                     {new Array(6).fill(1).map((item, idx) => {

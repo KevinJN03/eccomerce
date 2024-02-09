@@ -12,6 +12,7 @@ export default {
                 lg: '0 8px 16px var(--tw-shadow-color)',
             },
             colors: {
+                'primary-gray': '#525050',
                 primary: '#2d2d2d',
                 'admin-primary': '#003e29',
                 'primary-green': '#018849',

@@ -662,19 +662,8 @@ export const getAllProducts = [
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
 
-
-    const draftPipeline = [
-      {
-        $set: {
-          status: 'draft',
-        },
-      },
-      ...productAggregateStage(),
-
-      { $sort: { _id: 1, ...checks.sort } },
-    ];
     const productPipeline = [
-      ...productAggregateStage(),
+      ...productAggregateStage({stats: true}),
 
       {
         $set: {
@@ -703,7 +692,7 @@ export const getAllProducts = [
         },
       },
       {
-        $sort: { _id: 1 },  
+        $sort: { _id: 1 },
       },
     ];
 
@@ -737,8 +726,6 @@ export const getAllProducts = [
 
     if (matchArray.length > 0) {
       productPipeline.unshift({ $match: { $and: matchArray } });
-
-      // draftPipeline.unshift({ $match: { $and: matchArray } });
     }
     if (checks?.searchText) {
       const should = [
@@ -771,12 +758,7 @@ export const getAllProducts = [
         },
       };
       productPipeline.unshift(searchStage);
-      draftPipeline.unshift(searchStage);
     }
-    const drafts = await DraftProducts.aggregate(draftPipeline).collation({
-      locale: 'en',
-      caseLevel: true,
-    });
 
     const products = await Product.aggregate(productPipeline)
       .collation({ locale: 'en', caseLevel: true })
@@ -786,7 +768,6 @@ export const getAllProducts = [
       (obj, item) => ((obj[item._id] = item.products), obj),
       {},
     );
-
 
     res.status(200).send({
       success: true,
