@@ -21,7 +21,7 @@ function Layout() {
     useEffect(() => {
         // window.scroll(0, 0);
         const splitLocation = location.pathname.split('/');
-        console.log(splitLocation);
+    
         const set = new Set([
             'portal',
             'my-account',

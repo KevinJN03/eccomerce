@@ -133,12 +133,12 @@ function Header() {
                         />
                         {/* </a> */}
 
-                        <a
-                            href="/wishlist"
+                        <Link
+                            to="/wishlist"
                             className="header-icons !cursor-pointer"
                         >
-                            <FavoriteBorderSharpIcon className="img-icon !cursor-not-allowed" />
-                        </a>
+                            <FavoriteBorderSharpIcon className="img-icon" />
+                        </Link>
 
                         <Link to="/cart" className="header-icons relative ">
                             <LocalMallOutlinedIcon

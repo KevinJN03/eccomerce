@@ -7,12 +7,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { random } from 'lodash';
+import { useWishlistContext } from '../../../context/wishlistContext';
 function Item({ image, text, url, loading, product }) {
     const [state] = useGenderCategory();
-
     const [isHover, setIsHover] = useState(false);
-
-    const [favorite, setFavorite] = useState(false);
+ const { wishListDispatch, wishlist } = useWishlistContext();
+    const [favorite, setFavorite] = useState(wishlist?.has(product));
 
     const [isHoverFavorite, setIsHoverFavorite] = useState(false);
     const [showAnimation, setShowAnimation] = useState(false);
@@ -24,6 +24,17 @@ function Item({ image, text, url, loading, product }) {
         setRandomNum(() => random(-3, 1));
     }, [showAnimation]);
     console.log(randomNum);
+
+   
+
+    const handleWishlist = () => {
+        if (favorite) {
+            return;
+        }
+        wishListDispatch({ type: 'add', productId: product._id });
+        setShowAnimation(() => true);
+        setFavorite(() => true);
+    };
     return (
         <div
             onClick={(e) => {
@@ -45,10 +56,7 @@ function Item({ image, text, url, loading, product }) {
             <div className="relative">
                 <div
                     className="absolute bottom-2 right-3 flex flex-col gap-y-2"
-                    onClick={() => {
-                        setShowAnimation((prevState) => !prevState);
-                        setFavorite((prevState) => !prevState);
-                    }}
+                    onClick={handleWishlist}
                     onMouseEnter={() => setIsHoverFavorite(() => true)}
                     onMouseLeave={() => setIsHoverFavorite(() => false)}
                 >
@@ -80,9 +88,7 @@ function Item({ image, text, url, loading, product }) {
                         <AnimatePresence>
                             {showAnimation && (
                                 <div className="absolute left-1 top-1">
-                                 
-
-                                 <motion.span
+                                    <motion.span
                                         initial={{
                                             opacity: 1,
                                             left: '0rem',
@@ -101,7 +107,7 @@ function Item({ image, text, url, loading, product }) {
                                         }}
                                         className="absolute"
                                     >
-                                        <Favorite className='!fill-dark-gray'/>
+                                        <Favorite className="!fill-dark-gray" />
                                     </motion.span>
 
                                     <motion.span
@@ -156,10 +162,10 @@ function Item({ image, text, url, loading, product }) {
                 </h2>
 
                 <div className="flec-row flex gap-2">
-                    <span className=" text-primary-gray whitespace-nowrap border  px-2 py-1 font-gotham text-[0.65rem] font-semibold tracking-wide text-white   sm:font-medium">
+                    <span className=" whitespace-nowrap border px-2  py-1 font-gotham text-[0.65rem] font-semibold tracking-wide text-primary-gray   sm:font-medium">
                         MORE COLOURS
                     </span>
-                    <span className=" bg-primary-gray whitespace-nowrap px-2  py-1 font-gotham text-[0.65rem] font-semibold tracking-wide text-white   sm:font-medium">
+                    <span className=" whitespace-nowrap bg-primary-gray px-2  py-1 font-gotham text-[0.65rem] font-semibold tracking-wide text-white   sm:font-medium">
                         SELLING FAST
                     </span>
                 </div>

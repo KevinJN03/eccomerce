@@ -79,7 +79,7 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
         category: { $arrayElemAt: ['$category', 0] },
       },
     },
-    ...productAggregateStage(),
+    ...productAggregateStage({ stats: true }),
   ]);
   if (newProduct.length < 1) {
     return res.status(404).send('product not found');
@@ -90,6 +90,22 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
   return res.status(200).send(newProduct);
 });
 
+export const get_many_product = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
+  console.log({ ids });
+  const products = await Product.aggregate([
+    {
+      $match: { _id: { $in: ids } },
+    },
+    ...productAggregateStage({ stats: false }),
+
+    { $sort: { _id: 1 } },
+  ]);
+
+  res.status(200).send({ products, success: true });
+});
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 

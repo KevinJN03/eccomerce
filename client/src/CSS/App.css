@@ -4,7 +4,7 @@
 }
 
 #main {
-    @apply m-0 flex justify-center p-0 bg-light-grey;
+    @apply m-0 flex justify-center p-0 bg-light-grey min-h-screen;
     /* min-height: 80vh; */
 
 }

@@ -9,14 +9,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DarkModeContextProvider } from './context/darkModeContext';
 import 'dayjs/locale/en-gb';
+import { WishlistContextProvider } from './context/wishlistContext.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
     /* <React.StrictMode>  */
     <AuthContextProvider>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
-            <DarkModeContextProvider>
-                <App />
-            </DarkModeContextProvider>
-        </LocalizationProvider>
+        <WishlistContextProvider>
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="en-gb"
+            >
+                <DarkModeContextProvider>
+                    <App />
+                </DarkModeContextProvider>
+            </LocalizationProvider>
+        </WishlistContextProvider>
     </AuthContextProvider>
 
     /* </React.StrictMode>   */
