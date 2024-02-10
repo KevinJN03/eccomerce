@@ -108,6 +108,8 @@ export const query_category_products_by_gender = AsyncHandler(
             },
 
             ...productAggregateStage({ stats: false }),
+
+            
           ],
         },
       },

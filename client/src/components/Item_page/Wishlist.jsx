@@ -5,6 +5,7 @@ import axios from '../../api/axios';
 import { DeleteOutlineRounded } from '@mui/icons-material';
 
 import delete_icon from '../../assets/icons/delete-icon.png';
+import { Link } from 'react-router-dom';
 function WishList({ handleClick }) {
     const { wishlist, wishListDispatch } = useWishlistContext();
 
@@ -77,25 +78,27 @@ function WishList({ handleClick }) {
                                                 handleDelete(product._id)
                                             }
                                         >
-                                            {/* <DeleteOutlineRounded /> */}
+                                    
 
                                             <img
                                                 src={delete_icon}
                                                 className="h-6 w-6"
                                             />
                                         </div>
-                                        <div className="img-wrap h-[80%]">
+                                        <Link 
+                                        to={`/product/${product?._id}?wishlistID=this`}
+                                        className="img-wrap h-[80%]">
                                             <img
                                                 className={
-                                                    'h-full w-full object-cover'
+                                                    'h-[22rem] w-full object-cover'
                                                 }
                                                 src={product.images[0]}
                                                 alt=""
                                             />
-                                        </div>
+                                        </Link>
 
                                         <div className="flex h-fit flex-col gap-3">
-                                            <p className="h-[50%]   text-sm ">
+                                            <p className="h-12 overflow-hidden text-ellipsis   text-sm ">
                                                 {product.title}
                                             </p>
 
@@ -111,14 +114,25 @@ function WishList({ handleClick }) {
                                                     FOREST
                                                 </p>
 
-                                                <p className="border-t-2 py-3">
+                                                {/* <p className="border-t-2 py-3">
                                                     FOREST
-                                                </p>
+                                                </p> */}
+
+                                                <select name="variation1" id="variation1-select" className='py-3 border-t-2 w-full text-sm'>
+                                                <option selected disabled>Select size</option>
+
+                                              {  [1,2,3].map((item)=> {
+                                                return(
+                                                    <option>item</option>
+                                                )
+                                              })}
+                                                </select>
                                             </div>
 
                                             <button
+                                            disabled
                                                 type="button"
-                                                className="w-full border-2 border-primary-green py-1 font-semibold tracking-wider transition-all hover:border-black"
+                                                className="w-full border-2 disabled:bg-black disabled:border-black disabled:opacity-50 disabled:text-white border-primary-green py-1 font-semibold tracking-wider transition-all hover:border-black"
                                             >
                                                 MOVE TO BAG
                                             </button>

@@ -14,13 +14,7 @@ function Collection({ products, loading }) {
                             <Item
                             product={product}
                                 key={product._id}
-                                image={product.images}
-                                price={
-                                    product?.price?.current ||
-                                    product?.minVariationPrice
-                                }
-                                title={product.title}
-                                url={product._id}
+                                
                             />
                         );
                     })}

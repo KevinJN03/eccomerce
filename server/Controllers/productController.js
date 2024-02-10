@@ -100,6 +100,75 @@ export const get_many_product = asyncHandler(async (req, res, next) => {
       $match: { _id: { $in: ids } },
     },
     ...productAggregateStage({ stats: false }),
+    {
+      $addFields: {
+        combineVariation: {
+          $cond: {
+            if: { $gte: [{ $size: '$variations' }, 2] },
+            // then: {
+            //   $map: {
+            //     input: { $arrayElemAt: ['$variations', 2] },
+            //     as: 'variation',
+            //     in: '$$variation.option'
+            //   },
+            // },
+
+            then: { $arrayElemAt: ['$variations', 2] },
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $unwind: {
+        path: '$variations',
+        includeArrayIndex: 'variationIndex',
+      },
+    },
+    {
+      $addFields: {
+        optionArray: { $objectToArray: '$variations.options' },
+      },
+    },
+
+    {
+      $addFields: {
+        variationOptionArray: {
+          $map: {
+            input: '$optionArray',
+            as: 'variationOption',
+            in: '$$variationOption.v',
+          },
+        },
+      },
+    },
+
+    {
+      $group: {
+        _id: '$_id',
+        variations: {
+          $push: '$variations',
+        },
+        doc: { $first: '$$ROOT' },
+        variationList: {
+          $push: {
+            name: '$variations.name',
+            variationIndex: '$variationIndex',
+            array: '$variationOptionArray',
+          },
+        },
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: ['$doc', { variationList: '$variationList' }],
+        },
+      },
+    },
+    {
+      $unset: ['variationOptionArray', 'variationIndex', 'optionArray'],
+    },
 
     { $sort: { _id: 1 } },
   ]);

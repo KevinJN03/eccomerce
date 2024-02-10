@@ -8,33 +8,20 @@ import { useEffect, useState } from 'react';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { random } from 'lodash';
 import { useWishlistContext } from '../../../context/wishlistContext';
-function Item({ image, text, url, loading, product }) {
+import WishListBtn from '../../buttons/wishlistBtn';
+import useWishListHook from '../../../hooks/wishlistHook';
+function Item({ image, text, loading, product }) {
     const [state] = useGenderCategory();
     const [isHover, setIsHover] = useState(false);
- const { wishListDispatch, wishlist } = useWishlistContext();
-    const [favorite, setFavorite] = useState(wishlist?.has(product));
-
-    const [isHoverFavorite, setIsHoverFavorite] = useState(false);
-    const [showAnimation, setShowAnimation] = useState(false);
-
+    const { isHoverFavorite, setIsHoverFavorite, favorite, setFavorite, handleWishlist, showAnimation } =
+        useWishListHook({ product });
     const [randomNum, setRandomNum] = useState(() => random(-3, 1));
     const navigate = useNavigate();
 
     useEffect(() => {
         setRandomNum(() => random(-3, 1));
     }, [showAnimation]);
-    console.log(randomNum);
 
-   
-
-    const handleWishlist = () => {
-        if (favorite) {
-            return;
-        }
-        wishListDispatch({ type: 'add', productId: product._id });
-        setShowAnimation(() => true);
-        setFavorite(() => true);
-    };
     return (
         <div
             onClick={(e) => {
@@ -42,11 +29,10 @@ function Item({ image, text, url, loading, product }) {
                     return;
                 }
 
-                navigate(`/${state.gender}/product/${url}`);
+                navigate(`/${state.gender}/product/${product?._id}`);
             }}
             onMouseEnter={() => setIsHover(() => true)}
             onMouseLeave={() => setIsHover(() => false)}
-            href={`/${state.gender}/product/${url}`}
             className="!box-border  flex min-h-96 w-52 cursor-pointer flex-col gap-3"
             variants={variants}
             animate={'animate'}
@@ -65,78 +51,16 @@ function Item({ image, text, url, loading, product }) {
                         className="wishlist-overlay absolute left-0  top-0 z-[1] h-full  w-full rounded-full bg-transparent"
                     ></div>
                     <div className=" relative flex items-center justify-center self-end rounded-full bg-white p-1">
-                        {isHoverFavorite || favorite ? (
-                            <motion.span
-                                animate={{
-                                    scale: favorite ? [1, 1.4, 0.8, 1] : 1,
-                                    transition: {
-                                        duration: 0.6,
-                                        //  times: [0, 0.2, 0.5, 0.8, 1],
-
-                                        ease: 'easeInOut',
-                                    },
-                                }}
-                            >
-                                <Favorite />
-                            </motion.span>
-                        ) : (
-                            <motion.span>
-                                <FavoriteBorder />
-                            </motion.span>
-                        )}
-
-                        <AnimatePresence>
-                            {showAnimation && (
-                                <div className="absolute left-1 top-1">
-                                    <motion.span
-                                        initial={{
-                                            opacity: 1,
-                                            left: '0rem',
-                                            translateX: '0%',
-                                        }}
-                                        animate={{
-                                            scale: 0,
-                                            opacity: 0,
-
-                                            translateX: `1.5rem`,
-                                            translateY: `2rem`,
-                                            transition: {
-                                                duration: 1.5,
-                                                ease: 'easeInOut',
-                                            },
-                                        }}
-                                        className="absolute"
-                                    >
-                                        <Favorite className="!fill-dark-gray" />
-                                    </motion.span>
-
-                                    <motion.span
-                                        initial={{
-                                            opacity: 1,
-                                            left: '0rem',
-                                            translateX: '0%',
-                                        }}
-                                        animate={{
-                                            scale: 0,
-                                            opacity: 0,
-
-                                            translateX: `0.5rem`,
-                                            translateY: `1.5rem`,
-                                            transition: {
-                                                duration: 1.5,
-                                                ease: 'easeInOut',
-                                            },
-                                        }}
-                                        className="absolute"
-                                    >
-                                        <Favorite />
-                                    </motion.span>
-                                </div>
-                            )}
-                        </AnimatePresence>
+                        <WishListBtn
+                            {...{
+                            
+                                favorite,
+                                showAnimation,
+                                isHoverFavorite,
+                            }}
+                        />
                     </div>
                 </div>
-
                 <img
                     className="h-72 w-full object-cover"
                     loading="lazy"
@@ -147,8 +71,6 @@ function Item({ image, text, url, loading, product }) {
                     }
                 />
             </div>
-            {/* <Info title={title} price={price} text={text} /> */}
-
             <div className="flex h-full  w-full flex-col gap-3 ">
                 <p
                     title={product.title}
@@ -158,7 +80,10 @@ function Item({ image, text, url, loading, product }) {
                 </p>
 
                 <h2 className=" text-sm font-bold text-[var(--primary-2)]">
-                    £{parseFloat(product.additional_data.price?.min).toFixed(2)}
+                    £
+                    {parseFloat(
+                        product.additional_data?.price?.min || 0
+                    ).toFixed(2)}
                 </h2>
 
                 <div className="flec-row flex gap-2">

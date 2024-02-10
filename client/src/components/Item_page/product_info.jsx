@@ -1,3 +1,4 @@
+import { FavoriteBorder } from '@mui/icons-material';
 import Info from '../common/info';
 import Select from './Select';
 import Size from './Size';
@@ -10,9 +11,21 @@ import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
 import { useEffect, useRef, useState } from 'react';
+import WishListBtn from '../buttons/wishlistBtn';
+import { useWishlistContext } from '../../context/wishlistContext';
+import useWishListHook from '../../hooks/wishlistHook';
 
 function Product_info({ title, text, details, images, product, loading }) {
     const [priceState, setPriceState] = useState(null);
+
+    const {
+        isHoverFavorite,
+        setIsHoverFavorite,
+        favorite,
+        setFavorite,
+        handleWishlist,
+        showAnimation,
+    } = useWishListHook({ product });
 
     const [error, setError] = useState(false);
     const [isOutOfStock, setOutOfStock] = useState(false);
@@ -54,13 +67,6 @@ function Product_info({ title, text, details, images, product, loading }) {
         }
     }, [variationSelect.variation1, variationSelect.variation2]);
 
-    // console.log({
-    //     variation2: product?.variation1,
-    //     variation1: product?.variation2,
-    //     combine: product?.combineVariation,
-    //     isVariationCombine: product?.isVariationCombine,
-    // });
-
     useEffect(() => {
         console.log({ isVariation1Present: product?.isVariation1Present });
 
@@ -78,6 +84,7 @@ function Product_info({ title, text, details, images, product, loading }) {
 
         console.log('variation changed');
     }, [product]);
+
     return (
         <section id="product-info">
             {!loading ? (
@@ -138,7 +145,7 @@ function Product_info({ title, text, details, images, product, loading }) {
                 {loading ? (
                     <div className="skeleton-pulse mb-4 h-full w-full"></div>
                 ) : (
-                    <>
+                    <div className="relative flex w-full flex-row items-center gap-3">
                         <AddToCart
                             variationSelect={variationSelect}
                             product={product}
@@ -146,8 +153,24 @@ function Product_info({ title, text, details, images, product, loading }) {
                             setError={setError}
                             isOutOfStock={isOutOfStock}
                         />
-                        <WishList />
-                    </>
+                        {/* <WishList /> */}
+
+                        <div
+                            className="relative rounded-full bg-light-grey/60 p-2"
+                            onClick={handleWishlist}
+                            onMouseEnter={() => setIsHoverFavorite(() => true)}
+                            onMouseLeave={() => setIsHoverFavorite(() => false)}
+                        >
+                            <div className="absolute left-0 top-0 z-[1] h-full w-full rounded-inherit bg-transparent"></div>
+                            <WishListBtn
+                                {...{
+                                    favorite,
+                                    showAnimation,
+                                    isHoverFavorite,
+                                }}
+                            />
+                        </div>
+                    </div>
                 )}
             </div>
 

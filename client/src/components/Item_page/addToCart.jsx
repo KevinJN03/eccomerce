@@ -61,9 +61,9 @@ function AddToCart({
         console.log({ variationSelect });
     };
     return (
-        <>
+        <div className='flex-1 w-full'>
             {!isOutOfStock ? (
-                <button id="add-to-cart" onClick={handleClick}>
+                <button className='w-full bg-primary-green hover:bg-green-700 text-white py-2 font-semibold' onClick={handleClick}>
                     Add to bag
                 </button>
             ) : (
@@ -74,7 +74,7 @@ function AddToCart({
                     </p>
                 </button>
             )}
-        </>
+        </div>
     );
 }
 
