@@ -16,7 +16,7 @@ import axios from '../../api/axios';
 
 function ItemPage() {
     const [product, setProduct] = useState({ images: [], gender: null });
-    const [alsoLike, setAlsoLike] = useState();
+
     const [state, dispatch] = useGenderCategory();
 
     const { id } = useParams();
@@ -25,12 +25,11 @@ function ItemPage() {
     useEffect(() => {
         const timeout = setTimeout(() => {
             axios
-                .get(`/product/${id}`)
-                .then((res) => {
-                    setProduct(res.data);
-                    setLoading(false);
-                    const gender = state.gender;
-                    setAlsoLike(res.data.also_like[gender]);
+                .get(`/product/many/${id}`)
+                .then(({ data }) => {
+                    setProduct(() => data?.products[0]);
+
+                    setLoading(() => false);
                 })
                 .catch((error) => {
                     'Error fetching data, not found', error;
@@ -90,10 +89,8 @@ function ItemPage() {
                             loading={loading}
                             text={example?.text}
                             title={product?.title}
-                          
                             details={product?.detail}
                             images={example?.similar_styles_images}
-                        
                             style_it_with_image={example?.style_it_with_image}
                             product={product}
                         />
@@ -104,7 +101,10 @@ function ItemPage() {
                         <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
                     )}
                     <div className=" item-page-divider border-5 w-full sm+md:mb-10 lg:!hidden"></div>
-                    <Recommended products={alsoLike} loading={loading} />
+                    <Recommended
+                        products={product?.alsoLike || []}
+                        loading={loading}
+                    />
                 </section>
             </section>
             {/* )} */}

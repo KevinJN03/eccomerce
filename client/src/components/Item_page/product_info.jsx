@@ -1,8 +1,6 @@
 import { FavoriteBorder } from '@mui/icons-material';
 import Info from '../common/info';
 import Select from './Select';
-import Size from './Size';
-import WishList from './Wishlist';
 import AddToCart from './addToCart';
 import Product_Detail from './product_detail';
 import Return from './return';
@@ -14,10 +12,17 @@ import { useEffect, useRef, useState } from 'react';
 import WishListBtn from '../buttons/wishlistBtn';
 import { useWishlistContext } from '../../context/wishlistContext';
 import useWishListHook from '../../hooks/wishlistHook';
+import useAddItemToBagHook from '../../hooks/addItemToBagHook';
 
 function Product_info({ title, text, details, images, product, loading }) {
-    const [priceState, setPriceState] = useState(null);
-
+    const {
+        priceState,
+        setPriceState,
+        variationSelect,
+        setVariationSelection,
+        isOutOfStock, setOutOfStock,
+        combineVariation, setCombineVariation
+    } = useAddItemToBagHook({ product });
     const {
         isHoverFavorite,
         setIsHoverFavorite,
@@ -28,62 +33,7 @@ function Product_info({ title, text, details, images, product, loading }) {
     } = useWishListHook({ product });
 
     const [error, setError] = useState(false);
-    const [isOutOfStock, setOutOfStock] = useState(false);
-    const [variationSelect, setVariationSelection] = useState({
-        variation1: { id: null, variation: null },
-        variation2: { id: null, variation: null },
-    });
-
-    const [combineVariation, setCombineVariation] = useState(null);
-
-    useEffect(() => {
-        setPriceState(product?.price?.current);
-
-        if (product?.isVariationCombine) {
-            setCombineVariation(() => product?.combineVariation);
-        }
-
-        if (product?.isVariation1Present) {
-            if (product?.variation1?.array?.length == 1) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    variation1: {
-                        ...prevState.variation1,
-                        ...product?.variation1?.array[0],
-                    },
-                }));
-            }
-        }
-    }, [product]);
-
-    useEffect(() => {
-        if (product?.isVariationCombine) {
-            var getPrice =
-                combineVariation?.[variationSelect?.variation1?.variation]?.[
-                    variationSelect?.variation2?.variation
-                ]?.price;
-
-            setPriceState(() => getPrice || product?.price?.current);
-        }
-    }, [variationSelect.variation1, variationSelect.variation2]);
-
-    useEffect(() => {
-        console.log({ isVariation1Present: product?.isVariation1Present });
-
-        [1, 2].map((variationNumber) => {
-            if (product?.[`isVariation${variationNumber}Present`]) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    [`variation${variationNumber}`]: {
-                        ...prevState?.[`variation${variationNumber}`],
-                        title: product?.[`variation${variationNumber}`]?.title,
-                    },
-                }));
-            }
-        });
-
-        console.log('variation changed');
-    }, [product]);
+ 
 
     return (
         <section id="product-info">

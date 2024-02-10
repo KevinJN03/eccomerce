@@ -69,7 +69,7 @@ import Pdf from './components/admin/order/pdf/pdf.jsx';
 import CancelOrder from './components/admin/order/cancelOrder.jsx';
 
 import EditProduct from './components/admin/components/product/product single page/editProduct.jsx';
-import WishList from './components/Item_page/Wishlist.jsx';
+import WishList from './components/wishlist/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
