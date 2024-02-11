@@ -1,6 +1,6 @@
 import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
 import { useWishlistContext } from '../../context/wishlistContext';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
 import { DeleteOutlineRounded } from '@mui/icons-material';
 
@@ -63,9 +63,9 @@ function WishList({}) {
                 <section className="flex flex-row flex-wrap gap-3">
                     {products.map((product) => {
                         return (
-                            <>
+                            <Fragment key={product?._id}>
                                 <WishListItem product={product} />
-                            </>
+                            </Fragment>
                         );
                     })}
                 </section>

@@ -1,8 +1,10 @@
 import { useWishlistContext } from '../../context/wishlistContext';
 import delete_icon from '../../assets/icons/delete-icon.png';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import useAddItemToBagHook from '../../hooks/addItemToBagHook';
+import AddToCart from '../Item_page/addToCart';
+import { v4 as uuidv4 } from 'uuid';
 function WishListItem({ product }) {
     const { wishlist, wishListDispatch } = useWishlistContext();
 
@@ -28,6 +30,38 @@ function WishListItem({ product }) {
         }
         return null;
     });
+
+    const [stockState, setStockState] = useState();
+    const [stockState2, setStockState2] = useState();
+    const {
+        priceState,
+        setPriceState,
+        variationSelect,
+        setVariationSelection,
+        isOutOfStock,
+        setOutOfStock,
+        combineVariation,
+        setCombineVariation,
+        error,
+        setError,
+        handleAddToCart,
+        handleOnChange,
+    } = useAddItemToBagHook({ product });
+
+    useEffect(() => {
+        if (stockState <= 0) {
+            setOutOfStock(() => true);
+        } else {
+            setOutOfStock(() => false);
+        }
+
+        if (stockState2 <= 0) {
+            setOutOfStock(() => true);
+        } else {
+            setOutOfStock(() => false);
+        }
+    }, [stockState, stockState2]);
+
     return (
         <>
             {wishlist?.has(product?._id) && (
@@ -57,56 +91,122 @@ function WishListItem({ product }) {
                             {product.title}
                         </p>
 
-                        <p className="text-sm font-semibold">
-                            £{parseFloat(product.additional_data.price?.min)}
-                        </p>
+                        <p className="text-sm font-semibold">£{priceState}</p>
                         <div className="variation-selection border-b-2 ">
                             {[
-                                { index: 1, variation: variation1 },
-                                { index: 2, variation: variation2 },
-                            ].map(({ index, variation }) => {
-                                return (
-                                    <>
-                                        {product?.[`variation${index}`]?.array
-                                            .length == 1 ? (
-                                            <p className="border-t-2 py-3">
-                                                {variation}
-                                            </p>
-                                        ) : (
-                                            product?.[`variation${index}`]
-                                                ?.array.length > 1 && (
-                                                <select
-                                                    name={`variation${index}`}
-                                                    id={`variation${index}-select`}
-                                                    className="w-full border-t-2 py-3 text-sm"
-                                                >
-                                                    <option disabled selected>
-                                                        Select{' '}
+                                {
+                                    index: 1,
+                                    currentVariation:
+                                        variationSelect?.variation1,
+                                    stockState,
+                                    setStockState,
+                                },
+                                {
+                                    index: 2,
+                                    currentVariation:
+                                        variationSelect?.variation2,
+                                    stockState: stockState2,
+                                    setStockState: setStockState2,
+                                },
+                            ].map(
+                                ({
+                                    index,
+                                    currentVariation,
+                                    stockState,
+                                    setStockState,
+                                }) => {
+                                    return (
+                                        <div key={uuidv4()}>
+                                            {product?.[`variation${index}`]
+                                                ?.array.length == 1 ? (
+                                                <p className="border-t-2 py-3">
+                                                    {
+                                                        currentVariation?.variation
+                                                    }
+                                                </p>
+                                            ) : (
+                                                product?.[`variation${index}`]
+                                                    ?.array.length > 1 && (
+                                                    <select
+                                                        onChange={(e) =>
+                                                            handleOnChange({
+                                                                e,
+                                                                stockState,
+                                                                setStockState,
+                                                                property: `variation${index}`,
+                                                            })
+                                                        }
+                                                        name={`variation${index}`}
+                                                        id={`variation${index}-select`}
+                                                        className="w-full border-t-2 py-3 text-sm"
+                                                    >
+                                                        <option
+                                                            disabled
+                                                            selected
+                                                        >
+                                                            Select{' '}
+                                                            {product?.[
+                                                                `variation${index}`
+                                                            ]?.title ||
+                                                                'option'}
+                                                        </option>
                                                         {product?.[
                                                             `variation${index}`
-                                                        ]?.title || 'option'}
-                                                    </option>
-                                                    {product?.[
-                                                        `variation${index}`
-                                                    ]?.array?.map(
-                                                        ({ variation }) => {
-                                                            return (
-                                                                <option
-                                                                    value={
-                                                                        variation
-                                                                    }
-                                                                >
-                                                                    {variation}
-                                                                </option>
-                                                            );
-                                                        }
-                                                    )}
-                                                </select>
-                                            )
-                                        )}
-                                    </>
-                                );
-                            })}
+                                                        ]?.array?.map(
+                                                            (item, idx) => {
+                                                                return (
+                                                                    // <option
+                                                                    //     value={
+                                                                    //         variation
+                                                                    //     }
+                                                                    // >
+                                                                    //     {variation}
+                                                                    // </option>
+
+                                                                    <option
+                                                                        selected={
+                                                                            item?.id ==
+                                                                            currentVariation?.id
+                                                                        }
+                                                                        // value={property ? { ...item } : item}
+                                                                        key={
+                                                                            item.id
+                                                                        }
+                                                                        data-id={
+                                                                            item.id
+                                                                        }
+                                                                        data-variation={
+                                                                            item.variation
+                                                                        }
+                                                                        data-price={
+                                                                            item?.price
+                                                                        }
+                                                                        data-stock={
+                                                                            item?.stock
+                                                                        }
+                                                                    >
+                                                                        {`${
+                                                                            item[
+                                                                                'variation'
+                                                                            ] ||
+                                                                            item
+                                                                        }${
+                                                                            item?.stock ==
+                                                                            0
+                                                                                ? ' - Out of Stock'
+                                                                                : ''
+                                                                        }`}
+                                                                    </option>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </select>
+                                                )
+                                            )}
+                                        </div>
+                                    );
+                                }
+                            )}
 
                             {/* <p className="border-t-2 py-3">
                         FOREST
@@ -126,15 +226,19 @@ function WishListItem({ product }) {
                                 })}
                             </select> */}
                         </div>
-
+                        {/* 
                         <button
                             disabled
                             type="button"
                             className=" w-full border-2 border-primary-green py-1 font-semibold tracking-wider transition-all hover:border-black disabled:border-black disabled:bg-black disabled:text-white disabled:opacity-50"
                         >
                             MOVE TO BAG
-                        </button>
-                        <p>{variation1 || 'nothing'}</p>
+                        </button> */}
+
+                        <AddToCart
+                            handleAddToCart={handleAddToCart}
+                            isOutOfStock={isOutOfStock}
+                        />
                     </div>
                 </div>
             )}

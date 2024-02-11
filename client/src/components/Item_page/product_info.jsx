@@ -20,8 +20,14 @@ function Product_info({ title, text, details, images, product, loading }) {
         setPriceState,
         variationSelect,
         setVariationSelection,
-        isOutOfStock, setOutOfStock,
-        combineVariation, setCombineVariation
+        isOutOfStock,
+        setOutOfStock,
+        combineVariation,
+        setCombineVariation,
+        error,
+        setError,
+        handleAddToCart,
+        handleOnChange,
     } = useAddItemToBagHook({ product });
     const {
         isHoverFavorite,
@@ -31,9 +37,6 @@ function Product_info({ title, text, details, images, product, loading }) {
         handleWishlist,
         showAnimation,
     } = useWishListHook({ product });
-
-    const [error, setError] = useState(false);
- 
 
     return (
         <section id="product-info">
@@ -56,6 +59,7 @@ function Product_info({ title, text, details, images, product, loading }) {
                         setPrice={setPriceState}
                         ref={null}
                         isSecond={false}
+                        handleOnChange={handleOnChange}
                     />
                 </>
             ) : (
@@ -77,6 +81,7 @@ function Product_info({ title, text, details, images, product, loading }) {
                     setPrice={setPriceState}
                     ref={null}
                     isSecond={false}
+                    handleOnChange={handleOnChange}
                 />
             ) : (
                 product?.isVariation2Present &&
@@ -97,11 +102,10 @@ function Product_info({ title, text, details, images, product, loading }) {
                 ) : (
                     <div className="relative flex w-full flex-row items-center gap-3">
                         <AddToCart
-                            variationSelect={variationSelect}
-                            product={product}
-                            price={priceState}
-                            setError={setError}
-                            isOutOfStock={isOutOfStock}
+                            {...{
+                                handleAddToCart,
+                                isOutOfStock,
+                            }}
                         />
                         {/* <WishList /> */}
 

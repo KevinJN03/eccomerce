@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-
+import { useCart } from '../context/cartContext';
+import { v4 as uuidv4 } from 'uuid';
 function useAddItemToBagHook({ product }) {
+    const { dispatch } = useCart();
+
     const [priceState, setPriceState] = useState(null);
     const [variationSelect, setVariationSelection] = useState({
         variation1: { id: null, variation: null },
@@ -8,6 +11,7 @@ function useAddItemToBagHook({ product }) {
     });
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         setPriceState(product?.price?.current);
@@ -37,8 +41,6 @@ function useAddItemToBagHook({ product }) {
             ...variationSelectObj,
         }));
 
-        console.log({ isVariation1Present: product?.isVariation1Present });
-
         [1, 2].map((variationNumber) => {
             if (product?.[`isVariation${variationNumber}Present`]) {
                 setVariationSelection((prevState) => ({
@@ -53,8 +55,6 @@ function useAddItemToBagHook({ product }) {
 
         console.log('variation changed');
 
-
-
         // check dependency
     }, [product]);
 
@@ -65,12 +65,86 @@ function useAddItemToBagHook({ product }) {
                     variationSelect?.variation2?.variation
                 ]?.price;
 
-            setPriceState(
-                () => getPrice || product?.additional_data?.price?.min
+            setPriceState(() =>
+                parseFloat(
+                    getPrice || product?.additional_data?.price?.min
+                ).toFixed(2)
             );
         }
     }, [variationSelect.variation1, variationSelect.variation2]);
 
+    const handleAddToCart = () => {
+        if (
+            (product.isVariation1Present &&
+                !variationSelect.variation1.variation) ||
+            (product.isVariation2Present &&
+                !variationSelect.variation2.variation)
+        ) {
+            setError(() => true);
+            return;
+        }
+
+        const {
+            id,
+            title,
+            images,
+            delivery,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
+        } = product;
+
+        const newImagesArray = images[0];
+        const newProduct = {
+            id,
+            title,
+            price: product.price,
+            images: [newImagesArray],
+            delivery,
+            variation1,
+            variation2,
+            isVariation1Present,
+            isVariation2Present,
+            combineVariation,
+            isVariationCombine,
+        };
+
+        newProduct.cartId = uuidv4();
+        newProduct.quantity = 1;
+        newProduct.price.current = priceState;
+        newProduct.variationSelect = variationSelect;
+        dispatch({ type: 'add', product: newProduct });
+
+        setError(() => false);
+
+        console.log({ variationSelect });
+    };
+
+    const handleOnChange = ({ e, stockState, setStockState, property }) => {
+        console.log('clicked');
+        const id = e.target.options[e.target.selectedIndex].dataset?.id;
+        const variation =
+            e.target.options[e.target.selectedIndex].dataset?.variation;
+        const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
+        const price = e.target.options[e.target.selectedIndex].dataset?.price;
+
+        setVariationSelection((prevState) => ({
+            ...prevState,
+            [property]: { ...prevState[property], variation, id },
+        }));
+        variationSelect;
+
+        if (stock == 0 || stock) {
+            setStockState(() => stock);
+        }
+
+        if (price) {
+            setPriceState(() => price);
+        }
+    };
     return {
         priceState,
         setPriceState,
@@ -80,6 +154,10 @@ function useAddItemToBagHook({ product }) {
         setCombineVariation,
         isOutOfStock,
         setOutOfStock,
+        handleAddToCart,
+        error,
+        setError,
+        handleOnChange,
     };
 }
 

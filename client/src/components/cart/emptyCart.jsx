@@ -13,7 +13,7 @@ function Empty_Cart({}) {
                 to your Saved Items.
             </p>
             <Link
-                to="wishlist"
+                to="/wishlist"
                 className="w-full max-w-[300px] bg-[var(--green)] py-3 text-center text-s font-bold tracking-wider text-white"
             >
                 VIEW SAVED ITEMS
