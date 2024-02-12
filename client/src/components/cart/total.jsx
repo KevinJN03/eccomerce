@@ -40,9 +40,9 @@ const Total = forwardRef(function ({}, ref) {
                 <p className="flex justify-center text-sm text-red-800">
                     Yay! You've saved £38.50
                 </p>
-                <Link to="/checkout" className="checkout-btn" ref={ref}>
+                <a href="/checkout" className="checkout-btn" ref={ref}>
                     CHECKOUT
-                </Link>
+                </a>
                 <section id="payment-methods" className="w-full ">
                     <p className="font-semibold tracking-wider">WE ACCEPT:</p>
 
