@@ -84,43 +84,20 @@ function useAddItemToBagHook({ product }) {
             return;
         }
 
-        const {
-            id,
-            title,
-            images,
-            delivery,
-            variation1,
-            variation2,
-            isVariation1Present,
-            isVariation2Present,
-            combineVariation,
-            isVariationCombine,
-        } = product;
 
-        const newImagesArray = images[0];
-        const newProduct = {
-            id,
-            title,
-            price: product.price,
-            images: [newImagesArray],
-            delivery,
-            variation1,
-            variation2,
-            isVariation1Present,
-            isVariation2Present,
-            combineVariation,
-            isVariationCombine,
-        };
+        const {alsoLike, detail, reviews,  ...rest} = product
+        const newProduct = JSON.parse(JSON.stringify(rest));
 
+        newProduct.id = product._id;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
         newProduct.price.current = priceState;
         newProduct.variationSelect = variationSelect;
         dispatch({ type: 'add', product: newProduct });
+        console.log({ newProduct });
 
+        console.log({ product });
         setError(() => false);
-
-        console.log({ variationSelect });
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {

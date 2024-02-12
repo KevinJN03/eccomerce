@@ -149,7 +149,7 @@ function Cart_Item({ product }) {
         exit: {
             opacity: 0,
             duration: 4,
-            transition: { duration: 4 },
+            transition: { duration: 0.5 },
         },
     };
     return (
@@ -221,12 +221,38 @@ function Cart_Item({ product }) {
                             onClick={onClick}
                         >
                             <p>Qty</p>
-                            <QTY_SIZE_OPTION
+                            {/* <QTY_SIZE_OPTION
                                 handleOnChange={handleQuantityChange}
                                 options={quantityArr}
                                 select={quantity}
                                 ref={qtyRef}
-                            />
+                            /> */}
+
+                            <span id="qty-select">
+                                {/* <label htmlFor="qty-select">{}</label> */}
+                                <select
+                                    onChange={handleQuantityChange}
+                                    name="quantity-select"
+                                    id="qty-size-select"
+                                    className="!max-w-[80px] text-s"
+                                    tabIndex={'0'}
+                                >
+                                    {quantityArr.map((item, index) => {
+                                        return (
+                                            <option
+                                                key={item}
+                                                value={item}
+                                                // selected = {}
+                                                selected={
+                                                    item == product.quantity
+                                                }
+                                            >
+                                                {item}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </span>
                         </div>
                     </div>
                     <button type="button" id="save-later-btn" className="">

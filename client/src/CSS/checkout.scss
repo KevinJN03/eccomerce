@@ -74,9 +74,7 @@
     @apply mt-4;
 }
 
-.promo-header-container span {
-    @apply flex h-20 items-center justify-center font-semibold tracking-wider;
-}
+
 
 .active-promo-voucher {
     border: 1px solid var(--primary-2);
@@ -87,22 +85,10 @@
     border-bottom: 1px solid var(--primary-2);
 }
 
-#promo-input-container {
-    @apply flex flex-col;
-}
-#promo-input-container span {
-    display: grid;
-    grid-template-columns: 2fr 1.2fr;
-    @apply mb-14 mt-2;
-    gap: 12px;
-}
-#promo-input-container span input {
-    @apply m-0 flex h-12 items-center px-3;
-}
 
-#promo-input-container span button {
-    background-color: var(--primary);
-}
+
+
+
 .need-to-know-container ul {
     list-style-type: disc;
     margin-left: 20px;

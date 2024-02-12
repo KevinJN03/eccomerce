@@ -25,8 +25,8 @@ function Checkout_Total() {
 
     return (
         <motion.section
-            className="sticky top-10 mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
-            // style={{ y: screenSize.width > 1024 ? scrollY : '' }}
+            className="lg:sticky top-10 mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
+     
         >
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">
@@ -87,30 +87,7 @@ function Checkout_Total() {
                 </div>
             </section>
 
-            {/* {error.msg && (
-                <div role="alert" className="alert alert-error rounded-none">
-                    <svg
-                        onClick={() =>
-                            setError((prevState) => ({
-                                ...prevState,
-                                msg: null,
-                            }))
-                        }
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 shrink-0 stroke-current transition-all hover:scale-110"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                    <span>{error.msg}</span>
-                </div>
-            )} */}
+    
         </motion.section>
     );
 }
