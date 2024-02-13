@@ -68,13 +68,6 @@
 }
 
 
-#total-container {
-    @apply white my-4 py-5 sm:px-3 md:mr-3 md:px-5  sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8;
-    // min-width: 300px;
-    // max-width: 400px;
-
-    height: fit-content;
-}
 
 #delivery-container {
     @apply flex flex-row items-baseline justify-between;

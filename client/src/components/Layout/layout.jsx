@@ -5,7 +5,7 @@ import { Fragment, useContext, useRef } from 'react';
 import { ProductsProvider } from '../../hooks/genderCategory.jsx';
 import { Outlet, useLocation } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
-import { CartProvider } from '../../context/cartContext';
+import { CartProvider, useCart } from '../../context/cartContext';
 import { useState, useEffect } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,10 +18,14 @@ function Layout() {
     const [loadState, setLoadState] = useState(true);
     const location = useLocation();
     const outletRef = useRef(false);
+
+    const { dispatch: cartDispatch } = useCart();
     useEffect(() => {
         // window.scroll(0, 0);
+
+        cartDispatch({ type: 'refresh' });
         const splitLocation = location.pathname.split('/');
-    
+
         const set = new Set([
             'portal',
             'my-account',
@@ -91,7 +95,7 @@ function Layout() {
         },
     };
     return (
-        <CartProvider>
+     
             <ProductsProvider>
                 <AnimatePresence mode="wait">
                     {!loadState && (
@@ -125,7 +129,7 @@ function Layout() {
                     )}
                 </AnimatePresence>
             </ProductsProvider>
-        </CartProvider>
+      
     );
 }
 

@@ -23,9 +23,9 @@ function Cart_Item({ product }) {
     const qtyRef = useRef(null);
     const sizeRef = useRef(null);
     const { dispatch, cart } = useCart();
-    const [removeItem, setRemoveItem] = useState(false);
+   
     const handleRemove = (id) => {
-        setRemoveItem(() => true);
+       
         dispatch({ type: 'remove', cartId: product.cartId });
     };
 

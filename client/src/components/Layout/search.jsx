@@ -68,7 +68,7 @@ function Search({ search }) {
                     id="search-input"
                     // onChange={search}
                     placeholder="Search for items"
-                    className="z-[3] placeholder:text-s"
+                    className="z-[3] placeholder:text-s sm:!hidden py-2 px-5  h-full w-full rounded-full border border-black"
                     onChange={(e) => handleOnChange(e)}
                     ref={inputRef}
                     onClick={openSearch}

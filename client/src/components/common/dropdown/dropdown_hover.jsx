@@ -4,11 +4,7 @@ function Dropdown_Hover({ button, dropdown_options }) {
     return (
         <div className="dropdown dropdown-hover">
             <div className="header-icons">
-                {/* <img
-                    className="btn profile-icon bg-transparent border-0 filter p-2 object-contain"
-                    tabIndex="0"
-                    src={button}
-                /> */}
+        
                 <PersonOutlinedIcon className="img-icon" />
             </div>
 

@@ -310,7 +310,7 @@ function Dashboard() {
                     />
 
                     <footer
-                        className=" mt-auto flex w-full justify-center bg-white p-5"
+                        className=" mt-auto z-10 flex w-full justify-center bg-white p-5"
                         ref={ref}
                     >
                         <section className="flex  w-full max-w-4xl flex-row items-center px-3">

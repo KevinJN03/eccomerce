@@ -1,12 +1,10 @@
 #App {
-    @apply m-0 p-0 min-w-[18.75rem] w-full max-w-[100vw];
-   
+    @apply m-0 w-full min-w-[18.75rem] max-w-[100vw] p-0;
 }
 
 #main {
-    @apply m-0 flex justify-center p-0 bg-light-grey min-h-screen;
+    @apply m-0 flex min-h-screen justify-center bg-light-grey p-0;
     /* min-height: 80vh; */
-
 }
 
 .header-section {
@@ -27,25 +25,6 @@
     background-color: var(--primary-2);
 
     left: 40px * /;
-}
-.header {
-    /* @apply flex flex-row w-full max-h-28 px-10 justify-center ; */
-
-    @apply px-4;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-
-    height: 50px;
-
-    position: relative;
-    align-items: center;
-    align-self: center;
-    justify-content: center;
-    width: 100%;
-
-    /* @apply lg:px-20; */
-    max-width: 1366px;
 }
 
 #header_category-container {
@@ -143,12 +122,9 @@
     object-fit: contain;
 }
 .header-right {
-    flex: 1 1 auto;
-    @apply flex items-center justify-around;
-    min-width: 0;
-    height: 100%;
-    max-width: 150px;
-    @apply w-full sm:gap-5 sm:pl-3 lg:gap-5;
+    /* flex: 1 1 auto; */
+
+    /* max-width: 150px; */
 }
 
 .header-icon {
@@ -164,8 +140,8 @@
 .img-icon {
     /* object-fit: cover; */
     /* font-size: 35px !important; */
-    width: 35px !important;
-    height: 35px !important;
+    width: 30px !important;
+    height: 30px !important;
     @apply filter;
 }
 
@@ -178,36 +154,15 @@
 /* search setion */
 
 .header-left {
-    flex: 1 1 1;
-    display: flex;
-    @apply md:!w-fit;
-    min-width: 0;
-    height: 100%;
+    
+
+    @apply md:!w-fit flex h-full flex-[0.3];
+
     /* max-width: 150px; */
 }
 
-.header-middle {
-    flex: 2 2 auto;
-    @apply flex h-full flex-row items-center sm:mx-0 md:mx-10 lg:mx-20 md+lg:max-w-[700px];
-    /* z-index: 1; */
-    /* display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: 100%;
-    align-items: center;
-    max-width: 700px; */
-    min-width: 0;
-}
 
-#search-input {
-    width: 100%;
-    border-radius: 30px;
-    border: 1px solid black;
-    height: 100%;
-    padding: 5px 20px;
-    /* @apply md:!hidden sm:!hidden */
-    @apply sm:!hidden;
-}
+
 #search-icon-section {
     max-height: 50%;
     max-width: 30px;
@@ -468,7 +423,6 @@
     @apply h-full;
 }
 
-
 .masked-overflow {
     /* scroll bar width, for use in mask calculations */
     --scrollbar-width: 0px;
@@ -477,7 +431,6 @@
     --mask-height: 10px;
 
     /* If content exceeds height of container, overflow! */
-    
 
     /* Our height limit */
     height: auto;
@@ -517,8 +470,16 @@
 
     /* Position the content gradient in the top left, and the 
   scroll gradient in the top right */
-    mask-position: 0 0, 100% 0;
+    mask-position:
+        0 0,
+        100% 0;
 
     /* We don't repeat our mask images */
     mask-repeat: no-repeat, no-repeat;
+}
+
+.subtotal-shadow {
+    /* -webkit-box-shadow: 0px -5px 18px 0px rgba(0, 0, 0, 0.14);
+    -moz-box-shadow: 0px -5px 18px 0px rgba(0, 0, 0, 0.14); */
+    box-shadow: 0 -10px 20px -5px rgba(0, 0, 0, 0.08);
 }
