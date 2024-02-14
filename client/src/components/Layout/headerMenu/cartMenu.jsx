@@ -2,18 +2,23 @@ import { Link } from 'react-router-dom';
 import DeleteIcon from '../../../assets/icons/deleteIcon';
 import calculateTotal from '../../common/calculateTotal';
 import { useCart } from '../../../context/cartContext';
-import { useState } from 'react';
-
-function CartMenu({ setIsHover }) {
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import CartMenuItem from './cartIMenutem';
+function CartMenu({ setIsHover, isHover }) {
     const { withOutShipping: subTotal } = calculateTotal();
-    const { dispatch, cart } = useCart();
+    const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
 
     const handleRemove = (cartId) => {
-        dispatch({ type: 'remove', cartId: cartId });
+        cartDispatch({ type: 'remove', cartId: cartId });
     };
 
+    useEffect(() => {
+        cartDispatch({ type: 'refresh' });
+    }, []);
+
     return (
-        <section className="cartMenu">
+        <motion.section className="cartMenu">
             <div className="flex flex-col py-3">
                 <header>
                     <h3 className="px-3 pb-3 font-gotham text-base">
@@ -26,85 +31,19 @@ function CartMenu({ setIsHover }) {
                         </span>
                     </h3>
                 </header>
-                <section className="cartItem flex h-full max-h-[15rem] w-full flex-col gap-3 overflow-y-auto bg-white p-3 px-3">
-                    {cart.map(
-                        (
-                            {
-                                title,
-                                cartId,
-                                images,
-                                price,
-                                quantity,
-                                variationSelect,
-                            },
-                            idx
-                        ) => {
+                <motion.section className="cartItem flex h-full max-h-[15rem] w-full flex-col gap-3 overflow-y-auto bg-white p-3 px-3">
+                    <AnimatePresence>
+                        {cart.map((cartItem, idx) => {
                             return (
-                                <div
-                                    key={cartId}
-                                    className={`flex max-h-fit flex-row flex-nowrap gap-3 ${
-                                        idx + 1 == cart.length
-                                            ? ''
-                                            : 'border-b border-b-light-grey'
-                                    } py-3`}
-                                >
-                                    <div className="left max-h-32 flex-[1.5]">
-                                        <img
-                                            src={images[0]}
-                                            alt=""
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-                                    <div className="right relative flex flex-[3] flex-col">
-                                        <p className="mb-3 text-sm  font-bold text-black/70">
-                                            £
-                                            {parseFloat(price?.current).toFixed(
-                                                2
-                                            )}
-                                        </p>
-
-                                        <p className="mb-1">{title}</p>
-                                        <div className="variationSelect flex flex-row flex-wrap gap-x-2">
-                                            {variationSelect.variation1
-                                                ?.variation && (
-                                                <p>
-                                                    {
-                                                        variationSelect
-                                                            .variation1
-                                                            .variation
-                                                    }
-                                                </p>
-                                            )}
-                                            {variationSelect.variation2
-                                                ?.variation && (
-                                                <p>
-                                                    {
-                                                        variationSelect
-                                                            .variation2
-                                                            .variation
-                                                    }
-                                                </p>
-                                            )}
-                                            <p>Qty: {quantity}</p>
-                                        </div>
-
-                                        <div
-                                            className="h-6 w-fit self-end"
-                                            onClick={() => handleRemove(cartId)}
-                                        >
-                                            <DeleteIcon />
-                                            {/* <img
-                                                            className="h-full !fill-red-600"
-                                                            src={delete_icon}
-                                                            alt="bin outline icon"
-                                                        /> */}
-                                        </div>
-                                    </div>
-                                </div>
+                                <CartMenuItem
+                                    key={`item-${cartItem.cartId}`}
+                                    cartItem={cartItem}
+                                    idx={idx}
+                                />
                             );
-                        }
-                    )}
-                </section>
+                        })}
+                    </AnimatePresence>
+                </motion.section>
 
                 <div className="subtotal subtotal-shadow flex flex-row flex-nowrap justify-between border-t bg-[#F5F5F5] px-3 py-4 ">
                     <p
@@ -147,7 +86,7 @@ function CartMenu({ setIsHover }) {
                     <a className="underline underline-offset-1">here</a>
                 </p>
             </div>
-        </section>
+        </motion.section>
     );
 }
 

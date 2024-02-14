@@ -31,7 +31,6 @@ function Cart({}) {
         cartRefresh,
     } = useCart();
 
-   
     const handleRemove = (id) => {
         dispatch({ type: 'remove', cartId: id });
     };
@@ -72,7 +71,6 @@ function Cart({}) {
         setCartRefresh(() => true);
         dispatch({ type: 'refresh' });
     }, []);
-  
 
     const cartVariants = {
         initial: {
@@ -148,12 +146,12 @@ function Cart({}) {
                             </div>{' '}
                             <motion.div className="product-cart-wrapper flex flex-col flex-nowrap">
                                 <AnimatePresence>
-                                    
-                                     {cart.map((item, idx) => {
-                                         console.log({cartLength: cart.length})
+                                    {cart.map((item, idx) => {
+                                        console.log({
+                                            cartLength: cart.length,
+                                        });
                                         return (
-                                            <Fragment key={item.cartId}>
-                                                {item.cartId && (
+                                          
                                                     <Cart_Item
                                                         idx={idx}
                                                         lastIndex={
@@ -163,12 +161,10 @@ function Cart({}) {
                                                         product={item}
                                                         // key={item.cartId}
                                                     />
-                                                )}
-                                            </Fragment>
+                                        
+                                       
                                         );
                                     })}
-                                    
-                                   
                                 </AnimatePresence>
                             </motion.div>
                         </div>

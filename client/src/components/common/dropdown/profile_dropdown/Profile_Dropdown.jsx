@@ -77,7 +77,7 @@ function Profile_Dropdown({}) {
                         <a
                             key={option.text}
                             href={`/${linkTo}`}
-                            target='_blank'
+                           
                             className="group flex w-full flex-row  items-center justify-start gap-3 px-3 py-3"
                         >
                             <img

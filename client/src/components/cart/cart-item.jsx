@@ -6,6 +6,9 @@ import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, animate, motion } from 'framer-motion';
 import { CloseRounded } from '@mui/icons-material';
+
+import Overlay from './overlay';
+import getCartItemVariants from './cartItemVariants';
 const arrayRange = (start, stop, step) =>
     Array.from(
         { length: (stop - start) / step + 1 },
@@ -138,128 +141,27 @@ function Cart_Item({ product, idx, lastIndex }) {
         });
     }, []);
 
-    const overlayVariant = {
-        body: {
-            initial: {
-                scaleX: 0,
-            },
-            animate: {
-                scaleX: 1,
-                transition: {
-                    duration: 0.8,
-                },
-            },
-        },
-        text: {
-            initial: { opacity: 0, scale: 0.9 },
-            animate: {
-                opacity: 1,
-                scale: 1,
-                transition: {
-                    duration: 0.5,
-                    delay: 0.3,
-                    ease: 'easeInOut',
-                },
-            },
-            exit: {
-                backgroundColor: '#00000',
-                transition: {
-                    duration: 0.2,
-                },
-            },
-        },
-    };
-
-    const variants = {
-        product: {
-            exit: {
-                opacity: 0,
-                transition: {
-                    delay: 0.6,
-                },
-            },
-        },
-
-        section: {
-            initial: { height: 'auto', translateY: 50, scale: 1 },
-            animate: {
-                translateY: 0,
-                height: 'auto',
-                scale: 1,
-                transition: {
-                    duration: 2,
-                    delay: 2,
-                    translateY: {
-                        duration: 0.7,
-                        delay: 0.2 * idx,
-                    },
-                },
-            },
-            exit: {
-                height: '0px',
-                opacity: 0,
-                scale: 0.8,
-                backgroundColor: '#00000',
-                transition: {
-                    duration: 0.7,
-                    delay: 1.2,
-                    height: {
-                        duration: 0.7,
-                        delay: 1.2,
-                    },
-
-                    scale: {
-                        delay: 1,
-                        duration: 0.2,
-                    },
-                    opacity: {
-                        delay: 1,
-                        duration: 0.2,
-                    },
-                },
-            },
-        },
-    };
-
+    const cartItemVariants = getCartItemVariants({
+        idx,
+        disableTranslateY: false,
+    });
     return (
         <motion.section
-            variants={variants.section}
+            variants={cartItemVariants.section}
             animate={'animate'}
             exit={'exit'}
             initial={'initial'}
-            className={`white relative box-content flex h-full max-h-44  ${
+            className={` relative box-content flex h-full max-h-44  ${
                 !lastIndex ? 'border-b-2 ' : ''
             }`}
         >
             <AnimatePresence>
-                {isRemoving && (
-                    <>
-                        {' '}
-                        <motion.div
-                            key={'body' + product.cartId}
-                            variants={overlayVariant.body}
-                            animate={'animate'}
-                            initial={'initial'}
-                            className=" absolute left-0 top-0 z-[1] flex h-full  w-full origin-top-right border-b-2 bg-light-grey !py-4"
-                        ></motion.div>
-                        <motion.div
-                            key={'text' + product.cartId}
-                            variants={overlayVariant.text}
-                            animate={'animate'}
-                            initial={'initial'}
-                            exit={'exit'}
-                            className=" absolute left-0 top-0 z-[1] flex h-full w-full flex-col items-center justify-center  "
-                        >
-                            <CloseRounded className="!text-3xl " />
-                            <p className="text-sm !text-black">Item Deleted</p>
-                        </motion.div>
-                    </>
-                )}
+                {isRemoving && <Overlay product={product} />}
 
                 {!isRemoving && (
                     <motion.section
                         key={'product' + product.cartId}
-                        variants={variants.product}
+                        variants={cartItemVariants.product}
                         animate={'animate'}
                         exit={'exit'}
                         initial={'initial'}

@@ -33,7 +33,7 @@ function Checkout_Total() {
                     <h1 className="font-gotham text-xl font-bold tracking-wider">
                         {cart.length} {cart.length > 1 ? 'ITEMS' : 'ITEM'}
                     </h1>
-                    <Link to="/cart">Edit</Link>
+                    <a href="/cart">Edit</a>
                 </div>
 
                 <div className="mb-4 flex max-h-[300px] border-b-2 py-6">

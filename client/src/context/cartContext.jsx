@@ -5,6 +5,8 @@ import {
     useEffect,
     useState,
 } from 'react';
+import { isEqual } from 'lodash';
+
 const getCartFromLocalStorage = () => {
     return JSON.parse(localStorage.getItem('cart') || '[]');
 };
@@ -18,8 +20,15 @@ const reducer = (state, action) => {
     let isProductInCart = false;
 
     const { product, type } = action;
-
-    const cart = getCartFromLocalStorage();
+    let cart = null;
+    const cartFromLS = getCartFromLocalStorage();
+    const isSame = isEqual(state, cartFromLS);
+   
+    if (isSame) {
+        cart = state;
+    } else {
+        cart = cartFromLS;
+    }
 
     if (type == 'refresh') {
         return cart;
@@ -44,7 +53,7 @@ const reducer = (state, action) => {
         if (isProductInCart) {
             return foundItemInCart;
         } else {
-            return [...cart, action.product];
+            return [action.product, ...cart];
         }
     }
 

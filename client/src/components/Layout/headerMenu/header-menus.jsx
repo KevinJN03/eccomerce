@@ -4,64 +4,58 @@ import {
     useMotionValueEvent,
     useScroll,
 } from 'framer-motion';
-import CartMenu from './cartMenu';
-
+import CartMenu from './cartMenu.jsx';
+import { v4 as uuidv4 } from 'uuid';
 import Profile_Dropdown from '../../common/dropdown/profile_dropdown/Profile_Dropdown.jsx';
 import { ClickAwayListener } from '@mui/material';
-import { useState } from 'react';
-
-import { v4 as uuidv4 } from 'uuid';
+import { forwardRef, useState } from 'react';
 function HeaderMenu({ isHover, setIsHover }) {
-    const [isScrollOver98, setMenuPosition] = useState('');
-    const { scrollY } = useScroll();
+    const [isScrollOver98, setMenuPosition] = useState(false);
+
     const variants = {
         initial: {
-            translateY: '-100%',
+            y: '-100%',
         },
         animate: {
-            translateY: '0%',
+            y: '0%',
 
-            transition: { duration: 0.4, ease: 'easeInOut' },
+            transition: {
+                duration: 0.4,
+            },
         },
         exit: {
             translateY: '-100%',
-            transition: { duration: 0.5, ease: 'easeInOut' },
+            transition: { duration: 0.5 },
         },
     };
-    useMotionValueEvent(scrollY, 'change', (latest) => {
-        if (latest > 108) {
-            setMenuPosition(() => true);
-        } else {
-            setMenuPosition(() => false);
-        }
-    });
     return (
-        <AnimatePresence mode="wait">
-            {isHover && (
-                <ClickAwayListener onClickAway={() => setIsHover(() => false)}>
+        <section className="  !absolute !right-0 !top-full">
+            <AnimatePresence mode='wait'>
+                {isHover.on && (
                     <motion.section
-                        // key={isHover + uuidv4()}
-                        style={{
-                            y: scrollY,
-                            top: isScrollOver98 ? '0%' : '100%',
-                        }}
-                        onMouseLeave={() => setIsHover(() => false)}
-                     
+                        id="header-menu"
+                        // onMouseLeave={() =>
+                        //     setIsHover(() => ({ menu: null, on: false }))
+                        // }
                         variants={variants}
                         animate={'animate'}
                         exit={'exit'}
                         initial={'initial'}
-                        className={`menus absolute right-0  mb-0 max-w-xs border border-dark-gray/50 bg-light-grey pb-0 md+lg:w-[20rem]`}
+                        className={`menus   mb-0 max-w-xs border border-dark-gray/50 bg-light-grey pb-0 md+lg:w-[20rem]`}
                     >
-                        {isHover == 'cart' ? (
-                            <CartMenu setIsHover={setIsHover}/>
-                        ) : (
-                            <Profile_Dropdown setIsHover={setIsHover} />
-                        )}
+                        <motion.div key={uuidv4()}>
+                            {isHover.menu == 'cart' && (
+                                <CartMenu setIsHover={setIsHover} isHover={isHover} />
+                            )}
+
+                            {isHover.menu == 'profile' && (
+                                <Profile_Dropdown setIsHover={setIsHover} />
+                            )}
+                        </motion.div>
                     </motion.section>
-                </ClickAwayListener>
-            )}
-        </AnimatePresence>
+                )}
+            </AnimatePresence>
+        </section>
     );
 }
 

@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { CartProvider } from './context/cartContext';
+import Layout from './components/Layout/layout';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
 function App() {
@@ -13,7 +14,9 @@ function App() {
         <div id="App">
             <LayoutProvider>
                 <CartProvider>
-                    <Router />
+                    {/* <Layout> */}
+                        <Router />
+                    {/* </Layout> */}
                 </CartProvider>
             </LayoutProvider>
         </div>
