@@ -23,7 +23,8 @@ function Cart({}) {
     const { withoutShipping } = calculateTotal();
     const cartTotal = withoutShipping;
     // const [cart, setCart] = useState(null)
-    const { cart, dispatch, cartLoading, setCartLoading, setCartRefresh } = useCart();
+    const { cart, dispatch, cartLoading, setCartLoading, setCartRefresh } =
+        useCart();
     const handleRemove = (id) => {
         dispatch({ type: 'remove', cartId: id });
     };
@@ -61,22 +62,39 @@ function Cart({}) {
     };
 
     useEffect(() => {
-        setCartRefresh(() => true)
+        setCartRefresh(() => true);
         dispatch({ type: 'refresh' });
- 
     }, []);
+
+    const cartVariants = {
+        initial: {
+            opacity: 0.8,
+        },
+        animate: {
+            opacity: 1,
+
+            transition: { duration: 5 },
+        },
+
+        exit: {
+            opacity: 0,
+            transition: { duration: 2, delay: 5 },
+        },
+    };
     return (
-        <AnimatePresence mode="wait">
-            {cartLoading ? (
+        <section className="flex">
+            {cartLoading && (
                 <div className="mt-32">
                     <GLoader />
                 </div>
-            ) : (
-                <>
-                    {cart.length > 0 ? (
+            )}
+
+            <AnimatePresence>
+                {cart.length > 0 && !cartLoading && (
+                    <AnimatePresence>
                         <motion.section
                             id="cart-page"
-                            variants={variants}
+                            variants={cartVariants}
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}
@@ -118,49 +136,63 @@ function Cart({}) {
                                     <p className="text-sm sm+md:text-[10px]">
                                         Items are reserved for 60 minutes
                                     </p>
-                                </div>
-                                <div className="product-cart-wrapper flex flex-col flex-nowrap">
-                                    <AnimatePresence>
+                                </div>{' '}
+                                <div
+                               
+                                    className="product-cart-wrapper flex flex-col flex-nowrap"
+                                >
+                                    {' '}
+                                    <AnimatePresence >
                                         {cart.map((item, idx) => {
                                             return (
-                                                <motion.div
-                                                    variants={generateItemVariant(
-                                                        idx
-                                                    )}
-                                                    animate={'animate'}
-                                                    initial={'initial'}
-                                                    exit={'exit'}
-                                                    key={item.cartId}
-                                                >
-                                                    {idx != 0 && (
-                                                        <motion.div
-                                                            key={uuidv4()}
-                                                            variants={
-                                                                borderVariant
-                                                            }
-                                                            animate={'animate'}
-                                                            initial={'initial'}
-                                                            exit={'exit'}
-                                                            className="mx-6 h-1 border-t-[1px] border-gray-300"
-                                                        ></motion.div>
-                                                    )}
+                                                // <motion.div
+                                                //     variants={generateItemVariant(
+                                                //         idx
+                                                //     )}
+                                                //     animate={'animate'}
+                                                //     initial={'initial'}
+                                                //     exit={'exit'}
+                                                //     key={item.cartId}
+                                                // >
+                                                //     {idx != 0 && (
+                                                //         <motion.div
+                                                //             key={uuidv4()}
+                                                //             variants={
+                                                //                 borderVariant
+                                                //             }
+                                                //             animate={
+                                                //                 'animate'
+                                                //             }
+                                                //             initial={
+                                                //                 'initial'
+                                                //             }
+                                                //             exit={'exit'}
+                                                //             className="mx-6 h-1 border-t-[1px] border-gray-300"
+                                                //         ></motion.div>
+                                                //     )}
 
-                                                    <Cart_Item product={item} />
-                                                </motion.div>
+                                                <Cart_Item
+                                                    idx={idx}
+                                                    lastIndex={
+                                                        idx == cart.length - 1
+                                                    }
+                                                    product={item}
+                                                    key={item.cartId}
+                                                />
+                                                // </motion.div>
                                             );
-                                        })}
+                                        })}{' '}
                                     </AnimatePresence>
                                 </div>
                             </div>
 
                             <Total ref={checkoutBottomRef} />
                         </motion.section>
-                    ) : (
-                        <Empty_Cart />
-                    )}
-                </>
-            )}
-        </AnimatePresence>
+                    </AnimatePresence>
+                )}
+                {cart.length == 0 && !cartLoading && <Empty_Cart />}
+            </AnimatePresence>
+        </section>
     );
 }
 

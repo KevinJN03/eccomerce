@@ -5,27 +5,29 @@ import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, animate, motion } from 'framer-motion';
+import { CloseRounded } from '@mui/icons-material';
 const arrayRange = (start, stop, step) =>
     Array.from(
         { length: (stop - start) / step + 1 },
         (value, index) => start + index * step
     );
 
-function Cart_Item({ product }) {
+function Cart_Item({ product, idx, lastIndex }) {
     const heart_icon_ref = useRef();
 
     const [quantity, setQuantity] = useState(product?.quantity);
     const [findSize, setFindSize] = useState(null);
     const [sizeOptionArray, setSizeOptionArray] = useState([]);
     const [findColor, setFindColor] = useState(null);
+    const [isRemoving, setIsRemoving] = useState(false);
     let quantityArr = arrayRange(1, 10, 1);
 
     const qtyRef = useRef(null);
     const sizeRef = useRef(null);
     const { dispatch, cart } = useCart();
-   
+
     const handleRemove = (id) => {
-       
+        setIsRemoving(() => true);
         dispatch({ type: 'remove', cartId: product.cartId });
     };
 
@@ -152,26 +154,122 @@ function Cart_Item({ product }) {
             transition: { duration: 0.5 },
         },
     };
-    return (
-        <section className="white relative flex h-full flex-row gap-x-4 px-4 py-4">
-            <button
-                type="button"
-                id="cart-close"
-                className="h-full w-full hover:bg-slate-100"
-                onClick={() => handleRemove(product.cartId)}
-            >
-                <img loading="lazy" src={close} />{' '}
-            </button>
-            <Link
-                to={`/product/${product.id}`}
-                className="cart-img-container min-h-full"
-            >
-                <img
-                    src={product.images[0]}
-                    className="h-[140px] w-full max-w-[110px] object-cover"
-                ></img>
-            </Link>
 
+    const overlayVariant = {
+        body: {
+            initial: {
+                scaleX: 0,
+            },
+            animate: {
+                scaleX: 1,
+                transition: {
+                    duration: 0.7,
+                },
+            },
+
+            // exit: {
+            //     scaleY: 0,
+            //     duration: 0.7,
+            //     delay: 1.4,
+            // },
+        },
+        text: {
+            initial: { opacity: 0, scale: 0.7 },
+            animate: {
+                opacity: 1,
+                scale: 1,
+                transition: {
+                    duration: 0.5,
+                    delay: 0.6,
+                },
+            },
+
+            exit: {
+                scale: 0,
+                opacity: 0,
+                transition: {
+                    duration: 0.4,
+                },
+            },
+        },
+    };
+    const sectionVariant = {
+        initial: { height: '100%', translateY: 50 },
+        animate: {
+            translateY: 0,
+            height: '100%',
+            transition: {
+                duration: 2,
+                delay: 2,
+                translateY: {
+                    duration: 0.7,
+                    delay: 0.2 * idx,
+                },
+            },
+        },
+        exit: {
+            height: ['100%', '0px'],
+            opacity: 0,
+            transition: {
+                duration: 0.7,
+                delay: 1.4,
+            },
+        },
+    };
+
+    return (
+        <motion.section
+            variants={sectionVariant}
+            animate={'animate'}
+            exit={'exit'}
+            initial={'initial'}
+            className={`white relative flex h-full origin-top flex-row gap-x-4 px-4 py-4 ${
+                !lastIndex ? 'border-b-2 ' : ''
+            }`}
+        >
+            <AnimatePresence>
+                {isRemoving && (
+                    <motion.div
+                        variants={overlayVariant.body}
+                        animate={'animate'}
+                        exit={'exit'}
+                        initial={'initial'}
+                        className=" absolute left-0 top-0 z-[1] flex h-full  w-full origin-top-right border-b-2 bg-light-grey !py-4"
+                    />
+
+                    /* <motion.div
+                            variants={overlayVariant.text}
+                            animate={'animate'}
+                            exit={'exit'}
+                            initial={'initial'}
+                            className=" absolute left-0 top-0 z-[1] flex h-full w-full flex-col items-center justify-center  "
+                        >
+                            <CloseRounded className="!text-3xl " />
+                            <p className="text-sm !text-black">Item Deleted</p>
+                        </motion.div> */
+                )}
+            </AnimatePresence>
+
+            <>
+                <button
+                    type="button"
+                    id="cart-close"
+                    className="h-full w-full hover:bg-slate-100"
+                    onClick={() => handleRemove(product.cartId)}
+                >
+                    <img loading="lazy" src={close} />{' '}
+                </button>
+
+                <Link
+                    to={`/product/${product.id}`}
+                    className="cart-img-container min-h-full"
+                >
+                    <img
+                        src={product.images[0]}
+                        className="h-[140px] w-full max-w-[110px] object-cover"
+                    ></img>
+                </Link>
+            </>
             <section
                 id="cart-info"
                 className="flex !min-h-full flex-col flex-nowrap"
@@ -261,7 +359,7 @@ function Cart_Item({ product }) {
                     </button>
                 </div>
             </section>
-        </section>
+        </motion.section>
     );
 }
 
