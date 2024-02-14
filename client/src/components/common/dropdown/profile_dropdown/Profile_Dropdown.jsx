@@ -7,6 +7,7 @@ import order_icon from '../../../../assets/icons/profile-icons/package.svg';
 import { useAuth } from '../../../../hooks/useAuth';
 import Dropdown_Option from './dropdown_option';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 function Profile_Dropdown({}) {
     const { user, authenticated, authDispatch } = useAuth();
 
@@ -73,9 +74,10 @@ function Profile_Dropdown({}) {
                     },
                 ].map(({ option, linkTo }, index) => {
                     return (
-                        <button
-                            key={uuidv4()}
-                            href={`./${linkTo}`}
+                        <a
+                            key={option.text}
+                            href={`/${linkTo}`}
+                            target='_blank'
                             className="group flex w-full flex-row  items-center justify-start gap-3 px-3 py-3"
                         >
                             <img
@@ -86,7 +88,7 @@ function Profile_Dropdown({}) {
                             <p className="text-sm group-hover:text-blue-500">
                                 {option.text}
                             </p>
-                        </button>
+                        </a>
                     );
                 })}
             </section>

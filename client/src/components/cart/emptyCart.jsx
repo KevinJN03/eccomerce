@@ -1,11 +1,13 @@
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import { Link } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
+
+import { motion } from 'framer-motion';
 function Empty_Cart({}) {
     const [state] = useGenderCategory();
     const gender = state.gender;
     return (
-        <section className="emptyCart flex w-[90vw] flex-col items-center gap-3 self-center">
+        <motion.section className="emptyCart flex w-[90vw] flex-col items-center gap-3 self-center">
             <LocalMallOutlinedIcon className="!text-4xl" />
             <p className="text-lg font-bold">Your bag is empty</p>
             <p className="max-w-sm text-center">
@@ -21,7 +23,7 @@ function Empty_Cart({}) {
             <Link to={`/${gender}/product`} className="text-s underline">
                 Continue Shopping
             </Link>
-        </section>
+        </motion.section>
     );
 }
 

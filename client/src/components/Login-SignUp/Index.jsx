@@ -88,8 +88,8 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                 <section className="min-h-screen w-screen">
                     <section className="login-signup-page min-h-screen">
                         <section id="login-signup-container" className="w-full">
-                            <Link
-                                to={!admin && '/'}
+                            <a
+                                href={!admin && '/'}
                                 className="login-logo mt-10 flex w-40 flex-nowrap items-center"
                             >
                                 <img loading="lazy" src={glamo} />
@@ -101,7 +101,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                         className="object-contain"
                                     />
                                 )}
-                            </Link>
+                            </a>
                             <div id="login-signup-option" className="relative">
                                 {!admin && (
                                     <>

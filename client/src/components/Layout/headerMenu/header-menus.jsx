@@ -46,6 +46,7 @@ function HeaderMenu({ isHover, setIsHover }) {
                             top: isScrollOver98 ? '0%' : '100%',
                         }}
                         onMouseLeave={() => setIsHover(() => false)}
+                     
                         variants={variants}
                         animate={'animate'}
                         exit={'exit'}

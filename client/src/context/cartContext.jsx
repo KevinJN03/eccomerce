@@ -12,15 +12,17 @@ export const useCart = () => {
     return useContext(cartContext);
 };
 
-const reducer = (cart, action) => {
+const reducer = (state, action) => {
     // JSON.parse(cart)
 
     let isProductInCart = false;
 
     const { product, type } = action;
 
+    const cart = getCartFromLocalStorage();
+
     if (type == 'refresh') {
-        return getCartFromLocalStorage();
+        return cart;
     }
 
     if (type == 'add') {
@@ -125,7 +127,8 @@ export function CartProvider({ children }) {
         setPromo,
         cartLoading,
         setCartLoading,
-        cartRefresh, setCartRefresh
+        cartRefresh,
+        setCartRefresh,
     };
 
     return (

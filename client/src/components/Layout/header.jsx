@@ -136,7 +136,15 @@ function Header() {
                                 </Link>
                                 <button
                                     className="header-icons relative flex h-full w-fit items-center justify-center rounded border border-transparent px-2 focus:border-white active:!border-white"
-                                    onMouseEnter={() => {
+
+                                    onMouseLeave={() => {
+                                        console.log(e.target.id, 'here')
+                                        // setIsHover(() => false)
+                                    
+                                    }}
+                                    onMouseEnter={(e) => {
+
+                                       
                                        
                                         if (pathname == '/cart') return;
                                         if (cart.length > 0) {
