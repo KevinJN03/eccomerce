@@ -1,8 +1,9 @@
+import { isEqual } from 'lodash';
 import { createContext, useContext, useEffect, useReducer } from 'react';
 
-const wishListFromLocalStorage = JSON.parse(
-    localStorage.getItem('wishlist') || '[]'
-);
+const getWishlistFromLS = () => {
+    return JSON.parse(localStorage.getItem('wishlist') || '[]');
+};
 
 const WishlistContext = createContext(null);
 
@@ -11,13 +12,28 @@ export const useWishlistContext = () => {
 };
 
 const reducer = (state, action) => {
+    let wishlist = null;
+    const wishlistFromLS = getWishlistFromLS();
+    const isDifferent = isEqual(state, wishlistFromLS);
+
+    if (isDifferent) {
+        wishlist = wishlistFromLS;
+    } else {
+        wishlist = state;
+    }
+
+    if (action.type == 'refresh') {
+
+
+       
+    }
     if (action.type == 'add') {
-        const newSet = new Set([...state, action.productId]);
+        const newSet = new Set([action.productId, ...wishlist]);
         return newSet;
     }
 
     if (action.type == 'delete') {
-        const newSet = new Set([...state]);
+        const newSet = new Set([...wishlist]);
 
         newSet.delete(action.productId);
         return newSet;
@@ -26,7 +42,7 @@ const reducer = (state, action) => {
 export function WishlistContextProvider({ children }) {
     const [wishlist, wishListDispatch] = useReducer(
         reducer,
-        new Set(wishListFromLocalStorage)
+        new Set(getWishlistFromLS())
     );
 
     useEffect(() => {

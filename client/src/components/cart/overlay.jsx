@@ -3,13 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import getCartItemVariants from './cartItemVariants';
 
 function Overlay({
-    product,
     handleRemove,
     isRemoving,
     setIsRemoving,
     disableImg,
+    enableBodyExit,
 }) {
-    const cartItemVariant = getCartItemVariants(0);
+    const cartItemVariant = getCartItemVariants({ idx: 0 });
     const handleAnimationComplete = (e) => {
         console.log('cartItemRemoveAnimation', e);
 
@@ -47,7 +47,7 @@ function Overlay({
                         animate={'animate'}
                         initial={'initial'}
                         exit={'exit'}
-                        className={` absolute left-0 top-0 z-[1] flex h-full w-full origin-top-right border-b-2 bg-light-grey`}
+                        className={` absolute left-0 top-0 z-[1] flex h-full w-full origin-top-right bg-light-grey`}
                     />
                 )}
             </AnimatePresence>
@@ -56,7 +56,6 @@ function Overlay({
                 {isRemoving.text && (
                     <motion.div
                         onAnimationComplete={handleAnimationComplete}
-                        key={'text' + product.cartId}
                         variants={cartItemVariant.overlay.text}
                         animate={'animate'}
                         initial={'initial'}

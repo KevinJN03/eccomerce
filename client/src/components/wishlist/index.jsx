@@ -47,7 +47,7 @@ function WishList({}) {
     }, []);
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col bg-white pb-24">
+        <div className="relative flex min-h-screen h-full w-full flex-col bg-white pb-24">
             <AnimatePresence mode="wait">
                 {loading ? (
                     <motion.section
@@ -95,14 +95,17 @@ function WishList({}) {
                                 </p>
                             </div>
 
-                            <section className="flex flex-row flex-wrap gap-3">
-                                {products.map((product) => {
-                                    return (
-                                        <Fragment key={product?._id}>
-                                            <WishListItem product={product} />
-                                        </Fragment>
-                                    );
-                                })}
+                            <section className="flex flex-row flex-wrap gap-5 h-full">
+                                <AnimatePresence>
+                                    {products.map((product) => {
+                                        return (
+                                            <WishListItem
+                                                product={product}
+                                                key={product?._id}
+                                            />
+                                        );
+                                    })}
+                                </AnimatePresence>
                             </section>
                         </div>
                     </motion.section>

@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import CartMenuItem from './cartIMenutem';
 import Cart_Item from '../../cart/cart-item';
 import { useLayoutContext } from '../../../context/layoutContext';
-function CartMenu({  }) {
+function CartMenu({}) {
     const { withOutShipping: subTotal } = calculateTotal();
     const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
     const { isHover, setIsHover } = useLayoutContext();
@@ -31,7 +31,7 @@ function CartMenu({  }) {
                 </header>
                 <section
                     key={'cart-item-menu-wrapper'}
-                    className="cartItem flex h-full max-h-[15rem] w-full flex-col overflow-y-auto bg-white"
+                    className="cartItem flex h-full max-h-[15rem] w-full flex-col overflow-y-auto  bg-white"
                 >
                     <AnimatePresence>
                         {cart.map((item, idx) => {
@@ -41,7 +41,6 @@ function CartMenu({  }) {
                                     cartItem={item}
                                     idx={idx}
                                     lastIndex={idx == cart.length - 1}
-                                 
                                 />
                             );
                         })}

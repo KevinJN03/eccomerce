@@ -13,8 +13,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLayoutContext } from '../../../context/layoutContext';
 
 function HeaderRight({}) {
-  
-
     const { isHover, setIsHover } = useLayoutContext();
     const navigate = useNavigate();
     const [hoveredElement, setHoveredElement] = useState(null);
@@ -76,23 +74,23 @@ function HeaderRight({}) {
         // console.log('entering: ', e.target.classList.contains('ignore'));
         if (pathname == '/cart') {
             return;
-        } else if (isHover.menu != 'cart') {
+        }
+
+        // else if (isHover.menu != 'cart') {
+        //     setIsHover(() => ({
+        //         on: true,
+        //         menu: 'cart',
+        //     }));
+        // }
+
+        if (cart.length > 0 && isHover.menu != 'cart') {
+            console.log('refresh here', isHover.menu);
+
             setIsHover(() => ({
                 on: true,
                 menu: 'cart',
             }));
         }
-
-        // if (cart.length > 0) {
-        //     if (isHover.menu != 'cart') {
-        //         console.log('refresh here', isHover.menu);
-
-        //         setIsHover(() => ({
-        //             on: true,
-        //             menu: 'cart',
-        //         }));
-        //     }
-        // }
     };
 
     return (
@@ -169,7 +167,7 @@ function HeaderRight({}) {
                     </div>
                 </button>
             </section>
-            <HeaderMenu/>
+            <HeaderMenu />
         </section>
     );
 }

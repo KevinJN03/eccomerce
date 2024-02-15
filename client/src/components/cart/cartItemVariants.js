@@ -1,4 +1,18 @@
-const getCartItemVariants = ({ idx, disableTranslateY }) => {
+const getCartItemVariants = ({
+    idx,
+    disableTranslateY,
+    scaleYExit,
+    heightExit,
+}) => {
+    const sectionExit = {};
+
+    if (scaleYExit) {
+        sectionExit.scaleY = 0;
+    }
+
+    if (heightExit) {
+        sectionExit.height = '0px';
+    }
     return {
         overlay: {
             body: {
@@ -73,7 +87,8 @@ const getCartItemVariants = ({ idx, disableTranslateY }) => {
             },
             exit: {
                 // opacity: 0,
-                scaleY: 0,
+                // scaleY: 0,
+                ...sectionExit,
                 transition: {
                     duration: 0.4,
                     // delay: 2,

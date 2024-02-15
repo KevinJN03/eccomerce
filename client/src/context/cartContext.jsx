@@ -23,7 +23,7 @@ const reducer = (state, action) => {
     let cart = null;
     const cartFromLS = getCartFromLocalStorage();
     const isSame = isEqual(state, cartFromLS);
-   
+
     if (isSame) {
         cart = state;
     } else {
@@ -126,6 +126,21 @@ export function CartProvider({ children }) {
         //     clearTimeout(timeout);
         // };
     }, [cart]);
+
+    // useEffect(() => {
+    //     if (cartRefresh) {
+    //         setCartLoading(() => true);
+
+    //         const timeout = setTimeout(() => {
+    //             setCartLoading(() => false);
+    //             setCartRefresh(() => false);
+    //         }, 1500);
+
+    //         return () => {
+    //             clearTimeout(timeout);
+    //         };
+    //     }
+    // }, [cartRefresh]);
 
     const value = {
         cart,

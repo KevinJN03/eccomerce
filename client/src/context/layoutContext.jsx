@@ -19,9 +19,9 @@ export function LayoutProvider({ children }) {
 
     const splitLocation = window.location.href
         .replace(import.meta.env.VITE_CLIENT_URL, '')
-        .split('/');
-
-    const [layout, setLayout] = useState(() => !set.has(splitLocation[1]));
+        .split('/')[1].split('?');
+console.log(splitLocation)
+    const [layout, setLayout] = useState(() => !set.has(splitLocation[0]));
     const [isHover, setIsHover] = useState({ on: false, menu: null });
     return (
         <LayoutContext.Provider

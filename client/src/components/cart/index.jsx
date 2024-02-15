@@ -21,6 +21,7 @@ function Cart({}) {
     const checkoutBottomRef = useRef(null);
     const isInView = useInView(checkoutBottomRef);
     const { withoutShipping } = calculateTotal();
+    const [loading, setLoading] = useState(true);
     const cartTotal = withoutShipping;
     const {
         cart,
@@ -31,46 +32,23 @@ function Cart({}) {
         cartRefresh,
     } = useCart();
 
-    const handleRemove = (id) => {
-        dispatch({ type: 'remove', cartId: id });
-    };
-
-    const borderVariant = {
-        initial: {
-            opacity: 0,
-        },
-        animate: {
-            opacity: 1,
-            transition: { delay: 2, duration: 0.2 },
-        },
-        exit: {
-            delay: 10,
-        },
-    };
-
-    const generateItemVariant = (delay) => {
-        return {
-            initial: {
-                opacity: 0,
-                translateY: 50,
-            },
-            animate: {
-                opacity: 1,
-                translateY: 0,
-                transition: { duration: 1.5, delay: delay * 0.4 },
-            },
-            exit: {
-                opacity: 0,
-                duration: 4,
-                transition: { duration: 4 },
-            },
-        };
-    };
-
     useEffect(() => {
-        setCartRefresh(() => true);
-        dispatch({ type: 'refresh' });
-    }, []);
+        if (loading || cartRefresh) {
+            setLoading(() => true);
+            setCartRefresh(() => true);
+            dispatch({ type: 'refresh' });
+
+            const timeout = setTimeout(() => {
+                setCartLoading(() => false);
+                setCartRefresh(() => false);
+                setLoading(() => false);
+            }, 1500);
+
+            return () => {
+                clearTimeout(timeout);
+            };
+        }
+    }, [cartRefresh]);
 
     const cartVariants = {
         initial: {
@@ -85,13 +63,13 @@ function Cart({}) {
         exit: {
             opacity: 0,
 
-            transition: { delay: 0.7 },
+            transition: { delay: 0.1 },
         },
     };
     return (
         <section className="flex">
             <AnimatePresence mode="wait">
-                {cartLoading ? (
+                {loading ? (
                     <motion.div key={'cart-loading'} className="mt-32">
                         <GLoader />
                     </motion.div>
@@ -147,20 +125,15 @@ function Cart({}) {
                             <motion.div className="product-cart-wrapper flex flex-col flex-nowrap">
                                 <AnimatePresence>
                                     {cart.map((item, idx) => {
-                                       
                                         return (
-                                          
-                                                    <Cart_Item
-                                                        idx={idx}
-                                                        lastIndex={
-                                                            idx ==
-                                                            cart.length - 1
-                                                        }
-                                                        product={item}
-                                                    key={item.cartId}
-                                                    />
-                                        
-                                       
+                                            <Cart_Item
+                                                idx={idx}
+                                                lastIndex={
+                                                    idx == cart.length - 1
+                                                }
+                                                cartItem={item}
+                                                key={item.cartId}
+                                            />
                                         );
                                     })}
                                 </AnimatePresence>

@@ -21,6 +21,7 @@ function CartMenuItem({ cartItem, idx, lastIndex }) {
         getCartItemVariants({
             idx: 0,
             disableTranslateY: true,
+            scaleYExit: true,
         })
     );
     const handleAnimationComplete = (e) => {

@@ -15,14 +15,14 @@ const arrayRange = (start, stop, step) =>
         (value, index) => start + index * step
     );
 
-function Cart_Item({ product, idx, lastIndex }) {
+function Cart_Item({ cartItem, idx, lastIndex }) {
     const heart_icon_ref = useRef();
 
-    const [quantity, setQuantity] = useState(product?.quantity);
+    const [quantity, setQuantity] = useState(cartItem?.quantity);
     const [findSize, setFindSize] = useState(null);
     const [sizeOptionArray, setSizeOptionArray] = useState([]);
     const [findColor, setFindColor] = useState(null);
-    const [isRemoving, setIsRemoving] = useState(false);
+    const [isRemoving, setIsRemoving] = useState({});
     let quantityArr = arrayRange(1, 10, 1);
 
     const qtyRef = useRef(null);
@@ -30,8 +30,7 @@ function Cart_Item({ product, idx, lastIndex }) {
     const { dispatch, cart } = useCart();
 
     const handleRemove = (id) => {
-        setIsRemoving(() => true);
-        dispatch({ type: 'remove', cartId: product.cartId });
+        dispatch({ type: 'remove', cartId: cartItem.cartId });
     };
 
     const onClick = () => {
@@ -43,10 +42,10 @@ function Cart_Item({ product, idx, lastIndex }) {
             e.target.options[e.target.options.selectedIndex]?.dataset;
 
         let variationIndex = null;
-        if (!product?.isVariationCombine) {
+        if (!cartItem?.isVariationCombine) {
             const findSizeVariation = [
-                product?.variation1,
-                product?.variation2,
+                cartItem?.variation1,
+                cartItem?.variation2,
             ].find((item, idx) => {
                 if (item.title == 'Size') {
                     variationIndex = idx + 1;
@@ -61,9 +60,9 @@ function Cart_Item({ product, idx, lastIndex }) {
 
                 if (foundVariation) {
                     const updatedVariationSelect = {
-                        ...product?.variationSelect,
+                        ...cartItem?.variationSelect,
                         [`variation${variationIndex}`]: {
-                            ...product.variationSelect?.[
+                            ...cartItem.variationSelect?.[
                                 `variation${variationIndex}`
                             ],
                             ...foundVariation,
@@ -72,25 +71,25 @@ function Cart_Item({ product, idx, lastIndex }) {
 
                     dispatch({
                         type: 'edit variation',
-                        cartId: product?.cartId,
+                        cartId: cartItem?.cartId,
                         variationSelect: updatedVariationSelect,
                     });
                 }
             }
         } else {
-            console.log('variation iscombine', product);
+            console.log('variation iscombine', cartItem);
 
             const selectedVariation1 =
-                product.variationSelect.variation1?.variation;
+                cartItem.variationSelect.variation1?.variation;
             const findVariation =
-                product?.combineVariation?.[selectedVariation1];
+                cartItem?.combineVariation?.[selectedVariation1];
 
             if (findVariation) {
                 const newVariation = findVariation[e.target.value];
                 const updatedVariationSelect = {
-                    ...product.variationSelect,
+                    ...cartItem.variationSelect,
                     variation2: {
-                        ...product.variationSelect.variation2,
+                        ...cartItem.variationSelect.variation2,
                         ...newVariation,
                     },
                 };
@@ -98,7 +97,7 @@ function Cart_Item({ product, idx, lastIndex }) {
                 console.log({
                     updatedVariationSelect,
                     newVariation,
-                    variationSelect: product?.variationSelect,
+                    variationSelect: cartItem?.variationSelect,
                 });
 
                 // dispatch({
@@ -115,13 +114,13 @@ function Cart_Item({ product, idx, lastIndex }) {
         dispatch({
             type: 'edit quantity',
             quantity: e.target.value,
-            cartId: product.cartId,
+            cartId: cartItem.cartId,
         });
     };
 
     useEffect(() => {
         const variationSelectArray = Object.entries(
-            product?.variationSelect
+            cartItem?.variationSelect
         ).map(([key, value]) => {
             if (value?.title == 'Colour') {
                 setFindColor(() => ({
@@ -136,7 +135,7 @@ function Cart_Item({ product, idx, lastIndex }) {
                     variationType: key,
                 }));
 
-                setSizeOptionArray(() => product?.[key]?.array || []);
+                setSizeOptionArray(() => cartItem?.[key]?.array || []);
             }
         });
     }, []);
@@ -145,161 +144,167 @@ function Cart_Item({ product, idx, lastIndex }) {
         getCartItemVariants({
             idx,
             disableTranslateY: false,
+            heightExit: true,
         })
     );
+
     return (
         <motion.section
             variants={cartItemVariants.section}
             animate={'animate'}
             exit={'exit'}
             initial={'initial'}
-            className={` relative box-content flex h-full max-h-44  ${
-                !lastIndex ? 'border-b-2 ' : ''
-            }`}
+            className={` relative flex h-full max-h-44`}
         >
-            <AnimatePresence>
-                {isRemoving && <Overlay product={product} />}
-
-                {!isRemoving && (
-                    <motion.section
-                        key={'product' + product.cartId}
-                        variants={cartItemVariants.product}
-                        animate={'animate'}
-                        exit={'exit'}
-                        initial={'initial'}
-                        className="white relative flex h-full w-full flex-row gap-x-4 px-4 py-4"
+            <Overlay
+                isRemoving={isRemoving}
+                setIsRemoving={setIsRemoving}
+                handleRemove={handleRemove}
+                enableBodyExit
+            />
+            <section
+                className={`w-full bg-white p-4 pb-0 ${
+                    isRemoving?.complete ? 'opacity-0' : 'opacity-100'
+                } 
+               
+                
+                `}
+            >
+                <section
+                    className={` 
+pb-4
+                    ${
+                        !lastIndex
+                            ? 'border-b-2 border-light-grey'
+                            : 'border-none'
+                    }
+               relative flex h-full w-full flex-row `}
+                >
+                    <Link
+                        to={`/product/${cartItem.id}`}
+                        className="cart-img-container h-full"
                     >
+                        <img
+                            src={cartItem.images[0]}
+                            className="h-[140px] w-full max-w-[110px] object-cover"
+                        ></img>
+                    </Link>
+                    <section
+                        id="cart-info"
+                        className={
+                            '  flex !min-h-full flex-col flex-nowrap px-4'
+                        }
+                    >
+                        <p className="flex gap-x-3 text-sm font-bold tracking-wider text-[var(--primary-2)]">
+                            <span
+                                className={
+                                    cartItem.price?.previous >
+                                    cartItem.price.current
+                                        ? 'text-red-600'
+                                        : 'text-dark-gray'
+                                }
+                            >
+                                £{cartItem.price.current}
+                            </span>
+                            {cartItem.price?.previous &&
+                                cartItem.price?.previous >
+                                    cartItem.price.current && (
+                                    <span className="text-[12px] font-medium text-[var(--grey)] line-through">
+                                        £{cartItem.price?.previous}
+                                    </span>
+                                )}
+                        </p>
+
+                        <div className=" bottom relative mt-2 flex h-full !max-h-full w-full flex-col justify-between">
+                            <p className="w-11/12 text-gray-500">
+                                {cartItem.title}
+                            </p>
+                            <div className="cart-options">
+                                {findColor && (
+                                    <span className="border-r-[1px] pr-2 text-s">
+                                        {findColor?.variation?.toUpperCase()}
+                                    </span>
+                                )}
+                                {cartItem?.isVariation2Present && (
+                                    <div className="cursor-pointer border-r-[1px] pr-2">
+                                        <QTY_SIZE_OPTION
+                                            handleOnChange={handleSizeChange}
+                                            options={
+                                                cartItem?.variation2?.array
+                                            }
+                                            select={
+                                                cartItem?.variationSelect
+                                                    ?.variation2?.variation
+                                            }
+                                            type="size"
+                                        />
+                                        <div className="border-r-2 pr-2"></div>
+                                    </div>
+                                )}
+                                <div
+                                    className="flex !cursor-pointer flex-nowrap  gap-x-2"
+                                    onClick={onClick}
+                                >
+                                    <p>Qty</p>
+
+                                    <span id="qty-select">
+                                        <select
+                                            onChange={handleQuantityChange}
+                                            name="quantity-select"
+                                            id="qty-size-select"
+                                            className="!max-w-[80px] text-s"
+                                            tabIndex={'0'}
+                                        >
+                                            {quantityArr.map((item, index) => {
+                                                return (
+                                                    <option
+                                                        key={item}
+                                                        value={item}
+                                                        // selected = {}
+                                                        selected={
+                                                            item ==
+                                                            cartItem.quantity
+                                                        }
+                                                    >
+                                                        {item}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                id="save-later-btn"
+                                className=""
+                            >
+                                <img
+                                    loading="lazy"
+                                    src={heart}
+                                    ref={heart_icon_ref}
+                                />
+                                <p className="m-0 text-xs">Save for later</p>
+                            </button>
+                        </div>
+                    </section>
+                    <div>
                         <button
                             type="button"
-                            id="cart-close"
-                            className="h-full w-full hover:bg-slate-100"
-                            onClick={() => handleRemove(product.cartId)}
+                            // id="cart-close"
+                            className=" h-fit w-fit rounded-full p-1 transition-all cursor-pointer"
+                            onClick={() =>
+                                setIsRemoving(() => ({
+                                    body: true,
+                                    text: true,
+                                }))
+                            }
                         >
-                            <img loading="lazy" src={close} />{' '}
+                            <CloseRounded  className='!text-3xl'/>
                         </button>
-
-                        <Link
-                            to={`/product/${product.id}`}
-                            className="cart-img-container min-h-full"
-                        >
-                            <img
-                                src={product.images[0]}
-                                className="h-[140px] w-full max-w-[110px] object-cover"
-                            ></img>
-                        </Link>
-                        <section
-                            id="cart-info"
-                            className="flex !min-h-full flex-col flex-nowrap"
-                        >
-                            <p className="flex gap-x-3 text-sm font-bold tracking-wider text-[var(--primary-2)]">
-                                <span
-                                    className={
-                                        product.price?.previous >
-                                        product.price.current
-                                            ? 'text-red-600'
-                                            : 'text-dark-gray'
-                                    }
-                                >
-                                    £{product.price.current}
-                                </span>
-                                {product.price?.previous &&
-                                    product.price?.previous >
-                                        product.price.current && (
-                                        <span className="text-[12px] font-medium text-[var(--grey)] line-through">
-                                            £{product.price?.previous}
-                                        </span>
-                                    )}
-                            </p>
-
-                            <div className=" bottom relative mt-2 flex h-full !max-h-full w-full flex-col justify-between">
-                                <p className="w-11/12 text-gray-500">
-                                    {product.title}
-                                </p>
-                                <div className="cart-options">
-                                    {findColor && (
-                                        <span className="border-r-[1px] pr-2 text-s">
-                                            {findColor?.variation?.toUpperCase()}
-                                        </span>
-                                    )}
-                                    {product?.isVariation2Present && (
-                                        <div className="cursor-pointer border-r-[1px] pr-2">
-                                            <QTY_SIZE_OPTION
-                                                handleOnChange={
-                                                    handleSizeChange
-                                                }
-                                                options={
-                                                    product?.variation2?.array
-                                                }
-                                                select={
-                                                    product?.variationSelect
-                                                        ?.variation2?.variation
-                                                }
-                                                type="size"
-                                            />
-                                            <div className="border-r-2 pr-2"></div>
-                                        </div>
-                                    )}
-                                    <div
-                                        className="flex !cursor-pointer flex-nowrap  gap-x-2"
-                                        onClick={onClick}
-                                    >
-                                        <p>Qty</p>
-                                        {/* <QTY_SIZE_OPTION
-                                handleOnChange={handleQuantityChange}
-                                options={quantityArr}
-                                select={quantity}
-                                ref={qtyRef}
-                            /> */}
-
-                                        <span id="qty-select">
-                                            {/* <label htmlFor="qty-select">{}</label> */}
-                                            <select
-                                                onChange={handleQuantityChange}
-                                                name="quantity-select"
-                                                id="qty-size-select"
-                                                className="!max-w-[80px] text-s"
-                                                tabIndex={'0'}
-                                            >
-                                                {quantityArr.map(
-                                                    (item, index) => {
-                                                        return (
-                                                            <option
-                                                                key={item}
-                                                                value={item}
-                                                                // selected = {}
-                                                                selected={
-                                                                    item ==
-                                                                    product.quantity
-                                                                }
-                                                            >
-                                                                {item}
-                                                            </option>
-                                                        );
-                                                    }
-                                                )}
-                                            </select>
-                                        </span>
-                                    </div>
-                                </div>
-                                <button
-                                    type="button"
-                                    id="save-later-btn"
-                                    className=""
-                                >
-                                    <img
-                                        loading="lazy"
-                                        src={heart}
-                                        ref={heart_icon_ref}
-                                    />
-                                    <p className="m-0 text-xs">
-                                        Save for later
-                                    </p>
-                                </button>
-                            </div>
-                        </section>
-                    </motion.section>
-                )}
-            </AnimatePresence>
+                    </div>
+                </section>
+            </section>
         </motion.section>
     );
 }
