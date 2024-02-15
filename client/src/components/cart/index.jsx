@@ -85,7 +85,7 @@ function Cart({}) {
         exit: {
             opacity: 0,
 
-            transition: { delay: cartLoading || cartRefresh ? 0 : 0.7 },
+            transition: { delay: 0.7 },
         },
     };
     return (
@@ -147,9 +147,7 @@ function Cart({}) {
                             <motion.div className="product-cart-wrapper flex flex-col flex-nowrap">
                                 <AnimatePresence>
                                     {cart.map((item, idx) => {
-                                        console.log({
-                                            cartLength: cart.length,
-                                        });
+                                       
                                         return (
                                           
                                                     <Cart_Item
@@ -159,7 +157,7 @@ function Cart({}) {
                                                             cart.length - 1
                                                         }
                                                         product={item}
-                                                        // key={item.cartId}
+                                                    key={item.cartId}
                                                     />
                                         
                                        

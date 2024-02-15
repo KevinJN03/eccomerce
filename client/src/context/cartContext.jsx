@@ -110,21 +110,21 @@ export function CartProvider({ children }) {
     const [cart, dispatch] = useReducer(reducer, getCartFromLocalStorage());
     const [promo, setPromo] = useState([{ bool: false }]);
     const [deliveryOption, setDeliveryOption] = useState({});
-    const [cartLoading, setCartLoading] = useState(true);
+    const [cartLoading, setCartLoading] = useState(false);
     const [cartRefresh, setCartRefresh] = useState(false);
     useEffect(() => {
-        if (cartRefresh) {
-            setCartLoading(() => true);
-        }
+        // if (cartRefresh) {
+        //     setCartLoading(() => true);
+        // }
         localStorage.setItem('cart', JSON.stringify(cart));
-        const timeout = setTimeout(() => {
-            setCartLoading(() => false);
-            setCartRefresh(() => false);
-        }, 1500);
+        // const timeout = setTimeout(() => {
+        //     setCartLoading(() => false);
+        //     setCartRefresh(() => false);
+        // }, 1500);
 
-        return () => {
-            clearTimeout(timeout);
-        };
+        // return () => {
+        //     clearTimeout(timeout);
+        // };
     }, [cart]);
 
     const value = {

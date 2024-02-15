@@ -141,10 +141,12 @@ function Cart_Item({ product, idx, lastIndex }) {
         });
     }, []);
 
-    const cartItemVariants = getCartItemVariants({
-        idx,
-        disableTranslateY: false,
-    });
+    const [cartItemVariants, setCartItemVariants] = useState(() =>
+        getCartItemVariants({
+            idx,
+            disableTranslateY: false,
+        })
+    );
     return (
         <motion.section
             variants={cartItemVariants.section}

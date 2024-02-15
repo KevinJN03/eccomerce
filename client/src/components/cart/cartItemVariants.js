@@ -1,4 +1,4 @@
-const getCartItemVariants = ({ idx, disableTranslateY }) => {
+const getCartItemVariants = ({idx, disableTranslateY}) => {
     return {
         overlay: {
             body: {
@@ -40,11 +40,7 @@ const getCartItemVariants = ({ idx, disableTranslateY }) => {
             },
         },
         section: {
-            initial: {
-                height: 'auto',
-                translateY: disableTranslateY ? 0 : 50,
-                scale: 1,
-            },
+            initial: { height: 'auto', translateY: disableTranslateY ? 0 : 50, scale: 1 },
             animate: {
                 translateY: 0,
                 height: 'auto',
@@ -53,7 +49,7 @@ const getCartItemVariants = ({ idx, disableTranslateY }) => {
                     duration: 2,
                     delay: 2,
                     translateY: {
-                        duration: disableTranslateY ? 0 : 0.7,
+                        duration: disableTranslateY ? 0 :  0.7,
                         delay: disableTranslateY ? 0 : 0.2 * idx,
                     },
                 },

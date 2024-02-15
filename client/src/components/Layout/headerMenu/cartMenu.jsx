@@ -5,17 +5,14 @@ import { useCart } from '../../../context/cartContext';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CartMenuItem from './cartIMenutem';
+import Cart_Item from '../../cart/cart-item';
 function CartMenu({ setIsHover, isHover }) {
     const { withOutShipping: subTotal } = calculateTotal();
     const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
 
-    const handleRemove = (cartId) => {
-        cartDispatch({ type: 'remove', cartId: cartId });
-    };
-
-    useEffect(() => {
-        cartDispatch({ type: 'refresh' });
-    }, []);
+    // useEffect(() => {
+    //     cartDispatch({ type: 'refresh' });
+    // }, []);
 
     return (
         <motion.section className="cartMenu">
@@ -31,15 +28,25 @@ function CartMenu({ setIsHover, isHover }) {
                         </span>
                     </h3>
                 </header>
-                <motion.section className="cartItem flex h-full max-h-[15rem] w-full flex-col gap-3 overflow-y-auto bg-white p-3 px-3">
+                <motion.section
+                    key={'cart-item-menu-wrapper'}
+                    className="cartItem flex h-full max-h-[15rem] w-full flex-col gap-3 overflow-y-auto bg-white p-3 px-3"
+                >
                     <AnimatePresence>
-                        {cart.map((cartItem, idx) => {
+                        {cart.map((item, idx) => {
                             return (
-                                <CartMenuItem
-                                    key={`item-${cartItem.cartId}`}
-                                    cartItem={cartItem}
+                                <> {
+                                    item &&  <CartMenuItem
+                                    // key={`${item.cartId}`}
+                                    cartItem={item}
                                     idx={idx}
-                                />
+                                    lastIndex={
+                                        idx ==
+                                        cart.length - 1
+                                    }
+                                />}
+                                </>
+                              
                             );
                         })}
                     </AnimatePresence>
