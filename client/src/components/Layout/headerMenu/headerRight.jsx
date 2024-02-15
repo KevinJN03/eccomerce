@@ -10,9 +10,12 @@ import HeaderMenu from './header-menus';
 import { useState } from 'react';
 import { useCart } from '../../../context/cartContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLayoutContext } from '../../../context/layoutContext';
 
 function HeaderRight({}) {
-    const [isHover, setIsHover] = useState({ on: false, menu: null });
+  
+
+    const { isHover, setIsHover } = useLayoutContext();
     const navigate = useNavigate();
     const [hoveredElement, setHoveredElement] = useState(null);
     const {
@@ -23,12 +26,16 @@ function HeaderRight({}) {
     } = useCart();
     const { pathname } = useLocation();
     const handleMouseLeave = (e) => {
-        console.log('leaving: ', e.target.classList.contains('ignore'));
+        // console.log(
+        //     'leaving: ',
+        //     e.target.classList.contains('ignore'),
+        //     e.target
+        // );
+        const isLeavingOnPointer = e.target.classList.contains('pointer');
 
-  
-        // if (e.target.id !== 'pointer') {
-        //     setIsHover(() => ({ menu: null, on: false }));
-        // }
+        if (!isLeavingOnPointer) {
+            setIsHover(() => ({ menu: null, on: false }));
+        }
     };
 
     const cartVariants = {
@@ -66,7 +73,7 @@ function HeaderRight({}) {
 
     const handleCartHover = (e) => {
         // setHoveredElement(() => e.target.id);
-        console.log('entering: ', e.target.classList.contains('ignore'));
+        // console.log('entering: ', e.target.classList.contains('ignore'));
         if (pathname == '/cart') {
             return;
         } else if (isHover.menu != 'cart') {
@@ -127,7 +134,6 @@ function HeaderRight({}) {
                     onClick={handleCartClick}
                     onMouseLeave={handleMouseLeave}
                 >
-                    <div className="ignore absolute left-0 top-0 z-[2] h-full w-full" />
                     {cart.length == 0 ? (
                         <LocalMallOutlined className="img-icon ignore" />
                     ) : (
@@ -163,7 +169,7 @@ function HeaderRight({}) {
                     </div>
                 </button>
             </section>
-            <HeaderMenu isHover={isHover} setIsHover={setIsHover} />
+            <HeaderMenu/>
         </section>
     );
 }

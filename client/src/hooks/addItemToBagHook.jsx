@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
+import { useLayoutContext } from '../context/layoutContext';
 function useAddItemToBagHook({ product }) {
     const { dispatch } = useCart();
 
@@ -12,7 +13,7 @@ function useAddItemToBagHook({ product }) {
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
     const [error, setError] = useState(false);
-
+    const { isHover, setIsHover } = useLayoutContext();
     useEffect(() => {
         setPriceState(product?.price?.current);
 
@@ -84,8 +85,7 @@ function useAddItemToBagHook({ product }) {
             return;
         }
 
-
-        const {alsoLike, detail, reviews,  ...rest} = product
+        const { alsoLike, detail, reviews, ...rest } = product;
         const newProduct = JSON.parse(JSON.stringify(rest));
 
         newProduct.id = product._id;
@@ -98,6 +98,7 @@ function useAddItemToBagHook({ product }) {
 
         console.log({ product });
         setError(() => false);
+        setIsHover(() => ({ on: true, menu: 'cart' }));
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {

@@ -6,16 +6,17 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CartMenuItem from './cartIMenutem';
 import Cart_Item from '../../cart/cart-item';
-function CartMenu({ setIsHover, isHover }) {
+import { useLayoutContext } from '../../../context/layoutContext';
+function CartMenu({  }) {
     const { withOutShipping: subTotal } = calculateTotal();
     const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
-
+    const { isHover, setIsHover } = useLayoutContext();
     // useEffect(() => {
     //     cartDispatch({ type: 'refresh' });
     // }, []);
 
     return (
-        <motion.section className="cartMenu">
+        <section className="cartMenu">
             <div className="flex flex-col py-3">
                 <header>
                     <h3 className="px-3 pb-3 font-gotham text-base">
@@ -28,29 +29,24 @@ function CartMenu({ setIsHover, isHover }) {
                         </span>
                     </h3>
                 </header>
-                <motion.section
+                <section
                     key={'cart-item-menu-wrapper'}
-                    className="cartItem flex h-full max-h-[15rem] w-full flex-col gap-3 overflow-y-auto bg-white p-3 px-3"
+                    className="cartItem flex h-full max-h-[15rem] w-full flex-col overflow-y-auto bg-white"
                 >
                     <AnimatePresence>
                         {cart.map((item, idx) => {
                             return (
-                                <> {
-                                    item &&  <CartMenuItem
-                                    // key={`${item.cartId}`}
+                                <CartMenuItem
+                                    key={`cartId-${item.cartId}`}
                                     cartItem={item}
                                     idx={idx}
-                                    lastIndex={
-                                        idx ==
-                                        cart.length - 1
-                                    }
-                                />}
-                                </>
-                              
+                                    lastIndex={idx == cart.length - 1}
+                                 
+                                />
                             );
                         })}
                     </AnimatePresence>
-                </motion.section>
+                </section>
 
                 <div className="subtotal subtotal-shadow flex flex-row flex-nowrap justify-between border-t bg-[#F5F5F5] px-3 py-4 ">
                     <p
@@ -93,7 +89,7 @@ function CartMenu({ setIsHover, isHover }) {
                     <a className="underline underline-offset-1">here</a>
                 </p>
             </div>
-        </motion.section>
+        </section>
     );
 }
 

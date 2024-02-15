@@ -20,19 +20,20 @@ function Pointer({ isHover }) {
         },
     };
     return (
-        <AnimatePresence>
-            {isHover && (
-                <motion.div
-                    variants={variants}
-                    initial={'initial'}
-                    animate={'animate'}
-                    exit={'exit'}
-
-                    id='pointer'
-                    className="pointer-up ignore absolute bottom-[-0.5rem] left-1/2 h-0 w-0 translate-x-[-50%] translate-y-[-50%]  border-x-[0.8rem] border-b-[0.8rem] border-x-transparent border-b-light-grey "
-                />
-            )}
-        </AnimatePresence>
+        <div className="ignore  pointer absolute bottom-[-0.2rem] w-full flex justify-center">
+            <AnimatePresence>
+                {isHover && (
+                    <motion.div
+                        variants={variants}
+                        initial={'initial'}
+                        animate={'animate'}
+                        exit={'exit'}
+                        // id='pointer'
+                        className=" pointer ignore  h-0 w-0   border-x-[0.8rem] border-b-[0.8rem] border-x-transparent border-b-light-grey "
+                    />
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
 

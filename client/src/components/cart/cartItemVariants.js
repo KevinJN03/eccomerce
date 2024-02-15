@@ -1,4 +1,4 @@
-const getCartItemVariants = ({idx, disableTranslateY}) => {
+const getCartItemVariants = ({ idx, disableTranslateY }) => {
     return {
         overlay: {
             body: {
@@ -9,6 +9,15 @@ const getCartItemVariants = ({idx, disableTranslateY}) => {
                     scaleX: 1,
                     transition: {
                         duration: 0.8,
+                        ease: 'easeIn',
+                        // ease: [0.11, 0, 0.5, 0],
+                    },
+                },
+
+                exit: {
+                    height: '0px',
+                    transition: {
+                        duration: 0.4,
                     },
                 },
             },
@@ -18,15 +27,17 @@ const getCartItemVariants = ({idx, disableTranslateY}) => {
                     opacity: 1,
                     scale: 1,
                     transition: {
-                        duration: 0.5,
-                        delay: 0.3,
-                        ease: 'easeInOut',
+                        duration: 0.3,
+                        delay: 0.5,
+                        ease: 'easeIn',
                     },
                 },
                 exit: {
-                    backgroundColor: '#00000',
+                    scale: 0.5,
+                    opacity: 0,
                     transition: {
-                        duration: 0.2,
+                        duration: 0.7,
+                        delay: 0.5,
                     },
                 },
             },
@@ -34,13 +45,19 @@ const getCartItemVariants = ({idx, disableTranslateY}) => {
         product: {
             exit: {
                 opacity: 0,
+                // height: '0px',
                 transition: {
-                    delay: 0.6,
+                    duration: 0,
+                    delay: 2,
                 },
             },
         },
         section: {
-            initial: { height: 'auto', translateY: disableTranslateY ? 0 : 50, scale: 1 },
+            initial: {
+                height: 'auto',
+                translateY: disableTranslateY ? 0 : 50,
+                scale: 1,
+            },
             animate: {
                 translateY: 0,
                 height: 'auto',
@@ -49,32 +66,21 @@ const getCartItemVariants = ({idx, disableTranslateY}) => {
                     duration: 2,
                     delay: 2,
                     translateY: {
-                        duration: disableTranslateY ? 0 :  0.7,
+                        duration: disableTranslateY ? 0 : 0.7,
                         delay: disableTranslateY ? 0 : 0.2 * idx,
                     },
                 },
             },
             exit: {
-                height: '0px',
-                opacity: 0,
-                scale: 0.8,
-                backgroundColor: '#00000',
+                // opacity: 0,
+                scaleY: 0,
                 transition: {
-                    duration: 0.7,
-                    delay: 1.2,
-                    height: {
-                        duration: 0.7,
-                        delay: 1.2,
-                    },
-
-                    scale: {
-                        delay: 1,
-                        duration: 0.2,
-                    },
-                    opacity: {
-                        delay: 1,
-                        duration: 0.2,
-                    },
+                    duration: 0.4,
+                    // delay: 2,
+                    // height: {
+                    //     duration: 0.7,
+                    //     delay: 10,
+                    // },
                 },
             },
         },

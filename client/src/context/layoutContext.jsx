@@ -22,9 +22,11 @@ export function LayoutProvider({ children }) {
         .split('/');
 
     const [layout, setLayout] = useState(() => !set.has(splitLocation[1]));
-
+    const [isHover, setIsHover] = useState({ on: false, menu: null });
     return (
-        <LayoutContext.Provider value={{ layout, setLayout }}>
+        <LayoutContext.Provider
+            value={{ layout, setLayout, isHover, setIsHover }}
+        >
             {children}
         </LayoutContext.Provider>
     );
