@@ -85,8 +85,8 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
             
 
             {!loading && (
-                <section className="min-h-screen w-screen">
-                    <section className="login-signup-page min-h-screen">
+                <section className="h-full w-screen">
+                    <section className="login-signup-page">
                         <section id="login-signup-container" className="w-full">
                             <a
                                 href={!admin && '/'}

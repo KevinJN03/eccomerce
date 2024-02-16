@@ -2,54 +2,86 @@ import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
 import { useWishlistContext } from '../../context/wishlistContext';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios';
-import { DeleteOutlineRounded } from '@mui/icons-material';
-
-import delete_icon from '../../assets/icons/delete-icon.png';
-import { Link } from 'react-router-dom';
 import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
 import WishListItem from './wishListItem';
 import { AnimatePresence, motion } from 'framer-motion';
-function WishList({}) {
-    const { wishlist, wishListDispatch } = useWishlistContext();
+import EmptyWishList from './empty.jsx';
 
-    const [products, setProducts] = useState([]);
+
+function WishList({}) {
+    const {
+        wishlist,
+        wishListDispatch,
+        wishlistLoading,
+        setWishListLoading,
+
+        wishlistRefresh,
+        getWishlistFromLS,
+    } = useWishlistContext();
+    const [wishlistProducts, setWishlistProduct] = useState([]);
     const abortControllerRef = useRef(new AbortController());
 
-    const [loading, setLoading] = useState(true);
+    const fetchData = async () => {
+        try {
+            setWishListLoading(() => true);
+            const productIdArray = [];
+            const wishlistMap = new Map(getWishlistFromLS());
+            for (const id of wishlistMap.keys()) {
+                productIdArray.push(id);
+            }
+
+            console.log({ productIdArray });
+            const { data } = await axios.get(`product/many/${productIdArray}`, {
+                signal: abortControllerRef.current?.signal,
+            });
+
+            // setProducts(() => data?.products || []);
+            wishListDispatch({
+                type: 'refresh',
+                products: data?.products || [],
+            });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            // setTimeout(() => {
+            //     setWishListLoading(() => false);
+            // }, 2000);
+        }
+    };
+
     useEffect(() => {
         abortControllerRef.current?.abort();
 
         abortControllerRef.current = new AbortController();
-        const fetchData = async () => {
-            try {
-                const { data } = await axios.get(
-                    `product/many/${Array.from(wishlist)}`,
-                    {
-                        signal: abortControllerRef.current.signal,
-                    }
-                );
-
-                setProducts(() => data?.products || []);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setTimeout(() => {
-                    setLoading(() => false);
-                }, 800);
-            }
-        };
 
         fetchData();
 
         return () => {
             abortControllerRef.current?.abort();
         };
-    }, []);
+    }, [wishlistRefresh]);
 
+    useEffect(() => {
+        const productsArray = [];
+
+        wishlist.forEach(function (value, key) {
+            productsArray.push(value);
+        });
+        console.log({ productsArray });
+        setWishlistProduct(() => productsArray);
+
+        const timeout = setTimeout(() => {
+            setWishListLoading(() => false);
+        }, 1000);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [wishlist]);
     return (
-        <div className="relative flex min-h-screen h-full w-full flex-col bg-white pb-24">
+        <div className="flex w-full flex-col bg-white">
             <AnimatePresence mode="wait">
-                {loading ? (
+                {wishlistLoading ? (
                     <motion.section
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -59,11 +91,11 @@ function WishList({}) {
                             ease: 'easeInOut',
                         }}
                         key={'wishlist-loader'}
-                        className="flex h-full w-full  items-center justify-center"
+                        className="mt-20 flex h-full  w-full items-center justify-center"
                     >
                         <GLoader />
                     </motion.section>
-                ) : (
+                ) : wishlistProducts.length > 0 ? (
                     <motion.section
                         key={'wishlist-container'}
                         initial={{ opacity: 0 }}
@@ -89,19 +121,21 @@ function WishList({}) {
                                 </select>
 
                                 <p>
-                                    {`${products.length} ${
-                                        products.length > 1 ? 'items' : 'item'
+                                    {`${wishlistProducts.length} ${
+                                        wishlistProducts.length > 1
+                                            ? 'items'
+                                            : 'item'
                                     }`}
                                 </p>
                             </div>
 
-                            <section className="flex flex-row flex-wrap gap-5 h-full">
+                            <section className="flex h-full flex-row flex-wrap gap-y-10">
                                 <AnimatePresence>
-                                    {products.map((product) => {
+                                    {wishlistProducts.map((product) => {
                                         return (
                                             <WishListItem
                                                 product={product}
-                                                key={product?._id}
+                                                key={product.wishlistId}
                                             />
                                         );
                                     })}
@@ -109,6 +143,8 @@ function WishList({}) {
                             </section>
                         </div>
                     </motion.section>
+                ) : (
+                    <EmptyWishList/>
                 )}
             </AnimatePresence>
         </div>

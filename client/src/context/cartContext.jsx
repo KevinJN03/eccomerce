@@ -127,20 +127,11 @@ export function CartProvider({ children }) {
         // };
     }, [cart]);
 
-    // useEffect(() => {
-    //     if (cartRefresh) {
-    //         setCartLoading(() => true);
+    useEffect(() => {
+        
 
-    //         const timeout = setTimeout(() => {
-    //             setCartLoading(() => false);
-    //             setCartRefresh(() => false);
-    //         }, 1500);
-
-    //         return () => {
-    //             clearTimeout(timeout);
-    //         };
-    //     }
-    // }, [cartRefresh]);
+        dispatch({ type: 'refresh' });
+    }, [cartRefresh]);
 
     const value = {
         cart,

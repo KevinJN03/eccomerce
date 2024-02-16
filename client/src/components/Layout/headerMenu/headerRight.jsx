@@ -11,9 +11,13 @@ import { useState } from 'react';
 import { useCart } from '../../../context/cartContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLayoutContext } from '../../../context/layoutContext';
+import { useWishlistContext } from '../../../context/wishlistContext';
 
 function HeaderRight({}) {
     const { isHover, setIsHover } = useLayoutContext();
+
+    const { wishListDispatch, setWishlistRefresh } = useWishlistContext();
+
     const navigate = useNavigate();
     const [hoveredElement, setHoveredElement] = useState(null);
     const {
@@ -53,7 +57,6 @@ function HeaderRight({}) {
     };
     const handleCartClick = (e) => {
         if (pathname == '/cart') {
-            cartDispatch({ type: 'refresh' });
             setCartRefresh(() => true);
             return;
         }
@@ -93,6 +96,12 @@ function HeaderRight({}) {
         }
     };
 
+    const handleWishlistClick = () => {
+        // wishListDispatch({ type: 'latestWishlist' });
+
+        setWishlistRefresh((prevState) => !prevState);
+    };
+
     return (
         <section className="header-right relative flex h-full w-fit max-w-fit ">
             <section className="top z-[2] flex h-full  max-w-fit items-center justify-around !bg-primary sm:gap-5 sm:pl-3 lg:gap-1">
@@ -118,6 +127,7 @@ function HeaderRight({}) {
                     <Pointer isHover={isHover.menu == 'profile'} />
                 </button>
                 <Link
+                    onClick={handleWishlistClick}
                     to="/wishlist"
                     className="header-icons flex h-full !cursor-pointer   items-center justify-center px-2"
                 >

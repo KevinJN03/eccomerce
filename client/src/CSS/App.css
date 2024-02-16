@@ -3,7 +3,9 @@
 }
 
 #main {
-    @apply m-0 flex min-h-screen justify-center bg-light-grey p-0;
+    @apply m-0 flex bg-light-grey p-0 h-full justify-center min-h-[calc(100vh_-_(6.75rem+3.5rem))] ;
+
+     /* min-h-screen */
    
 }
 
@@ -242,12 +244,8 @@
 
 /* footer section */
 .footer-wrapper {
-    background-color: var(--light-grey);
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: black;
+   
+    @apply text-black flex flex-col justify-center w-full bg-light-grey;
 }
 .footer {
     @apply flex w-full flex-row px-5;

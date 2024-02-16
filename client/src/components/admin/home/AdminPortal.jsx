@@ -44,7 +44,7 @@ function AdminPortal({}) {
         <>
             {loading && <LoadingPage />}
             {!loading && (
-                <section className="login-signup-page min-h-screen">
+                <section className="login-signup-page">
                     <section
                         id="login-signup-container"
                         className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"

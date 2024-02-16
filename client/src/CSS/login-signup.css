@@ -1,19 +1,17 @@
 @tailwind components;
 .login-signup-page {
-    @apply m-0 flex h-full flex-col  items-center p-0;
-    min-width: 100%;
-    background-color: var(--light-grey);
+    @apply m-0 flex h-full flex-col  items-center p-0 bg-light-grey;
+   
 }
 
 #login-signup-container {
-    /* max-width: 600px; */
-    /* width: clamp(300px, 00px, 600px); */
+   
     width: clamp(300px, 90vw, 600px);
-    /* border: thin solid black; */
+   
 
-    margin-top: 80px;
-    padding: 12px;
-    @apply flex flex-col items-center justify-center bg-white;
+  
+   
+    @apply flex flex-col items-center justify-center bg-white p-3;
 }
 
 #login-signup-option {
