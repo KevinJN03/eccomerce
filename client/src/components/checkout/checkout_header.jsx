@@ -14,7 +14,7 @@ function Checkout_Header({ text, disableIcon, className }) {
             <h1
                 className={`${
                     className || ''
-                } mr-10 text-3xl font-semibold sm:text-xl md:text-2xl`}
+                } mr-10 text-[1.65rem] font-semibold sm:text-xl md:text-2xl`}
             >
                 {text}
             </h1>

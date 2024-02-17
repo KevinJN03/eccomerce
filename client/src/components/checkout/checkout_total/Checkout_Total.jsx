@@ -25,7 +25,7 @@ function Checkout_Total() {
 
     return (
         <motion.section
-            className="lg:sticky top-10 mt-5 h-fit sm+md:w-[90vw] lg:w-[400px]"
+            className="lg:sticky top-3  h-fit sm+md:w-[90vw] lg:w-[400px]"
      
         >
             <section id="checkout-total">

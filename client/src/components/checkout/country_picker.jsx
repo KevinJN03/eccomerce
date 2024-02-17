@@ -26,7 +26,7 @@ function Country_Picker({ select, setSelect, disable }) {
         <section
             id="country-picker"
        
-            className={`${disable ? 'disable-component' : 'display-component'}`}
+            className={`px-6 py-6 ${disable ? 'disable-component' : 'display-component'}`}
         >
             <h1 className="mb-2 text-lg font-bold tracking-wider">
                 DELIVERY COUNTRY:

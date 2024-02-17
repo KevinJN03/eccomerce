@@ -3,9 +3,8 @@
 }
 
 #main {
-    @apply m-0 flex bg-light-grey p-0 h-full justify-center min-h-[calc(100vh_-_(6.75rem+3.5rem))] ;
+    @apply m-0 flex bg-light-grey p-0 h-full justify-center max-w-[100vw] min-h-[calc(100vh_-_(6.75rem+3.5rem))] ;
 
-     /* min-h-screen */
    
 }
 
