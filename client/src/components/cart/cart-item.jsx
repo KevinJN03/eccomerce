@@ -11,6 +11,7 @@ import Overlay from './overlay';
 import getCartItemVariants from './cartItemVariants';
 import { useHover } from '@uidotdev/usehooks';
 import useWishListHook from '../../hooks/wishlistHook';
+import Hearts from './hearts';
 const arrayRange = (start, stop, step) =>
     Array.from(
         { length: (stop - start) / step + 1 },
@@ -169,167 +170,150 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                     enableBodyExit
                 />
                 <AnimatePresence>
-                    {isRemoving?.showOverlay && (
+                    {(isRemoving?.showOverlay) && (
                         <motion.div
                             key={`saveLaterOverlay-${cartItem.cartId}`}
                             exit={'exit'}
-                            // onAnimationComplete={(e) => {
-                            //     if (e == 'exit') {
-                            //         handleWishlist();
-                            //         handleRemove();
-                            //     }
-                            // }}
-                            className="relative flex max-h-44 min-h-44 w-full flex-col items-center justify-center"
+                            className=" absolute left-0 top-0 z-[1] flex h-full w-full flex-col items-center justify-center"
                         >
                             <AnimatePresence>
-                                {
-                                    <motion.div className="min-h-44 flex items-center justify-center">
-                                        <AnimatePresence>
-                                            {!isRemoving.showOverlayOpacityOff && (
-                                                <motion.p
-                                                    initial={{
-                                                        opacity: 0,
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        transition: {
-                                                            duration: 0.3,
-                                                            // delay: 0.5,
-                                                        },
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        scale: 0.9,
-                                                        transition: {
-                                                            duration: 0.2,
-                                                            delay: 0.1,
-                                                        },
-                                                    }}
-                                                    className="text-sm font-medium "
-                                                >
-                                                    Item saved for later
-                                                </motion.p>
-                                            )}
-                                        </AnimatePresence>
-
-                                        <AnimatePresence>
-                                            {[
-                                                {
-                                                    left: 30,
-                                                    top: 80,
-                                                    fontSize: 1,
-                                                },
-                                                {
-                                                    top: 69,
-                                                    left: 32,
-                                                    fontSize: 0.8,
-                                                },
-
-                                                {
-                                                    top: 75,
-                                                    fontSize: 0.6,
-                                                    left: 35,
-                                                },
-                                                {
-                                                    left: 36,
-                                                    top: 65,
-                                                    fontSize: 0.45,
-                                                },
-                                            ].map(
-                                                (
-                                                    { left, top, fontSize },
-                                                    idx
-                                                ) => {
-                                                    const variants = {
-                                                        initial: { opacity: 0 },
-                                                        animate: {
-                                                            opacity: 1,
-                                                            transition: {
-                                                                duration: 0.3,
-                                                                delay:
-                                                                    0.2 * idx,
-                                                            },
-                                                        },
-                                                        exit: {
-                                                            opacity: 0,
-                                                            transition: {
-                                                                duration: 0.3,
-                                                                delay:
-                                                                    (4 - idx) *
-                                                                    0.2,
-                                                            },
-                                                        },
-                                                    };
-                                                    return (
-                                                        <AnimatePresence>
-                                                            {!isRemoving?.showOverlayOpacityOff && (
-                                                                <motion.div
-                                                                    className={`absolute  left-[${left}%] top-[${top}%] `}
-                                                                    key={`heart-${
-                                                                        idx + 1
-                                                                    }-${
-                                                                        cartItem.cartId
-                                                                    }`}
-                                                                    variants={
-                                                                        variants
-                                                                    }
-                                                                    initial={
-                                                                        'initial'
-                                                                    }
-                                                                    animate={
-                                                                        'animate'
-                                                                    }
-                                                                    exit={
-                                                                        'exit'
-                                                                    }
-                                                                    onAnimationComplete={(
-                                                                        e
-                                                                    ) => {
-                                                                        console.log(
-                                                                            'onAnimationComplete: ',
-                                                                            e
-                                                                        );
-
-                                                                        if (
-                                                                            idx ==
-                                                                                0 &&
-                                                                            e ==
-                                                                                'exit'
-                                                                        ) {
-                                                                            handleWishlist();
-                                                                            handleRemove();
-                                                                        }
-                                                                        if (
-                                                                            idx ==
-                                                                                3 &&
-                                                                            e ==
-                                                                                'animate'
-                                                                        ) {
-                                                                            setIsRemoving(
-                                                                                (
-                                                                                    prevState
-                                                                                ) => ({
-                                                                                    ...prevState,
-                                                                                    showOverlayOpacityOff: true,
-                                                                                    // showOverlay: false,
-                                                                                })
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <Favorite
-                                                                        className={` !text-[${fontSize}rem]`}
-                                                                    />
-                                                                </motion.div>
-                                                            )}
-                                                        </AnimatePresence>
-                                                    );
-                                                }
-                                            )}
-                                        </AnimatePresence>
-                                    </motion.div>
-                                }
+                                {!isRemoving.showOverlayOpacityOff && (
+                                    <motion.p
+                                        initial={{
+                                            opacity: 0,
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            transition: {
+                                                duration: 0.3,
+                                                // delay: 0.5,
+                                            },
+                                        }}
+                                        exit={{
+                                            opacity: 0,
+                                            scale: 0.9,
+                                            transition: {
+                                                duration: 0.2,
+                                                delay: 0.1,
+                                            },
+                                        }}
+                                        className=" text-sm font-medium"
+                                    >
+                                        Item saved for later
+                                    </motion.p>
+                                )}
                             </AnimatePresence>
+                            {/* <div className="relative flex h-full w-full items-end justify-center"> */}
+                            <AnimatePresence>
+                                {[
+                                    {
+                                        left: 40,
+
+                                        fontSize: 1,
+
+                                        bottom: 1,
+                                    },
+                                    {
+                                        left: 42,
+                                        fontSize: 0.8,
+
+                                        bottom: 2.3,
+                                    },
+
+                                    {
+                                        fontSize: 0.6,
+                                        left: 45,
+
+                                        bottom: 1.7,
+                                    },
+                                    {
+                                        left: 45,
+
+                                        fontSize: 0.45,
+
+                                        bottom: 3,
+                                    },
+                                ].map(
+                                    (
+                                        { left, top, fontSize, ml, bottom, mb },
+                                        idx
+                                    ) => {
+                                        const variants = {
+                                            initial: { opacity: 0 },
+                                            animate: {
+                                                opacity: 1,
+                                                transition: {
+                                                    duration: 0.3,
+                                                    delay: 0.2 * (idx + 1),
+                                                },
+                                            },
+                                            exit: {
+                                                opacity: 0,
+                                                transition: {
+                                                    duration: 0.3,
+                                                    delay: (4 - idx) * 0.2,
+                                                },
+                                            },
+                                        };
+                                        return (
+                                            <AnimatePresence>
+                                                {!isRemoving?.showOverlayOpacityOff && (
+                                                    <motion.div
+                                                        style={{
+                                                            // marginBottom: `${mb}rem`
+
+                                                            bottom: `${bottom}rem`,
+                                                            left: `${left}%`,
+                                                        }}
+                                                        className={`absolute`}
+                                                        key={`heart-${
+                                                            idx + 1
+                                                        }-${cartItem.cartId}`}
+                                                        variants={variants}
+                                                        initial={'initial'}
+                                                        animate={'animate'}
+                                                        exit={'exit'}
+                                                        onAnimationComplete={(
+                                                            e
+                                                        ) => {
+                                                            if (
+                                                                idx == 0 &&
+                                                                e == 'exit'
+                                                            ) {
+                                                                handleWishlist();
+                                                                handleRemove();
+                                                            }
+                                                            if (
+                                                                idx == 3 &&
+                                                                e == 'animate'
+                                                            ) {
+                                                                setIsRemoving(
+                                                                    (
+                                                                        prevState
+                                                                    ) => ({
+                                                                        ...prevState,
+                                                                        showOverlayOpacityOff: true,
+                                                                        // showOverlay: false,
+                                                                    })
+                                                                );
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Favorite
+                                                            sx={{
+                                                                fontSize:
+                                                                    fontSize +
+                                                                    'rem',
+                                                            }}
+                                                        />
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        );
+                                    }
+                                )}
+                            </AnimatePresence>{' '}
+                            {/* </div> */}
                         </motion.div>
                     )}
                 </AnimatePresence>
