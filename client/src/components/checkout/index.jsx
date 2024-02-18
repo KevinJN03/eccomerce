@@ -212,10 +212,10 @@ function Checkout() {
                 setError,
             }}
         >
-            <section className="checkout-page-wrapper m-0 h-full min-h-screen w-full max-w-[100vw] bg-light-grey p-0">
+            <section className="checkout-page-wrapper m-0 h-full min-h-screen w-full max-w-[100vw]  p-0 flex justify-center items-center">
                 <Elements stripe={stripePromise}>
                     {cartLoading ? (
-                        <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
+                        <div className="flex h-full w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
                             <img src={RedirectImage} className="h-28 w-28" />
                             <p className="text-center text-lg">
                                 Your cart is Empty, you will get redirected to
@@ -228,8 +228,10 @@ function Checkout() {
                         !loading && (
                             <section
                                 id="checkout-page"
-                                className="m-0 flex h-full w-full justify-center p-0"
+                                className="m-0 flex h-full w-full justify-center items-center p-0 flex-col"
                             >
+
+
                                 <section
                                     id="checkout"
                                     variants={variants}
@@ -342,13 +344,15 @@ function Checkout() {
                                         <Checkout_Total />
                                     </div>
                                 </section>
+
+                                <footer className="mt-5 w-full self-start bg-white  py-6 text-center">
+                    GLAMO Help
+                </footer>
                             </section>
                         )
                     )}
                 </Elements>
-                <footer className="mt-5 w-full self-start bg-white  py-6 text-center">
-                    GLAMO Help
-                </footer>
+              
             </section>
         </CheckOutProvider>
     );

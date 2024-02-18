@@ -6,6 +6,10 @@ export default {
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
+
+            minHeight: {
+                main: 'calc(100vh-(6.75rem+3.75rem))',
+            },
             textShadow: {
                 sm: '0 1px 2px var(--tw-shadow-color)',
                 DEFAULT: '0 2px 4px var(--tw-shadow-color)',

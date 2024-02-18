@@ -44,7 +44,7 @@ const reducer = (state, action) => {
                     product?.variationSelect?.variation2?.variation
             ) {
                 isProductInCart = true;
-                return { ...item, quantity: item.quantity + 1 };
+                return { ...item, quantity: parseInt(item.quantity) + 1 };
             }
 
             return item;
@@ -128,8 +128,6 @@ export function CartProvider({ children }) {
     }, [cart]);
 
     useEffect(() => {
-        
-
         dispatch({ type: 'refresh' });
     }, [cartRefresh]);
 

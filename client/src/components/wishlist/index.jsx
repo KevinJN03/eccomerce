@@ -7,7 +7,6 @@ import WishListItem from './wishListItem';
 import { AnimatePresence, motion } from 'framer-motion';
 import EmptyWishList from './empty.jsx';
 
-
 function WishList({}) {
     const {
         wishlist,
@@ -29,8 +28,13 @@ function WishList({}) {
             for (const id of wishlistMap.keys()) {
                 productIdArray.push(id);
             }
+            if (productIdArray.length < 1) {
+               setTimeout(() => {
+                    setWishListLoading(() => false);
+                }, 1000);
 
-            console.log({ productIdArray });
+                return
+            }
             const { data } = await axios.get(`product/many/${productIdArray}`, {
                 signal: abortControllerRef.current?.signal,
             });
@@ -43,9 +47,7 @@ function WishList({}) {
         } catch (error) {
             console.error(error);
         } finally {
-            // setTimeout(() => {
-            //     setWishListLoading(() => false);
-            // }, 2000);
+         
         }
     };
 
@@ -91,7 +93,7 @@ function WishList({}) {
                             ease: 'easeInOut',
                         }}
                         key={'wishlist-loader'}
-                        className="mt-20 flex h-full  w-full items-center justify-center"
+                        className=" flex h-full  w-full items-center justify-center"
                     >
                         <GLoader />
                     </motion.section>
@@ -99,13 +101,21 @@ function WishList({}) {
                     <motion.section
                         key={'wishlist-container'}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                            duration: 0.3,
-                            ease: 'easeInOut',
+                        animate={{
+                            opacity: 1,
+                            transition: {
+                                duration: 0.3,
+                                ease: 'easeInOut',
+                            },
                         }}
-                        className=" relative flex h-full w-full flex-col"
+                        exit={{
+                            opacity: 0,
+                            transition: {
+                                duration: 0.2,
+                                ease: 'easeOut',
+                            },
+                        }}
+                        className=" relative mb-32 flex h-full w-full flex-col"
                     >
                         <header className="bg-dark-gray/10 py-6 text-center font-gotham text-2xl font-bold tracking-wider text-black/80">
                             Saved Items
@@ -135,7 +145,7 @@ function WishList({}) {
                                         return (
                                             <WishListItem
                                                 product={product}
-                                                key={product.wishlistId}
+                                                key={`wishlistId-${product.wishlistId}`}
                                             />
                                         );
                                     })}
@@ -144,7 +154,7 @@ function WishList({}) {
                         </div>
                     </motion.section>
                 ) : (
-                    <EmptyWishList/>
+                    <EmptyWishList />
                 )}
             </AnimatePresence>
         </div>

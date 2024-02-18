@@ -117,11 +117,10 @@ function Product_info({ title, text, details, images, product, loading }) {
                         >
                             <div className="absolute left-0 top-0 z-[1] h-full w-full rounded-inherit bg-transparent"></div>
                             <WishListBtn
-                                {...{
-                                    favorite,
-                                    showAnimation,
-                                    isHoverFavorite,
-                                }}
+                            favorite={favorite}
+                            showAnimation={showAnimation}
+                            isHoverFavorite={isHoverFavorite}
+                            
                             />
                         </div>
                     </div>

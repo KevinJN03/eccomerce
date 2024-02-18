@@ -7,7 +7,7 @@ function Empty_Cart({}) {
     const [state] = useGenderCategory();
     const gender = state.gender;
     return (
-        <motion.section className="emptyCart flex w-[90vw] flex-col items-center gap-3 self-center">
+        <motion.section className=" flex w-[90vw] flex-col items-center gap-3 self-center">
             <LocalMallOutlinedIcon className="!text-4xl" />
             <p className="text-lg font-bold">Your bag is empty</p>
             <p className="max-w-sm text-center">

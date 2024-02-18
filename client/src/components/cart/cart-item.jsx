@@ -5,10 +5,12 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, animate, motion } from 'framer-motion';
-import { CloseRounded } from '@mui/icons-material';
+import { CloseRounded, Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import Overlay from './overlay';
 import getCartItemVariants from './cartItemVariants';
+import { useHover } from '@uidotdev/usehooks';
+import useWishListHook from '../../hooks/wishlistHook';
 const arrayRange = (start, stop, step) =>
     Array.from(
         { length: (stop - start) / step + 1 },
@@ -16,26 +18,28 @@ const arrayRange = (start, stop, step) =>
     );
 
 function Cart_Item({ cartItem, idx, lastIndex }) {
-    const heart_icon_ref = useRef();
-
     const [quantity, setQuantity] = useState(cartItem?.quantity);
     const [findSize, setFindSize] = useState(null);
     const [sizeOptionArray, setSizeOptionArray] = useState([]);
     const [findColor, setFindColor] = useState(null);
-    const [isRemoving, setIsRemoving] = useState({});
+    const [isRemoving, setIsRemoving] = useState({ saveForLater: false });
     let quantityArr = arrayRange(1, 10, 1);
 
-    const qtyRef = useRef(null);
-    const sizeRef = useRef(null);
     const { dispatch, cart } = useCart();
 
-    const handleRemove = (id) => {
+    const handleRemove = () => {
         dispatch({ type: 'remove', cartId: cartItem.cartId });
     };
 
-    const onClick = () => {
-        qtyRef.current.focus();
-    };
+    const {
+        isHoverFavorite,
+        setIsHoverFavorite,
+        favorite,
+        setFavorite,
+        handleWishlist,
+    } = useWishListHook({
+        product: cartItem,
+    });
 
     const handleSizeChange = (e) => {
         const { id } =
@@ -77,8 +81,6 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                 }
             }
         } else {
-            console.log('variation iscombine', cartItem);
-
             const selectedVariation1 =
                 cartItem.variationSelect.variation1?.variation;
             const findVariation =
@@ -93,12 +95,6 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                         ...newVariation,
                     },
                 };
-
-                console.log({
-                    updatedVariationSelect,
-                    newVariation,
-                    variationSelect: cartItem?.variationSelect,
-                });
 
                 // dispatch({
                 //     type: 'edit variation',
@@ -148,30 +144,220 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
         })
     );
 
+    const saveForLaterVariants = {
+        exit: {
+            scale: 0,
+            opacity: 0,
+            transition: {
+                duration: 0.7,
+            },
+        },
+    };
     return (
         <motion.section
             variants={cartItemVariants.section}
             animate={'animate'}
             exit={'exit'}
             initial={'initial'}
-            className={` relative flex h-full max-h-44`}
+            className={` relative flex h-full max-h-44 origin-top`}
         >
-            <Overlay
-                isRemoving={isRemoving}
-                setIsRemoving={setIsRemoving}
-                handleRemove={handleRemove}
-                enableBodyExit
-            />
-            <section
-                className={`w-full bg-white p-4 pb-0 ${
-                    isRemoving?.complete ? 'opacity-0' : 'opacity-100'
-                } 
+            <div className="h-44 w-full">
+                <Overlay
+                    isRemoving={isRemoving}
+                    setIsRemoving={setIsRemoving}
+                    handleRemove={handleRemove}
+                    enableBodyExit
+                />
+                <AnimatePresence>
+                    {isRemoving?.showOverlay && (
+                        <motion.div
+                            key={`saveLaterOverlay-${cartItem.cartId}`}
+                            exit={'exit'}
+                            // onAnimationComplete={(e) => {
+                            //     if (e == 'exit') {
+                            //         handleWishlist();
+                            //         handleRemove();
+                            //     }
+                            // }}
+                            className="relative flex max-h-44 min-h-44 w-full flex-col items-center justify-center"
+                        >
+                            <AnimatePresence>
+                                {
+                                    <motion.div className="min-h-44 flex items-center justify-center">
+                                        <AnimatePresence>
+                                            {!isRemoving.showOverlayOpacityOff && (
+                                                <motion.p
+                                                    initial={{
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        transition: {
+                                                            duration: 0.3,
+                                                            // delay: 0.5,
+                                                        },
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        scale: 0.9,
+                                                        transition: {
+                                                            duration: 0.2,
+                                                            delay: 0.1,
+                                                        },
+                                                    }}
+                                                    className="text-sm font-medium "
+                                                >
+                                                    Item saved for later
+                                                </motion.p>
+                                            )}
+                                        </AnimatePresence>
+
+                                        <AnimatePresence>
+                                            {[
+                                                {
+                                                    left: 30,
+                                                    top: 80,
+                                                    fontSize: 1,
+                                                },
+                                                {
+                                                    top: 69,
+                                                    left: 32,
+                                                    fontSize: 0.8,
+                                                },
+
+                                                {
+                                                    top: 75,
+                                                    fontSize: 0.6,
+                                                    left: 35,
+                                                },
+                                                {
+                                                    left: 36,
+                                                    top: 65,
+                                                    fontSize: 0.45,
+                                                },
+                                            ].map(
+                                                (
+                                                    { left, top, fontSize },
+                                                    idx
+                                                ) => {
+                                                    const variants = {
+                                                        initial: { opacity: 0 },
+                                                        animate: {
+                                                            opacity: 1,
+                                                            transition: {
+                                                                duration: 0.3,
+                                                                delay:
+                                                                    0.2 * idx,
+                                                            },
+                                                        },
+                                                        exit: {
+                                                            opacity: 0,
+                                                            transition: {
+                                                                duration: 0.3,
+                                                                delay:
+                                                                    (4 - idx) *
+                                                                    0.2,
+                                                            },
+                                                        },
+                                                    };
+                                                    return (
+                                                        <AnimatePresence>
+                                                            {!isRemoving?.showOverlayOpacityOff && (
+                                                                <motion.div
+                                                                    className={`absolute  left-[${left}%] top-[${top}%] `}
+                                                                    key={`heart-${
+                                                                        idx + 1
+                                                                    }-${
+                                                                        cartItem.cartId
+                                                                    }`}
+                                                                    variants={
+                                                                        variants
+                                                                    }
+                                                                    initial={
+                                                                        'initial'
+                                                                    }
+                                                                    animate={
+                                                                        'animate'
+                                                                    }
+                                                                    exit={
+                                                                        'exit'
+                                                                    }
+                                                                    onAnimationComplete={(
+                                                                        e
+                                                                    ) => {
+                                                                        console.log(
+                                                                            'onAnimationComplete: ',
+                                                                            e
+                                                                        );
+
+                                                                        if (
+                                                                            idx ==
+                                                                                0 &&
+                                                                            e ==
+                                                                                'exit'
+                                                                        ) {
+                                                                            handleWishlist();
+                                                                            handleRemove();
+                                                                        }
+                                                                        if (
+                                                                            idx ==
+                                                                                3 &&
+                                                                            e ==
+                                                                                'animate'
+                                                                        ) {
+                                                                            setIsRemoving(
+                                                                                (
+                                                                                    prevState
+                                                                                ) => ({
+                                                                                    ...prevState,
+                                                                                    showOverlayOpacityOff: true,
+                                                                                    // showOverlay: false,
+                                                                                })
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Favorite
+                                                                        className={` !text-[${fontSize}rem]`}
+                                                                    />
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
+                                                    );
+                                                }
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                }
+                            </AnimatePresence>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                <AnimatePresence>
+                    {!isRemoving?.saveForLater && (
+                        <motion.section
+                            variants={saveForLaterVariants}
+                            exit={'exit'}
+                            onAnimationComplete={(e, k) => {
+                                console.log('e: ', e, k);
+                                if (e == 'exit') {
+                                    setIsRemoving((prevState) => ({
+                                        ...prevState,
+                                        showOverlay: true,
+                                    }));
+                                }
+                            }}
+                            className={`h-44 w-full bg-white p-4 pb-0 ${
+                                isRemoving?.complete
+                                    ? 'opacity-0'
+                                    : 'opacity-100'
+                            } 
                
                 
                 `}
-            >
-                <section
-                    className={` 
+                        >
+                            <section
+                                className={` 
 pb-4
                     ${
                         !lastIndex
@@ -179,132 +365,177 @@ pb-4
                             : 'border-none'
                     }
                relative flex h-full w-full flex-row `}
-                >
-                    <Link
-                        to={`/product/${cartItem.id}`}
-                        className="cart-img-container h-full"
-                    >
-                        <img
-                            src={cartItem.images[0]}
-                            className="h-[140px] w-full max-w-[110px] object-cover"
-                        ></img>
-                    </Link>
-                    <section
-                        id="cart-info"
-                        className={
-                            '  flex !min-h-full flex-col flex-nowrap px-4'
-                        }
-                    >
-                        <p className="flex gap-x-3 text-sm font-bold tracking-wider text-[var(--primary-2)]">
-                            <span
-                                className={
-                                    cartItem.price?.previous >
-                                    cartItem.price.current
-                                        ? 'text-red-600'
-                                        : 'text-dark-gray'
-                                }
                             >
-                                £{cartItem.price.current}
-                            </span>
-                            {cartItem.price?.previous &&
-                                cartItem.price?.previous >
-                                    cartItem.price.current && (
-                                    <span className="text-[12px] font-medium text-[var(--grey)] line-through">
-                                        £{cartItem.price?.previous}
-                                    </span>
-                                )}
-                        </p>
-
-                        <div className=" bottom relative mt-2 flex h-full !max-h-full w-full flex-col justify-between">
-                            <p className="w-11/12 text-gray-500">
-                                {cartItem.title}
-                            </p>
-                            <div className="cart-options">
-                                {findColor && (
-                                    <span className="border-r-[1px] pr-2 text-s">
-                                        {findColor?.variation?.toUpperCase()}
-                                    </span>
-                                )}
-                                {cartItem?.isVariation2Present && (
-                                    <div className="cursor-pointer border-r-[1px] pr-2">
-                                        <QTY_SIZE_OPTION
-                                            handleOnChange={handleSizeChange}
-                                            options={
-                                                cartItem?.variation2?.array
-                                            }
-                                            select={
-                                                cartItem?.variationSelect
-                                                    ?.variation2?.variation
-                                            }
-                                            type="size"
-                                        />
-                                        <div className="border-r-2 pr-2"></div>
-                                    </div>
-                                )}
-                                <div
-                                    className="flex !cursor-pointer flex-nowrap  gap-x-2"
-                                    onClick={onClick}
+                                <Link
+                                    to={`/product/${cartItem.id}`}
+                                    className="cart-img-container h-full"
                                 >
-                                    <p>Qty</p>
-
-                                    <span id="qty-select">
-                                        <select
-                                            onChange={handleQuantityChange}
-                                            name="quantity-select"
-                                            id="qty-size-select"
-                                            className="!max-w-[80px] text-s"
-                                            tabIndex={'0'}
+                                    <img
+                                        src={cartItem.images[0]}
+                                        className="h-[140px] w-full max-w-[110px] object-cover"
+                                    ></img>
+                                </Link>
+                                <section
+                                    id="cart-info"
+                                    className={
+                                        '  flex !min-h-full flex-col flex-nowrap px-4'
+                                    }
+                                >
+                                    <p className="flex gap-x-3 text-sm font-bold tracking-wider text-black">
+                                        <span
+                                            className={
+                                                cartItem.price?.previous >
+                                                cartItem.price.current
+                                                    ? 'text-red-600'
+                                                    : 'text-black/80'
+                                            }
                                         >
-                                            {quantityArr.map((item, index) => {
-                                                return (
-                                                    <option
-                                                        key={item}
-                                                        value={item}
-                                                        // selected = {}
-                                                        selected={
-                                                            item ==
-                                                            cartItem.quantity
+                                            £{cartItem.price.current}
+                                        </span>
+                                        {cartItem.price?.previous &&
+                                            cartItem.price?.previous >
+                                                cartItem.price.current && (
+                                                <span className="text-[12px] font-medium text-[var(--grey)] line-through">
+                                                    £{cartItem.price?.previous}
+                                                </span>
+                                            )}
+                                    </p>
+
+                                    <div className=" bottom relative mt-2 flex h-full !max-h-full w-full flex-col justify-between">
+                                        <p className="w-11/12 text-black/70">
+                                            {cartItem.title}
+                                        </p>
+                                        <div className="cart-options">
+                                            {findColor && (
+                                                <span className="border-r-[1px] pr-2 text-s text-black/70">
+                                                    {findColor?.variation}
+                                                </span>
+                                            )}
+                                            {cartItem?.isVariation2Present && (
+                                                <div className="cursor-pointer border-r-[1px] pr-2">
+                                                    <QTY_SIZE_OPTION
+                                                        handleOnChange={
+                                                            handleSizeChange
                                                         }
+                                                        options={
+                                                            cartItem?.variation2
+                                                                ?.array
+                                                        }
+                                                        select={
+                                                            cartItem
+                                                                ?.variationSelect
+                                                                ?.variation2
+                                                                ?.variation
+                                                        }
+                                                        type="size"
+                                                    />
+                                                    <div className="border-r-2 pr-2" />
+                                                </div>
+                                            )}
+                                            <div className="flex !cursor-pointer flex-nowrap  gap-x-2">
+                                                <p>Qty</p>
+
+                                                <span id="qty-select">
+                                                    <select
+                                                        onChange={
+                                                            handleQuantityChange
+                                                        }
+                                                        name="quantity-select"
+                                                        id="qty-size-select"
+                                                        className="!max-w-[80px] text-s text-black/70"
+                                                        tabIndex={'0'}
                                                     >
-                                                        {item}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
-                                    </span>
+                                                        {quantityArr.map(
+                                                            (item, index) => {
+                                                                return (
+                                                                    <option
+                                                                        className="text-black/60"
+                                                                        key={
+                                                                            item
+                                                                        }
+                                                                        value={
+                                                                            item
+                                                                        }
+                                                                        // selected = {}
+                                                                        selected={
+                                                                            item ==
+                                                                            cartItem.quantity
+                                                                        }
+                                                                    >
+                                                                        {item}
+                                                                    </option>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </select>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            id="save-later-btn"
+                                            className=""
+                                            onClick={() => {
+                                                // handleWishlist;
+
+                                                setIsRemoving((prevState) => ({
+                                                    ...prevState,
+                                                    saveForLater: true,
+                                                }));
+                                            }}
+                                            onMouseEnter={() =>
+                                                setIsHoverFavorite(() => true)
+                                            }
+                                            onMouseLeave={() =>
+                                                setIsHoverFavorite(() => false)
+                                            }
+                                        >
+                                            <div className="h-fit w-fit">
+                                                {isHoverFavorite || favorite ? (
+                                                    <Favorite
+                                                        sx={{
+                                                            stroke: 'white',
+                                                            strokeWidth: -0.5,
+                                                            fontSize: '1rem',
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <FavoriteBorder
+                                                        sx={{
+                                                            stroke: 'white',
+                                                            strokeWidth: -0.5,
+                                                            fontSize: '1rem',
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+
+                                            <p className="m-0 text-xs">
+                                                Save for later
+                                            </p>
+                                        </button>
+                                    </div>
+                                </section>
+                                <div>
+                                    <button
+                                        type="button"
+                                        // id="cart-close"
+                                        className=" h-fit w-fit cursor-pointer rounded-full p-1 transition-all"
+                                        onClick={() =>
+                                            setIsRemoving(() => ({
+                                                body: true,
+                                                text: true,
+                                            }))
+                                        }
+                                    >
+                                        <CloseRounded className="!text-3xl" />
+                                    </button>
                                 </div>
-                            </div>
-                            <button
-                                type="button"
-                                id="save-later-btn"
-                                className=""
-                            >
-                                <img
-                                    loading="lazy"
-                                    src={heart}
-                                    ref={heart_icon_ref}
-                                />
-                                <p className="m-0 text-xs">Save for later</p>
-                            </button>
-                        </div>
-                    </section>
-                    <div>
-                        <button
-                            type="button"
-                            // id="cart-close"
-                            className=" h-fit w-fit rounded-full p-1 transition-all cursor-pointer"
-                            onClick={() =>
-                                setIsRemoving(() => ({
-                                    body: true,
-                                    text: true,
-                                }))
-                            }
-                        >
-                            <CloseRounded  className='!text-3xl'/>
-                        </button>
-                    </div>
-                </section>
-            </section>
+                            </section>
+                        </motion.section>
+                    )}
+                </AnimatePresence>
+            </div>
         </motion.section>
     );
 }

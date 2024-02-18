@@ -123,10 +123,10 @@ function Buy_Now_Btn({ disable }) {
                 const klarnaDObFormat = `${klarnaDob['year']}-${klarnaDob['month']}-${klarnaDob['day']}`;
                 const isKlarnaDobValid = dayjs(
                     klarnaDObFormat,
-                    'YYYY-MM-DD',
+                    'YYYY-M-DD',
                     true
                 ).isValid();
-                console.log({ isKlarnaDobValid });
+                console.log({ isKlarnaDobValid , klarnaDObFormat});
                 if (!isKlarnaDobValid) {
                     setKlarnaDob((prevState) => ({
                         ...prevState,

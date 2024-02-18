@@ -26,12 +26,12 @@ import EmailTailwind from '../components/emailTailwind.jsx';
 import Header from '../components/header.jsx';
 import dayjs from 'dayjs';
 import 'dotenv/config';
-const clientUrl = process.env.CLIENT_URL;
 
+const { CLOUDFRONT_URL, CLIENT_URL } = process.env;
 function OrderReceived({ order }) {
   const orderDate = dayjs(order?.createdAt).format('dddd DD MMMM YYYY');
 
-  const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
+  const url = `${CLOUDFRONT_URL}/files/logos`;
 
   const logos = {
     afterpay: 'afterpay.png',
@@ -171,7 +171,8 @@ function OrderReceived({ order }) {
                       >
                         <Img
                           src={`${url}/${
-                            logos?.[order?.payment_type?.toLowerCase()] || 'credit-card-icon.png'
+                            logos?.[order?.payment_type?.toLowerCase()] ||
+                            'credit-card-icon.png'
                           }`}
                           alt="logo"
                           title="logo"
@@ -210,7 +211,7 @@ function OrderReceived({ order }) {
                       align="center"
                     >
                       <Button
-                        href={`${clientUrl}/order-success?order-number=${order?._id}`}
+                        href={`${CLIENT_URL}/order-success?order-number=${order?._id}`}
                         target="_blank"
                         className="block text-center self-center no-underline mx-auto text-inherit font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider"
                       >
@@ -234,7 +235,7 @@ function OrderReceived({ order }) {
                       align="center"
                     >
                       <Button
-                        href={`${clientUrl}/return-information`}
+                        href={`${CLIENT_URL}/return-information`}
                         target="_blank"
                         className="block text-center self-center no-underline mx-auto text-inherit font-semibold w-2/4 py-3 text-sm border-2 border-solid border-light-grey tracking-wider"
                       >

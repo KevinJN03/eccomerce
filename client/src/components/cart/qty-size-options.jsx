@@ -13,13 +13,14 @@ const QTY_SIZE_OPTION = forwardRef(function QTY_SIZE_OPTION(
                 onChange={handleOnChange}
                 name="quantity-select"
                 id="qty-size-select"
-                className="!max-w-[80px] text-s"
+                className="!max-w-[80px] text-s text-black/70"
                 ref={ref}
                 tabIndex={'0'}
             >
                 {options.map((item, index) => {
                     return (
                         <option
+                        className='text-black/60'
                             key={index}
                             value={type == 'size' ? item?.variation : item}
                             data-id={'size' ? item?.id : null}

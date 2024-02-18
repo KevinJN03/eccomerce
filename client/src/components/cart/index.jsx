@@ -17,12 +17,9 @@ import variants from '../common/framerMotionVariants.jsx';
 import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
 import { v4 as uuidv4 } from 'uuid';
 function Cart({}) {
-    const checkoutRef = useRef(null);
-    const checkoutBottomRef = useRef(null);
-    const isInView = useInView(checkoutBottomRef);
-    const { withoutShipping } = calculateTotal();
+    const { withOutShipping: subTotal } = calculateTotal();
     const [loading, setLoading] = useState(true);
-    const cartTotal = withoutShipping;
+
     const {
         cart,
         dispatch,
@@ -67,11 +64,13 @@ function Cart({}) {
         },
     };
     return (
-        <section className="flex">
+        <section className="!min-h-main  flex  items-center justify-center  ">
             <AnimatePresence mode="wait">
                 {loading ? (
-                    <motion.div key={'cart-loading'} className="mt-32">
-                        <GLoader />
+                    <motion.div key={'cart-loading'} className="">
+                      
+                       <GLoader />
+                     
                     </motion.div>
                 ) : cart.length > 0 ? (
                     <motion.section
@@ -81,18 +80,18 @@ function Cart({}) {
                         initial={'initial'}
                         animate={'animate'}
                         exit={'exit'}
-                        className="pt-3"
+                        className="pt-3 flex justify-center gap-4 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center mb-24"
                     >
                         {' '}
                         <motion.span
                             key={'cart-checkout'}
                             className="sticky-header sticky  flex items-center justify-between bg-white p-3 lg:!hidden"
-                            animate={{
-                                position: 'sticky',
-                                zIndex: 1,
-                                top: '-1px',
-                                opacity: isInView ? 0 : 1,
-                            }}
+                            // animate={{
+                            //     position: 'sticky',
+                            //     zIndex: 1,
+                            //     top: '-1px',
+                            //     opacity: isInView ? 0 : 1,
+                            // }}
                             transition={{
                                 ease: 'easeInOut',
                                 duration: 0.4,
@@ -102,7 +101,7 @@ function Cart({}) {
                                 <p className="text-base font-semibold">
                                     BAG SUB-TOTAL
                                 </p>
-                                <p className="text-sm">£{cartTotal}</p>
+                                <p className="text-sm">£{subTotal}</p>
                             </div>
                             <div className="right">
                                 <Link
@@ -122,7 +121,7 @@ function Cart({}) {
                                     Items are reserved for 60 minutes
                                 </p>
                             </div>{' '}
-                            <motion.div className="product-cart-wrapper flex flex-col flex-nowrap">
+                            <motion.div className="product-cart-wrapper flex flex-col flex-nowrap bg-white">
                                 <AnimatePresence>
                                     {cart.map((item, idx) => {
                                         return (
@@ -138,8 +137,13 @@ function Cart({}) {
                                     })}
                                 </AnimatePresence>
                             </motion.div>
+                            <div className="mt-2 bg-white p-3 py-6 flex justify-end gap-5">
+
+                                <p className='font-gotham text-sm text-black/80'>SUB-TOTAL</p>
+                                <p className='font-gotham text-sm text-black/80'>£{subTotal}</p>
+                            </div>
                         </div>
-                        <Total ref={checkoutBottomRef} />
+                        <Total subTotal={subTotal} />
                     </motion.section>
                 ) : (
                     <Empty_Cart key={'empty-cart'} />
