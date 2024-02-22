@@ -78,16 +78,18 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     };
     return (
         <PortalProvider value={value}>
-{/* 
+            {/* 
             <AnimatePresence> */}
-                {loading && <LoadingPage />}
+            {loading && <LoadingPage />}
             {/* </AnimatePresence> */}
-            
 
             {!loading && (
-                <section className="h-full w-screen">
-                    <section className="login-signup-page">
-                        <section id="login-signup-container" className="w-full">
+                <section className="h-full !min-h-screen w-screen flex justify-center items-center">
+                    <section className="m-0 flex h-fit flex-col items-center bg-light-grey p-0">
+                        <section
+                            id="login-signup-container"
+                            className="flex w-full mt-5 flex-col items-center justify-center bg-white p-3"
+                        >
                             <a
                                 href={!admin && '/'}
                                 className="login-logo mt-10 flex w-40 flex-nowrap items-center"
@@ -144,7 +146,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                 </motion.section>
                             </AnimatePresence>
                         </section>
-                        <div className="mt-2 flex flex-row gap-2 pb-5 text-xs underline underline-offset-2">
+                        <div className=" py-4 flex flex-row gap-2 text-xs underline underline-offset-2">
                             <span>
                                 <a href="/pages/privacy-policy">
                                     Privacy Policy

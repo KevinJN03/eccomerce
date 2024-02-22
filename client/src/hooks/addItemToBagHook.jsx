@@ -98,7 +98,16 @@ function useAddItemToBagHook({ product }) {
 
         console.log({ product });
         setError(() => false);
-        setIsHover(() => ({ on: true, menu: 'cart' }));
+
+        const timeout = setTimeout(() => {
+            setIsHover(() => ({ on: false, menu: null }));
+        }, 3000);
+        setIsHover(() => ({
+            on: true,
+            menu: 'cart',
+            timeout,
+            addToCart: true,
+        }));
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {

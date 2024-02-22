@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import CartMenuItem from './cartIMenutem';
 import Cart_Item from '../../cart/cart-item';
 import { useLayoutContext } from '../../../context/layoutContext';
+import { CheckCircleOutlineSharp } from '@mui/icons-material';
 function CartMenu({}) {
     const { withOutShipping: subTotal } = calculateTotal();
     const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
@@ -29,6 +30,10 @@ function CartMenu({}) {
                         </span>
                     </h3>
                 </header>
+           {isHover?.addToCart &&     <div className=' px-2 py-2 flex flex-row gap-2 items-center bg-green-200/80'>
+                    <CheckCircleOutlineSharp className='!fill-green-700'/>
+                    <p>It's in the bag - We'll hold it for an hour</p>
+                </div>}
                 <section
                     key={'cart-item-menu-wrapper'}
                     className="cartItem flex h-full max-h-[15rem] w-full flex-col overflow-y-auto  bg-white"
@@ -62,18 +67,18 @@ function CartMenu({}) {
                     </p>
                 </div>
             </div>
-            <div className="flex flex-row flex-nowrap gap-3 border-b border-dark-gray/50 bg-light-grey p-3 px-3">
+            <div className="flex flex-row items-center flex-nowrap gap-3 border-b border-dark-gray/50 bg-light-grey p-3 px-3">
                 <Link
                     onClick={() => setIsHover(() => false)}
                     to={'/cart'}
-                    className="flex flex-1 items-center justify-center border-2 bg-white font-semibold hover:bg-light-grey"
+                    className="flex flex-1 items-center justify-center border-2 bg-white py-2 font-semibold hover:bg-light-grey"
                 >
                     VIEW BAG
                 </Link>
 
                 <a
                     href="/checkout"
-                    className=" checkout-btn flex-1"
+                    className="flex-1 border-primary-green bg-primary-green py-2 h-fit text-center font-semibold tracking-widest text-white hover:bg-[#016536]"
                     onClick={() => setIsHover(() => false)}
                 >
                     CHECKOUT

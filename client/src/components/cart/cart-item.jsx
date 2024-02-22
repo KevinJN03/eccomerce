@@ -197,7 +197,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                                                 delay: 0.1,
                                             },
                                         }}
-                                        className=" text-sm font-medium"
+                                        className=" text-sm font-medium text-black/80"
                                     >
                                         Item saved for later
                                     </motion.p>
@@ -300,6 +300,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                                                         }}
                                                     >
                                                         <Favorite
+                                                        className='!fill-black/80'
                                                             sx={{
                                                                 fontSize:
                                                                     fontSize +
@@ -312,8 +313,8 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                                         );
                                     }
                                 )}
-                            </AnimatePresence>{' '}
-                            {/* </div> */}
+                            </AnimatePresence>
+                            
                         </motion.div>
                     )}
                 </AnimatePresence>

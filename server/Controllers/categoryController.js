@@ -78,19 +78,6 @@ export const get_singleCategory = AsyncHandler(async (req, res, next) => {
 export const query_category_products_by_gender = AsyncHandler(
   async (req, res, next) => {
     const { name, gender } = req.params;
-    const result = await Category.findOne(
-      { name: name.toLowerCase() },
-      { gender: 1 },
-    )
-      .populate({
-        path: gender.toLowerCase(),
-
-        // populate: {
-        //   model: 'product',
-        //   path: 'minVariationPrice',
-        // },
-      })
-      .exec();
 
     const categoryResult = await Category.aggregate([
       {
@@ -108,14 +95,19 @@ export const query_category_products_by_gender = AsyncHandler(
             },
 
             ...productAggregateStage({ stats: false }),
-
-            
           ],
         },
       },
       {
         $project: {
-          products: 1,
+          products: {
+            $sortArray: {
+              input: '$products',
+              sortBy: {
+                _id: 1,
+              },
+            },
+          },
         },
       },
     ]);
