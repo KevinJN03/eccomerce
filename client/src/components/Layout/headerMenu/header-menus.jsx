@@ -28,7 +28,7 @@ function HeaderMenu({}) {
         },
         exit: {
             translateY: '-100%',
-            transition: { duration: 0.5 },
+            transition: { duration: 0.7 },
         },
     };
 
@@ -48,6 +48,7 @@ function HeaderMenu({}) {
                 {isHover.on && (
                     <motion.section
                         id="header-menu"
+                        // key={uuidv4()}
                         onMouseLeave={() =>
                             setIsHover(() => ({ menu: null, on: false }))
                         }

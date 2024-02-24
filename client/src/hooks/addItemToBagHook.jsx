@@ -85,6 +85,12 @@ function useAddItemToBagHook({ product }) {
             return;
         }
 
+        if(isHover?.timeout) {
+
+            clearTimeout(isHover.timeout)
+
+        }
+
         const { alsoLike, detail, reviews, ...rest } = product;
         const newProduct = JSON.parse(JSON.stringify(rest));
 

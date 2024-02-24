@@ -29,7 +29,9 @@ function Item({ image, text, loading, product }) {
                     return;
                 }
 
-                navigate(`/${state.gender}/product/${product?._id}`);
+                // navigate(`/${state.gender}/product/${product?._id}`);
+
+                window.location = `/${state.gender}/product/${product?._id}`
             }}
             onMouseEnter={() => setIsHover(() => true)}
             onMouseLeave={() => setIsHover(() => false)}

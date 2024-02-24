@@ -35,13 +35,12 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
     const {
         isHoverFavorite,
         setIsHoverFavorite,
-        favorite,
-        setFavorite,
+
         handleWishlist,
     } = useWishListHook({
         product: cartItem,
     });
-
+    const [favorite, setFavorite] = useState(false);
     const handleSizeChange = (e) => {
         const { id } =
             e.target.options[e.target.options.selectedIndex]?.dataset;
@@ -150,7 +149,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
             scale: 0,
             opacity: 0,
             transition: {
-                duration: 0.7,
+                duration: 0.4,
             },
         },
     };
@@ -170,7 +169,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                     enableBodyExit
                 />
                 <AnimatePresence>
-                    {(isRemoving?.showOverlay) && (
+                    {isRemoving?.showOverlay && (
                         <motion.div
                             key={`saveLaterOverlay-${cartItem.cartId}`}
                             exit={'exit'}
@@ -300,7 +299,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                                                         }}
                                                     >
                                                         <Favorite
-                                                        className='!fill-black/80'
+                                                            className="!fill-black/80"
                                                             sx={{
                                                                 fontSize:
                                                                     fontSize +
@@ -314,7 +313,6 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                                     }
                                 )}
                             </AnimatePresence>
-                            
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -475,7 +473,7 @@ pb-4
                                                 setIsHoverFavorite(() => false)
                                             }
                                         >
-                                            <div className="h-fit w-fit">
+                                            <div className="h-fit w-fit flex items-center flex-row">
                                                 {isHoverFavorite || favorite ? (
                                                     <Favorite
                                                         sx={{

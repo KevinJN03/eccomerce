@@ -81,15 +81,7 @@ function OrderPageContent({}) {
             >
                 <DrawerContainer />
             </Drawer>
-            {/* {modalCheck && (
-        <Modal
-            check={modalCheck}
-            setCheck={setModalCheck}
-            ModalContent={views[modalContent]}
-            loading={modalLoad}
-            setLoading={setModalLoad}
-        />
-    )} */}
+
             <Modal open={modalCheck} onClose={() => setModalCheck(() => false)}>
                 <Box
                     sx={{
