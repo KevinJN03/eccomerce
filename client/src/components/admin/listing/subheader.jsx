@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAdminContext } from '../../../context/adminContext';
 import { useListingPageContext } from '../../../context/listingPageContext';
-import SelectionInput from '../order/home/selectionIput';
+import SelectionInput from '../order/home/selectionInput';
 import { ArrowDropDownSharp } from '@mui/icons-material';
 import { useContent } from '../../../context/ContentContext';
 import { ClickAwayListener } from '@mui/material';

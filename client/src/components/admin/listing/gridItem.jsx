@@ -130,7 +130,7 @@ function GridItem({ product, index }) {
                             </h6>
                             <div className="flex w-full flex-nowrap items-center gap-2">
                                 <p className="left whitespace-nowrap text-black/70">
-                                    0 visits
+                                    {product?.visits || 0} visits
                                 </p>
                                 <div className="h-3 w-[1px] bg-dark-gray/50"></div>
                                 <p className="right whitespace-nowrap text-black/70 ">

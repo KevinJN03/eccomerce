@@ -22,22 +22,38 @@ function ItemPage() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
 
+    const abortControllerRef = useRef(new AbortController());
+    const timeoutRef = useRef(null);
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            axios
-                .get(`/product/many/${id}`)
-                .then(({ data }) => {
-                    setProduct(() => data?.products[0]);
+        const fetchData = async () => {
+            try {
+                abortControllerRef.current?.abort();
+                abortControllerRef.current = new AbortController();
+                const [{ data }] = await Promise.all([
+                    axios.get(`/product/many/${id}`, {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                    axios.get(`/product/${id}/visit`, {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                ]);
 
+                timeoutRef.current = setTimeout(() => {
+                    setProduct(() => data.products[0]);
                     setLoading(() => false);
-                })
-                .catch((error) => {
-                    'Error fetching data, not found', error;
-                });
-        }, 1500);
+                }, 1500);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                
+            }
+        };
+
+        fetchData()
+
         return () => {
-            clearTimeout(timeout);
-            setLoading(true);
+            clearTimeout(timeoutRef.current);
+            abortControllerRef.current?.abort();
         };
     }, []);
 

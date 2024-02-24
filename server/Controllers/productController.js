@@ -550,3 +550,18 @@ export const getVariations = asyncHandler(async (req, res, next) => {
 
   res.send(variation);
 });
+
+export const increment_visit = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findByIdAndUpdate(
+    id,
+    { $inc: { visits: 1 } },
+    {
+      new: true,
+      lean: { toObject: true },
+      select: { visits: 1 },
+    },
+  );
+
+  res.status(200).send({ id, success: true, product });
+});

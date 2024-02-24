@@ -17,13 +17,13 @@ function HeaderMenu({}) {
     const [pageHeight, setPageHeight] = useState('');
     const variants = {
         initial: {
-            y: '-100%',
+             y: '-100%',
         },
         animate: {
             y: '0%',
 
             transition: {
-                duration: 0.4,
+                duration: 0.6,
             },
         },
         exit: {
@@ -44,7 +44,7 @@ function HeaderMenu({}) {
             }}
             className={`  !absolute !right-0 !top-full !z-0 min-h-full`}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence >
                 {isHover.on && (
                     <motion.section
                         id="header-menu"
@@ -66,7 +66,7 @@ function HeaderMenu({}) {
                         initial={'initial'}
                         className={`menus sticky top-0   mb-0 max-w-xs border border-dark-gray/50 bg-light-grey pb-0 md+lg:w-[20rem]`}
                     >
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence >
                             {isHover.menu == 'cart' && (
                                 <CartMenu
                                     key={'cart-menu'}

@@ -56,6 +56,7 @@ export const productSchema = new Schema(
     reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
     delivery: [{ type: Schema.Types.ObjectId, ref: 'deliveryProfile' }],
     timestamp: { type: Schema.Types.Date, default: Date.now },
+    visits: { type: Schema.Types.Number, default: 0 },
     status: {
       type: Schema.Types.String,
       default: 'active',

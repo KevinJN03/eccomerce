@@ -48,7 +48,7 @@ function Transaction_Table({ data }) {
                                                 key={uuidv4()}
                                                 className="tooltip tooltip-top"
                                                 data-tooltip={
-                                                    item?.product.title
+                                                    item?.product?.title
                                                 }
                                             >
                                                 <img
@@ -62,8 +62,6 @@ function Transaction_Table({ data }) {
                                             </span>
                                         );
                                     })}
-
-                                    {/* {row.product} */}
                                 </div>
                             </TableCell>
                             <TableCell className="tableCell">

@@ -9,7 +9,7 @@ import SearchInput from '../order/home/searchInput.jsx';
 import { AddRounded, ArrowDropDownSharp } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductItem from './gridItem.jsx';
-import SelectionInput from '../order/home/selectionIput.jsx';
+import SelectionInput from '../order/home/selectionInput.jsx';
 import SideContainer from './sideContainer.jsx';
 import { Box, Modal } from '@mui/material';
 import GridProduct from './gridProducts.jsx';
@@ -227,9 +227,10 @@ function ListingPage() {
                                         onClick={() => {
                                             if (checks?.searchText) {
                                                 setChecks((prevState) => {
-                                                    
-
-                                                    return { ...prevState, searchText: ''};
+                                                    return {
+                                                        ...prevState,
+                                                        searchText: '',
+                                                    };
                                                 });
                                                 setTriggerSearch(
                                                     (prevState) => !prevState
@@ -253,7 +254,9 @@ function ListingPage() {
                                         }}
                                         className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
                                     >
-                                        {checks?.searchText ? 'Clear Search' : 'Reset Filters'}
+                                        {checks?.searchText
+                                            ? 'Clear Search'
+                                            : 'Reset Filters'}
                                     </button>
                                 </div>
                             )}
