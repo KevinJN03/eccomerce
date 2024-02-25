@@ -67,6 +67,17 @@ function WishListItem({ product }) {
         }
     }, [stockState, stockState2]);
 
+    useEffect(() => {
+        console.log('variation change', product.wishlistId);
+        wishListDispatch({
+            type: 'updateVariationSelect',
+            wishlistId: product.wishlistId,
+            variationSelect,
+
+            productId: product._id
+        });
+    }, [variationSelect]);
+
     const variants = {
         parent: {
             exit: {
@@ -76,8 +87,6 @@ function WishListItem({ product }) {
                 transition: {
                     duration: 0.3,
                     ease: 'easeInOut',
-
-                   
                 },
             },
         },
@@ -111,7 +120,6 @@ function WishListItem({ product }) {
                         handleDelete(product._id);
                     }}
                 >
-                  
                     <AnimatePresence>
                         {!remove.child && (
                             <motion.section
@@ -150,14 +158,14 @@ function WishListItem({ product }) {
                                         className={
                                             'h-[25rem] w-full object-cover'
                                         }
-                                        src={product.images[0]}
+                                        src={product?.images[0]}
                                         alt=""
                                     />
                                 </Link>
 
                                 <div className="flex h-fit flex-col gap-3">
                                     <p className="h-12 overflow-hidden text-ellipsis   text-sm ">
-                                        {product.title}
+                                        {product?.title}
                                     </p>
 
                                     <p className="text-sm font-semibold">
@@ -204,7 +212,9 @@ function WishListItem({ product }) {
                                                           ]?.array.length >
                                                           1 ? (
                                                             <select
-                                                                onChange={(e) =>
+                                                                onChange={(
+                                                                    e
+                                                                ) => {
                                                                     handleOnChange(
                                                                         {
                                                                             e,
@@ -212,8 +222,8 @@ function WishListItem({ product }) {
                                                                             setStockState,
                                                                             property: `variation${index}`,
                                                                         }
-                                                                    )
-                                                                }
+                                                                    );
+                                                                }}
                                                                 name={`variation${index}`}
                                                                 id={`variation${index}-select`}
                                                                 className="daisy-select daisy-select-md !mx-0 w-full rounded-sm border-0  !px-0  focus:outline-offset-0 focus:outline-black   "
@@ -251,13 +261,13 @@ function WishListItem({ product }) {
                                                                                 }
                                                                                 // value={property ? { ...item } : item}
                                                                                 key={
-                                                                                    item.id
+                                                                                    item?.id
                                                                                 }
                                                                                 data-id={
-                                                                                    item.id
+                                                                                    item?.id
                                                                                 }
                                                                                 data-variation={
-                                                                                    item.variation
+                                                                                    item?.variation
                                                                                 }
                                                                                 data-price={
                                                                                     item?.price

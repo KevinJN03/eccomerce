@@ -36,7 +36,7 @@ function Product_info({ title, text, details, images, product, loading }) {
         setFavorite,
         handleWishlist,
         showAnimation,
-    } = useWishListHook({ product });
+    } = useWishListHook({ product, variationSelect });
 
     return (
         <section id="product-info">

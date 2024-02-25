@@ -34,7 +34,7 @@ function HeaderMenu({}) {
 
     useEffect(() => {
         const currentPageHeight = document.getElementById('root').clientHeight;
-        console.log(currentPageHeight);
+   
         setPageHeight(() => currentPageHeight);
     });
     return (

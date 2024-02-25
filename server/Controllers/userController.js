@@ -1121,3 +1121,25 @@ export const cancelOrder = [
     }
   }),
 ];
+
+export const updateWishlist = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    await User.findByIdAndUpdate(userId, { wishlist: req.body.wishlist });
+    res.status(200).send({ success: true });
+  }),
+];
+
+export const getWishlist = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId, null, {
+      lean: { toObject: true },
+    });
+
+    res.status(200).send({ wishlist: user.wishlist, success: true });
+  }),
+];

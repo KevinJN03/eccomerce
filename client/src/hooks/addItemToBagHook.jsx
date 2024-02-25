@@ -6,58 +6,66 @@ function useAddItemToBagHook({ product }) {
     const { dispatch } = useCart();
 
     const [priceState, setPriceState] = useState(null);
-    const [variationSelect, setVariationSelection] = useState({
-        variation1: { id: null, variation: null },
-        variation2: { id: null, variation: null },
-    });
+    const [variationSelect, setVariationSelection] = useState(
+        product?.variationSelect || {
+            variation1: { id: null, variation: null },
+            variation2: { id: null, variation: null },
+        }
+    );
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
     const [error, setError] = useState(false);
     const { isHover, setIsHover } = useLayoutContext();
-    useEffect(() => {
-        setPriceState(product?.price?.current);
+    useEffect(
+        () => {
+            setPriceState(product?.price?.current);
 
-        if (product?.isVariationCombine) {
-            setCombineVariation(() => product?.combineVariation);
-        }
-
-        const variationSelectObj = {};
-
-        if (
-            (product?.isVariation1Present,
-            product?.variation1?.array?.length == 1)
-        ) {
-            variationSelectObj.variation1 = product?.variation1?.array[0];
-        }
-
-        if (
-            product?.isVariation2Present &&
-            product?.variation2?.array?.length == 1
-        ) {
-            variationSelectObj.variation2 = product?.variation2?.array[0];
-        }
-
-        setVariationSelection((prevState) => ({
-            ...prevState,
-            ...variationSelectObj,
-        }));
-
-        [1, 2].map((variationNumber) => {
-            if (product?.[`isVariation${variationNumber}Present`]) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    [`variation${variationNumber}`]: {
-                        ...prevState?.[`variation${variationNumber}`],
-                        title: product?.[`variation${variationNumber}`]?.title,
-                    },
-                }));
+            if (product?.isVariationCombine) {
+                setCombineVariation(() => product?.combineVariation);
             }
-        });
 
-        console.log('variation changed');
+            const variationSelectObj = {};
 
-        // check dependency
-    }, [product]);
+            if (
+                (product?.isVariation1Present,
+                product?.variation1?.array?.length == 1)
+            ) {
+                variationSelectObj.variation1 = product?.variation1?.array[0];
+            }
+
+            if (
+                product?.isVariation2Present &&
+                product?.variation2?.array?.length == 1
+            ) {
+                variationSelectObj.variation2 = product?.variation2?.array[0];
+            }
+
+            setVariationSelection((prevState) => ({
+                ...prevState,
+                ...variationSelectObj,
+            }));
+
+            [1, 2].map((variationNumber) => {
+                if (product?.[`isVariation${variationNumber}Present`]) {
+                    setVariationSelection((prevState) => ({
+                        ...prevState,
+                        [`variation${variationNumber}`]: {
+                            ...prevState?.[`variation${variationNumber}`],
+                            title: product?.[`variation${variationNumber}`]
+                                ?.title,
+                        },
+                    }));
+                }
+            });
+
+            console.log('variation changed');
+
+            // check dependency
+        },
+        [
+            // product
+        ]
+    );
 
     useEffect(() => {
         if (product?.isVariationCombine) {
@@ -85,10 +93,8 @@ function useAddItemToBagHook({ product }) {
             return;
         }
 
-        if(isHover?.timeout) {
-
-            clearTimeout(isHover.timeout)
-
+        if (isHover?.timeout) {
+            clearTimeout(isHover.timeout);
         }
 
         const { alsoLike, detail, reviews, ...rest } = product;
@@ -117,18 +123,16 @@ function useAddItemToBagHook({ product }) {
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {
-        console.log('clicked');
         const id = e.target.options[e.target.selectedIndex].dataset?.id;
         const variation =
             e.target.options[e.target.selectedIndex].dataset?.variation;
         const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
         const price = e.target.options[e.target.selectedIndex].dataset?.price;
-
+console.log('variation onchange')
         setVariationSelection((prevState) => ({
             ...prevState,
             [property]: { ...prevState[property], variation, id },
         }));
-        variationSelect;
 
         if (stock == 0 || stock) {
             setStockState(() => stock);

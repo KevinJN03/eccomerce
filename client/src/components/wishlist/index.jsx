@@ -14,7 +14,6 @@ function WishList({}) {
         wishListDispatch,
         wishlistLoading,
         setWishListLoading,
-
         wishlistRefresh,
         getWishlistFromLS,
     } = useWishlistContext();

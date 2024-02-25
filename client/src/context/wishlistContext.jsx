@@ -59,12 +59,23 @@ const reducer = (state, action) => {
                 {
                     wishListTimestamp: dayjs().toISOString(),
                     wishlistId: uuidv4(),
-                    // ...action.product,
+                    ...action.product,
+                    variationSelect: action?.variationSelect || action.product?.variationSelect
                 },
             ],
             ...wishlist,
         ]);
         return newSet;
+    }
+
+    if (action.type == 'updateVariationSelect') {
+        const wishlistItem = { ...wishlist.get(action.productId) };
+
+        wishlistItem.variationSelect = action.variationSelect;
+        const newMap = new Map(wishlist);
+        newMap.set(action.productId, wishlistItem);
+
+        return newMap;
     }
 
     if (action.type == 'delete') {
@@ -85,7 +96,28 @@ export function WishlistContextProvider({ children }) {
     const [wishlistRefresh, setWishlistRefresh] = useState(false);
     const abortControllerRef = useRef(new AbortController());
     useEffect(() => {
-        localStorage.setItem('wishlist', JSON.stringify(Array.from(wishlist)));
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+        const convertMaptoArray = Array.from(wishlist);
+        localStorage.setItem('wishlist', JSON.stringify(convertMaptoArray));
+
+        const updateWishlist = async () => {
+            try {
+                await axios.post(
+                    '/user/wishlist/update',
+                    {
+                        wishlist: convertMaptoArray.map(
+                            ([key, value]) => value
+                        ),
+                    },
+                    { signal: abortControllerRef.current?.signal }
+                );
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        updateWishlist();
     }, [wishlist]);
 
     const value = {
