@@ -23,12 +23,12 @@ function HeaderMenu({}) {
             y: '0%',
 
             transition: {
-                duration: 0.6,
+                duration: 0.4,
             },
         },
         exit: {
             translateY: '-100%',
-            transition: { duration: 0.7 },
+            transition: { duration: 0.4 },
         },
     };
 
@@ -44,7 +44,7 @@ function HeaderMenu({}) {
             }}
             className={`  !absolute !right-0 !top-full !z-0 min-h-full`}
         >
-            <AnimatePresence >
+            <AnimatePresence mode='wait' >
                 {isHover.on && (
                     <motion.section
                         id="header-menu"
@@ -66,7 +66,7 @@ function HeaderMenu({}) {
                         initial={'initial'}
                         className={`menus sticky top-0   mb-0 max-w-xs border border-dark-gray/50 bg-light-grey pb-0 md+lg:w-[20rem]`}
                     >
-                        <AnimatePresence >
+                        <AnimatePresence mode='wait' >
                             {isHover.menu == 'cart' && (
                                 <CartMenu
                                     key={'cart-menu'}

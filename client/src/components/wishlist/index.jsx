@@ -6,6 +6,7 @@ import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
 import WishListItem from './wishListItem';
 import { AnimatePresence, motion } from 'framer-motion';
 import EmptyWishList from './empty.jsx';
+import { Diversity2Outlined } from '@mui/icons-material';
 
 function WishList({}) {
     const {
@@ -29,11 +30,11 @@ function WishList({}) {
                 productIdArray.push(id);
             }
             if (productIdArray.length < 1) {
-               setTimeout(() => {
+                setTimeout(() => {
                     setWishListLoading(() => false);
                 }, 1000);
 
-                return
+                return;
             }
             const { data } = await axios.get(`product/many/${productIdArray}`, {
                 signal: abortControllerRef.current?.signal,
@@ -47,7 +48,6 @@ function WishList({}) {
         } catch (error) {
             console.error(error);
         } finally {
-         
         }
     };
 
@@ -115,7 +115,7 @@ function WishList({}) {
                                 ease: 'easeOut',
                             },
                         }}
-                        className=" relative mb-32 flex h-full w-full flex-col"
+                        className=" relative  flex h-full w-full flex-col"
                     >
                         <header className="bg-dark-gray/10 py-6 text-center font-gotham text-2xl font-bold tracking-wider text-black/80">
                             Saved Items
@@ -139,7 +139,7 @@ function WishList({}) {
                                 </p>
                             </div>
 
-                            <section className="flex h-full flex-row flex-wrap gap-y-10">
+                            <section className="flex h-full flex-row flex-wrap gap-y-10 mb-28">
                                 <AnimatePresence>
                                     {wishlistProducts.map((product) => {
                                         return (
@@ -151,6 +151,16 @@ function WishList({}) {
                                     })}
                                 </AnimatePresence>
                             </section>
+                        </div>
+
+                        <div className="flex w-full flex-col items-center justify-center h-full bg-light-grey/40 py-10 gap-5 mb-8">
+                            <Diversity2Outlined className="!text-4xl" />
+                            <p className='max-w-52 text-center'>
+                                Sign in to sync your Saved Items across all your
+                                devices.
+                            </p>
+
+                            <a href="/portal/login" className='bg-white border-2 border-dark-gray py-3 px-28 font-gotham hover:bg-light-grey transition-all '> SIGN IN</a>
                         </div>
                     </motion.section>
                 ) : (
