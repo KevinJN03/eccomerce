@@ -31,6 +31,7 @@ import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
+
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -745,10 +746,44 @@ export const updateProductFeature = [
 ];
 
 export const updateStatus = asyncHandler(async (req, res, next) => {
- 
-  const {productIds, status} = req.body
+  const { productIds, status } = req.body;
   await Product.updateMany({ _id: productIds }, { status });
   res.send({ success: true, msg: `${productIds} status has been updated` });
 });
 
+export const editTitle = [
+  asyncHandler(async (req, res, next) => {
+    const { selectedOption, productIds, optionData } = req.body;
 
+    const products = await Product.find({ _id: productIds }, { title: 1 });
+
+    const updateProducts = products.map((product) => {
+      let newTitle = null;
+      if (selectedOption == 'add_to_front') {
+        newTitle = optionData + product.title;
+      }
+
+      if (selectedOption == 'add_to_end') {
+        newTitle = product.title + optionData;
+      }
+
+      if (selectedOption == 'find_and_replace') {
+        if (optionData.replaceAll) {
+          newTitle = product.title?.replaceAll(
+            optionData.find,
+            optionData.replace,
+          );
+        } else {
+          newTitle = product.title?.replace(
+            optionData.find,
+            optionData.replace,
+          );
+        }
+      }
+      return newTitle;
+    });
+
+    console.log({ selectedOption, productIds, optionData, updateProducts });
+    res.send({ success: true, msg: 'titles updates' });
+  }),
+];

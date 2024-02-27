@@ -1,36 +1,44 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { adminAxios } from '../../../../api/axios';
 import Template from './template';
 import { useContent } from '../../../../context/ContentContext';
-
+import UserLogout from '../../../../hooks/userLogout';
+import { isEmpty } from 'lodash';
 function TitleDescriptionTemplate({ property, textbox }) {
-    const [text, setText] = useState({
-        add_to_front: '',
-        add_to_end: '',
-        delete: '',
-        reset: '',
-    });
     const [sampleText, setSampleText] = useState('12344');
     const [select, setSelect] = useState('add_to_front');
     const { modalContent } = useContent();
     const [products, setProducts] = useState([]);
 
+    const { logoutUser } = UserLogout();
+    const [loading, setLoading] = useState(false);
     const [deleteInstance, setDeleteInstance] = useState(false);
     const [defaultText, setDefaultText] = useState('');
-    const [findReplace, setFindReplace] = useState({
-        find: '',
-        replace: '',
-        replaceAll: false,
-        caseSensitive: false,
-    });
 
+    const [text, setText] = useState({
+        add_to_front: '',
+        add_to_end: '',
+        delete: '',
+        reset: '',
+        find_and_replace: {
+            find: '',
+            replace: '',
+            replaceAll: false,
+            caseSensitive: false,
+        },
+    });
+    const abortControllerRef = useRef(new AbortController());
+
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const { data } = await adminAxios.get(
-                    `product/${
-                        modalContent?.products || ['65ace5838f9aa588e0e6d225']
-                    }`
+                    `product/${modalContent?.products}`
                 );
                 setProducts(() => data);
 
@@ -103,7 +111,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
 
         let newSampleText = null;
 
-        if (findReplace?.replaceAll) {
+        if (text['find_and_replace']?.replaceAll) {
             newSampleText = defaultText.replaceAll(find, replace);
         } else {
             newSampleText = defaultText.replace(find, replace);
@@ -117,8 +125,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
 
         if (select == 'find_and_replace') {
             handleFindReplace({
-                find: findReplace?.find,
-                replace: findReplace?.replace,
+                ...text['find_and_replace'],
             });
         } else {
             handleText({ onChange: false });
@@ -126,9 +133,39 @@ function TitleDescriptionTemplate({ property, textbox }) {
         }
     }, [select]);
 
+    const handleClick = async () => {
+        try {
+            abortControllerRef.current?.abort;
+            abortControllerRef.current = new AbortController();
+            setLoading(() => true);
+
+            await adminAxios.post(
+                '/product/title/update',
+                {
+                    selectedOption: select,
+                    productIds: modalContent?.products,
+                    optionData: text[select],
+                },
+                { signal: abortControllerRef.current?.signal }
+            );
+        } catch (error) {
+            logoutUser({ error });
+        } finally {
+            setLoading(() => false);
+        }
+    };
     return (
         <Template
             title={`Editing ${property} for ${modalContent.products?.length} listing`}
+            submit={{
+                loading,
+                handleClick,
+                disabled:
+                    select == 'find_and_replace'
+                        ? isEmpty(text['find_and_replace']?.find) ||
+                          isEmpty(text['find_and_replace']?.replace)
+                        : isEmpty(text[select]),
+            }}
         >
             <section className="flex flex-col gap-2 border-b py-3">
                 <section
@@ -196,40 +233,56 @@ function TitleDescriptionTemplate({ property, textbox }) {
                                             <textarea
                                                 className="daisy-textarea daisy-textarea-bordered w-full rounded-sm p-2"
                                                 onChange={(e) => {
-                                                    setFindReplace(
-                                                        (prevState) => ({
-                                                            ...prevState,
+                                                    setText((prevState) => ({
+                                                        ...prevState,
+                                                        find_and_replace: {
+                                                            ...prevState[
+                                                                'find_and_replace'
+                                                            ],
                                                             find: e.target
                                                                 .value,
-                                                        })
-                                                    );
+                                                        },
+                                                    }));
 
                                                     handleFindReplace({
                                                         find: e.target.value,
                                                         replace:
-                                                            findReplace?.replace,
+                                                            text[
+                                                                'find_and_replace'
+                                                            ]?.replace,
                                                     });
                                                 }}
-                                                value={findReplace?.find}
+                                                value={
+                                                    text['find_and_replace']
+                                                        ?.find
+                                                }
                                             />
                                         ) : (
                                             <input
                                                 onChange={(e) => {
-                                                    setFindReplace(
-                                                        (prevState) => ({
-                                                            ...prevState,
+                                                    setText((prevState) => ({
+                                                        ...prevState,
+                                                        find_and_replace: {
+                                                            ...prevState[
+                                                                'find_and_replace'
+                                                            ],
                                                             find: e.target
                                                                 .value,
-                                                        })
-                                                    );
+                                                        },
+                                                    }));
 
                                                     handleFindReplace({
                                                         find: e.target.value,
                                                         replace:
-                                                            findReplace?.replace,
+                                                            text[
+                                                                'find_and_replace'
+                                                            ]?.replace,
                                                     });
                                                 }}
-                                                value={findReplace?.find}
+                                                value={
+                                                    text['find_and_replace']
+                                                        ?.find
+                                                }
                                                 type="text"
                                                 className="h-8 w-full flex-[2] rounded-sm border border-dark-gray/50 p-2 text-xs"
                                             />
@@ -251,38 +304,54 @@ function TitleDescriptionTemplate({ property, textbox }) {
                                             <textarea
                                                 className="daisy-textarea daisy-textarea-bordered w-full rounded-sm p-2"
                                                 onChange={(e) => {
-                                                    setFindReplace(
-                                                        (prevState) => ({
-                                                            ...prevState,
+                                                    setText((prevState) => ({
+                                                        ...prevState,
+                                                        find_and_replace: {
+                                                            ...prevState[
+                                                                'find_and_replace'
+                                                            ],
                                                             replace:
                                                                 e.target.value,
-                                                        })
-                                                    );
+                                                        },
+                                                    }));
 
                                                     handleFindReplace({
-                                                        find: findReplace?.find,
+                                                        find: text[
+                                                            'find_and_replace'
+                                                        ]?.find,
                                                         replace: e.target.value,
                                                     });
                                                 }}
-                                                value={findReplace?.replace}
+                                                value={
+                                                    text['find_and_replace']
+                                                        ?.replace
+                                                }
                                             />
                                         ) : (
                                             <input
                                                 onChange={(e) => {
-                                                    setFindReplace(
-                                                        (prevState) => ({
-                                                            ...prevState,
+                                                    setText((prevState) => ({
+                                                        ...prevState,
+                                                        find_and_replace: {
+                                                            ...prevState[
+                                                                'find_and_replace'
+                                                            ],
                                                             replace:
                                                                 e.target.value,
-                                                        })
-                                                    );
+                                                        },
+                                                    }));
 
                                                     handleFindReplace({
-                                                        find: findReplace?.find,
+                                                        find: text[
+                                                            'find_and_replace'
+                                                        ]?.find,
                                                         replace: e.target.value,
                                                     });
                                                 }}
-                                                value={findReplace?.replace}
+                                                value={
+                                                    text['find_and_replace']
+                                                        ?.replace
+                                                }
                                                 type="text"
                                                 className="h-8 w-full flex-[2] rounded-sm border border-dark-gray/50 p-2 text-xs"
                                             />
@@ -291,50 +360,52 @@ function TitleDescriptionTemplate({ property, textbox }) {
                                 </section>
 
                                 <section className="mt-1 flex flex-nowrap justify-end gap-3">
-                                    <div
-                                        className="flex flex-row gap-2"
-                                        onClick={() => {
-                                            setFindReplace((prevState) => ({
-                                                ...prevState,
-                                                replaceAll:
-                                                    !prevState?.replaceAll,
-                                            }));
-                                        }}
-                                    >
-                                        <input
-                                            readOnly
-                                            value={findReplace?.replaceAll}
-                                            type="checkbox"
-                                            name="replace-all"
-                                            id="replace-all"
-                                            className="daisy-checkbox daisy-checkbox-xs rounded-sm border-black"
-                                        />
-                                        <p className="text-xs"> Replace all</p>
-                                    </div>
-
-                                    <div
-                                        className="flex flex-row gap-2"
-                                        onClick={() => {
-                                            setFindReplace((prevState) => ({
-                                                ...prevState,
-                                                caseSensitive:
-                                                    !prevState?.caseSensitive,
-                                            }));
-                                        }}
-                                    >
-                                        <input
-                                            readOnly
-                                            value={findReplace?.caseSensitive}
-                                            type="checkbox"
-                                            name="replace-all"
-                                            id="replace-all"
-                                            className="daisy-checkbox daisy-checkbox-xs rounded-sm border-black"
-                                        />
-                                        <p className="text-xs">
-                                            {' '}
-                                            Case sensitive
-                                        </p>
-                                    </div>
+                                    {[
+                                        {
+                                            label: 'Replace all',
+                                            property: 'replaceAll',
+                                        },
+                                        {
+                                            label: 'Case sensitive',
+                                            property: 'caseSensitive',
+                                        },
+                                    ].map(({ label, property }) => {
+                                        return (
+                                            <div
+                                                key={label}
+                                                className="flex flex-row gap-2"
+                                                onClick={() => {
+                                                    setText((prevState) => ({
+                                                        ...prevState,
+                                                        find_and_replace: {
+                                                            ...prevState.find_and_replace,
+                                                            [property]:
+                                                                !prevState
+                                                                    .find_and_replace[
+                                                                    property
+                                                                ],
+                                                        },
+                                                    }));
+                                                }}
+                                            >
+                                                <input
+                                                    readOnly
+                                                    value={
+                                                        text[
+                                                            'find_and_replace'
+                                                        ][property]
+                                                    }
+                                                    type="checkbox"
+                                                    name="replace-all"
+                                                    id="replace-all"
+                                                    className="daisy-checkbox daisy-checkbox-xs rounded-sm border-black"
+                                                />
+                                                <p className="text-xs">
+                                                    {label}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
                                 </section>
                             </section>
                         ) : (

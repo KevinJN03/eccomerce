@@ -37,8 +37,9 @@ function Template({
                             Cancel
                         </button>
                         <button
-                            disabled={submit?.loading}
+                            disabled={submit?.loading || submit?.disabled}
                             onClick={submit?.handleClick}
+                            
                             type="button"
                             className="flex disabled:opacity-50 items-center justify-center rounded-sm border border-black bg-black px-3 py-2 text-xs font-semibold text-white hover:opacity-70"
                         >
