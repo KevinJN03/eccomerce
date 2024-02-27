@@ -31,6 +31,8 @@ function Footer({ type }) {
         minVariationPrice,
         product,
     } = useNewProduct();
+
+    // const { publish, setPulish, publishError, publishErrorDispatch,  ...values } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
@@ -108,8 +110,6 @@ function Footer({ type }) {
 
     return (
         <div className="sticky bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
-        
-
             <CancelButton handleClick={() => navigate('/admin/products')} />
             <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button

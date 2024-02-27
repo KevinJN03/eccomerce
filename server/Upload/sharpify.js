@@ -2,32 +2,26 @@ import { config } from 'dotenv';
 import sharp from 'sharp';
 
 const sharpify = async (file, type) => {
-  const image = sharp(file.buffer);
-  const meta = await image.metadata();
-
-  const { format } = meta;
-  const config = {
-    jpeg: { quality: 80 },
-    webp: { quality: 100, lossless: true, effort: 6 },
-    png: { compressionLevel: 8 },
-  };
-  // .resize(100)
-  // .png({ quality: 80, force: true })
-  // .webp({ quality: 80, force: false })
-  // .jpeg({ quality: 80, force: false })
-  // .toBuffer();
-
-  const compressImage = image.png({ quality: 90, force: true });
-
-  type === 'profile' && compressImage.resize(200);
-
   const obj = {
-    buffer: await compressImage.toBuffer(),
     format: 'png',
     type: file.mimetype,
     originalname: file.originalname,
   };
-  // console.log(obj);
+  const image = sharp(file.buffer);
+  // file size is bigger than 125 kb
+  if (file.size / 1024 > 125) {
+    const meta = await image.metadata();
+
+    const compressImage = image.png({ quality: 90, force: true });
+    obj.buffer = await compressImage.toBuffer();
+    // type === 'profile' && compressImage.resize(200);
+  } else if (file.mimetype !== 'image/png') {
+    const compressImage = image.png({ quality: 100, force: true });
+    obj.buffer = await compressImage.toBuffer();
+  } else {
+    obj.buffer = file.buffer;
+  }
+
   return obj;
 };
 

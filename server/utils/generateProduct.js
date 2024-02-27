@@ -11,7 +11,7 @@ async function generateProduct(req, id, endPoint = 'products') {
   const { files } = req;
 
   const { variations } = req.body;
- 
+
   const { title, delivery, gender, price, stock, category, detail } = req.body;
 
   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
@@ -25,7 +25,6 @@ async function generateProduct(req, id, endPoint = 'products') {
   });
 
   const productData = {
-
     title,
     delivery,
     gender,
@@ -41,7 +40,7 @@ async function generateProduct(req, id, endPoint = 'products') {
   if (newPrice.on) {
     productData.price = { current: newPrice.value };
   }
-  
+
   const sharpResult = [];
   for (const item of files) {
     const sharpen = await sharpify(item);
@@ -51,7 +50,6 @@ async function generateProduct(req, id, endPoint = 'products') {
     sharpResult.push(sharpen);
   }
 
-  console.log({ sharpResult });
   return { productData, sharpResult };
 }
 

@@ -25,15 +25,12 @@ import s3Upload, {
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
-
 import multerUpload from '../utils/multerUpload.js';
 import DraftProducts from '../Models/draftProducts.js';
 import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
-import draftProducts from '../Models/draftProducts.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
-import { JsonWebTokenError } from 'jsonwebtoken';
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -556,86 +553,82 @@ export const searchOrder = [
   }),
 ];
 
-export const getDraftProducts = asyncHandler(async (req, res, next) => {
-  const draftProducts = await DraftProducts.find({});
 
-  res.send({ draftProducts });
-});
 
-export const createDaftProduct = [
-  multerUpload.array('files', 6),
-  productValidator,
-  asyncHandler(async (req, res, next) => {
-    const result = validationResult(req);
+// export const createDaftProduct = [
+//   multerUpload.array('files', 6),
+//   productValidator,
+//   asyncHandler(async (req, res, next) => {
+//     const result = validationResult(req);
 
-    if (!result.isEmpty()) {
-      res.status(400).send(result.errors);
-      return;
-    }
+//     if (!result.isEmpty()) {
+//       res.status(400).send(result.errors);
+//       return;
+//     }
 
-    const { gender, category } = req.body;
-    const draftProducts = new DraftProducts();
+//     const { gender, category } = req.body;
+//     const draftProducts = new DraftProducts();
 
-    const { productData, sharpResult } = await generateProduct(
-      req,
-      draftProducts.id,
-      'draftProducts',
-    );
+//     const { productData, sharpResult } = await generateProduct(
+//       req,
+//       draftProducts.id,
+//       'draftProducts',
+//     );
 
-    Object.assign(draftProducts, productData);
-    draftProducts.status = 'draft';
-    try {
-      await s3Upload({
-        files: sharpResult,
-        isProfile: false,
-        folderId: draftProducts.id,
-        endPoint: 'draftProducts',
-      });
+//     Object.assign(draftProducts, productData);
+//     draftProducts.status = 'draft';
+//     try {
+//       await s3Upload({
+//         files: sharpResult,
+//         isProfile: false,
+//         folderId: draftProducts.id,
+//         endPoint: 'draftProducts',
+//       });
 
-      await draftProducts.save();
-      return res.send({ success: true, msg: 'draft saved' });
-    } catch (error) {
-      const deleteId = draftProducts.id;
+//       await draftProducts.save();
+//       return res.send({ success: true, msg: 'draft saved' });
+//     } catch (error) {
+//       const deleteId = draftProducts.id;
 
-      await s3Delete('products', deleteId);
+//       await s3Delete('products', deleteId);
 
-      next(error);
-    }
-  }),
-];
+//       next(error);
+//     }
+//   }),
+// ];
 
-export const getDraft = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+// export const getDraft = asyncHandler(async (req, res, next) => {
+//   const { id } = req.params;
 
-  const draftProduct = await DraftProducts.findOne({ _id: id })
-    .populate([{ path: 'delivery' }, { path: 'category' }])
-    .exec();
+//   const draftProduct = await DraftProducts.findOne({ _id: id })
+//     .populate([{ path: 'delivery' }, { path: 'category' }])
+//     .exec();
 
-  if (!draftProduct) {
-    return res.status(404).send('product not found');
-  }
+//   if (!draftProduct) {
+//     return res.status(404).send('product not found');
+//   }
 
-  // await s3Get(id);
+//   // await s3Get(id);
 
-  return res.status(200).send({ draftProduct });
-});
+//   return res.status(200).send({ draftProduct });
+// });
 
-export const delete_drafts = asyncHandler(async (req, res, next) => {
-  const { ids } = req.params;
+// export const delete_drafts = asyncHandler(async (req, res, next) => {
+//   const { ids } = req.params;
 
-  const idsArray = ids.split(',');
+//   const idsArray = ids.split(',');
 
-  const deleteProductsImages = idsArray.map((id) => {
-    return s3Delete('draftProducts', id);
-  });
+//   const deleteProductsImages = idsArray.map((id) => {
+//     return s3Delete('draftProducts', id);
+//   });
 
-  const result = await Promise.all([
-    DraftProducts.deleteMany({ _id: idsArray }),
-    ...deleteProductsImages,
-  ]);
+//   const result = await Promise.all([
+//     DraftProducts.deleteMany({ _id: idsArray }),
+//     ...deleteProductsImages,
+//   ]);
 
-  res.send({ msg: 'deletion successful' });
-});
+//   res.send({ msg: 'deletion successful' });
+// });
 
 export const getAllProducts = [
   check('check.featured')

@@ -68,11 +68,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                         <div className="border-b border-dark-gray/50 py-2">
                             <Link
                                 onClick={closeAction}
-                                to={`edit/${product._id}${
-                                    checks?.listing_status == 'draft'
-                                        ? '?draft=true'
-                                        : ''
-                                }`}
+                                to={`edit/${product._id}`}
                             >
                                 <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
                                     Edit

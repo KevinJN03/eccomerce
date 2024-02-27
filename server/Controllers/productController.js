@@ -461,7 +461,7 @@ export const create_new_product = [
       req,
       newProduct.id,
     );
-    console.log({ productId: newProduct.id });
+ 
 
     Object.assign(newProduct, productData);
     try {
