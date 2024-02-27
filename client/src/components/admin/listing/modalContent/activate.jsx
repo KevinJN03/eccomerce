@@ -24,8 +24,13 @@ function Activate({}) {
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
 
-            const { data } = await adminAxios.get(
-                `/product/status/${modalContent?.productIds}?status=active`,
+            const { data } = await adminAxios.post(
+                `/product/status/update`,
+
+                {
+                    productIds: modalContent.productIds,
+                    status: 'active',
+                },
                 { signal: abortControllerRef.current?.signal }
             );
         } catch (error) {
@@ -53,12 +58,12 @@ function Activate({}) {
     };
     return (
         <Template
-        submit={{
-            text: 'Activate',
-            handleClick: handleActivate,
-            loading,
-        }}
-        small
+            submit={{
+                text: 'Activate',
+                handleClick: handleActivate,
+                loading,
+            }}
+            small
             title={`You are about to activate ${modalContent.productIds?.length} listing`}
         >
             <div className="flex w-fit flex-col gap-4">

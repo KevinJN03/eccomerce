@@ -26,7 +26,7 @@ import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
 import multerUpload from '../utils/multerUpload.js';
-import DraftProducts from '../Models/draftProducts.js';
+
 import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
@@ -553,83 +553,6 @@ export const searchOrder = [
   }),
 ];
 
-
-
-// export const createDaftProduct = [
-//   multerUpload.array('files', 6),
-//   productValidator,
-//   asyncHandler(async (req, res, next) => {
-//     const result = validationResult(req);
-
-//     if (!result.isEmpty()) {
-//       res.status(400).send(result.errors);
-//       return;
-//     }
-
-//     const { gender, category } = req.body;
-//     const draftProducts = new DraftProducts();
-
-//     const { productData, sharpResult } = await generateProduct(
-//       req,
-//       draftProducts.id,
-//       'draftProducts',
-//     );
-
-//     Object.assign(draftProducts, productData);
-//     draftProducts.status = 'draft';
-//     try {
-//       await s3Upload({
-//         files: sharpResult,
-//         isProfile: false,
-//         folderId: draftProducts.id,
-//         endPoint: 'draftProducts',
-//       });
-
-//       await draftProducts.save();
-//       return res.send({ success: true, msg: 'draft saved' });
-//     } catch (error) {
-//       const deleteId = draftProducts.id;
-
-//       await s3Delete('products', deleteId);
-
-//       next(error);
-//     }
-//   }),
-// ];
-
-// export const getDraft = asyncHandler(async (req, res, next) => {
-//   const { id } = req.params;
-
-//   const draftProduct = await DraftProducts.findOne({ _id: id })
-//     .populate([{ path: 'delivery' }, { path: 'category' }])
-//     .exec();
-
-//   if (!draftProduct) {
-//     return res.status(404).send('product not found');
-//   }
-
-//   // await s3Get(id);
-
-//   return res.status(200).send({ draftProduct });
-// });
-
-// export const delete_drafts = asyncHandler(async (req, res, next) => {
-//   const { ids } = req.params;
-
-//   const idsArray = ids.split(',');
-
-//   const deleteProductsImages = idsArray.map((id) => {
-//     return s3Delete('draftProducts', id);
-//   });
-
-//   const result = await Promise.all([
-//     DraftProducts.deleteMany({ _id: idsArray }),
-//     ...deleteProductsImages,
-//   ]);
-
-//   res.send({ msg: 'deletion successful' });
-// });
-
 export const getAllProducts = [
   check('check.featured')
     .trim()
@@ -656,7 +579,7 @@ export const getAllProducts = [
     const { checks } = req.body;
 
     const productPipeline = [
-      ...productAggregateStage({stats: true}),
+      ...productAggregateStage({ stats: true }),
 
       {
         $set: {
@@ -803,33 +726,18 @@ export const updateProductFeature = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { featured, draft } = req.query;
-    let product = null;
 
-    if (draft) {
-      product = await DraftProducts.findOneAndUpdate(
-        { _id: id },
-        { featured },
-        {
-          upsert: false,
-          new: true,
-          lean: {
-            toObject: true,
-          },
+    const product = await Product.findOneAndUpdate(
+      { _id: id },
+      { featured },
+      {
+        upsert: false,
+        new: true,
+        lean: {
+          toObject: true,
         },
-      );
-    } else {
-      product = await Product.findOneAndUpdate(
-        { _id: id },
-        { featured },
-        {
-          upsert: false,
-          new: true,
-          lean: {
-            toObject: true,
-          },
-        },
-      );
-    }
+      },
+    );
 
     console.log(product?.featured);
     res.status(200).send({ success: true, featured: product?.featured });
@@ -837,12 +745,10 @@ export const updateProductFeature = [
 ];
 
 export const updateStatus = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const { status } = req.query;
-  const ids = id.split(',');
-  console.log({ ids, status });
-
-  const products = await Product.updateMany({ _id: ids }, { status });
-  res.send({ success: true, msg: `${id} status has been updated` });
+ 
+  const {productIds, status} = req.body
+  await Product.updateMany({ _id: productIds }, { status });
+  res.send({ success: true, msg: `${productIds} status has been updated` });
 });
+
+

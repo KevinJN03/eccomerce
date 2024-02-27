@@ -10,21 +10,15 @@ import {
   generatePresignUrl,
   testPdf,
   searchOrder,
-  getDraftProducts,
-  createDaftProduct,
-  getDraft,
   getAllProducts,
-  delete_drafts,
   getProductFiles,
   updateProductFeature,
-  searchProduct,
   updateStatus,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
   getProductsInfo,
   getVariations,
-  delete_many_product,
   update_product,
 } from '../Controllers/productController.js';
 import {
@@ -66,7 +60,7 @@ router.get('/orders', getAllOrders);
 router.get('/coupon/all', get_all_coupons);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:ids', delete_product);
-// router.delete('/delete/draftProduct/:ids', delete_drafts);
+
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
@@ -91,6 +85,6 @@ router.delete('/privateNote/delete', deletePrivateNote);
 router.post('/products/all', getAllProducts);
 router.get('/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);
-router.get('/product/status/:id', updateStatus);
+router.post('/product/status/update', updateStatus);
 // router.get('/check', checkLogin)
 export default router;

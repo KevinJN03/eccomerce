@@ -33,6 +33,7 @@ import EditDescription from '../listing/modalContent/edit_description.jsx';
 import EditPrice from '../listing/modalContent/edit_price.jsx';
 import Deactivate from '../listing/modalContent/deactivate.jsx';
 import Activate from '../listing/modalContent/activate.jsx';
+import Publish from '../listing/modalContent/publish.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -57,6 +58,7 @@ function Admin({}) {
         edit_price: <EditPrice />,
         deactivate: <Deactivate />,
         activate: <Activate />,
+        publish: <Publish/>
     };
     const alertVariant = {
         initial: {

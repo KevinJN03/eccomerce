@@ -2,46 +2,47 @@ import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import UserLogout from '../../../../hooks/userLogout';
-
 import { adminAxios } from '../../../../api/axios';
 import { useAdminContext } from '../../../../context/adminContext';
-import { check } from 'prettier';
 import updateProduct from './updateProduct';
 
-function Deactivate({}) {
+function Publish({}) {
     const { modalContent, setModalCheck } = useContent();
     const abortControllerRef = useRef(new AbortController());
-    const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
+    const { allProducts, setAllProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
+
     useEffect(() => {
         return () => {
             abortControllerRef.current?.abort();
         };
     }, []);
 
-    const handleDeactivate = async () => {
+    const handlePublish = async () => {
         try {
             setLoading(() => true);
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
             const { data } = await adminAxios.post(
                 `/product/status/update`,
+
                 {
                     productIds: modalContent.productIds,
-                    status: 'inactive',
+                    status: 'active',
                 },
                 { signal: abortControllerRef.current?.signal }
             );
         } catch (error) {
-            console.error('error at Deactivate: ', error?.message);
+            console.error(error);
+
             logoutUser({ error });
-        } finally {
+        }finally{
             const generateUpdateProduct = updateProduct({
                 listing_status: modalContent.checks?.listing_status,
                 allProducts,
                 productIds: modalContent?.productIds,
-                note: 'Moved to inactive listings',
+                note: 'Moved to active listings',
             });
             setTimeout(() => {
                 setLoading(() => false);
@@ -58,30 +59,27 @@ function Deactivate({}) {
     };
     return (
         <Template
+            small={true}
             submit={{
-                text: 'Deactivate',
-                handleClick: handleDeactivate,
+                text: 'Publish',
+                handleClick: handlePublish,
                 loading,
             }}
-            small
-            title={`You are about to deactivate  ${modalContent.productIds?.length} listing`}
+            title={`You are about to publish  ${modalContent.productIds?.length} listing`}
         >
-            <div className="flex w-fit flex-col gap-4">
-                <p className="w-fit">
-                    Deactivating this product will promptly remove it from your
-                    public shop, ensuring a streamlined and curated shopping
-                    experience for your customers.
-                </p>
-                <p>
-                    Consider utilizing this feature strategically to align with
-                    seasonal changes, limited-time promotions, or inventory
-                    management. Activate and showcase your products when they
-                    matter most, and seamlessly deactivate them when it's time
-                    for a change or replenishment.
-                </p>
-            </div>
+            <p>
+                Ready to showcase your product to potential buyers? Publishing
+                your listing means your product will be live on our platform,
+                visible to shoppers browsing for what you offer. This is your
+                chance to make a compelling impression, so ensure your listing
+                is complete with high-quality images, detailed descriptions, and
+                accurate pricing. Once published, users can explore, purchase,
+                and interact with your product. Take the time to ensure your
+                listing is optimized for visibility and conversions. When you're
+                confident it's ready, hit publish and let the sales begin!
+            </p>
         </Template>
     );
 }
 
-export default Deactivate;
+export default Publish;

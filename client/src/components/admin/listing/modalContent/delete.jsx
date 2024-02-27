@@ -47,7 +47,7 @@ function Delete({}) {
                     productIds.forEach((id) => {
                         newSet.delete(id);
                     });
-                    debugger;
+        
                     return newSet;
                 });
             }, 1000);
