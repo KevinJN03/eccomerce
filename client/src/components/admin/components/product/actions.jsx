@@ -7,11 +7,9 @@ import { useContent } from '../../../../context/ContentContext';
 import { useListingPageContext } from '../../../../context/listingPageContext';
 
 function Actions({ showAction, setShowAction, className, product }) {
-    const navigate = useNavigate();
     const { setModalCheck, setModalContent } = useContent();
 
-    const { selectionSet, setSelectionSet, setProductIds, checks } =
-        useListingPageContext();
+    const { handleClick, text } = useListingPageContext();
 
     const closeAction = () => {
         setShowAction(() => false);
@@ -20,18 +18,6 @@ function Actions({ showAction, setShowAction, className, product }) {
         setModalContent(() => ({ type: 'changeSection' }));
         setModalCheck(() => true);
         closeAction();
-    };
-
-    const handleDelete = () => {
-        setModalContent({
-            type: 'delete',
-            productIds: [product?._id],
-            setSelectionSet,
-
-            checks,
-            setProductIds,
-        });
-        setModalCheck(() => true);
     };
 
     return (
@@ -45,11 +31,11 @@ function Actions({ showAction, setShowAction, className, product }) {
                         exit={'exit'}
                         className={` ${
                             className || ''
-                        } absolute right-0 top-full z-10  rounded border border-dark-gray/50 bg-white py-2`}
+                        } absolute right-0 top-full z-10  rounded border border-gray-300 bg-white py-2`}
                     >
                         {' '}
                         {product?.status == 'active' && (
-                            <div className="w-full border-b border-dark-gray/50 pb-2">
+                            <div className="w-full border-b border-gray-300 pb-2">
                                 <Link
                                     onClick={closeAction}
                                     to={`/product/${product?._id}`}
@@ -65,7 +51,7 @@ function Actions({ showAction, setShowAction, className, product }) {
                                 </p>
                             </div>
                         )}
-                        <div className="border-b border-dark-gray/50 py-2">
+                        <div className="border-b border-gray-300 py-2">
                             <Link
                                 onClick={closeAction}
                                 to={`edit/${product._id}`}
@@ -77,19 +63,30 @@ function Actions({ showAction, setShowAction, className, product }) {
 
                             <Link
                                 onClick={closeAction}
-                                to={`copy/${product?._id}${
-                                    checks?.listing_status == 'draft'
-                                        ? '?draft=true'
-                                        : ''
-                                }`}
+                                to={`copy/${product?._id}`}
                                 target="_blank"
                             >
                                 <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
                                     Copy
                                 </p>
                             </Link>
+
+                            <button
+                                onClick={() => {
+                                    handleClick({
+                                        productIds: [product?._id],
+                                        type: text[
+                                            product?.status
+                                        ].toLowerCase(),
+                                    });
+                                    closeAction();
+                                }}
+                                className="w-full cursor-pointer py-2 pl-4 text-left hover:bg-light-grey/50"
+                            >
+                                <p>{text[product?.status]}</p>
+                            </button>
                         </div>
-                        <div className="border-b border-dark-gray/50 py-2">
+                        <div className="border-b border-gray-300 py-2">
                             <p
                                 onClick={changeSection}
                                 className="cursor-pointer whitespace-nowrap py-2 pl-4 pr-14 hover:bg-light-grey/50"
@@ -98,7 +95,13 @@ function Actions({ showAction, setShowAction, className, product }) {
                             </p>
                         </div>
                         <p
-                            onClick={handleDelete}
+                            onClick={() => {
+                                handleClick({
+                                    type: 'delete',
+                                    productIds: [product?._id],
+                                });
+                                closeAction();
+                            }}
                             className="mt-2 cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50"
                         >
                             Delete

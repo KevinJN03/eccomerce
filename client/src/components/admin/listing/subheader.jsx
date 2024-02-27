@@ -9,43 +9,21 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import variant from '../order/home/variant';
 function SubHeader({}) {
-    const { selectionSet, setSelectionSet, checks, productIds, setProductIds } =
-        useListingPageContext();
+    const {
+        selectionSet,
+        setSelectionSet,
+        checks,
+        productIds,
+        handleClick,
+        text
+    } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [showAction, setShowAction] = useState(false);
 
-    const handleDelete = () => {
-        setModalContent({
-            type: 'delete',
-            productIds: Array.from(selectionSet),
-            setSelectionSet,
-            draft: checks?.listing_status == 'draft',
-            checks,
-            setProductIds,
-        });
-        setModalCheck(() => true);
-    };
+   
 
-    const text = {
-        inactive: 'Activate',
-        active: 'Deactivate',
-        draft: 'Publish',
-    };
 
-    const handleOptionClick = () => {
-        setModalContent({
-            type: text[checks?.listing_status]?.toLowerCase(),
-            productIds: Array.from(selectionSet),
-            setSelectionSet,
-            // draft: checks?.listing_status == 'draft',
-            checks,
-            clearSelection: () => {
-                setSelectionSet(() => new Set());
-            },
-        });
-        setModalCheck(() => true);
-    };
 
     return (
         <div className="subheader mb-3 flex flex-row  flex-nowrap gap-3">
@@ -63,7 +41,14 @@ function SubHeader({}) {
                 </button>
                 {text[checks?.listing_status] && (
                     <button
-                        onClick={handleOptionClick}
+                        onClick={() =>
+                            handleClick({
+                                productIds: Array.from(selectionSet),
+                                type: text[
+                                    checks?.listing_status
+                                ]?.toLowerCase(),
+                            })
+                        }
                         disabled={!selectionSet?.size}
                         type="button"
                         className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
@@ -72,7 +57,12 @@ function SubHeader({}) {
                     </button>
                 )}
                 <button
-                    onClick={handleDelete}
+                    onClick={() =>
+                        handleClick({
+                            productIds: Array.from(selectionSet),
+                            type: 'delete',
+                        })
+                    }
                     disabled={!selectionSet?.size}
                     type="button"
                     className="rounded-r-inherit px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"

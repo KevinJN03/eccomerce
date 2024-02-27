@@ -7,6 +7,7 @@ import { adminAxios } from '../../../../api/axios';
 import { useAdminContext } from '../../../../context/adminContext';
 import { check } from 'prettier';
 import updateProduct from './updateProduct';
+import preventProductFromSelection from './preventProductFromSelection';
 
 function Deactivate({}) {
     const { modalContent, setModalCheck } = useContent();
@@ -14,6 +15,8 @@ function Deactivate({}) {
     const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
     const { logoutUser } = UserLogout();
+    const { productIds, setProductIds } = modalContent;
+
     useEffect(() => {
         return () => {
             abortControllerRef.current?.abort();
@@ -53,6 +56,9 @@ function Deactivate({}) {
                         prevState[modalContent.checks?.listing_status],
                 }));
                 modalContent?.clearSelection();
+
+                preventProductFromSelection({setProductIds, productIds})
+
             }, 1000);
         }
     };

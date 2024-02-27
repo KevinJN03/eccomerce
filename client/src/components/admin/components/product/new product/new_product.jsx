@@ -21,6 +21,7 @@ import { Box, Modal } from '@mui/material';
 import Delivery_Main from './delivery/Main.jsx';
 import Delivery_New from './delivery/New.jsx';
 import {
+    ArrowBackRounded,
     CallMadeRounded,
     ContentCopySharp,
     KeyboardBackspaceRounded,
@@ -75,45 +76,45 @@ function New_Product({ Content, type }) {
                     <Link
                       to={'/admin/products'}
                     className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1">
-                        <div className="flex items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
-                            <KeyboardBackspaceRounded fontSize="small" />
+                        <div className="flex relative items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
+                            {/* <KeyboardBackspaceRounded fontSize="small" /> */}
+                            <ArrowBackRounded fontSize="small"/>
                         </div>
 
-                        <p className="text-sm font-semibold">
+                        <p className="text-base font-semibold">
                             Back to listings
                         </p>
                     </Link>
                     <div className="flex w-full flex-col">
                         <div className="flex-no-wrap flex w-full flex-row justify-between">
-                            <div>
-                                <h3 className=" text-lg font-semibold tracking-wider">
+                            <div className='flex flex-col gap-3'>
+                                <h3 className=" text-xl font-semibold tracking-wider">
                                     {!type ? 'New Listing' : mountTitle}
                                 </h3>
                                 <div className="flex flex-nowrap items-center gap-3">
                                     <p
-                                        className={`w-fit rounded-full font-light ${
+                                        className={`w-fit rounded-full font-normal text-xs tracking-wide ${
                                             product?.status == 'active'
                                                 ? 'bg-green-200'
-                                                : product?.status == 'draft'
-                                                  ? 'bg-black/80 text-white'
-                                                  : 'bg-dark-gray/50'
-                                        }  px-3 py-1`}
+                                               
+                                                  : 'bg-black/90 text-white'
+                                        }  px-2 py-1`}
                                     >
-                                        {product?.status}
+                                        {product?.status[0].toUpperCase() + product?.status.substring(1) }
                                     </p>
 
-                                    <p>
+                                { product?.status == 'active' &&    <p>
                                         Listed on{' '}
                                         {dayjs(product?.timestamp).format(
                                             'DD MMM, YYYY'
                                         )}
                                         .
-                                    </p>
+                                    </p>}
                                 </div>
                             </div>
 
-                            <div className=" flex flex-row flex-nowrap items-center gap-2">
-                                {type && (
+                            <div className=" flex flex-row flex-nowrap items-start gap-2">
+                                {type && product?.status == 'active' && (
                                     <Link
                                         to={`/product/${product?._id}`}
                                         target="_blank"

@@ -5,6 +5,7 @@ import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 import updateProduct from './updateProduct';
 import { useAdminContext } from '../../../../context/adminContext';
+import preventProductFromSelection from './preventProductFromSelection';
 
 function Activate({}) {
     const { modalContent, setModalCheck } = useContent();
@@ -12,6 +13,8 @@ function Activate({}) {
     const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
     const { logoutUser } = UserLogout();
+    const { productIds, setProductIds } = modalContent;
+debugger
     useEffect(() => {
         return () => {
             abortControllerRef.current?.abort();
@@ -53,6 +56,7 @@ function Activate({}) {
                         prevState[modalContent.checks?.listing_status],
                 }));
                 modalContent?.clearSelection();
+              preventProductFromSelection({setProductIds, productIds})
             }, 1000);
         }
     };
