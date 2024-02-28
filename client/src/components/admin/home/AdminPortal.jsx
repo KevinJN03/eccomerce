@@ -41,36 +41,38 @@ function AdminPortal({}) {
         },
     };
     return (
-        <>
+         <section className="h-full w-full">
             {loading && <LoadingPage />}
             {!loading && (
-                <section className="login-signup-page">
-                    <section
-                        id="login-signup-container"
-                        className="sm:w-[90vw] md:w-[500px] lg:w-[600px]"
-                    >
-                        <Link className="login-logo mt-10 flex w-40 flex-nowrap items-center">
-                            <img loading="lazy" src={glamo} />
+                <section className="flex flex-col bg-light-grey h-full !min-h-screen w-screen items-center justify-center">
+                    <section className="m-0 flex h-fit flex-col items-center p-0">
+                        <section
+                            id="login-signup-container"
+                            className="mt-5 flex w-full flex-col items-center justify-center bg-white p-3"
+                        >
+                            <Link className="login-logo mt-10 flex w-40 flex-nowrap items-center">
+                                <img loading="lazy" src={glamo} />
 
-                            <img
-                                src={adminLogo}
-                                width={'50px'}
-                                height={'50px'}
-                                className="object-contain"
-                            />
-                        </Link>
+                                <img
+                                    src={adminLogo}
+                                    width={'50px'}
+                                    height={'50px'}
+                                    className="object-contain"
+                                />
+                            </Link>
 
-                        <AnimatePresence>
-                            <motion.section
-                                key={location?.pathname}
-                                variants={outletVariant}
-                                initial={'initial'}
-                                animate={'animate'}
-                                className="mt-10 flex w-full flex-col items-center justify-center"
-                            >
-                                <Outlet />
-                            </motion.section>
-                        </AnimatePresence>
+                            <AnimatePresence>
+                                <motion.section
+                                    key={location?.pathname}
+                                    variants={outletVariant}
+                                    initial={'initial'}
+                                    animate={'animate'}
+                                    className="mt-10 flex w-full flex-col items-center justify-center"
+                                >
+                                    <Outlet />
+                                </motion.section>
+                            </AnimatePresence>
+                        </section>
                     </section>
                     <div className="mt-2 flex flex-row gap-2 pb-5 text-xs underline underline-offset-2">
                         <span>
@@ -85,7 +87,7 @@ function AdminPortal({}) {
                     </div>
                 </section>
             )}
-        </>
+         </section>
     );
 }
 

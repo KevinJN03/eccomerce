@@ -24,7 +24,6 @@ function AdminLogin({}) {
 
     const navigate = useNavigate();
 
- 
     const onSubmit = async ({ email, password }) => {
         console.log('test');
         let success = false;
@@ -74,7 +73,6 @@ function AdminLogin({}) {
         }
     };
     return (
-     
         <LoginForm
             onSubmit={onSubmit}
             error={error}
