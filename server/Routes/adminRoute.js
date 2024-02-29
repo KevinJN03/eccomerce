@@ -15,6 +15,7 @@ import {
   updateProductFeature,
   updateStatus,
   editTitle,
+  editPrice,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -88,5 +89,7 @@ router.get('/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);
 router.post('/product/status/update', updateStatus);
 router.post('/product/title/update', editTitle);
+
+router.post('/product/price/update', editPrice)
 // router.get('/check', checkLogin)
 export default router;

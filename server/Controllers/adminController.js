@@ -810,3 +810,124 @@ export const editTitle = [
     res.send({ success: true, msg: 'titles updates' });
   }),
 ];
+
+export const editPrice = [
+  check('amount', 'Please enter a valid number between 0.17 and 999')
+    .escape()
+    .trim()
+    .isFloat({ min: 0.17, max: 999 }),
+  asyncHandler(async (req, res, next) => {
+    const { productIds, selectedOption, amount } = req.body;
+
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result?.isEmpty()) {
+      console.log({ error: result.mapped() });
+      return res.status(400).send({ error: result.mapped(), success: false });
+    }
+    const productsInfo = await Product.find(
+      { _id: productIds },
+      { variations: 1, price: 1 },
+      // { lean: { toObject: true } },
+    );
+    const failedProductIds = new Map();
+    const updateProductPrice = productsInfo.map((product) => {
+      let isPriceAssorted = false;
+      let variationWithPriceIndex = null;
+
+      const getNewPrice = (currentPrice) => {
+        let nextCurrentPrice = parseFloat(currentPrice);
+        const parseAmount = parseFloat(amount);
+
+        if (selectedOption == 'increase_by_amount') {
+          nextCurrentPrice += parseAmount;
+        }
+
+        if (selectedOption == 'decrease_by_amount') {
+          nextCurrentPrice -= parseAmount;
+        }
+
+        if (selectedOption == 'set_new_amount') {
+          nextCurrentPrice = parseAmount;
+        }
+
+        if (selectedOption == 'percentage_increase') {
+          nextCurrentPrice *= 1 + parseAmount / 100;
+        }
+
+        if (selectedOption == 'percentage_decrease') {
+          nextCurrentPrice *= 1 - parseAmount / 100;
+        }
+        // return nextCurrentPrice.toFixed(2)
+        const formatPrice = Math.floor(nextCurrentPrice * 100) / 100;
+        if (formatPrice < 0.17 || formatPrice > 999) {
+          const idString = product._id?.toString();
+          failedProductIds.set(idString, {
+            id: idString,
+            msg:
+              formatPrice < 0.17
+                ? 'Price is below listing fee.'
+                : 'Price is too high.',
+          });
+        }
+        return formatPrice;
+      };
+
+      for (const [idx, { priceHeader }] of product?.variations.entries()) {
+        if (priceHeader?.on) {
+          isPriceAssorted = true;
+          variationWithPriceIndex = idx;
+          break;
+        }
+      }
+      if (!isPriceAssorted) {
+        if (!failedProductIds.has(product._id.toString())) {
+          return {
+            previous: product.price.current,
+            current: getNewPrice(product.price?.current),
+            _id: product._id,
+          };
+        }
+      }
+
+      if (isPriceAssorted) {
+        const generateVariationPrice = (index) => {
+          const { options } = product.variations[index];
+          const newOptionsMap = new Map();
+          options.forEach((value, key) => {
+            newOptionsMap.set(key, {
+              ...value,
+              price: getNewPrice(value.price),
+            });
+          });
+          return newOptionsMap;
+        };
+        if (product.variations?.length === 3) {
+          const updatedVariationOptions = generateVariationPrice(2);
+
+          if (!failedProductIds.has(product._id.toString())) {
+            return updatedVariationOptions;
+          }
+        } else {
+          const updatedVariationOptions = generateVariationPrice(
+            variationWithPriceIndex,
+          );
+          if (!failedProductIds.has(product._id.toString())) {
+            return updatedVariationOptions;
+          }
+        }
+      }
+    });
+    console.log({ failedProductIds, productIds });
+
+    if (failedProductIds.size > 0) {
+      return res.status(400).send({
+        success: false,
+        failedProductIds: Array.from(failedProductIds).map(
+          ([key, value]) => value,
+        ),
+      });
+    }
+    res.status(200).send({ success: true, msg: 'products price updated' });
+  }),
+];

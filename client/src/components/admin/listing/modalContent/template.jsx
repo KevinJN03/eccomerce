@@ -46,7 +46,7 @@ function Template({
                 <>
                     <header className="border-b border-b-dark-gray/50 p-3">
                         {headerChildren || (
-                            <p className=" font-medium">{title}</p>
+                            <p className=" font-medium text-base">{title}</p>
                         )}
                     </header>
                     <body className="flex w-full flex-col gap-2 px-3 py-4">
@@ -58,7 +58,7 @@ function Template({
                                 <button
                                     onClick={() => setModalCheck(false)}
                                     type="button"
-                                    className="rounded-sm border px-3 py-2 text-xs font-semibold hover:bg-light-grey/50"
+                                    className="rounded-sm border px-3 py-2 text-sm font-semibold hover:bg-light-grey/50"
                                 >
                                     Cancel
                                 </button>
@@ -68,7 +68,7 @@ function Template({
                                     }
                                     onClick={submit?.handleClick}
                                     type="button"
-                                    className="flex items-center justify-center rounded-sm border border-black bg-black px-3 py-2 text-xs font-semibold text-white hover:opacity-70 disabled:opacity-50"
+                                    className="flex items-center justify-center rounded-sm border border-black bg-black px-3 py-2 text-sm font-semibold text-white hover:opacity-70 disabled:opacity-50"
                                 >
                                     {submit?.loading ? (
                                         <div class=" daisy-loading daisy-loading-spinner daisy-loading-xs !text-white "></div>
