@@ -22,7 +22,13 @@ import Update from '../components/product/new product/variation/update';
 import Order_Edit from '../order/home/edit_order';
 import UpdateOrder from '../order/home/updateOrder';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CloseSharp, MoodBad, MoodBadTwoTone } from '@mui/icons-material';
+import {
+    CheckRounded,
+    CloseRounded,
+    CloseSharp,
+    MoodBad,
+    MoodBadTwoTone,
+} from '@mui/icons-material';
 
 import sadEmoji from '../../../assets/icons/sad-emoji.svg';
 import { Box, Modal } from '@mui/material';
@@ -38,8 +44,9 @@ function Admin({}) {
     const { darkMode } = useDarkMode();
 
     const [showAlert, setShowAlert] = useState({
-        msg: '111111111111111',
-        on: false,
+        msg: 'Listing Updated.',
+        on: true,
+        small: false,
     });
     const [open, setOpen] = useState(true);
 
@@ -58,27 +65,42 @@ function Admin({}) {
         edit_price: <EditPrice />,
         deactivate: <Deactivate />,
         activate: <Activate />,
-        publish: <Publish/>
+        publish: <Publish />,
     };
-    const alertVariant = {
+    const generateAlertVariant = (stationaryPosition) => ({
         initial: {
             // y: 0,
             translateY: '-100px',
         },
         animate: {
             // y: 0
-            translateY: '20px',
+            translateY: stationaryPosition,
             transition: {
-                duration: 0.9,
+                duration: 0.5,
             },
         },
         exit: {
             translateY: '-100px',
             transition: {
-                duration: 0.9,
+                duration: 0.4,
             },
         },
-    };
+    });
+
+    useEffect(() => {
+        let timeout = null;
+        if (showAlert?.on) {
+            timeout = setTimeout(() => {
+                setShowAlert(() => ({ on: false, msg: null, small: null }));
+            }, 5000);
+        }
+
+        return()=> {
+            clearTimeout(timeout)
+        }
+    }, [showAlert.on]);
+
+    console.log('admin rerender')
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
             <ContentProvider
@@ -91,6 +113,8 @@ function Admin({}) {
                     setOpen,
                     openSearch,
                     setOpenSearch,
+                    showAlert,
+                    setShowAlert,
                 }}
             >
                 {location.pathname.split('/')[2] == 'login' ||
@@ -99,10 +123,10 @@ function Admin({}) {
                 ) : (
                     <section className="home relative">
                         <AnimatePresence>
-                            {showAlert?.on && (
+                            {showAlert?.on && showAlert?.small === true && (
                                 <motion.section
                                     className="fixed left-0 z-50 flex w-full justify-center"
-                                    variants={alertVariant}
+                                    variants={generateAlertVariant('20px')}
                                     initial={'initial'}
                                     animate={'animate'}
                                     exit={'exit'}
@@ -126,6 +150,31 @@ function Admin({}) {
                                             <CloseSharp className="!fill-white " />
                                         </button>
                                     </div>
+                                </motion.section>
+                            )}
+                            {showAlert?.on && showAlert?.small === false && (
+                                <motion.section
+                                    className="fixed left-0 top-0 z-50 flex w-full items-center justify-center  !bg-green-100 p-5 "
+                                    variants={generateAlertVariant('0px')}
+                                    initial={'initial'}
+                                    animate={'animate'}
+                                    exit={'exit'}
+                                >
+                                    <div className="flex w-fit flex-row items-center gap-3">
+                                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
+                                            <CheckRounded className="!text-[1.8rem]" />
+                                        </div>
+
+                                        <p className="text-sm">
+                                            {showAlert?.msg}
+                                        </p>
+                                    </div>
+                                    <button
+                                        className="absolute right-8 top-1/2 translate-y-[-50%]"
+                                        onClick={() => setShowAlert({})}
+                                    >
+                                        <CloseRounded className="!fill-black !text-[1.8rem]" />
+                                    </button>
                                 </motion.section>
                             )}
                         </AnimatePresence>

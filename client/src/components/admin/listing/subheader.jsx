@@ -15,15 +15,11 @@ function SubHeader({}) {
         checks,
         productIds,
         handleClick,
-        text
+        text,
     } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [showAction, setShowAction] = useState(false);
-
-   
-
-
 
     return (
         <div className="subheader mb-3 flex flex-row  flex-nowrap gap-3">
@@ -116,6 +112,12 @@ function SubHeader({}) {
                                                 setModalCheck(() => true);
                                                 setModalContent(() => ({
                                                     type: id,
+
+                                                    clearSelection: () => {
+                                                        setSelectionSet(
+                                                            new Set()
+                                                        );
+                                                    },
                                                     products:
                                                         Array.from(
                                                             selectionSet

@@ -12,7 +12,16 @@ async function generateProduct(req, id, endPoint = 'products') {
 
   const { variations } = req.body;
 
-  const { title, delivery, gender, price, stock, category, detail } = req.body;
+  const {
+    title,
+    delivery,
+    gender,
+    price,
+    stock,
+    category,
+  
+    description,
+  } = req.body;
 
   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
   const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
@@ -29,9 +38,10 @@ async function generateProduct(req, id, endPoint = 'products') {
     delivery,
     gender,
     category,
-    detail,
+
     variations: parseVariations,
     images: imageArr,
+    description,
   };
   if (newStock.on) {
     productData.stock = newStock.value;

@@ -22,26 +22,13 @@ export default function formatFormData(value) {
         .filter((item) => item.isDragDisabled == false)
         .map((item) => item.file);
 
-    const { blocks } = convertToRaw(description.getCurrentContent());
-    const mappedBlocks = blocks.map(
-        (block) => (!block.text.trim() && '\n') || block.text
-    );
-    // if block type is unordered list, make it into an individual list
-    // else connect blocks
-
-    mappedBlocks.reduce((acc, block) => {
-        let returned = acc;
-        if (block === '\n') returned += block;
-        else returned += `${block}\n`;
-        return returned;
-    }, '');
-
     formData.append('title', title);
     formData.append('category', category);
     formData.append('gender', gender);
     formData.append('price', JSON.stringify(priceValue));
     formData.append('stock', JSON.stringify(stockValue));
     formData.append('minVariationPrice', minVariationPrice);
+    formData.append('description', description);
     for (const item of filteredFiles) {
         formData.append('files', item);
     }
@@ -49,9 +36,9 @@ export default function formatFormData(value) {
         formData.append('delivery[]', _id);
     }
 
-    for (const item of mappedBlocks) {
-        formData.append('detail[]', item);
-    }
+    // for (const item of mappedBlocks) {
+    //     formData.append('detail[]', item);
+    // }
     // for (const item of variations) {
     //     formData.append('variations[]', JSON.stringify(item));
     // }

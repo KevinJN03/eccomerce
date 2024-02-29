@@ -44,13 +44,16 @@ export const productSchema = new Schema(
         message: ['{VALUE} is not support, only men or women is allowed'],
       },
     },
-    detail: {
-      type: Schema.Types.Array,
+    description: {
+      type: Schema.Types.String,
       required: true,
-      maxlength: [400, 'Details must be under 200 characters'],
     },
-    // color: [{ type: Schema.Types.String }],
-    // size: { type: Schema.Types.Array, default: [] },
+    // detail: {
+    //   type: Schema.Types.Array,
+    //   required: true,
+    //   maxlength: [400, 'Details must be under 200 characters'],
+    // },
+
     variations: [variationSchema],
     images: { type: Schema.Types.Array, default: [] },
     reviews: [{ type: Schema.Types.ObjectId, ref: 'product_review' }],
@@ -71,54 +74,7 @@ export const productSchema = new Schema(
     toJSON: { virtuals: true },
   },
 );
-/*  toObject: { virtuals: true },
-    , */
+
 productSchema.virtual('id');
 
-// productSchema.virtual('additional_data').get(function () {
-//   const data = { minPrice: [], minStock: [] };
-//   const { variations, id } = this;
-//   console.log({ variations, id });
-//   variations.map(({ options, priceHeader, quantityHeader }) => {
-//     if (priceHeader.on) {
-//       for (const [key, value] of options) {
-//         data.minPrice.push(value.price);
-//       }
-//     }
-//     if (quantityHeader.on) {
-//       for (const [key, value] of options) {
-//         data.minStock.push(value.stock);
-//       }
-//     }
-//   });
-
-//   return 'hi';
-// });
-// productSchema.virtual('isSizePresent').get(function () {
-//   const variations = this.variations;
-
-//   let isPresent = false;
-
-//   variations.map((variation) => {
-//     if (variation.name == 'Size') {
-//       isPresent = true;
-//     }
-//   });
-
-//   return isPresent;
-// });
-
-// productSchema.virtual('isColorPresent').get(function () {
-//   const variations = this.variations;
-
-//   let isPresent = false;
-
-//   variations.map((variation) => {
-//     if (variation.name == 'Colour') {
-//       isPresent = true;
-//     }
-//   });
-
-//   return isPresent;
-// });
 export default model('product', productSchema);

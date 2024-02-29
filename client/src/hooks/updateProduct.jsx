@@ -114,10 +114,8 @@ function UpdateProduct(props, value) {
                 });
             });
 
-            setDescription(() =>
-                EditorState.createWithContent(
-                    ContentState.createFromBlockArray(newDetails)
-                )
+            setDescription(
+                () => singleValue?.description || singleValue?.detail?.join('')
             );
 
             // createFiles();
@@ -134,7 +132,6 @@ function UpdateProduct(props, value) {
                         });
 
                         console.log({ fileName });
-                        
 
                         const file = new File([blob], fileName, {
                             type: ContentType || 'image/png',

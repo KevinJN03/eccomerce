@@ -4,21 +4,24 @@ import Template from './template';
 import { useContent } from '../../../../context/ContentContext';
 import UserLogout from '../../../../hooks/userLogout';
 import { isEmpty } from 'lodash';
+import {
+    ArrowBackIosNewRounded,
+    ArrowForwardIosRounded,
+} from '@mui/icons-material';
 function TitleDescriptionTemplate({ property, textbox }) {
     const [sampleText, setSampleText] = useState('12344');
     const [select, setSelect] = useState('add_to_front');
-    const { modalContent } = useContent();
+    const { modalContent, setModalCheck } = useContent();
     const [products, setProducts] = useState([]);
-
+    const [finishLoading, setFinishLoading] = useState(false);
     const { logoutUser } = UserLogout();
     const [loading, setLoading] = useState(false);
-    const [deleteInstance, setDeleteInstance] = useState(false);
     const [defaultText, setDefaultText] = useState('');
-
+    const [productIndex, setProductIndex] = useState(0);
     const [text, setText] = useState({
         add_to_front: '',
         add_to_end: '',
-        delete: '',
+        delete: { instance: false, text: '' },
         reset: '',
         find_and_replace: {
             find: '',
@@ -42,14 +45,8 @@ function TitleDescriptionTemplate({ property, textbox }) {
                 );
                 setProducts(() => data);
 
-                if (property == 'detail') {
-                    const newString = data[0]?.detail.join('\r\n');
-                    setDefaultText(() => newString);
-                    setSampleText(() => newString);
-                } else {
-                    setDefaultText(() => data[0]?.[property]);
-                    setSampleText(() => data[0]?.[property]);
-                }
+                setDefaultText(() => data[0]?.[property]);
+                setSampleText(() => data[0]?.[property]);
             } catch (error) {
                 console.error(error);
             }
@@ -59,53 +56,56 @@ function TitleDescriptionTemplate({ property, textbox }) {
     }, []);
 
     const handleText = ({ e, onChange }) => {
-        if (onChange) {
+        let newSampleText = null;
+        if (onChange && e) {
             setText((prevState) => ({
                 ...prevState,
-                [select]: e.target.value,
+                [select]:
+                    select == 'delete'
+                        ? {
+                              ...prevState.delete,
+                              text: e?.target.value,
+                          }
+                        : e?.target.value,
             }));
         }
-
         if (select == 'add_to_front') {
-            setSampleText(
-                () => (onChange ? e.target.value : text?.[select]) + defaultText
-            );
+            newSampleText =
+                (onChange ? e.target.value : text?.[select]) + defaultText;
         }
 
         if (select == 'add_to_end') {
-            setSampleText(
-                () => defaultText + (onChange ? e.target.value : text?.[select])
-            );
+            newSampleText =
+                defaultText + (onChange ? e.target.value : text?.[select]);
         }
 
         if (select == 'reset') {
-            setSampleText(() =>
-                onChange ? e.target.value : text?.[select] || defaultText
-            );
+            newSampleText = onChange
+                ? e.target.value
+                : text?.[select] || defaultText;
         }
 
         if (select == 'delete') {
-            let newSampleText = null;
-            if (deleteInstance) {
+            if (text['delete']?.instance) {
                 newSampleText = defaultText.replaceAll(
-                    onChange ? e.target.value : text?.[select],
+                    onChange ? e.target.value : text?.[select].text,
                     ''
                 );
             } else {
                 newSampleText = defaultText.replace(
-                    onChange ? e.target.value : text?.[select],
+                    onChange ? e.target.value : text?.[select].text,
                     ''
                 );
             }
-
-            setSampleText(() => newSampleText);
         }
+        setSampleText(() => newSampleText);
     };
 
     const handleFindReplace = ({ find, replace }) => {
         console.log({ find, replace });
         if (!find || !replace) {
             setSampleText(() => defaultText);
+
             return;
         }
 
@@ -131,7 +131,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
             handleText({ onChange: false });
             // setSampleText(() => defaultText);
         }
-    }, [select]);
+    }, [select, productIndex]);
 
     const handleClick = async () => {
         try {
@@ -142,6 +142,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
             await adminAxios.post(
                 '/product/title/update',
                 {
+                    property,
                     selectedOption: select,
                     productIds: modalContent?.products,
                     optionData: text[select],
@@ -151,11 +152,34 @@ function TitleDescriptionTemplate({ property, textbox }) {
         } catch (error) {
             logoutUser({ error });
         } finally {
-            setLoading(() => false);
+            setTimeout(() => {
+                setLoading(() => false);
+                setFinishLoading(() => true);
+            }, 1300);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (productIndex - 1 >= 0) {
+            setProductIndex(() => productIndex - 1);
+
+            setDefaultText(() => products[productIndex - 1]?.[property]);
+            setSampleText(() => products[productIndex - 1]?.[property]);
+        }
+    };
+
+    const handleNext = () => {
+        if (productIndex + 1 < products.length) {
+            setProductIndex(() => productIndex + 1);
+
+            setDefaultText(() => products[productIndex + 1]?.[property]);
+            setSampleText(() => products[productIndex + 1]?.[property]);
         }
     };
     return (
         <Template
+            handleClearSelection={modalContent?.clearSelection}
+            finishLoading={finishLoading}
             title={`Editing ${property} for ${modalContent.products?.length} listing`}
             submit={{
                 loading,
@@ -416,7 +440,11 @@ function TitleDescriptionTemplate({ property, textbox }) {
                                             handleText({ e, onChange: true })
                                         }
                                         className="daisy-textarea daisy-textarea-bordered w-full rounded-sm p-2"
-                                        value={text?.[select]}
+                                        value={
+                                            select === 'delete'
+                                                ? text[select]?.text
+                                                : text[select]
+                                        }
                                         type="text"
                                     />
                                 ) : (
@@ -424,7 +452,11 @@ function TitleDescriptionTemplate({ property, textbox }) {
                                         onChange={(e) =>
                                             handleText({ e, onChange: true })
                                         }
-                                        value={text?.[select]}
+                                        value={
+                                            select === 'delete'
+                                                ? text[select]?.text
+                                                : text[select]
+                                        }
                                         type="text"
                                         className="h-8 w-full rounded-sm border border-dark-gray/50 p-2 text-xs"
                                     />
@@ -436,22 +468,31 @@ function TitleDescriptionTemplate({ property, textbox }) {
                 {select == 'delete' && (
                     <div
                         onClick={() => {
-                            setDeleteInstance((prevState) => !prevState);
+                            setText((prevState) => ({
+                                ...prevState,
+                                delete: {
+                                    ...prevState.delete,
+                                    instance: !prevState.delete?.instance,
+                                },
+                            }));
                             let newSampleText = null;
-                            if (!deleteInstance) {
+                            if (!text['delete']?.instance) {
                                 newSampleText = defaultText.replaceAll(
-                                    text,
+                                    text['delete']?.text,
                                     ''
                                 );
                             } else {
-                                newSampleText = defaultText.replace(text, '');
+                                newSampleText = defaultText.replace(
+                                    text['delete']?.text,
+                                    ''
+                                );
                             }
                             setSampleText(() => newSampleText);
                         }}
                         className="flex flex-row flex-nowrap items-center gap-2 self-end"
                     >
                         <input
-                            checked={deleteInstance}
+                            checked={text['delete']?.instance}
                             readOnly
                             type="checkbox"
                             className="daisy-checkbox daisy-checkbox-xs  rounded-sm border-black"
@@ -470,7 +511,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
                 <section className="sample flex w-full max-w-full flex-row flex-nowrap items-center gap-3 rounded-sm bg-light-grey/60 p-2 pr-5">
                     <div className="left min-h-16 h-16 max-h-16 w-16 min-w-16 max-w-16 rounded-sm">
                         <img
-                            src={products[0]?.images[0]}
+                            src={products[productIndex]?.images[0]}
                             alt=""
                             className="h-full w-full rounded-inherit object-cover"
                         />
@@ -480,6 +521,24 @@ function TitleDescriptionTemplate({ property, textbox }) {
                         {sampleText}
                     </p>
                 </section>
+                <div className="mt-1 flex items-center justify-end self-end gap-2">
+                    <button
+                        type="button"
+                        disabled={productIndex == 0}
+                        className="h-fit w-fit hover:bg-light-grey disabled:opacity-35 flex items-center justify-center p-2"
+                        onClick={handlePrevious}
+                    >
+                        <ArrowBackIosNewRounded fontSize="small" />
+                    </button>
+                    <button
+                    disabled={productIndex == products.length - 1}
+                        type="button"
+                        className="h-fit w-fit hover:bg-light-grey disabled:opacity-35 flex items-center justify-center p-2"
+                        onClick={handleNext}
+                    >
+                        <ArrowForwardIosRounded fontSize="small" />
+                    </button>
+                </div>
             </section>
         </Template>
     );

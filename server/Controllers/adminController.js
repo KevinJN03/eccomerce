@@ -753,37 +753,60 @@ export const updateStatus = asyncHandler(async (req, res, next) => {
 
 export const editTitle = [
   asyncHandler(async (req, res, next) => {
-    const { selectedOption, productIds, optionData } = req.body;
+    const { selectedOption, productIds, optionData, property } = req.body;
 
-    const products = await Product.find({ _id: productIds }, { title: 1 });
+    const products = await Product.find(
+      { _id: productIds },
+      { title: 1, description: 1 },
+    );
 
     const updateProducts = products.map((product) => {
-      let newTitle = null;
-      if (selectedOption == 'add_to_front') {
-        newTitle = optionData + product.title;
+      let newText = null;
+      const currentValue = product[property];
+      console.log({ currentValue });
+      if (selectedOption === 'add_to_front') {
+        newText = optionData + currentValue;
       }
 
-      if (selectedOption == 'add_to_end') {
-        newTitle = product.title + optionData;
+      if (selectedOption === 'add_to_end') {
+        newText = currentValue + optionData;
       }
 
-      if (selectedOption == 'find_and_replace') {
+      if (selectedOption === 'find_and_replace') {
         if (optionData.replaceAll) {
-          newTitle = product.title?.replaceAll(
+          newText = currentValue?.replaceAll(
             optionData.find,
             optionData.replace,
           );
         } else {
-          newTitle = product.title?.replace(
-            optionData.find,
-            optionData.replace,
-          );
+          newText = currentValue?.replace(optionData.find, optionData.replace);
         }
       }
-      return newTitle;
-    });
 
-    console.log({ selectedOption, productIds, optionData, updateProducts });
+      if (selectedOption === 'delete') {
+        newText = currentValue.replace(optionData, '');
+
+        if (optionData.instance) {
+          newText = currentValue.replaceAll(optionData.text, '');
+        } else {
+          newText = currentValue.replace(optionData.text, '');
+        }
+      }
+
+      if (selectedOption === 'reset') {
+        newText = optionData;
+      }
+      return Product.findByIdAndUpdate(
+        { _id: product._id },
+        { [property]: newText.replace(/ {2,}/g, '  ').trim() },
+        {
+          new: true,
+          select: { [property]: 1 },
+        },
+      );
+    });
+    const promiseResult = await Promise.all(updateProducts);
+    console.log({ promiseResult, property });
     res.send({ success: true, msg: 'titles updates' });
   }),
 ];
