@@ -882,11 +882,15 @@ export const editPrice = [
       }
       if (!isPriceAssorted) {
         if (!failedProductIds.has(product._id.toString())) {
-          return {
-            previous: product.price.current,
-            current: getNewPrice(product.price?.current),
-            _id: product._id,
-          };
+          return Product.findByIdAndUpdate(
+            { _id: product._id },
+            {
+              price: {
+                previous: product.price.current,
+                current: getNewPrice(product.price?.current),
+              },
+            },
+          );
         }
       }
 
@@ -900,7 +904,11 @@ export const editPrice = [
               price: getNewPrice(value.price),
             });
           });
-          return newOptionsMap;
+
+          return Product.findByIdAndUpdate(
+            { _id: product._id },
+             { [`variations.${index}.options`]: newOptionsMap },
+          );
         };
         if (product.variations?.length === 3) {
           const updatedVariationOptions = generateVariationPrice(2);
@@ -918,8 +926,7 @@ export const editPrice = [
         }
       }
     });
-    console.log({ failedProductIds, productIds });
-
+    
     if (failedProductIds.size > 0) {
       return res.status(400).send({
         success: false,
@@ -928,6 +935,8 @@ export const editPrice = [
         ),
       });
     }
+    const PromiseResult = await Promise.all(updateProductPrice);
+    console.log({ PromiseResult });
     res.status(200).send({ success: true, msg: 'products price updated' });
   }),
 ];

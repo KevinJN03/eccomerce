@@ -129,6 +129,7 @@ function EditPrice({}) {
     };
     return (
         <Template
+        handleClearSelection={modalContent.clearSelection}
             title={`Editing price for ${modalContent.products?.length} listing`}
             finishLoading={finishLoading}
             submit={{
