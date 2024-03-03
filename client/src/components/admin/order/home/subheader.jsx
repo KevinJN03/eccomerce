@@ -46,7 +46,7 @@ function SubHeader({}) {
     };
 
     const printOrders = () => {
-        console.log('clikced');
+       
         adminOrderModalContentDispatch({
             type: 'printOrder',
             orders: Array.from(selectionSet),
