@@ -48,37 +48,59 @@ function EditPrice({}) {
 
     const handleAmountChange = (value) => {
         setAmount(() => value);
-        // handleValue({
-        //     ...priceOptions,
-        //     setError,
-        //     value,
-        //     setValue: setAmount,
-        // });
 
         const parseValue = parseFloat(value);
         let min = originalPrice?.min;
         let max = originalPrice?.max;
 
         if (
-            (select == 'increase_by_amount' ||
-                select == 'decrease_by_amount' ||
-                select == 'set_new_amount') &&
-            (parseValue < priceOptions.minValue ||
-                value > priceOptions.maxValue)
+            select == 'increase_by_amount' ||
+            select == 'decrease_by_amount' ||
+            select == 'set_new_amount'
         ) {
-            setError((prevState) => ({
-                ...prevState,
-                price: 'Price must be between £0.17 and £42,933.20.',
-            }));
-        } else if (
-            (select == 'percentage_decrease' ||
-                select == 'percentage_increase') &&
-            parseValue < 0
-        ) {
-            setError(() => ({ price: 'Percent must be a positive number.' }));
-        } else {
-            setError(() => {});
+            if (isNaN(parseValue)) {
+                setError((prevState) => ({
+                    ...prevState,
+                    price: 'Please enter a price.',
+                }));
+                return;
+            } else if (
+                parseValue < priceOptions.minValue ||
+                value > priceOptions.maxValue
+            ) {
+                setError((prevState) => ({
+                    ...prevState,
+                    price: 'Price must be between £0.17 and £42,933.20.',
+                }));
+                return;
+            } else {
+                setError(() => ({}));
+            }
         }
+
+        if (
+            select == 'percentage_decrease' ||
+            select == 'percentage_increase'
+        ) {
+            
+            if (parseValue < 0 || isNaN(parseValue)) {
+                setError(() => ({
+                    price: 'Percent must be a positive number.',
+                }));
+                return;
+            } else if (parseValue > 1000) {
+                setError(() => ({
+                    price: 'Percent must be between 1 and 1000.',
+                }));
+
+                return;
+            } else {
+                console.log('clear');
+                setError(() => ({}));
+            }
+        }
+
+        console.log('pass');
         if (select == 'increase_by_amount') {
             min += parseValue;
             max += parseValue;
@@ -111,6 +133,7 @@ function EditPrice({}) {
 
     useEffect(() => {
         handleAmountChange(amount);
+        setError(() => ({}));
     }, [select]);
     useEffect(() => {
         setFailedProductIds(() => []);
@@ -173,7 +196,7 @@ function EditPrice({}) {
             submit={{
                 handleClick,
                 loading,
-                disabled: !amount,
+                disabled: !amount || error?.price,
                 text:
                     failedProductIds.length > 0 &&
                     failedProductIds.length != productDataMap.size
@@ -235,7 +258,7 @@ function EditPrice({}) {
                                     autoComplete={'off'}
                                     name="price"
                                     id="price"
-                                    className="daisy-input daisy-input-bordered !w-full !max-w-full  rounded px-5"
+                                    className={`${error?.price ? 'border-red-700 bg-red-100' : ''} daisy-input daisy-input-bordered !w-full !max-w-full  rounded px-5`}
                                 />
                                 {select.includes('percentage') && (
                                     <p className="absolute right-2 top-2/4 translate-y-[-50%] text-sm">
@@ -276,9 +299,9 @@ function EditPrice({}) {
                                 <p className="font-raleway text-[1.05rem] font-semibold leading-6 text-black/80">
                                     {productData?.title}
                                 </p>
-                                {amount ? (
+                                {amount && !error?.price ? (
                                     <div className="flex flex-row items-center gap-1">
-                                        <p className="text-lg font-semibold text-green-700">
+                                        <p className="text-lg font-semibold text-green-700 whitespace-nowrap">
                                             Now{' '}
                                             {originalPrice?.min ==
                                             originalPrice?.max

@@ -40,6 +40,7 @@ import EditPrice from '../listing/modalContent/edit_price.jsx';
 import Deactivate from '../listing/modalContent/deactivate.jsx';
 import Activate from '../listing/modalContent/activate.jsx';
 import Publish from '../listing/modalContent/publish.jsx';
+import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -59,7 +60,7 @@ function Admin({}) {
         delete: <Delete />,
         change_section: <ChangeSection />,
         delivery_main: <Main />,
-
+        edit_delivery: <Edit_Delivery />,
         edit_title: <Edit_Title />,
         edit_description: <EditDescription />,
         edit_price: <EditPrice />,
@@ -95,12 +96,12 @@ function Admin({}) {
             }, 5000);
         }
 
-        return()=> {
-            clearTimeout(timeout)
-        }
+        return () => {
+            clearTimeout(timeout);
+        };
     }, [showAlert.on]);
 
-    console.log('admin rerender')
+    console.log('admin rerender');
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
             <ContentProvider

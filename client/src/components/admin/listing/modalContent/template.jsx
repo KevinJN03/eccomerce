@@ -46,7 +46,11 @@ function Template({
                 <>
                     <header className="border-b border-b-dark-gray/50 p-3">
                         {headerChildren || (
-                            <p className=" font-medium text-base">{title}</p>
+                            <p
+                                className={`font-medium ${small ? 'text-xs' : 'text-base'}`}
+                            >
+                                {title}
+                            </p>
                         )}
                     </header>
                     <body className="flex w-full flex-col gap-2 px-3 py-4">
