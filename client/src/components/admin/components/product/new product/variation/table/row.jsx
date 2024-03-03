@@ -134,7 +134,7 @@ function Row({
     };
 
     function onClickAway() {
-        ('clickaway');
+    
         if (
             (!price && !stock) ||
             (singleVariation.price == price &&

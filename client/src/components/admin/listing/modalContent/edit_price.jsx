@@ -3,7 +3,11 @@ import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import { adminAxios } from '../../../../api/axios';
 import UserLogout from '../../../../hooks/userLogout';
+import { AnimatePresence } from 'framer-motion';
+import OptionError from '../../components/product/new product/variation/error/optionError';
+import { priceOptions } from '../../components/product/new product/utils/handleValueOptions';
 
+import handleValue from '../../components/product/new product/utils/handleValue';
 function EditPrice({}) {
     const { modalContent } = useContent();
     const { logoutUser } = UserLogout();
@@ -15,7 +19,7 @@ function EditPrice({}) {
     const [loading, setLoading] = useState(false);
     const [select, setSelect] = useState('increase_by_amount');
     const [finishLoading, setFinishLoading] = useState(false);
-
+    const [error, setError] = useState({});
     const [failedProductIds, setFailedProductIds] = useState([]);
     useEffect(() => {
         adminAxios
@@ -44,11 +48,37 @@ function EditPrice({}) {
 
     const handleAmountChange = (value) => {
         setAmount(() => value);
+        // handleValue({
+        //     ...priceOptions,
+        //     setError,
+        //     value,
+        //     setValue: setAmount,
+        // });
 
         const parseValue = parseFloat(value);
         let min = originalPrice?.min;
         let max = originalPrice?.max;
 
+        if (
+            (select == 'increase_by_amount' ||
+                select == 'decrease_by_amount' ||
+                select == 'set_new_amount') &&
+            (parseValue < priceOptions.minValue ||
+                value > priceOptions.maxValue)
+        ) {
+            setError((prevState) => ({
+                ...prevState,
+                price: 'Price must be between £0.17 and £42,933.20.',
+            }));
+        } else if (
+            (select == 'percentage_decrease' ||
+                select == 'percentage_increase') &&
+            parseValue < 0
+        ) {
+            setError(() => ({ price: 'Percent must be a positive number.' }));
+        } else {
+            setError(() => {});
+        }
         if (select == 'increase_by_amount') {
             min += parseValue;
             max += parseValue;
@@ -96,10 +126,11 @@ function EditPrice({}) {
                 productIds:
                     failedProductIds.length > 0 &&
                     failedProductIds.length != productDataMap.size
-                        ? modalContent?.products.filter((id) =>
-                              !failedProductIds.some(
-                                  ({ id: failedId }) => failedId == id
-                              )
+                        ? modalContent?.products.filter(
+                              (id) =>
+                                  !failedProductIds.some(
+                                      ({ id: failedId }) => failedId == id
+                                  )
                           )
                         : modalContent?.products,
 
@@ -116,6 +147,13 @@ function EditPrice({}) {
 
                 console.log({ errorData });
             }
+
+            if (error.response.data?.error?.amount) {
+                setError((prevState) => ({
+                    ...prevState,
+                    price: error.response.data.error.amount,
+                }));
+            }
         } finally {
             setTimeout(() => {
                 setLoading(() => false);
@@ -129,7 +167,7 @@ function EditPrice({}) {
     };
     return (
         <Template
-        handleClearSelection={modalContent.clearSelection}
+            handleClearSelection={modalContent.clearSelection}
             title={`Editing price for ${modalContent.products?.length} listing`}
             finishLoading={finishLoading}
             submit={{
@@ -144,8 +182,8 @@ function EditPrice({}) {
             }}
         >
             <section className="flex flex-col gap-3">
-                <section className="top flex gap-3">
-                    <div className="left flex w-full">
+                <section className="top flex  w-full gap-3">
+                    <div className="left flex max-w-[65%] flex-[1.5]">
                         <select
                             onChange={(e) => setSelect(() => e.target.value)}
                             name="new-amount"
@@ -180,30 +218,44 @@ function EditPrice({}) {
                             </optgroup>
                         </select>
                     </div>
-                    <div className="right w-full">
-                        <div className="relative w-4/6">
-                            {!select.includes('percentage') && (
-                                <p className="absolute left-2 top-2/4 translate-y-[-50%] text-sm">
-                                    £
-                                </p>
-                            )}
-                            <input
-                                value={amount}
-                                onChange={(e) =>
-                                    handleAmountChange(e.target.value)
-                                }
-                                type="text"
-                                autoComplete={'off'}
-                                name="price"
-                                id="price"
-                                className="daisy-input daisy-input-bordered w-full rounded px-5"
-                            />
-                            {select.includes('percentage') && (
-                                <p className="absolute right-2 top-2/4 translate-y-[-50%] text-sm">
-                                    %
-                                </p>
-                            )}
-                        </div>
+                    <div className="right flex max-w-[45%] flex-1  flex-col">
+                        <section className=" w-full pr-20">
+                            <div className="relative w-fit">
+                                {!select.includes('percentage') && (
+                                    <p className="absolute left-2 top-2/4 translate-y-[-50%] text-sm">
+                                        £
+                                    </p>
+                                )}
+                                <input
+                                    value={amount}
+                                    onChange={(e) =>
+                                        handleAmountChange(e.target.value)
+                                    }
+                                    type="text"
+                                    autoComplete={'off'}
+                                    name="price"
+                                    id="price"
+                                    className="daisy-input daisy-input-bordered !w-full !max-w-full  rounded px-5"
+                                />
+                                {select.includes('percentage') && (
+                                    <p className="absolute right-2 top-2/4 translate-y-[-50%] text-sm">
+                                        %
+                                    </p>
+                                )}
+                            </div>
+
+                            <AnimatePresence>
+                                {error?.price && (
+                                    <OptionError
+                                        disableIcon
+                                        msg={error?.price}
+                                        className={
+                                            '!items-start !break-words !pl-0'
+                                        }
+                                    />
+                                )}
+                            </AnimatePresence>
+                        </section>
                     </div>
                 </section>
 

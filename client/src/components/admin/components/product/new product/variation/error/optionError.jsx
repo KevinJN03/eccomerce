@@ -22,7 +22,7 @@ const variants = {
         },
     },
 };
-function OptionError({ msg, className, small }) {
+function OptionError({ msg, className, small, disableIcon }) {
     return (
         <motion.div
             variants={variants}
@@ -31,8 +31,14 @@ function OptionError({ msg, className, small }) {
             exit="exit"
             className={`flex flex-row items-center justify-start gap-3 p-3 ${className}`}
         >
-            <ErrorOutlinedIcon className={` ${small ? '!text-lg' : ''} !fill-red-800`} />
-            <p className={`${small ? 'text-xs' : 'text-sm'} text-red-800`}>
+            {!disableIcon && (
+                <ErrorOutlinedIcon
+                    className={` ${small ? '!text-lg' : ''} !fill-red-800`}
+                />
+            )}
+            <p
+                className={`${small ? 'text-xs' : 'text-sm'} max-w-full break-words text-red-800`}
+            >
                 {msg}
             </p>
         </motion.div>

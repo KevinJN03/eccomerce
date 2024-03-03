@@ -812,10 +812,10 @@ export const editTitle = [
 ];
 
 export const editPrice = [
-  check('amount', 'Please enter a valid number between 0.17 and 999')
+  check('amount', 'Price must be between £0.17 and £42,933.20')
     .escape()
     .trim()
-    .isFloat({ min: 0.17, max: 999 }),
+    .isFloat({ min: 0.17, max: 42933.20 }),
   asyncHandler(async (req, res, next) => {
     const { productIds, selectedOption, amount } = req.body;
 
@@ -907,7 +907,7 @@ export const editPrice = [
 
           return Product.findByIdAndUpdate(
             { _id: product._id },
-             { [`variations.${index}.options`]: newOptionsMap },
+            { [`variations.${index}.options`]: newOptionsMap },
           );
         };
         if (product.variations?.length === 3) {
@@ -926,7 +926,7 @@ export const editPrice = [
         }
       }
     });
-    
+
     if (failedProductIds.size > 0) {
       return res.status(400).send({
         success: false,
