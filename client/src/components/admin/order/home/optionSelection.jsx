@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
-function OptionSelection({ options, status, setStatus }) {
+function OptionSelection({ options, status, setStatus, className }) {
     const [hover, setHover] = useState('');
 
     const variant = ({ currentStatus }) => {
@@ -31,7 +31,7 @@ function OptionSelection({ options, status, setStatus }) {
     };
 
     return (
-        <section className="mb-4 flex flex-col gap-x-5 ">
+        <section className={`${className || ''} mb-4 flex flex-col gap-x-5`}>
             <div className="flex flex-row gap-6">
                 {options.map((option) => {
                     return (
@@ -66,8 +66,6 @@ function OptionSelection({ options, status, setStatus }) {
                         </div>
                     );
                 })}
-
-               
             </div>
             <div class=" m-0 h-[2px] w-full bg-light-grey !py-0"></div>
         </section>
