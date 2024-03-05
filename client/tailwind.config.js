@@ -46,6 +46,7 @@ export default {
             boxShadow: {
                 'my-shadow': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
                 '3xl': '0px 5px 10px rgba(0, 0, 0, 0.35)',
+                'inner-2': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.15) '
             },
 
             spacing: {

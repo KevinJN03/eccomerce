@@ -70,6 +70,9 @@ import CancelOrder from './components/admin/order/cancelOrder.jsx';
 
 import EditProduct from './components/admin/components/product/product single page/editProduct.jsx';
 import WishList from './components/wishlist/index.jsx';
+import DeliveryProfile from './components/admin/delivery/deliveryProfile.jsx';
+import Postage from './components/admin/delivery/postage.jsx';
+import Upgrades from './components/admin/delivery/upgrades.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -89,7 +92,7 @@ function Router({ Header, Footer }) {
     const router = createBrowserRouter([
         {
             element: <Layout />,
-        //  errorElement: <Error />,
+            //  errorElement: <Error />,
 
             children: [
                 {
@@ -352,6 +355,22 @@ function Router({ Header, Footer }) {
                         {
                             path: 'delivery/',
                             element: <Delivery />,
+                            children: [
+                                { index: true, element: <DeliveryProfile /> },
+
+                                {
+                                    path: 'delivery-profiles',
+                                    element: <DeliveryProfile />,
+                                },
+                                {
+                                    path: 'postage',
+                                    element: <Postage />,
+                                },
+                                {
+                                    path: 'upgrades',
+                                    element: <Upgrades />,
+                                },
+                            ],
                         },
                         {
                             path: 'users/',

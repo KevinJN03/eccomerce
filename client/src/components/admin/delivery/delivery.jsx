@@ -23,6 +23,7 @@ import {
 import DeliveryProfile from './deliveryProfile';
 import Upgrades from './upgrades';
 import Postage from './postage';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 export default function Delivery() {
     const [profiles, setProfiles] = useState([]);
@@ -32,6 +33,8 @@ export default function Delivery() {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
     // const { dispatch, setModalCheck, content, modalCheck } = useContent();
+
+    const navigate = useNavigate();
     const [selection, setSelection] = useState([]);
     const [modalCheck, setModalCheck] = useState(false);
     const addClick = () => {
@@ -69,11 +72,6 @@ export default function Delivery() {
         active_listings: 1,
     };
 
-    const contents = {
-        'Delivery Profiles': <DeliveryProfile />,
-        Upgrades: <Upgrades />,
-        'Postage label options': <Postage />,
-    };
 
     return (
         <section className="flex flex-col gap-6 px-6 py-4 ">
@@ -87,18 +85,28 @@ export default function Delivery() {
                     options: [
                         {
                             text: 'Delivery Profiles',
+                            handleClick: () => {
+                                navigate('/admin/delivery/delivery-profiles');
+                            },
                         },
                         {
                             text: 'Upgrades',
+                            handleClick: () => {
+                                navigate('/admin/delivery/upgrades');
+                            },
                         },
                         {
                             text: 'Postage label options',
+                            handleClick: () => {
+                                navigate('/admin/delivery/postage');
+                            },
                         },
                     ],
                 }}
             />
 
-            {contents[status]}
+      
+            <Outlet />
         </section>
     );
 }

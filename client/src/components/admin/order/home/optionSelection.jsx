@@ -36,7 +36,10 @@ function OptionSelection({ options, status, setStatus, className }) {
                 {options.map((option) => {
                     return (
                         <div
-                            onClick={() => setStatus(option.text)}
+                            onClick={() => {
+                                setStatus(option.text);
+                                option?.handleClick()
+                            }}
                             className="relative cursor-pointer"
                             onMouseEnter={() => setHover(() => option.text)}
                             onMouseLeave={() => setHover(() => null)}
