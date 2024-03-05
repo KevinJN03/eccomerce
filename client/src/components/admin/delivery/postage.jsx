@@ -138,7 +138,7 @@ function Postage({}) {
             <footer className="mt-6 flex w-full justify-end border-t-2 pb-12 pt-8">
                 <button
                     type="button"
-                    className="rounded-full bg-black px-5 py-3 text-white"
+                    className="rounded-full bg-black px-5 py-3 text-white text-base font-medium"
                 >
                     Save preferences
                 </button>

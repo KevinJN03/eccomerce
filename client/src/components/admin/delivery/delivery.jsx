@@ -23,7 +23,7 @@ import {
 import DeliveryProfile from './deliveryProfile';
 import Upgrades from './upgrades';
 import Postage from './postage';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Delivery() {
     const [profiles, setProfiles] = useState([]);
@@ -60,7 +60,8 @@ export default function Delivery() {
     });
 
     const [status, setStatus] = useState('Delivery Profiles');
-
+    const location = useLocation();
+    console.log(location);
     const exampleProfile = {
         name: '2-3 Weeks Delivery',
         processing_time: {
@@ -72,9 +73,19 @@ export default function Delivery() {
         active_listings: 1,
     };
 
+    useEffect(() => {
+        setStatus(() => location.pathname.split('/').pop());
 
+        const set = new Set(['delivery-profiles', 'upgrades', 'postage']);
+
+        const lastIndex = location.pathname.split('/').pop();
+
+        if (set.has(lastIndex)) {
+            setStatus(() => lastIndex);
+        } else setStatus(() => 'delivery-profiles');
+    }, [location.pathname]);
     return (
-        <section className="flex flex-col gap-6 px-6 py-4 ">
+        <section className="flex flex-col gap-6 px-10 py-4 ">
             <h1 className="text-2xl font-semibold">Delivery settings</h1>
 
             <OptionSelection
@@ -85,18 +96,21 @@ export default function Delivery() {
                     options: [
                         {
                             text: 'Delivery Profiles',
+                            select: 'delivery-profiles',
                             handleClick: () => {
                                 navigate('/admin/delivery/delivery-profiles');
                             },
                         },
                         {
                             text: 'Upgrades',
+                            select: 'upgrades',
                             handleClick: () => {
                                 navigate('/admin/delivery/upgrades');
                             },
                         },
                         {
                             text: 'Postage label options',
+                            select: 'postage',
                             handleClick: () => {
                                 navigate('/admin/delivery/postage');
                             },
@@ -105,7 +119,6 @@ export default function Delivery() {
                 }}
             />
 
-      
             <Outlet />
         </section>
     );

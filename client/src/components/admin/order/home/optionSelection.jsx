@@ -37,11 +37,11 @@ function OptionSelection({ options, status, setStatus, className }) {
                     return (
                         <div
                             onClick={() => {
-                                setStatus(option.text);
-                                option?.handleClick()
+                                option?.handleClick() ||
+                                    setStatus(() => option.select);
                             }}
                             className="relative cursor-pointer"
-                            onMouseEnter={() => setHover(() => option.text)}
+                            onMouseEnter={() => setHover(() => option.select)}
                             onMouseLeave={() => setHover(() => null)}
                         >
                             <p className="flex flex-row flex-nowrap items-center gap-1 pb-3 text-base">
@@ -53,11 +53,11 @@ function OptionSelection({ options, status, setStatus, className }) {
                                 )}
                             </p>
                             <AnimatePresence>
-                                {(status == option.text ||
-                                    hover == option.text) && (
+                                {(status == option.select ||
+                                    hover == option.select) && (
                                     <motion.div
                                         variants={variant({
-                                            currentStatus: option.text,
+                                            currentStatus: option.select,
                                         })}
                                         animate={'animate'}
                                         initial={'initial'}

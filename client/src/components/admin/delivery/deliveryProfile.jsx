@@ -8,7 +8,8 @@ import {
     ModeEditOutlineRounded,
     WestRounded,
 } from '@mui/icons-material';
-
+import BubbleButton from '../../buttons/bubbleButton.jsx';
+import { useContent } from '../../../context/ContentContext.jsx';
 function DeliveryProfile({ status, setStatus }) {
     const exampleProfile = {
         name: '2-3 Weeks Delivery',
@@ -20,6 +21,8 @@ function DeliveryProfile({ status, setStatus }) {
         origin: 'KY15 7AA',
         active_listings: 1,
     };
+
+    const { setModalCheck, setModalContent } = useContent();
     return (
         <section className=" flex flex-col gap-6 sm+md:w-full lg:w-10/12">
             <div className="">
@@ -33,13 +36,23 @@ function DeliveryProfile({ status, setStatus }) {
                 </p>
             </div>
 
-            <div className="flex flex-row flex-nowrap items-center justify-between rounded-lg border border-dark-gray px-8 py-8">
+            <div className="flex flex-row flex-nowrap items-center justify-between rounded-lg border border-dark-gray px-8 py-6">
                 <p className="text-base font-semibold">Monday-Friday</p>
-                <button className="flex flex-row flex-nowrap items-center gap-2">
-                    <ModeEditOutlineRounded />
+                <BubbleButton
+                    handleClick={() => {
+                        setModalCheck(() => true);
+                        setModalContent(()=> ({type: 'processOrder'}))
+                    }}
+                >
+                    <div className="flex flex-row flex-nowrap items-center gap-2  ">
+                        <ModeEditOutlineRounded className="!z-[3]" />
 
-                    <p className="text-base font-semibold">Edit</p>
-                </button>
+                        <p className="!z-[3] text-base font-semibold">Edit</p>
+                    </div>
+                    {/* <span className=" relative !z-[3] w-full text-base font-medium">
+                        Cancel
+                    </span> */}
+                </BubbleButton>
             </div>
 
             <div>

@@ -7,7 +7,7 @@ import { useNewProduct } from '../../../../../../context/newProductContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import UserLogout from '../../../../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../../../../api/axios.js';
-import CancelButton from '../../../../../buttons/cancelButton.jsx';
+import BubbleButton from '../../../../../buttons/bubbleButton.jsx';
 function Delete({ id }) {
     const [check, setCheck] = useState(false);
     const {
@@ -76,8 +76,8 @@ function Delete({ id }) {
             </p>
 
             <div className="relative flex w-full max-w-xs flex-row flex-nowrap items-center justify-between">
-                <CancelButton handleClick={() => setModalCheck(() => false)} />
-          
+                <BubbleButton handleClick={() => setModalCheck(() => false)} />
+
                 <button
                     disabled={btnLoading}
                     onClick={handleDelete}

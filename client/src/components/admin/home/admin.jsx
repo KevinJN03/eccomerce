@@ -41,6 +41,7 @@ import Deactivate from '../listing/modalContent/deactivate.jsx';
 import Activate from '../listing/modalContent/activate.jsx';
 import Publish from '../listing/modalContent/publish.jsx';
 import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
+import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -67,6 +68,7 @@ function Admin({}) {
         deactivate: <Deactivate />,
         activate: <Activate />,
         publish: <Publish />,
+        processOrder: <ProcessOrder />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-function CancelButton({ handleClick }) {
+function BubbleButton({ handleClick, children }) {
     const [isHover, setIsHover] = useState(false);
 
     const variant = {
@@ -32,9 +32,11 @@ function CancelButton({ handleClick }) {
                 className="left relative rounded-full  px-5 py-3 "
                 onClick={handleClick}
             >
-                <span className=" relative !z-[3] w-full text-base font-medium">
-                    Cancel
-                </span>
+                {children || (
+                    <span className=" relative !z-[3] w-full text-base font-medium">
+                        Cancel
+                    </span>
+                )}
                 <AnimatePresence>
                     {isHover && (
                         <motion.div
@@ -51,4 +53,4 @@ function CancelButton({ handleClick }) {
     );
 }
 
-export default CancelButton;
+export default BubbleButton;
