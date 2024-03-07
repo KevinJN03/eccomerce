@@ -30,7 +30,7 @@ function Promo({ disable }) {
                     ].map(({ text, type }) => {
                         return (
                             <span
-                                className={`flex h-20 mb-2 items-center justify-center font-semibold tracking-wider ${
+                                className={`flex h-20 mb-2 items-center justify-center font-semibold tracking-wider text-center ${
                                     option == type
                                         ? 'active-promo-voucher'
                                         : 'promo-voucher'

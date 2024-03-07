@@ -2,8 +2,11 @@ import { AddRounded, CloseRounded } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useContent } from '../../../../context/ContentContext';
 import BubbleButton from '../../../buttons/bubbleButton';
+import { useState } from 'react';
 function CreateProfile({}) {
     const { setModalCheck } = useContent();
+
+    const [profile, setProfile] = useState({ active_listing: 1 });
     return (
         <section className="relative mb-10">
             <section className="flex w-full max-w-[43.75rem] flex-col gap-6 rounded-3xl bg-white p-8">
@@ -120,10 +123,15 @@ function CreateProfile({}) {
                         />
                         <button
                             type="button"
-                            className="rounded-full  bg-black px-5 py-3  text-sm font-medium text-white"
+                            className="flex  flex-nowrap items-center rounded-full  bg-black px-5 py-3 text-base font-medium text-white"
                         >
                             {' '}
                             Save profile
+                            {profile?.active_listing > 0 && (
+                                <span className="ml-2 rounded-full bg-white px-2 py-1 text-xs font-normal">
+                                    {`Affects ${profile?.active_listing} ${profile.active_listing > 1 ? 'listings' : 'listing'}`}
+                                </span>
+                            )}
                         </button>
                     </footer>
                 </section>

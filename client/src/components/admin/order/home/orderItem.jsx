@@ -293,62 +293,45 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                     >
                         <MoreVertSharp className="disable-drawer" />
                     </div>
-                    <AnimatePresence>
-                        {showOptions && (
-                            <ClickAwayListener
-                                onClickAway={() => setShowOptions(false)}
-                            >
-                                <motion.div
-                                    variants={containerVariants}
-                                    animate="animate"
-                                    initial="initial"
-                                    exit={'exit'}
-                                    className="disable-drawer absolute left-0 top-0 z-[1] rounded-lg bg-white shadow-3xl"
-                                >
-                                    <button
-                                        className="disable-drawer px-2 pt-2"
-                                        onClick={() => setShowOptions(false)}
-                                    >
-                                        <MoreVertSharp className="disable-drawer" />
-                                    </button>
 
-                                    <Actions
-                                        orderId={order?._id}
-                                        setShowActions={setShowOptions}
-                                    />
-
-                                    <button
-                                        onClick={() =>
-                                            navigate(
-                                                `/admin/orders/${order?._id}/cancel_order`
-                                            )
-                                        }
-                                        className={` flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 border-t py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
-                                    >
-                                        <span>
-                                            <CloseSharp fontSize="small" />
-                                        </span>
-                                        <p className=" w-full whitespace-nowrap">
-                                            Cancel
-                                        </p>
-                                    </button>
-                                    <button
-                                        className={`flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
-                                    >
-                                        <span>
-                                            <UndoOutlined
-                                                className="!rotate-[-45deg]"
-                                                fontSize="small"
-                                            />
-                                        </span>
-                                        <p className=" w-full whitespace-nowrap">
-                                            Refund
-                                        </p>
-                                    </button>
-                                </motion.div>
-                            </ClickAwayListener>
-                        )}
-                    </AnimatePresence>
+                    {showOptions && (
+                        <div
+                            onClick={() => setShowOptions(true)}
+                            className="disable-drawer absolute top-0 left-0 z-[3] flex h-10 w-10 items-center  justify-center rounded-full"
+                        >
+                            <MoreVertSharp className="disable-drawer" />
+                        </div>
+                    )}
+                    <Actions
+                        orderId={order?._id}
+                        setShowActions={setShowOptions}
+                        showActions={showOptions}
+                    >
+                        <button
+                            onClick={() =>
+                                navigate(
+                                    `/admin/orders/${order?._id}/cancel_order`
+                                )
+                            }
+                            className={` flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 border-t py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
+                        >
+                            <span>
+                                <CloseSharp fontSize="small" />
+                            </span>
+                            <p className=" w-full whitespace-nowrap">Cancel</p>
+                        </button>
+                        <button
+                            className={`flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
+                        >
+                            <span>
+                                <UndoOutlined
+                                    className="!rotate-[-45deg]"
+                                    fontSize="small"
+                                />
+                            </span>
+                            <p className=" w-full whitespace-nowrap">Refund</p>
+                        </button>
+                    </Actions>
                 </section>
             </div>
         </section>

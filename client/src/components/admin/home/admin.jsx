@@ -43,6 +43,7 @@ import Publish from '../listing/modalContent/publish.jsx';
 import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
 import CreateProfile from '../delivery/modalViews.jsx/createProfile.jsx';
+import DeleteProfile from '../delivery/modalViews.jsx/deleteProfile.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -71,6 +72,7 @@ function Admin({}) {
         publish: <Publish />,
         processOrder: <ProcessOrder />,
         createProfile: <CreateProfile />,
+        deleteProfile: <DeleteProfile/>
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {

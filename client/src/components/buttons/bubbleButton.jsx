@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-function BubbleButton({ handleClick, children, className }) {
+function BubbleButton({ handleClick, children, className, hoverClassName }) {
     const [isHover, setIsHover] = useState(false);
 
     const variant = {
@@ -47,7 +47,7 @@ function BubbleButton({ handleClick, children, className }) {
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}
-                            className="absolute left-0 top-0  h-full w-full  rounded-inherit  bg-light-grey"
+                            className={`absolute left-0 top-0  h-full w-full  rounded-inherit ${ hoverClassName || 'bg-light-grey'} `}
                         ></motion.div>
                     )}
                 </AnimatePresence>

@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import UserLogout from '../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../api/axios.js';
+import SeamlessDropdown from '../../common/dropdown/seamlessDropdown.jsx';
 function DeliveryProfile({ status, setStatus }) {
     const { logoutUser } = UserLogout();
     const exampleProfile = {
@@ -36,6 +37,7 @@ function DeliveryProfile({ status, setStatus }) {
     const [show, setShow] = useState(false);
 
     const [profiles, setProfiles] = useState([]);
+    const [showEditOrigin, setShowEditOrigin] = useState(false);
 
     const options = [
         {
@@ -150,98 +152,97 @@ function DeliveryProfile({ status, setStatus }) {
                         {selection.size > 0 && (
                             <p className="ml-2">{selection.size}</p>
                         )}
-                        <section className="relative  mx-2">
-                            <BubbleButton
-                                className={
-                                    'border border-transparent px-2 py-1'
-                                }
-                                handleClick={() => {
-                                    setShow(() => true);
-                                }}
-                            >
-                                <ArrowDropDown />
-                            </BubbleButton>
-                            {show && (
-                                <div
-                                    onClick={() => setShow(() => false)}
-                                    className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
+                        <AnimatePresence mode="wait">
+                            <section className="relative  mx-2">
+                                <BubbleButton
+                                    className={
+                                        'border border-transparent px-2 py-1'
+                                    }
+                                    handleClick={() => {
+                                        setShow(() => true);
+                                    }}
                                 >
                                     <ArrowDropDown />
-                                </div>
-                            )}
-                            <AnimatePresence>
+                                </BubbleButton>
                                 {show && (
-                                    <ClickAwayListener
-                                        onClickAway={() => setShow(() => false)}
+                                    <div
+                                        onClick={() => setShow(() => false)}
+                                        className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
                                     >
-                                        <motion.div
-                                            exit={{
-                                                scale: 0,
-                                                opacity: 0,
-
-                                                transition: {
-                                                    ease: 'easeOut',
-                                                    scale: {
-                                                        duration: 0.3,
-                                                    },
-                                                    opacity: {
-                                                        duration: 0.15,
-                                                    },
-                                                },
-                                            }}
-                                            className="shadow-normal absolute left-0 top-0 z-[2] w-fit  origin-top-left rounded-xl border bg-white pt-1"
-                                        >
-                                            {/* <div
-                                                className={` w-fit  px-2 ${!show ? 'opacity-0' : 'opacity-100'}`}
-                                                onClick={() =>
-                                                    setShow(() => false)
-                                                }
-                                            >
-                                                <ArrowDropDown />
-                                            </div> */}
-
-                                            <ul className="relative mt-7 w-full list-none">
-                                                {options.map(
-                                                    (
-                                                        { text, handleClick },
-                                                        idx
-                                                    ) => {
-                                                        return (
-                                                            <li
-                                                                key={text}
-                                                                onClick={() => {
-                                                                    handleClick();
-                                                                    setShow(
-                                                                        () =>
-                                                                            false
-                                                                    );
-                                                                }}
-                                                                className={`w-full whitespace-nowrap rounded-b-inherit py-3 pl-4 pr-8 text-sm hover:bg-light-grey ${idx == options.length - 1 ? 'rounded-b-xl' : 'rounded-none'}`}
-                                                            >
-                                                                {text}
-                                                            </li>
-                                                        );
-                                                    }
-                                                )}
-                                            </ul>
-                                        </motion.div>
-                                    </ClickAwayListener>
+                                        <ArrowDropDown />
+                                    </div>
                                 )}
-                            </AnimatePresence>
-                        </section>
+
+                                <SeamlessDropdown
+                                    {...{ setShow, show, options }}
+                                />
+                            </section>
+                            <section className="relative  mx-2">
+                                <button
+                                    onClick={() =>
+                                        setShowEditOrigin(() => true)
+                                    }
+                                    type="button"
+                                    className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
+                                >
+                                    <ModeEditOutlineRounded />
+
+                                    <p className="whitespace-nowrap text-sm ">
+                                        Edit origin post code
+                                    </p>
+                                    <ArrowDropDown />
+                                </button>
+                                {showEditOrigin && (
+                                    <button
+                                        type="button"
+                                        className=" absolute left-0 top-0 !z-[3]  flex flex-row items-center gap-2 border-2 border-transparent p-3"
+                                    >
+                                        <ModeEditOutlineRounded />
+
+                                        <p className="whitespace-nowrap text-sm ">
+                                            Edit origin post code
+                                        </p>
+                                        <ArrowDropDown />
+                                    </button>
+                                )}
+
+                                <SeamlessDropdown
+                                    {...{
+                                        setShow: setShowEditOrigin,
+                                        show: showEditOrigin,
+                                        options,
+                                    }}
+                                >
+                                    <div className="mt-12 flex flex-col gap-5 px-4 py-4">
+                                        <p className="text-sm ">
+                                            This is the post code that you
+                                            dispatch your items from.
+                                        </p>
+
+                                        <div className="flex flex-col gap-1">
+                                            <p className="text-base font-semibold">
+                                                Origin post code
+                                            </p>
+
+                                            <input
+                                                type="text"
+                                                className="daisy-input daisy-input-bordered"
+                                                placeholder="EC2R 7DA"
+                                            />
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className="w-fit self-end rounded-full bg-black px-5 py-3 font-semibold text-white"
+                                        >
+                                            Update
+                                        </button>
+                                    </div>
+                                </SeamlessDropdown>
+                            </section>
+                        </AnimatePresence>
                     </div>
 
-                    <button
-                        type="button"
-                        className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
-                    >
-                        <ModeEditOutlineRounded />
-
-                        <p className="whitespace-nowrap text-sm ">
-                            Edit origin post code
-                        </p>
-                        <ArrowDropDown />
-                    </button>
                     <div className="flex w-full justify-end">
                         <BubbleButton
                             className={''}
@@ -393,6 +394,13 @@ function DeliveryProfile({ status, setStatus }) {
                                                 <ContentCopySharp />
                                             </button>
                                             <button
+                                                onClick={() => {
+                                                    setModalContent(() => ({
+                                                        type: 'deleteProfile',
+                                                        profileId: _id,
+                                                    }));
+                                                    setModalCheck(() => true);
+                                                }}
                                                 type="button"
                                                 className="rounded-full p-2 transition-all hover:bg-dark-gray/30"
                                             >
