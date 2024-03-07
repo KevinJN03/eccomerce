@@ -7,31 +7,23 @@ import { useContent } from '../../../../context/ContentContext';
 import { useListingPageContext } from '../../../../context/listingPageContext';
 
 function Actions({ showAction, setShowAction, className, product }) {
-    const navigate = useNavigate();
     const { setModalCheck, setModalContent } = useContent();
-    const { checks } = useListingPageContext();
+
+    const { handleClick, text } = useListingPageContext();
+
+    const closeAction = () => {
+        setShowAction(() => false);
+    };
     const changeSection = () => {
         setModalContent(() => ({ type: 'changeSection' }));
         setModalCheck(() => true);
-        setShowAction(() => false);
-    };
-    const handleDelete = () => {
-        setModalContent(() => ({
-            type: 'delete',
-            ids: [product._id],
-            draft: true,
-            checks,
-        }));
-        setModalCheck(() => true);
-        setShowAction(() => false);
+        closeAction();
     };
 
     return (
         <AnimatePresence>
             {showAction && (
-                <ClickAwayListener
-                    onClickAway={() => setShowAction(() => false)}
-                >
+                <ClickAwayListener onClickAway={closeAction}>
                     <motion.div
                         variants={variant}
                         animate={'animate'}
@@ -39,15 +31,15 @@ function Actions({ showAction, setShowAction, className, product }) {
                         exit={'exit'}
                         className={` ${
                             className || ''
-                        } absolute top-full right-0 z-10  rounded border border-dark-gray/50 bg-white py-2`}
+                        } absolute right-0 top-full z-10  rounded border border-gray-300 bg-white py-2`}
                     >
                         {' '}
                         {product?.status == 'active' && (
-                            <div className="w-full border-b border-dark-gray/50 pb-2">
+                            <div className="w-full border-b border-gray-300 pb-2">
                                 <Link
+                                    onClick={closeAction}
                                     to={`/product/${product?._id}`}
                                     target="_blank"
-                                    onClick={() => setShowAction()}
                                 >
                                     <p className="!w-full !min-w-full cursor-pointer whitespace-nowrap py-2  pl-4 text-s hover:bg-light-grey/50">
                                         View on glamo
@@ -59,13 +51,10 @@ function Actions({ showAction, setShowAction, className, product }) {
                                 </p>
                             </div>
                         )}
-                        <div className="border-b border-dark-gray/50 py-2">
+                        <div className="border-b border-gray-300 py-2">
                             <Link
-                                to={`edit/${product._id}${
-                                    checks?.listing_status == 'draft'
-                                        ? '?draft=true'
-                                        : ''
-                                }`}
+                                onClick={closeAction}
+                                to={`edit/${product._id}`}
                             >
                                 <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
                                     Edit
@@ -73,19 +62,31 @@ function Actions({ showAction, setShowAction, className, product }) {
                             </Link>
 
                             <Link
-                                to={`copy/${product?._id}${
-                                    checks?.listing_status == 'draft'
-                                        ? '?draft=true'
-                                        : ''
-                                }`}
+                                onClick={closeAction}
+                                to={`copy/${product?._id}`}
                                 target="_blank"
                             >
                                 <p className="cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50">
                                     Copy
                                 </p>
                             </Link>
+
+                            <button
+                                onClick={() => {
+                                    handleClick({
+                                        productIds: [product?._id],
+                                        type: text[
+                                            product?.status
+                                        ].toLowerCase(),
+                                    });
+                                    closeAction();
+                                }}
+                                className="w-full cursor-pointer py-2 pl-4 text-left hover:bg-light-grey/50"
+                            >
+                                <p>{text[product?.status]}</p>
+                            </button>
                         </div>
-                        <div className="border-b border-dark-gray/50 py-2">
+                        <div className="border-b border-gray-300 py-2">
                             <p
                                 onClick={changeSection}
                                 className="cursor-pointer whitespace-nowrap py-2 pl-4 pr-14 hover:bg-light-grey/50"
@@ -94,7 +95,13 @@ function Actions({ showAction, setShowAction, className, product }) {
                             </p>
                         </div>
                         <p
-                            onClick={handleDelete}
+                            onClick={() => {
+                                handleClick({
+                                    type: 'delete',
+                                    productIds: [product?._id],
+                                });
+                                closeAction();
+                            }}
                             className="mt-2 cursor-pointer whitespace-nowrap py-2 pl-4 hover:bg-light-grey/50"
                         >
                             Delete

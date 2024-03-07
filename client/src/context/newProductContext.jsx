@@ -30,9 +30,7 @@ export const NewProductProvider = (props) => {
     });
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState(() =>
-        EditorState.createWithContent(ContentState.createFromText('yest'))
-    );
+    const [description, setDescription] = useState('');
     const [profile, setProfile] = useState([]);
     const [globalUpdate, setGlobalUpdate] = useState({
         price: null,

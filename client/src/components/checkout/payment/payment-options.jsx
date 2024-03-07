@@ -97,7 +97,7 @@ function Payment_Options({}) {
     ];
 
     return (
-        <div className=" flex w-6/12 flex-col">
+        <div className=" flex w-6/12 sm:w-full flex-col">
             {paymentMethodArray.map((item, idx) => {
                 let handleClick = item.handleClick;
                 if (idx > 0) {

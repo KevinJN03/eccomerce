@@ -1,7 +1,6 @@
+import { FavoriteBorder } from '@mui/icons-material';
 import Info from '../common/info';
 import Select from './Select';
-import Size from './Size';
-import WishList from './Wishlist';
 import AddToCart from './addToCart';
 import Product_Detail from './product_detail';
 import Return from './return';
@@ -10,74 +9,35 @@ import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
 import { useEffect, useRef, useState } from 'react';
+import WishListBtn from '../buttons/wishlistBtn';
+import { useWishlistContext } from '../../context/wishlistContext';
+import useWishListHook from '../../hooks/wishlistHook';
+import useAddItemToBagHook from '../../hooks/addItemToBagHook';
 
 function Product_info({ title, text, details, images, product, loading }) {
-    const [priceState, setPriceState] = useState(null);
+    const {
+        priceState,
+        setPriceState,
+        variationSelect,
+        setVariationSelection,
+        isOutOfStock,
+        setOutOfStock,
+        combineVariation,
+        setCombineVariation,
+        error,
+        setError,
+        handleAddToCart,
+        handleOnChange,
+    } = useAddItemToBagHook({ product });
+    const {
+        isHoverFavorite,
+        setIsHoverFavorite,
+        favorite,
+        setFavorite,
+        handleWishlist,
+        showAnimation,
+    } = useWishListHook({ product, variationSelect });
 
-    const [error, setError] = useState(false);
-    const [isOutOfStock, setOutOfStock] = useState(false);
-    const [variationSelect, setVariationSelection] = useState({
-        variation1: { id: null, variation: null },
-        variation2: { id: null, variation: null },
-    });
-
-    const [combineVariation, setCombineVariation] = useState(null);
-
-    useEffect(() => {
-        setPriceState(product?.price?.current);
-
-        if (product?.isVariationCombine) {
-            setCombineVariation(() => product?.combineVariation);
-        }
-
-        if (product?.isVariation1Present) {
-            if (product?.variation1?.array?.length == 1) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    variation1: {
-                        ...prevState.variation1,
-                        ...product?.variation1?.array[0],
-                    },
-                }));
-            }
-        }
-    }, [product]);
-
-    useEffect(() => {
-        if (product?.isVariationCombine) {
-            var getPrice =
-                combineVariation?.[variationSelect?.variation1?.variation]?.[
-                    variationSelect?.variation2?.variation
-                ]?.price;
-
-            setPriceState(() => getPrice || product?.price?.current);
-        }
-    }, [variationSelect.variation1, variationSelect.variation2]);
-
-    // console.log({
-    //     variation2: product?.variation1,
-    //     variation1: product?.variation2,
-    //     combine: product?.combineVariation,
-    //     isVariationCombine: product?.isVariationCombine,
-    // });
-
-    useEffect(() => {
-        console.log({ isVariation1Present: product?.isVariation1Present });
-
-        [1, 2].map((variationNumber) => {
-            if (product?.[`isVariation${variationNumber}Present`]) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    [`variation${variationNumber}`]: {
-                        ...prevState?.[`variation${variationNumber}`],
-                        title: product?.[`variation${variationNumber}`]?.title,
-                    },
-                }));
-            }
-        });
-
-        console.log('variation changed');
-    }, [product]);
     return (
         <section id="product-info">
             {!loading ? (
@@ -99,6 +59,7 @@ function Product_info({ title, text, details, images, product, loading }) {
                         setPrice={setPriceState}
                         ref={null}
                         isSecond={false}
+                        handleOnChange={handleOnChange}
                     />
                 </>
             ) : (
@@ -120,6 +81,7 @@ function Product_info({ title, text, details, images, product, loading }) {
                     setPrice={setPriceState}
                     ref={null}
                     isSecond={false}
+                    handleOnChange={handleOnChange}
                 />
             ) : (
                 product?.isVariation2Present &&
@@ -138,16 +100,30 @@ function Product_info({ title, text, details, images, product, loading }) {
                 {loading ? (
                     <div className="skeleton-pulse mb-4 h-full w-full"></div>
                 ) : (
-                    <>
+                    <div className="relative flex w-full flex-row items-center gap-3">
                         <AddToCart
-                            variationSelect={variationSelect}
-                            product={product}
-                            price={priceState}
-                            setError={setError}
-                            isOutOfStock={isOutOfStock}
+                            {...{
+                                handleAddToCart,
+                                isOutOfStock,
+                            }}
                         />
-                        <WishList />
-                    </>
+                        {/* <WishList /> */}
+
+                        <div
+                            className="relative rounded-full bg-light-grey/60 p-2"
+                            onClick={handleWishlist}
+                            onMouseEnter={() => setIsHoverFavorite(() => true)}
+                            onMouseLeave={() => setIsHoverFavorite(() => false)}
+                        >
+                            <div className="absolute left-0 top-0 z-[1] h-full w-full rounded-inherit bg-transparent"></div>
+                            <WishListBtn
+                            favorite={favorite}
+                            showAnimation={showAnimation}
+                            isHoverFavorite={isHoverFavorite}
+                            
+                            />
+                        </div>
+                    </div>
                 )}
             </div>
 

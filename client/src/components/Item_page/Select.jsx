@@ -11,18 +11,20 @@ const Select = forwardRef(function Select(
         setPrice,
         variationSelect,
         setVariationSelection,
+        handleOnChange,
     },
     ref
 ) {
     const [stockState, setStockState] = useState();
 
     useEffect(() => {
-        if (stockState == 0) {
+        if (stockState <= 0) {
             setOutOfStock(() => true);
         } else {
             setOutOfStock(() => false);
         }
     }, [stockState]);
+
     const onChange = (e) => {
         const id = e.target.options[e.target.selectedIndex].dataset?.id;
         const variation =
@@ -63,7 +65,14 @@ const Select = forwardRef(function Select(
                     </p>
                     <select
                         ref={ref}
-                        onChange={onChange}
+                        onChange={(e) =>
+                            handleOnChange({
+                                e,
+                                setStockState,
+                                stockState,
+                                property,
+                            })
+                        }
                         className="item-select select mb-3 min-h-0  min-w-full rounded-none border-[1px] border-black !outline-none focus:!drop-shadow-2xl"
                     >
                         <option value={'null'}>Please Select</option>

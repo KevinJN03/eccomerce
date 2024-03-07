@@ -2,10 +2,7 @@
     --test123: 255 255 255;
 }
 
-#checkout-page {
-    @apply flex justify-center sm+md:min-w-[100vw] lg:w-[100vw] #{!important};
-    background-color: var(--light-grey);
-}
+
 .active-green {
     filter: invert(60%) sepia(91%) saturate(947%) hue-rotate(70deg)
         brightness(95%) contrast(88%);
@@ -50,15 +47,6 @@
     @apply px-7 py-1 font-semibold tracking-wide disabled:cursor-not-allowed;
 }
 
-#country-picker {
-    margin-top: 20px;
-    @apply px-6 py-6;
-}
-
-.checkout-body {
-    @apply flex flex-row gap-3 sm+md:flex-col-reverse;
-    background-color: var(--light-grey) !important;
-}
 
 .ReactFlagsSelect-module_flagsSelect__2pfa2 {
     width: 60%;
@@ -74,9 +62,7 @@
     @apply mt-4;
 }
 
-.promo-header-container span {
-    @apply flex h-20 items-center justify-center font-semibold tracking-wider;
-}
+
 
 .active-promo-voucher {
     border: 1px solid var(--primary-2);
@@ -87,22 +73,10 @@
     border-bottom: 1px solid var(--primary-2);
 }
 
-#promo-input-container {
-    @apply flex flex-col;
-}
-#promo-input-container span {
-    display: grid;
-    grid-template-columns: 2fr 1.2fr;
-    @apply mb-14 mt-2;
-    gap: 12px;
-}
-#promo-input-container span input {
-    @apply m-0 flex h-12 items-center px-3;
-}
 
-#promo-input-container span button {
-    background-color: var(--primary);
-}
+
+
+
 .need-to-know-container ul {
     list-style-type: disc;
     margin-left: 20px;
@@ -248,12 +222,6 @@
     width: 90%;
 }
 
-#checkout-body-wrapper {
-    background-color: var(--light-grey) !important;
-    height: 100%;
-
-    @apply lg:w-[600px];
-}
 
 .digicert-logo {
     @apply h-10 pr-4 sm+md:object-contain;

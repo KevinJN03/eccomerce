@@ -6,12 +6,18 @@ export default {
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
+
+            minHeight: {
+                main: 'calc(100vh-(6.75rem+3.75rem))',
+            },
             textShadow: {
                 sm: '0 1px 2px var(--tw-shadow-color)',
                 DEFAULT: '0 2px 4px var(--tw-shadow-color)',
                 lg: '0 8px 16px var(--tw-shadow-color)',
             },
             colors: {
+                'primary-gray': '#525050',
+                'primary-2': '#525050',
                 primary: '#2d2d2d',
                 'admin-primary': '#003e29',
                 'primary-green': '#018849',
@@ -40,6 +46,8 @@ export default {
             boxShadow: {
                 'my-shadow': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
                 '3xl': '0px 5px 10px rgba(0, 0, 0, 0.35)',
+                'inner-2': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.15) ',
+                normal: '0px 2px 10px rgba(0,0,0,0.35)',
             },
 
             spacing: {

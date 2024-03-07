@@ -175,7 +175,7 @@ export default function Add_Card({}) {
                 error={error}
                 setError={setError}
             />
-            <div className="mb-4 mt-4 w-4/6">
+            <div className="mb-4 mt-4 w-4/6 sm:w-full">
                 <ElementDiv
                     label={'CARD NUMBER'}
                     id={'cardNumber'}
@@ -188,7 +188,7 @@ export default function Add_Card({}) {
                 <ElementDiv
                     label={'EXPIRY DATE'}
                     id={'cardExpiry'}
-                    className={'w-2/6'}
+                    className={'w-2/6 sm:w-3/6'}
                     error={error}
                     property={'expiryDate'}
                 />
@@ -205,7 +205,7 @@ export default function Add_Card({}) {
                     label={'CVC'}
                     id={'cardCvc'}
                     icon={{ img: cvv_icon, alt: 'cvc icon' }}
-                    className={'w-2/6'}
+                    className={'w-2/6 sm:w-3/6'}
                     error={error}
                     property={'cvc'}
                 />

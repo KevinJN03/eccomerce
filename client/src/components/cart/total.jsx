@@ -6,16 +6,13 @@ import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
 import fetchDeliveryOptions from '../../hooks/fetchDeliveryOption';
 
-const Total = forwardRef(function ({}, ref) {
-    const { withOutShipping } = calculateTotal();
-    let totalAmount = withOutShipping;
-    
+function Total({ subTotal }) {
     const [shippingOptions, setShippingOptions] = useState([]);
     const { deliveryOption } = useCart();
 
     fetchDeliveryOptions(setShippingOptions);
     return (
-        <section id="total-container">
+        <section className="white sticky top-3 my-4 h-fit py-5  sm:px-3 md:mr-3 md:px-5 sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8">
             <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">
                 TOTAL
             </h1>
@@ -24,7 +21,7 @@ const Total = forwardRef(function ({}, ref) {
                     <p className="text-base font-semibold tracking-wide">
                         Sub-total
                     </p>
-                    <p>£{totalAmount}</p>
+                    <p>£{subTotal}</p>
                 </div>
                 <div id="delivery-container">
                     <p className="text-base font-semibold tracking-wide">
@@ -40,9 +37,9 @@ const Total = forwardRef(function ({}, ref) {
                 <p className="flex justify-center text-sm text-red-800">
                     Yay! You've saved £38.50
                 </p>
-                <Link to="/checkout" className="checkout-btn" ref={ref}>
+                <a href="/checkout" className="checkout-btn">
                     CHECKOUT
-                </Link>
+                </a>
                 <section id="payment-methods" className="w-full ">
                     <p className="font-semibold tracking-wider">WE ACCEPT:</p>
 
@@ -55,6 +52,6 @@ const Total = forwardRef(function ({}, ref) {
             </section>
         </section>
     );
-});
+}
 
 export default Total;

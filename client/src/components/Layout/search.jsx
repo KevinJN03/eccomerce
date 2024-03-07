@@ -5,11 +5,11 @@ import { SearchRounded, CloseRounded } from '@mui/icons-material';
 import axios from '../../api/axios';
 import { useDebounce, useWindowSize } from '@uidotdev/usehooks';
 import { Link, useNavigate } from 'react-router-dom';
+import { Backdrop, Box, Modal } from '@mui/material';
 
 function Search({ search }) {
-    const [open, setOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
-   
+    const [open, setOpen] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const debounceValue = useDebounce(searchText, 500);
 
@@ -68,12 +68,12 @@ function Search({ search }) {
                     id="search-input"
                     // onChange={search}
                     placeholder="Search for items"
-                    className="z-[3] placeholder:text-s"
+                    className="z-[3] placeholder:text-s sm:!hidden py-2 px-5  h-full w-full rounded-full border border-black"
                     onChange={(e) => handleOnChange(e)}
                     ref={inputRef}
                     onClick={openSearch}
                 />
-                <span className="search-icons absolute right-0 top-0 z-[3] flex  h-full flex-row items-center ">
+                <span className="search-icons absolute right-1 top-0 z-[3] flex  h-full flex-row items-center ">
                     {searchText && (
                         <CloseRounded
                             onClick={clearInput}
@@ -84,7 +84,7 @@ function Search({ search }) {
                         onClick={mobileSearch}
                         className={`${
                             searchText && 'filter lg:bg-orange-400'
-                        } h-full rounded-full p-1 sm:!text-[40px] sm:invert lg:!text-3xl`}
+                        }rounded-full !h-8 !w-8 p-1 sm:!text-[40px] sm:invert`}
                     />
                 </span>
 
@@ -166,10 +166,14 @@ function Search({ search }) {
                     </section>
                 </div>
             )}
-            <div
-                className={`backdrop ${open && 'backdrop-open'}`}
-                onClick={closeSearch}
-            ></div>
+
+            {open && (
+                <Backdrop
+                    open={open}
+                    onClick={() => setOpen(() => false)}
+                    sx={{ color: '#fff', zIndex: 1 }}
+                />
+            )}
         </section>
     );
 }

@@ -17,7 +17,7 @@ function Containers({ ordersByDate }) {
         }
     };
     return (
-        <section className="flex w-full flex-col gap-4">
+        <section className="flex w-full flex-col gap-4 mb-10">
             {ordersByDate?.map((item, idx) => {
                 return (
                     <OrderList

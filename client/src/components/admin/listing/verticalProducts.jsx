@@ -5,7 +5,7 @@ import {
 } from '@mui/icons-material';
 import { useAdminContext } from '../../../context/adminContext';
 import { useEffect, useState } from 'react';
-import VerticalItem from './verticalItem';
+import VerticalItem from './veritcalItem/verticalItem';
 import { useListingPageContext } from '../../../context/listingPageContext';
 
 function VerticalProducts() {

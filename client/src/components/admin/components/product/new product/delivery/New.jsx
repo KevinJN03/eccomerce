@@ -11,7 +11,7 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 function New({ setModalState, edit }) {
     const { contentDispatch, modalContent } = useNewProduct();
     const [disable, setDisable] = useState();
-    console.log({ modalContent });
+  
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState('');
     const [cost, setCost] = useState(0);
@@ -63,7 +63,9 @@ function New({ setModalState, edit }) {
     };
     const save = () => {
         const url = `/delivery/${fetchRoute}`;
-        const fetchUrl = modal?.profile ? `${url}/${modal?.profile._id}` : url;
+        const fetchUrl = modalContent?.profile
+            ? `${url}/${modalContent?.profile._id}`
+            : url;
         const fetchOptions = {
             name,
             processingTime,
@@ -86,7 +88,7 @@ function New({ setModalState, edit }) {
                 .catch((error) => axiosCatch(error));
         };
 
-        if (modal?.profile) {
+        if (modalContent?.profile) {
             axiosFetch(adminAxios.put(fetchUrl, fetchOptions));
         } else {
             axiosFetch(adminAxios.post(fetchUrl, fetchOptions));
@@ -161,7 +163,7 @@ function New({ setModalState, edit }) {
                 <select
                     id="options"
                     name="options"
-                    key={uuidv4()}
+               
                     className=" !border-1 daisy-select daisy-select-bordered daisy-select-md rounded "
                     onChange={(e) => {
                         handleOnchange(e, e.target.options);

@@ -54,7 +54,7 @@ function Promo_Student({ triggerClose, display, setDisplay }) {
                 <ActivePromo type="promo" />
             )}
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
-            <div id="promo-input-container">
+            <div id="promo-input-container" className='flex flex-col'>
                 <Input
                     header={'PROMO/STUDENT CODE:'}
                     button_text="APPLY CODE"

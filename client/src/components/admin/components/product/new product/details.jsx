@@ -42,7 +42,7 @@ function Details() {
             const result = await adminAxios.get('category/all');
         
             const status = result.status;
-            console.log({ result });
+       
             if (status == 200) {
                 setCategoryError('');
             }

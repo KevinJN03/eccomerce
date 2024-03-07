@@ -1,12 +1,13 @@
 import axios from '../../../../api/axios';
 import chat_icon from '../../../../assets/icons/profile-icons/chat.png';
-import dashboard_icon from '../../../../assets/icons/profile-icons/dashboard.png';
+import dashboard_icon from '../../../../assets/icons/person.png';
 import return_icon from '../../../../assets/icons/profile-icons/delivery-status.png';
 import info_icon from '../../../../assets/icons/profile-icons/info.png';
 import order_icon from '../../../../assets/icons/profile-icons/package.svg';
 import { useAuth } from '../../../../hooks/useAuth';
 import Dropdown_Option from './dropdown_option';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 function Profile_Dropdown({}) {
     const { user, authenticated, authDispatch } = useAuth();
 
@@ -16,8 +17,8 @@ function Profile_Dropdown({}) {
         });
     };
     return (
-        <section id="profile_dropdown" className="m-0">
-            <div className="signin-signup-btn-container bg-slate-300">
+        <section className="!mb-0 !pb-0">
+            <div className=" bg-light-grey px-3 py-3">
                 {!user?.firstName ? (
                     <>
                         <a
@@ -49,37 +50,48 @@ function Profile_Dropdown({}) {
                     </span>
                 )}
             </div>
-
-            {[
-                {
-                    option: { src: dashboard_icon, text: 'Dashboard' },
-                    linkTo: './my-account',
-                },
-                {
-                    option: { src: order_icon, text: 'My Order' },
-                    linkTo: './my-account',
-                },
-                {
-                    option: { src: return_icon, text: 'My Returns' },
-                    linkTo: './my-account/returns',
-                },
-                {
-                    option: { src: info_icon, text: 'Return Information' },
-                    linkTo: './my-account/returns',
-                },
-                {
-                    option: { src: chat_icon, text: 'Contact Preference' },
-                    linkTo: './my-account/contact-preferences',
-                },
-            ].map(({ option, linkTo }) => {
-                return (
-                    <Dropdown_Option
-                        key={uuidv4()}
-                        option={option}
-                        linkTo={linkTo}
-                    />
-                );
-            })}
+            <section className="mb-0 bg-white px-4 pb-0">
+                {[
+                    {
+                        option: { src: dashboard_icon, text: 'My Account' },
+                        linkTo: './my-account',
+                    },
+                    {
+                        option: { src: order_icon, text: 'My Order' },
+                        linkTo: './my-account',
+                    },
+                    {
+                        option: { src: return_icon, text: 'My Returns' },
+                        linkTo: './my-account/returns',
+                    },
+                    {
+                        option: { src: info_icon, text: 'Return Information' },
+                        linkTo: './my-account/returns',
+                    },
+                    {
+                        option: { src: chat_icon, text: 'Contact Preference' },
+                        linkTo: './my-account/contact-preferences',
+                    },
+                ].map(({ option, linkTo }, index) => {
+                    return (
+                        <a
+                            key={option.text}
+                            href={`/${linkTo}`}
+                           
+                            className="group flex w-full flex-row  items-center justify-start gap-3 px-3 py-3"
+                        >
+                            <img
+                            
+                                src={option.src}
+                                className="h-7 w-7 object-cover"
+                            />
+                            <p className="text-sm group-hover:text-blue-500">
+                                {option.text}
+                            </p>
+                        </a>
+                    );
+                })}
+            </section>
         </section>
     );
 }

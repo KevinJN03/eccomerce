@@ -1,25 +1,21 @@
 /* eslint-disable */
+// eslint-disable-next-line import/prefer-default-export
 import asyncHandler from 'express-async-handler';
 import Product from '../Models/product.js';
 import Category from '../Models/category.js';
-
-import { validationResult } from 'express-validator';
-const url = `${process.env.UPLOAD_URL}/products`;
+import { validationResult, check } from 'express-validator';
 import productValidator from '../utils/productValidator.js';
-import sharpify from '../Upload/sharpify.js';
-import multer from 'multer';
-import fileFilter from '../Upload/fileFilter.js';
-import s3Upload, { s3Delete } from '../s3Service.js';
-// eslint-disable-next-line import/prefer-default-export
-import { v4 as uuidv4 } from 'uuid';
+import s3Upload, { s3Delete } from '../utils/s3Service.js';
+
 import 'dotenv/config';
-import _ from 'lodash';
+import { has } from 'lodash';
 import multerUpload from '../utils/multerUpload';
 import sortCombineVariation from '../utils/sortCOmbineVariations.js';
 import generateProduct from '../utils/generateProduct.js';
 import { Endpoint } from 'aws-sdk';
 import productAggregateStage from '../utils/productAggregateStage.js';
 import mongoose from 'mongoose';
+
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
   res.send(products);
@@ -79,7 +75,7 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
         category: { $arrayElemAt: ['$category', 0] },
       },
     },
-    ...productAggregateStage(),
+    ...productAggregateStage({ stats: true }),
   ]);
   if (newProduct.length < 1) {
     return res.status(404).send('product not found');
@@ -90,11 +86,191 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
   return res.status(200).send(newProduct);
 });
 
+export const get_many_product = [
+  check('id').trim().escape(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
+    console.log({ ids });
+    const products = await Product.aggregate([
+      {
+        $match: { _id: { $in: ids } },
+      },
+      ...productAggregateStage({ stats: false }),
+
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'category',
+          foreignField: 'category',
+          as: 'alsoLike',
+
+          let: { gender: '$gender', id: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $and: [
+                  {
+                    $expr: {
+                      $eq: ['$status', 'active'],
+                    },
+                  },
+                  {
+                    $expr: {
+                      $eq: ['$gender', '$$gender'],
+                    },
+                  },
+                  {
+                    $expr: {
+                      $ne: [{ $toObjectId: '$$id' }, '$_id'],
+                    },
+                  },
+                ],
+              },
+            },
+
+            ...productAggregateStage({ stats: false }),
+
+            {
+              $unset: ['variations'],
+            },
+
+            { $limit: 10 },
+
+            // { $limit: 1 },
+            // {
+            //   $project: {
+            //     result: 1,
+            //     gender: 1,
+            //   },
+            // },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          combineVariation: {
+            $cond: {
+              if: { $gte: [{ $size: '$variations' }, 2] },
+              // then: {
+              //   $map: {
+              //     input: { $arrayElemAt: ['$variations', 2] },
+              //     as: 'variation',
+              //     in: '$$variation.option'
+              //   },
+              // },
+
+              then: {
+                $objectToArray: {
+                  $arrayElemAt: ['$variations.options', 2],
+                },
+              },
+              else: false,
+            },
+          },
+        },
+      },
+
+      {
+        $unwind: {
+          path: '$variations',
+          includeArrayIndex: 'variationIndex',
+        },
+      },
+      {
+        $addFields: {
+          optionArray: { $objectToArray: '$variations.options' },
+        },
+      },
+
+      {
+        $addFields: {
+          variationOptionArray: {
+            $map: {
+              input: '$optionArray',
+              as: 'variationOption',
+              in: '$$variationOption.v',
+            },
+          },
+        },
+      },
+
+      {
+        $group: {
+          _id: '$_id',
+          variations: {
+            $push: '$variations',
+          },
+          doc: { $first: '$$ROOT' },
+          variationList: {
+            $push: {
+              title: '$variations.name',
+              variationIndex: '$variationIndex',
+              array: '$variationOptionArray',
+            },
+          },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$doc', { variationList: '$variationList' }],
+          },
+        },
+      },
+      {
+        $unset: ['variationOptionArray', 'variationIndex', 'optionArray'],
+      },
+
+      { $sort: { _id: 1 } },
+
+      {
+        $project: {
+          variations: 0,
+        },
+      },
+    ]);
+
+    const updateProductVariation = Array.from(products).map(
+      ({ variationList, ...remainingProps }) => {
+        const result = {};
+
+        remainingProps[`isVariation1Present`] = false;
+        remainingProps[`isVariation2Present`] = false;
+        for (let i = 0; i < variationList.length; i++) {
+          if (i < 2) {
+            remainingProps[`variation${i + 1}`] = variationList[i];
+            remainingProps[`isVariation${i + 1}Present`] = true;
+          } else {
+            const combineVariation = {};
+
+            variationList[i].array.forEach(
+              ({ variation, variation2, ...remainingProps }) => {
+                if (!combineVariation.hasOwnProperty(variation)) {
+                  combineVariation[variation] = {};
+                }
+
+                combineVariation[variation][variation2] = remainingProps;
+              },
+            );
+
+            remainingProps.combineVariation = combineVariation;
+            remainingProps[`isVariationCombine`] = true;
+          }
+        }
+
+        return remainingProps;
+      },
+    );
+    res.status(200).send({ products: updateProductVariation, success: true });
+  }),
+];
 export const get_single_product = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const product = await Product.findById(id)
-    .populate({
+  const product = await Product.findById(id, null, {
+    populate: {
       path: 'category',
       populate: [
         {
@@ -108,20 +284,18 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
           match: { _id: { $ne: id } },
         },
       ],
-    })
-    .exec();
+    },
 
-  if (!product) {
+    // lean: {
+    //   toObject: true,
+    // },
+  }).exec();
+
+  if (!product || product?.status != 'active') {
     return res.status(404).send('product not found');
   }
 
-  const {
-    price,
-
-    category,
-
-    minVariationPrice,
-  } = product;
+  const { price, category } = product;
 
   const newProducts = product.toJSON({ flattenMaps: true });
   let newData = {
@@ -132,7 +306,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
   };
 
   // if ('variations' in product) {
-  const isVariationsPresent = _.has(newProducts, 'variations');
+  const isVariationsPresent = has(newProducts, 'variations');
 
   newData.isVariation1Present = false;
   newData.isVariation2Present = false;
@@ -154,7 +328,7 @@ export const get_single_product = asyncHandler(async (req, res, next) => {
 
         const valueArray = [];
         for (const [key, value] of options) {
-          const hasPriceProperty = _.has(value, 'price');
+          const hasPriceProperty = has(value, 'price');
 
           if (hasPriceProperty) {
             minimumPrice = Math.min(minimumPrice, value.price);
@@ -272,27 +446,24 @@ export const delete_product = asyncHandler(async (req, res, next) => {
 export const create_new_product = [
   multerUpload.array('files', 6),
   productValidator,
-  async function (req, res, next) {
+
+  asyncHandler(async (req, res, next) => {
     const resultValidation = validationResult(req);
     if (!resultValidation.isEmpty()) {
       res.status(400).send(resultValidation.errors);
       return;
     }
     const { gender, category } = req.body;
-    const newProduct = new Product();
+    const { isDraft } = req.query;
+    const newProduct = new Product({ status: isDraft ? 'draft' : 'active' });
 
     const { productData, sharpResult } = await generateProduct(
       req,
       newProduct.id,
     );
+ 
 
     Object.assign(newProduct, productData);
-
-    // console.log(
-    //   '--------------------------------\r\n',
-    //   'newProduct: ',
-    //   newProduct,
-    // );
     try {
       await Category.updateOne(
         { _id: category },
@@ -303,7 +474,7 @@ export const create_new_product = [
         files: sharpResult,
         isProfile: false,
         folderId: newProduct.id,
-        endpoint: 'products',
+        endPoint: 'products',
       });
 
       await newProduct.save();
@@ -315,7 +486,7 @@ export const create_new_product = [
 
       next(error);
     }
-  },
+  }),
 ];
 export const update_product = [
   multerUpload.array('files', 6),
@@ -378,4 +549,19 @@ export const getVariations = asyncHandler(async (req, res, next) => {
   );
 
   res.send(variation);
+});
+
+export const increment_visit = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findByIdAndUpdate(
+    id,
+    { $inc: { visits: 1 } },
+    {
+      new: true,
+      lean: { toObject: true },
+      select: { visits: 1 },
+    },
+  );
+
+  res.status(200).send({ id, success: true, product });
 });

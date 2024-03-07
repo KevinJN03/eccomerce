@@ -65,6 +65,7 @@ const UserSchema = new Schema(
         email: { type: Schema.Types.Boolean, default: false },
       },
     },
+    wishlist: [{ type: Schema.Types.Mixed }],
     social_accounts: {
       google: { type: Schema.Types.String },
       twitter: { type: Schema.Types.String },

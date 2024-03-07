@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ClickAwayListener } from '@mui/material';
 import variant from './variant';
 import { useAdminContext } from '../../../../context/adminContext';
-import SelectionInput from './selectionIput';
+import SelectionInput from './selectionInput';
 
 function SubHeader({}) {
     const {
@@ -46,7 +46,7 @@ function SubHeader({}) {
     };
 
     const printOrders = () => {
-        console.log('clikced');
+       
         adminOrderModalContentDispatch({
             type: 'printOrder',
             orders: Array.from(selectionSet),

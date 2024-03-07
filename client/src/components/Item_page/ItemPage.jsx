@@ -16,29 +16,44 @@ import axios from '../../api/axios';
 
 function ItemPage() {
     const [product, setProduct] = useState({ images: [], gender: null });
-    const [alsoLike, setAlsoLike] = useState();
+
     const [state, dispatch] = useGenderCategory();
 
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
 
+    const abortControllerRef = useRef(new AbortController());
+    const timeoutRef = useRef(null);
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            axios
-                .get(`/product/${id}`)
-                .then((res) => {
-                    setProduct(res.data);
-                    setLoading(false);
-                    const gender = state.gender;
-                    setAlsoLike(res.data.also_like[gender]);
-                })
-                .catch((error) => {
-                    'Error fetching data, not found', error;
-                });
-        }, 1500);
+        const fetchData = async () => {
+            try {
+                abortControllerRef.current?.abort();
+                abortControllerRef.current = new AbortController();
+                const [{ data }] = await Promise.all([
+                    axios.get(`/product/many/${id}`, {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                    axios.get(`/product/${id}/visit`, {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                ]);
+
+                timeoutRef.current = setTimeout(() => {
+                    setProduct(() => data.products[0]);
+                    setLoading(() => false);
+                }, 1500);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                
+            }
+        };
+
+        fetchData()
+
         return () => {
-            clearTimeout(timeout);
-            setLoading(true);
+            clearTimeout(timeoutRef.current);
+            abortControllerRef.current?.abort();
         };
     }, []);
 
@@ -90,10 +105,8 @@ function ItemPage() {
                             loading={loading}
                             text={example?.text}
                             title={product?.title}
-                          
                             details={product?.detail}
                             images={example?.similar_styles_images}
-                        
                             style_it_with_image={example?.style_it_with_image}
                             product={product}
                         />
@@ -104,7 +117,10 @@ function ItemPage() {
                         <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
                     )}
                     <div className=" item-page-divider border-5 w-full sm+md:mb-10 lg:!hidden"></div>
-                    <Recommended products={alsoLike} loading={loading} />
+                    <Recommended
+                        products={product?.alsoLike || []}
+                        loading={loading}
+                    />
                 </section>
             </section>
             {/* )} */}

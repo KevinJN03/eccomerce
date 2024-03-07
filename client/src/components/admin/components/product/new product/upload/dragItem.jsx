@@ -94,7 +94,7 @@ function DragItem({ id, droppableId, className, handleAddPhoto, deletePhoto }) {
                                             onChange={(e) =>
                                                 handleAddPhoto(e, files[id])
                                             }
-                                            accept="image/jpeg,image/x-png"
+                                            accept="image/jpeg, image/png, image/webp"
                                             hidden
                                             multiple
                                         />

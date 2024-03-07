@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from 'react';
 import { adminAxios } from '../api/axios';
 import UserLogout from '../hooks/userLogout';
 import { useAdminContext } from './adminContext';
+import { useContent } from './ContentContext';
 
 const ListingPageContext = createContext();
 
@@ -11,18 +12,30 @@ export const useListingPageContext = () => {
 function ListingPageProvider({ children, newValue }) {
     // const [selectionSet, setSelectionSet] = useState(() => new Set());
     const value = { ...newValue };
+
     const { logoutUser } = UserLogout();
     const { setAllProducts } = useAdminContext();
+    const { selectionSet, setSelectionSet, checks, productIds, setProductIds } =
+        newValue;
+    const { setModalCheck, setModalContent } = useContent();
+
+    const text = {
+        inactive: 'Activate',
+        active: 'Deactivate',
+        draft: 'Publish',
+    };
+
     const handleFeatured = async ({
         product,
         setFeatured,
         featured,
         index,
     }) => {
-        // console.log({ query: qs.stringify(checks) });
+        
 
         try {
             console.log({ index });
+            setFeatured(() => !featured);
             const { data } = await adminAxios.get(
                 `product/featured/${product?._id}?featured=${!featured}${
                     product?.status == 'draft' ? '&draft=true' : '&draft=false'
@@ -45,8 +58,30 @@ function ListingPageProvider({ children, newValue }) {
             logoutUser({ error });
         }
     };
+
+    const handleClick = ({ productIds, type }) => {
+        setModalContent({
+            type,
+            productIds,
+            setProductIds,
+            setSelectionSet,
+            checks,
+            clearSelection: () => {
+                setSelectionSet(() => new Set());
+            },
+        });
+        setModalCheck(() => true);
+    };
     return (
-        <ListingPageContext.Provider value={{ ...value, handleFeatured }}>
+        <ListingPageContext.Provider
+            value={{
+                ...value,
+                handleFeatured,
+text,
+                handleClick,
+                
+            }}
+        >
             {children}
         </ListingPageContext.Provider>
     );

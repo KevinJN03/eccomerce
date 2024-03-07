@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 function Footer() {
     return (
         <motion.div
-            className="footer-wrapper"
+            className="footer-wrapper border-t-2 border-light-grey"
             variants={variants}
             initial={'initial'}
             animate={'animate'}

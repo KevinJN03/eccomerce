@@ -1,167 +1,96 @@
 import logo from '../../assets/glamo.png';
 import '../../CSS/App.css';
-import basket from '../../assets/basket.png';
-import profile from '../../assets/profile.png';
-import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
-import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
-import Dropdown_Hover from '../common/dropdown/dropdown_hover';
+
 import '../../CSS/dropdown.css';
-import Profile_Dropdown from '../common/dropdown/profile_dropdown';
+
 import Header_Category from './header-category/header-category';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
-import {
-    ProductsProvider,
-    useGenderCategory,
-} from '../../hooks/genderCategory.jsx';
-import { Link } from 'react-router-dom';
+import { useGenderCategory } from '../../hooks/genderCategory.jsx';
+import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Search from './search';
 import { useCart } from '../../context/cartContext';
-import variants from '../common/framerMotionVariants.jsx';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import {
+    FavoriteBorderSharp,
+    LocalMallOutlined,
+    LocalMall,
+    PersonOutlined,
+} from '@mui/icons-material';
+import calculateTotal from '../common/calculateTotal.jsx';
+import HeaderMenu from './headerMenu/header-menus.jsx';
+import Pointer from './headerMenu/pointer.jsx';
+import { useHover } from '@uidotdev/usehooks';
+import HeaderRight from './headerMenu/headerRight.jsx';
 function Header() {
     //const [activeCategory, setActiveCategory] = useState(false)
     const navigate = useNavigate();
     const [state, dispatch] = useGenderCategory();
-    'state', state;
-    const search = (e) => {
-        e;
-    };
 
-    const { cart } = useCart();
-    const cartVariants = {
-        initial: {
-            y: 10,
-            opacity: 0,
-        },
-
-        animate: {
-            opacity: 1,
-            y: 0,
-            duration: 2,
-        },
-        exit: {
-            opacity: 0,
-        },
-    };
-
-    const headerVariants = {
-        initial: {
-            opacity: 0.6,
-            y: -8,
-        },
-        animate: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.5 },
-        },
-
-        exit: {
-            opacity: 0,
-            y: -100,
-            transition: { duration: 2 },
-        },
-    };
     return (
-        <motion.section
-            className="header-section flex w-full max-w-full flex-col justify-center"
-            // variants={headerVariants}
-            // initial={'initial'}
-            // animate={'animate'}
-            // exit={'exit'}
-        >
+        <section className="header-section flex w-full max-w-full flex-col justify-center">
             <section id="header-wrapper">
-                <header className="header">
-                    <section className="header-left">
-                        <Mobile_Nav />
-                        <div id="image-wrapper" className="image-wrapper">
-                            <a href="/">
-                                <img
-                                    loading="lazy"
-                                    src={logo}
-                                    alt="glamo logo"
-                                    className=""
-                                />
-                            </a>
-                        </div>
-                        <section
-                            id="women"
-                            onClick={() => {
-                                dispatch({ type: 'women' });
-                                navigate('/home');
-                            }}
-                            className={`header-category-btn ${
-                                state.gender == 'women'
-                                    ? 'active-header-category'
-                                    : ''
-                            }`}
-                        >
-                            Women
+                <header className="header relative  flex h-[3.75rem] w-full max-w-[85.375rem] flex-row items-center justify-center self-center  !bg-primary px-4">
+                    <section className=" relative !z-[2] flex  h-full w-full  flex-row flex-nowrap items-center justify-center self-center !bg-primary ">
+                        <section className="header-left">
+                            <Mobile_Nav />
+                            <div id="image-wrapper" className="image-wrapper">
+                                <a href="/">
+                                    <img
+                                        loading="lazy"
+                                        src={logo}
+                                        alt="glamo logo"
+                                        className=""
+                                    />
+                                </a>
+                            </div>
+                            <section
+                                id="women"
+                                onClick={() => {
+                                    dispatch({ type: 'women' });
+                                    navigate('/home');
+                                }}
+                                className={`header-category-btn ${
+                                    state.gender == 'women'
+                                        ? 'active-header-category'
+                                        : ''
+                                }`}
+                            >
+                                Women
+                            </section>
+                            <section
+                                id="men"
+                                onClick={() => {
+                                    dispatch({ type: 'men' });
+                                    navigate('/home');
+                                }}
+                                className={`header-category-btn ${
+                                    state.gender == 'men'
+                                        ? 'active-header-category'
+                                        : ''
+                                }`}
+                            >
+                                Men
+                            </section>
                         </section>
-                        <section
-                            id="men"
-                            onClick={() => {
-                                dispatch({ type: 'men' });
-                                navigate('/home');
-                            }}
-                            className={`header-category-btn ${
-                                state.gender == 'men'
-                                    ? 'active-header-category'
-                                    : ''
-                            }`}
-                        >
-                            Men
+                        <section className="header-middle z-[2] flex h-full flex-1 flex-row items-center  !bg-primary sm:mx-0  md:px-10 lg:px-20">
+                            <Search />
                         </section>
-                    </section>
-
-                    <section className="header-middle">
-                        <Search />
-                    </section>
-
-                    <section className="header-right h-full">
-                        {/* <a href="/login"> */}
-                        <Dropdown_Hover
-                            button={profile}
-                            dropdown_options={<Profile_Dropdown />}
-                        />
-                        {/* </a> */}
-
-                        <a
-                            href="/wishlist"
-                            className="header-icons !cursor-pointer"
-                        >
-                            <FavoriteBorderSharpIcon className="img-icon !cursor-not-allowed" />
-                        </a>
-
-                        <Link to="/cart" className="header-icons relative ">
-                            <LocalMallOutlinedIcon
-                                className="img-icon"
-                                fontSize="large"
-                            />
-                            <AnimatePresence>
-                                {cart.length > 0 && (
-                                    <motion.span
-                                        key={cart.length}
-                                        variants={cartVariants}
-                                        animate={'animate'}
-                                        initial={'initial'}
-                                        exit={'exit'}
-                                        className="absolute bottom-[-8px] right-[-3px] flex h-0 w-0 items-center justify-center rounded-full bg-white p-[10px] text-s font-medium"
-                                    >
-                                        {cart.length}
-                                    </motion.span>
-                                )}
-                            </AnimatePresence>
-                        </Link>
+                        <HeaderRight />
                     </section>
                 </header>
 
-                <section id="category-wrapper" className="md:hidden">
-                    <Header_Category category={state.gender} />
+                <section
+                    id="category-wrapper"
+                    className=" !bg-primary-2 relative    flex min-w-full justify-center outline-4 md:hidden "
+                >
+                    <section className="relative flex w-full max-w-[85.375rem] justify-between">
+                        <Header_Category category={state.gender} />
+                    </section>
                 </section>
             </section>
-        </motion.section>
+        </section>
     );
 }
 

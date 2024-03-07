@@ -5,7 +5,7 @@ import { Fragment, useContext, useRef } from 'react';
 import { ProductsProvider } from '../../hooks/genderCategory.jsx';
 import { Outlet, useLocation } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
-import { CartProvider } from '../../context/cartContext';
+import { CartProvider, useCart } from '../../context/cartContext';
 import { useState, useEffect } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,48 +14,10 @@ function Layout() {
     const { layout, setLayout } = useLayoutContext();
 
     const [loading, setLoading] = useState(false);
-
-    const [loadState, setLoadState] = useState(true);
-    const location = useLocation();
+    const { pathname } = useLocation();
     const outletRef = useRef(false);
-    useEffect(() => {
-        // window.scroll(0, 0);
-        const splitLocation = location.pathname.split('/');
-        console.log(splitLocation);
-        const set = new Set([
-            'portal',
-            'my-account',
-            'checkout',
-            'admin',
-            'order-success',
-            'order-cancel',
-            'order-cancelled',
-        ]);
-        if (set.has(splitLocation[1])) {
-            console.log('true');
 
-            if (layout) {
-                outletRef.current = false;
-                setLoadState(() => true);
-            }
-
-            setLayout(() => false);
-            setTimeout(() => {
-                setLoadState(() => false);
-                outletRef.current = true;
-            }, 1000);
-        } else {
-            if (!layout) {
-                setLoadState(() => true);
-            }
-            setLayout(() => true);
-            // setLoadState(() => false);
-            setTimeout(() => {
-                setLoadState(() => false);
-                outletRef.current = true;
-            }, 1000);
-        }
-    }, [location?.pathname]);
+    const { dispatch: cartDispatch } = useCart();
 
     const variants = {
         initial: {
@@ -91,41 +53,30 @@ function Layout() {
         },
     };
     return (
-        <CartProvider>
+        <motion.section
+            className="max-w-[100vw]"
+            // key={layout}
+            // variants={variants}
+            // initial={'initial'}
+            // animate={'animate'}
+            // exit={'exit'}
+        >
+   
             <ProductsProvider>
-                <AnimatePresence mode="wait">
-                    {!loadState && (
-                        <motion.section
-                            className=""
-                            // key={layout}
-                            // variants={variants}
-                            // initial={'initial'}
-                            // animate={'animate'}
-                            // exit={'exit'}
-                        >
-                            {
-                                <>
-                                    {layout && <Header />}
-                                    <AnimatePresence>
-                                        <motion.main
-                                            // variants={betaOutletVariant}
-                                            // initial={'initial'}
-                                            // animate={'animate'}
-                                            // exit={'exit'}
-                                            id="main"
-                                        >
-                                            {!loadState && <Outlet />}
-                                        </motion.main>
-                                    </AnimatePresence>
-
-                                    {layout && <Footer />}
-                                </>
-                            }
-                        </motion.section>
-                    )}
-                </AnimatePresence>
+                {layout && <Header />}
+                <main
+                    // variants={betaOutletVariant}
+                    // initial={'initial'}
+                    // animate={'animate'}
+                    // exit={'exit'}
+                    id="main"
+                >
+                    {/* {!loadState && <Outlet />} */}
+                    <Outlet />
+                </main>
+                {layout && <Footer />}{' '}
             </ProductsProvider>
-        </CartProvider>
+        </motion.section>
     );
 }
 

@@ -2,6 +2,7 @@
 import express from 'express';
 import AsyncHandler from 'express-async-handler';
 import Category from '../Models/category.js';
+import productAggregateStage from '../utils/productAggregateStage.js';
 const router = express.Router();
 
 export const get_all_category = AsyncHandler(async (req, res, next) => {
@@ -77,20 +78,50 @@ export const get_singleCategory = AsyncHandler(async (req, res, next) => {
 export const query_category_products_by_gender = AsyncHandler(
   async (req, res, next) => {
     const { name, gender } = req.params;
-    const result = await Category.findOne(
-      { name: name.toLowerCase() },
-      { gender: 1 },
-    )
-      .populate({
-        path: gender.toLowerCase(),
 
-        // populate: {
-        //   model: 'product',
-        //   path: 'minVariationPrice',
-        // },
-      })
-      .exec();
+    const categoryResult = await Category.aggregate([
+      {
+        $match: { name: name.toLowerCase() },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: gender.toLowerCase(),
+          foreignField: '_id',
+          as: 'products',
+          pipeline: [
+            {
+              $match: { status: 'active' },
+            },
 
-    res.send(result);
+            ...productAggregateStage({ stats: false }),
+          ],
+        },
+      },
+      {
+        $project: {
+          products: {
+            $sortArray: {
+              input: '$products',
+              sortBy: {
+                _id: 1,
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    res.send(categoryResult[0].products);
   },
 );
+
+export const getCategoryIds = AsyncHandler(async (req, res, next) => {
+  const categoryResult = await Category.find(
+    {},
+    { name: 1 },
+    { lean: { toObject: true } },
+  );
+
+  res.send(categoryResult);
+});

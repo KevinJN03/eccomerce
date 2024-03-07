@@ -1,4 +1,4 @@
-import { s3Delete } from './s3Service.js';
+import { s3Delete } from './utils/s3Service.js';
 
 const customValidationError = (error) => {
   const values = Object.values(error.errors).map((err) => err.message);

@@ -6,12 +6,22 @@ import sharpify from '../Upload/sharpify.js';
 
 async function generateProduct(req, id, endPoint = 'products') {
   const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
-  let counter = 0;
+  let counter = 1;
   const imageArr = [];
   const { files } = req;
 
   const { variations } = req.body;
-  const { title, delivery, gender, price, stock, category, detail } = req.body;
+
+  const {
+    title,
+    delivery,
+    gender,
+    price,
+    stock,
+    category,
+  
+    description,
+  } = req.body;
 
   const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
   const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
@@ -28,9 +38,10 @@ async function generateProduct(req, id, endPoint = 'products') {
     delivery,
     gender,
     category,
-    detail,
+
     variations: parseVariations,
     images: imageArr,
+    description,
   };
   if (newStock.on) {
     productData.stock = newStock.value;
@@ -43,13 +54,12 @@ async function generateProduct(req, id, endPoint = 'products') {
   const sharpResult = [];
   for (const item of files) {
     const sharpen = await sharpify(item);
-    sharpen.fileName = counter === 0 ? 'primary' : `additional-${counter}`;
+    sharpen.fileName = counter;
     imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
     counter += 1;
     sharpResult.push(sharpen);
   }
 
-  // const sharpResult = await Promise.all(newFiles);
   return { productData, sharpResult };
 }
 

@@ -8,8 +8,14 @@ import { adminAxios } from '../../../api/axios';
 import UserLogout from '../../../hooks/userLogout';
 
 function SideContainer({}) {
-    const { checks, setChecks, categoryQuantity, showStats, setShowStats } =
-        useListingPageContext();
+    const {
+        checks,
+        setChecks,
+        categoryQuantity,
+        showStats,
+        setShowStats,
+        deliveryProfile,
+    } = useListingPageContext();
     const { allProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
     const [categoryArray, setCategories] = useState([]);
@@ -222,7 +228,7 @@ function SideContainer({}) {
             </div>
 
             <div
-                className="flex w-fit flex-row flex-nowrap gap-2 cursor-pointer "
+                className="flex w-fit cursor-pointer flex-row flex-nowrap gap-2 "
                 onClick={() =>
                     setChecks((prevChecks) => ({
                         ...prevChecks,
@@ -260,14 +266,16 @@ function SideContainer({}) {
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
                 >
                     <optgroup label="Sections" className="text-s font-medium">
-                        <option className="text-xs">All</option>
+                        <option selected={!checks?.section} className="text-xs">
+                            All
+                        </option>
 
                         {categoryArray.map(({ _id, name }) => {
                             return (
                                 <option
                                     disabled={!categoryQuantity?.[_id]}
                                     className="text-xs"
-                                    selected={checks?.select == _id}
+                                    selected={checks?.section == _id}
                                     value={_id}
                                 >
                                     {`${name} (${
@@ -288,15 +296,30 @@ function SideContainer({}) {
                 </p>
 
                 <select
+                    onChange={(e) =>
+                        setChecks((prevState) => ({
+                            ...prevState,
+                            deliveryProfile: e.target.value,
+                        }))
+                    }
                     name="sections"
                     id="sections"
                     className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
                 >
                     <optgroup label="Sections">
-                        <option>All</option>
+                        <option selected={!checks?.deliveryProfile}>All</option>
 
-                        {[1, 2, 3].map((item) => {
-                            return <option value={item}>{item}</option>;
+                        {deliveryProfile.map((item) => {
+                            return (
+                                <option
+                                    selected={
+                                        item._id == checks?.deliveryProfile
+                                    }
+                                    value={item._id}
+                                >
+                                    {item.name}
+                                </option>
+                            );
                         })}
                     </optgroup>
                 </select>

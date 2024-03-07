@@ -5,20 +5,36 @@ import {
     useEffect,
     useState,
 } from 'react';
-const cartFromLocalStorage = JSON.parse(localStorage.getItem('cart') || '[]');
+import { isEqual } from 'lodash';
+
+const getCartFromLocalStorage = () => {
+    return JSON.parse(localStorage.getItem('cart') || '[]');
+};
 export const useCart = () => {
     return useContext(cartContext);
 };
 
-const reducer = (cart, action) => {
+const reducer = (state, action) => {
     // JSON.parse(cart)
 
     let isProductInCart = false;
 
-    const { product } = action;
+    const { product, type } = action;
+    let cart = null;
+    const cartFromLS = getCartFromLocalStorage();
+    const isSame = isEqual(state, cartFromLS);
 
-    ({ product });
-    if (action.type == 'add') {
+    if (isSame) {
+        cart = state;
+    } else {
+        cart = cartFromLS;
+    }
+
+    if (type == 'refresh') {
+        return cart;
+    }
+
+    if (type == 'add') {
         const foundItemInCart = cart.map((item) => {
             if (
                 item.id == product.id &&
@@ -28,7 +44,7 @@ const reducer = (cart, action) => {
                     product?.variationSelect?.variation2?.variation
             ) {
                 isProductInCart = true;
-                return { ...item, quantity: item.quantity + 1 };
+                return { ...item, quantity: parseInt(item.quantity) + 1 };
             }
 
             return item;
@@ -37,15 +53,15 @@ const reducer = (cart, action) => {
         if (isProductInCart) {
             return foundItemInCart;
         } else {
-            return [...cart, action.product];
+            return [action.product, ...cart];
         }
     }
 
-    if (action.type == 'remove') {
+    if (type == 'remove') {
         return cart.filter((product) => product.cartId !== action.cartId);
     }
 
-    if (action.type == 'edit quantity') {
+    if (type == 'edit quantity') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
                 const newItem = {
@@ -61,7 +77,7 @@ const reducer = (cart, action) => {
         return newCart;
     }
 
-    if (action.type == 'edit variation') {
+    if (type == 'edit variation') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
                 const newItem = {
@@ -79,7 +95,7 @@ const reducer = (cart, action) => {
         return newCart;
     }
 
-    if (action.type == 'remove items') {
+    if (type == 'remove items') {
         const cartIds = action?.cartIds;
         const newCart = cart.filter((item) => !cartIds.includes(item.cartId));
 
@@ -87,20 +103,33 @@ const reducer = (cart, action) => {
         return newCart;
     }
 
-    throw new Error(
-        `${action.type} is not valid, please use either add or remove`
-    );
+    throw new Error(`${type} is not valid, please use either add or remove`);
 };
 const cartContext = createContext(null);
 export function CartProvider({ children }) {
-    const [cart, dispatch] = useReducer(reducer, cartFromLocalStorage);
+    const [cart, dispatch] = useReducer(reducer, getCartFromLocalStorage());
     const [promo, setPromo] = useState([{ bool: false }]);
     const [deliveryOption, setDeliveryOption] = useState({});
+    const [cartLoading, setCartLoading] = useState(false);
+    const [cartRefresh, setCartRefresh] = useState(false);
+    useEffect(() => {
+        // if (cartRefresh) {
+        //     setCartLoading(() => true);
+        // }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        // const timeout = setTimeout(() => {
+        //     setCartLoading(() => false);
+        //     setCartRefresh(() => false);
+        // }, 1500);
+
+        // return () => {
+        //     clearTimeout(timeout);
+        // };
+    }, [cart]);
 
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        ('state updated');
-    }, [cart]);
+        dispatch({ type: 'refresh' });
+    }, [cartRefresh]);
 
     const value = {
         cart,
@@ -109,6 +138,10 @@ export function CartProvider({ children }) {
         setDeliveryOption,
         promo,
         setPromo,
+        cartLoading,
+        setCartLoading,
+        cartRefresh,
+        setCartRefresh,
     };
 
     return (

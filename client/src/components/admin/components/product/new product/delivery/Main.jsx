@@ -1,33 +1,61 @@
-import New from './New';
-import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import Popover from './edit';
-import { useContent } from '../../../../../../context/ContentContext';
-import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
-import RemoveCircleOutlineRoundedIcon from '@mui/icons-material/RemoveCircleOutlineRounded';
-import Edit from './edit';
-import { adminAxios } from '../../../../../../api/axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Delete from './delete';
 import fetchProfile from './fetchDeliveryProfile';
 import { useNewProduct } from '../../../../../../context/newProductContext';
+import {
+    AddCircleOutlineRounded,
+    DeleteForeverSharp,
+    ModeEditOutlineOutlined,
+    RemoveCircleOutlineRounded,
+} from '@mui/icons-material';
+import { adminAxios } from '../../../../../../api/axios';
+import UserLogout from '../../../../../../hooks/userLogout';
+import BubbleButton from '../../../../../buttons/bubbleButton';
 
 function MainContent() {
     const {
         setProfile,
         profile,
         setModalCheck,
-        loading,
-        setLoading,
+
         contentDispatch,
     } = useNewProduct();
     const [deliveryProfiles, setDeliveryProfiles] = useState([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const { logOutUser } = UserLogout();
     const [profileReplacement, setProfileReplacement] = useState(
         JSON.parse(JSON.stringify(profile))
     );
     const [disable, setDisable] = useState(true);
+
+    const abortControllerRef = useRef(new AbortController());
     useEffect(() => {
-        fetchProfile(setDeliveryProfiles);
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+        const fetchData = async () => {
+            try {
+                const { data } = await adminAxios.get('/delivery/all', {
+                    signal: abortControllerRef.current?.signal,
+                });
+
+                setDeliveryProfiles(() => data);
+            } catch (error) {
+                console.error('error while fetching: ', error.message);
+
+                logOutUser({ error });
+            } finally {
+                setTimeout(() => {
+                    setLoading(() => false);
+                }, 1000);
+            }
+        };
+
+        fetchData();
+        return () => {
+            abortControllerRef.current?.abort();
+        };
     }, []);
 
     useEffect(() => {
@@ -36,15 +64,15 @@ function MainContent() {
         }
     }, [profileReplacement]);
 
-    useEffect(() => {
-        fetchProfile(setDeliveryProfiles);
-        let timeout;
-        if (loading == true) {
-            timeout = setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        }
-    }, [loading]);
+    // useEffect(() => {
+    //     fetchProfile(setDeliveryProfiles);
+    //     let timeout;
+    //     if (loading == true) {
+    //         timeout = setTimeout(() => {
+    //             setLoading(false);
+    //         }, 1000);
+    //     }
+    // }, [loading]);
 
     const handleClick = (profile) => {
         setProfileReplacement((prevState) => [...prevState, profile]);
@@ -89,7 +117,7 @@ function MainContent() {
                                 return (
                                     <div
                                         key={delivery._id}
-                                        className={`item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2 ${
+                                        className={`item border-1 mb-3 flex flex-row justify-between rounded-lg px-3 py-2 hover:bg-light-grey/60 ${
                                             findProfile && 'border-green-400'
                                         }`}
                                     >
@@ -121,8 +149,8 @@ function MainContent() {
                                             className="flex items-center justify-center gap-2"
                                         >
                                             {findProfile ? (
-                                                <RemoveCircleOutlineRoundedIcon
-                                                    className="box-content rounded-full p-1 hover:bg-slate-100"
+                                                <RemoveCircleOutlineRounded
+                                                    className="box-content rounded-full p-1 hover:bg-dark-gray/80"
                                                     onClick={() =>
                                                         removeProfile(
                                                             delivery._id
@@ -130,16 +158,37 @@ function MainContent() {
                                                     }
                                                 />
                                             ) : (
-                                                <AddCircleOutlineRoundedIcon
-                                                    className="box-content rounded-full p-1 hover:bg-slate-100"
+                                                <AddCircleOutlineRounded
+                                                    className="box-content rounded-full p-1 hover:bg-dark-gray/80"
                                                     onClick={() =>
                                                         handleClick(delivery)
                                                     }
                                                 />
                                             )}
 
-                                            <Edit profile={delivery} />
-                                            <Delete id={delivery._id} />
+                                            <button
+                                                className="box-content rounded-full p-1 hover:bg-dark-gray/80"
+                                                onClick={() => {
+                                                    contentDispatch({
+                                                        type: 'delivery_edit',
+                                                        profile: delivery,
+                                                    });
+                                                }}
+                                            >
+                                                <ModeEditOutlineOutlined />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    contentDispatch({
+                                                        type: 'delivery_delete',
+                                                        deliveryProfileId:
+                                                            delivery._id,
+                                                    });
+                                                }}
+                                                className="box-content rounded-full p-1 hover:bg-dark-gray/80"
+                                            >
+                                                <DeleteForeverSharp />
+                                            </button>
                                         </section>
                                     </div>
                                 );
@@ -153,19 +202,15 @@ function MainContent() {
                         )}
 
                         {deliveryProfiles.length > 0 && (
-                            <div className="flex w-full flex-row gap-x-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setModalCheck(false)}
-                                    className="flex-1 rounded-md bg-red-300 py-2 hover:bg-red-500"
-                                >
-                                    Cancel
-                                </button>
+                            <div className="mt-5 flex w-full flex-row items-center justify-between gap-x-2">
+                                <BubbleButton
+                                    handleClick={() => setModalCheck(false)}
+                                />
                                 <button
                                     type="button"
                                     onClick={confirm}
-                                    className="flex-1 rounded-md bg-green-300 py-2 hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-slate-100"
-                                    disabled={disable}
+                                    className=" theme-btn  disabled:bg-black-50 rounded-full bg-black px-5 py-3 text-base font-medium text-white disabled:cursor-not-allowed"
+                                    // disabled={disable}
                                 >
                                     Confirm
                                 </button>

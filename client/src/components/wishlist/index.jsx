@@ -1,0 +1,173 @@
+import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
+import { useWishlistContext } from '../../context/wishlistContext';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import axios from '../../api/axios';
+import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
+import WishListItem from './wishListItem';
+import { AnimatePresence, motion } from 'framer-motion';
+import EmptyWishList from './empty.jsx';
+import { Diversity2Outlined } from '@mui/icons-material';
+
+function WishList({}) {
+    const {
+        wishlist,
+        wishListDispatch,
+        wishlistLoading,
+        setWishListLoading,
+        wishlistRefresh,
+        getWishlistFromLS,
+    } = useWishlistContext();
+    const [wishlistProducts, setWishlistProduct] = useState([]);
+    const abortControllerRef = useRef(new AbortController());
+
+    const fetchData = async () => {
+        try {
+            setWishListLoading(() => true);
+            const productIdArray = [];
+            const wishlistMap = new Map(getWishlistFromLS());
+            for (const id of wishlistMap.keys()) {
+                productIdArray.push(id);
+            }
+            if (productIdArray.length < 1) {
+                setTimeout(() => {
+                    setWishListLoading(() => false);
+                }, 1000);
+
+                return;
+            }
+            const { data } = await axios.get(`product/many/${productIdArray}`, {
+                signal: abortControllerRef.current?.signal,
+            });
+
+            // setProducts(() => data?.products || []);
+            wishListDispatch({
+                type: 'refresh',
+                products: data?.products || [],
+            });
+        } catch (error) {
+            console.error(error);
+        } finally {
+        }
+    };
+
+    useEffect(() => {
+        abortControllerRef.current?.abort();
+
+        abortControllerRef.current = new AbortController();
+
+        fetchData();
+
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, [wishlistRefresh]);
+
+    useEffect(() => {
+        const productsArray = [];
+
+        wishlist.forEach(function (value, key) {
+            productsArray.push(value);
+        });
+        console.log({ productsArray });
+        setWishlistProduct(() => productsArray);
+
+        const timeout = setTimeout(() => {
+            setWishListLoading(() => false);
+        }, 1000);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [wishlist]);
+    return (
+        <div className="flex w-full flex-col bg-white">
+            <AnimatePresence mode="wait">
+                {wishlistLoading ? (
+                    <motion.section
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                            duration: 0.3,
+                            ease: 'easeInOut',
+                        }}
+                        key={'wishlist-loader'}
+                        className=" flex h-full  w-full items-center justify-center"
+                    >
+                        <GLoader />
+                    </motion.section>
+                ) : wishlistProducts.length > 0 ? (
+                    <motion.section
+                        key={'wishlist-container'}
+                        initial={{ opacity: 0 }}
+                        animate={{
+                            opacity: 1,
+                            transition: {
+                                duration: 0.3,
+                                ease: 'easeInOut',
+                            },
+                        }}
+                        exit={{
+                            opacity: 0,
+                            transition: {
+                                duration: 0.2,
+                                ease: 'easeOut',
+                            },
+                        }}
+                        className=" relative  flex h-full w-full flex-col"
+                    >
+                        <header className="bg-dark-gray/10 py-6 text-center font-gotham text-2xl font-bold tracking-wider text-black/80">
+                            Saved Items
+                        </header>
+                        <div className="flex h-full w-10/12 flex-col gap-3 self-center bg-white pt-3 ">
+                            <div className="flex flex-row justify-between">
+                                <select
+                                    name="sort-by"
+                                    id="sort-by"
+                                    className="daisy-select daisy-select-bordered daisy-select-sm w-fit rounded-none text-base font-semibold"
+                                >
+                                    <option value="">Recently added</option>
+                                </select>
+
+                                <p>
+                                    {`${wishlistProducts.length} ${
+                                        wishlistProducts.length > 1
+                                            ? 'items'
+                                            : 'item'
+                                    }`}
+                                </p>
+                            </div>
+
+                            <section className="flex h-full flex-row flex-wrap gap-y-10 mb-28">
+                                <AnimatePresence>
+                                    {wishlistProducts.map((product) => {
+                                        return (
+                                            <WishListItem
+                                                product={product}
+                                                key={`wishlistId-${product.wishlistId}`}
+                                            />
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </section>
+                        </div>
+
+                        <div className="flex w-full flex-col items-center justify-center h-full bg-light-grey/40 py-10 gap-5 mb-8">
+                            <Diversity2Outlined className="!text-4xl" />
+                            <p className='max-w-52 text-center'>
+                                Sign in to sync your Saved Items across all your
+                                devices.
+                            </p>
+
+                            <a href="/portal/login" className='bg-white border-2 border-dark-gray py-3 px-28 font-gotham hover:bg-light-grey transition-all '> SIGN IN</a>
+                        </div>
+                    </motion.section>
+                ) : (
+                    <EmptyWishList />
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+export default WishList;

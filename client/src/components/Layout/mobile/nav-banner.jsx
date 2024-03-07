@@ -16,7 +16,7 @@ dispatch({type: 'changeProductCategory', productCategory: title.toLowerCase()})
             } mx-3 mt-3 items-center justify-between bg-[var(--light-grey)]`}
             onClick={updateCategory}
         >
-            <p className="pl-3 text-lg">{title}</p>
+            <p className="pl-3 text-base font-bold tracking-wider ">{title}</p>
             <img
                 src={img}
                 alt=""

@@ -21,19 +21,17 @@ import s3Upload, {
   s3Delete,
   s3Get,
   s3PdfUpload,
-} from '../s3Service.js';
+} from '../utils/s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
-
 import multerUpload from '../utils/multerUpload.js';
-import DraftProducts from '../Models/draftProducts.js';
+
 import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
-import draftProducts from '../Models/draftProducts.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
-import { JsonWebTokenError } from 'jsonwebtoken';
+
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
 export const count_all = asyncHandler(async (req, res, next) => {
@@ -556,87 +554,6 @@ export const searchOrder = [
   }),
 ];
 
-export const getDraftProducts = asyncHandler(async (req, res, next) => {
-  const draftProducts = await DraftProducts.find({});
-
-  res.send({ draftProducts });
-});
-
-export const createDaftProduct = [
-  multerUpload.array('files', 6),
-  productValidator,
-  asyncHandler(async (req, res, next) => {
-    const result = validationResult(req);
-
-    if (!result.isEmpty()) {
-      res.status(400).send(result.errors);
-      return;
-    }
-
-    const { gender, category } = req.body;
-    const draftProducts = new DraftProducts();
-
-    const { productData, sharpResult } = await generateProduct(
-      req,
-      draftProducts.id,
-      'draftProducts',
-    );
-
-    Object.assign(draftProducts, productData);
-    draftProducts.status = 'draft';
-    try {
-      await s3Upload({
-        files: sharpResult,
-        isProfile: false,
-        folderId: draftProducts.id,
-        endPoint: 'draftProducts',
-      });
-
-      await draftProducts.save();
-      return res.send({ success: true, msg: 'draft saved' });
-    } catch (error) {
-      const deleteId = draftProducts.id;
-
-      await s3Delete('products', deleteId);
-
-      next(error);
-    }
-  }),
-];
-
-export const getDraft = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const draftProduct = await DraftProducts.findOne({ _id: id })
-    .populate([{ path: 'delivery' }, { path: 'category' }])
-    .exec();
-
-  if (!draftProduct) {
-    return res.status(404).send('product not found');
-  }
-
-  // await s3Get(id);
-
-  return res.status(200).send({ draftProduct });
-});
-
-export const delete_drafts = asyncHandler(async (req, res, next) => {
-  const { ids } = req.params;
-
-  const idsArray = ids.split(',');
-
-  const deleteProductsImages = idsArray.map((id) => {
-    return s3Delete('draftProducts', id);
-  });
-
-  const result = await Promise.all([
-    DraftProducts.deleteMany({ _id: idsArray }),
-    ...deleteProductsImages,
-  ]);
-
-  res.send({ msg: 'deletion successful' });
-});
-
 export const getAllProducts = [
   check('check.featured')
     .trim()
@@ -661,22 +578,9 @@ export const getAllProducts = [
     .optional({ checkFalsy: true, null: true, undefined: true }),
   asyncHandler(async (req, res, next) => {
     const { checks } = req.body;
-    console.log({ checks });
-    
-
-    const draftPipeline = [
-      {
-        $set: {
-          status: 'draft',
-        },
-      },
-      ...productAggregateStage(),
-
-      { $sort: { _id: 1, ...checks.sort } },
-    ];
 
     const productPipeline = [
-      ...productAggregateStage(),
+      ...productAggregateStage({ stats: true }),
 
       {
         $set: {
@@ -709,25 +613,69 @@ export const getAllProducts = [
       },
     ];
 
+    const matchArray = [];
+
     if (checks?.section) {
       try {
         const newObjectId = new mongoose.Types.ObjectId(checks.section);
-        productPipeline.unshift({ $match: { category: newObjectId } });
 
-        draftPipeline.unshift({ $match: { category: newObjectId } });
+        matchArray.push({ category: newObjectId });
       } catch (error) {
         console.log('error converting section id to objectId', error.message);
       }
     }
+
     if (checks?.featured) {
-      productPipeline.unshift({ $match: { featured: true } });
-      draftPipeline.unshift({ $match: { featured: true } });
+      matchArray.push({ featured: true });
     }
 
-    const drafts = await DraftProducts.aggregate(draftPipeline).collation({
-      locale: 'en',
-      caseLevel: true,
-    });
+    if (checks?.deliveryProfile) {
+      try {
+        const newObjectId = new mongoose.Types.ObjectId(checks.deliveryProfile);
+        matchArray.push({ delivery: { $eq: newObjectId } });
+      } catch (error) {
+        console.log(
+          'error converting deliveryProfile id to objectId',
+          error.message,
+        );
+      }
+    }
+
+    if (matchArray.length > 0) {
+      productPipeline.unshift({ $match: { $and: matchArray } });
+    }
+    if (checks?.searchText) {
+      const should = [
+        {
+          autocomplete: {
+            query: checks.searchText,
+            path: 'title',
+          },
+        },
+      ];
+
+      try {
+        const objectId = new mongoose.Types.ObjectId(checks.searchText);
+        should.push({
+          equals: {
+            value: objectId,
+            path: '_id',
+          },
+        });
+      } catch (error) {
+        console.error('parse string to objectId failed: ', error?.message);
+      }
+
+      const searchStage = {
+        $search: {
+          index: 'products_search_index',
+          compound: {
+            should,
+          },
+        },
+      };
+      productPipeline.unshift(searchStage);
+    }
 
     const products = await Product.aggregate(productPipeline)
       .collation({ locale: 'en', caseLevel: true })
@@ -738,7 +686,6 @@ export const getAllProducts = [
       {},
     );
 
-    allProducts.draft = drafts;
     res.status(200).send({
       success: true,
       products: allProducts,
@@ -749,14 +696,29 @@ export const getAllProducts = [
 export const getProductFiles = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  console.log({ id });
   const result = await s3Get(id);
-  const parseResult = result.map((file) => file.Body);
-  // console.log({parseResult})
+  // const parseResult = result.map((file) => file.Body);
 
-  res.json({
-    parseResult,
-  });
+  const files = await Promise.all(
+    (result || [])?.map(async ({ data, key }) => {
+      // const file = new File([Body.read()], ContentType, {
+      //   type: ContentType,
+      // });
+
+      const base64String = await data.Body.transformToString('base64');
+
+      const obj = {
+        ContentType: data.ContentType,
+        fileName: key,
+        ContentLength: data.ContentLength,
+        buffer: base64String,
+      };
+
+      return obj;
+    }),
+  );
+
+  res.send({ files });
 });
 
 export const updateProductFeature = [
@@ -765,112 +727,216 @@ export const updateProductFeature = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { featured, draft } = req.query;
-    let product = null;
 
-    if (draft) {
-      product = await DraftProducts.findOneAndUpdate(
-        { _id: id },
-        { featured },
-        {
-          upsert: false,
-          new: true,
-          lean: {
-            toObject: true,
-          },
+    const product = await Product.findOneAndUpdate(
+      { _id: id },
+      { featured },
+      {
+        upsert: false,
+        new: true,
+        lean: {
+          toObject: true,
         },
-      );
-    } else {
-      product = await Product.findOneAndUpdate(
-        { _id: id },
-        { featured },
-        {
-          upsert: false,
-          new: true,
-          lean: {
-            toObject: true,
-          },
-        },
-      );
-    }
+      },
+    );
 
     console.log(product?.featured);
     res.status(200).send({ success: true, featured: product?.featured });
   }),
 ];
 
-export const searchProduct = [
+export const updateStatus = asyncHandler(async (req, res, next) => {
+  const { productIds, status } = req.body;
+  await Product.updateMany({ _id: productIds }, { status });
+  res.send({ success: true, msg: `${productIds} status has been updated` });
+});
+
+export const editTitle = [
   asyncHandler(async (req, res, next) => {
-    const { searchText , sort} = req.query;
+    const { selectedOption, productIds, optionData, property } = req.body;
 
-    const should = [
-      {
-        autocomplete: {
-          query: searchText,
-          path: 'title',
-        },
-      },
+    const products = await Product.find(
+      { _id: productIds },
+      { title: 1, description: 1 },
+    );
 
-      {
-        text: {
-          query: searchText,
-          path: '_id',
-        },
-      },
-    ];
+    const updateProducts = products.map((product) => {
+      let newText = null;
+      const currentValue = product[property];
+      console.log({ currentValue });
+      if (selectedOption === 'add_to_front') {
+        newText = optionData + currentValue;
+      }
 
-    try {
-      const objectId = new mongoose.Types.ObjectId(searchText);
-      should.push({
-        equals: {
-          value: objectId,
-          path: 'customer',
+      if (selectedOption === 'add_to_end') {
+        newText = currentValue + optionData;
+      }
+
+      if (selectedOption === 'find_and_replace') {
+        if (optionData.replaceAll) {
+          newText = currentValue?.replaceAll(
+            optionData.find,
+            optionData.replace,
+          );
+        } else {
+          newText = currentValue?.replace(optionData.find, optionData.replace);
+        }
+      }
+
+      if (selectedOption === 'delete') {
+        newText = currentValue.replace(optionData, '');
+
+        if (optionData.instance) {
+          newText = currentValue.replaceAll(optionData.text, '');
+        } else {
+          newText = currentValue.replace(optionData.text, '');
+        }
+      }
+
+      if (selectedOption === 'reset') {
+        newText = optionData;
+      }
+      return Product.findByIdAndUpdate(
+        { _id: product._id },
+        { [property]: newText.replace(/ {2,}/g, '  ').trim() },
+        {
+          new: true,
+          select: { [property]: 1 },
         },
-      });
-    } catch (error) {
-     
-      console.error('parse string to objectId failed: ', error?.message);
+      );
+    });
+    const promiseResult = await Promise.all(updateProducts);
+    console.log({ promiseResult, property });
+    res.send({ success: true, msg: 'titles updates' });
+  }),
+];
+
+export const editPrice = [
+  check('amount', 'Price must be between £0.17 and £42,933.20')
+    .escape()
+    .trim()
+    .isFloat({ min: 0.17, max: 42933.20 }),
+  asyncHandler(async (req, res, next) => {
+    const { productIds, selectedOption, amount } = req.body;
+
+    const result = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!result?.isEmpty()) {
+      console.log({ error: result.mapped() });
+      return res.status(400).send({ error: result.mapped(), success: false });
     }
+    const productsInfo = await Product.find(
+      { _id: productIds },
+      { variations: 1, price: 1 },
+      // { lean: { toObject: true } },
+    );
+    const failedProductIds = new Map();
+    const updateProductPrice = productsInfo.map((product) => {
+      let isPriceAssorted = false;
+      let variationWithPriceIndex = null;
 
-    const products = await Product.aggregate([
-      {
-        $search: {
-          index: 'products_search_index',
-          compound: {
-            should,
-          },
-        },
-      },
-      ...productAggregateStage(),
-      {
-        $set: {
-          status: {
-            $cond: {
-              if: { $gt: ['$additional_data.stock.total', 0] },
-              then: '$status',
-              else: 'soldout',
+      const getNewPrice = (currentPrice) => {
+        let nextCurrentPrice = parseFloat(currentPrice);
+        const parseAmount = parseFloat(amount);
+
+        if (selectedOption == 'increase_by_amount') {
+          nextCurrentPrice += parseAmount;
+        }
+
+        if (selectedOption == 'decrease_by_amount') {
+          nextCurrentPrice -= parseAmount;
+        }
+
+        if (selectedOption == 'set_new_amount') {
+          nextCurrentPrice = parseAmount;
+        }
+
+        if (selectedOption == 'percentage_increase') {
+          nextCurrentPrice *= 1 + parseAmount / 100;
+        }
+
+        if (selectedOption == 'percentage_decrease') {
+          nextCurrentPrice *= 1 - parseAmount / 100;
+        }
+        // return nextCurrentPrice.toFixed(2)
+        const formatPrice = Math.floor(nextCurrentPrice * 100) / 100;
+        if (formatPrice < 0.17 || formatPrice > 999) {
+          const idString = product._id?.toString();
+          failedProductIds.set(idString, {
+            id: idString,
+            msg:
+              formatPrice < 0.17
+                ? 'Price is below listing fee.'
+                : 'Price is too high.',
+          });
+        }
+        return formatPrice;
+      };
+
+      for (const [idx, { priceHeader }] of product?.variations.entries()) {
+        if (priceHeader?.on) {
+          isPriceAssorted = true;
+          variationWithPriceIndex = idx;
+          break;
+        }
+      }
+      if (!isPriceAssorted) {
+        if (!failedProductIds.has(product._id.toString())) {
+          return Product.findByIdAndUpdate(
+            { _id: product._id },
+            {
+              price: {
+                previous: product.price.current,
+                current: getNewPrice(product.price?.current),
+              },
             },
-          },
-        },
-      },
+          );
+        }
+      }
 
-      {
-        $group: {
-          _id: '$status',
-          products: { $push: '$$ROOT' },
-        },
-      },
+      if (isPriceAssorted) {
+        const generateVariationPrice = (index) => {
+          const { options } = product.variations[index];
+          const newOptionsMap = new Map();
+          options.forEach((value, key) => {
+            newOptionsMap.set(key, {
+              ...value,
+              price: getNewPrice(value.price),
+            });
+          });
 
-      {
-        $addFields: {
-          products: {
-            $sortArray: { input: '$products', sortBy: { ...checks.sort } },
-          },
-        },
-      },
-      {
-        $sort: { _id: 1 },
-      },
-    ]);
-    res.send({ success: true, searchText, products });
+          return Product.findByIdAndUpdate(
+            { _id: product._id },
+            { [`variations.${index}.options`]: newOptionsMap },
+          );
+        };
+        if (product.variations?.length === 3) {
+          const updatedVariationOptions = generateVariationPrice(2);
+
+          if (!failedProductIds.has(product._id.toString())) {
+            return updatedVariationOptions;
+          }
+        } else {
+          const updatedVariationOptions = generateVariationPrice(
+            variationWithPriceIndex,
+          );
+          if (!failedProductIds.has(product._id.toString())) {
+            return updatedVariationOptions;
+          }
+        }
+      }
+    });
+
+    if (failedProductIds.size > 0) {
+      return res.status(400).send({
+        success: false,
+        failedProductIds: Array.from(failedProductIds).map(
+          ([key, value]) => value,
+        ),
+      });
+    }
+    const PromiseResult = await Promise.all(updateProductPrice);
+    console.log({ PromiseResult });
+    res.status(200).send({ success: true, msg: 'products price updated' });
   }),
 ];

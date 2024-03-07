@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAdminContext } from '../../../context/adminContext';
 import { useListingPageContext } from '../../../context/listingPageContext';
-import SelectionInput from '../order/home/selectionIput';
+import SelectionInput from '../order/home/selectionInput';
 import { ArrowDropDownSharp } from '@mui/icons-material';
 import { useContent } from '../../../context/ContentContext';
 import { ClickAwayListener } from '@mui/material';
@@ -9,22 +9,18 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import variant from '../order/home/variant';
 function SubHeader({}) {
-    const { selectionSet, setSelectionSet, checks, productIds } =
-        useListingPageContext();
+    const {
+        selectionSet,
+        setSelectionSet,
+        checks,
+        productIds,
+        handleClick,
+        text,
+    } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [showAction, setShowAction] = useState(false);
 
-    const handleDelete = () => {
-        setModalContent({
-            type: 'delete',
-            ids: Array.from(selectionSet),
-            setSelectionSet,
-            draft: checks?.listing_status == 'draft',
-            checks,
-        });
-        setModalCheck(() => true);
-    };
     return (
         <div className="subheader mb-3 flex flex-row  flex-nowrap gap-3">
             <SelectionInput
@@ -39,15 +35,30 @@ function SubHeader({}) {
                 >
                     Renew
                 </button>
+                {text[checks?.listing_status] && (
+                    <button
+                        onClick={() =>
+                            handleClick({
+                                productIds: Array.from(selectionSet),
+                                type: text[
+                                    checks?.listing_status
+                                ]?.toLowerCase(),
+                            })
+                        }
+                        disabled={!selectionSet?.size}
+                        type="button"
+                        className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
+                    >
+                        {text[checks?.listing_status]}
+                    </button>
+                )}
                 <button
-                    disabled={!selectionSet?.size}
-                    type="button"
-                    className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
-                >
-                    Deactivate
-                </button>
-                <button
-                    onClick={handleDelete}
+                    onClick={() =>
+                        handleClick({
+                            productIds: Array.from(selectionSet),
+                            type: 'delete',
+                        })
+                    }
                     disabled={!selectionSet?.size}
                     type="button"
                     className="rounded-r-inherit px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
@@ -95,19 +106,25 @@ function SubHeader({}) {
                                     },
                                 ].map(({ title, id }) => {
                                     return (
-                                        <p 
+                                        <p
                                             onClick={() => {
                                                 setShowAction(() => false);
                                                 setModalCheck(() => true);
                                                 setModalContent(() => ({
                                                     type: id,
+
+                                                    clearSelection: () => {
+                                                        setSelectionSet(
+                                                            new Set()
+                                                        );
+                                                    },
                                                     products:
                                                         Array.from(
                                                             selectionSet
                                                         ),
                                                 }));
                                             }}
-                                            className="whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20 cursor-pointer"
+                                            className="cursor-pointer whitespace-nowrap px-5 py-2 hover:bg-dark-gray/20"
                                             id={id}
                                             key={id}
                                         >

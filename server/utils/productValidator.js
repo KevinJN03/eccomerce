@@ -79,17 +79,19 @@ const productValidator = [
     ),
 
   // .notEmpty(),
-  body('detail', 'Please add some details.')
-    .trim()
-    .escape()
-    .isArray({ min: 1 })
-    .custom(async (value) => {
-      const everyValue = value.every((item) => item === '\n' || item === '');
 
-      if (everyValue === true) {
-        throw new Error();
-      }
-    }),
+  body('description', 'Please Enter a description').escape().trim().notEmpty(),
+  // body('detail', 'Please add some details.')
+  //   .trim()
+  //   .escape()
+  //   .isArray({ min: 1 })
+  //   .custom(async (value) => {
+  //     const everyValue = value.every((item) => item === '\n' || item === '');
+
+  //     if (everyValue === true) {
+  //       throw new Error();
+  //     }
+  //   }),
   body('delivery', 'Please add some delivery profiles.')
     .trim()
     .escape()

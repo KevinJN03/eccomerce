@@ -46,7 +46,7 @@ function Checkout() {
     });
     const { authDispatch } = useAuth();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+
     const [isOrderSubmit, setOrderSubmit] = useState(false);
     const [addresses, setAddresses] = useState([]);
     const [shippingAddress, setShippingAddress] = useState({});
@@ -67,10 +67,42 @@ function Checkout() {
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [initialView, setInitialView] = useState(null);
     const abortControllerRef = useRef(new AbortController());
-    const [error, setError] = useState({})
+    const [error, setError] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [cartLoading, setCartLoading] = useState();
+
+    // useEffect(() => {
+    //     if (cart.length == 0) {
+    //         setCartLoading(() => true);
+    //         setLoading(() => true);
+
+    //         const timeout = setTimeout(() => {
+    //             // navigate('/home');
+
+    //             window.location = '/home';
+    //         }, 4000);
+    //         return () => {
+    //             clearTimeout(timeout);
+    //         };
+    //     }
+    // }, [cart]);
+
     useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
+
+        if (cart.length == 0) {
+            setCartLoading(() => true);
+
+            const timeout = setTimeout(() => {
+                // navigate('/home');
+
+                window.location = '/home';
+            }, 4000);
+            return () => {
+                clearTimeout(timeout);
+            };
+        }
 
         const fetchData = async () => {
             try {
@@ -133,28 +165,15 @@ function Checkout() {
                 logOutUser({ error, authDispatch, navigate });
             } finally {
                 setIsDataSet(() => true);
+                setLoading(() => false);
+
+                setCartLoading(() => false);
             }
         };
 
         fetchData();
     }, []);
 
-    useEffect(() => {
-        if (cart.length == 0) {
-            setLoading(() => true);
-
-            const timeout = setTimeout(() => {
-                navigate('/home');
-                setLoading(false);
-            }, 5000);
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
-    }, [cart]);
-
-    const footerRef = useRef();
-    const isInView = useInView(footerRef);
     return (
         <CheckOutProvider
             value={{
@@ -189,134 +208,152 @@ function Checkout() {
                 setIsDeliveryAddressFill,
                 initialView,
                 setInitialView,
-                error, setError
+                error,
+                setError,
             }}
         >
-            <Elements stripe={stripePromise}>
-                {loading && (
-                    <div className="flex h-screen w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
-                        <img src={RedirectImage} className="h-28 w-28" />
-                        <p className="text-center text-lg">
-                            Your cart is Empty, you will get redirected to the
-                            Home Page in a few seconds.
-                        </p>
-                        <span className="loading loading-infinity loading-lg"></span>
-                    </div>
-                )}
+            <section className="checkout-page-wrapper m-0 h-full min-h-screen w-full max-w-[100vw]  p-0 flex justify-center items-center">
+                <Elements stripe={stripePromise}>
+                    {cartLoading ? (
+                        <div className="flex h-full w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
+                            <img src={RedirectImage} className="h-28 w-28" />
+                            <p className="text-center text-lg">
+                                Your cart is Empty, you will get redirected to
+                                the Home Page in a few seconds.
+                            </p>
+                            <span className="loading loading-infinity loading-lg"></span>
+                        </div>
+                    ) : (
+                        !cartLoading &&
+                        !loading && (
+                            <section
+                                id="checkout-page"
+                                className="m-0 flex h-full w-full justify-center items-center p-0 flex-col"
+                            >
 
-                {!loading && (
-                    <section id="checkout-page">
-                        <section
-                            id="checkout"
-                            variants={variants}
-                            animate={'animate'}
-                            initial={'initial'}
-                            exit={'exit'}
-                        >
-                            <Checkout_Header text={'CHECKOUT'} />
-                            <div className="checkout-body relative">
-                                <section id="checkout-body-wrapper">
-                                    <section className="left flex flex-col !bg-[var(--light-grey)]">
-                                        <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-[var(--light-grey)]">
-                                            <Country_Picker
-                                                disable={
-                                                    disableOtherComponents?.disable
-                                                }
-                                                select={select}
-                                                setSelect={setSelect}
-                                            />
-                                            <Promo
-                                                disable={
-                                                    disableOtherComponents?.disable
-                                                }
-                                            />
-                                            <Email_address
-                                                disable={
-                                                    disableOtherComponents?.disable
-                                                }
-                                            />
-                                            <Address_Container
-                                                mainAddress={shippingAddress}
-                                                setMainAddress={
-                                                    setShippingAddress
-                                                }
-                                                defaultProperty={
-                                                    'shipping_address'
-                                                }
-                                                addressType={'DELIVERY'}
-                                                enableAddressEdit={true}
-                                                disable={
-                                                    disableOtherComponents?.disable &&
-                                                    disableOtherComponents.addressType !=
-                                                        'DELIVERY'
-                                                }
-                                            />
 
-                                            {isDeliveryAddressFill ? (
-                                                <Delivery
-                                                    disable={
-                                                        disableOtherComponents?.disable
-                                                    }
-                                                />
-                                            ) : (
-                                                <div className="border-2 px-6 py-4">
-                                                    <p className="text-lg font-bold opacity-20">
-                                                        DELIVERY OPTIONS
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            {isDeliveryAddressFill ? (
-                                                <PaymentMethodProvider
-                                                    userPaymentMethods={
-                                                        userPaymentMethods
-                                                    }
-                                                >
-                                                    <Payment
-                                                        defaultProperty={
-                                                            'billing_address'
+                                <section
+                                    id="checkout"
+                                    variants={variants}
+                                    animate={'animate'}
+                                    initial={'initial'}
+                                    exit={'exit'}
+                                >
+                                    <Checkout_Header text={'CHECKOUT'} />
+                                    <div
+                                        id="checkout-body"
+                                        className="relative mt-5 flex max-w-[100vw] flex-row gap-3 bg-light-grey sm+md:flex-col-reverse"
+                                    >
+                                        <section
+                                            id="checkout-body-wrapper"
+                                            className="h-full !bg-light-grey lg:w-[600px]"
+                                        >
+                                            <section className="left flex flex-col">
+                                                <section className="top relative flex min-h-screen flex-col gap-y-3 !bg-light-grey">
+                                                    <Country_Picker
+                                                        disable={
+                                                            disableOtherComponents?.disable
                                                         }
-                                                        billingAddress={
-                                                            billingAddress
-                                                        }
-                                                        setBillingAddress={
-                                                            setBillingAddress
+                                                        select={select}
+                                                        setSelect={setSelect}
+                                                    />
+                                                    <Promo
+                                                        disable={
+                                                            disableOtherComponents?.disable
                                                         }
                                                     />
-                                                </PaymentMethodProvider>
-                                            ) : (
-                                                <div className="border-2 px-6 py-4">
-                                                    <p className="text-lg font-bold opacity-20">
-                                                        PAYMENT
-                                                    </p>
+                                                    <Email_address
+                                                        disable={
+                                                            disableOtherComponents?.disable
+                                                        }
+                                                    />
+                                                    <Address_Container
+                                                        mainAddress={
+                                                            shippingAddress
+                                                        }
+                                                        setMainAddress={
+                                                            setShippingAddress
+                                                        }
+                                                        defaultProperty={
+                                                            'shipping_address'
+                                                        }
+                                                        addressType={'DELIVERY'}
+                                                        enableAddressEdit={true}
+                                                        disable={
+                                                            disableOtherComponents?.disable &&
+                                                            disableOtherComponents.addressType !=
+                                                                'DELIVERY'
+                                                        }
+                                                    />
+
+                                                    {isDeliveryAddressFill ? (
+                                                        <Delivery
+                                                            disable={
+                                                                disableOtherComponents?.disable
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div className="border-2 px-6 py-4">
+                                                            <p className="text-lg font-bold opacity-20">
+                                                                DELIVERY OPTIONS
+                                                            </p>
+                                                        </div>
+                                                    )}
+
+                                                    {isDeliveryAddressFill ? (
+                                                        <PaymentMethodProvider
+                                                            userPaymentMethods={
+                                                                userPaymentMethods
+                                                            }
+                                                        >
+                                                            <Payment
+                                                                defaultProperty={
+                                                                    'billing_address'
+                                                                }
+                                                                billingAddress={
+                                                                    billingAddress
+                                                                }
+                                                                setBillingAddress={
+                                                                    setBillingAddress
+                                                                }
+                                                            />
+                                                        </PaymentMethodProvider>
+                                                    ) : (
+                                                        <div className="border-2 px-6 py-4">
+                                                            <p className="text-lg font-bold opacity-20">
+                                                                PAYMENT
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </section>
+                                                <div className="bottom flex flex-col gap-y-3 bg-light-grey pt-5">
+                                                    <Buy_Now_Btn
+                                                        disable={
+                                                            disableOtherComponents?.disable ||
+                                                            !isDeliveryAddressFill ||
+                                                            !selectedMethod?.type
+                                                        }
+                                                        isOrderSubmit={
+                                                            isOrderSubmit
+                                                        }
+                                                    />
                                                 </div>
-                                            )}
+                                            </section>
                                         </section>
-                                        <div className="bottom mt-5 flex flex-col gap-y-3">
-                                            <Buy_Now_Btn
-                                                disable={
-                                                    disableOtherComponents?.disable ||
-                                                    !isDeliveryAddressFill ||
-                                                    !selectedMethod?.type
-                                                }
-                                                isOrderSubmit={isOrderSubmit}
-                                            />
-                                        </div>
-                                    </section>
+
+                                        <Checkout_Total />
+                                    </div>
                                 </section>
 
-                                <Checkout_Total />
-                            </div>
-                            <footer
-                                ref={footerRef}
-                                className="relative left-[calc(-50vw+50%)] mt-5 min-w-[100vw] self-start bg-white  py-6 text-center"
-                            >
-                                GLAMO Help
-                            </footer>
-                        </section>
-                    </section>
-                )}
-            </Elements>
+                                <footer className="mt-5 w-full self-start bg-white  py-6 text-center">
+                    GLAMO Help
+                </footer>
+                            </section>
+                        )
+                    )}
+                </Elements>
+              
+            </section>
         </CheckOutProvider>
     );
 }

@@ -5,7 +5,7 @@ import multer from 'multer';
 import fileFilter from '../Upload/fileFilter.js';
 import sharpify from '../Upload/sharpify.js';
 import bcrypt from 'bcryptjs';
-import s3Upload, { s3Delete } from '../s3Service.js';
+import s3Upload, { s3Delete } from '../utils/s3Service.js';
 import 'dotenv/config';
 import { body, check, validationResult } from 'express-validator';
 import timezone from 'dayjs/plugin/timezone.js';
@@ -1119,5 +1119,27 @@ export const cancelOrder = [
     } else {
       res.status(200).send({ msg: 'successfully cancelled', success: true });
     }
+  }),
+];
+
+export const updateWishlist = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    await User.findByIdAndUpdate(userId, { wishlist: req.body.wishlist });
+    res.status(200).send({ success: true });
+  }),
+];
+
+export const getWishlist = [
+  checkAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId, null, {
+      lean: { toObject: true },
+    });
+
+    res.status(200).send({ wishlist: user.wishlist, success: true });
   }),
 ];

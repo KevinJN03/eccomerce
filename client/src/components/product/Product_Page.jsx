@@ -47,11 +47,11 @@ return()=> {
         axios
             .get(`/category/${state.productCategory}/${state.gender}`)
             .then((res) => {
-                let lowerCaseGender = state.gender.toLowerCase();
-                ('data response: ', res.data[lowerCaseGender]);
+                
+                
 
                 setTimeout(() => {
-                    setProducts(res.data[lowerCaseGender]);
+                    setProducts(res.data);
                     setLoading(() => false);
                 }, 1000);
             })

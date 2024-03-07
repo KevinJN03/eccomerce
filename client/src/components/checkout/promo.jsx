@@ -24,26 +24,24 @@ function Promo({ disable }) {
         return (
             <div className="promo-container">
                 <section className="promo-header-container">
-                    <span
-                        className={
-                            option == 'promo'
-                                ? 'active-promo-voucher'
-                                : 'promo-voucher'
-                        }
-                        onClick={() => setOption('promo')}
-                    >
-                        PROMO / STUDENT CODE
-                    </span>
-                    <span
-                        className={
-                            option == 'voucher'
-                                ? 'active-promo-voucher'
-                                : 'promo-voucher'
-                        }
-                        onClick={() => setOption('voucher')}
-                    >
-                        VOUCHER
-                    </span>
+                    {[
+                        { text: 'PROMO / STUDENT CODE', type: 'promo' },
+                        { text: 'VOUCHER', type: 'voucher' },
+                    ].map(({ text, type }) => {
+                        return (
+                            <span
+                                className={`flex h-20 mb-2 items-center justify-center font-semibold tracking-wider ${
+                                    option == type
+                                        ? 'active-promo-voucher'
+                                        : 'promo-voucher'
+                                }`}
+                                onClick={() => setOption(type)}
+                            >
+                                {text}
+                            </span>
+                        );
+                    })}
+
                 </section>
                 {option == 'promo' ? (
                     <Promo_Student

@@ -2,7 +2,7 @@ import order_icon from '../../../assets/icons/profile-icons/package.svg';
 import calendar_icon from '../../../assets/icons/profile-icons/calender.png';
 import paypal_icon from '../../../assets/icons/payment-icons/paypal.svg';
 import duplicate_icon from '../../../assets/icons/duplicate.png';
-import logos from '../payment-methods/logos.jsx';
+
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { Link, useParams } from 'react-router-dom';
 import { useMemo, useState } from 'react';
@@ -16,6 +16,7 @@ import { AnimatePresence } from 'framer-motion';
 import submitCancellation from './handleCancelOrder.js';
 import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
 import emoji from '../../../assets/icons/sad-emoji.png';
+const { VITE_CLOUDFRONT_URL } = import.meta.env;
 export function OrderNumberDate({ icon, title, text, className }) {
     return (
         <div className="flex w-full flex-row items-center">
@@ -65,6 +66,19 @@ function Order_Info({}) {
         error,
         setShow,
         handleCancelOrder,
+    };
+
+    const url = `${VITE_CLOUDFRONT_URL}/files/logos`;
+
+    const logos = {
+        afterpay: 'afterpay.png',
+        amex: 'american-express.png',
+        klarna: 'klarna.png',
+        maestro: 'maestro.png',
+        mastercard: 'mastercard-alt.png',
+        paypal: 'paypal.png',
+        'union-pay': 'union-pay.png',
+        visa: 'visa.png',
     };
     return (
         <section className="order-info-wrapper h-full w-full">
@@ -307,11 +321,15 @@ function Order_Info({}) {
 
                             <div className="mt-5 flex flex-row items-center gap-x-4">
                                 <img
-                                    src={paypal_icon}
+                                    src={`${url}/${
+                                        logos?.[findOrder?.payment_type]
+                                    }`}
                                     alt=""
                                     className="h-8 w-12 rounded-sm border-2"
                                 />
-                                <p className="text-sm">PayPal</p>
+                                <p className="text-sm">
+                                    {findOrder?.payment_type}
+                                </p>
                             </div>
                         </div>
 

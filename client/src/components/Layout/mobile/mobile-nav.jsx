@@ -19,11 +19,12 @@ function Mobile_Nav({}) {
     };
     return (
         <section className="mobile-nav">
+      
             <div
                 className={sideBar ? 'opacity-0' : 'burger'}
                 onClick={() => openMenu()}
             >
-                <MenuRoundedIcon className="icon filter" />
+                <MenuRoundedIcon className="icon !fill-white" />
             </div>
 
             <Nav_Options sideBar={sideBar} closeMenu={closeMenu} />

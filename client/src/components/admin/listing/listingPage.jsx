@@ -9,7 +9,7 @@ import SearchInput from '../order/home/searchInput.jsx';
 import { AddRounded, ArrowDropDownSharp } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductItem from './gridItem.jsx';
-import SelectionInput from '../order/home/selectionIput.jsx';
+import SelectionInput from '../order/home/selectionInput.jsx';
 import SideContainer from './sideContainer.jsx';
 import { Box, Modal } from '@mui/material';
 import GridProduct from './gridProducts.jsx';
@@ -19,7 +19,7 @@ import Header from './header.jsx';
 import ListingPageProvider from '../../../context/listingPageContext.jsx';
 import { adminAxios } from '../../../api/axios.js';
 import UserLogout from '../../../hooks/userLogout.jsx';
-
+import illustration from './illustration3.png';
 import { AnimatePresence, motion, progress } from 'framer-motion';
 
 function ListingPage() {
@@ -28,13 +28,18 @@ function ListingPage() {
     const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
+    const [triggerSearch, setTriggerSearch] = useState(false);
     const [products, setProducts] = useState([]);
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
 
+    const [deliveryProfile, setDeliveryProfile] = useState([]);
+
     const [showStats, setShowStats] = useState(false);
+
+    const abortControllerRef = useRef(new AbortController());
     const [checks, setChecks] = useState({
-        format: 'vertical',
+        format: 'grid',
         listing_status: 'active',
 
         featured: false,
@@ -46,13 +51,15 @@ function ListingPage() {
     const { logoutUser } = UserLogout();
 
     useEffect(() => {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
         let id = null;
         const fetchData = async () => {
             try {
                 let complete = false;
                 let speed = 1;
                 const data = {};
-
+                const deliveryProfileData = [];
                 setSelectionSet(() => new Set());
                 var intervalId = setInterval(handleInterval, 1);
                 id = intervalId;
@@ -61,6 +68,7 @@ function ListingPage() {
 
                     setProgressValue((prevValue) => {
                         if (prevValue >= 100) {
+                            setDeliveryProfile(() => deliveryProfileData);
                             setAllProducts(() => data.products);
                             const newProducts =
                                 data.products?.[checks?.listing_status] || [];
@@ -76,8 +84,11 @@ function ListingPage() {
                             });
                             console.log({ countObj });
                             setCategoryQuantity(() => countObj);
-                            setProductIds(() =>
-                                newProducts?.map((item) => item._id)
+                            setProductIds(
+                                () =>
+                                    new Set(
+                                        newProducts?.map((item) => item._id)
+                                    )
                             );
                             clearInterval(intervalId);
 
@@ -96,15 +107,27 @@ function ListingPage() {
                     });
                 }
 
-                const { data: productResult } = await adminAxios.post(
-                    'products/all',
-                    {
-                        checks,
-                    }
-                );
+                const [
+                    { data: productResult },
+                    { data: deliveryProfileResult },
+                ] = await Promise.all([
+                    adminAxios.post(
+                        'products/all',
+                        {
+                            checks,
+                        },
+                        { signal: abortControllerRef.current?.signal }
+                    ),
+
+                    adminAxios.get('delivery/all', {
+                        signal: abortControllerRef.current?.signal,
+                    }),
+                ]);
+
                 complete = productResult.success;
 
                 Object.assign(data, productResult);
+                deliveryProfileData.push(...deliveryProfileResult);
             } catch (error) {
                 console.error(error);
                 clearInterval(id);
@@ -118,12 +141,17 @@ function ListingPage() {
         return () => {
             console.log({ id });
             clearInterval(id);
+
+            abortControllerRef.current?.abort();
         };
     }, [
         checks?.listing_status,
         checks?.sort,
         checks?.featured,
         checks?.section,
+        triggerSearch,
+        ,
+        checks?.deliveryProfile,
     ]);
 
     const deleteButtonClick = () => {};
@@ -139,6 +167,10 @@ function ListingPage() {
         categoryQuantity,
         showStats,
         setShowStats,
+        triggerSearch,
+        setTriggerSearch,
+        setProductIds,
+        deliveryProfile,
     };
 
     return (
@@ -172,10 +204,61 @@ function ListingPage() {
                     <section className="left flex w-full flex-[5] flex-col">
                         <SubHeader />
                         <section className="w-full">
-                            {checks.format === 'grid' ? (
-                                <GridProduct />
+                            {products?.length > 0 ? (
+                                <>
+                                    {checks.format === 'grid' ? (
+                                        <GridProduct />
+                                    ) : (
+                                        <VerticalProducts />
+                                    )}
+                                </>
                             ) : (
-                                <VerticalProducts />
+                                <div className="mt-20 flex w-full flex-col items-center justify-center gap-4">
+                                    <img
+                                        className="w28 h-28"
+                                        src={illustration}
+                                    />
+                                    <p className="text-lg">
+                                        {checks?.searchText
+                                            ? 'No listings matched your search query.'
+                                            : 'No listings matched these filters.'}
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            if (checks?.searchText) {
+                                                setChecks((prevState) => {
+                                                    return {
+                                                        ...prevState,
+                                                        searchText: '',
+                                                    };
+                                                });
+                                                setTriggerSearch(
+                                                    (prevState) => !prevState
+                                                );
+
+                                                return;
+                                            }
+
+                                            setChecks((prevState) => {
+                                                const {
+                                                    sort,
+                                                    listing_status,
+                                                    format,
+                                                } = prevState;
+                                                return {
+                                                    sort,
+                                                    listing_status,
+                                                    format,
+                                                };
+                                            });
+                                        }}
+                                        className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
+                                    >
+                                        {checks?.searchText
+                                            ? 'Clear Search'
+                                            : 'Reset Filters'}
+                                    </button>
+                                </div>
                             )}
                         </section>
                     </section>

@@ -53,7 +53,7 @@ function Select({ header, dataArray }) {
                                     klarnaDob?.[header.toLowerCase()] ==
                                         idx + 1 || false
                                 }
-                                value={('0' + idx + 1).toString().slice(-2)}
+                                value={idx + 1}
                                 className="text-left text-s"
                             >
                                 {item}

@@ -14,48 +14,14 @@ function Description({}) {
         useNewProduct();
     const [descriptionError, setDescriptionError] = useState('');
 
-    useNewProductError('detail', setDescriptionError);
+    useNewProductError('description', setDescriptionError);
 
     useEffect(() => {
         setDescriptionError('');
 
-        publishErrorDispatch({ type: 'clear', path: 'detail' });
+        publishErrorDispatch({ type: 'clear', path: 'description' });
     }, [description]);
 
-    const boldClick = () => {
-        setDescription(RichUtils.toggleInlineStyle(description, 'BOLD'));
-    };
-
-    const italicClick = () => {
-        setDescription(RichUtils.toggleInlineStyle(description, 'ITALIC'));
-    };
-
-    const underlineClick = () => {
-        setDescription(RichUtils.toggleInlineStyle(description, 'UNDERLINE'));
-    };
-
-    const unorderedList = () => {
-        setDescription(
-            RichUtils.toggleBlockType(description, 'unordered-list-item')
-        );
-    };
-
-    const customStyleMap = {
-        10: { fontSize: '10px' },
-        12: { fontSize: '12px' },
-        14: { fontSize: '14px' },
-        16: { fontSize: '16px' },
-        18: { fontSize: '18px' },
-        20: { fontSize: '20px' },
-    };
-
-    const toggleFontSize = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setDescription(
-            RichUtils.toggleInlineStyle(description, e.target.value)
-        );
-    };
     return (
         <section id="Description">
             <p className="text-lg font-medium">
@@ -72,32 +38,11 @@ function Description({}) {
                     className={'!mb-[-8px] px-0  py-0 pt-1'}
                 />
             )}
-            <section className="richText-Editor ">
-                <div className="richText-Editor-header">
-                    <select
-                        id="descriptionOption"
-                        name="descriptionOption"
-                        className=" !z-10 my-1 h-[20px] !min-h-[20px] max-w-[60px] rounded-none border-none bg-white text-sm"
-                    >
-                        {Object.keys(customStyleMap).map((item) => {
-                            return (
-                                <option key={item} value={item}>
-                                    {item}
-                                </option>
-                            );
-                        })}
-                    </select>
-                    <FormatBoldSharpIcon onClick={boldClick} />
-
-                    <FormatItalicSharpIcon onClick={italicClick} />
-                    <FormatUnderlinedSharp onClick={underlineClick} />
-                    <FormatListBulletedSharpIcon onClick={unorderedList} />
-                </div>
-
-                <Editor
-                    editorState={description}
-                    onChange={setDescription}
-                    customStyleMap={customStyleMap}
+            <section className="w-full ">
+                <textarea
+                    onChange={(e) => setDescription(() => e.target.value)}
+                    value={description}
+                    className="mt-4 min-h-[200px] w-full rounded-lg border-[1px] border-black p-3 text-sm"
                 />
             </section>
         </section>

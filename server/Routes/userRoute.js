@@ -23,6 +23,8 @@ import {
   changePassword,
   addDigitalPaymentMethod,
   cancelOrder,
+  getWishlist,
+  updateWishlist,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -56,5 +58,7 @@ router.get('/orders', getOrders);
 router.post('/change-password', changePassword);
 router.post('/cancel-order', cancelOrder);
 router.post('/payment-method/digital', addDigitalPaymentMethod);
+router.get('/wishlist', getWishlist);
 
+router.post('/wishlist/update', updateWishlist);
 export default router;

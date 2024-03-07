@@ -1,69 +1,16 @@
 import { useCart } from '../../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
-function AddToCart({
-    product,
-    setError,
-    isOutOfStock,
-    price,
-    variationSelect,
-}) {
-    const { dispatch } = useCart();
+function AddToCart({ isOutOfStock, handleAddToCart }) {
 
-    const handleClick = () => {
-        if (
-            (product.isVariation1Present &&
-                !variationSelect.variation1.variation) ||
-            (product.isVariation2Present &&
-                !variationSelect.variation2.variation)
-        ) {
-            ('enter error');
-            setError(() => true);
-            return;
-        }
 
-        const {
-            id,
-            title,
-            images,
-            delivery,
-            variation1,
-            variation2,
-            isVariation1Present,
-            isVariation2Present,
-            combineVariation,
-            isVariationCombine,
-        } = product;
-
-        const newImagesArray = images[0];
-        const newProduct = {
-            id,
-            title,
-            price: product.price,
-            images: [newImagesArray],
-            delivery,
-            variation1,
-            variation2,
-            isVariation1Present,
-            isVariation2Present,
-            combineVariation,
-            isVariationCombine,
-        };
-
-        newProduct.cartId = uuidv4();
-        newProduct.quantity = 1;
-        newProduct.price.current = price;
-        newProduct.variationSelect = variationSelect;
-        dispatch({ type: 'add', product: newProduct });
-
-        setError(() => false);
-
-        console.log({ variationSelect });
-    };
     return (
-        <>
+        <div className="w-full flex-1">
             {!isOutOfStock ? (
-                <button id="add-to-cart" onClick={handleClick}>
+                <button
+                    className="w-full bg-primary-green py-2 font-semibold text-white hover:bg-green-700"
+                    onClick={handleAddToCart}
+                >
                     Add to bag
                 </button>
             ) : (
@@ -74,7 +21,7 @@ function AddToCart({
                     </p>
                 </button>
             )}
-        </>
+        </div>
     );
 }
 

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import formatFormData from '../utils/formatFormData';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAdminContext } from '../../../../../../context/adminContext';
+import BubbleButton from '../../../../../buttons/bubbleButton';
 
 function Footer({ type }) {
     const { id } = useParams();
@@ -30,6 +31,8 @@ function Footer({ type }) {
         minVariationPrice,
         product,
     } = useNewProduct();
+
+    // const { publish, setPulish, publishError, publishErrorDispatch,  ...values } = useNewProduct();
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
@@ -75,7 +78,7 @@ function Footer({ type }) {
 
     async function publishData(formData, draft) {
         const url = draft
-            ? '/draftProducts/save'
+            ? '/product/create?isDraft=true'
             : type == 'update'
               ? `/product/${type}/${id}`
               : '/product/create';
@@ -107,12 +110,7 @@ function Footer({ type }) {
 
     return (
         <div className="sticky bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
-            <button
-                className="cancel-btn"
-                onClick={() => navigate('/admin/products')}
-            >
-                Cancel
-            </button>
+            <BubbleButton handleClick={() => navigate('/admin/products')} />
             <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button
                 className="theme-btn !text-sm"
