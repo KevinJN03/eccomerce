@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-function BubbleButton({ handleClick, children }) {
+function BubbleButton({ handleClick, children, className }) {
     const [isHover, setIsHover] = useState(false);
 
     const variant = {
@@ -29,14 +29,17 @@ function BubbleButton({ handleClick, children }) {
                 onMouseLeave={() => {
                     setIsHover(() => false);
                 }}
-                className="left relative rounded-full  px-5 py-3 "
+                className={`left relative  rounded-full ${className || 'px-5 py-3'}`}
                 onClick={handleClick}
             >
-                {children || (
-                    <span className=" relative !z-[3] w-full text-base font-medium">
+                {children ? (
+                    <span className="relative !z-[1] ">{children}</span>
+                ) : (
+                    <span className=" relative !z-[1] w-full text-base font-medium">
                         Cancel
                     </span>
                 )}
+
                 <AnimatePresence>
                     {isHover && (
                         <motion.div
@@ -44,7 +47,7 @@ function BubbleButton({ handleClick, children }) {
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}
-                            className=" absolute left-0 top-0 z-0  h-full w-full rounded-inherit bg-light-grey"
+                            className="absolute left-0 top-0  h-full w-full  rounded-inherit  bg-light-grey"
                         ></motion.div>
                     )}
                 </AnimatePresence>

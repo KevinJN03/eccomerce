@@ -10,7 +10,14 @@ import {
 } from '@mui/icons-material';
 import BubbleButton from '../../buttons/bubbleButton.jsx';
 import { useContent } from '../../../context/ContentContext.jsx';
+
+import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { ClickAwayListener } from '@mui/material';
+import UserLogout from '../../../hooks/userLogout.jsx';
+import { adminAxios } from '../../../api/axios.js';
 function DeliveryProfile({ status, setStatus }) {
+    const { logoutUser } = UserLogout();
     const exampleProfile = {
         name: '2-3 Weeks Delivery',
         processing_time: {
@@ -23,6 +30,52 @@ function DeliveryProfile({ status, setStatus }) {
     };
 
     const { setModalCheck, setModalContent } = useContent();
+
+    const [selection, setSelection] = useState(new Set());
+
+    const [show, setShow] = useState(false);
+
+    const [profiles, setProfiles] = useState([]);
+
+    const options = [
+        {
+            _id: 1,
+            text: `Select ${5} profiles on this page`,
+        },
+        {
+            _id: 2,
+
+            text: `Select ${7} on all pages`,
+        },
+        {
+            _id: 3,
+            handleClick: () => {
+                setSelection(() => new Set());
+            },
+            text: 'Deselect all',
+        },
+    ];
+
+    const exampleData = [
+        { ...exampleProfile, _id: 1 },
+        { ...exampleProfile, _id: 2 },
+        { ...exampleProfile, _id: 3 },
+    ];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await adminAxios.get('/delivery/all');
+
+                setProfiles(() => data);
+            } catch (error) {
+                logoutUser({ error });
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <section className=" flex flex-col gap-6 sm+md:w-full lg:w-10/12">
             <div className="">
@@ -41,17 +94,14 @@ function DeliveryProfile({ status, setStatus }) {
                 <BubbleButton
                     handleClick={() => {
                         setModalCheck(() => true);
-                        setModalContent(()=> ({type: 'processOrder'}))
+                        setModalContent(() => ({ type: 'processOrder' }));
                     }}
                 >
                     <div className="flex flex-row flex-nowrap items-center gap-2  ">
-                        <ModeEditOutlineRounded className="!z-[3]" />
+                        <ModeEditOutlineRounded className="" />
 
-                        <p className="!z-[3] text-base font-semibold">Edit</p>
+                        <p className="text-base font-semibold">Edit</p>
                     </div>
-                    {/* <span className=" relative !z-[3] w-full text-base font-medium">
-                        Cancel
-                    </span> */}
                 </BubbleButton>
             </div>
 
@@ -69,17 +119,113 @@ function DeliveryProfile({ status, setStatus }) {
                 <div className="flex w-full flex-row pl-4">
                     <div className="flex flex-row flex-nowrap items-center">
                         <input
+                            checked={selection.size > 0 ? true : false}
+                            onChange={(e) => {
+                                if ( selection.size == profiles.length) {
+                                    setSelection(() => new Set());
+                                } else {
+                                    setSelection(
+                                        () =>
+                                            new Set(
+                                                profiles.map(
+                                                    ({ _id }) => _id
+                                                )
+                                            )
+                                    );
+                                }
+                                console.log(e.target.checked);
+                            }}
                             type="checkbox"
                             className="daisy-checkbox h-[1.125rem] w-[1.125rem] rounded-sm border-dark-gray"
                         />
-                        <div className="p-4">
-                            <ArrowDropDown />
-                        </div>
+
+                        {selection.size > 0 && (
+                            <p className="ml-2">{selection.size}</p>
+                        )}
+                        <section className="relative  mx-2">
+                            <BubbleButton
+                                className={
+                                    'border border-transparent px-2 py-1'
+                                }
+                                handleClick={() => {
+                                    setShow(() => true);
+                                }}
+                            >
+                                <ArrowDropDown />
+                            </BubbleButton>
+                            {show && (
+                                <div
+                                    onClick={() => setShow(() => false)}
+                                    className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
+                                >
+                                    <ArrowDropDown />
+                                </div>
+                            )}
+                            <AnimatePresence>
+                                {show && (
+                                    <ClickAwayListener
+                                        onClickAway={() => setShow(() => false)}
+                                    >
+                                        <motion.div
+                                            exit={{
+                                                scale: 0,
+                                                opacity: 0,
+
+                                                transition: {
+                                                    ease: 'easeOut',
+                                                    scale: {
+                                                        duration: 0.3,
+                                                    },
+                                                    opacity: {
+                                                        duration: 0.15,
+                                                    },
+                                                },
+                                            }}
+                                            className="shadow-normal absolute left-0 top-0 z-[2] w-fit  origin-top-left rounded-xl border bg-white pt-1"
+                                        >
+                                            {/* <div
+                                                className={` w-fit  px-2 ${!show ? 'opacity-0' : 'opacity-100'}`}
+                                                onClick={() =>
+                                                    setShow(() => false)
+                                                }
+                                            >
+                                                <ArrowDropDown />
+                                            </div> */}
+
+                                            <ul className="relative mt-7 w-full list-none">
+                                                {options.map(
+                                                    (
+                                                        { text, handleClick },
+                                                        idx
+                                                    ) => {
+                                                        return (
+                                                            <li
+                                                                key={text}
+                                                                onClick={() => {
+                                                                    handleClick();
+                                                                    setShow(
+                                                                        () =>
+                                                                            false
+                                                                    );
+                                                                }}
+                                                                className={`w-full whitespace-nowrap rounded-b-inherit py-3 pl-4 pr-8 text-sm hover:bg-light-grey ${idx == options.length - 1 ? 'rounded-b-xl' : 'rounded-none'}`}
+                                                            >
+                                                                {text}
+                                                            </li>
+                                                        );
+                                                    }
+                                                )}
+                                            </ul>
+                                        </motion.div>
+                                    </ClickAwayListener>
+                                )}
+                            </AnimatePresence>
+                        </section>
                     </div>
 
                     <button
                         type="button"
-                        className="flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
+                        className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
                     >
                         <ModeEditOutlineRounded />
 
@@ -143,19 +289,51 @@ function DeliveryProfile({ status, setStatus }) {
                         <th className="pb-2" />
                     </tr>
 
-                    {[exampleProfile, exampleProfile, exampleProfile].map(
+                    {profiles.map(
                         ({
+                            _id,
                             name,
-                            processing_time,
+                            processingTime,
                             origin,
                             active_listings,
                         }) => {
                             return (
-                                <tr className="border-b-2 border-light-grey hover:bg-light-grey">
+                                <tr
+                                    key={_id}
+                                    className={`border-dak-grey border-b-2 hover:bg-light-grey  ${selection.has(_id) ? 'bg-light-grey/60' : ''}`}
+                                >
                                     <td className="py-6 pl-4">
                                         <input
+                                            onChange={() => {
+                                                console.log('clicked here');
+                                                setSelection(
+                                                    (prevSelection) => {
+                                                        const newSelection =
+                                                            new Set(
+                                                                prevSelection
+                                                            );
+
+                                                        if (
+                                                            newSelection.has(
+                                                                _id
+                                                            )
+                                                        ) {
+                                                            newSelection.delete(
+                                                                _id
+                                                            );
+                                                        } else {
+                                                            newSelection.add(
+                                                                _id
+                                                            );
+                                                        }
+
+                                                        return newSelection;
+                                                    }
+                                                );
+                                            }}
                                             type="checkbox"
-                                            className="daisy-checkbox h-[1.125rem] w-[1.125rem] rounded-sm border-dark-gray"
+                                            checked={selection.has(_id)}
+                                            className={`daisy-checkbox h-[1.125rem] w-[1.125rem] rounded-sm border-dark-gray `}
                                         />
                                     </td>
                                     <td className="py-6 pl-5">
@@ -166,13 +344,13 @@ function DeliveryProfile({ status, setStatus }) {
 
                                     <td className="py-6">
                                         <p className="text-base ">
-                                            {`${processing_time.start}-${processing_time.end} ${processing_time.type}`}
+                                            {`${processingTime.start}-${processingTime.end} ${processingTime.type}`}
                                         </p>
                                     </td>
 
                                     <td className="py-6">
                                         <p className="w-2/4 text-base">
-                                            {origin}
+                                            {origin || 'KY15 7AA'}
                                         </p>
                                     </td>
 

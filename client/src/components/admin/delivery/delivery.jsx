@@ -45,7 +45,6 @@ export default function Delivery() {
 
     const viewClick = (id) => {
         setType('view');
-        console.log({ id });
         const findProfile = profiles.find((profile) => profile._id == id);
         setDeliveryProfile(findProfile);
         setModalCheck(true);
@@ -61,7 +60,6 @@ export default function Delivery() {
 
     const [status, setStatus] = useState('Delivery Profiles');
     const location = useLocation();
-    console.log(location);
     const exampleProfile = {
         name: '2-3 Weeks Delivery',
         processing_time: {

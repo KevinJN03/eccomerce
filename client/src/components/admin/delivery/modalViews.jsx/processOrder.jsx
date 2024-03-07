@@ -29,13 +29,15 @@ function ProcessOrder({}) {
 
                 <section className="mt-2 flex flex-nowrap items-center gap-4">
                     {[
-                        { text: 'Monday-Friday' },
+                        { text: 'Monday-Friday', defaultCheck: true, disabled: true },
                         { text: 'Saturday' },
                         { text: 'Sunday' },
                     ].map((item) => {
                         return (
                             <div className="flex flex-nowrap items-center gap-2">
                                 <input
+                                defaultChecked={item?.defaultCheck}
+                                disabled={item?.disabled}
                                     type="checkbox"
                                     className="daisy-checkbox daisy-checkbox-lg border-dark-gray"
                                 />
