@@ -42,6 +42,7 @@ import Activate from '../listing/modalContent/activate.jsx';
 import Publish from '../listing/modalContent/publish.jsx';
 import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
+import CreateProfile from '../delivery/modalViews.jsx/createProfile.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -69,6 +70,7 @@ function Admin({}) {
         activate: <Activate />,
         publish: <Publish />,
         processOrder: <ProcessOrder />,
+        createProfile: <CreateProfile />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -198,23 +200,30 @@ function Admin({}) {
                             <Outlet />
 
                             <Modal
-                                className="!overflow-y-auto"
+                             
                                 open={modalCheck}
                                 onClose={() => setModalCheck(false)}
+                                style={{
+                            
+                                     overflowY: 'auto',
+                                }}
                             >
                                 <Box
                                     sx={{
-                                        // backgroundColor: 'white',
+                                    
                                         position: 'absolute',
-                                        top: '20%',
+                                        top: '15%',
                                         left: '50%',
+                                      
 
-                                        transform: 'translate(-50%, -20%)',
+                                        transform: 'translate(-50%, -0%)',
                                         boxSizing: 'border-box',
-                                        maxWidth: '600px',
+                                        // maxWidth: '600px',
                                         // width: '100%',
                                         borderRadius: '4px',
                                         border: 'none',
+                                        
+                                       
                                     }}
                                 >
                                     {views?.[modalContent?.type]}

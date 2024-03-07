@@ -46,6 +46,16 @@ function DeliveryProfile({ status, setStatus }) {
             _id: 2,
 
             text: `Select ${7} on all pages`,
+
+            handleClick: () => {
+                setSelection(
+                    (prevSelection) =>
+                        new Set([
+                            ...prevSelection,
+                            ...profiles.map(({ _id }) => _id),
+                        ])
+                );
+            },
         },
         {
             _id: 3,
@@ -121,15 +131,13 @@ function DeliveryProfile({ status, setStatus }) {
                         <input
                             checked={selection.size > 0 ? true : false}
                             onChange={(e) => {
-                                if ( selection.size == profiles.length) {
+                                if (selection.size == profiles.length) {
                                     setSelection(() => new Set());
                                 } else {
                                     setSelection(
                                         () =>
                                             new Set(
-                                                profiles.map(
-                                                    ({ _id }) => _id
-                                                )
+                                                profiles.map(({ _id }) => _id)
                                             )
                                     );
                                 }
@@ -235,13 +243,22 @@ function DeliveryProfile({ status, setStatus }) {
                         <ArrowDropDown />
                     </button>
                     <div className="flex w-full justify-end">
-                        <button
-                            type="button"
-                            className="flex flex-nowrap items-center gap-3 self-center  rounded-full border-2 border-black p-3"
+                        <BubbleButton
+                            className={''}
+                            handleClick={() => {
+                                setModalContent(() => ({
+                                    type: 'createProfile',
+                                }));
+                                setModalCheck(() => true);
+                            }}
                         >
-                            <AddRounded />
-                            <p className="whitespace-nowrap">Create profile</p>
-                        </button>
+                            <div className="flex flex-row flex-nowrap items-center gap-2">
+                                <AddRounded className="!text-3xl" />
+                                <p className="whitespace-nowrap text-base font-semibold">
+                                    Create profile
+                                </p>
+                            </div>
+                        </BubbleButton>
                     </div>
                 </div>
 
