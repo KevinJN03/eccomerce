@@ -42,7 +42,7 @@ import Activate from '../listing/modalContent/activate.jsx';
 import Publish from '../listing/modalContent/publish.jsx';
 import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
-import CreateProfile from '../delivery/modalViews.jsx/createProfile.jsx';
+import CreateProfile from '../delivery/modalViews.jsx/createProfile/createProfile.jsx';
 import DeleteProfile from '../delivery/modalViews.jsx/deleteProfile.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
@@ -72,7 +72,7 @@ function Admin({}) {
         publish: <Publish />,
         processOrder: <ProcessOrder />,
         createProfile: <CreateProfile />,
-        deleteProfile: <DeleteProfile/>
+        deleteProfile: <DeleteProfile />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -202,30 +202,28 @@ function Admin({}) {
                             <Outlet />
 
                             <Modal
-                             
                                 open={modalCheck}
                                 onClose={() => setModalCheck(false)}
                                 style={{
-                            
-                                     overflowY: 'auto',
+                                    overflowY: 'auto',
                                 }}
                             >
                                 <Box
                                     sx={{
-                                    
                                         position: 'absolute',
                                         top: '15%',
                                         left: '50%',
-                                      
 
                                         transform: 'translate(-50%, -0%)',
                                         boxSizing: 'border-box',
                                         // maxWidth: '600px',
-                                        // width: '100%',
+                                        width: '100%',
+
                                         borderRadius: '4px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+
                                         border: 'none',
-                                        
-                                       
                                     }}
                                 >
                                     {views?.[modalContent?.type]}

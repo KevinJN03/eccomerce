@@ -4,6 +4,8 @@ import { useContent } from '../../../../context/ContentContext';
 
 function DeleteProfile({}) {
     const { setModalCheck } = useContent();
+
+
     return (
         <section className="rounded-3xl bg-white p-8 flex flex-col gap-4 !max-w-[100rem] !w-[27rem]">
             <h1 className="font-EBGaramond text-4xl">

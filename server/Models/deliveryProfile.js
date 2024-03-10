@@ -1,5 +1,33 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, SchemaType } from 'mongoose';
 
+const timeObj = {
+  type: {
+    type: Schema.Types.String,
+    enum: {
+      values: ['days', 'weeks'],
+    },
+    default: 'days',
+  },
+  start: {
+    type: Schema.Types.Number,
+    required: [
+      true,
+      "You didn't enter a start day for your profile. Please enter a start date",
+    ],
+  },
+  end: {
+    type: Schema.Types.Number,
+    required: [
+      true,
+      "You didn't enter a end day for your profile. Please enter an end date",
+    ],
+  },
+};
+
+const chargeObj = {
+  one_item: { type: Schema.Types.Number },
+  additional_item: { type: Schema.Types.Number },
+};
 const DeliveryProfileSchema = new Schema({
   name: {
     type: Schema.Types.String,
@@ -10,29 +38,42 @@ const DeliveryProfileSchema = new Schema({
     unique: [true, 'err'],
   },
   cost: Schema.Types.Number,
-  processingTime: {
-    type: {
-      type: Schema.Types.String,
-      enum: {
-        values: ['days', 'weeks'],
-      },
-      default: 'days',
-    },
-    start: {
-      type: Schema.Types.Number,
-      required: [
-        true,
-        "You didn't enter a start day for your profile. Please enter a start date",
-      ],
-    },
-    end: {
-      type: Schema.Types.Number,
-      required: [
-        true,
-        "You didn't enter a end day for your profile. Please enter an end date",
-      ],
-    },
+
+  country_of_origin: {
+    type: Schema.Types.String,
   },
+  origin_post_code: {
+    type: Schema.Types.String,
+  },
+  standard_delivery: [
+    {
+      _id: Schema.Types.ObjectId,
+      destination: { type: Schema.Types.String },
+      shipping_time: timeObj,
+      charges: chargeObj,
+      delivery_service: { type: Schema.Types.String },
+    },
+  ],
+  delivery_upgrades: [
+    {
+      destination: {
+        type: Schema.Types.String,
+        enum: {
+          values: ['domestic', 'international'],
+        },
+      },
+      upgrade: {
+        type: Schema.Types.String,
+        required: true,
+        minlength: 1,
+        maxlength: 28,
+      },
+      charges: chargeObj,
+      delivery_service: { type: Schema.Types.String },
+      shipping_time: timeObj,
+    },
+  ],
+  processingTime: timeObj,
 });
 
 DeliveryProfileSchema.pre('updateOne', function (next) {
