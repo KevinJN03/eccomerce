@@ -7,14 +7,33 @@ import Label from './label';
 import DeliveryService from './deliveryService';
 import Section from './section';
 import { v4 as uuidv4 } from 'uuid';
+import ReactFlagsSelect from 'react-flags-select';
+
+import { getNameList } from 'country-list';
 function CreateProfile({}) {
     const { setModalCheck, modalContent } = useContent();
 
-    const [profile, setProfile] = useState({});
+    const [profile, setProfile] = useState({
+        standard_delivery: [
+            {
+                location: 'GB',
+                name: 'United Kingdom',
+                disableDelete: true
+            },
+            {
+                location: 'everywhere_else',
+                name: 'Everywhere Else',
+            },
+        ],
+    });
     const [showPTInput, setShowPTInput] = useState(false);
 
     const handleProcessingTime = (e) => {
         if (e.target.value == 'custom-range') {
+            setProfile((prevState) => ({
+                ...prevState,
+                processing_time: { type: 'days', start: 1, end: 1 },
+            }));
             setShowPTInput(() => true);
         } else {
             setShowPTInput(() => false);
@@ -50,11 +69,24 @@ function CreateProfile({}) {
                     title={'Country of origin'}
                     description={`The country you're dispatching from`}
                 >
-                    <select
+                    {/* <select
                         name="country-origin"
                         id="country-origin"
                         className="daisy-select daisy-select-bordered w-full"
-                    ></select>
+                    ></select> */}
+
+                    <ReactFlagsSelect
+                        id="country-of-origin"
+                        className="w-full !rounded-lg"
+                        fullWidth={true}
+                        selected={profile?.country_of_origin}
+                        onSelect={(code) =>
+                            setProfile((prevState) => ({
+                                ...prevState,
+                                country_of_origin: code,
+                            }))
+                        }
+                    />
                 </Section>
                 <Section
                     title={'Origin post code'}
@@ -212,11 +244,45 @@ function CreateProfile({}) {
                     />
                 </section>
 
-                <DeliveryService title={'United Kingdom'} />
-                <DeliveryService title={'Everywhere else'} />
+                {profile?.standard_delivery?.map((item, idx) => {
+                    return (
+                        <DeliveryService
+                            title={item.name}
+                            service={item}
+                            index={idx}
+                            setProfile={setProfile}
+                            handleDelete={() =>
+                                setProfile((prevState) => {
+                                    const { standard_delivery } = prevState;
+
+                                    return {
+                                        ...prevState,
+                                        standard_delivery:
+                                            standard_delivery?.filter(
+                                                (
+                                                    currenValue,
+                                                    currenValueIndex
+                                                ) => currenValueIndex != idx
+                                            ),
+                                    };
+                                })
+                            }
+                        />
+                    );
+                })}
+                {/* <DeliveryService title={'United Kingdom'} />
+                <DeliveryService title={'Everywhere else'} /> */}
 
                 <BubbleButton
-                    handleClick={() => {}}
+                    handleClick={() =>
+                        setProfile((prevState) => ({
+                            ...prevState,
+                            standard_delivery: [
+                                ...prevState?.standard_delivery,
+                                {},
+                            ],
+                        }))
+                    }
                     className={`flex w-fit items-center px-3 py-3`}
                 >
                     <div className="flex w-fit flex-nowrap gap-2">

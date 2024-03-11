@@ -29,7 +29,7 @@ function BubbleButton({ handleClick, children, className, hoverClassName }) {
                 onMouseLeave={() => {
                     setIsHover(() => false);
                 }}
-                className={`left relative  rounded-full ${className || 'px-5 py-3'}`}
+                className={` relative  rounded-full ${className || 'px-5 py-3'}`}
                 onClick={handleClick}
             >
                 {children ? (
