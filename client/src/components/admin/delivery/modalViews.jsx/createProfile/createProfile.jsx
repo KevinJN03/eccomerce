@@ -18,13 +18,15 @@ function CreateProfile({}) {
             {
                 location: 'GB',
                 name: 'United Kingdom',
-                disableDelete: true
+                disableDelete: true,
             },
             {
                 location: 'everywhere_else',
                 name: 'Everywhere Else',
             },
         ],
+
+        upgrades: [],
     });
     const [showPTInput, setShowPTInput] = useState(false);
 
@@ -46,6 +48,19 @@ function CreateProfile({}) {
         }
     };
 
+    const handleDelete = ({ property, idx }) => {
+        setProfile((prevState) => {
+            const value = prevState?.[property];
+
+            return {
+                ...prevState,
+                [property]: value?.filter(
+                    (currentValue, currentValueIndex) =>
+                        currentValueIndex != idx
+                ),
+            };
+        });
+    };
     return (
         <section className="relative mb-10 flex w-fit justify-center">
             <section className="flex  flex-col gap-6 rounded-3xl bg-white p-8 sm+md:w-10/12 lg:w-[43.75rem]">
@@ -235,115 +250,123 @@ function CreateProfile({}) {
 
                 <hr className="bg-dark-gray" />
 
-                <section className="standard-delivery flex flex-col gap-6">
-                    <Label
-                        title={'Standard delivery'}
-                        description={
-                            'Where will you dispatch to? We’ll show your listings to shoppers in the countries you add here. Estimate your postage costs'
-                        }
-                    />
-                </section>
+                {[
+                    {
+                        buttonText: 'Add another location',
+                        serviceArray: profile?.standard_delivery || [],
+                        property: 'standard_delivery',
+                        title: 'Standard delivery',
+                        isUpgrade: false,
+                        description:
+                            'Where will you dispatch to? We’ll show your listings to shoppers in the countries you add here. Estimate your postage costs',
+                    },
+                    {
+                        buttonText: 'Add a delivery upgrade',
+                        isUpgrade: true,
 
-                {profile?.standard_delivery?.map((item, idx) => {
-                    return (
-                        <DeliveryService
-                            title={item.name}
-                            service={item}
-                            index={idx}
-                            setProfile={setProfile}
-                            handleDelete={() =>
-                                setProfile((prevState) => {
-                                    const { standard_delivery } = prevState;
+                        serviceArray: profile?.upgrades || [],
+                        property: 'upgrades',
+                        title: 'Delivery upgrades',
+                        description:
+                            'Give buyers the option to choose faster delivery. We’ll add these costs to your standard pricing. Learn more',
+                    },
+                ].map(
+                    (
+                        {
+                            title,
+                            property,
+                            description,
+                            serviceArray,
+                            buttonText,
+                            isUpgrade
+                        },
+                        idx
+                    ) => {
+                        return (
+                            <Fragment key={title}>
+                                <section className=" flex flex-col gap-6">
+                                    <Label
+                                        title={title}
+                                        description={description}
+                                    />
+                                </section>
 
-                                    return {
-                                        ...prevState,
-                                        standard_delivery:
-                                            standard_delivery?.filter(
-                                                (
-                                                    currenValue,
-                                                    currenValueIndex
-                                                ) => currenValueIndex != idx
-                                            ),
-                                    };
-                                })
-                            }
-                        />
-                    );
-                })}
-                {/* <DeliveryService title={'United Kingdom'} />
-                <DeliveryService title={'Everywhere else'} /> */}
+                                {serviceArray.map((item, idx) => {
+                                    return (
+                                        <DeliveryService
+                                        isUpgrade={isUpgrade}
+                                            property={property}
+                                            service={item}
+                                            index={idx}
+                                            setProfile={setProfile}
+                                            handleDelete={() =>
+                                                handleDelete({
+                                                    property,
+                                                    idx,
+                                                })
+                                            }
+                                        />
+                                    );
+                                })}
 
-                <BubbleButton
-                    handleClick={() =>
-                        setProfile((prevState) => ({
-                            ...prevState,
-                            standard_delivery: [
-                                ...prevState?.standard_delivery,
-                                {},
-                            ],
-                        }))
+                                <BubbleButton
+                                    handleClick={() =>
+                                        setProfile((prevState) => ({
+                                            ...prevState,
+                                            [property]: [
+                                                ...prevState?.[property],
+                                                {},
+                                            ],
+                                        }))
+                                    }
+                                    className={`flex w-fit items-center px-3 py-3`}
+                                >
+                                    <div className="flex w-fit flex-nowrap gap-2">
+                                        <AddRounded />{' '}
+                                        <p className="text-base font-semibold">
+                                            {buttonText}
+                                        </p>
+                                    </div>
+                                </BubbleButton>
+
+                                {idx == 0 && <hr className="bg-dark-gray" />}
+                            </Fragment>
+                        );
                     }
-                    className={`flex w-fit items-center px-3 py-3`}
-                >
-                    <div className="flex w-fit flex-nowrap gap-2">
-                        <AddRounded />{' '}
-                        <p className="text-base font-semibold">
-                            Add another location
-                        </p>
-                    </div>
-                </BubbleButton>
+                )}
 
-                <section className="delivery-upgrade">
-                    <Label
-                        title={'Delivery upgrades'}
-                        disableAsterisk={true}
-                        description={`Give buyers the option to choose faster delivery. We’ll add these costs to your standard pricing. Learn more`}
+                <hr className="my-4 bg-dark-gray" />
+                <Section title={`Profile name﻿`}>
+                    <input
+                        value={profile?.name}
+                        onChange={(e) =>
+                            setProfile((prevState) => ({
+                                ...prevState,
+                                name: e.target.value,
+                            }))
+                        }
+                        type="text"
+                        className="daisy-input daisy-input-bordered w-full"
                     />
+                </Section>
+
+                <footer className="mt-10 flex items-center justify-between">
                     <BubbleButton
-                        handleClick={() => {}}
-                        className={`flex w-fit items-center px-3 py-3`}
+                        handleClick={() => setModalCheck(() => false)}
+                    />
+                    <button
+                        type="button"
+                        className="flex  flex-nowrap items-center rounded-full  bg-black px-5 py-3 text-base font-medium text-white"
                     >
-                        <div className="flex w-fit flex-nowrap gap-2">
-                            <AddRounded />{' '}
-                            <p className="text-base font-semibold">
-                                Add a delivery upgrade
-                            </p>
-                        </div>
-                    </BubbleButton>
-
-                    <hr className="my-4 bg-dark-gray" />
-                    <Section title={`Profile name﻿`}>
-                        <input
-                            value={profile?.name}
-                            onChange={(e) =>
-                                setProfile((prevState) => ({
-                                    ...prevState,
-                                    name: e.target.value,
-                                }))
-                            }
-                            type="text"
-                            className="daisy-input daisy-input-bordered w-full"
-                        />
-                    </Section>
-
-                    <footer className="mt-10 flex items-center justify-between">
-                        <BubbleButton
-                            handleClick={() => setModalCheck(() => false)}
-                        />
-                        <button
-                            type="button"
-                            className="flex  flex-nowrap items-center rounded-full  bg-black px-5 py-3 text-base font-medium text-white"
-                        >
-                            {' '}
-                            Save profile
-                            {profile?.active_listing > 0 && (
-                                <span className="ml-2 rounded-full bg-white px-2 py-1 text-xs font-normal">
-                                    {`Affects ${profile?.active_listing} ${profile.active_listing > 1 ? 'listings' : 'listing'}`}
-                                </span>
-                            )}
-                        </button>
-                    </footer>
-                </section>
+                        {' '}
+                        Save profile
+                        {profile?.active_listing > 0 && (
+                            <span className="ml-2 rounded-full bg-white px-2 py-1 text-xs font-normal">
+                                {`Affects ${profile?.active_listing} ${profile.active_listing > 1 ? 'listings' : 'listing'}`}
+                            </span>
+                        )}
+                    </button>
+                </footer>
             </section>
 
             <motion.div

@@ -216,7 +216,7 @@ function Admin({}) {
 
                                         transform: 'translate(-50%, -0%)',
                                         boxSizing: 'border-box',
-                                        // maxWidth: '600px',
+                                         maxWidth: '800px',
                                         width: '100%',
 
                                         borderRadius: '4px',

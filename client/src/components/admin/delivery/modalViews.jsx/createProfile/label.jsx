@@ -1,7 +1,7 @@
 function Label({ title, description, disableAsterisk }) {
     return (
-        <div className="flex flex-col gap-y-1">
-            <label className="whitespace-nowrap text-base font-semibold">
+        <div className="flex flex-col gap-y-1 w-full">
+            <label className="text-base font-semibold">
                 {title}{' '}
                 {!disableAsterisk && <span className="text-red-800 ">*</span>}
             </label>

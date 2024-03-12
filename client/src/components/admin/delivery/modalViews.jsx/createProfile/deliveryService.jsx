@@ -7,22 +7,29 @@ import { getNameList, getData } from 'country-list';
 import { useState } from 'react';
 
 import { internationalOptions, UkOptions } from './shippingOptions';
-function DeliveryService({ title, handleDelete, service, index, setProfile }) {
+function DeliveryService({
+    handleDelete,
+    service,
+    index,
+    setProfile,
+    isUpgrade,
+    property,
+}) {
     const [countries, setCountries] = useState(() => getData());
     const [showOptions, setShowOptions] = useState(false);
     const handleOnChange = (e) => {
-        const { ...value } = e.target[e.target.selectedIndex].dataset;
-        console.log({ value });
-        setProfile((prevState) => {
-            const { standard_delivery } = prevState;
-            const new_standard_delivery = Array.from(standard_delivery);
-            new_standard_delivery[index] = {
-                ...new_standard_delivery,
-                name: value.name,
-                location: value.code,
-            };
-            return { ...prevState, standard_delivery: new_standard_delivery };
-        });
+        if (!isUpgrade) {
+            const { ...value } = e.target[e.target.selectedIndex].dataset;
+            setProfile((prevState) => {
+                const newValues = Array.from(prevState?.[property]);
+                newValues[index] = {
+                    ...newValues,
+                    name: value.name,
+                    location: value.code,
+                };
+                return { ...prevState, [property]: newValues };
+            });
+        }
     };
     const [shippingOptions, setSHippingOptions] = useState(() =>
         service?.location == 'GB' ? UkOptions : internationalOptions
@@ -32,7 +39,7 @@ function DeliveryService({ title, handleDelete, service, index, setProfile }) {
         <section className=" flex flex-nowrap items-start gap-20">
             <div className="left w-full flex-[0.7]">
                 {service?.name ? (
-                    <Label title={title} disableAsterisk={true} />
+                    <Label title={service?.name} disableAsterisk={true} />
                 ) : (
                     <select
                         onChange={handleOnChange}
@@ -41,21 +48,69 @@ function DeliveryService({ title, handleDelete, service, index, setProfile }) {
                         className="daisy-select daisy-select-bordered w-full"
                     >
                         <option value="" disabled selected>
-                            Add a location
+                            {isUpgrade ? 'Add a destination' : 'Add a location'}
                         </option>
 
-                        {countries.map(({ name, code }) => {
-                            return (
-                                <option data-code={code} data-name={name}>
-                                    {name}
-                                </option>
-                            );
-                        })}
+                        {isUpgrade ? (
+                            <>
+                                {['Domestic', 'International'].map((item) => {
+                                    return <option value={item}>{item}</option>;
+                                })}
+                            </>
+                        ) : (
+                            <>
+                                {countries.map(({ name, code }) => {
+                                    return (
+                                        <option
+                                            data-code={code}
+                                            data-name={name}
+                                        >
+                                            {name}
+                                        </option>
+                                    );
+                                })}
+                            </>
+                        )}
                     </select>
                 )}
             </div>
             <div className="right w-full flex-[2]">
                 <div className="mb-5 flex w-full flex-col gap-4">
+                    {isUpgrade && (
+                        <div>
+                            <p className="text-base font-semibold">Upgrade</p>
+                            <div className="flex flex-row flex-nowrap items-center gap-2">
+                                <select
+                                    name=""
+                                    id=""
+                                    className="daisy-select daisy-select-bordered w-full"
+                                >
+                                    {[
+                                        'Express',
+                                        '1 Day',
+                                        'Economy',
+                                        'Custom',
+                                    ].map((item) => {
+                                        return (
+                                            <option value={item} key={item}>
+                                                {item}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                                <div className="w-14">
+                                    {!service?.disableDelete && (
+                                        <BubbleButton
+                                            className={'px-3 py-3'}
+                                            handleClick={handleDelete}
+                                        >
+                                            <Delete />
+                                        </BubbleButton>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div>
                         <p className="text-base font-semibold">
                             Delivery service
@@ -67,7 +122,7 @@ function DeliveryService({ title, handleDelete, service, index, setProfile }) {
                                 className="daisy-select daisy-select-bordered w-full"
                             >
                                 <option value="" selected disabled>
-                                    Select a delivery dervice
+                                    Select a delivery service
                                 </option>
 
                                 {shippingOptions.map(({ options, courier }) => {
@@ -86,14 +141,17 @@ function DeliveryService({ title, handleDelete, service, index, setProfile }) {
                                     );
                                 })}
                             </select>
-                            {!service?.disableDelete && (
-                                <BubbleButton
-                                    className={'px-3 py-3'}
-                                    handleClick={handleDelete}
-                                >
-                                    <Delete />
-                                </BubbleButton>
-                            )}
+
+                            <div className="w-14">
+                                {!service?.disableDelete && !isUpgrade && (
+                                    <BubbleButton
+                                        className={'px-3 py-3'}
+                                        handleClick={handleDelete}
+                                    >
+                                        <Delete />
+                                    </BubbleButton>
+                                )}
+                            </div>
                         </div>
                     </div>
 
