@@ -83,6 +83,7 @@ function CreateProfile({}) {
                 <Section
                     title={'Country of origin'}
                     description={`The country you're dispatching from`}
+                    noWhiteSpace
                 >
                     {/* <select
                         name="country-origin"
@@ -104,6 +105,7 @@ function CreateProfile({}) {
                     />
                 </Section>
                 <Section
+                noWhiteSpace
                     title={'Origin post code'}
                     description={`Where will your orders dispatch from – home, the post office, or another location?`}
                 >
@@ -121,6 +123,7 @@ function CreateProfile({}) {
                     />
                 </Section>
                 <Section
+                noWhiteSpace
                     title={`Processing time
                 `}
                     description={`How much time
@@ -356,7 +359,7 @@ function CreateProfile({}) {
                     />
                     <button
                         type="button"
-                        className="flex  flex-nowrap items-center rounded-full  bg-black px-5 py-3 text-base font-medium text-white"
+                        className="flex flex-nowrap items-center rounded-full  bg-black px-5 py-3 text-base font-medium text-white"
                     >
                         {' '}
                         Save profile

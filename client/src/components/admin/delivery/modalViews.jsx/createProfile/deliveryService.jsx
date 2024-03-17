@@ -1,4 +1,4 @@
-import { Delete } from '@mui/icons-material';
+import { Close, CloseRounded, Delete } from '@mui/icons-material';
 import Section from './section';
 import BubbleButton from '../../../../buttons/bubbleButton';
 import ReactFlagsSelect from 'react-flags-select';
@@ -17,6 +17,8 @@ function DeliveryService({
 }) {
     const [countries, setCountries] = useState(() => getData());
     const [showOptions, setShowOptions] = useState(false);
+
+    const [isCustomName, setIsCustomName] = useState(false);
     const handleOnChange = (e) => {
         if (!isUpgrade) {
             const { ...value } = e.target[e.target.selectedIndex].dataset;
@@ -29,6 +31,16 @@ function DeliveryService({
                 };
                 return { ...prevState, [property]: newValues };
             });
+        } else {
+            setProfile((prevState) => {
+                const newValues = Array.from(prevState?.[property]);
+                newValues[index] = {
+                    ...newValues[index],
+                    destination: e.target.value,
+                };
+
+                return { ...prevState, [property]: newValues };
+            });
         }
     };
     const [shippingOptions, setSHippingOptions] = useState(() =>
@@ -38,9 +50,15 @@ function DeliveryService({
     return (
         <section className=" flex flex-nowrap items-start gap-20">
             <div className="left w-full flex-[0.7]">
-                {service?.name ? (
-                    <Label title={service?.name} disableAsterisk={true} />
+                {isUpgrade ? (
+                    <Label title={'Destination'} disableAsterisk={true} />
                 ) : (
+                    service?.name && (
+                        <Label title={service?.name} disableAsterisk={true} />
+                    )
+                )}
+
+                {(!service?.name || isUpgrade) && (
                     <select
                         onChange={handleOnChange}
                         name=""
@@ -80,24 +98,97 @@ function DeliveryService({
                         <div>
                             <p className="text-base font-semibold">Upgrade</p>
                             <div className="flex flex-row flex-nowrap items-center gap-2">
-                                <select
-                                    name=""
-                                    id=""
-                                    className="daisy-select daisy-select-bordered w-full"
-                                >
-                                    {[
-                                        'Express',
-                                        '1 Day',
-                                        'Economy',
-                                        'Custom',
-                                    ].map((item) => {
-                                        return (
-                                            <option value={item} key={item}>
-                                                {item}
-                                            </option>
-                                        );
-                                    })}
-                                </select>
+                                {isCustomName ? (
+                                    <div className="relative flex h-fit w-full flex-row flex-nowrap">
+                                        <input
+                                            onChange={(e) => {
+                                                setProfile((prevState) => {
+                                                    const newValues =
+                                                        Array.from(
+                                                            prevState?.[
+                                                                property
+                                                            ]
+                                                        );
+
+                                                    newValues[index] = {
+                                                        ...newValues[index],
+                                                        name: e.target.value,
+                                                    };
+                                                    return {
+                                                        ...prevState,
+                                                        [property]: newValues,
+                                                    };
+                                                });
+                                            }}
+                                            type="text"
+                                            name="upgrade-name-input"
+                                            id="upgrade-name-input"
+                                            className="daisy-input daisy-input-bordered w-full pr-14"
+                                        />
+                                        <div className="absolute right-4 top-1/2 h-fit w-fit translate-y-[-50%]">
+                                            <BubbleButton
+                                                handleClick={() =>
+                                                    setIsCustomName(() => false)
+                                                }
+                                                className={'px-1.5 py-1.5'}
+                                            >
+                                                <CloseRounded className="!fill-black/70" />
+                                            </BubbleButton>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <select
+                                        onChange={(e) => {
+                                            const nameLC =
+                                                e.target.value?.toLowerCase();
+
+                                            if (nameLC == 'custom') {
+                                                setIsCustomName(() => true);
+                                            } else {
+                                                setProfile((prevState) => {
+                                                    const newValues =
+                                                        Array.from(
+                                                            prevState?.[
+                                                                property
+                                                            ]
+                                                        );
+
+                                                    newValues[index] = {
+                                                        ...newValues[index],
+                                                        name: nameLC,
+                                                    };
+                                                    return {
+                                                        ...prevState,
+                                                        [property]: newValues,
+                                                    };
+                                                });
+                                            }
+                                        }}
+                                        name="upgrade-name"
+                                        id="upgrade-name"
+                                        className="daisy-select daisy-select-bordered w-full"
+                                    >
+                                        {[
+                                            'Express',
+                                            '1 Day',
+                                            'Economy',
+                                            'Custom',
+                                        ].map((item) => {
+                                            return (
+                                                <option
+                                                    value={item}
+                                                    key={item}
+                                                    selected={
+                                                        service?.name ==
+                                                        item.toLowerCase()
+                                                    }
+                                                >
+                                                    {item}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                )}
                                 <div className="w-14">
                                     {!service?.disableDelete && (
                                         <BubbleButton
