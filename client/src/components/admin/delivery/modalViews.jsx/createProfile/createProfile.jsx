@@ -17,12 +17,14 @@ function CreateProfile({}) {
         standard_delivery: [
             {
                 location: 'GB',
-                name: 'United Kingdom',
+                destination: 'United Kingdom',
                 disableDelete: true,
             },
             {
                 location: 'everywhere_else',
-                name: 'Everywhere Else',
+                destination: 'Everywhere Else',
+            
+
             },
         ],
 

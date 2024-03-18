@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 function BubbleButton({ handleClick, children, className, hoverClassName }) {
     const [isHover, setIsHover] = useState(false);
 
@@ -20,6 +22,9 @@ function BubbleButton({ handleClick, children, className, hoverClassName }) {
             },
         },
     };
+
+    const ref = useRef([uuidv4(), uuidv4()]);
+
     return (
         <AnimatePresence>
             <motion.button
@@ -47,7 +52,7 @@ function BubbleButton({ handleClick, children, className, hoverClassName }) {
                             initial={'initial'}
                             animate={'animate'}
                             exit={'exit'}
-                            className={`absolute left-0 top-0  h-full w-full  rounded-inherit ${ hoverClassName || 'bg-light-grey'} `}
+                            className={`absolute left-0 top-0  h-full w-full  rounded-inherit ${hoverClassName || 'bg-light-grey'} `}
                         ></motion.div>
                     )}
                 </AnimatePresence>

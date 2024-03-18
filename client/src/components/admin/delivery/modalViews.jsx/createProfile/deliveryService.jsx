@@ -7,6 +7,7 @@ import { getNameList, getData } from 'country-list';
 import { useState } from 'react';
 
 import { internationalOptions, UkOptions } from './shippingOptions';
+import { ClickAwayListener } from '@mui/material';
 function DeliveryService({
     handleDelete,
     service,
@@ -17,30 +18,39 @@ function DeliveryService({
 }) {
     const [countries, setCountries] = useState(() => getData());
     const [showOptions, setShowOptions] = useState(false);
-
+    const [charges, setCharges] = useState({
+        one_item: 0.0,
+        additional_item: 0.0,
+    });
     const [isCustomName, setIsCustomName] = useState(false);
+
+    const handleUpdate = ({ updateProperty }) => {
+        setProfile((prevState) => {
+            const newValues = Array.from(prevState?.[property]);
+
+            newValues[index] = {
+                ...newValues[index],
+                ...updateProperty,
+            };
+            return {
+                ...prevState,
+                [property]: newValues,
+            };
+        });
+    };
+
     const handleOnChange = (e) => {
         if (!isUpgrade) {
             const { ...value } = e.target[e.target.selectedIndex].dataset;
-            setProfile((prevState) => {
-                const newValues = Array.from(prevState?.[property]);
-                newValues[index] = {
-                    ...newValues,
-                    name: value.name,
-                    location: value.code,
-                };
-                return { ...prevState, [property]: newValues };
+
+            handleUpdate({
+                updateProperty: {
+                    destination: value.name,
+                    iso_code: value.code,
+                },
             });
         } else {
-            setProfile((prevState) => {
-                const newValues = Array.from(prevState?.[property]);
-                newValues[index] = {
-                    ...newValues[index],
-                    destination: e.target.value,
-                };
-
-                return { ...prevState, [property]: newValues };
-            });
+            handleUpdate({ updateProperty: { destination: e.target.value } });
         }
     };
     const [shippingOptions, setSHippingOptions] = useState(() =>
@@ -53,12 +63,15 @@ function DeliveryService({
                 {isUpgrade ? (
                     <Label title={'Destination'} disableAsterisk={true} />
                 ) : (
-                    service?.name && (
-                        <Label title={service?.name} disableAsterisk={true} />
+                    service?.destination && (
+                        <Label
+                            title={service?.destination}
+                            disableAsterisk={true}
+                        />
                     )
                 )}
 
-                {(!service?.name || isUpgrade) && (
+                {(!service?.destination || isUpgrade) && (
                     <select
                         onChange={handleOnChange}
                         name=""
@@ -102,22 +115,10 @@ function DeliveryService({
                                     <div className="relative flex h-fit w-full flex-row flex-nowrap">
                                         <input
                                             onChange={(e) => {
-                                                setProfile((prevState) => {
-                                                    const newValues =
-                                                        Array.from(
-                                                            prevState?.[
-                                                                property
-                                                            ]
-                                                        );
-
-                                                    newValues[index] = {
-                                                        ...newValues[index],
+                                                handleUpdate({
+                                                    updateProperty: {
                                                         name: e.target.value,
-                                                    };
-                                                    return {
-                                                        ...prevState,
-                                                        [property]: newValues,
-                                                    };
+                                                    },
                                                 });
                                             }}
                                             type="text"
@@ -127,10 +128,17 @@ function DeliveryService({
                                         />
                                         <div className="absolute right-4 top-1/2 h-fit w-fit translate-y-[-50%]">
                                             <BubbleButton
-                                                handleClick={() =>
-                                                    setIsCustomName(() => false)
-                                                }
-                                                className={'px-1.5 py-1.5'}
+                                                handleClick={() => {
+                                                    setIsCustomName(
+                                                        () => false
+                                                    );
+                                                    handleUpdate({
+                                                        updateProperty: {
+                                                            name: '',
+                                                        },
+                                                    });
+                                                }}
+                                                className={'p-1.5'}
                                             >
                                                 <CloseRounded className="!fill-black/70" />
                                             </BubbleButton>
@@ -138,36 +146,37 @@ function DeliveryService({
                                     </div>
                                 ) : (
                                     <select
+                                        // aria-invalid={true}
                                         onChange={(e) => {
                                             const nameLC =
                                                 e.target.value?.toLowerCase();
 
                                             if (nameLC == 'custom') {
                                                 setIsCustomName(() => true);
-                                            } else {
-                                                setProfile((prevState) => {
-                                                    const newValues =
-                                                        Array.from(
-                                                            prevState?.[
-                                                                property
-                                                            ]
-                                                        );
-
-                                                    newValues[index] = {
-                                                        ...newValues[index],
-                                                        name: nameLC,
-                                                    };
-                                                    return {
-                                                        ...prevState,
-                                                        [property]: newValues,
-                                                    };
+                                                handleUpdate({
+                                                    updateProperty: {
+                                                        name: '',
+                                                    },
                                                 });
+                                                return;
                                             }
+                                            handleUpdate({
+                                                updateProperty: {
+                                                    name: nameLC,
+                                                },
+                                            });
                                         }}
                                         name="upgrade-name"
                                         id="upgrade-name"
                                         className="daisy-select daisy-select-bordered w-full"
                                     >
+                                        <option
+                                            value=""
+                                            selected={service?.name == ''}
+                                            disabled
+                                            hidden
+                                        ></option>
+
                                         {[
                                             'Express',
                                             '1 Day',
@@ -208,6 +217,15 @@ function DeliveryService({
                         </p>
                         <div className="flex flex-row flex-nowrap items-center gap-2">
                             <select
+                                onChange={(e) => {
+                                    const value = {
+                                        ...e.target[e.target.selectedIndex]
+                                            .dataset,
+                                    };
+                                    handleUpdate({
+                                        updateProperty: { shipping: value },
+                                    });
+                                }}
                                 name="delivery-service"
                                 id="delivery-service"
                                 className="daisy-select daisy-select-bordered w-full"
@@ -222,8 +240,13 @@ function DeliveryService({
                                             {options.map(
                                                 ({ text, start, end }) => {
                                                     return (
-                                                        <option>
-                                                            {`${text} (${start == end ? start : `${start}-${end}`} days)`}
+                                                        <option
+                                                            data-service={text}
+                                                            data-start={start}
+                                                            data-end={end}
+                                                            data-type={'days'}
+                                                        >
+                                                            {`${text} (${start == end ? start : `${start}-${end}`} ${'days'})`}
                                                         </option>
                                                     );
                                                 }
@@ -260,6 +283,15 @@ function DeliveryService({
                                     setShowOptions(() => true);
                                 } else {
                                     setShowOptions(() => false);
+
+                                    handleUpdate({
+                                        updateProperty: {
+                                            charges: {
+                                                one_item: 0,
+                                                additional_item: 0,
+                                            },
+                                        },
+                                    });
                                 }
                             }}
                             name="shipping-charge"
@@ -272,7 +304,73 @@ function DeliveryService({
 
                         {showOptions && (
                             <div className="mt-4 flex w-full flex-nowrap gap-4">
-                                <div className="left flex flex-col gap-1 ">
+                                {[
+                                    { text: 'One item', prop: 'one_item' },
+                                    {
+                                        text: 'Additional item',
+                                        prop: 'additional_item',
+                                    },
+                                ].map(({ text, prop }) => {
+                                    return (
+                                        <div
+                                            key={`${text}-${property}-${index}`}
+                                            className=" flex flex-col gap-1 "
+                                        >
+                                            <p className="whitespace-nowrap text-base font-semibold">
+                                                {text}
+                                            </p>
+                                            <ClickAwayListener
+                                                onClickAway={() => {
+                                                    let parseValue = parseFloat(
+                                                        charges?.[prop]
+                                                    ).toFixed(2);
+
+                                                    if (isNaN(parseValue)) {
+                                                        parseValue = '0.00';
+                                                    }
+
+                                                    setCharges((prevState) => ({
+                                                        ...prevState,
+                                                        [prop]: parseValue,
+                                                    }));
+
+                                                    handleUpdate({
+                                                        updateProperty: {
+                                                            charges: {
+                                                                ...service?.charges,
+                                                                [prop]: parseValue,
+                                                            },
+                                                        },
+                                                    });
+                                                }}
+                                            >
+                                                <div className="relative">
+                                                    <p className="absolute text-base left-2 top-1/2 translate-y-[-50%]">
+                                                        £
+                                                    </p>
+                                                    <input
+                                                        value={charges?.[prop]}
+                                                        onChange={(e) => {
+                                                            setCharges(
+                                                                (
+                                                                    prevState
+                                                                ) => ({
+                                                                    ...prevState,
+                                                                    [prop]: e
+                                                                        .target
+                                                                        .value,
+                                                                })
+                                                            );
+                                                        }}
+                                                        type="text"
+                                                        className="daisy-input daisy-input-bordered w-full pl-6"
+                                                    />
+                                                </div>
+                                            </ClickAwayListener>
+                                        </div>
+                                    );
+                                })}
+                                {/* <div className="left flex flex-col gap-1 ">
                                     <p className="whitespace-nowrap text-base font-semibold">
                                         One item
                                     </p>
@@ -291,7 +389,7 @@ function DeliveryService({
                                         type="text"
                                         className="daisy-input daisy-input-bordered w-full"
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         )}
                     </section>

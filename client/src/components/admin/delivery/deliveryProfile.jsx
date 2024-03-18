@@ -12,12 +12,15 @@ import BubbleButton from '../../buttons/bubbleButton.jsx';
 import { useContent } from '../../../context/ContentContext.jsx';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import UserLogout from '../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../api/axios.js';
 import SeamlessDropdown from '../../common/dropdown/seamlessDropdown.jsx';
+import { v4 as uuidv4 } from 'uuid';
 function DeliveryProfile({ status, setStatus }) {
+    const ref = useRef([uuidv4()]);
+
     const { logoutUser } = UserLogout();
     const exampleProfile = {
         name: '2-3 Weeks Delivery',
@@ -87,7 +90,6 @@ function DeliveryProfile({ status, setStatus }) {
 
         fetchData();
     }, []);
-
     return (
         <section className=" flex flex-col gap-6 sm+md:w-full lg:w-10/12">
             <div className="">
@@ -104,6 +106,7 @@ function DeliveryProfile({ status, setStatus }) {
             <div className="flex flex-row flex-nowrap items-center justify-between rounded-lg border border-dark-gray px-8 py-6">
                 <p className="text-base font-semibold">Monday-Friday</p>
                 <BubbleButton
+                    key={uuidv4()}
                     handleClick={() => {
                         setModalCheck(() => true);
                         setModalContent(() => ({ type: 'processOrder' }));
@@ -152,38 +155,47 @@ function DeliveryProfile({ status, setStatus }) {
                         {selection.size > 0 && (
                             <p className="ml-2">{selection.size}</p>
                         )}
-                        <AnimatePresence mode="wait">
-                            <section className="relative  mx-2">
-                                <BubbleButton
-                                    className={
-                                        'border border-transparent px-2 py-1'
-                                    }
-                                    handleClick={() => {
-                                        setShow(() => true);
-                                    }}
+
+                        <section className="relative  mx-2">
+                            <BubbleButton
+                                key={uuidv4()}
+                                className={
+                                    'border border-transparent px-2 py-1'
+                                }
+                                handleClick={() => {
+                                    setShow(() => true);
+                                }}
+                            >
+                                <ArrowDropDown />
+                            </BubbleButton>
+                            {show && (
+                                <div
+                                    onClick={() => setShow(() => false)}
+                                    className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
                                 >
                                     <ArrowDropDown />
-                                </BubbleButton>
-                                {show && (
-                                    <div
-                                        onClick={() => setShow(() => false)}
-                                        className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
-                                    >
-                                        <ArrowDropDown />
-                                    </div>
-                                )}
+                                </div>
+                            )}
 
-                                <SeamlessDropdown
-                                    {...{ setShow, show, options }}
-                                />
-                            </section>
-                            <section className="relative  mx-2">
+                            <SeamlessDropdown {...{ setShow, show, options }} />
+                        </section>
+                        <section className="relative  mx-2">
+                            <button
+                                onClick={() => setShowEditOrigin(() => true)}
+                                type="button"
+                                className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
+                            >
+                                <ModeEditOutlineRounded />
+
+                                <p className="whitespace-nowrap text-sm ">
+                                    Edit origin post code
+                                </p>
+                                <ArrowDropDown />
+                            </button>
+                            {showEditOrigin && (
                                 <button
-                                    onClick={() =>
-                                        setShowEditOrigin(() => true)
-                                    }
                                     type="button"
-                                    className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
+                                    className=" absolute left-0 top-0 !z-[3]  flex flex-row items-center gap-2 border-2 border-transparent p-3"
                                 >
                                     <ModeEditOutlineRounded />
 
@@ -192,59 +204,47 @@ function DeliveryProfile({ status, setStatus }) {
                                     </p>
                                     <ArrowDropDown />
                                 </button>
-                                {showEditOrigin && (
+                            )}
+
+                            <SeamlessDropdown
+                                {...{
+                                    setShow: setShowEditOrigin,
+                                    show: showEditOrigin,
+                                    options,
+                                }}
+                            >
+                                <div className="mt-12 flex flex-col gap-5 px-4 py-4">
+                                    <p className="text-sm ">
+                                        This is the post code that you dispatch
+                                        your items from.
+                                    </p>
+
+                                    <div className="flex flex-col gap-1">
+                                        <p className="text-base font-semibold">
+                                            Origin post code
+                                        </p>
+
+                                        <input
+                                            type="text"
+                                            className="daisy-input daisy-input-bordered"
+                                            placeholder="EC2R 7DA"
+                                        />
+                                    </div>
+
                                     <button
                                         type="button"
-                                        className=" absolute left-0 top-0 !z-[3]  flex flex-row items-center gap-2 border-2 border-transparent p-3"
+                                        className="w-fit self-end rounded-full bg-black px-5 py-3 font-semibold text-white"
                                     >
-                                        <ModeEditOutlineRounded />
-
-                                        <p className="whitespace-nowrap text-sm ">
-                                            Edit origin post code
-                                        </p>
-                                        <ArrowDropDown />
+                                        Update
                                     </button>
-                                )}
-
-                                <SeamlessDropdown
-                                    {...{
-                                        setShow: setShowEditOrigin,
-                                        show: showEditOrigin,
-                                        options,
-                                    }}
-                                >
-                                    <div className="mt-12 flex flex-col gap-5 px-4 py-4">
-                                        <p className="text-sm ">
-                                            This is the post code that you
-                                            dispatch your items from.
-                                        </p>
-
-                                        <div className="flex flex-col gap-1">
-                                            <p className="text-base font-semibold">
-                                                Origin post code
-                                            </p>
-
-                                            <input
-                                                type="text"
-                                                className="daisy-input daisy-input-bordered"
-                                                placeholder="EC2R 7DA"
-                                            />
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            className="w-fit self-end rounded-full bg-black px-5 py-3 font-semibold text-white"
-                                        >
-                                            Update
-                                        </button>
-                                    </div>
-                                </SeamlessDropdown>
-                            </section>
-                        </AnimatePresence>
+                                </div>
+                            </SeamlessDropdown>
+                        </section>
                     </div>
 
                     <div className="flex w-full justify-end">
                         <BubbleButton
+                            key={uuidv4()}
                             className={''}
                             handleClick={() => {
                                 setModalContent(() => ({
