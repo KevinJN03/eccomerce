@@ -23,8 +23,6 @@ function BubbleButton({ handleClick, children, className, hoverClassName }) {
         },
     };
 
-    const ref = useRef([uuidv4(), uuidv4()]);
-
     return (
         <AnimatePresence>
             <motion.button

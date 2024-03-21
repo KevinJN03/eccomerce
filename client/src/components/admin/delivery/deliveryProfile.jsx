@@ -11,57 +11,41 @@ import {
 import BubbleButton from '../../buttons/bubbleButton.jsx';
 import { useContent } from '../../../context/ContentContext.jsx';
 
-import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { ClickAwayListener } from '@mui/material';
 import UserLogout from '../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../api/axios.js';
 import SeamlessDropdown from '../../common/dropdown/seamlessDropdown.jsx';
 import { v4 as uuidv4 } from 'uuid';
+import { Skeleton, Tooltip, Typography } from '@mui/material';
+
+import { makeStyles } from '@mui/styles';
+import ThemeBtn from '../../buttons/themeBtn.jsx';
+import Pagination from '../../dashboard/pagination/pagination.jsx';
+import Table from './table.jsx';
 function DeliveryProfile({ status, setStatus }) {
-    const ref = useRef([uuidv4()]);
-
     const { logoutUser } = UserLogout();
-    const exampleProfile = {
-        name: '2-3 Weeks Delivery',
-        processing_time: {
-            start: 2,
-            end: 3,
-            type: 'weeks',
-        },
-        origin: 'KY15 7AA',
-        active_listings: 1,
-    };
-
-    const { setModalCheck, setModalContent } = useContent();
-
+    const { setModalCheck, setModalContent, modalContent } = useContent();
     const [selection, setSelection] = useState(new Set());
-
     const [show, setShow] = useState(false);
-
     const [profiles, setProfiles] = useState([]);
+    const [originPostCode, setOriginPostCode] = useState('');
+    const [triggerRefresh, setTriggerRefresh] = useState(false);
+    const [refreshLoading, setRefreshLoading] = useState(true);
     const [showEditOrigin, setShowEditOrigin] = useState(false);
-
+    const abortControllerRef = useRef(new AbortController());
+    const [currentPageProfiles, setCurrentPageProfiles] = useState([]);
+    const [page, setPage] = useState(1);
     const options = [
         {
             _id: 1,
-            text: `Select ${5} profiles on this page`,
-        },
-        {
-            _id: 2,
-
-            text: `Select ${7} on all pages`,
-
+            text: `Select ${currentPageProfiles.length} ${currentPageProfiles?.length > 1 ? 'profiles' : 'profile'} on this page`,
             handleClick: () => {
                 setSelection(
-                    (prevSelection) =>
-                        new Set([
-                            ...prevSelection,
-                            ...profiles.map(({ _id }) => _id),
-                        ])
+                    () => new Set(currentPageProfiles.map(({ _id }) => _id))
                 );
             },
         },
+
         {
             _id: 3,
             handleClick: () => {
@@ -71,25 +55,77 @@ function DeliveryProfile({ status, setStatus }) {
         },
     ];
 
-    const exampleData = [
-        { ...exampleProfile, _id: 1 },
-        { ...exampleProfile, _id: 2 },
-        { ...exampleProfile, _id: 3 },
-    ];
+    if (profiles.length > 5) {
+        options.splice(1, 0, {
+            _id: 2,
+
+            text: `Select ${profiles.length} on all pages`,
+
+            handleClick: () => {
+                setSelection(() => new Set(profiles.map(({ _id }) => _id)));
+            },
+        });
+    }
 
     useEffect(() => {
         const fetchData = async () => {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            setRefreshLoading(() => true);
             try {
-                const { data } = await adminAxios.get('/delivery/all');
+                const { data } = await adminAxios.get('/delivery/all', {
+                    signal: abortControllerRef?.current?.signal,
+                });
 
                 setProfiles(() => data);
+
+                const currentProfiles = data.slice(5 * (page - 1), page * 5);
+
+                if (currentProfiles.length < 1) {
+                    setPage(() => 1);
+                }
             } catch (error) {
                 logoutUser({ error });
+            } finally {
+                setTimeout(() => {
+                    setRefreshLoading(() => false);
+                }, 1000);
             }
         };
 
         fetchData();
-    }, []);
+
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, [triggerRefresh]);
+
+    useEffect(() => {
+        setCurrentPageProfiles(() => profiles.slice(5 * (page - 1), page * 5));
+    }, [profiles, page]);
+
+    useEffect(() => {
+        setSelection(() => new Set());
+    }, [page]);
+    const handlePostCode = async () => {
+        try {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await adminAxios.post(
+                '/delivery/update',
+                {
+                    ids: Array.from(selection),
+                    origin_post_code: originPostCode,
+                },
+                { signal: abortControllerRef.current?.signal }
+            );
+            setTriggerRefresh((prevState) => !prevState);
+            setShowEditOrigin(() => false);
+        } catch (error) {
+            logoutUser({ error });
+        }
+    };
+
     return (
         <section className=" flex flex-col gap-6 sm+md:w-full lg:w-10/12">
             <div className="">
@@ -136,13 +172,18 @@ function DeliveryProfile({ status, setStatus }) {
                         <input
                             checked={selection.size > 0 ? true : false}
                             onChange={(e) => {
-                                if (selection.size == profiles.length) {
+                                if (selection.size) {
                                     setSelection(() => new Set());
                                 } else {
                                     setSelection(
                                         () =>
                                             new Set(
-                                                profiles.map(({ _id }) => _id)
+                                                profiles
+                                                    .map(({ _id }) => _id)
+                                                    .slice(
+                                                        5 * (page - 1),
+                                                        page * 5
+                                                    )
                                             )
                                     );
                                 }
@@ -179,11 +220,14 @@ function DeliveryProfile({ status, setStatus }) {
 
                             <SeamlessDropdown {...{ setShow, show, options }} />
                         </section>
-                        <section className="relative  mx-2">
+                        <section
+                            className={`relative  mx-2 ${selection.size < 1 ? 'opacity-30' : 'opacity-100'}`}
+                        >
                             <button
+                                disabled={selection.size < 1}
                                 onClick={() => setShowEditOrigin(() => true)}
                                 type="button"
-                                className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3"
+                                className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3 disabled:cursor-not-allowed"
                             >
                                 <ModeEditOutlineRounded />
 
@@ -225,18 +269,24 @@ function DeliveryProfile({ status, setStatus }) {
                                         </p>
 
                                         <input
+                                            value={originPostCode}
+                                            onChange={(e) =>
+                                                setOriginPostCode(
+                                                    () => e.target.value
+                                                )
+                                            }
                                             type="text"
                                             className="daisy-input daisy-input-bordered"
                                             placeholder="EC2R 7DA"
                                         />
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="w-fit self-end rounded-full bg-black px-5 py-3 font-semibold text-white"
-                                    >
-                                        Update
-                                    </button>
+                                    <div className="w-fit self-end">
+                                        <ThemeBtn
+                                            text={'Update'}
+                                            handleClick={handlePostCode}
+                                        />
+                                    </div>
                                 </div>
                             </SeamlessDropdown>
                         </section>
@@ -249,6 +299,8 @@ function DeliveryProfile({ status, setStatus }) {
                             handleClick={() => {
                                 setModalContent(() => ({
                                     type: 'createProfile',
+                                    version: 'create',
+                                    setTriggerRefresh,
                                 }));
                                 setModalCheck(() => true);
                             }}
@@ -262,180 +314,26 @@ function DeliveryProfile({ status, setStatus }) {
                         </BubbleButton>
                     </div>
                 </div>
+                <Table
+                    {...{
+                        selection,
+                        profiles,
+                        refreshLoading,
+                        page,
+                        currentPageProfiles, setTriggerRefresh, setSelection
+                    }}
+                />
 
-                <table className="mt-5 w-full">
-                    <colgroup>
-                        <col span="1" width={'5%'} className="bg-red-500/0" />
-                        <col
-                            span="1"
-                            width={'40%'}
-                            className="bg-yellow-500/0"
-                        />
-                        <col
-                            span="1"
-                            width={'25%'}
-                            className="bg-orange-500/0"
-                        />
-                        <col
-                            span="1"
-                            width={'7.5%'}
-                            className="bg-pink-500/0"
-                        />
-                        <col
-                            span="1"
-                            width={'7.5%'}
-                            className="bg-purple-500/0"
-                        />
-                        <col span="1" width={'15%'} className="bg-blue-500/0" />
-                    </colgroup>
-                    <tr
-                        className="
-                    "
-                    >
-                        <th className=" pb-2" />
-                        <th className=" pb-2" />
-                        <th className="whitespace-nowrap pb-2 text-left text-xs font-medium underline">
-                            Processing Time
-                        </th>
-                        <th className="pb-2 text-left text-xs font-medium">
-                            Origin
-                        </th>
-
-                        <th className="pb-2 text-left text-xs font-medium">
-                            Active Listings
-                        </th>
-                        <th className="pb-2" />
-                    </tr>
-
-                    {profiles.map(
-                        ({
-                            _id,
-                            name,
-                            processingTime,
-                            origin,
-                            active_listings,
-                        }) => {
-                            return (
-                                <tr
-                                    key={_id}
-                                    className={`border-dak-grey border-b-2 hover:bg-light-grey  ${selection.has(_id) ? 'bg-light-grey/60' : ''}`}
-                                >
-                                    <td className="py-6 pl-4">
-                                        <input
-                                            onChange={() => {
-                                                console.log('clicked here');
-                                                setSelection(
-                                                    (prevSelection) => {
-                                                        const newSelection =
-                                                            new Set(
-                                                                prevSelection
-                                                            );
-
-                                                        if (
-                                                            newSelection.has(
-                                                                _id
-                                                            )
-                                                        ) {
-                                                            newSelection.delete(
-                                                                _id
-                                                            );
-                                                        } else {
-                                                            newSelection.add(
-                                                                _id
-                                                            );
-                                                        }
-
-                                                        return newSelection;
-                                                    }
-                                                );
-                                            }}
-                                            type="checkbox"
-                                            checked={selection.has(_id)}
-                                            className={`daisy-checkbox h-[1.125rem] w-[1.125rem] rounded-sm border-dark-gray `}
-                                        />
-                                    </td>
-                                    <td className="py-6 pl-5">
-                                        <p className="text-base font-semibold">
-                                            {name}
-                                        </p>
-                                    </td>
-
-                                    <td className="py-6">
-                                        <p className="text-base ">
-                                            {`${processingTime.start}-${processingTime.end} ${processingTime.type}`}
-                                        </p>
-                                    </td>
-
-                                    <td className="py-6">
-                                        <p className="w-2/4 text-base">
-                                            {origin || 'KY15 7AA'}
-                                        </p>
-                                    </td>
-
-                                    <td className="py-6">
-                                        <p className="text-base">
-                                            {active_listings}
-                                        </p>
-                                    </td>
-
-                                    <td className="py-6 pr-3">
-                                        <div className="flex w-full flex-nowrap items-center justify-end">
-                                            <button
-                                                type="button"
-                                                className="rounded-full p-2 transition-all hover:bg-dark-gray/30"
-                                            >
-                                                <EditRounded />
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="rounded-full p-2 transition-all hover:bg-dark-gray/30"
-                                            >
-                                                <ContentCopySharp />
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setModalContent(() => ({
-                                                        type: 'deleteProfile',
-                                                        profileId: _id,
-                                                    }));
-                                                    setModalCheck(() => true);
-                                                }}
-                                                type="button"
-                                                className="rounded-full p-2 transition-all hover:bg-dark-gray/30"
-                                            >
-                                                <DeleteRounded />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
+                <div className="delivery-pagination mt-4 flex flex-row flex-nowrap justify-end gap-1.5 ">
+                    <Pagination
+                        activeClassName={'border-2 border-black'}
+                        buttonClassName={
+                            'rounded-full active:border-black active:border-2 focus:border-black focus:border-2  h-10 w-10 bg-light-grey flex justify-center items-center hover:bg-dark-gray/50 text-s font-semibold'
                         }
-                    )}
-                </table>
-
-                <div className="delivery-pagination mt-4 flex flex-row flex-nowrap justify-end gap-1.5">
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full bg-light-grey">
-                        <WestRounded fontSize="small" />
-                    </button>
-
-                    {[1, 2, 3, 4].map((item) => {
-                        return (
-                            <button
-                                type="button"
-                                className="flex h-8 w-8 items-center justify-center rounded-full bg-light-grey"
-                            >
-                                <p className="text-sm font-medium">{item}</p>
-                            </button>
-                        );
-                    })}
-
-                    <button
-                        type="button"
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-light-grey"
-                    >
-                        <EastRounded fontSize="small" />
-                    </button>
+                        divideBy={Math.ceil(profiles.length / 5)}
+                        setPage={setPage}
+                        page={page}
+                    />
                 </div>
             </section>
         </section>

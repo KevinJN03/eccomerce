@@ -1,4 +1,10 @@
-function PaginationButton({ divideBy, setPage, page }) {
+function PaginationButton({
+    divideBy,
+    setPage,
+    page,
+    buttonClassName,
+    activeClassName,
+}) {
     const content = () => {
         if (divideBy > 4) {
             return (
@@ -7,8 +13,10 @@ function PaginationButton({ divideBy, setPage, page }) {
                         return (
                             <button
                                 onClick={() => setPage(() => item)}
-                                className={`btn ${
-                                    page == item ? 'btn-active' : ''
+                                className={`${buttonClassName || 'btn'}  ${
+                                    page == item
+                                        ? (activeClassName || 'btn-active')
+                                        : ''
                                 }`}
                                 key={item}
                             >
@@ -17,27 +25,35 @@ function PaginationButton({ divideBy, setPage, page }) {
                         );
                     })}
                     {page >= 4 && (
-                        <button disabled className="btn">
+                        <button
+                            disabled
+                            className={` ${buttonClassName || 'btn'}`}
+                        >
                             ...
                         </button>
                     )}
                     {page > 2 && page < divideBy && (
                         <button
                             // onClick={() => setPage(divideBy)}
-                            className={`btn-active btn`}
+                            className={` ${buttonClassName || 'btn'} ${activeClassName || 'btn-active'}`}
                         >
                             {page}
                         </button>
                     )}
                     {page < divideBy - 1 && page >= 1 && (
-                        <button disabled className="btn">
+                        <button
+                            disabled
+                            className={` ${buttonClassName || 'btn'}`}
+                        >
                             ...
                         </button>
                     )}
                     <button
                         onClick={() => setPage(divideBy)}
-                        className={`btn ${
-                            page == divideBy ? 'btn-active' : ''
+                        className={` ${buttonClassName || 'btn'} ${
+                            page == divideBy
+                                ? activeClassName || 'btn-active'
+                                : ''
                         }`}
                     >
                         {divideBy}
@@ -50,12 +66,11 @@ function PaginationButton({ divideBy, setPage, page }) {
                     {Array(divideBy)
                         .fill(1)
                         .map((item, idx) => {
-                            console.log({ item });
                             return (
                                 <button
                                     onClick={() => setPage(() => idx + 1)}
-                                    className={`btn ${
-                                        page == idx + 1 ? 'btn-active' : ''
+                                    className={` ${buttonClassName || 'btn'} ${
+                                        page == idx + 1 ? (activeClassName || 'btn-active') : ''
                                     }`}
                                     key={idx + 1}
                                 >

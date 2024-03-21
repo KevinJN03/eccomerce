@@ -1,4 +1,4 @@
-import mongoose, { Schema, SchemaType } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const timeObj = {
   type: {
@@ -25,8 +25,8 @@ const timeObj = {
 };
 
 const chargeObj = {
-  one_item: { type: Schema.Types.Number },
-  additional_item: { type: Schema.Types.Number },
+  one_item: { type: Schema.Types.Number, default: 0, required: true },
+  additional_item: { type: Schema.Types.Number, default: 0, required: true },
 };
 const DeliveryProfileSchema = new Schema({
   name: {
@@ -47,11 +47,17 @@ const DeliveryProfileSchema = new Schema({
   },
   standard_delivery: [
     {
-      _id: Schema.Types.ObjectId,
-      destination: { type: Schema.Types.String },
-      shipping_time: timeObj,
+      _id: {
+        type: Schema.Types.ObjectId,
+      
+      },
+      destination: { type: Schema.Types.String, required: true },
+      iso_code: { type: Schema.Types.String, required: true },
       charges: chargeObj,
-      delivery_service: { type: Schema.Types.String },
+      shipping: {
+        service: { type: Schema.Types.String },
+        ...timeObj,
+      },
     },
   ],
   delivery_upgrades: [
@@ -69,11 +75,13 @@ const DeliveryProfileSchema = new Schema({
         maxlength: 28,
       },
       charges: chargeObj,
-      delivery_service: { type: Schema.Types.String },
-      shipping_time: timeObj,
+      shipping: {
+        service: { type: Schema.Types.String },
+        ...timeObj,
+      },
     },
   ],
-  processingTime: timeObj,
+  processing_time: timeObj,
 });
 
 DeliveryProfileSchema.pre('updateOne', function (next) {
@@ -81,21 +89,9 @@ DeliveryProfileSchema.pre('updateOne', function (next) {
   next();
 });
 
-DeliveryProfileSchema.path('processingTime.start').validate(function (value) {
-  const time = this.get('processingTime');
+DeliveryProfileSchema.path('processing_time.start').validate(function (value) {
+  const time = this.get('processing_time');
   return value < time.end;
 }, 'Your start day or week must be less than end day');
-
-DeliveryProfileSchema.post('save', async function (error, doc, next) {
-  if (error.name === 'MongoServerError' && error.code === 11000) {
-    return next(
-      new Error(
-        `There is already a delivery profile with name ${doc.code}. Please use another name!`,
-      ),
-    );
-  }
-
-  return next();
-});
 
 export default mongoose.model('deliveryProfile', DeliveryProfileSchema);

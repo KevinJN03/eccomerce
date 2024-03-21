@@ -41,6 +41,7 @@ import {
   get_single_delivery_profile,
   update_single_delivery_profile,
   getAllOrders,
+  update_delivery_profile,
 } from '../Controllers/deliveryProfileController.js';
 import {
   addPrivateNote,
@@ -67,6 +68,7 @@ router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
+router.post('/delivery/update', update_delivery_profile);
 router.put('/delivery/update/:id', update_single_delivery_profile);
 router.post('/user/create', create_user);
 router.post('/user/update/:id', update_single);
@@ -90,6 +92,6 @@ router.get('/product/featured/:id', updateProductFeature);
 router.post('/product/status/update', updateStatus);
 router.post('/product/title/update', editTitle);
 
-router.post('/product/price/update', editPrice)
+router.post('/product/price/update', editPrice);
 // router.get('/check', checkLogin)
 export default router;
