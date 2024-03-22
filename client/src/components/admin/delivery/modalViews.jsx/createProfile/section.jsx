@@ -7,6 +7,7 @@ function Section({
     disableAsterisk,
     noWhiteSpace,
     note,
+    errorMsg,
 }) {
     return (
         <section className=" flex flex-nowrap items-start gap-20">
@@ -19,8 +20,9 @@ function Section({
             <div className="right w-full flex-[2]">
                 {children}
 
-                <p className="mt-2 text-base  text-red-800">{'Test msg'}</p>
-
+                {errorMsg && (
+                    <p className="mt-2 text-base  text-red-800">{errorMsg}</p>
+                )}
                 {note && <p className="mt-2">{note}</p>}
             </div>
         </section>

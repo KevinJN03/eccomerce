@@ -4,11 +4,11 @@ import BubbleButton from '../../../../buttons/bubbleButton';
 import ReactFlagsSelect from 'react-flags-select';
 import Label from './label';
 import { getNameList, getData } from 'country-list';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 import { internationalOptions, UkOptions } from './shippingOptions';
 import { ClickAwayListener } from '@mui/material';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import { useDeliveryContext } from '../../../../../context/deliveryCOntext';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 function DeliveryService({
@@ -19,7 +19,8 @@ function DeliveryService({
     isUpgrade,
     property,
 }) {
-    const { clickAwayRefs, countries, setProfile } = useCreateProfileContext();
+    const { countries, setProfile, errors, highlightError, setErrors } =
+        useCreateProfileContext();
     const clickAwayRef = useRef({ one_item: false, additional_item: false });
 
     const [showOptions, setShowOptions] = useState(false);
@@ -28,12 +29,7 @@ function DeliveryService({
         additional_item: 0.0,
     });
     const [isCustomName, setIsCustomName] = useState(false);
-    useEffect(() => {
-        clickAwayRefs.current[service._id] = {
-            one_item: false,
-            additional_item: false,
-        };
-    }, []);
+
     useEffect(() => {
         setCharges(() => ({ one_item: '0.00', additional_item: '0.00' }));
     }, [service?.iso_code]);
@@ -66,6 +62,23 @@ function DeliveryService({
         } else {
             handleUpdate({ updateProperty: { destination: e.target.value } });
         }
+    };
+
+    const handleSelect = (e) => {
+        const value = {
+            ...e.target[e.target.selectedIndex].dataset,
+        };
+        handleUpdate({
+            updateProperty: { shipping: value },
+        });
+
+        const cloneErrors = cloneDeep(errors);
+
+        // cloneErrors[property] = {...cloneErrors?.[property], [service._id] : {...cloneErrors?.[property]?.}}
+        cloneErrors[property][service._id]['shipping'] = null;
+
+        console.log({ cloneErrors });
+        setErrors(() => cloneErrors);
     };
 
     return (
@@ -229,18 +242,14 @@ function DeliveryService({
                         </p>
                         <div className="flex flex-row flex-nowrap items-center gap-2">
                             <select
-                                onChange={(e) => {
-                                    const value = {
-                                        ...e.target[e.target.selectedIndex]
-                                            .dataset,
-                                    };
-                                    handleUpdate({
-                                        updateProperty: { shipping: value },
-                                    });
-                                }}
+                                onChange={handleSelect}
                                 name="delivery-service"
                                 id="delivery-service"
-                                className="daisy-select daisy-select-bordered w-full"
+                                className={`daisy-select daisy-select-bordered w-full ${
+                                    errors?.[property]?.[service._id]?.shipping
+                                        ? 'border-red-700 bg-red-100'
+                                        : ''
+                                }`}
                             >
                                 <option
                                     value=""
@@ -295,9 +304,14 @@ function DeliveryService({
                             </div>
                         </div>
 
-                        <p className="mt-2 text-base  text-red-800">
-                            {'Select a delivery service'}
-                        </p>
+                        {_.has(
+                            errors,
+                            `${property}.${service._id}.shipping`
+                        ) && (
+                            <p className="mt-2 text-base  text-red-800">
+                                {errors?.[`${property}`][service._id]?.shipping}
+                            </p>
+                        )}
                     </div>
 
                     <section className="w-full max-w-[calc(8/12*100%)]">
@@ -355,12 +369,21 @@ function DeliveryService({
                                                     setCharges,
                                                     charges,
                                                 }}
+                                                ref={clickAwayRef}
                                             />
                                         );
                                     })}
                                 </div>
-                                <p className="mt-2 text-base  text-red-800">{`Price can't be greater than the One item price.`}</p>
                             </section>
+                        )}
+
+                        {_.has(
+                            errors,
+                            `${property}.${service._id}.charges`
+                        ) && (
+                            <p className="mt-2 text-base  text-red-800">
+                                {errors?.[`${property}`][service._id]?.charges}
+                            </p>
                         )}
                     </section>
                 </div>
@@ -371,21 +394,10 @@ function DeliveryService({
 
 export default DeliveryService;
 
-function Input({
-    handleUpdate,
-    text,
-    property,
-    index,
-    service,
-    prop,
-    setCharges,
-    charges,
-}) {
-    const { clickAwayRefs } = useCreateProfileContext();
-    // useEffect(() => {
-    //     console.log('service updated');
-    //     clickAwayRefs.current[service._id][prop] = false;
-    // }, [service?.charges]);
+const Input = forwardRef(function Input(
+    { handleUpdate, text, property, index, service, prop, setCharges, charges },
+    clickAwayRef
+) {
     return (
         <div
             key={`${service._id}-${property}-${index}`}
@@ -394,7 +406,7 @@ function Input({
             <p className="whitespace-nowrap text-base font-semibold">{text}</p>
             <ClickAwayListener
                 onClickAway={() => {
-                    if (!clickAwayRefs.current[service._id][prop]) {
+                    if (!clickAwayRef.current[prop]) {
                         return;
                     }
 
@@ -419,7 +431,7 @@ function Input({
                         },
                     });
 
-                    clickAwayRefs.current[service._id][prop] = false;
+                    clickAwayRef.current[prop] = false;
                 }}
             >
                 <div className="relative">
@@ -429,7 +441,7 @@ function Input({
                     <input
                         value={charges?.[prop]}
                         onChange={(e) => {
-                            clickAwayRefs.current[service._id][prop] = true;
+                            clickAwayRef.current[prop] = true;
                             setCharges((prevState) => ({
                                 ...prevState,
                                 [prop]: e.target.value,
@@ -442,4 +454,4 @@ function Input({
             </ClickAwayListener>
         </div>
     );
-}
+});

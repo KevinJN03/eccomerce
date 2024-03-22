@@ -1,47 +1,83 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-continue */
 import { check } from 'express-validator';
-import { isEmpty, isNull } from 'lodash';
+import _, { isEmpty, isNull } from 'lodash';
 
 const generateChecks = ({ property }) => {
   return [
-    check(`${property}.*.shipping`, 'Select a delivery service').custom(
-      (value, { req }) => {
-        if (isEmpty(value?.service)) {
-          return false;
+    check(`${property}`, 'Select a delivery service')
+      .isArray()
+      .custom((value, { req }) => {
+        const resultObj = {};
+        let isAllClear = true;
+
+        for (const element of value) {
+          const checks = { shipping: false, charges: false };
+          if (!_.has(element, 'shipping.service') && !checks.shipping) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              shipping: 'Select a delivery service',
+            };
+
+            isAllClear = false;
+            checks.shipping = true;
+          }
+
+          if (!_.has(element, 'element.start') && !checks.shipping) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              shipping: 'Select a shipping timeframe start.',
+            };
+            checks.shipping = true;
+          }
+          if (!_.has(element, 'element.end') && !checks.shipping) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              shipping: 'Select a shipping timeframe end.',
+            };
+            checks.shipping = true;
+          }
+
+          if (!_.has(element, 'element.type') && !checks.shipping) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              shipping: 'Select a shipping timeframe type.',
+            };
+            checks.shipping = true;
+          }
+
+          if (
+            (!_.has(element, 'charges') ||
+              !_.has(
+                element,
+                'charges.one_item' ||
+                  !_.has(element, 'charges.additional_item'),
+              )) &&
+            !checks.charges
+          ) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              charges: 'Select how much you want you charge',
+            };
+            checks.charges = true;
+          }
+
+          if (element?.charges?.one_item < element?.charges?.additional_item) {
+            resultObj[element._id] = {
+              ...resultObj[element._id],
+              charges: `Price can't be greater than the One item price.`,
+            };
+
+            checks.charges = false;
+          }
         }
 
-        if (isEmpty(value?.start)) {
-          throw Error('Select a shipping timeframe start.');
+        if (isAllClear) {
+          return true;
         }
-        if (isEmpty(value?.end)) {
-          throw Error('Select a shipping timeframe end.');
-        }
+        throw new Error(JSON.stringify(resultObj));
+      }),
 
-        if (isEmpty(value?.type)) {
-          throw Error('Select a shipping timeframe type.');
-        }
-
-        return true;
-      },
-    ),
-
-    check(`${property}.*.charges`, 'Select shipping charges').custom(
-      (value) => {
-        console.log({ value });
-
-        // console.log({ additional_item: isNaN(value?.additional_item) });
-
-        if (value?.additional_item > value?.one_item) {
-          throw new Error(`Price can't be greater than the One item price.`);
-        }
-        return true;
-
-      },
-    ),
-
-    // check(`${property}.charges.additional_item`, 'Select a delivery service')
-    //   .escape()
-    //   .trim()
-    //   .notEmpty(),
     // check(`${property}.destination`, 'add a destination')
     //   .escape()
     //   .trim()
@@ -53,6 +89,10 @@ const generateChecks = ({ property }) => {
   ];
 };
 const deliveryProfileValidator = [
+  check('country_of_origin', 'Select a Country your dispatching from.')
+    .escape()
+    .trim()
+    .notEmpty(),
   check('name', 'Profile name must be between 1 and 128 characters.')
     .escape()
     .trim()

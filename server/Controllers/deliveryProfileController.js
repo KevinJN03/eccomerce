@@ -6,16 +6,27 @@ import { useParams } from 'react-router-dom';
 import deliveryProfileValidator from '../utils/deliveryProfileValidator.js';
 import { validationResult } from 'express-validator';
 
+const errorFormatter = (element) => {
+  try {
+    const parseValue = JSON.parse(element.msg);
+
+    return parseValue;
+  } catch (error) {
+    return element.msg;
+  }
+};
 export const create_delivery_profile = [
   deliveryProfileValidator,
   asyncHandler(async (req, res, next) => {
     const { _id, ...body } = req.body;
     //console.log(body);
 
-    const errors = validationResult(req).formatWith(({ msg }) => msg);
+    const errors = validationResult(req).formatWith(errorFormatter);
+    console.log('- - - - - - - - - - - ');
 
+    console.log(errors.mapped());
     if (!errors.isEmpty()) {
-      res.status(404).send({ error: errors.mapped() });
+      res.status(404).send(errors.mapped());
       return;
     }
     const profile = await DeliveryProfile.create(body);
@@ -60,9 +71,18 @@ export const delete_single_delivery_profile = asyncHandler(
   },
 );
 
-export const update_single_delivery_profile = asyncHandler(
-  async (req, res, next) => {
+export const update_single_delivery_profile = [
+  deliveryProfileValidator,
+  asyncHandler(async (req, res, next) => {
     const { id } = req.params;
+
+    const errors = validationResult(req).formatWith(errorFormatter);
+
+    console.log(errors.mapped());
+    if (!errors.isEmpty()) {
+      res.status(404).send(errors.mapped());
+      return;
+    }
 
     const profile = await DeliveryProfile.updateOne({ _id: id }, req.body, {
       new: true,
@@ -70,8 +90,8 @@ export const update_single_delivery_profile = asyncHandler(
     });
 
     res.status(200).send(profile);
-  },
-);
+  }),
+];
 
 export const update_delivery_profile = asyncHandler(async (req, res, next) => {
   const { ids, ...body } = req.body;
