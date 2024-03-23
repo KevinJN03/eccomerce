@@ -62,16 +62,28 @@ const generateChecks = ({ property }) => {
             checks.charges = true;
           }
 
+          ['one_item', 'additional_item'].forEach((prop) => {
+            if (
+              element?.charges?.[prop] < 0 ||
+              element?.charges?.[prop] > 15865.4
+            ) {
+              resultObj[element._id] = {
+                ...resultObj[element._id],
+                [prop]: `Price must be between £0.00 and £15,865.40.`,
+              };
+            }
+          });
+
+
           if (element?.charges?.one_item < element?.charges?.additional_item) {
             resultObj[element._id] = {
               ...resultObj[element._id],
-              charges: `Price can't be greater than the One item price.`,
+              additional_item: `Price can't be greater than the One item price.`,
             };
-
-            checks.charges = false;
           }
-        }
 
+        }
+      
         if (isAllClear) {
           return true;
         }

@@ -11,6 +11,7 @@ import { ClickAwayListener } from '@mui/material';
 import _, { cloneDeep } from 'lodash';
 import { useDeliveryContext } from '../../../../../context/deliveryCOntext';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
+import Charges from './charges';
 function DeliveryService({
     handleDelete,
     service,
@@ -60,7 +61,9 @@ function DeliveryService({
                 },
             });
         } else {
-            handleUpdate({ updateProperty: { destination: e.target.value } });
+            handleUpdate({
+                updateProperty: { destination: e.target.value },
+            });
         }
     };
 
@@ -74,11 +77,12 @@ function DeliveryService({
 
         const cloneErrors = cloneDeep(errors);
 
-        // cloneErrors[property] = {...cloneErrors?.[property], [service._id] : {...cloneErrors?.[property]?.}}
-        cloneErrors[property][service._id]['shipping'] = null;
 
-        console.log({ cloneErrors });
-        setErrors(() => cloneErrors);
+        if (_.has(cloneErrors, `${property}.${service._id}.shipping`)) {
+            console.log({ cloneErrors });
+            delete cloneErrors[property][service._id]['shipping'];
+            setErrors(() => cloneErrors);
+        }
     };
 
     return (
@@ -160,6 +164,7 @@ function DeliveryService({
                                                         updateProperty: {
                                                             name: '',
                                                         },
+                                                        property,
                                                     });
                                                 }}
                                                 className={'p-1.5'}
@@ -223,7 +228,6 @@ function DeliveryService({
                                     </select>
                                 )}
                                 <div className="w-14">
-                                    sss
                                     {!isUpgrade && index != 0 && (
                                         <BubbleButton
                                             className={'px-3 py-3'}
@@ -314,78 +318,12 @@ function DeliveryService({
                         )}
                     </div>
 
-                    <section className="w-full max-w-[calc(8/12*100%)]">
-                        <p className="text-base font-semibold">
-                            What you'll charge
-                        </p>
-
-                        <select
-                            onChange={(e) => {
-                                const { value } =
-                                    e.target[e.target.selectedIndex];
-
-                                if (value == 'fixed-price') {
-                                    setShowOptions(() => true);
-                                } else {
-                                    setShowOptions(() => false);
-
-                                    handleUpdate({
-                                        updateProperty: {
-                                            charges: {
-                                                one_item: 0,
-                                                additional_item: 0,
-                                            },
-                                        },
-                                    });
-                                }
-                            }}
-                            name="shipping-charge"
-                            id="shipping-charge"
-                            className="daisy-select daisy-select-bordered w-full"
-                        >
-                            <option value="free-delivery">Free delivery</option>
-                            <option value="fixed-price">Fixed price</option>
-                        </select>
-
-                        {showOptions && (
-                            <section>
-                                <div className="mt-4 flex w-full flex-nowrap gap-4">
-                                    {[
-                                        { text: 'One item', prop: 'one_item' },
-                                        {
-                                            text: 'Additional item',
-                                            prop: 'additional_item',
-                                        },
-                                    ].map(({ text, prop }) => {
-                                        return (
-                                            <Input
-                                                {...{
-                                                    handleUpdate,
-                                                    text,
-                                                    property,
-                                                    index,
-                                                    service,
-                                                    prop,
-                                                    setCharges,
-                                                    charges,
-                                                }}
-                                                ref={clickAwayRef}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </section>
-                        )}
-
-                        {_.has(
-                            errors,
-                            `${property}.${service._id}.charges`
-                        ) && (
-                            <p className="mt-2 text-base  text-red-800">
-                                {errors?.[`${property}`][service._id]?.charges}
-                            </p>
-                        )}
-                    </section>
+                    <Charges
+                        property={property}
+                        service={service}
+                        index={index}
+                        handleUpdate={handleUpdate}
+                    />
                 </div>
             </div>
         </section>
@@ -393,65 +331,3 @@ function DeliveryService({
 }
 
 export default DeliveryService;
-
-const Input = forwardRef(function Input(
-    { handleUpdate, text, property, index, service, prop, setCharges, charges },
-    clickAwayRef
-) {
-    return (
-        <div
-            key={`${service._id}-${property}-${index}`}
-            className=" flex flex-col gap-1 "
-        >
-            <p className="whitespace-nowrap text-base font-semibold">{text}</p>
-            <ClickAwayListener
-                onClickAway={() => {
-                    if (!clickAwayRef.current[prop]) {
-                        return;
-                    }
-
-                    console.log('clickaway: ', prop);
-                    let parseValue = parseFloat(charges?.[prop]).toFixed(2);
-
-                    if (isNaN(parseValue)) {
-                        parseValue = '0.00';
-                    }
-
-                    setCharges((prevState) => ({
-                        ...prevState,
-                        [prop]: parseValue,
-                    }));
-
-                    handleUpdate({
-                        updateProperty: {
-                            charges: {
-                                ...service?.charges,
-                                [prop]: parseValue,
-                            },
-                        },
-                    });
-
-                    clickAwayRef.current[prop] = false;
-                }}
-            >
-                <div className="relative">
-                    <p className="absolute left-2 top-1/2 translate-y-[-50%] text-base">
-                        £
-                    </p>
-                    <input
-                        value={charges?.[prop]}
-                        onChange={(e) => {
-                            clickAwayRef.current[prop] = true;
-                            setCharges((prevState) => ({
-                                ...prevState,
-                                [prop]: e.target.value,
-                            }));
-                        }}
-                        type="text"
-                        className="daisy-input daisy-input-bordered w-full pl-6"
-                    />
-                </div>
-            </ClickAwayListener>
-        </div>
-    );
-});
