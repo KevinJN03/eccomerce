@@ -1,6 +1,7 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Section from './section';
+import _ from 'lodash';
 
 function ProcessingTime({}) {
     const {
@@ -13,9 +14,41 @@ function ProcessingTime({}) {
         setErrors,
         highlightError,
     } = useCreateProfileContext();
+
+    const [options, setOptions] = useState([
+        { start: 1, end: 1, type: 'days' },
+        { start: 1, end: 2, type: 'days' },
+        { start: 1, end: 3, type: 'days' },
+        { start: 3, end: 5, type: 'days' },
+        { start: 5, end: 7, type: 'days' },
+    ]);
+
+    const [selectIdx, setSelect] = useState(0);
+
+    useEffect(() => {
+        if (profile?.processing_time) {
+            let found = false;
+            for (const [idx, { start, end, type }] of options.entries()) {
+                console.log('tested');
+
+                if (
+                    profile?.processing_time?.start == start &&
+                    profile?.processing_time?.end == end &&
+                    profile?.processing_time?.type == type
+                ) {
+                    setSelect(() => idx + 1);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                setSelect(() => options.length + 1);
+                setShowPTInput(() => true);
+            }
+        }
+    }, []);
     return (
         <Section
-            errorMsg={errors?.['processing_time']}
             noWhiteSpace
             title={`Processing time
 `}
@@ -29,20 +62,15 @@ include: Monday–Friday.`}
                 onChange={handleProcessingTime}
                 name="country-origin"
                 id="country-origin"
-                className={`daisy-select daisy-select-bordered w-full ${highlightError('processing_time')}`}
+                className={`daisy-select daisy-select-bordered w-full ${highlightError(['processing_time', 'general'])}`}
             >
-                <option selected disabled>
+                <option selected={selectIdx == 0} disabled>
                     Select your processing time...
                 </option>
-                {[
-                    { start: 1, end: 1, type: 'days' },
-                    { start: 1, end: 2, type: 'days' },
-                    { start: 1, end: 3, type: 'days' },
-                    { start: 3, end: 5, type: 'days' },
-                    { start: 5, end: 7, type: 'days' },
-                ].map(({ start, end, type, isCustom }) => {
+                {options.map(({ start, end, type, isCustom }, idx) => {
                     return (
                         <option
+                            selected={idx + 1 == selectIdx}
                             data-start={start}
                             data-end={end}
                             data-type={type}
@@ -50,7 +78,12 @@ include: Monday–Friday.`}
                     );
                 })}
 
-                <option value="custom-range">Custom range</option>
+                <option
+                    value="custom-range"
+                    selected={selectIdx == options.length + 1}
+                >
+                    Custom range
+                </option>
             </select>
 
             {showPTInput && (
@@ -71,7 +104,7 @@ include: Monday–Friday.`}
                                         }}
                                         name={`${field}-select`}
                                         id={`${field}-select`}
-                                        className="daisy-select daisy-select-bordered w-full flex-1"
+                                        className={`daisy-select daisy-select-bordered w-full flex-1 ${highlightError(['processing_time', field])}`}
                                     >
                                         {Array(10)
                                             .fill(1)
@@ -142,6 +175,17 @@ include: Monday–Friday.`}
                     </div>
                 </div>
             )}
+            {['general', 'start', 'end'].map((element) => {
+                return (
+                    <Fragment key={`error-processing_time-${element}`}>
+                        {_.has(errors, `processing_time.${element}`) && (
+                            <p className="mt-2 text-base  text-red-800">
+                                {errors['processing_time'][element]}
+                            </p>
+                        )}
+                    </Fragment>
+                );
+            })}
         </Section>
     );
 }

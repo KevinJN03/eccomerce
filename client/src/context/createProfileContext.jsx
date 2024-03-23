@@ -4,6 +4,7 @@ import UserLogout from '../hooks/userLogout';
 import { useContent } from './ContentContext';
 import { getData, getName } from 'country-list';
 import ObjectId from 'bson-objectid';
+import _ from 'lodash';
 
 const CreateProfileContext = createContext(null);
 
@@ -176,7 +177,7 @@ function CreateProfileContextProvider({ children }) {
     };
 
     const highlightError = (property) => {
-        if (errors?.[property]) {
+        if (_.has(errors, property)) {
             return 'border-red-700 bg-red-100';
         } 
     };

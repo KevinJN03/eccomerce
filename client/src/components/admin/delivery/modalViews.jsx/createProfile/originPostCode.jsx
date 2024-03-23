@@ -4,6 +4,7 @@ import {
     postcodeValidator,
     postcodeValidatorExistsForCountry,
 } from 'postcode-validator';
+import postCodeFormat from './postCodeFormats.json';
 function OriginPostCode({}) {
     const { highlightError, profile, setProfile, errors, setErrors } =
         useCreateProfileContext();
@@ -15,15 +16,15 @@ function OriginPostCode({}) {
                 origin_post_code: e.target.value,
             }));
 
-            console.log({
-                exist: postcodeValidatorExistsForCountry(
-                    profile?.country_of_origin
-                ),
-                postcode: postcodeValidator(
-                    e.target.value?.toUpperCase(),
-                    profile?.country_of_origin
-                ),
-            });
+            // console.log({
+            //     exist: postcodeValidatorExistsForCountry(
+            //         profile?.country_of_origin
+            //     ),
+            //     postcode: postcodeValidator(
+            //         e.target.value?.toUpperCase(),
+            //         profile?.country_of_origin
+            //     ),
+            // });
 
             if (
                 postcodeValidatorExistsForCountry(profile?.country_of_origin) &&
@@ -40,9 +41,8 @@ function OriginPostCode({}) {
                 return;
             }
 
-            setErrors((prevState) => ({
+            setErrors(({ origin_post_code, ...prevState }) => ({
                 ...prevState,
-                origin_post_code: null,
             }));
         } catch (error) {
             console.error('error postcode', error);
@@ -57,11 +57,12 @@ function OriginPostCode({}) {
             description={`Where will your orders dispatch from – home, the post office, or another location?`}
         >
             <input
+                placeholder={postCodeFormat?.[profile?.country_of_origin]}
                 value={profile?.origin_post_code}
                 onChange={handleOnchange}
                 name="postcode-origin"
                 id="postcode-origin"
-                className={`daisy-input daisy-input-bordered w-full max-w-40 ${highlightError('origin_post_code')}`}
+                className={`daisy-input daisy-input-bordered w-full max-w-40 placeholder:text-black/50 ${highlightError('origin_post_code')}`}
             />
         </Section>
     );

@@ -2,7 +2,10 @@
 /* eslint-disable no-continue */
 import { check } from 'express-validator';
 import _, { isEmpty, isNull } from 'lodash';
-
+import {
+  postcodeValidator,
+  postcodeValidatorExistsForCountry,
+} from 'postcode-validator';
 const generateChecks = ({ property }) => {
   return [
     check(`${property}`, 'Select a delivery service')
@@ -74,16 +77,14 @@ const generateChecks = ({ property }) => {
             }
           });
 
-
           if (element?.charges?.one_item < element?.charges?.additional_item) {
             resultObj[element._id] = {
               ...resultObj[element._id],
               additional_item: `Price can't be greater than the One item price.`,
             };
           }
-
         }
-      
+
         if (isAllClear) {
           return true;
         }
@@ -113,11 +114,33 @@ const deliveryProfileValidator = [
   check('origin_post_code', 'Enter a valid postal code')
     .escape()
     .trim()
-    .isLength({ min: 1 }),
+    .isLength({ min: 1 })
+    .custom((value, { req }) => {
+      const { country_of_origin } = req.body;
+
+      console.log(country_of_origin, value);
+      if (
+        postcodeValidatorExistsForCountry(country_of_origin) &&
+        !postcodeValidator(value?.toUpperCase(), country_of_origin)
+      ) {
+        return false;
+      }
+      return true;
+    }),
 
   check('processing_time').custom((value) => {
-    if (isEmpty(value) || isEmpty(value?.start) || isEmpty(value?.end)) {
-      throw Error('Select a processing time');
+    const resultObj = {};
+    if (isEmpty(value) || !value?.start || !value?.end) {
+      resultObj.general = 'Select a processing time';
+      throw Error(JSON.stringify(resultObj));
+    }
+
+    if (value?.start > value?.end) {
+      resultObj.start = `Start ${
+        value?.type || 'timeframe'
+      } cant be greater than end ${value?.type || 'timeframe'}.`;
+
+      throw Error(JSON.stringify(resultObj));
     }
 
     return value;

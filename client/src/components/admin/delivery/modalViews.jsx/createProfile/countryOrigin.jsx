@@ -9,19 +9,13 @@ function CountryOrigin({}) {
         const values = e.target[e.target.selectedIndex].dataset;
 
         setProfile((prevState) => {
-            const newStandardDelivery = cloneDeep(prevState.standard_delivery);
+            const newProfile = cloneDeep(prevState);
+            newProfile.country_of_origin = values.code;
+            newProfile.origin_post_code = '';
+            newProfile['standard_delivery'][0]['destination'] = values.name;
+            newProfile['standard_delivery'][0]['iso_code'] = values.code;
 
-            newStandardDelivery[0] = {
-                destination: values.name,
-                iso_code: values.code,
-            };
-            console.log(newStandardDelivery[0]);
-            return {
-                ...prevState,
-                country_of_origin: values.code,
-                standard_delivery: newStandardDelivery,
-                origin_post_code: '',
-            };
+            return newProfile;
         });
     };
     return (

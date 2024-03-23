@@ -1,6 +1,6 @@
 import { Fragment, useRef, useState } from 'react';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import Input from './input';
 function Charges({ property, service, index, handleUpdate }) {
     const { profile, errors, setErrors } = useCreateProfileContext();
@@ -32,6 +32,22 @@ function Charges({ property, service, index, handleUpdate }) {
                                 },
                             },
                         });
+
+                        setErrors((prevState) => {
+                            const newErrors = cloneDeep(prevState);
+                            delete newErrors[property][service?._id][
+                                'one_item'
+                            ];
+                            delete newErrors[property][service?._id][
+                                'additional_item'
+                            ];
+                            return newErrors;
+                        });
+
+                        setCharges(() => ({
+                            one_item: 0.0,
+                            additional_item: 0.0,
+                        }));
                     }
                 }}
                 name="shipping-charge"
