@@ -3,9 +3,15 @@ import asyncHandler from 'express-async-handler';
 import DeliveryProfile from '../Models/deliveryProfile.js';
 import Order from '../Models/order.js';
 import { useParams } from 'react-router-dom';
-import deliveryProfileValidator from '../utils/deliveryProfileValidator.js';
-import { validationResult } from 'express-validator';
-
+import deliveryProfileValidator, {
+  postCodeValidator,
+} from '../utils/deliveryProfileValidator.js';
+import { check, validationResult } from 'express-validator';
+import {
+  postcodeValidator,
+  postcodeValidatorExistsForCountry,
+} from 'postcode-validator';
+import _ from 'lodash';
 const errorFormatter = (element) => {
   try {
     const parseValue = JSON.parse(element.msg);
@@ -17,14 +23,23 @@ const errorFormatter = (element) => {
 };
 export const create_delivery_profile = [
   deliveryProfileValidator,
+  check('name').custom(async (value) => {
+    const find = await DeliveryProfile.findOne({ name: value });
+
+    if (find) {
+      throw Error('You already have a profile with this name.');
+    }
+
+    return true;
+  }),
   asyncHandler(async (req, res, next) => {
     const { _id, ...body } = req.body;
     //console.log(body);
 
     const errors = validationResult(req).formatWith(errorFormatter);
-    console.log('- - - - - - - - - - - ');
+    // console.log('- - - - - - - - - - - ');
 
-    console.log(errors.mapped());
+    // console.log(errors.mapped());
     if (!errors.isEmpty()) {
       res.status(404).send(errors.mapped());
       return;
@@ -78,7 +93,6 @@ export const update_single_delivery_profile = [
 
     const errors = validationResult(req).formatWith(errorFormatter);
 
-    console.log(errors.mapped());
     if (!errors.isEmpty()) {
       res.status(404).send(errors.mapped());
       return;
@@ -93,15 +107,59 @@ export const update_single_delivery_profile = [
   }),
 ];
 
-export const update_delivery_profile = asyncHandler(async (req, res, next) => {
-  const { ids, ...body } = req.body;
+export const update_delivery_profile = [
+  // postCodeValidator(),
+  check('origin_post_code', 'Enter a valid postal code')
+    .escape()
+    .trim()
+    .notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { ids, ...body } = req.body;
 
-  const profiles = await DeliveryProfile.updateMany({ _id: ids }, body, {
-    new: true,
-  });
+    const errors = validationResult(req).formatWith(errorFormatter);
 
-  res.status(200).send(profiles);
-});
+    if (!errors.isEmpty()) {
+      res.status(404).send(errors.mapped());
+      return;
+    }
+
+    const profiles = await DeliveryProfile.find({ _id: ids }, null, {
+      new: true,
+      lean: { toObject: true },
+    });
+    const failure = [];
+    const updateProfile = profiles.map(({ country_of_origin, _id, name }) => {
+      try {
+        if (
+          postcodeValidatorExistsForCountry(country_of_origin) &&
+          !postcodeValidator(
+            req.body?.origin_post_code?.toUpperCase(),
+            country_of_origin,
+          )
+        ) {
+          failure.push({ name, _id, country_of_origin });
+        } else {
+          return DeliveryProfile.updateOne({ _id }, req.body);
+        }
+      } catch (error) {
+        console.error('validating error here: ', error);
+      }
+    });
+    await Promise.allSettled(updateProfile);
+    if (failure.length >= 1) {
+      res.status(500).send({
+        failure,
+        msg: `We're unable to update the origin post code to ${req.body.origin_post_code} for ${failure.length} of your delivery profiles. Try again or update each profile individually.`,
+      });
+      return;
+    }
+    res.status(200).send({
+      msg: `The origin post code has been updated to ${
+        req.body.origin_post_code
+      } for ${profiles.length - failure.length} of your delivery profiles.`,
+    });
+  }),
+];
 
 export const get_single_delivery_profile = asyncHandler(
   async (req, res, next) => {

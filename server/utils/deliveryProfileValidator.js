@@ -6,13 +6,14 @@ import {
   postcodeValidator,
   postcodeValidatorExistsForCountry,
 } from 'postcode-validator';
+import DeliveryProfile from '../Models/deliveryProfile';
 const generateChecks = ({ property }) => {
   return [
+    check(`${property}.*.destination`).escape().trim(),
     check(`${property}`, 'Select a delivery service')
       .isArray()
       .custom((value, { req }) => {
         const resultObj = {};
-        let isAllClear = true;
 
         for (const element of value) {
           const checks = { shipping: false, charges: false };
@@ -22,18 +23,17 @@ const generateChecks = ({ property }) => {
               shipping: 'Select a delivery service',
             };
 
-            isAllClear = false;
             checks.shipping = true;
           }
 
-          if (!_.has(element, 'element.start') && !checks.shipping) {
+          if (!_.has(element, 'shipping.start') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
               shipping: 'Select a shipping timeframe start.',
             };
             checks.shipping = true;
           }
-          if (!_.has(element, 'element.end') && !checks.shipping) {
+          if (!_.has(element, 'shipping.end') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
               shipping: 'Select a shipping timeframe end.',
@@ -41,7 +41,7 @@ const generateChecks = ({ property }) => {
             checks.shipping = true;
           }
 
-          if (!_.has(element, 'element.type') && !checks.shipping) {
+          if (!_.has(element, 'shipping.type') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
               shipping: 'Select a shipping timeframe type.',
@@ -83,24 +83,53 @@ const generateChecks = ({ property }) => {
               additional_item: `Price can't be greater than the One item price.`,
             };
           }
+
+          if (
+            property === 'delivery_upgrades' &&
+            element?.upgrade?.length == 0
+          ) {
+            _.set(
+              resultObj,
+              [element._id, 'upgrade'],
+              'Name must be between 1 and 128 characters',
+            );
+          }
+
+          if (element?.destination?.length === 0) {
+            _.set(
+              resultObj,
+              [element._id, 'destination'],
+              'Select a destination',
+            );
+          }
         }
 
-        if (isAllClear) {
+        if (_.isEmpty(resultObj)) {
           return true;
         }
         throw new Error(JSON.stringify(resultObj));
       }),
-
-    // check(`${property}.destination`, 'add a destination')
-    //   .escape()
-    //   .trim()
-    //   .notEmpty(),
-    // check(`${property}.iso_code`, 'add a destination')
-    //   .escape()
-    //   .trim()
-    //   .notEmpty(),
   ];
 };
+
+export const postCodeValidator = () => {
+  return check('origin_post_code', 'Enter a valid postal code')
+    .escape()
+    .trim()
+    .isLength({ min: 1 })
+    .custom((value, { req }) => {
+      const { country_of_origin } = req.body;
+
+      if (
+        postcodeValidatorExistsForCountry(country_of_origin) &&
+        !postcodeValidator(value?.toUpperCase(), country_of_origin)
+      ) {
+        return false;
+      }
+      return true;
+    });
+};
+
 const deliveryProfileValidator = [
   check('country_of_origin', 'Select a Country your dispatching from.')
     .escape()
@@ -111,22 +140,7 @@ const deliveryProfileValidator = [
     .trim()
     .isLength({ min: 1, max: 128 }),
 
-  check('origin_post_code', 'Enter a valid postal code')
-    .escape()
-    .trim()
-    .isLength({ min: 1 })
-    .custom((value, { req }) => {
-      const { country_of_origin } = req.body;
-
-      console.log(country_of_origin, value);
-      if (
-        postcodeValidatorExistsForCountry(country_of_origin) &&
-        !postcodeValidator(value?.toUpperCase(), country_of_origin)
-      ) {
-        return false;
-      }
-      return true;
-    }),
+  postCodeValidator(),
 
   check('processing_time').custom((value) => {
     const resultObj = {};
@@ -145,7 +159,7 @@ const deliveryProfileValidator = [
 
     return value;
   }),
-
+  check('delivery_upgrades.*.upgrade').escape().trim(),
   ...generateChecks({ property: 'standard_delivery' }),
   ...generateChecks({ property: 'delivery_upgrades' }),
 ];

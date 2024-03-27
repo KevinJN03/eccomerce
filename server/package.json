@@ -65,6 +65,7 @@
     "country-code-lookup": "^0.1.1",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
+    "easyship": "^1.0.0",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.17.3",

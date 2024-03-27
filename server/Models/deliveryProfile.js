@@ -10,13 +10,30 @@ const timeObj = {
   },
   start: {
     type: Schema.Types.Number,
+    default: 1,
     required: [
       true,
       "You didn't enter a start day for your profile. Please enter a start date",
     ],
+    validate: {
+      validator: function (startValue) {
+        const endValue =
+          this.get('processing_time')?.end || this.get('shipping')?.end;
+
+        console.log({
+          startValue,
+          endValue,
+          check: startValue <= endValue,
+        });
+
+        return startValue <= endValue;
+      },
+      message: 'Your start day or week must be less than end day',
+    },
   },
   end: {
     type: Schema.Types.Number,
+    default: 1,
     required: [
       true,
       "You didn't enter a end day for your profile. Please enter an end date",
@@ -44,12 +61,12 @@ const DeliveryProfileSchema = new Schema({
   },
   origin_post_code: {
     type: Schema.Types.String,
+    uppercase: true,
   },
   standard_delivery: [
     {
       _id: {
         type: Schema.Types.ObjectId,
-      
       },
       destination: { type: Schema.Types.String, required: true },
       iso_code: { type: Schema.Types.String, required: true },
@@ -64,6 +81,7 @@ const DeliveryProfileSchema = new Schema({
     {
       destination: {
         type: Schema.Types.String,
+        lowercase: true,
         enum: {
           values: ['domestic', 'international'],
         },
@@ -89,9 +107,9 @@ DeliveryProfileSchema.pre('updateOne', function (next) {
   next();
 });
 
-DeliveryProfileSchema.path('processing_time.start').validate(function (value) {
-  const time = this.get('processing_time');
-  return value < time.end;
-}, 'Your start day or week must be less than end day');
+// DeliveryProfileSchema.path('processing_time.start').validate(function (value) {
+//   const time = this.get('processing_time');
+//   return value < time.end;
+// }, 'Your start day or week must be less than end day');
 
 export default mongoose.model('deliveryProfile', DeliveryProfileSchema);
