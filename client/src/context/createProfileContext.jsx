@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { adminAxios } from '../api/axios';
 import UserLogout from '../hooks/userLogout';
 import { useContent } from './ContentContext';
-import { getData, getName } from 'country-list';
+import { getData, getName, overwrite } from 'country-list';
 import ObjectId from 'bson-objectid';
 import _ from 'lodash';
 
@@ -20,13 +20,44 @@ function CreateProfileContextProvider({ children }) {
 
     const { logoutUser } = UserLogout();
 
-    const { modalContent, setModalCheck } = useContent();
+    const { modalContent, setModalCheck, setShowAlert } = useContent();
     const [loading, setLoading] = useState(true);
 
     const latestStateRef = useRef();
     const [showPTInput, setShowPTInput] = useState(false);
-    const [countries, setCountries] = useState(() => getData());
+    const [allProfileNames, setAllProfileNames] = useState(new Set());
+
+    overwrite([
+        {
+            code: 'GB',
+            name: 'United Kingdom',
+        },
+    ]);
+    const [countries, setCountries] = useState(() =>
+        _.orderBy(getData(), ['name'], ['asc'])
+    );
+
+    const [commonCountries, setCommonCountries] = useState(() => {
+        return [
+            'AU', // Australia
+            'CA', // Canada
+            'FR', // France
+            'DE', // Germany
+            'GR', // Greece
+            'IN', // India
+            'IT', // Italy
+            'JP', // Japan
+            'NZ', // New Zealand
+            'PL', // Poland
+            'PT', // Portugal
+            'ES', // Spain
+            'NL', // Netherlands
+            'GB', // United Kingdom
+            'US', // United States
+        ].map((element) => ({ code: element, name: getName(element) }));
+    });
     const [errors, setErrors] = useState({});
+    const [selectedDestination, setSelectedDestination] = useState(new Set());
 
     const handleProcessingTime = (e) => {
         if (e.target.value == 'custom-range') {
@@ -96,22 +127,56 @@ function CreateProfileContextProvider({ children }) {
     }, [profile]);
 
     useEffect(() => {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
         const fetchData = async () => {
             try {
-                if (modalContent?.profileId) {
-                    const { data } = await adminAxios.get(
-                        `/delivery/${modalContent.profileId}`
-                    );
+                const promiseArray = [
+                    adminAxios.get('/delivery/all', {
+                        signal: abortControllerRef?.current?.signal,
+                    }),
+                ];
 
+                if (modalContent?.profileId) {
+                    promiseArray.push(
+                        adminAxios.get(`/delivery/${modalContent.profileId}`, {
+                            signal: abortControllerRef.current?.signal,
+                        })
+                    );
+                }
+                const [{ data: profilesResult }, profileResult] =
+                    await Promise.all(promiseArray);
+                setAllProfileNames(() => {
+                    const newSet = new Set(
+                        profilesResult.map(({ name }) => name?.toLowerCase())
+                    );
+                    if (
+                        _.has(profileResult, ['data', 0, 'name']) &&
+                        modalContent.version == 'edit'
+                    ) {
+                        newSet.delete(
+                            profileResult.data[0]?.name?.toLowerCase()
+                        );
+                    }
+                    return newSet;
+                });
+
+                if (modalContent?.profileId) {
+                    // setAllProfileNames((prevState) => {
+                    //     const newSet = new Set(prevState)
+                    //     newSet.delete(profileResult.data[0]?.name);
+
+                    // })
                     setProfile(() => ({
-                        ...data[0],
+                        ...profileResult.data[0],
                         name:
                             modalContent?.version == 'duplicate'
-                                ? `Duplicate of ${data[0]?.name}`
-                                : data[0]?.name,
+                                ? `Duplicate of ${profileResult.data[0]?.name}`
+                                : profileResult.data[0]?.name,
                     }));
                 }
             } catch (error) {
+                console.error(error);
                 logoutUser({ error });
             } finally {
                 setTimeout(() => {
@@ -128,6 +193,14 @@ function CreateProfileContextProvider({ children }) {
             clearTimeout(timeoutRef?.current);
         };
     }, []);
+
+    useEffect(() => {
+        const delivery_codes = profile?.standard_delivery?.map(
+            ({ iso_code }) => iso_code
+        );
+
+        setSelectedDestination(() => new Set(delivery_codes));
+    }, [profile?.standard_delivery]);
 
     const handleSubmit = () => {
         timeoutRef.current = setTimeout(async () => {
@@ -155,12 +228,22 @@ function CreateProfileContextProvider({ children }) {
                 }
                 success = true;
             } catch (error) {
-                console.error(error.response.data, 'here');
-
+                logoutUser({ error });
                 if (error.response.status == 404) {
                     setErrors(() => error.response.data || {});
                 }
-                logoutUser({ error });
+
+                if (error.response.status == 500) {
+                    setModalCheck(() => false);
+
+                    setShowAlert(() => ({
+                        on: true,
+                        bg: 'bg-red-900',
+                        icon: 'sadFace',
+                        msg: 'We could not update your profile.',
+                        size: 'medium',
+                    }));
+                }
             } finally {
                 if (success) {
                     setTimeout(() => {
@@ -168,6 +251,14 @@ function CreateProfileContextProvider({ children }) {
                         modalContent?.setTriggerRefresh(
                             (prevState) => !prevState
                         );
+                        setShowAlert(() => ({
+                            msg: `Your delivery profile has been ${modalContent?.version == 'edit' ? 'updated' : 'created'}.`,
+                            size: 'medium',
+                            bg: 'bg-blue-900',
+                            icon: 'check',
+                            small: true,
+                            on: true,
+                        }));
                     }, 1000);
                 } else {
                     setBtnLoad(() => false);
@@ -179,11 +270,8 @@ function CreateProfileContextProvider({ children }) {
     const highlightError = (property) => {
         if (_.has(errors, property)) {
             return 'border-red-700 bg-red-100';
-        } 
+        }
     };
-
-
-   
 
     const values = {
         handleSubmit,
@@ -202,6 +290,10 @@ function CreateProfileContextProvider({ children }) {
         generateNewService,
         loading,
         highlightError,
+        selectedDestination,
+        commonCountries,
+        allProfileNames,
+        setAllProfileNames,
     };
     return (
         <CreateProfileContext.Provider value={values}>

@@ -6,7 +6,7 @@ import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 
 function DeleteProfile({}) {
-    const { setModalCheck, modalContent } = useContent();
+    const { setModalCheck, modalContent, setShowAlert } = useContent();
     const abortControllerRef = useRef(new AbortController());
     const { logoutUser } = UserLogout();
 
@@ -31,6 +31,14 @@ function DeleteProfile({}) {
                 setTimeout(() => {
                     setModalCheck(() => false);
                     modalContent?.setTriggerRefresh((prevState) => !prevState);
+                    setShowAlert(() => ({
+                        msg: 'Your delivery profile has been deleted.',
+                        size: 'medium',
+                        bg: 'bg-blue-900',
+                        icon: 'check',
+                        small: true,
+                        on: true,
+                    }));
                 }, 1000);
             }
         }

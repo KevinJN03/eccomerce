@@ -1,11 +1,30 @@
+import { useEffect, useState } from 'react';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Section from './section';
+import { useDeliveryContext } from '../../../../../context/deliveryContext';
+import UserLogout from '../../../../../hooks/userLogout';
 
 function ProfileName({}) {
-    const { profile, errors, setErrors, setProfile, highlightError } =
-        useCreateProfileContext();
+    const {
+        profile,
+        errors,
+        setErrors,
+        setProfile,
+        highlightError,
+        allProfileNames,
+        setAllProfileNames,
+    } = useCreateProfileContext();
+    // const { profiles, setProfiles } = useDeliveryContext();
+
+    const { logoutUser } = UserLogout();
+    const abortControllerRef = new AbortController();
+
     return (
-        <Section title={`Profile name﻿`} errorMsg={errors?.['name']}>
+        <Section
+            title={`Profile name﻿`}
+            errorMsg={errors?.['name']}
+            noWhiteSpace
+        >
             <input
                 value={profile?.name}
                 onChange={(e) => {
@@ -22,11 +41,15 @@ function ProfileName({}) {
                             ...prevState,
                             name: `Profile name can't be only spaces.`,
                         }));
-                    } else {
+                    } else if (
+                        allProfileNames.has(e.target.value.toLowerCase().trim())
+                    ) {
                         setErrors((prevState) => ({
                             ...prevState,
-                            name: null,
+                            name: `You already have a profile with this name.`,
                         }));
+                    } else {
+                        setErrors(({ name, ...prevState }) => prevState);
                     }
                     setProfile((prevState) => ({
                         ...prevState,

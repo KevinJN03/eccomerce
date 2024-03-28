@@ -23,7 +23,9 @@ function Template({
                 setShowAlert(() => ({
                     msg: 'Listing Updated.',
                     on: true,
-                    small: false,
+                    size: 'large',
+                    bg: 'bg-green-100',
+                    icon: 'check'
                 }));
                 handleClearSelection();
             }, 1500);

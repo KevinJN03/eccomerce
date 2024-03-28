@@ -1,15 +1,17 @@
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 const DeliveryContext = createContext();
 
 export const useDeliveryContext = () => {
     return useContext(DeliveryContext);
 };
-function DeliveryContextProvider({ value, children }) {
-    const clickAwayRefs = useRef();
-    const values = { ...value, clickAwayRefs, test: 1 };
+function DeliveryContextProvider({  children }) {
+    const [profiles, setProfiles] = useState([]);
+const value = {
+    profiles, setProfiles
+}
     return (
-        <DeliveryContext.Provider value={values}>
+        <DeliveryContext.Provider value={value}>
             {children}
         </DeliveryContext.Provider>
     );

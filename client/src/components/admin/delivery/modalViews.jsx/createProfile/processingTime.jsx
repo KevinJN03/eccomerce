@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Section from './section';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 function ProcessingTime({}) {
     const {
@@ -47,6 +47,67 @@ function ProcessingTime({}) {
             }
         }
     }, []);
+
+    const handleOnChange = (e, field) => {
+        const clearError = () => {
+            setErrors((prevState) => {
+                const newErrors = cloneDeep(prevState);
+                _.unset(newErrors, 'processing_time.end');
+                _.unset(newErrors, 'processing_time.start');
+                return newErrors;
+            });
+        };
+        if (
+            field == 'start' &&
+            parseInt(e.target.value) > parseInt(profile?.processing_time?.end)
+        ) {
+            setProfile((prevState) => ({
+                ...prevState,
+                processing_time: {
+                    ...prevState?.processing_time,
+                    [field]: e.target.value,
+                    ['end']: e.target.value,
+                },
+            }));
+            clearError();
+            return;
+        }
+
+        if (
+            field == 'end' &&
+            parseInt(e.target.value) < parseInt(profile?.processing_time?.start)
+        ) {
+            setProfile((prevState) => ({
+                ...prevState,
+                processing_time: {
+                    ...prevState?.processing_time,
+                    [field]: e.target.value,
+                },
+            }));
+            setErrors((prevState) => {
+                const newErrors = cloneDeep(prevState);
+                _.set(
+                    newErrors,
+                    'processing_time.end',
+                    `End ${
+                        profile?.processing_time?.type || 'timeframe'
+                    } cant be lower than start ${profile?.processing_time?.type || 'timeframe'}.`
+                );
+
+                return newErrors;
+            });
+            return;
+        }
+
+        setProfile((prevState) => ({
+            ...prevState,
+            processing_time: {
+                ...prevState?.processing_time,
+                [field]: e.target.value,
+            },
+        }));
+        clearError();
+    };
     return (
         <Section
             noWhiteSpace
@@ -93,15 +154,9 @@ include: Monday–Friday.`}
                             return (
                                 <Fragment key={`select-${field}`}>
                                     <select
-                                        onChange={(e) => {
-                                            setProfile((prevState) => ({
-                                                ...prevState,
-                                                processing_time: {
-                                                    ...prevState?.processing_time,
-                                                    [field]: e.target.value,
-                                                },
-                                            }));
-                                        }}
+                                        onChange={(e) =>
+                                            handleOnChange(e, field)
+                                        }
                                         name={`${field}-select`}
                                         id={`${field}-select`}
                                         className={`daisy-select daisy-select-bordered w-full flex-1 ${highlightError(['processing_time', field])}`}

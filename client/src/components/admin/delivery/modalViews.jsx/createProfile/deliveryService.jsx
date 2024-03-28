@@ -6,12 +6,14 @@ import Label from './label';
 import { getNameList, getData } from 'country-list';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
-import { internationalOptions, UkOptions } from './shippingOptions';
+import { internationalOptions } from './shippingOptions';
 import { ClickAwayListener } from '@mui/material';
 import _, { cloneDeep } from 'lodash';
 import { useDeliveryContext } from '../../../../../context/deliveryCOntext';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Charges from './charges';
+import shipping from './shipping/shipping';
+
 function DeliveryService({
     handleDelete,
     service,
@@ -20,21 +22,18 @@ function DeliveryService({
     isUpgrade,
     property,
 }) {
-    const { countries, setProfile, errors, highlightError, setErrors } =
-        useCreateProfileContext();
-    const clickAwayRef = useRef({ one_item: false, additional_item: false });
+    const {
+        countries,
+        setProfile,
+        errors,
+        highlightError,
+        setErrors,
+        profile,
+        selectedDestination,
+        commonCountries,
+    } = useCreateProfileContext();
 
-    const [showOptions, setShowOptions] = useState(false);
-    const [charges, setCharges] = useState({
-        one_item: 0.0,
-        additional_item: 0.0,
-    });
     const [isCustomName, setIsCustomName] = useState(false);
-
-    useEffect(() => {
-        setCharges(() => ({ one_item: '0.00', additional_item: '0.00' }));
-    }, [service?.iso_code]);
-
     const handleUpdate = ({ updateProperty }) => {
         setProfile((prevState) => {
             const newValues = Array.from(prevState?.[property]);
@@ -65,6 +64,12 @@ function DeliveryService({
                 updateProperty: { destination: e.target.value },
             });
         }
+        setErrors((prevState) => {
+            const cloneErrors = cloneDeep(prevState);
+
+            _.unset(cloneErrors, [property, service?._id, 'destination']);
+            return cloneErrors;
+        });
     };
 
     const handleSelect = (e) => {
@@ -76,7 +81,6 @@ function DeliveryService({
         });
 
         const cloneErrors = cloneDeep(errors);
-
 
         if (_.has(cloneErrors, `${property}.${service._id}.shipping`)) {
             console.log({ cloneErrors });
@@ -104,7 +108,7 @@ function DeliveryService({
                         onChange={handleOnChange}
                         name=""
                         id=""
-                        className="daisy-select daisy-select-bordered w-full"
+                        className={`daisy-select daisy-select-bordered w-full ${highlightError([property, service?._id, 'destination'])}`}
                     >
                         <option value="" disabled selected>
                             {isUpgrade ? 'Add a destination' : 'Add a location'}
@@ -113,24 +117,87 @@ function DeliveryService({
                         {isUpgrade ? (
                             <>
                                 {['Domestic', 'International'].map((item) => {
-                                    return <option value={item}>{item}</option>;
+                                    return (
+                                        <option
+                                            key={`${item}`}
+                                            value={item}
+                                            selected={
+                                                service?.destination ==
+                                                item.toLowerCase()
+                                            }
+                                        >
+                                            {item}
+                                        </option>
+                                    );
                                 })}
                             </>
                         ) : (
                             <>
-                                {countries.map(({ name, code }) => {
+                                {/* <option
+                                    disabled
+                                    className="text-base font-bold"
+                                >
+                                    ─────────
+                                </option> */}
+                                {/* <option
+                                    data-code={'elsewhere-else'}
+                                    data-name={'Elsewhere Else'}
+                                    disabled={selectedDestination.has(code)}
+                                >
+                                    Elsewhere Else
+                                </option> */}
+
+                                {[
+                                    {
+                                        array: [
+                                            {
+                                                code: 'elsewhere-else',
+                                                name: 'Elsewhere Else',
+                                            },
+                                        ],
+                                        field: 'elsewhere'
+                                    },
+                                    {
+                                        array: commonCountries,
+                                        field: 'commonCountries',
+                                    },
+                                    { array: countries, field: 'countries' },
+                                ].map(({ array, field }) => {
                                     return (
-                                        <option
-                                            data-code={code}
-                                            data-name={name}
-                                        >
-                                            {name}
-                                        </option>
+                                        <>
+                                            <option
+                                                key={`${service._id}-${field}`}
+                                                disabled
+                                                className="text-base font-bold"
+                                            >
+                                                ─────────
+                                            </option>
+                                            {array.map(({ name, code }) => {
+                                                return (
+                                                    <option
+                                                        key={`${service._id}-${field}-${code}`}
+                                                        disabled={selectedDestination.has(
+                                                            code
+                                                        )}
+                                                        data-code={code}
+                                                        data-name={name}
+                                                    >
+                                                        {name}
+                                                    </option>
+                                                );
+                                            })}
+                                        </>
                                     );
                                 })}
                             </>
                         )}
                     </select>
+                )}
+
+                {_.has(errors, [property, service?._id, 'destination']) && (
+                    <p className="mt-2 text-base  text-red-800">
+                        {errors[property][service._id]['destination']}
+                    </p>
                 )}
             </div>
             <div className="right w-full flex-[2]">
@@ -145,14 +212,42 @@ function DeliveryService({
                                             onChange={(e) => {
                                                 handleUpdate({
                                                     updateProperty: {
-                                                        name: e.target.value,
+                                                        upgrade: e.target.value,
                                                     },
+                                                });
+
+                                                setErrors((prevState) => {
+                                                    const cloneErrors =
+                                                        cloneDeep(prevState);
+
+                                                    if (
+                                                        e.target.value.trim()
+                                                            .length > 0
+                                                    ) {
+                                                        _.unset(cloneErrors, [
+                                                            property,
+                                                            service?._id,
+                                                            'upgrade',
+                                                        ]);
+                                                    } else {
+                                                        _.set(
+                                                            cloneErrors,
+                                                            [
+                                                                property,
+                                                                service?._id,
+                                                                'upgrade',
+                                                            ],
+                                                            'Name must be between 1 and 128 characters'
+                                                        );
+                                                    }
+
+                                                    return cloneErrors;
                                                 });
                                             }}
                                             type="text"
                                             name="upgrade-name-input"
                                             id="upgrade-name-input"
-                                            className="daisy-input daisy-input-bordered w-full pr-14"
+                                            className={`daisy-input daisy-input-bordered w-full pr-14 ${highlightError([property, service?._id, 'upgrade'])}`}
                                         />
                                         <div className="absolute right-4 top-1/2 h-fit w-fit translate-y-[-50%]">
                                             <BubbleButton
@@ -162,7 +257,7 @@ function DeliveryService({
                                                     );
                                                     handleUpdate({
                                                         updateProperty: {
-                                                            name: '',
+                                                            upgrade: '',
                                                         },
                                                         property,
                                                     });
@@ -184,27 +279,38 @@ function DeliveryService({
                                                 setIsCustomName(() => true);
                                                 handleUpdate({
                                                     updateProperty: {
-                                                        name: '',
+                                                        upgrade: '',
                                                     },
                                                 });
                                                 return;
                                             }
+                                            setErrors((prevState) => {
+                                                const cloneErrors =
+                                                    cloneDeep(prevState);
+
+                                                _.unset(cloneErrors, [
+                                                    property,
+                                                    service?._id,
+                                                    'upgrade',
+                                                ]);
+                                                return cloneErrors;
+                                            });
                                             handleUpdate({
                                                 updateProperty: {
-                                                    name: nameLC,
+                                                    upgrade: nameLC,
                                                 },
                                             });
                                         }}
                                         name="upgrade-name"
                                         id="upgrade-name"
-                                        className="daisy-select daisy-select-bordered w-full"
+                                        className={`daisy-select daisy-select-bordered w-full ${highlightError(['delivery_upgrades', service?._id, 'upgrade'])}`}
                                     >
                                         <option
                                             value=""
-                                            selected={service?.name == ''}
+                                            selected={service?.upgrade == ''}
                                             disabled
                                             hidden
-                                        ></option>
+                                        />
 
                                         {[
                                             'Express',
@@ -217,7 +323,7 @@ function DeliveryService({
                                                     value={item}
                                                     key={item}
                                                     selected={
-                                                        service?.name ==
+                                                        service?.upgrade ==
                                                         item.toLowerCase()
                                                     }
                                                 >
@@ -228,16 +334,24 @@ function DeliveryService({
                                     </select>
                                 )}
                                 <div className="w-14">
-                                    {!isUpgrade && index != 0 && (
-                                        <BubbleButton
-                                            className={'px-3 py-3'}
-                                            handleClick={handleDelete}
-                                        >
-                                            <Delete />
-                                        </BubbleButton>
-                                    )}
+                                    <BubbleButton
+                                        className={'px-3 py-3'}
+                                        handleClick={handleDelete}
+                                    >
+                                        <Delete />
+                                    </BubbleButton>
                                 </div>
                             </div>
+
+                            {_.has(errors, [
+                                property,
+                                service?._id,
+                                'upgrade',
+                            ]) && (
+                                <p className="mt-2 text-base  text-red-800">
+                                    {errors[property][service._id]['upgrade']}
+                                </p>
+                            )}
                         </div>
                     )}
                     <div>
@@ -265,16 +379,45 @@ function DeliveryService({
                                     Select a delivery service
                                 </option>
 
-                                {(service?.iso_code == 'GB'
-                                    ? UkOptions
-                                    : internationalOptions
-                                ).map(({ options, courier }) => {
+                                {[
+                                    ...(() => {
+                                        if (
+                                            _.has(
+                                                shipping,
+                                                profile?.country_of_origin
+                                            )
+                                        ) {
+                                            if (
+                                                profile?.country_of_origin ==
+                                                service?.iso_code
+                                            ) {
+                                                return shipping[
+                                                    profile?.country_of_origin
+                                                ]['domestic'];
+                                            } else {
+                                                return shipping[
+                                                    profile?.country_of_origin
+                                                ]['international'];
+                                            }
+                                        }
+
+                                        return internationalOptions;
+                                        // _.has(shipping) &&
+                                        // profile?.country_of_origin ==
+                                        //     service?.iso_code
+                                        //     ? shipping[service?.iso_code][
+                                        //           'domestic'
+                                        //       ]
+                                        //     : internationalOptions;
+                                    })(),
+                                ].map(({ options, courier }) => {
                                     return (
                                         <optgroup label={courier}>
                                             {options.map(
                                                 ({ text, start, end }) => {
                                                     return (
                                                         <option
+                                                            key={`${service._id}-${text}`}
                                                             selected={
                                                                 service
                                                                     ?.shipping
@@ -297,7 +440,7 @@ function DeliveryService({
                             </select>
 
                             <div className="w-14">
-                                {!service?.disableDelete && !isUpgrade && (
+                                {index != 0 && !isUpgrade && (
                                     <BubbleButton
                                         className={'px-3 py-3'}
                                         handleClick={handleDelete}

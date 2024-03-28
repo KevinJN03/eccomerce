@@ -9,7 +9,7 @@ import Section from './section';
 import UserLogout from '../../../../../hooks/userLogout.jsx';
 import { getData, getName } from 'country-list';
 import ThemeBtn from '../../../../buttons/themeBtn';
-import { adminAxios } from '../../../../../api/axios.js';
+import axios, { adminAxios } from '../../../../../api/axios.js';
 import _ from 'lodash';
 import CreateProfileContextProvider, {
     useCreateProfileContext,
@@ -26,6 +26,33 @@ function CreateProfile({}) {
 
     const { profile, setProfile, errors, loading, highlightError } =
         useCreateProfileContext();
+
+    // useEffect(() => {
+    //     const fetchCouriers = async () => {
+    //         console.log({ VITE_EASYSHIP_ACCESS_TOKEN });
+    //         try {
+    //             const options = {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     accept: 'application/json',
+    //                     authorization:
+    //                         'Bearer sand_n19r7BpcHRGzw2UN1Z4ifPt39Uq85lPsw2D4NmQEFQ8=',
+    //                 },
+    //             };
+
+    //             const result = await fetch(
+    //                 'https://api.easyship.com/2023-01/couriers?country_alpha2=GB',
+    //                 options
+    //             );
+
+    //             console.log(result);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+
+    //     fetchCouriers();
+    // }, []);
     return (
         <section className="relative mb-10 flex w-fit justify-center">
             <section className="flex  flex-col gap-6 rounded-3xl bg-white p-8 sm+md:w-10/12 lg:w-[43.75rem]">

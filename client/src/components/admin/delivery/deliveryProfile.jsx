@@ -22,12 +22,13 @@ import { makeStyles } from '@mui/styles';
 import ThemeBtn from '../../buttons/themeBtn.jsx';
 import Pagination from '../../dashboard/pagination/pagination.jsx';
 import Table from './table.jsx';
+import EditOriginPostCode from './editOriginPostCode.jsx';
+import { useDeliveryContext } from '../../../context/deliveryContext.jsx';
 function DeliveryProfile({ status, setStatus }) {
     const { logoutUser } = UserLogout();
     const { setModalCheck, setModalContent, modalContent } = useContent();
     const [selection, setSelection] = useState(new Set());
     const [show, setShow] = useState(false);
-    const [profiles, setProfiles] = useState([]);
     const [originPostCode, setOriginPostCode] = useState('');
     const [triggerRefresh, setTriggerRefresh] = useState(false);
     const [refreshLoading, setRefreshLoading] = useState(true);
@@ -35,6 +36,7 @@ function DeliveryProfile({ status, setStatus }) {
     const abortControllerRef = useRef(new AbortController());
     const [currentPageProfiles, setCurrentPageProfiles] = useState([]);
     const [page, setPage] = useState(1);
+    const { profiles, setProfiles } = useDeliveryContext();
     const options = [
         {
             _id: 1,
@@ -220,76 +222,15 @@ function DeliveryProfile({ status, setStatus }) {
 
                             <SeamlessDropdown {...{ setShow, show, options }} />
                         </section>
-                        <section
-                            className={`relative  mx-2 ${selection.size < 1 ? 'opacity-30' : 'opacity-100'}`}
-                        >
-                            <button
-                                disabled={selection.size < 1}
-                                onClick={() => setShowEditOrigin(() => true)}
-                                type="button"
-                                className=" flex flex-row items-center gap-2 rounded-full border-2 border-black p-3 disabled:cursor-not-allowed"
-                            >
-                                <ModeEditOutlineRounded />
-
-                                <p className="whitespace-nowrap text-sm ">
-                                    Edit origin post code
-                                </p>
-                                <ArrowDropDown />
-                            </button>
-                            {showEditOrigin && (
-                                <button
-                                    type="button"
-                                    className=" absolute left-0 top-0 !z-[3]  flex flex-row items-center gap-2 border-2 border-transparent p-3"
-                                >
-                                    <ModeEditOutlineRounded />
-
-                                    <p className="whitespace-nowrap text-sm ">
-                                        Edit origin post code
-                                    </p>
-                                    <ArrowDropDown />
-                                </button>
-                            )}
-
-                            <SeamlessDropdown
-                                {...{
-                                    setShow: setShowEditOrigin,
-                                    show: showEditOrigin,
-                                    options,
-                                }}
-                            >
-                                <div className="mt-12 flex flex-col gap-5 px-4 py-4">
-                                    <p className="text-sm ">
-                                        This is the post code that you dispatch
-                                        your items from.
-                                    </p>
-
-                                    <div className="flex flex-col gap-1">
-                                        <p className="text-base font-semibold">
-                                            Origin post code
-                                        </p>
-
-                                        <input
-                                            value={originPostCode}
-                                            onChange={(e) =>
-                                                setOriginPostCode(
-                                                    () => e.target.value
-                                                )
-                                            }
-                                            type="text"
-                                            className="daisy-input daisy-input-bordered"
-                                            placeholder="EC2R 7DA"
-                                        />
-                                    </div>
-
-                                    <div className="w-fit self-end">
-                                        <ThemeBtn
-                                            text={'Update'}
-                                            handleClick={handlePostCode}
-                                        />
-                                    </div>
-                                </div>
-                            </SeamlessDropdown>
-                        </section>
+                        <EditOriginPostCode
+                            {...{
+                                selection,
+                                setShowEditOrigin,
+                                showEditOrigin,
+                                setTriggerRefresh,
+                                options,
+                            }}
+                        />
                     </div>
 
                     <div className="flex w-full justify-end">
@@ -320,7 +261,9 @@ function DeliveryProfile({ status, setStatus }) {
                         profiles,
                         refreshLoading,
                         page,
-                        currentPageProfiles, setTriggerRefresh, setSelection
+                        currentPageProfiles,
+                        setTriggerRefresh,
+                        setSelection,
                     }}
                 />
 
