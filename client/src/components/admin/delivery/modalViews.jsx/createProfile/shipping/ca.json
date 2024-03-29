@@ -1,0 +1,166 @@
+{
+    "domestic": [
+        {
+            "courier": "Canada Post",
+            "options": [
+                {
+                    "text": "Priority",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Xpresspost",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Regular Parcel",
+                    "start": 2,
+                    "end": 9
+                },
+                {
+                    "text": "Expedited Parcel",
+                    "start": 1,
+                    "end": 7
+                }
+            ]
+        },
+        {
+            "courier": "Purolator",
+            "options": [
+                {
+                    "text": "Express",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "Ground",
+                    "start": 1,
+                    "end": 3
+                }
+            ]
+        },
+        {
+            "courier": "FedEx Canada",
+            "options": [
+                {
+                    "text": "Priority Overnight",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "Standard Overnight",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "2Day",
+                    "start": 2,
+                    "end": 2
+                },
+                {
+                    "text": "Express Saver",
+                    "start": 3,
+                    "end": 3
+                }
+            ]
+        },
+        {
+            "courier": "UPS Canada",
+            "options": [
+                {
+                    "text": "Next Day Air",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "2nd Day Air",
+                    "start": 2,
+                    "end": 2
+                },
+                {
+                    "text": "3 Day Select",
+                    "start": 3,
+                    "end": 3
+                },
+                {
+                    "text": "Ground",
+                    "start": 1,
+                    "end": 6
+                }
+            ]
+        }
+    ],
+    "international": [
+        {
+            "courier": "Canada Post International",
+            "options": [
+                {
+                    "text": "Xpresspost - International",
+                    "start": 4,
+                    "end": 7
+                },
+                {
+                    "text": "Priority Worldwide",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Small Packet - Air",
+                    "start": 6,
+                    "end": 10
+                }
+            ]
+        },
+        {
+            "courier": "Purolator International",
+            "options": [
+                {
+                    "text": "Express",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Ground",
+                    "start": 2,
+                    "end": 5
+                }
+            ]
+        },
+        {
+            "courier": "FedEx International",
+            "options": [
+                {
+                    "text": "International Priority",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "International Economy",
+                    "start": 3,
+                    "end": 7
+                }
+            ]
+        },
+        {
+            "courier": "UPS Worldwide",
+            "options": [
+                {
+                    "text": "UPS Worldwide Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "UPS Worldwide Saver",
+                    "start": 2,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Standard",
+                    "start": 4,
+                    "end": 7
+                }
+            ]
+        }
+    ]
+}

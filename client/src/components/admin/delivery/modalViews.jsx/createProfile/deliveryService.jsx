@@ -4,7 +4,7 @@ import BubbleButton from '../../../../buttons/bubbleButton';
 import ReactFlagsSelect from 'react-flags-select';
 import Label from './label';
 import { getNameList, getData } from 'country-list';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Fragment, forwardRef, useEffect, useRef, useState } from 'react';
 
 import { internationalOptions } from './shippingOptions';
 import { ClickAwayListener } from '@mui/material';
@@ -133,20 +133,6 @@ function DeliveryService({
                             </>
                         ) : (
                             <>
-                                {/* <option
-                                    disabled
-                                    className="text-base font-bold"
-                                >
-                                    ─────────
-                                </option> */}
-                                {/* <option
-                                    data-code={'elsewhere-else'}
-                                    data-name={'Elsewhere Else'}
-                                    disabled={selectedDestination.has(code)}
-                                >
-                                    Elsewhere Else
-                                </option> */}
-
                                 {[
                                     {
                                         array: [
@@ -155,7 +141,7 @@ function DeliveryService({
                                                 name: 'Elsewhere Else',
                                             },
                                         ],
-                                        field: 'elsewhere'
+                                        field: 'elsewhere',
                                     },
                                     {
                                         array: commonCountries,
@@ -354,92 +340,330 @@ function DeliveryService({
                             )}
                         </div>
                     )}
+
                     <div>
-                        <p className="text-base font-semibold">
-                            Delivery service
-                        </p>
                         <div className="flex flex-row flex-nowrap items-center gap-2">
-                            <select
-                                onChange={handleSelect}
-                                name="delivery-service"
-                                id="delivery-service"
-                                className={`daisy-select daisy-select-bordered w-full ${
-                                    errors?.[property]?.[service._id]?.shipping
-                                        ? 'border-red-700 bg-red-100'
-                                        : ''
-                                }`}
-                            >
-                                <option
-                                    value=""
-                                    selected={!service?.shipping?.service}
-                                    disabled={_.isEmpty(
-                                        service?.shipping?.service
-                                    )}
+                            <div className="service-wrapper flex flex-col gap-y-2">
+                                <p className="text-base font-semibold">
+                                    Delivery service
+                                </p>
+                                <select
+                                    onChange={handleSelect}
+                                    name="delivery-service"
+                                    id="delivery-service"
+                                    className={`daisy-select daisy-select-bordered w-full ${highlightError(
+                                        [
+                                            property,
+                                            service?._id,
+                                            'shipping',
+                                            'service',
+                                        ]
+                                    )}`}
                                 >
-                                    Select a delivery service
-                                </option>
+                                    <option
+                                        value=""
+                                        selected={!service?.shipping?.service}
+                                        disabled={_.isEmpty(
+                                            service?.shipping?.service
+                                        )}
+                                    >
+                                        Select a delivery service
+                                    </option>
 
-                                {[
-                                    ...(() => {
-                                        if (
-                                            _.has(
-                                                shipping,
-                                                profile?.country_of_origin
-                                            )
-                                        ) {
+                                    {[
+                                        ...(() => {
                                             if (
-                                                profile?.country_of_origin ==
-                                                service?.iso_code
+                                                _.has(
+                                                    shipping,
+                                                    profile?.country_of_origin
+                                                )
                                             ) {
-                                                return shipping[
-                                                    profile?.country_of_origin
-                                                ]['domestic'];
-                                            } else {
-                                                return shipping[
-                                                    profile?.country_of_origin
-                                                ]['international'];
-                                            }
-                                        }
-
-                                        return internationalOptions;
-                                        // _.has(shipping) &&
-                                        // profile?.country_of_origin ==
-                                        //     service?.iso_code
-                                        //     ? shipping[service?.iso_code][
-                                        //           'domestic'
-                                        //       ]
-                                        //     : internationalOptions;
-                                    })(),
-                                ].map(({ options, courier }) => {
-                                    return (
-                                        <optgroup label={courier}>
-                                            {options.map(
-                                                ({ text, start, end }) => {
-                                                    return (
-                                                        <option
-                                                            key={`${service._id}-${text}`}
-                                                            selected={
-                                                                service
-                                                                    ?.shipping
-                                                                    ?.service ==
-                                                                text
-                                                            }
-                                                            data-service={text}
-                                                            data-start={start}
-                                                            data-end={end}
-                                                            data-type={'days'}
-                                                        >
-                                                            {`${text} (${start == end ? start : `${start}-${end}`} ${'days'})`}
-                                                        </option>
-                                                    );
+                                                if (
+                                                    profile?.country_of_origin ==
+                                                    service?.iso_code
+                                                ) {
+                                                    return shipping[
+                                                        profile
+                                                            ?.country_of_origin
+                                                    ]['domestic'];
+                                                } else {
+                                                    return shipping[
+                                                        profile
+                                                            ?.country_of_origin
+                                                    ]['international'];
                                                 }
-                                            )}
-                                        </optgroup>
-                                    );
-                                })}
-                            </select>
+                                            }
 
-                            <div className="w-14">
+                                            return internationalOptions;
+                                        })(),
+                                    ].map(({ options, courier }) => {
+                                        return (
+                                            <optgroup label={courier}>
+                                                {options.map(
+                                                    ({ text, start, end }) => {
+                                                        return (
+                                                            <option
+                                                                key={`${service._id}-${text}`}
+                                                                selected={
+                                                                    service
+                                                                        ?.shipping
+                                                                        ?.service ==
+                                                                    text
+                                                                }
+                                                                data-service={
+                                                                    text
+                                                                }
+                                                                data-start={
+                                                                    start
+                                                                }
+                                                                data-end={end}
+                                                                data-type={
+                                                                    'days'
+                                                                }
+                                                            >
+                                                                {`${text} (${start == end ? start : `${start}-${end}`} ${'days'})`}
+                                                            </option>
+                                                        );
+                                                    }
+                                                )}
+                                            </optgroup>
+                                        );
+                                    })}
+
+                                    <option
+                                        key={`${service._id}-divider`}
+                                        disabled
+                                        className="text-base font-bold"
+                                    >
+                                        ─────────
+                                    </option>
+
+                                    <option
+                                        key={`${service._id}-other`}
+                                        className=""
+                                        data-service={`other`}
+                                        data-type={'days'}
+                                    >
+                                        Other{' '}
+                                    </option>
+                                </select>
+                            </div>
+                            {_.get(service, ['shipping', 'service']) ==
+                                'other' && (
+                                <div className="flex h-full flex-col gap-y-2 ">
+                                    <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap text-base font-semibold">
+                                        Delivery time{' '}
+                                        <span className="text-xs font-normal">
+                                            Business days
+                                        </span>
+                                    </p>
+
+                                    <div className="flex flex-nowrap items-center gap-x-2">
+                                        {[
+                                            { field: 'start' },
+                                            { field: 'end' },
+                                        ].map(({ field }, idx) => {
+                                            return (
+                                                <Fragment
+                                                    key={`${service?._id}-other-${field}`}
+                                                >
+                                                    {' '}
+                                                    <select
+                                                        className={`daisy-select daisy-select-bordered w-full ${highlightError([property, service?._id, 'shipping', field])}`}
+                                                        onChange={(e) => {
+                                                            setProfile(
+                                                                (prevState) => {
+                                                                    const cloneProfile =
+                                                                        cloneDeep(
+                                                                            prevState
+                                                                        );
+                                                                    if (
+                                                                        field ===
+                                                                            'start' &&
+                                                                        (service
+                                                                            ?.shipping
+                                                                            ?.start >
+                                                                            service
+                                                                                ?.shipping
+                                                                                ?.end ||
+                                                                            !service
+                                                                                ?.shipping
+                                                                                ?.end)
+                                                                    ) {
+                                                                        _.set(
+                                                                            cloneProfile,
+                                                                            [
+                                                                                property,
+                                                                                index,
+                                                                                'shipping',
+                                                                            ],
+                                                                            {
+                                                                                ...cloneProfile?.[
+                                                                                    property
+                                                                                ][0]
+                                                                                    ?.shipping,
+                                                                                start: e
+                                                                                    .target
+                                                                                    .value,
+                                                                                end: e
+                                                                                    .target
+                                                                                    .value,
+                                                                            }
+                                                                        );
+                                                                        
+                                                                    } else if (
+                                                                        field ==
+                                                                            'end' &&
+                                                                        !service
+                                                                            ?.shipping
+                                                                            ?.start
+                                                                    ) {
+
+                                                                        _.set(
+                                                                            cloneProfile,
+                                                                            [
+                                                                                property,
+                                                                                index,
+                                                                                'shipping',
+                                                                            ],
+                                                                            {
+                                                                                ...cloneProfile?.[
+                                                                                    property
+                                                                                ][0]
+                                                                                    ?.shipping,
+                                                                                start: 1,
+                                                                                end: e
+                                                                                    .target
+                                                                                    .value,
+                                                                            }
+                                                                        );
+                                                                    } else {
+                                                                        _.set(
+                                                                            cloneProfile,
+                                                                            [
+                                                                                property,
+                                                                                index,
+                                                                                'shipping',
+                                                                                field,
+                                                                            ],
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        );
+                                                                    }
+
+                                                                    return cloneProfile;
+                                                                }
+                                                            );
+
+                                                            setErrors(
+                                                                (prevState) => {
+                                                                    const cloneErrors =
+                                                                        cloneDeep(
+                                                                            prevState
+                                                                        );
+                                                                    _.unset(
+                                                                        cloneErrors,
+                                                                        [
+                                                                            property,
+                                                                            service?._id,
+                                                                            'shipping',
+                                                                            field,
+                                                                        ]
+                                                                    );
+                                                                    return cloneErrors;
+                                                                }
+                                                            );
+                                                        }}
+                                                    >
+                                                        <option
+                                                            selected
+                                                            disabled
+                                                        >
+                                                            Select...
+                                                        </option>
+                                                        {(field === 'start'
+                                                            ? Array(45).fill('')
+                                                            : Array.from(
+                                                                  {
+                                                                      length:
+                                                                          (service
+                                                                              ?.shipping
+                                                                              ?.start
+                                                                              ? 46
+                                                                              : 45) -
+                                                                          parseInt(
+                                                                              service
+                                                                                  ?.shipping
+                                                                                  ?.start ||
+                                                                                  0
+                                                                          ),
+                                                                  },
+                                                                  (_, index) =>
+                                                                      parseInt(
+                                                                          service
+                                                                              ?.shipping
+                                                                              ?.start ||
+                                                                              0
+                                                                      ) +
+                                                                      (service
+                                                                          ?.shipping
+                                                                          ?.start
+                                                                          ? index
+                                                                          : index +
+                                                                            1)
+                                                              )
+                                                        )
+                                                            //   Array(
+                                                            //       46 -
+                                                            //           parseInt(service
+                                                            //               ?.shipping
+                                                            //               ?.start ||
+                                                            //           0)
+                                                            //   ).fill('')
+                                                            .map(
+                                                                (item, idx) => {
+                                                                    return (
+                                                                        <option
+                                                                            key={`${service?._id}-other-${idx + 1}`}
+                                                                            selected={
+                                                                                service
+                                                                                    ?.shipping?.[
+                                                                                    field
+                                                                                ] ==
+                                                                                (field ===
+                                                                                'end'
+                                                                                    ? item
+                                                                                    : idx +
+                                                                                      1)
+                                                                            }
+                                                                            value={
+                                                                                field ===
+                                                                                'end'
+                                                                                    ? item
+                                                                                    : idx +
+                                                                                      1
+                                                                            }
+                                                                        >
+                                                                            {field ===
+                                                                            'end'
+                                                                                ? item
+                                                                                : idx +
+                                                                                  1}
+                                                                        </option>
+                                                                    );
+                                                                }
+                                                            )}
+                                                    </select>
+                                                    {idx == 0 && <div>-</div>}
+                                                </Fragment>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="w-14 self-end">
                                 {index != 0 && !isUpgrade && (
                                     <BubbleButton
                                         className={'px-3 py-3'}
@@ -451,14 +675,22 @@ function DeliveryService({
                             </div>
                         </div>
 
-                        {_.has(
-                            errors,
-                            `${property}.${service._id}.shipping`
-                        ) && (
-                            <p className="mt-2 text-base  text-red-800">
-                                {errors?.[`${property}`][service._id]?.shipping}
-                            </p>
-                        )}
+                        {_.toPairs(
+                            _.get(
+                                errors,
+                                [property, service?._id, 'shipping'] || {}
+                            )
+                        ).map(([key, value], idx) => {
+                            return (
+                                <>
+                                    {
+                                        <p className="mt-2 text-base  text-red-800">
+                                            {value}
+                                        </p>
+                                    }
+                                </>
+                            );
+                        })}
                     </div>
 
                     <Charges

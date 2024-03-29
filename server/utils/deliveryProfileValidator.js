@@ -20,7 +20,7 @@ const generateChecks = ({ property }) => {
           if (!_.has(element, 'shipping.service') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
-              shipping: 'Select a delivery service',
+              shipping: { service: 'Select a delivery service' },
             };
 
             checks.shipping = true;
@@ -29,14 +29,20 @@ const generateChecks = ({ property }) => {
           if (!_.has(element, 'shipping.start') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
-              shipping: 'Select a shipping timeframe start.',
+              shipping: {
+                ...resultObj[element._id]?.shipping,
+                start: 'Select a shipping timeframe start.',
+              },
             };
             checks.shipping = true;
           }
           if (!_.has(element, 'shipping.end') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
-              shipping: 'Select a shipping timeframe end.',
+              shipping: {
+                ...resultObj[element._id]?.shipping,
+                end: 'Select a shipping timeframe end.',
+              },
             };
             checks.shipping = true;
           }
@@ -44,7 +50,10 @@ const generateChecks = ({ property }) => {
           if (!_.has(element, 'shipping.type') && !checks.shipping) {
             resultObj[element._id] = {
               ...resultObj[element._id],
-              shipping: 'Select a shipping timeframe type.',
+              shipping: {
+                ...resultObj[element._id]?.shipping,
+                type: 'Select a shipping timeframe type.',
+              },
             };
             checks.shipping = true;
           }

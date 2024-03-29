@@ -1,0 +1,166 @@
+{
+    "domestic": [
+        {
+            "courier": "La Poste",
+            "options": [
+                {
+                    "text": "Lettre Prioritaire",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Lettre Suivie",
+                    "start": 2,
+                    "end": 3
+                },
+                {
+                    "text": "Colissimo",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Chronopost",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Colissimo Access",
+                    "start": 3,
+                    "end": 5
+                },
+                {
+                    "text": "Colissimo Expert",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "Chronopost",
+            "options": [
+                {
+                    "text": "Chrono Relais",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Chrono 13",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Chrono 18",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Chrono Samedy",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "Mondial Relay",
+            "options": [
+                {
+                    "text": "Livraison en Point Relais",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Livraison à domicile",
+                    "start": 3,
+                    "end": 6
+                }
+            ]
+        }
+    ],
+    "international": [
+        {
+            "courier": "La Poste International",
+            "options": [
+                {
+                    "text": "Colissimo International",
+                    "start": 3,
+                    "end": 8
+                },
+                {
+                    "text": "Chronopost International",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Lettre Suivie Internationale",
+                    "start": 4,
+                    "end": 9
+                },
+                {
+                    "text": "Colis Économique Monde",
+                    "start": 5,
+                    "end": 15
+                }
+            ]
+        },
+        {
+            "courier": "DHL Express",
+            "options": [
+                {
+                    "text": "DHL Express Worldwide",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "DHL Economy Select",
+                    "start": 3,
+                    "end": 6
+                }
+            ]
+        },
+        {
+            "courier": "UPS",
+            "options": [
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                }
+            ]
+        },
+        {
+            "courier": "FedEx",
+            "options": [
+                {
+                    "text": "FedEx International Priority",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "FedEx International Economy",
+                    "start": 3,
+                    "end": 7
+                }
+            ]
+        },
+        {
+            "courier": "TNT",
+            "options": [
+                {
+                    "text": "TNT Express",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "TNT Economy Express",
+                    "start": 3,
+                    "end": 6
+                }
+            ]
+        }
+    ]
+}

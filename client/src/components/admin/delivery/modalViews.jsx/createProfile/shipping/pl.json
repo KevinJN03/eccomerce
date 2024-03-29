@@ -1,0 +1,201 @@
+{
+    "domestic": [
+        {
+            "courier": "Poczta Polska",
+            "options": [
+                {
+                    "text": "List Polecony",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Paczka Priorytetowa",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Paczka Ekspresowa",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Paczka w Ruchu",
+                    "start": 3,
+                    "end": 7
+                }
+            ]
+        },
+        {
+            "courier": "InPost",
+            "options": [
+                {
+                    "text": "Kurier InPost",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Paczkomaty InPost",
+                    "start": 2,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "DPD Polska",
+            "options": [
+                {
+                    "text": "DPD Classic",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "DPD Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "DPD Pickup",
+                    "start": 2,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "UPS Polska",
+            "options": [
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                }
+            ]
+        }
+    ],
+    "international": [
+        {
+            "courier": "Poczta Polska (Polish Post)",
+            "options": [
+                {
+                    "text": "Poczta Polska - Global Expres",
+                    "start": 5,
+                    "end": 15
+                },
+                {
+                    "text": "Poczta Polska - EMS",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "Poczta Polska - Standard",
+                    "start": 6,
+                    "end": 20
+                }
+            ]
+        },
+        {
+            "courier": "DHL Express",
+            "options": [
+                {
+                    "text": "DHL Express Worldwide",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "DHL Economy Select",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "DHL Express 9:00",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "DHL Express 10:30",
+                    "start": 1,
+                    "end": 1
+                }
+            ]
+        },
+        {
+            "courier": "UPS",
+            "options": [
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "UPS Worldwide Expedited",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "UPS Express Plus",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "FedEx",
+            "options": [
+                {
+                    "text": "FedEx International Priority",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "FedEx International Economy",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "FedEx International First",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "FedEx International Priority Freight",
+                    "start": 1,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "TNT",
+            "options": [
+                {
+                    "text": "TNT Express",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "TNT Economy Express",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "TNT 12:00 Express",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "TNT 9:00 Express",
+                    "start": 1,
+                    "end": 1
+                }
+            ]
+        }
+    ]
+}

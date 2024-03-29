@@ -1,0 +1,167 @@
+{
+    "domestic": [
+        {
+            "courier": "Correos (Spanish Post)",
+            "options": [
+                {
+                    "text": "Paq Premium (Premium Parcel)",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Paq Estándar (Standard Parcel)",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Carta Certificada (Registered Letter)",
+                    "start": 2,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "SEUR",
+            "options": [
+                {
+                    "text": "SEUR 24 (Next Day Delivery)",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "SEUR 10 (Express Delivery by 10:00 AM)",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "SEUR Classic (Standard Delivery)",
+                    "start": 2,
+                    "end": 3
+                }
+            ]
+        },
+        {
+            "courier": "MRW",
+            "options": [
+                {
+                    "text": "MRW Urgente (Urgent Delivery)",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "MRW 14 (Delivery by 2:00 PM)",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "MRW 48 (48-Hour Delivery)",
+                    "start": 2,
+                    "end": 3
+                }
+            ]
+        }
+    ],
+
+    "international": [
+        {
+            "courier": "Correos (Spanish Post)",
+            "options": [
+                {
+                    "text": "Paq Premium (Premium Parcel)",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "Paq Internacional (International Parcel)",
+                    "start": 5,
+                    "end": 15
+                },
+                {
+                    "text": "EMS",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "Correo Certificado (Registered Mail)",
+                    "start": 5,
+                    "end": 10
+                }
+            ]
+        },
+        {
+            "courier": "DHL Express",
+            "options": [
+                {
+                    "text": "DHL Express Worldwide",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "DHL Economy Select",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "DHL Express 9:00",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "DHL Express 12:00",
+                    "start": 1,
+                    "end": 1
+                }
+            ]
+        },
+        {
+            "courier": "UPS",
+            "options": [
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "UPS Worldwide Expedited",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "UPS Express Plus",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "FedEx",
+            "options": [
+                {
+                    "text": "FedEx International Priority",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "FedEx International Economy",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "FedEx International First",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "FedEx International Priority Freight",
+                    "start": 1,
+                    "end": 4
+                }
+            ]
+        }
+    ]
+}
