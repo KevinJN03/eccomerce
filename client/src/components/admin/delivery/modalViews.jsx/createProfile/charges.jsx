@@ -27,9 +27,9 @@ function Charges({ property, service, index, handleUpdate }) {
         }
     }, []);
 
-    useEffect(() => {
-        setCharges(() => ({ one_item: '0.00', additional_item: '0.00' }));
-    }, [service?.iso_code]);
+    // useEffect(() => {
+    //     setCharges(() => ({ one_item: '0.00', additional_item: '0.00' }));
+    // }, [service?.iso_code]);
     return (
         <section className="w-full max-w-[calc(8/12*100%)]">
             <p className="text-base font-semibold">What you'll charge</p>

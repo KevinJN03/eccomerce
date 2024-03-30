@@ -1,11 +1,14 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Section from './section';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
+import shipping from './shipping/shipping';
+
 function CountryOrigin({}) {
     const {
         profile,
         errors,
+        setErrors,
         setProfile,
         countries,
         highlightError,
@@ -16,31 +19,56 @@ function CountryOrigin({}) {
 
     const handleOnchange = (e) => {
         const values = e.target[e.target.selectedIndex].dataset;
+        const cloneError = cloneDeep(errors);
 
-        setProfile((prevState) => {
-            const newProfile = cloneDeep(prevState);
-            newProfile.country_of_origin = values.code;
-            newProfile.origin_post_code = '';
-            const { standard_delivery } = newProfile;
+        const newProfile = cloneDeep(profile);
+        newProfile.country_of_origin = values.code;
+        newProfile.origin_post_code = '';
+        const { standard_delivery, delivery_upgrades } = newProfile;
 
-            if (selectedDestination.has(values?.code)) {
-                const findIndex = standard_delivery.findIndex(
-                    (element) => element?.iso_code == values.code
-                );
-                const founded = standard_delivery[findIndex];
-                standard_delivery.splice(findIndex, 1);
-                standard_delivery.unshift(founded);
-            } else {
-                standard_delivery.unshift({
-                    iso_code: values.code,
-                    destination: values.name,
-                    ...generateNewService(),
-                });
-            }
+        if (selectedDestination.has(values?.code)) {
+            const findIndex = standard_delivery.findIndex(
+                (element) => element?.iso_code == values.code
+            );
+            const founded = standard_delivery[findIndex];
+            standard_delivery.splice(findIndex, 1);
+            standard_delivery.unshift(founded);
+        } else {
+            standard_delivery.unshift({
+                iso_code: values.code,
+                destination: values.name,
+                ...generateNewService(),
+            });
+        }
 
-            return newProfile;
+        [
+            { array: standard_delivery, field: 'standard_delivery' },
+            { array: delivery_upgrades, field: 'delivery_upgrades' },
+        ].forEach(({ array, field }, idx) => {
+            array.forEach((element) => {
+                if (!_.has(shipping, values.code)) {
+                    element['shipping'] = { service: 'other', type: 'days' };
+                    _.set(cloneError, [field, element?._id, 'shipping'], {
+                        start: 'Select delivery time',
+                        end: '',
+                    });
+                } else {
+                    element['shipping'] = {};
+                    _.set(
+                        cloneError,
+                        [field, element?._id, 'shipping', 'service'],
+                        'Select a delivery service'
+                    );
+                    // }
+                }
+            });
         });
+
+        setProfile(() => newProfile);
+
+        setErrors(() => cloneError);
     };
+
     return (
         <Section
             title={'Country of origin'}

@@ -4,6 +4,7 @@ import DeliveryService from './deliveryService';
 import BubbleButton from '../../../../buttons/bubbleButton';
 import { AddRounded } from '@mui/icons-material';
 import Label from './label';
+import _, { cloneDeep } from 'lodash';
 
 function DeliverySection({}) {
     const { profile, handleDelete, setProfile, generateNewService } =
@@ -72,13 +73,21 @@ function DeliverySection({}) {
 
                             <BubbleButton
                                 handleClick={() =>
-                                    setProfile((prevState) => ({
-                                        ...prevState,
-                                        [property]: [
-                                            ...prevState?.[property],
-                                            generateNewService(),
-                                        ],
-                                    }))
+                                    setProfile((prevState) => {
+                                        const newValue = {...generateNewService()};
+                                        if (isUpgrade) {
+                                            newValue.destination = 'domestic';
+                                            newValue.upgrade = 'Express';
+                                        }
+
+                                        return {
+                                            ...prevState,
+                                            [property]: [
+                                                ...prevState?.[property],
+                                                newValue,
+                                            ],
+                                        };
+                                    })
                                 }
                                 className={`flex w-fit items-center px-3 py-3`}
                             >

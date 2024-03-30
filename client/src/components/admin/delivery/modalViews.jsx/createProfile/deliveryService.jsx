@@ -31,9 +31,27 @@ function DeliveryService({
         profile,
         selectedDestination,
         commonCountries,
+        duplicateUpgrades,
+        setDuplicateUpgrades,
     } = useCreateProfileContext();
 
     const [isCustomName, setIsCustomName] = useState(false);
+
+    const [upgradeOptions, setUpgradeOptions] = useState([
+        'Express',
+        '1 Day',
+        'Economy',
+        'Custom',
+    ]);
+
+    useEffect(() => {
+        const set = new Set(upgradeOptions);
+        if (isUpgrade && !set.has(service?.upgrade)) {
+            setIsCustomName(() => true);
+        }
+    }, []);
+
+    useEffect(() => {}, [profile?.country_of_origin]);
     const handleUpdate = ({ updateProperty }) => {
         setProfile((prevState) => {
             const newValues = Array.from(prevState?.[property]);
@@ -61,7 +79,7 @@ function DeliveryService({
             });
         } else {
             handleUpdate({
-                updateProperty: { destination: e.target.value },
+                updateProperty: { destination: e.target.value, shipping: {} },
             });
         }
         setErrors((prevState) => {
@@ -88,7 +106,21 @@ function DeliveryService({
             setErrors(() => cloneErrors);
         }
     };
-
+    // useEffect(() => {
+    //     if (property == 'delivery_upgrades' && duplicateUpgrades.has(service?._id)) {
+    //         console.log(duplicateUpgrades);
+    //         setErrors((prevState) => ({
+    //             ...prevState,
+    //             [property]: {
+    //                 ...prevState?.[property],
+    //                 [service?._id]: {
+    //                     ...prevState?.[property]?.[service?._id],
+    //                     upgrade: 'You already have an upgrade with this name.',
+    //                 },
+    //             },
+    //         }));
+    //     }
+    // }, [duplicateUpgrades]);
     return (
         <section className=" flex flex-nowrap items-start gap-20">
             <div className="left w-full flex-[0.7]">
@@ -120,7 +152,7 @@ function DeliveryService({
                                     return (
                                         <option
                                             key={`${item}`}
-                                            value={item}
+                                            value={item?.toLowerCase()}
                                             selected={
                                                 service?.destination ==
                                                 item.toLowerCase()
@@ -196,6 +228,9 @@ function DeliveryService({
                                     <div className="relative flex h-fit w-full flex-row flex-nowrap">
                                         <input
                                             onChange={(e) => {
+                                                const upgradeLC = e.target.value
+                                                    .trim()
+                                                    ?.toLowerCase();
                                                 handleUpdate({
                                                     updateProperty: {
                                                         upgrade: e.target.value,
@@ -207,15 +242,17 @@ function DeliveryService({
                                                         cloneDeep(prevState);
 
                                                     if (
-                                                        e.target.value.trim()
-                                                            .length > 0
+                                                        upgradeLC.length > 0 &&
+                                                        !duplicateUpgrades.has(
+                                                            service._id
+                                                        )
                                                     ) {
                                                         _.unset(cloneErrors, [
                                                             property,
                                                             service?._id,
                                                             'upgrade',
                                                         ]);
-                                                    } else {
+                                                    } else if (!upgradeLC) {
                                                         _.set(
                                                             cloneErrors,
                                                             [
@@ -230,10 +267,11 @@ function DeliveryService({
                                                     return cloneErrors;
                                                 });
                                             }}
+                                            value={service?.upgrade}
                                             type="text"
                                             name="upgrade-name-input"
                                             id="upgrade-name-input"
-                                            className={`daisy-input daisy-input-bordered w-full pr-14 ${highlightError([property, service?._id, 'upgrade'])}`}
+                                            className={`daisy-input daisy-input-bordered w-full pr-14  ${highlightError([property, service?._id, 'upgrade'])}`}
                                         />
                                         <div className="absolute right-4 top-1/2 h-fit w-fit translate-y-[-50%]">
                                             <BubbleButton
@@ -241,6 +279,25 @@ function DeliveryService({
                                                     setIsCustomName(
                                                         () => false
                                                     );
+
+                                                    setErrors((prevState) => {
+                                                        const cloneError =
+                                                            cloneDeep(
+                                                                prevState
+                                                            );
+                                                        _.set(
+                                                            cloneError,
+                                                            [
+                                                                property,
+                                                                service._id,
+                                                                'upgrade',
+                                                            ],
+                                                            'Name must be between 1 and 128 characters'
+                                                        );
+
+                                                        return cloneError;
+                                                    });
+
                                                     handleUpdate({
                                                         updateProperty: {
                                                             upgrade: '',
@@ -268,6 +325,22 @@ function DeliveryService({
                                                         upgrade: '',
                                                     },
                                                 });
+
+                                                setErrors((prevState) => {
+                                                    const cloneError =
+                                                        cloneDeep(prevState);
+                                                    _.set(
+                                                        cloneError,
+                                                        [
+                                                            property,
+                                                            service._id,
+                                                            'upgrade',
+                                                        ],
+                                                        'Name must be between 1 and 128 characters'
+                                                    );
+
+                                                    return cloneError;
+                                                });
                                                 return;
                                             }
                                             setErrors((prevState) => {
@@ -283,14 +356,17 @@ function DeliveryService({
                                             });
                                             handleUpdate({
                                                 updateProperty: {
-                                                    upgrade: nameLC,
+                                                    upgrade: e.target.value,
                                                 },
                                             });
                                         }}
                                         name="upgrade-name"
                                         id="upgrade-name"
-                                        className={`daisy-select daisy-select-bordered w-full ${highlightError(['delivery_upgrades', service?._id, 'upgrade'])}`}
+                                        className={`daisy-select daisy-select-bordered w-full 
+                                       
+                                        ${highlightError(['delivery_upgrades', service?._id, 'upgrade'])}`}
                                     >
+                                        {/*  ${duplicateUpgrades.has(service?._id) ? 'border-red-700 bg-red-100' : ''}  */}
                                         <option
                                             value=""
                                             selected={service?.upgrade == ''}
@@ -298,19 +374,13 @@ function DeliveryService({
                                             hidden
                                         />
 
-                                        {[
-                                            'Express',
-                                            '1 Day',
-                                            'Economy',
-                                            'Custom',
-                                        ].map((item) => {
+                                        {upgradeOptions.map((item) => {
                                             return (
                                                 <option
                                                     value={item}
                                                     key={item}
                                                     selected={
-                                                        service?.upgrade ==
-                                                        item.toLowerCase()
+                                                        service?.upgrade == item
                                                     }
                                                 >
                                                     {item}
@@ -328,7 +398,11 @@ function DeliveryService({
                                     </BubbleButton>
                                 </div>
                             </div>
-
+                            {/* {duplicateUpgrades.has(service?._id) && (
+                                <p className="mt-2 text-base  text-red-800">
+                                    You already have an upgrade with this name.
+                                </p>
+                            )} */}
                             {_.has(errors, [
                                 property,
                                 service?._id,
@@ -363,9 +437,7 @@ function DeliveryService({
                                     <option
                                         value=""
                                         selected={!service?.shipping?.service}
-                                        disabled={_.isEmpty(
-                                            service?.shipping?.service
-                                        )}
+                                        disabled
                                     >
                                         Select a delivery service
                                     </option>
@@ -380,7 +452,9 @@ function DeliveryService({
                                             ) {
                                                 if (
                                                     profile?.country_of_origin ==
-                                                    service?.iso_code
+                                                        service?.iso_code ||
+                                                    service?.destination ==
+                                                        'domestic'
                                                 ) {
                                                     return shipping[
                                                         profile
@@ -394,7 +468,7 @@ function DeliveryService({
                                                 }
                                             }
 
-                                            return internationalOptions;
+                                            return [];
                                         })(),
                                     ].map(({ options, courier }) => {
                                         return (
@@ -403,6 +477,19 @@ function DeliveryService({
                                                     ({ text, start, end }) => {
                                                         return (
                                                             <option
+                                                                disabled={
+                                                                    isUpgrade &&
+                                                                    text ==
+                                                                        _.get(
+                                                                            profile,
+                                                                            [
+                                                                                'standard_delivery',
+                                                                                0,
+                                                                                'shipping',
+                                                                                'service',
+                                                                            ]
+                                                                        )
+                                                                }
                                                                 key={`${service._id}-${text}`}
                                                                 selected={
                                                                     service
@@ -430,16 +517,25 @@ function DeliveryService({
                                         );
                                     })}
 
-                                    <option
-                                        key={`${service._id}-divider`}
-                                        disabled
-                                        className="text-base font-bold"
-                                    >
-                                        ─────────
-                                    </option>
+                                    {_.has(
+                                        shipping,
+                                        profile?.country_of_origin
+                                    ) && (
+                                        <option
+                                            key={`${service._id}-divider`}
+                                            disabled
+                                            className="text-base font-bold"
+                                        >
+                                            ─────────
+                                        </option>
+                                    )}
 
                                     <option
                                         key={`${service._id}-other`}
+                                        selected={
+                                            service?.shipping?.service ==
+                                            'other'
+                                        }
                                         className=""
                                         data-service={`other`}
                                         data-type={'days'}
@@ -500,7 +596,9 @@ function DeliveryService({
                                                                             {
                                                                                 ...cloneProfile?.[
                                                                                     property
-                                                                                ][0]
+                                                                                ][
+                                                                                    index
+                                                                                ]
                                                                                     ?.shipping,
                                                                                 start: e
                                                                                     .target
@@ -508,9 +606,9 @@ function DeliveryService({
                                                                                 end: e
                                                                                     .target
                                                                                     .value,
+                                                                                type: 'days',
                                                                             }
                                                                         );
-                                                                        
                                                                     } else if (
                                                                         field ==
                                                                             'end' &&
@@ -518,7 +616,6 @@ function DeliveryService({
                                                                             ?.shipping
                                                                             ?.start
                                                                     ) {
-
                                                                         _.set(
                                                                             cloneProfile,
                                                                             [
@@ -529,12 +626,15 @@ function DeliveryService({
                                                                             {
                                                                                 ...cloneProfile?.[
                                                                                     property
-                                                                                ][0]
+                                                                                ][
+                                                                                    index
+                                                                                ]
                                                                                     ?.shipping,
                                                                                 start: 1,
                                                                                 end: e
                                                                                     .target
                                                                                     .value,
+                                                                                type: 'days',
                                                                             }
                                                                         );
                                                                     } else {
@@ -562,13 +662,23 @@ function DeliveryService({
                                                                         cloneDeep(
                                                                             prevState
                                                                         );
+
                                                                     _.unset(
                                                                         cloneErrors,
                                                                         [
                                                                             property,
                                                                             service?._id,
                                                                             'shipping',
-                                                                            field,
+                                                                            'start',
+                                                                        ]
+                                                                    );
+                                                                    _.unset(
+                                                                        cloneErrors,
+                                                                        [
+                                                                            property,
+                                                                            service?._id,
+                                                                            'shipping',
+                                                                            'end',
                                                                         ]
                                                                     );
                                                                     return cloneErrors;

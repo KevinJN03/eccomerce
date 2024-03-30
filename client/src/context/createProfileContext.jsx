@@ -4,7 +4,7 @@ import UserLogout from '../hooks/userLogout';
 import { useContent } from './ContentContext';
 import { getData, getName, overwrite } from 'country-list';
 import ObjectId from 'bson-objectid';
-import _ from 'lodash';
+import _, { clone, cloneDeep } from 'lodash';
 
 const CreateProfileContext = createContext(null);
 
@@ -26,16 +26,17 @@ function CreateProfileContextProvider({ children }) {
     const latestStateRef = useRef();
     const [showPTInput, setShowPTInput] = useState(false);
     const [allProfileNames, setAllProfileNames] = useState(new Set());
+    const [duplicateUpgrades, setDuplicateUpgrades] = useState(new Set());
+    const [countries, setCountries] = useState(() => {
+        overwrite([
+            {
+                code: 'GB',
+                name: 'United Kingdom',
+            },
+        ]);
 
-    overwrite([
-        {
-            code: 'GB',
-            name: 'United Kingdom',
-        },
-    ]);
-    const [countries, setCountries] = useState(() =>
-        _.orderBy(getData(), ['name'], ['asc'])
-    );
+        return _.orderBy(getData(), ['name'], ['asc']);
+    });
 
     const [commonCountries, setCommonCountries] = useState(() => {
         return [
@@ -80,10 +81,9 @@ function CreateProfileContextProvider({ children }) {
     };
 
     const handleDelete = ({ property, idx, _id }) => {
-        console.log('clicked');
         setProfile((prevState) => {
             const value = prevState?.[property];
-            console.log({ value, _id });
+
             return {
                 ...prevState,
                 [property]: value.filter(
@@ -202,6 +202,48 @@ function CreateProfileContextProvider({ children }) {
         setSelectedDestination(() => new Set(delivery_codes));
     }, [profile?.standard_delivery]);
 
+    const duplicateTimeoutRef = useRef(null);
+    useEffect(() => {
+        clearTimeout(duplicateTimeoutRef.current);
+        const obj = {};
+        const cloneErrors = cloneDeep(errors);
+        const set = new Set();
+        duplicateTimeoutRef.current = setTimeout(() => {
+            profile?.delivery_upgrades.forEach(
+                ({ upgrade, _id, destination }) => {
+                    const upgradeLC = upgrade?.toLowerCase()?.trim();
+                    if (upgradeLC) {
+                        if (_.get(obj, [upgradeLC, destination]) >= 1) {
+                            obj[upgradeLC][destination] += 1;
+                            set.add(_id);
+                            _.set(
+                                cloneErrors,
+                                ['delivery_upgrades', _id, 'upgrade'],
+                                'You already have an upgrade with this name.'
+                            );
+                        } else {
+                            _.set(obj, [upgradeLC, destination], 1);
+                            _.unset(cloneErrors, [
+                                'delivery_upgrades',
+                                _id,
+                                'upgrade',
+                            ]);
+                        }
+                    }
+                }
+            );
+            setDuplicateUpgrades(() => set);
+
+            setErrors(() => cloneErrors);
+        }, 0);
+
+        // console.log(obj);
+
+        return () => {
+            clearTimeout(duplicateTimeoutRef.current);
+        };
+    }, [profile?.delivery_upgrades]);
+
     const handleSubmit = () => {
         timeoutRef.current = setTimeout(async () => {
             abortControllerRef.current?.abort();
@@ -294,6 +336,8 @@ function CreateProfileContextProvider({ children }) {
         commonCountries,
         allProfileNames,
         setAllProfileNames,
+        duplicateUpgrades,
+        setDuplicateUpgrades,
     };
     return (
         <CreateProfileContext.Provider value={values}>

@@ -12,6 +12,7 @@ import {
   postcodeValidatorExistsForCountry,
 } from 'postcode-validator';
 import _ from 'lodash';
+import mongoose from 'mongoose';
 const errorFormatter = (element) => {
   try {
     const parseValue = JSON.parse(element.msg);
@@ -164,9 +165,33 @@ export const update_delivery_profile = [
 export const get_single_delivery_profile = asyncHandler(
   async (req, res, next) => {
     const { id } = req.params;
-    const profile = await DeliveryProfile.find({ _id: id });
-
-    res.status(200).send(profile);
+    const profiles = await DeliveryProfile.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'products', // Assuming your listings collection is named "listings"
+          localField: '_id',
+          foreignField: 'delivery',
+          // let: { deliveryId: '$_delivery' }, // Assigning the delivery profile ID to a variable
+          pipeline: [
+            {
+              $project: { _id: 1, title: 1 },
+            },
+          ],
+          as: 'listings', // Output field to store the matching listings
+        },
+      },
+      {
+        $addFields: {
+          active_listings: { $size: '$listings' },
+        },
+      },
+    ]);
+    res.status(200).send(profiles);
   },
 );
 

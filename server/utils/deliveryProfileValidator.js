@@ -14,7 +14,7 @@ const generateChecks = ({ property }) => {
       .isArray()
       .custom((value, { req }) => {
         const resultObj = {};
-
+        const upgradeObj = {};
         for (const element of value) {
           const checks = { shipping: false, charges: false };
           if (!_.has(element, 'shipping.service') && !checks.shipping) {
@@ -31,7 +31,7 @@ const generateChecks = ({ property }) => {
               ...resultObj[element._id],
               shipping: {
                 ...resultObj[element._id]?.shipping,
-                start: 'Select a shipping timeframe start.',
+                start: 'Select delivery time.',
               },
             };
             checks.shipping = true;
@@ -41,7 +41,7 @@ const generateChecks = ({ property }) => {
               ...resultObj[element._id],
               shipping: {
                 ...resultObj[element._id]?.shipping,
-                end: 'Select a shipping timeframe end.',
+                end: 'Select delivery time',
               },
             };
             checks.shipping = true;
@@ -52,7 +52,7 @@ const generateChecks = ({ property }) => {
               ...resultObj[element._id],
               shipping: {
                 ...resultObj[element._id]?.shipping,
-                type: 'Select a shipping timeframe type.',
+                type: 'Select delivery type.',
               },
             };
             checks.shipping = true;
@@ -93,16 +93,33 @@ const generateChecks = ({ property }) => {
             };
           }
 
-          if (
-            property === 'delivery_upgrades' &&
-            element?.upgrade?.length == 0
-          ) {
-            _.set(
-              resultObj,
-              [element._id, 'upgrade'],
-              'Name must be between 1 and 128 characters',
-            );
+          if (property === 'delivery_upgrades') {
+            if (!element?.upgrade) {
+              _.set(
+                resultObj,
+                [element._id, 'upgrade'],
+                'Name must be between 1 and 128 characters',
+              );
+            } else if (
+              _.get(upgradeObj, [
+                element?.upgrade?.toLowerCase(),
+                element?.destination,
+              ]) >= 1
+            ) {
+              _.set(
+                resultObj,
+                [element._id, 'upgrade'],
+                'You already have an upgrade with this name.',
+              );
+            } else {
+              _.set(
+                upgradeObj,
+                [element?.upgrade?.toLowerCase(), element?.destination],
+                1,
+              );
+            }
           }
+          //
 
           if (element?.destination?.length === 0) {
             _.set(
@@ -112,6 +129,8 @@ const generateChecks = ({ property }) => {
             );
           }
         }
+
+        console.log(upgradeObj);
 
         if (_.isEmpty(resultObj)) {
           return true;
