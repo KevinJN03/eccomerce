@@ -9,7 +9,7 @@ import { Fragment, forwardRef, useEffect, useRef, useState } from 'react';
 import { internationalOptions } from './shippingOptions';
 import { ClickAwayListener } from '@mui/material';
 import _, { cloneDeep } from 'lodash';
-import { useDeliveryContext } from '../../../../../context/deliveryCOntext';
+import { useDeliveryContext } from '../../../../../context/deliveryContext';
 import { useCreateProfileContext } from '../../../../../context/createProfileContext';
 import Charges from './charges';
 import shipping from './shipping/shipping';

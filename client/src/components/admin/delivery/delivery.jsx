@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react';
 
 import OptionSelection from '../order/home/optionSelection';
 
-
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import DeliveryContextProvider from '../../../context/deliveryContext';
 
 export default function Delivery() {
-
     const navigate = useNavigate();
 
     const [status, setStatus] = useState('Delivery Profiles');

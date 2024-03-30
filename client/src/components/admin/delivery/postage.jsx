@@ -2,8 +2,18 @@ import { useState } from 'react';
 import CustomForm from './customForm';
 import Labels from './labels';
 import { ArrowDropDown } from '@mui/icons-material';
+import { useDeliveryContext } from '../../../context/deliveryContext';
 
-function Input({ asterisk, optional, label, inputId, children, maxlength }) {
+function Input({
+    asterisk,
+    optional,
+    label,
+    inputId,
+    children,
+    maxlength,
+    property,
+}) {
+    const { postageSetting, setPostageSetting } = useDeliveryContext();
     return (
         <div className="flex w-full flex-1 flex-col gap-2">
             <label className="font-semibold" htmlFor={inputId}>
@@ -18,11 +28,18 @@ function Input({ asterisk, optional, label, inputId, children, maxlength }) {
             </label>
             <div className="relative w-full">
                 <input
+                    onChange={(e) =>
+                        setPostageSetting((prevState) => ({
+                            ...prevState,
+                            [property]: e.target.value,
+                        }))
+                    }
+                    value={postageSetting?.[property]}
                     maxLength={maxlength}
                     type="text"
                     name={inputId}
                     id={inputId}
-                    className="shadow-inner-2 daisy-input daisy-input-bordered w-full border-dark-gray"
+                    className="daisy-input daisy-input-bordered w-full border-dark-gray shadow-inner-2"
                 />
 
                 {children}
@@ -31,39 +48,54 @@ function Input({ asterisk, optional, label, inputId, children, maxlength }) {
     );
 }
 function Postage({}) {
-    const [format, setFormat] = useState('1 label per page');
-    const [customForm, setCustomForm] = useState(
-        'Prefill item description with my listing title'
-    );
+   
     return (
         <section className="flex flex-col gap-8">
             <section className="flex flex-col gap-4">
                 <h2 className="text-lg font-semibold">Dispatching From</h2>
 
-                <Input label={'Full name'} inputId={'full-name'} asterisk />
+                <Input
+                    label={'Full name'}
+                    inputId={'full-name'}
+                    asterisk
+                    property={'full_name'}
+                />
 
                 <section className="flex w-full flex-nowrap items-center gap-4">
                     <Input
                         label={'Street address'}
                         inputId={'street-address'}
                         asterisk
+                        property={'address_1'}
                     />
                     <Input
                         label={' Flat / Other'}
                         inputId={'address-2'}
                         optional
+                        property={'address_2'}
                     />
                 </section>
 
                 <section className=" flex w-full flex-nowrap gap-4">
-                    <Input label={'City'} inputId={'city'} asterisk />
-                    <Input label={'County'} inputId={'county'} optional />
+                    <Input
+                        label={'City'}
+                        inputId={'city'}
+                        asterisk
+                        property={'city'}
+                    />
+                    <Input
+                        label={'County'}
+                        inputId={'county'}
+                        optional
+                        property={'county'}
+                    />
 
                     <Input
                         label={'Post code'}
                         inputId={'post-code'}
                         maxlength={9}
                         asterisk
+                        property={'post_code'}
                     >
                         <ArrowDropDown className="absolute right-3 top-1/2 translate-y-[-50%]" />
                     </Input>
@@ -72,10 +104,11 @@ function Postage({}) {
                     label={'Phone number'}
                     inputId={'phone-number'}
                     asterisk
+                    property={'phone_number'}
                 />
             </section>
 
-            <section  className='flex flex-col gap-4'>
+            <section className="flex flex-col gap-4">
                 <h1 className="text-2xl font-semibold">
                     Postage label preferences
                 </h1>
@@ -85,9 +118,9 @@ function Postage({}) {
                     fulfilment process.
                 </p>
                 <section className=" grid  w-full grid-cols-2 gap-4">
-                    <Labels {...{ format, setFormat }} />
+                    <Labels  />
 
-                    <CustomForm {...{ setCustomForm, customForm }} />
+                    <CustomForm  />
                     <div className="flex w-full flex-col  rounded-lg border border-dark-gray p-5">
                         <h2 className="text-lg font-semibold">
                             Default label presets
@@ -138,7 +171,7 @@ function Postage({}) {
             <footer className="mt-6 flex w-full justify-end border-t-2 pb-12 pt-8">
                 <button
                     type="button"
-                    className="rounded-full bg-black px-5 py-3 text-white text-base font-medium"
+                    className="rounded-full bg-black px-5 py-3 text-base font-medium text-white"
                 >
                     Save preferences
                 </button>
