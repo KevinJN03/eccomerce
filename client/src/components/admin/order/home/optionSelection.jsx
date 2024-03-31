@@ -70,7 +70,7 @@ function OptionSelection({ options, status, setStatus, className }) {
                     );
                 })}
             </div>
-            <div class=" m-0 h-[2px] w-full bg-light-grey !py-0"></div>
+            <div className=" m-0 h-[2px] w-full bg-light-grey !py-0"></div>
         </section>
     );
 }

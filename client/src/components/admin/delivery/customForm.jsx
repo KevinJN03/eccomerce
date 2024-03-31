@@ -1,7 +1,7 @@
-import { useDeliveryContext } from '../../../context/deliveryContext';
+import { usePostageContext } from '../../../context/postageContext';
 
 function CustomForm() {
-    const { postageSetting, setPostageSetting } = useDeliveryContext();
+    const { postageSetting, setPostageSetting } = usePostageContext();
     return (
         <div className="custom-form w-full rounded-lg border border-dark-gray p-5">
             <h2 className="text-lg font-semibold">
@@ -48,10 +48,45 @@ function CustomForm() {
                                 className="daisy-radio daisy-radio-lg"
                                 name="custom-form"
                             />
-                            <p className="text-base cursor-pointer">{title}</p>
+                            <p className="cursor-pointer text-base">{title}</p>
                         </div>
                     );
                 })}
+
+                {!postageSetting?.custom_form?.prefill_with_title && (
+                    <div>
+                        <label className="daisy-form-control w-full">
+                            <div className="daisy-label">
+                                <span className="daisy-label-text font-semibold">
+                                    Description{' '}
+                                </span>
+                            </div>
+                            <input
+                                value={postageSetting?.custom_form?.description}
+                                onChange={(e) => {
+                                    setPostageSetting((prevState) => ({
+                                        ...prevState,
+                                        custom_form: {
+                                            ...prevState?.custom_form,
+                                            description: e.target.value,
+                                        },
+                                    }));
+                                }}
+                                type="text"
+                                placeholder="ex. Black Cotton t-shirt, Gold Necklace..."
+                                className="daisy-input daisy-input-bordered w-full max-w-full"
+                            />
+                            <div className="daisy-label">
+                                <span className="daisy-label-text-alt" />
+                                <span className="daisy-label-text-alt text-sm">
+                                    {postageSetting?.custom_form?.description
+                                        ?.length || 0}
+                                    /25
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                )}
             </div>
         </div>
     );

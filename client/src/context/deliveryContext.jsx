@@ -1,26 +1,16 @@
 import { createContext, useContext, useRef, useState } from 'react';
-
+import UserLogout from '../hooks/userLogout';
+import { useContent } from './ContentContext';
 const DeliveryContext = createContext();
 
 export const useDeliveryContext = () => {
     return useContext(DeliveryContext);
 };
 function DeliveryContextProvider({ children }) {
-    const [profiles, setProfiles] = useState([]);
-    const [postageSetting, setPostageSetting] = useState({
-        label_format: '1 label per page',
-        custom_form: {
-            prefill_with_title: !true,
-            custom_description: '',
-        },
-    });
+    const { setShowAlert } = useContent();
+    const { logoutUser } = UserLogout();
 
-    const value = {
-        profiles,
-        setProfiles,
-        postageSetting,
-        setPostageSetting,
-    };
+    const value = {};
     return (
         <DeliveryContext.Provider value={value}>
             {children}

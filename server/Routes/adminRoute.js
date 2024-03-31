@@ -51,6 +51,10 @@ import {
 } from '../Controllers/orderController.js';
 import { get_all_coupons } from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
+import {
+  get_setting,
+  update_settings,
+} from '../Controllers/settingController.js';
 const router = express.Router();
 router.get('/category/all', get_all_category);
 //  router.get('/product/search', searchProduct)
@@ -91,7 +95,8 @@ router.get('/productFiles/:id', getProductFiles);
 router.get('/product/featured/:id', updateProductFeature);
 router.post('/product/status/update', updateStatus);
 router.post('/product/title/update', editTitle);
-
+router.get(`/setting`, get_setting);
+router.put('/setting/update', update_settings);
 router.post('/product/price/update', editPrice);
 // router.get('/check', checkLogin)
 export default router;

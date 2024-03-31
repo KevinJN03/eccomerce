@@ -1,8 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import BubbleButton from '../../../buttons/bubbleButton';
+import ThemeBtn from '../../../buttons/themeBtn';
 
 function ProcessOrder({}) {
-    const { setModalCheck } = useContent();
+    const { setModalCheck, modalContent } = useContent();
+    const [postageSetting, setPostageSetting] = useState();
+    const [loading, setLoading] = useState(true);
+    const { fetchSetting, save } = useContent();
+    const [btnLoad, setBtnLoad] = useState(false);
+    useEffect(() => {
+        fetchSetting({ setPostageSetting, setLoading });
+    }, []);
+
     return (
         <section className="flex min-w-full flex-col gap-5 rounded-xl bg-white p-5">
             <h2 className="text-xl font-semibold">
@@ -29,19 +39,47 @@ function ProcessOrder({}) {
 
                 <section className="mt-2 flex flex-nowrap items-center gap-4">
                     {[
-                        { text: 'Monday-Friday', defaultCheck: true, disabled: true },
-                        { text: 'Saturday' },
-                        { text: 'Sunday' },
-                    ].map((item) => {
+                        {
+                            text: 'Monday-Friday',
+                            field: 'monday_friday',
+                            defaultCheck: true,
+                            disabled: true,
+                        },
+                        { text: 'Saturday', field: 'saturday' },
+                        { text: 'Sunday', field: 'sunday' },
+                    ].map(({ field, text, ...item }) => {
                         return (
-                            <div className="flex flex-nowrap items-center gap-2">
+                            <div
+                                onClick={() => {
+                                    if (field != 'monday_friday') {
+                                        setPostageSetting((prevState) => ({
+                                            ...prevState,
+                                            processing_schedule: {
+                                                ...prevState?.processing_schedule,
+                                                [field]:
+                                                    !prevState
+                                                        ?.processing_schedule?.[
+                                                        field
+                                                    ],
+                                            },
+                                        }));
+                                    }
+                                }}
+                                className="flex flex-nowrap items-center gap-2"
+                            >
                                 <input
-                                defaultChecked={item?.defaultCheck}
-                                disabled={item?.disabled}
+                                    checked={
+                                        postageSetting?.processing_schedule?.[
+                                            field
+                                        ]
+                                    }
+                                    readOnly
+                                    defaultChecked={item?.defaultCheck}
+                                    disabled={item?.disabled}
                                     type="checkbox"
                                     className="daisy-checkbox daisy-checkbox-lg border-dark-gray"
                                 />
-                                <p className="text-base ">{item.text}</p>
+                                <p className="text-base ">{text}</p>
                             </div>
                         );
                     })}
@@ -50,9 +88,30 @@ function ProcessOrder({}) {
 
             <footer className="mt-6 flex w-full items-center justify-between">
                 <BubbleButton handleClick={() => setModalCheck(() => false)} />
-                <button className="rounded-full bg-black px-5 py-3 font-medium text-white">
-                    Update
-                </button>
+
+                <ThemeBtn
+                    text={'Update'}
+                    handleClick={() =>
+                        save({
+                            msg: 'Success – your order processing schedule is updated.',
+                            postageSetting,
+                            setBtnLoad,
+                            handleFunc: () => {
+                                modalContent?.setTriggerFetchSetting(
+                                    (prevState) => !prevState
+                                );
+                            },
+                        })
+                    }
+                >
+                    {btnLoad ? (
+                        <div className="spinner-circle [--spinner-color:255,255,255] [--spinner-size:25px]" />
+                    ) : (
+                        <p className="text-base font-medium text-white">
+                            Update
+                        </p>
+                    )}
+                </ThemeBtn>
             </footer>
         </section>
     );

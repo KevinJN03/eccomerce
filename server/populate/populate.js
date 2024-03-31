@@ -16,7 +16,7 @@ import Coupon from '../Models/coupon.js';
 import createDeliveryProfile from './createDeliveryProfiles.js';
 import Product from '../Models/product.js';
 import Category from '../Models/Category.js';
-
+import Setting from '../Models/setting.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
@@ -62,6 +62,8 @@ async function populate() {
       { code: 'SURPRISE', amount: 10 },
       { code: 'NEW', amount: 15 },
     ]);
+
+    await Setting.create({ name: 'general' });
     mongoose.connection.close();
     console.log('connection closed');
   } catch (error) {
