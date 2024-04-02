@@ -9,6 +9,7 @@ function UserLogout() {
 
     const logoutRef = useRef(null);
     const logoutFunction = ({ error }) => {
+        console.error(error);
         if (error?.response?.status == 401) {
             authDispatch({ type: 'LOGOUT' });
             return navigate('/portal/login');

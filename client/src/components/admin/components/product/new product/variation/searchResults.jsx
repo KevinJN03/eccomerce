@@ -23,7 +23,7 @@ function VariationResults({
                         return (
                             <li
                                 key={uuidv4()}
-                                className="flex flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
+                                className="flex cursor-pointer flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
                                 onClick={() => addOption(item)}
                             >
                                 <p className="bg-transparent text-sm">
@@ -37,7 +37,7 @@ function VariationResults({
 
                 {searchText == '' && variation.length > 0 && (
                     <li
-                        className="px-3 py-3 hover:bg-[var(--light-grey)]"
+                        className="px-3 cursor-pointer py-3 hover:bg-[var(--light-grey)]"
                         onClick={addRemainingColors}
                     >
                         Add all options{' '}
@@ -62,7 +62,7 @@ function VariationResults({
                     ) && (
                         <li
                             onClick={handleCustom}
-                            className="flex flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
+                            className="flex  cursor-pointer flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
                         >
                             <p className="max-w-full bg-transparent text-sm ">
                                 Custom Option:{' '}

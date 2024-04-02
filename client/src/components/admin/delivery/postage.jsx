@@ -10,23 +10,26 @@ import PostageContextProvider, {
 import UserLogout from '../../../hooks/userLogout.jsx';
 import { useDeliveryContext } from '../../../context/deliveryContext.jsx';
 import OptionError from '../components/product/new product/variation/error/optionError.jsx';
-import _ from 'lodash';
+import _, { property, replace } from 'lodash';
 import { useContent } from '../../../context/ContentContext.jsx';
+import { postcodeValidator } from 'postcode-validator';
 function Input({
     asterisk,
     optional,
     label,
-    inputId,
+
     children,
     maxlength,
     property,
     autocomplete,
+    handleOnchange,
+    errorMsg,
 }) {
     const { postageSetting, setPostageSetting, errors, setErrors } =
         usePostageContext();
     return (
-        <div className="flex w-full flex-1 flex-col gap-2">
-            <label className="relative w-fit font-semibold" htmlFor={inputId}>
+        <div className="flex w-full flex-1 flex-col gap-2 self-start">
+            <label className="relative w-fit font-semibold" htmlFor={property}>
                 {label}{' '}
                 {asterisk ? (
                     <span className="text-lg text-red-800">*</span>
@@ -44,22 +47,32 @@ function Input({
             </label>
             <div className="relative w-full">
                 <input
-                    onChange={(e) =>
+                    onChange={(e) => {
                         setPostageSetting((prevState) => ({
                             ...prevState,
                             [property]: e.target.value,
-                        }))
-                    }
+                        }));
+
+                        handleOnchange &&
+                            handleOnchange({
+                                value: e.target.value,
+                                property,
+                                msg: errorMsg,
+                            });
+                    }}
                     value={postageSetting?.[property]}
                     maxLength={maxlength}
                     type="text"
-                    name={inputId}
-                    id={inputId}
+                    name={property}
+                    id={property}
                     autocomplete={autocomplete}
                     className={`daisy-input daisy-input-bordered w-full border-dark-gray shadow-inner-2 ${_.has(errors, [`delivery.${property}`]) ? 'border-red-700 bg-red-100' : ''}`}
                 />
                 {errors?.[`delivery.${property}`] && (
-                    <OptionError msg={errors?.[`delivery.${property}`]} />
+                    <OptionError
+                        msg={errors?.[`delivery.${property}`]}
+                        className={'px-0 pt-1'}
+                    />
                 )}
 
                 {children}
@@ -84,10 +97,46 @@ function Postage({}) {
     useEffect(() => {
         fetchSetting({ setPostageSetting, setLoading });
     }, []);
-    const [errors, setErrors] = useState({
-        'delivery.full_name': 'Please enter a full name.',
-    });
+    const [errors, setErrors] = useState({});
     const value = { postageSetting, setPostageSetting, errors, setErrors };
+    const handleOnChange = ({ value, property, msg }) => {
+        try {
+            const clearPropertyError = () => {
+                setErrors(
+                    ({
+                        [`delivery.${property}`]: propertyError,
+                        ...prevState
+                    }) => ({
+                        ...prevState,
+                    })
+                );
+            };
+            const newValue = value.trim();
+            if (newValue.length < 1) {
+                setErrors((prevState) => ({
+                    ...prevState,
+                    [`delivery.${property}`]: msg,
+                }));
+            } else if (property == 'post_code') {
+                if (!postcodeValidator(newValue?.toUpperCase(), 'GB')) {
+                    setErrors((prevState) => ({
+                        ...prevState,
+                        [`delivery.${property}`]:
+                            'Please enter a valid post code.',
+                    }));
+                    return;
+                }
+
+                clearPropertyError();
+                return;
+            } else {
+                clearPropertyError();
+            }
+        } catch (error) {
+            console.error('error postcode', error);
+        }
+    };
+
     return (
         <PostageContextProvider value={value}>
             {loading ? (
@@ -96,6 +145,27 @@ function Postage({}) {
                 </div>
             ) : (
                 <section className="flex flex-col gap-8">
+                    {!_.isEmpty(errors) && (
+                        <div className="w-full rounded-lg bg-red-800 p-5 text-white">
+                            <p className="text-sm text-white">
+                                Please fix the errors on these fields:
+                            </p>
+
+                            <ol className="mt-1 px-6">
+                                {_.toPairs(errors).map(([key, value]) => {
+                                    return (
+                                        <li className="pb-1 text-base text-white underline">
+                                            <a
+                                                href={`#${key.replace('delivery.', '')}`}
+                                            >
+                                                {`${_.upperFirst(key.replaceAll('delivery.', '').replaceAll('_', ' '))}:  ${value}`}
+                                            </a>
+                                        </li>
+                                    );
+                                })}
+                            </ol>
+                        </div>
+                    )}
                     <section className="flex flex-col gap-4">
                         <h2 className="text-lg font-semibold">
                             Dispatching From
@@ -103,23 +173,24 @@ function Postage({}) {
 
                         <Input
                             label={'Full name'}
-                            inputId={'full-name'}
                             asterisk
                             property={'full_name'}
                             autocomplete={'name'}
+                            errorMsg={'Please enter a full name.'}
+                            handleOnchange={handleOnChange}
                         />
 
                         <section className="flex w-full flex-nowrap items-center gap-4">
                             <Input
                                 label={'Street address'}
-                                inputId={'street-address'}
                                 asterisk
                                 property={'address_1'}
                                 autocomplete={'street-address'}
+                                errorMsg={'Please enter a street address.'}
+                                handleOnchange={handleOnChange}
                             />
                             <Input
                                 label={' Flat / Other'}
-                                inputId={'address-2'}
                                 optional
                                 property={'address_2'}
                                 autocomplete={'address-line2'}
@@ -129,14 +200,14 @@ function Postage({}) {
                         <section className=" flex w-full flex-nowrap items-baseline gap-4">
                             <Input
                                 label={'City'}
-                                inputId={'city'}
                                 asterisk
                                 property={'city'}
                                 autocomplete={'home city'}
+                                errorMsg={'Please enter a city.'}
+                                handleOnchange={handleOnChange}
                             />
                             <Input
                                 label={'County'}
-                                inputId={'county'}
                                 optional
                                 property={'county'}
                                 autocomplete={'county'}
@@ -144,21 +215,23 @@ function Postage({}) {
 
                             <Input
                                 label={'Post code'}
-                                inputId={'post-code'}
                                 maxlength={9}
                                 asterisk
                                 property={'post_code'}
                                 autocomplete={'postal-code'}
+                                errorMsg={'Please enter a post code.'}
+                                handleOnchange={handleOnChange}
                             >
                                 <ArrowDropDown className="absolute right-3 top-1/2 translate-y-[-50%]" />
                             </Input>
                         </section>
                         <Input
                             label={'Phone number'}
-                            inputId={'phone-number'}
                             asterisk
                             property={'phone_number'}
                             autocomplete={'tel'}
+                            errorMsg={'Please enter a phone number.'}
+                            handleOnchange={handleOnChange}
                         />
                     </section>
 
@@ -231,7 +304,7 @@ function Postage({}) {
                         <ThemeBtn
                             text={'Save preferences'}
                             handleClick={() =>
-                                save({ setBtnLoad, postageSetting , setErrors})
+                                save({ setBtnLoad, postageSetting, setErrors })
                             }
                         >
                             {btnLoad ? (

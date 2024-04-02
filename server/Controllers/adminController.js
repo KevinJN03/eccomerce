@@ -580,6 +580,9 @@ export const getAllProducts = [
     const { checks } = req.body;
 
     const productPipeline = [
+      {
+        $sort: { _id: 1 },
+      },
       ...productAggregateStage({ stats: true }),
 
       {
@@ -604,12 +607,12 @@ export const getAllProducts = [
       {
         $addFields: {
           products: {
-            $sortArray: { input: '$products', sortBy: { ...checks.sort } },
+            $sortArray: {
+              input: '$products',
+              sortBy: { ...checks.sort, _id: 1 },
+            },
           },
         },
-      },
-      {
-        $sort: { _id: 1 },
       },
     ];
 
@@ -815,7 +818,7 @@ export const editPrice = [
   check('amount', 'Price must be between £0.17 and £42,933.20')
     .escape()
     .trim()
-    .isFloat({ min: 0.17, max: 42933.20 }),
+    .isFloat({ min: 0.17, max: 42933.2 }),
   asyncHandler(async (req, res, next) => {
     const { productIds, selectedOption, amount } = req.body;
 
@@ -823,65 +826,74 @@ export const editPrice = [
 
     if (!result?.isEmpty()) {
       console.log({ error: result.mapped() });
-      return res.status(400).send({ error: result.mapped(), success: false });
+      return res.status(400).send(result.mapped());
     }
     const productsInfo = await Product.find(
       { _id: productIds },
-      { variations: 1, price: 1 },
-      // { lean: { toObject: true } },
+      { variations: 1, price: 1, images: 1, title: 1 },
+   //   { lean: { toJSON: true } },
     );
     const failedProductIds = new Map();
+
+    const eligibleProductID = new Set();
     const updateProductPrice = productsInfo.map((product) => {
-      let isPriceAssorted = false;
-      let variationWithPriceIndex = null;
+      const idString = product._id?.toString();
 
-      const getNewPrice = (currentPrice) => {
-        let nextCurrentPrice = parseFloat(currentPrice);
-        const parseAmount = parseFloat(amount);
+      try {
+        let isPriceAssorted = false;
+        let variationWithPriceIndex = null;
 
-        if (selectedOption == 'increase_by_amount') {
-          nextCurrentPrice += parseAmount;
-        }
+        const getNewPrice = (currentPrice) => {
+          let nextCurrentPrice = parseFloat(currentPrice || 0);
+          const parseAmount = parseFloat(amount || 0);
 
-        if (selectedOption == 'decrease_by_amount') {
-          nextCurrentPrice -= parseAmount;
-        }
+          if (selectedOption == 'increase_by_amount') {
+            nextCurrentPrice += parseAmount;
+          }
 
-        if (selectedOption == 'set_new_amount') {
-          nextCurrentPrice = parseAmount;
-        }
+          if (selectedOption == 'decrease_by_amount') {
+            nextCurrentPrice -= parseAmount;
+          }
 
-        if (selectedOption == 'percentage_increase') {
-          nextCurrentPrice *= 1 + parseAmount / 100;
-        }
+          if (selectedOption == 'set_new_amount') {
+            nextCurrentPrice = parseAmount;
+          }
 
-        if (selectedOption == 'percentage_decrease') {
-          nextCurrentPrice *= 1 - parseAmount / 100;
-        }
-        // return nextCurrentPrice.toFixed(2)
-        const formatPrice = Math.floor(nextCurrentPrice * 100) / 100;
-        if (formatPrice < 0.17 || formatPrice > 999) {
-          const idString = product._id?.toString();
-          failedProductIds.set(idString, {
-            id: idString,
-            msg:
-              formatPrice < 0.17
-                ? 'Price is below listing fee.'
-                : 'Price is too high.',
-          });
-        }
-        return formatPrice;
-      };
+          if (selectedOption == 'percentage_increase') {
+            nextCurrentPrice *= 1 + parseAmount / 100;
+          }
 
-      for (const [idx, { priceHeader }] of product?.variations.entries()) {
-        if (priceHeader?.on) {
-          isPriceAssorted = true;
-          variationWithPriceIndex = idx;
-          break;
+          if (selectedOption == 'percentage_decrease') {
+            nextCurrentPrice *= 1 - parseAmount / 100;
+          }
+          // return nextCurrentPrice.toFixed(2)
+          const formatPrice = Math.floor(nextCurrentPrice * 100) / 100;
+          if (formatPrice < 0.17 || formatPrice > 999) {
+            console.log({ idString, formatPrice, status: 'failed' });
+            eligibleProductID.delete(idString);
+            failedProductIds.set(idString, {
+              title: product.title,
+              images: product.images,
+
+              msg:
+                formatPrice < 0.17
+                  ? 'Price is below 0.17.'
+                  : 'Price is too high.',
+            });
+          } else {
+            eligibleProductID.add(idString);
+          }
+          return formatPrice;
+        };
+
+        for (const [idx, { priceHeader }] of product?.variations.entries()) {
+          if (priceHeader?.on) {
+            isPriceAssorted = true;
+            variationWithPriceIndex = idx;
+            break;
+          }
         }
-      }
-      if (!isPriceAssorted) {
-        if (!failedProductIds.has(product._id.toString())) {
+        if (!isPriceAssorted && !failedProductIds.has(idString)) {
           return Product.findByIdAndUpdate(
             { _id: product._id },
             {
@@ -892,51 +904,65 @@ export const editPrice = [
             },
           );
         }
-      }
 
-      if (isPriceAssorted) {
-        const generateVariationPrice = (index) => {
-          const { options } = product.variations[index];
-          const newOptionsMap = new Map();
-          options.forEach((value, key) => {
-            newOptionsMap.set(key, {
-              ...value,
-              price: getNewPrice(value.price),
-            });
-          });
+        if (isPriceAssorted) {
+          const generateVariationPrice = (index) => {
+            const { options } = product.variations[index];
+            const newOptionsMap = new Map();
 
-          return Product.findByIdAndUpdate(
-            { _id: product._id },
-            { [`variations.${index}.options`]: newOptionsMap },
-          );
-        };
-        if (product.variations?.length === 3) {
-          const updatedVariationOptions = generateVariationPrice(2);
+            for (const [key, value] of options.entries()) {
+              const newPrice = getNewPrice(value.price);
 
-          if (!failedProductIds.has(product._id.toString())) {
-            return updatedVariationOptions;
-          }
-        } else {
-          const updatedVariationOptions = generateVariationPrice(
-            variationWithPriceIndex,
-          );
-          if (!failedProductIds.has(product._id.toString())) {
-            return updatedVariationOptions;
+              newOptionsMap.set(key, {
+                ...value.toObject(),
+                price: newPrice,
+              });
+
+              if (newPrice < 0.17 || newPrice > 999) {
+                break;
+              }
+            }
+
+            if (!failedProductIds.has(idString)) {
+              return Product.findByIdAndUpdate(
+                { _id: product._id },
+                { [`variations.${index}.options`]: newOptionsMap },
+              );
+            }
+          };
+          if (product.variations?.length === 3) {
+            return generateVariationPrice(2);
+          } else {
+            return generateVariationPrice(variationWithPriceIndex);
           }
         }
+      } catch (error) {
+        console.error(error);
+        failedProductIds.set(idString, {
+          title: product.title,
+          images: product.images,
+
+          msg: `Error occured while updating, try again later`,
+        });
       }
     });
 
     if (failedProductIds.size > 0) {
-      return res.status(400).send({
+      return res.status(409).send({
         success: false,
-        failedProductIds: Array.from(failedProductIds).map(
-          ([key, value]) => value,
-        ),
+        eligibleId: Array.from(eligibleProductID),
+        failedProductIds: Array.from(failedProductIds).map(([key, value]) => ({
+          ...value,
+          id: key,
+        })),
       });
     }
     const PromiseResult = await Promise.all(updateProductPrice);
-    console.log({ PromiseResult });
-    res.status(200).send({ success: true, msg: 'products price updated' });
+
+    res.status(200).send({
+      success: true,
+      count: productsInfo?.length,
+      msg: 'products price updated',
+    });
   }),
 ];

@@ -10,24 +10,32 @@ function Footer({}) {
     const { profile, btnLoad, handleSubmit } = useCreateProfileContext();
     return (
         <footer className="mt-10 flex items-center justify-between">
-            <BubbleButton handleClick={() => setModalCheck(() => false)} />
+            <BubbleButton
+                handleClick={() => {
+                    if (modalContent?.handleCancel) {
+                        modalContent.handleCancel();
+                    } else {
+                        setModalCheck(() => false);
+                    }
+                }}
+            />
 
             <ThemeBtn text={'Save profile'} handleClick={handleSubmit}>
                 {btnLoad ? (
                     <div className="spinner-circle spinner-sm [--spinner-color:255,255,255]" />
                 ) : (
                     <div className="flex flex-row flex-nowrap items-center text-base font-medium text-white">
-                        Save profile
+                        {modalContent?.button?.text || 'Save profile'}
                         <AnimatePresence>
-                            {(profile?.active_listings > 0 &&
-                                modalContent?.version == 'edit') && (
+                            {profile?.active_listings > 0 &&
+                                modalContent?.version == 'edit' && (
                                     <motion.div
                                         className="relative ml-2 origin-right rounded-full bg-white px-2 py-1 text-xs font-normal"
                                         initial={{ opacity: 0, scaleX: 0 }}
                                         animate={{
                                             opacity: 1,
                                             scaleX: 1,
-                                            transition: { duration: 0.5, },
+                                            transition: { duration: 0.5 },
                                         }}
                                         exit={{ opacity: 0 }}
                                     >

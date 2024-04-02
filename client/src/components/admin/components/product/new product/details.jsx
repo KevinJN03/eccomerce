@@ -1,13 +1,10 @@
-import { Modal, buttonBaseClasses } from '@mui/material';
 import New_Product_Header from './header';
-import MultipleSelect from './select/select';
 import CategorySelect from './select/select';
-import { forwardRef, useEffect, useState } from 'react';
-import axios, { adminAxios } from '../../../../../api/axios';
+import {  useEffect, useState } from 'react';
+import  { adminAxios } from '../../../../../api/axios';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import OptionError from './variation/error/optionError';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
-import restart from '../../../../../assets/icons/restart.png';
 import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
 import useNewProductError from '../../../../../useNewProductError';
 function Details() {

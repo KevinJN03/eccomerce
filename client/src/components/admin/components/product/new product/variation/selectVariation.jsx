@@ -293,7 +293,7 @@ function SelectVariation({}) {
                             const { variation, id } = item;
                             return (
                                 <div
-                                    className="border-1 flex flex-row items-center justify-between rounded-lg p-2"
+                                    className="border-1 cursor-pointer flex flex-row items-center justify-between rounded-lg p-2"
                                     key={id}
                                 >
                                     <span className="flex flex-row items-center gap-3">

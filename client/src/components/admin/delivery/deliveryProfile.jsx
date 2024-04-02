@@ -1,9 +1,7 @@
 import {
     AddRounded,
     ArrowDropDown,
-  
     ModeEditOutlineRounded,
-  
 } from '@mui/icons-material';
 import BubbleButton from '../../buttons/bubbleButton.jsx';
 import { useContent } from '../../../context/ContentContext.jsx';
@@ -13,7 +11,6 @@ import UserLogout from '../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../api/axios.js';
 import SeamlessDropdown from '../../common/dropdown/seamlessDropdown.jsx';
 import { v4 as uuidv4 } from 'uuid';
-
 
 import Pagination from '../../dashboard/pagination/pagination.jsx';
 import Table from './table.jsx';
@@ -31,7 +28,7 @@ function DeliveryProfile({ status, setStatus }) {
     const abortControllerRef = useRef(new AbortController());
     const [currentPageProfiles, setCurrentPageProfiles] = useState([]);
     const [page, setPage] = useState(1);
-
+    const [profileData, setProfileData] = useState({});
     const [loading, setLoading] = useState(true);
     const { fetchSetting } = useContent();
     const [triggerFetchSetting, setTriggerFetchSetting] = useState(false);
@@ -222,7 +219,12 @@ function DeliveryProfile({ status, setStatus }) {
                                     )}
 
                                     <SeamlessDropdown
-                                        {...{ setShow, show, options }}
+                                        {...{
+                                            setShow,
+                                            show,
+                                            options,
+                                            className: '',
+                                        }}
                                     />
                                 </section>
                                 <EditOriginPostCode
@@ -261,10 +263,10 @@ function DeliveryProfile({ status, setStatus }) {
                         <Table
                             {...{
                                 selection,
-                                profiles,
+                                profiles: currentPageProfiles,
                                 refreshLoading,
                                 page,
-                                currentPageProfiles,
+
                                 setTriggerRefresh,
                                 setSelection,
                             }}

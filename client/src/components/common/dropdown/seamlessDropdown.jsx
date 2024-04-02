@@ -1,7 +1,7 @@
 import { ClickAwayListener } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 
-function SeamlessDropdown({ show, setShow, children, options }) {
+function SeamlessDropdown({ show, setShow, children, options, className }) {
     return (
         <AnimatePresence mode="wait">
             {show && (
@@ -31,10 +31,10 @@ function SeamlessDropdown({ show, setShow, children, options }) {
                                 },
                             },
                         }}
-                        className="absolute left-0 top-[-0.25rem] z-[2] w-fit origin-top-left  rounded-xl border bg-white box-content pt-1 shadow-normal"
+                        className={`absolute ${className || 'left-0 top-[-0.25rem] origin-top-left'} z-[2] box-content w-fit   rounded-xl border bg-white pt-1 shadow-normal`}
                     >
                         {children || (
-                            <ul className="relative mt-7 w-full list-none">
+                            <ul className="relative !mt-7 w-full list-none">
                                 {options.map(({ text, handleClick }, idx) => {
                                     return (
                                         <li

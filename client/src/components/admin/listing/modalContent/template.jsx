@@ -8,43 +8,44 @@ function Template({
     small,
     footerChildren,
     headerChildren,
-    finishLoading,
+    loading,
     submit,
+
     handleClearSelection,
 }) {
     const { setModalCheck, setShowAlert } = useContent();
 
-    useEffect(() => {
-        let timeout = null;
+    // useEffect(() => {
+    //     let timeout = null;
 
-        if (finishLoading) {
-            timeout = setTimeout(() => {
-                setModalCheck(() => false);
-                setShowAlert(() => ({
-                    msg: 'Listing Updated.',
-                    on: true,
-                    size: 'large',
-                    bg: 'bg-green-100',
-                    icon: 'check'
-                }));
-                handleClearSelection();
-            }, 1500);
-        }
+    //     if (loading) {
+    //         timeout = setTimeout(() => {
+    //             setModalCheck(() => false);
+    //             setShowAlert(() => ({
+    //                 msg: 'Listing Updated.',
+    //                 on: true,
+    //                 size: 'large',
+    //                 bg: 'bg-green-100',
+    //                 icon: 'check'
+    //             }));
+    //             handleClearSelection();
+    //         }, 1500);
+    //     }
 
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [finishLoading]);
+    //     return () => {
+    //         clearTimeout(timeout);
+    //     };
+    // }, [loading]);
 
     return (
         <section
             className={`w-full rounded-sm bg-white ${
-                small || finishLoading
+                small || loading
                     ? `!min-w-[24rem] max-w-[24rem]`
                     : 'min-w-[37.5rem]'
             }`}
         >
-            {!finishLoading ? (
+            {!loading ? (
                 <>
                     <header className="border-b border-b-dark-gray/50 p-3">
                         {headerChildren || (

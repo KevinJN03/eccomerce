@@ -154,7 +154,7 @@ function New_Product({ Content, type }) {
 
                 <div
                     id={'stickyElement'}
-                    className=" subheader !sticky !top-0 z-50 flex h-12 w-full flex-row flex-nowrap  items-center gap-x-10 bg-white pl-16 "
+                    className=" subheader !sticky !top-0 z-[4] flex h-12 w-full flex-row flex-nowrap  items-center gap-x-10 bg-white pl-16 "
                 >
                     {[
                         { text: 'About', id: 'about' },
@@ -223,9 +223,6 @@ function New_Product({ Content, type }) {
 
                     <Delivery />
 
-                    {/* <div className='h-[1000px]'>
-
-                    </div> */}
                 </section>
 
                 <Footer type={type} />

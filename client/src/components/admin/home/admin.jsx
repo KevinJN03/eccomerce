@@ -38,6 +38,7 @@ import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
 import CreateProfile from '../delivery/modalViews.jsx/createProfile/createProfile.jsx';
 import DeleteProfile from '../delivery/modalViews.jsx/deleteProfile.jsx';
+import DeliveryOption from '../delivery/modalViews.jsx/deliveryOption.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -64,6 +65,7 @@ function Admin({}) {
         processOrder: <ProcessOrder />,
         createProfile: <CreateProfile />,
         deleteProfile: <DeleteProfile />,
+        deliveryOption: <DeliveryOption />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -90,7 +92,7 @@ function Admin({}) {
 
         if (showAlert?.on) {
             timeoutRef.current = setTimeout(() => {
-                setShowAlert(() => ({ on: false }));
+                    setShowAlert(() => ({ on: false }));
             }, showAlert?.timeout || 5000);
         }
     }, [showAlert]);
@@ -155,7 +157,9 @@ function Admin({}) {
                                                 </div>
                                             )}
 
-                                            <div className="mt-0.5 text-base font-normal tracking-wide text-white">
+                                            <div
+                                                className={`mt-0.5 font-normal tracking-wide ${showAlert?.text || 'text-base text-white'} `}
+                                            >
                                                 {showAlert?.msg}
                                             </div>
 
@@ -170,20 +174,26 @@ function Admin({}) {
                                 )}
                             {showAlert?.on && showAlert?.size == 'large' && (
                                 <motion.section
-                                    className={`fixed left-0 top-0 z-50 flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} p-5 `}
+                                    className={`fixed left-0 top-0 z-50 flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
                                     variants={generateAlertVariant('0px')}
                                     initial={'initial'}
                                     animate={'animate'}
                                     exit={'exit'}
                                 >
                                     <div className="flex w-fit flex-row items-center gap-3">
-                                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white !text-[1.8rem]">
-                                            {icons?.[showAlert?.icon]}
-                                        </div>
+                                        {showAlert?.icon && (
+                                            <div
+                                                className={`flex h-fit w-fit items-center  justify-center rounded-full ${showAlert?.icon == 'sadFace' ? 'bg-transparent' : 'bg-white'}  p-2 !text-[1.8rem]`}
+                                            >
+                                                {icons?.[showAlert?.icon]}
+                                            </div>
+                                        )}
 
-                                        <p className="text-sm">
+                                        <div
+                                            className={`mt-0.5  font-normal tracking-wide ${showAlert?.text || 'text-base text-white'}`}
+                                        >
                                             {showAlert?.msg}
-                                        </p>
+                                        </div>
                                     </div>
                                     <button
                                         className="absolute right-8 top-1/2 translate-y-[-50%]"

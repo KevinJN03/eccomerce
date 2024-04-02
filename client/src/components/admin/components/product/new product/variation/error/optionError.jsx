@@ -29,7 +29,7 @@ function OptionError({ msg, className, small, disableIcon }) {
             initial="initial"
             animate="animate"
             exit="exit"
-            className={`flex flex-row items-center justify-start gap-3 p-3 ${className}`}
+            className={`${className} flex flex-row items-center justify-start gap-3 p-3 `}
         >
             {!disableIcon && (
                 <ErrorOutlinedIcon

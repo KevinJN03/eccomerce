@@ -79,6 +79,53 @@ export const get_all_delivery_profile = asyncHandler(async (req, res, next) => {
 
   res.status(200).send(profiles);
 });
+
+export const get_delivery_profile_pagination = [
+  check('limit').trim().toInt(),
+  check('page').trim().toInt(),
+
+  asyncHandler(async (req, res, next) => {
+    const { page, limit } = req.query;
+
+    const [totalProfiles, profiles] = await Promise.all([
+      DeliveryProfile.countDocuments(),
+
+      DeliveryProfile.aggregate([
+        {
+          $sort: { _id: 1 },
+        },
+        {
+          $skip: (page - 1) * limit,
+        },
+        {
+          $limit: limit,
+        },
+        {
+          $lookup: {
+            from: 'products', // Assuming your listings collection is named "listings"
+            localField: '_id',
+            foreignField: 'delivery',
+            // let: { deliveryId: '$_delivery' }, // Assigning the delivery profile ID to a variable
+            pipeline: [
+              {
+                $project: { _id: 1, title: 1 },
+              },
+            ],
+            as: 'activeListings', // Output field to store the matching listings
+          },
+        },
+        {
+          $addFields: {
+            active_listings: { $size: '$activeListings' },
+          },
+        },
+      ]),
+    ]);
+
+    res.status(200).send({ total: totalProfiles, profiles });
+  }),
+];
+
 export const delete_single_delivery_profile = asyncHandler(
   async (req, res, next) => {
     const { id } = req.params;
@@ -99,10 +146,13 @@ export const update_single_delivery_profile = [
       return;
     }
 
-    const profile = await DeliveryProfile.updateOne({ _id: id }, req.body, {
-      new: true,
-      // context: 'query',
-    });
+    const profile = await DeliveryProfile.findByIdAndUpdate(
+      { _id: id },
+      req.body,
+      {
+        new: true,
+      },
+    );
 
     res.status(200).send(profile);
   }),

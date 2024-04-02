@@ -249,9 +249,10 @@ function CreateProfileContextProvider({ children }) {
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
             let success = false;
+            let dataValue = null;
+
             try {
                 setBtnLoad(() => true);
-
                 if (
                     modalContent?.version == 'create' ||
                     modalContent?.version == 'duplicate'
@@ -261,13 +262,17 @@ function CreateProfileContextProvider({ children }) {
                         latestStateRef.current,
                         { signal: abortControllerRef.current.signal }
                     );
+
+                    dataValue = data;
                 } else if (modalContent?.version == 'edit') {
                     const { data } = await adminAxios.put(
                         `/delivery/update/${modalContent?.profileId}`,
                         latestStateRef.current,
                         { signal: abortControllerRef.current.signal }
                     );
+                    dataValue = data;
                 }
+
                 success = true;
             } catch (error) {
                 logoutUser({ error });
@@ -289,10 +294,19 @@ function CreateProfileContextProvider({ children }) {
             } finally {
                 if (success) {
                     setTimeout(() => {
-                        setModalCheck(() => false);
-                        modalContent?.setTriggerRefresh(
-                            (prevState) => !prevState
-                        );
+                        if (modalContent?.button?.handleClick) {
+                            modalContent?.button?.handleClick({
+                                ...dataValue,
+                                active_listings: profile?.active_listings,
+                            });
+                        }
+
+                        if (modalContent?.setTriggerRefresh) {
+                            modalContent?.setTriggerRefresh(
+                                (prevState) => !prevState
+                            );
+                        }
+
                         setShowAlert(() => ({
                             msg: `Your delivery profile has been ${modalContent?.version == 'edit' ? 'updated' : 'created'}.`,
                             size: 'medium',
@@ -301,6 +315,7 @@ function CreateProfileContextProvider({ children }) {
                             small: true,
                             on: true,
                         }));
+                        setModalCheck(() => false);
                     }, 1000);
                 } else {
                     setBtnLoad(() => false);

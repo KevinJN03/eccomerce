@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import { adminAxios } from '../../../../api/axios';
@@ -13,8 +13,11 @@ import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 
 import { isEmpty } from 'lodash';
 function ChangeSection({}) {
-    const { setModalCheck, modalContent } = useContent();
+    const { setModalCheck, modalContent, setShowAlert } = useContent();
     const [categoryArray, setCategories] = useState([]);
+    const [btnLoading, setBtnLoading] = useState(false);
+
+    const [loading, setLoading] = useState(false);
     const { logoutUser } = UserLogout();
     const [content, setContent] = useState('main');
     const [select, setSelect] = useState('');
@@ -22,13 +25,21 @@ function ChangeSection({}) {
     const [productData, setProductData] = useState({});
     const [text, setText] = useState('');
     const queryAttr = 'data-rbd-drag-handle-draggable-id';
+
+    const abortControllerRef = useRef(new AbortController());
     useEffect(() => {
         const fetchData = async () => {
             try {
+                abortControllerRef.current?.abort();
+                abortControllerRef.current = new AbortController();
                 const [{ value: categoryData }, { value: productResult }] =
                     await Promise.allSettled([
-                        adminAxios.get('category/all'),
-                        adminAxios.get(`product/${modalContent?.products[0]}`),
+                        adminAxios.get('category/all', {
+                            signal: abortControllerRef.current?.signal,
+                        }),
+                        adminAxios.get(`product/${modalContent?.products[0]}`, {
+                            signal: abortControllerRef.current?.signal,
+                        }),
                     ]);
 
                 setCategories(() =>
@@ -50,6 +61,10 @@ function ChangeSection({}) {
             }
         };
         fetchData();
+
+        return () => {
+            abortControllerRef.current?.abort();
+        };
     }, []);
 
     const getDraggedDom = (draggableId) => {
@@ -68,8 +83,73 @@ function ChangeSection({}) {
         setCategories(() => newCategoryArray);
     };
 
+    const handleApply = async () => {
+        let success = false;
+        let count = null;
+        try {
+            setBtnLoading(() => true);
+
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await adminAxios.put(
+                '/product/category/update',
+                {
+                    ids: modalContent.products,
+                    category: select,
+                },
+                { signal: abortControllerRef.current?.signal }
+            );
+            count = data?.total;
+            success = true;
+        } catch (error) {
+            logoutUser({ error });
+        } finally {
+            setTimeout(() => {
+                setBtnLoading(() => false);
+                setLoading(() => true);
+
+                setTimeout(() => {
+                    if (success) {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-green-100',
+                            icon: 'check',
+                            size: 'large',
+                            msg:
+                                count > 1
+                                    ? `You've updated ${count} listings.`
+                                    : 'Listing updated.',
+                            text: 'text-black text-base',
+                        }));
+                    } else {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-red-800',
+                            icon: 'sadFace',
+                            size: 'medium',
+                            text: 'text-sm text-white',
+                            timeout: 10000,
+                            msg: `We're unable to update the section for ${modalContent?.products?.length} of your listing. Try again or update each listing individually.`,
+                        }));
+                    }
+
+                    modalContent?.setTriggerSearch((prevState) => !prevState);
+                    setLoading(() => false);
+
+                    setModalCheck(() => false);
+                }, 1300);
+            }, 1000);
+        }
+    };
+
     return (
         <Template
+            loading={loading}
+            submit={{
+                text: 'Apply',
+                loading: btnLoading,
+                handleClick: handleApply,
+            }}
             headerChildren={
                 {
                     edit: true,
@@ -162,7 +242,7 @@ function ChangeSection({}) {
             title={`Change section for ${modalContent.products?.length} listing`}
         >
             {content == 'main' && (
-                <div className="flex w-full flex-col gap-2 ">
+                <div className="flex w-full flex-col gap-2 mb-12">
                     <select
                         onChange={(e) => setSelect(() => e.target.value)}
                         name="change-section"
@@ -172,22 +252,23 @@ function ChangeSection({}) {
                         <option value="" selected disabled>
                             Select Section...
                         </option>
-                        <optgroup label="_________" className="font-light">
-                            {categoryArray.map(({ _id, name }) => {
-                                return (
-                                    <option
-                                        selected={select === _id}
-                                        key={_id}
-                                        value={_id}
-                                    >
-                                        {name}
-                                    </option>
-                                );
-                            })}
-                        </optgroup>
+                        <option disabled className="text-xs font-bold">
+                            ------------
+                        </option>{' '}
+                        {categoryArray.map(({ _id, name }) => {
+                            return (
+                                <option
+                                    selected={select === _id}
+                                    key={_id}
+                                    value={_id}
+                                >
+                                    {name}
+                                </option>
+                            );
+                        })}
                     </select>
 
-                    <button
+                    {/* <button
                         type="button"
                         className="w-fit text-left underline"
                         onClick={() => setContent(() => 'manage')}
@@ -195,11 +276,11 @@ function ChangeSection({}) {
                         <p className=" mt-4 cursor-pointer hover:opacity-80">
                             Manage Sections
                         </p>
-                    </button>
+                    </button> */}
                 </div>
             )}
 
-            {content == 'manage' && (
+            {/* {content == 'manage' && (
                 <div className="flex w-full max-w-[24rem] flex-col gap-3">
                     <p>
                         Sections help shoppers browse your shop. Drag and drop
@@ -315,7 +396,7 @@ function ChangeSection({}) {
                         </Droppable>
                     </DragDropContext>
                 </div>
-            )}
+            )} */}
 
             {content == 'edit' && (
                 <div className="flex flex-col gap-2">

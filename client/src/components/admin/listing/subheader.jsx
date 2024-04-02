@@ -16,6 +16,7 @@ function SubHeader({}) {
         productIds,
         handleClick,
         text,
+        setTriggerSearch
     } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
@@ -112,7 +113,7 @@ function SubHeader({}) {
                                                 setModalCheck(() => true);
                                                 setModalContent(() => ({
                                                     type: id,
-
+                                                    setTriggerSearch,
                                                     clearSelection: () => {
                                                         setSelectionSet(
                                                             new Set()

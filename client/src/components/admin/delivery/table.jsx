@@ -9,8 +9,6 @@ function Table({
     profiles,
     refreshLoading,
     selection,
-    page,
-    currentPageProfiles,
     setTriggerRefresh,
     setSelection,
 }) {
@@ -43,7 +41,7 @@ function Table({
                 <th className="pb-2" />
             </tr>
 
-            {currentPageProfiles.map(
+            {profiles.map(
                 ({
                     _id,
                     name,
@@ -228,29 +226,28 @@ function Table({
                                                         }}
                                                     >
                                                         {/* <span> */}
-                                                            <button
-                                                                disabled={
-                                                                    refreshLoading
-                                                                }
-                                                                onClick={() => {
-                                                                    setModalContent(
-                                                                        () => ({
-                                                                            ...props,
-                                                                            profileId:
-                                                                                _id,
-                                                                            setTriggerRefresh,
-                                                                        })
-                                                                    );
-                                                                    setModalCheck(
-                                                                        () =>
-                                                                            true
-                                                                    );
-                                                                }}
-                                                                type="button"
-                                                                className={`rounded-full p-2 transition-all hover:bg-dark-gray/30 `}
-                                                            >
-                                                                {icon}
-                                                            </button>
+                                                        <button
+                                                            disabled={
+                                                                refreshLoading
+                                                            }
+                                                            onClick={() => {
+                                                                setModalContent(
+                                                                    () => ({
+                                                                        ...props,
+                                                                        profileId:
+                                                                            _id,
+                                                                        setTriggerRefresh,
+                                                                    })
+                                                                );
+                                                                setModalCheck(
+                                                                    () => true
+                                                                );
+                                                            }}
+                                                            type="button"
+                                                            className={`rounded-full p-2 transition-all hover:bg-dark-gray/30 `}
+                                                        >
+                                                            {icon}
+                                                        </button>
                                                         {/* </span> */}
                                                     </Tooltip>
                                                 )}

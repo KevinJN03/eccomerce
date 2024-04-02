@@ -7,7 +7,7 @@
 }
 
 .format {
-    @apply m-4 w-7/12 rounded-xl;
+    @apply m-4 w-8/12 rounded-xl;
 }
 .new-product {
     @apply flex w-full;
@@ -41,7 +41,7 @@
 
     .about,
     #description,
-    #details {
+    #details, #delivery {
         @apply format bg-white;
 
         input {

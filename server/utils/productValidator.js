@@ -1,7 +1,6 @@
 import { body, check, validationResult } from 'express-validator';
 
 function customVariationValidator({ value, minValue, maxValue, msg }) {
-
   const parseValue = JSON.parse(value.replace(/&quot;/g, '"'));
 
   if (!parseValue.on) return true;
@@ -39,7 +38,6 @@ const productValidator = [
     .notEmpty()
     .custom((value) => {
       if (value === 'undefined') {
-     
         throw new Error();
       }
 
@@ -60,7 +58,7 @@ const productValidator = [
   body('isAllInputValid', 'Please enter a value in all inputs.').custom(
     (value) => {
       const parseValue = JSON.parse(value);
-  
+
       // if (value) return true;
       // return false;
       return parseValue;
@@ -92,10 +90,10 @@ const productValidator = [
   //       throw new Error();
   //     }
   //   }),
-  body('delivery', 'Please add some delivery profiles.')
+  body('delivery', 'Please add a delivery profiles.')
     .trim()
     .escape()
-    .isArray({ min: 1 }),
+    .notEmpty(),
 ];
 
 export default productValidator;
