@@ -1,22 +1,24 @@
 import { Inventory2Sharp, PrintSharp, RedeemSharp } from '@mui/icons-material';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
+import { useContent } from '../../../../context/ContentContext';
 
-function Actions({ setShowActions, showActions, orderId, children }) {
-    const { adminOrderModalContentDispatch, setModalCheck } =
-        useAdminOrderContext();
+function Actions({ setShowActions, showActions, children }) {
+    const { setModalCheck, setModalContent } = useContent();
+
+    const { orderInfo } = useAdminOrderContext();
     const printOrder = () => {
         console.log('clicked');
-        adminOrderModalContentDispatch({
+        setModalContent({
             type: 'printOrder',
-            orders: [orderId],
+            orders: [orderInfo?._id],
         });
         setModalCheck(true);
         setShowActions(false);
     };
 
     return (
-        <SeamlessDropdown {...{ setShow: setShowActions, show: showActions, }}>
+        <SeamlessDropdown {...{ setShow: setShowActions, show: showActions }}>
             <section className="mt-9">
                 {[
                     {

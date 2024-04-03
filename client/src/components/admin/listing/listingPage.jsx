@@ -21,10 +21,12 @@ import { adminAxios } from '../../../api/axios.js';
 import UserLogout from '../../../hooks/userLogout.jsx';
 import illustration from './illustration3.png';
 import { AnimatePresence, motion, progress } from 'framer-motion';
-
+import _ from 'lodash';
 function ListingPage() {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [categoryQuantity, setCategoryQuantity] = useState({});
+    const [deliveryQuantityMap, setDeliveryQuantityMap] = useState({});
+
     const [selectionSet, setSelectionSet] = useState([]);
     const { allProducts, setAllProducts } = useAdminContext();
     const [searchText, setSearchText] = useState('');
@@ -32,23 +34,38 @@ function ListingPage() {
     const [products, setProducts] = useState([]);
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
-
     const [deliveryProfile, setDeliveryProfile] = useState([]);
-
     const [showStats, setShowStats] = useState(false);
-
     const abortControllerRef = useRef(new AbortController());
-    const [checks, setChecks] = useState({
-        format: 'grid',
-        listing_status: 'active',
+    const [checks, setChecks] = useState(() => {
+        const defaultChecks = {
+            format: 'grid',
+            listing_status: 'active',
 
-        featured: false,
-        sort: {
-            title: 1,
-        },
+            featured: false,
+            sort: {
+                title: 1,
+            },
+        };
+
+        try {
+            if (!_.isEmpty(localStorage.getItem('checks'))) {
+                console.log('in here', localStorage.getItem('checks'));
+                return JSON.parse(localStorage.getItem('checks'));
+            } else {
+                return defaultChecks;
+            }
+        } catch (error) {
+            console.error(error);
+            return defaultChecks;
+        }
     });
 
     const { logoutUser } = UserLogout();
+
+    useEffect(() => {
+        localStorage.setItem('checks', JSON.stringify(checks));
+    }, [checks]);
 
     useEffect(() => {
         abortControllerRef.current?.abort();
@@ -73,17 +90,71 @@ function ListingPage() {
                             const newProducts =
                                 data.products?.[checks?.listing_status] || [];
                             setProducts(() => newProducts);
-                            const countObj = {};
+                            const categoryObj = {};
+                            const deliveryObj = {};
 
-                            newProducts?.forEach(({ category }) => {
-                                if (countObj?.[category]) {
-                                    countObj[category] += 1;
+                            newProducts?.forEach(({ category, delivery }) => {
+                                if (_.has(categoryObj, category)) {
+                                    categoryObj[category] += 1;
                                 } else {
-                                    countObj[category] = 1;
+                                    categoryObj[category] = 1;
+                                }
+
+                                if (_.has(deliveryObj, delivery)) {
+                                    deliveryObj[delivery] += 1;
+                                } else {
+                                    deliveryObj[delivery] = 1;
                                 }
                             });
-                            console.log({ countObj });
-                            setCategoryQuantity(() => countObj);
+
+                            // setCategoryQuantity(() => categoryObj);
+
+                            const updateQuantityMap = ({
+                                setState,
+                                property,
+                                quantityObj,
+                            }) => {
+                                if (
+                                    !checks?.[property] ||
+                                    checks?.[property] == 'All'
+                                ) {
+                                    setState(() => quantityObj);
+                                } else {
+                                    console.log(quantityObj);
+                                    setState((prevState) => ({
+                                        ...quantityObj,
+                                        ...prevState,
+                                        [checks?.[property]]:
+                                            quantityObj[checks?.[property]],
+                                    }));
+                                }
+                            };
+
+                            updateQuantityMap({
+                                property: 'deliveryProfile',
+                                quantityObj: deliveryObj,
+                                setState: setDeliveryQuantityMap,
+                            });
+                            updateQuantityMap({
+                                property: 'category',
+                                quantityObj: categoryObj,
+                                setState: setCategoryQuantity,
+                            });
+
+                            if (
+                                !checks?.deliveryProfile ||
+                                checks?.deliveryProfile == 'All'
+                            ) {
+                                setDeliveryQuantityMap(() => deliveryObj);
+                            } else {
+                                console.log(deliveryObj);
+                                setDeliveryQuantityMap((prevState) => ({
+                                    ...deliveryObj,
+                                    ...prevState,
+                                    [checks?.deliveryProfile]:
+                                        deliveryObj[checks?.deliveryProfile],
+                                }));
+                            }
                             setProductIds(
                                 () =>
                                     new Set(
@@ -133,6 +204,12 @@ function ListingPage() {
                 clearInterval(id);
                 logoutUser({ error });
             } finally {
+                setSelectionSet(() => new Set());
+                if (loading) {
+                    setTimeout(() => {
+                        setLoading(() => false);
+                    },400);
+                }
             }
         };
 
@@ -148,14 +225,12 @@ function ListingPage() {
         checks?.listing_status,
         checks?.sort,
         checks?.featured,
-        checks?.section,
+        checks?.category,
         triggerSearch,
         ,
         checks?.deliveryProfile,
     ]);
 
-    const deleteButtonClick = () => {};
-    const handleClick = () => {};
     const value = {
         checks,
         setChecks,
@@ -165,6 +240,8 @@ function ListingPage() {
         selectionSet,
         setSelectionSet,
         categoryQuantity,
+        deliveryQuantityMap,
+        loading,
         showStats,
         setShowStats,
         triggerSearch,
@@ -204,62 +281,60 @@ function ListingPage() {
                     <section className="left flex w-full flex-[5] flex-col">
                         <SubHeader />
                         <section className="w-full">
-                            {products?.length > 0 ? (
-                                <>
-                                    {checks.format === 'grid' ? (
-                                        <GridProduct />
-                                    ) : (
-                                        <VerticalProducts />
-                                    )}
-                                </>
-                            ) : (
-                                <div className="mt-20 flex w-full flex-col items-center justify-center gap-4">
-                                    <img
-                                        className="w28 h-28"
-                                        src={illustration}
-                                    />
-                                    <p className="text-lg">
-                                        {checks?.searchText
-                                            ? 'No listings matched your search query.'
-                                            : 'No listings matched these filters.'}
-                                    </p>
-                                    <button
-                                        onClick={() => {
-                                            if (checks?.searchText) {
-                                                setChecks((prevState) => {
-                                                    return {
-                                                        ...prevState,
-                                                        searchText: '',
-                                                    };
-                                                });
-                                                setTriggerSearch(
-                                                    (prevState) => !prevState
-                                                );
+                            <>
+                                {checks.format === 'grid' ? (
+                                    <GridProduct />
+                                ) : (
+                                    <VerticalProducts />
+                                )}
+                            </>
 
-                                                return;
-                                            }
+                            {/* // <div className="mt-20 flex w-full flex-col items-center justify-center gap-4">
+                                //     <img
+                                //         className="w28 h-28"
+                                //         src={illustration}
+                                //     />
+                                //     <p className="text-lg">
+                                //         {checks?.searchText
+                                //             ? 'No listings matched your search query.'
+                                //             : 'No listings matched these filters.'}
+                                //     </p>
+                                //     <button
+                                //         onClick={() => {
+                                //             if (checks?.searchText) {
+                                //                 setChecks((prevState) => {
+                                //                     return {
+                                //                         ...prevState,
+                                //                         searchText: '',
+                                //                     };
+                                //                 });
+                                //                 setTriggerSearch(
+                                //                     (prevState) => !prevState
+                                //                 );
 
-                                            setChecks((prevState) => {
-                                                const {
-                                                    sort,
-                                                    listing_status,
-                                                    format,
-                                                } = prevState;
-                                                return {
-                                                    sort,
-                                                    listing_status,
-                                                    format,
-                                                };
-                                            });
-                                        }}
-                                        className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
-                                    >
-                                        {checks?.searchText
-                                            ? 'Clear Search'
-                                            : 'Reset Filters'}
-                                    </button>
-                                </div>
-                            )}
+                                //                 return;
+                                //             }
+
+                                //             setChecks((prevState) => {
+                                //                 const {
+                                //                     sort,
+                                //                     listing_status,
+                                //                     format,
+                                //                 } = prevState;
+                                //                 return {
+                                //                     sort,
+                                //                     listing_status,
+                                //                     format,
+                                //                 };
+                                //             });
+                                //         }}
+                                //         className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
+                                //     >
+                                //         {checks?.searchText
+                                //             ? 'Clear Search'
+                                //             : 'Reset Filters'}
+                                //     </button>
+                                // </div> */}
                         </section>
                     </section>
 

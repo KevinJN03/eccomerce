@@ -17,14 +17,14 @@ function EditPrice({}) {
     const [newPrice, setNewPrice] = useState({});
     const [amount, setAmount] = useState();
     const [originalPrice, setOriginalPrice] = useState({});
-    const [btnLoad, setBtnLoad] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
     const [select, setSelect] = useState('increase_by_amount');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({});
     const [failedData, setFailedData] = useState({});
     useEffect(() => {
         adminAxios
-            .get(`product/${_.get(modalContent, ['products', 0])}`)
+            .get(`product/${_.get(modalContent, ['productIds', 0])}`)
             .then(({ data }) => {
                 setProductData(() => data[0]);
 
@@ -138,20 +138,13 @@ function EditPrice({}) {
         const failedDataValue = {};
         let count = null;
         try {
-            setBtnLoad(() => true);
+            setBtnLoading(() => true);
             const { data } = await adminAxios.post('/product/price/update', {
                 productIds:
                     failedData?.failedProductIds?.length > 0 &&
                     failedData?.eligibleId?.length > 0
                         ? failedData?.eligibleId
-                        : // failedData?.failedProductIds?.length != productDataMap.size
-                          //     ? modalContent?.products.filter(
-                          //           (id) =>
-                          //               !failedProductIds.some(
-                          //                   ({ id: failedId }) => failedId == id
-                          //               )
-                          //       )
-                          modalContent?.products,
+                        : modalContent?.productIds,
 
                 selectedOption: select,
                 amount,
@@ -164,7 +157,7 @@ function EditPrice({}) {
             logoutUser({ error });
             console.log(error);
             if (error.response.status == 409) {
-                _.assign(failedDataValue, error.response.data)
+                _.assign(failedDataValue, error.response.data);
             }
 
             if (error.response.status == 400) {
@@ -174,44 +167,42 @@ function EditPrice({}) {
                 }));
             }
         } finally {
-            // setTimeout(() => {
-            //     setBtnLoad(() => false);
-
-            //     setLoading(() => true);
-            // }, 1000);
-
             setTimeout(() => {
-                if (success) {
-                    setShowAlert(() => ({
-                        on: true,
-                        bg: 'bg-green-100',
-                        icon: 'check',
-                        size: 'large',
-                        msg:
-                            count > 1
-                                ? `You've updated ${count} listings.`
-                                : 'Listing updated.',
-                        text: 'text-black text-base',
-                    }));
+                setBtnLoading(() => false);
 
-                    setModalCheck(() => false);
-                    modalContent?.setTriggerSearch((prevState) => !prevState);
+                if (success) {
+                    setLoading(() => true)
+                    setTimeout(() => {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-green-100',
+                            icon: 'check',
+                            size: 'large',
+                            msg:
+                                count > 1
+                                    ? `You've updated ${count} listings.`
+                                    : 'Listing updated.',
+                            text: 'text-black text-base',
+                        }));
+                        setModalCheck(() => false);
+                        modalContent?.setTriggerSearch(
+                            (prevState) => !prevState
+                        );
+                    }, 2000);
                 } else {
                     setFailedData(() => failedDataValue);
-
                 }
-                setBtnLoad(() => false);
-            },2000);
+            }, 1000);
         }
     };
     return (
         <Template
             handleClearSelection={modalContent.clearSelection}
-            title={`Editing price for ${modalContent.products?.length} listing`}
+            title={`Editing price for ${modalContent.productIds?.length} listing`}
             loading={loading}
             submit={{
                 handleClick,
-                loading: btnLoad,
+                loading: btnLoading,
                 disabled: !amount || error?.price,
                 text:
                     failedData?.failedProductIds?.length > 0 &&
@@ -365,7 +356,7 @@ function EditPrice({}) {
                     <div className="my-4 flex flex-col gap-8 px-6">
                         <div className="w-full rounded-md bg-red-800 p-6">
                             <p className="text-sm text-white">
-                                {modalContent?.products?.length ==
+                                {modalContent?.productIds?.length ==
                                 failedData?.failedProductIds?.length
                                     ? 'None of the selected listings could be updated'
                                     : `${failedData?.failedProductIds?.length} listings could not be updated`}

@@ -81,6 +81,7 @@ function OrderPageContent({}) {
                 )}
             </section>
             <Drawer
+                style={{ zIndex: 50 }}
                 anchor="right"
                 open={openDrawer}
                 onClose={() => setOpenDrawer(false)}
@@ -95,23 +96,6 @@ function OrderPageContent({}) {
             >
                 <DrawerContainer />
             </Drawer>
-
-            <Modal open={modalCheck} onClose={() => setModalCheck(() => false)}>
-                <Box
-                    sx={{
-                        backgroundColor: 'white',
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '100%',
-                        maxWidth: '600px',
-                        borderRadius: '4px',
-                    }}
-                >
-                    {views[modalContent?.type]}
-                </Box>
-            </Modal>
         </section>
     );
 }

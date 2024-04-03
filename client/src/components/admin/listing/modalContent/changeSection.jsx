@@ -11,13 +11,14 @@ import {
 } from '@mui/icons-material';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
+import { handleTimeout } from './handleTimeout';
 function ChangeSection({}) {
     const { setModalCheck, modalContent, setShowAlert } = useContent();
     const [categoryArray, setCategories] = useState([]);
     const [btnLoading, setBtnLoading] = useState(false);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const { logoutUser } = UserLogout();
     const [content, setContent] = useState('main');
     const [select, setSelect] = useState('');
@@ -37,7 +38,7 @@ function ChangeSection({}) {
                         adminAxios.get('category/all', {
                             signal: abortControllerRef.current?.signal,
                         }),
-                        adminAxios.get(`product/${modalContent?.products[0]}`, {
+                        adminAxios.get(`product/${modalContent?.productIds}`, {
                             signal: abortControllerRef.current?.signal,
                         }),
                     ]);
@@ -51,13 +52,24 @@ function ChangeSection({}) {
                 );
 
                 if (productResult) {
-                    setProductData(() => productResult?.data[0] || {});
-                    setSelect(() => productResult.data[0].category?._id);
+                    setSelect(() =>
+                        productResult.data?.every(
+                            ({ category }) =>
+                                category?._id ==
+                                _.get(productResult, 'data[0].category._id')
+                        )
+                            ? _.get(productResult, 'data[0].category._id')
+                            : ''
+                    );
                 }
             } catch (error) {
                 console.error(error);
 
                 logoutUser({ error });
+            } finally {
+                setTimeout(() => {
+                    setLoading(() => false);
+                }, 400);
             }
         };
         fetchData();
@@ -94,7 +106,7 @@ function ChangeSection({}) {
             const { data } = await adminAxios.put(
                 '/product/category/update',
                 {
-                    ids: modalContent.products,
+                    ids: modalContent.productIds,
                     category: select,
                 },
                 { signal: abortControllerRef.current?.signal }
@@ -104,41 +116,20 @@ function ChangeSection({}) {
         } catch (error) {
             logoutUser({ error });
         } finally {
-            setTimeout(() => {
-                setBtnLoading(() => false);
-                setLoading(() => true);
-
-                setTimeout(() => {
-                    if (success) {
-                        setShowAlert(() => ({
-                            on: true,
-                            bg: 'bg-green-100',
-                            icon: 'check',
-                            size: 'large',
-                            msg:
-                                count > 1
-                                    ? `You've updated ${count} listings.`
-                                    : 'Listing updated.',
-                            text: 'text-black text-base',
-                        }));
-                    } else {
-                        setShowAlert(() => ({
-                            on: true,
-                            bg: 'bg-red-800',
-                            icon: 'sadFace',
-                            size: 'medium',
-                            text: 'text-sm text-white',
-                            timeout: 10000,
-                            msg: `We're unable to update the section for ${modalContent?.products?.length} of your listing. Try again or update each listing individually.`,
-                        }));
+            handleTimeout({
+                setBtnLoading,
+                setLoading,
+                success,
+                count,
+                setModalCheck,
+                handleFunc: () => {
+                    if (modalContent?.clearSelection) {
+                        modalContent?.clearSelection();
                     }
-
-                    modalContent?.setTriggerSearch((prevState) => !prevState);
-                    setLoading(() => false);
-
-                    setModalCheck(() => false);
-                }, 1300);
-            }, 1000);
+                },
+                setShowAlert,
+                msg: 'Oh dear! Something went wrong - please try again.',
+            });
         }
     };
 
@@ -239,10 +230,10 @@ function ChangeSection({}) {
                 ) : null
             }
             small={true}
-            title={`Change section for ${modalContent.products?.length} listing`}
+            title={`Change section for ${modalContent.productIds?.length} listing`}
         >
             {content == 'main' && (
-                <div className="flex w-full flex-col gap-2 mb-12">
+                <div className="mb-12 flex w-full flex-col gap-2">
                     <select
                         onChange={(e) => setSelect(() => e.target.value)}
                         name="change-section"
@@ -262,7 +253,7 @@ function ChangeSection({}) {
                                     key={_id}
                                     value={_id}
                                 >
-                                    {name}
+                                    {name[0].toUpperCase() + name.slice(1)}
                                 </option>
                             );
                         })}

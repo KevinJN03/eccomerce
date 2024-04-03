@@ -15,28 +15,6 @@ function Template({
 }) {
     const { setModalCheck, setShowAlert } = useContent();
 
-    // useEffect(() => {
-    //     let timeout = null;
-
-    //     if (loading) {
-    //         timeout = setTimeout(() => {
-    //             setModalCheck(() => false);
-    //             setShowAlert(() => ({
-    //                 msg: 'Listing Updated.',
-    //                 on: true,
-    //                 size: 'large',
-    //                 bg: 'bg-green-100',
-    //                 icon: 'check'
-    //             }));
-    //             handleClearSelection();
-    //         }, 1500);
-    //     }
-
-    //     return () => {
-    //         clearTimeout(timeout);
-    //     };
-    // }, [loading]);
-
     return (
         <section
             className={`w-full rounded-sm bg-white ${
@@ -56,9 +34,9 @@ function Template({
                             </p>
                         )}
                     </header>
-                    <body className="flex w-full flex-col gap-2 px-3 py-4">
+                    <div className="flex w-full flex-col gap-2 px-3 py-4">
                         {children}
-                    </body>
+                    </div>
                     <footer className="flex flex-row flex-nowrap justify-end gap-2 border-t border-dark-gray/50 p-3">
                         {footerChildren || (
                             <>
@@ -78,7 +56,7 @@ function Template({
                                     className="flex items-center justify-center rounded-sm border border-black bg-black px-3 py-2 text-sm font-semibold text-white hover:opacity-70 disabled:opacity-50"
                                 >
                                     {submit?.loading ? (
-                                        <div class=" daisy-loading daisy-loading-spinner daisy-loading-xs !text-white "></div>
+                                        <div className=" daisy-loading daisy-loading-spinner daisy-loading-xs !text-white "></div>
                                     ) : (
                                         submit?.text || 'Apply'
                                     )}

@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { forwardRef } from 'react';
 
 function ThemeBtn({ text, handleClick, children, bg, className }) {
     return (

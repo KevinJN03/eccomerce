@@ -7,20 +7,19 @@ import { ClickAwayListener } from '@mui/material';
 import variant from './variant';
 import { useAdminContext } from '../../../../context/adminContext';
 import SelectionInput from './selectionInput';
+import { useContent } from '../../../../context/ContentContext';
 
 function SubHeader({}) {
     const {
         selectionSet,
         setSelectionSet,
         allOrderPerPage,
-        setModalCheck,
         adminOrderModalContentDispatch,
         resultMap,
         currentPage,
     } = useAdminOrderContext();
+    const { setModalCheck, setModalContent } = useContent();
 
-   
-  
     const [showAction, setShowAction] = useState(false);
     const [allOrderIds, setAllOrdersId] = useState();
 
@@ -46,8 +45,7 @@ function SubHeader({}) {
     };
 
     const printOrders = () => {
-       
-        adminOrderModalContentDispatch({
+        setModalContent({
             type: 'printOrder',
             orders: Array.from(selectionSet),
         });
@@ -66,9 +64,6 @@ function SubHeader({}) {
                     allIds: allOrderIds,
                     setSelectionSet,
                     selectionSet,
-                 
-                   
-                  
                 }}
             />
 

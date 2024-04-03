@@ -618,13 +618,13 @@ export const getAllProducts = [
 
     const matchArray = [];
 
-    if (checks?.section) {
+    if (checks?.category) {
       try {
-        const newObjectId = new mongoose.Types.ObjectId(checks.section);
+        const newObjectId = new mongoose.Types.ObjectId(checks.category);
 
         matchArray.push({ category: newObjectId });
       } catch (error) {
-        console.log('error converting section id to objectId', error.message);
+        console.log('error converting category id to objectId', error.message);
       }
     }
 
@@ -750,8 +750,17 @@ export const updateProductFeature = [
 
 export const updateStatus = asyncHandler(async (req, res, next) => {
   const { productIds, status } = req.body;
-  await Product.updateMany({ _id: productIds }, { status });
-  res.send({ success: true, msg: `${productIds} status has been updated` });
+  const products = await Product.updateMany(
+    { _id: productIds },
+    { status },
+    { lean: { toObject: true } },
+  );
+  console.log(products);
+  res.send({
+    success: true,
+    msg: `${productIds} status has been updated`,
+    count: products.modifiedCount,
+  });
 });
 
 export const editTitle = [
@@ -831,7 +840,7 @@ export const editPrice = [
     const productsInfo = await Product.find(
       { _id: productIds },
       { variations: 1, price: 1, images: 1, title: 1 },
-   //   { lean: { toJSON: true } },
+      //   { lean: { toJSON: true } },
     );
     const failedProductIds = new Map();
 

@@ -15,6 +15,7 @@ import _ from 'lodash';
 import ThemeBtn from '../../../buttons/themeBtn';
 import Pagination from '../../../dashboard/pagination/pagination';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
+import { Tooltip } from '@mui/material';
 
 function DeliveryProfile(props) {
     const {
@@ -163,6 +164,8 @@ function DeliveryOption({}) {
     const [loading, setLoading] = useState(true);
 
     const [selectedProfile, setSelectedProfile] = useState({});
+
+    const editBtnRef = useRef(null);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -230,49 +233,129 @@ function DeliveryOption({}) {
                 ) : (
                     <>
                         <div className="bottom mt-2 flex flex-col gap-5">
-                            <div className="w-full">
-                                <DeliveryProfile
-                                    {...{
-                                        ...selectedProfile,
-                                        applied: true,
-                                        handleCancel,
-                                    }}
-                                >
-                                    <ThemeBtn
-                                        bg={'bg-light-grey'}
-                                        className={'p-2.5'}
-                                        handleClick={() => {
-                                            setModalContent(() => ({
-                                                type: 'createProfile',
-                                                version: 'edit',
-                                                profileId: selectedProfile?._id,
-                                                button: buttonObj,
+                            {!_.isEmpty(selectedProfile) && (
+                                <>
+                                    <div className="w-full">
+                                        <DeliveryProfile
+                                            {...{
+                                                ...selectedProfile,
+                                                applied: true,
                                                 handleCancel,
-                                            }));
-                                        }}
-                                    >
-                                        <EditRounded />
-                                    </ThemeBtn>
+                                            }}
+                                        >
+                                            {[
+                                                {
+                                                    title: 'Edit',
+                                                    button: (
+                                                        <ThemeBtn
+                                                            bg={'bg-light-grey'}
+                                                            className={'p-2.5'}
+                                                            handleClick={() => {
+                                                                setModalContent(
+                                                                    () => ({
+                                                                        type: 'createProfile',
+                                                                        version:
+                                                                            'edit',
+                                                                        profileId:
+                                                                            selectedProfile?._id,
+                                                                        button: buttonObj,
+                                                                        handleCancel,
+                                                                    })
+                                                                );
+                                                            }}
+                                                        >
+                                                            <EditRounded />
+                                                        </ThemeBtn>
+                                                    ),
+                                                },
+                                                {
+                                                    title: 'Duplicate',
+                                                    button: (
+                                                        <ThemeBtn
+                                                            bg={'bg-light-grey'}
+                                                            className={'p-2.5'}
+                                                            handleClick={() => {
+                                                                setModalContent(
+                                                                    () => ({
+                                                                        type: 'createProfile',
+                                                                        version:
+                                                                            'duplicate',
+                                                                        profileId:
+                                                                            selectedProfile?._id,
+                                                                        handleCancel,
+                                                                        button: buttonObj,
+                                                                    })
+                                                                );
+                                                            }}
+                                                        >
+                                                            <ContentCopyOutlined />
+                                                        </ThemeBtn>
+                                                    ),
+                                                },
+                                            ].map(({ button, title }) => {
+                                                return (
+                                                    <Tooltip
+                                                        key={`${title}-${selectedProfile?._id}`}
+                                                        title={title}
+                                                        arrow
+                                                        slotProps={{
+                                                            arrow: {
+                                                                sx: {
+                                                                    fontSize:
+                                                                        '1rem',
+                                                                    '&:before':
+                                                                        {
+                                                                            // border: '1px solid #E6E8ED',
+                                                                            borderColor:
+                                                                                'rgb(0,0,0,0.90)',
 
-                                    <ThemeBtn
-                                        bg={'bg-light-grey'}
-                                        className={'p-2.5'}
-                                        handleClick={() => {
-                                            setModalContent(() => ({
-                                                type: 'createProfile',
-                                                version: 'duplicate',
-                                                profileId: selectedProfile?._id,
-                                                handleCancel,
-                                                button: buttonObj,
-                                            }));
-                                        }}
-                                    >
-                                        <ContentCopyOutlined />
-                                    </ThemeBtn>
-                                </DeliveryProfile>
-                            </div>
+                                                                            backgroundColor:
+                                                                                'rgb(0,0,0,0.90)',
+                                                                        },
+                                                                },
+                                                            },
+                                                            tooltip: {
+                                                                sx: {
+                                                                    fontSize:
+                                                                        '0.8rem',
+                                                                    backgroundColor:
+                                                                        'rgb(0,0,0,0.90)',
+                                                                    padding:
+                                                                        '0.8rem 1.2rem',
+                                                                    borderRadius:
+                                                                        '0.7rem',
+                                                                    borderWidth:
+                                                                        '0px',
+                                                                    borderColor:
+                                                                        'rgb(0,0,0,0.90)',
+                                                                },
+                                                            },
+                                                        }}
+                                                        classes={{
+                                                            arrow: {
+                                                                fontSize:
+                                                                    '1rem',
+                                                                '&:before': {
+                                                                    // border: '1px solid #E6E8ED',
+                                                                    borderColor:
+                                                                        'rgb(0,0,0,0.90)',
 
-                            <hr className="border" />
+                                                                    backgroundColor:
+                                                                        'rgb(0,0,0,0.90)',
+                                                                },
+                                                            },
+                                                        }}
+                                                    >
+                                                        <div>{button}</div>
+                                                    </Tooltip>
+                                                );
+                                            })}
+                                        </DeliveryProfile>
+                                    </div>
+
+                                    <hr className="border" />
+                                </>
+                            )}
                             <div className="flex items-center justify-between">
                                 <h3 className="text-xl font-medium">
                                     Delivery profiles

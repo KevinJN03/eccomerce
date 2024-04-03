@@ -378,12 +378,12 @@ export const delete_product = asyncHandler(async (req, res, next) => {
     return s3Delete('products', item);
   });
 
-  const result = await Promise.all([
+  const [products] = await Promise.all([
     Product.deleteMany({ _id: idsArray }),
     ...deleteProductsImages,
   ]);
-
-  res.send({ msg: 'deletion successful' });
+  console.log(products);
+  res.send({ msg: 'deletion successful', count: products?.deletedCount });
 });
 
 // // create a new Product
@@ -592,14 +592,17 @@ export const update_product_delivery_profile = [
     if (!errors.isEmpty()) {
       return res.status(404).send(errors.mapped());
     }
-    await Product.updateMany(
+    const products = await Product.updateMany(
       {
         _id: ids,
       },
       { delivery: deliveryProfileId },
     );
 
-    res.send({ msg: 'products delivery profile updated' });
+    res.send({
+      msg: 'products delivery profile updated',
+      count: products.modifiedCount,
+    });
   }),
 ];
 

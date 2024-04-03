@@ -20,6 +20,7 @@ import {
     CloseSharp,
     MoodBad,
     MoodBadTwoTone,
+    NotificationsOutlined,
     SentimentDissatisfiedTwoTone,
 } from '@mui/icons-material';
 
@@ -39,6 +40,7 @@ import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
 import CreateProfile from '../delivery/modalViews.jsx/createProfile/createProfile.jsx';
 import DeleteProfile from '../delivery/modalViews.jsx/deleteProfile.jsx';
 import DeliveryOption from '../delivery/modalViews.jsx/deliveryOption.jsx';
+import PrintOrder from '../order/modalView/printOrder.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
@@ -66,6 +68,7 @@ function Admin({}) {
         createProfile: <CreateProfile />,
         deleteProfile: <DeleteProfile />,
         deliveryOption: <DeliveryOption />,
+        printOrder: <PrintOrder/>
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -92,12 +95,13 @@ function Admin({}) {
 
         if (showAlert?.on) {
             timeoutRef.current = setTimeout(() => {
-                    setShowAlert(() => ({ on: false }));
+                setShowAlert(() => ({ on: false }));
             }, showAlert?.timeout || 5000);
         }
     }, [showAlert]);
 
     const icons = {
+        bell: <NotificationsOutlined />,
         check: <CheckRounded />,
         sadFace: (
             <div className="relative h-10 w-10">
@@ -140,7 +144,7 @@ function Admin({}) {
                                 (showAlert?.size === 'small' ||
                                     showAlert?.size === 'medium') && (
                                     <motion.section
-                                        className="fixed left-0 z-50 flex w-full justify-center"
+                                        className="fixed left-0 z-[51] flex w-full justify-center"
                                         variants={generateAlertVariant('20px')}
                                         initial={'initial'}
                                         animate={'animate'}
@@ -174,7 +178,7 @@ function Admin({}) {
                                 )}
                             {showAlert?.on && showAlert?.size == 'large' && (
                                 <motion.section
-                                    className={`fixed left-0 top-0 z-50 flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
+                                    className={`fixed left-0 top-0 z-[51] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
                                     variants={generateAlertVariant('0px')}
                                     initial={'initial'}
                                     animate={'animate'}
@@ -199,7 +203,7 @@ function Admin({}) {
                                         className="absolute right-8 top-1/2 translate-y-[-50%]"
                                         onClick={() => setShowAlert({})}
                                     >
-                                        <CloseRounded className="!fill-black !text-[1.8rem]" />
+                                        <CloseRounded className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`} />
                                     </button>
                                 </motion.section>
                             )}

@@ -43,7 +43,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
         const fetchData = async () => {
             try {
                 const { data } = await adminAxios.get(
-                    `product/${modalContent?.products}`
+                    `product/${modalContent?.productIds}`
                 );
                 setProducts(() => data);
 
@@ -149,7 +149,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
                 {
                     property,
                     selectedOption: select,
-                    productIds: modalContent?.products,
+                    productIds: modalContent?.productIds,
                     optionData: text[select],
                 },
                 { signal: abortControllerRef.current?.signal }
@@ -183,7 +183,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
                             size: 'medium',
                             text: 'text-sm text-white',
                             timeout: 10000,
-                            msg: `We're unable to update the ${property} for ${modalContent?.products?.length} of your listing. Try again or update each listing individually.`,
+                            msg: `We're unable to update the ${property} for ${modalContent?.productIds?.length} of your listing. Try again or update each listing individually.`,
                         }));
                     }
 
@@ -218,7 +218,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
             loading={loading}
             handleClearSelection={modalContent?.clearSelection}
             finishLoading={finishLoading}
-            title={`Editing ${property} for ${modalContent.products?.length} listing`}
+            title={`Editing ${property} for ${modalContent.productIds?.length} listing`}
             submit={{
                 loading: btnLoading,
                 handleClick,

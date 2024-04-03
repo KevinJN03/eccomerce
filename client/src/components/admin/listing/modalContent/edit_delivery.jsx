@@ -5,12 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 import _ from 'lodash';
+import { handleTimeout, handleUpdateProduct } from './handleTimeout';
 function Edit_Delivery({}) {
     const [profiles, setProfiles] = useState([]);
 
     const [select, setSelect] = useState('');
     const [profileMap, setProfileMap] = useState(new Map());
     const [loading, setLoading] = useState(false);
+    const [btnLoading, setBtnLoading] = useState();
     const { modalContent, setModalCheck, setShowAlert } = useContent();
     const navigate = useNavigate();
     const { logoutUser } = UserLogout();
@@ -44,53 +46,47 @@ function Edit_Delivery({}) {
 
     const apply = async () => {
         let success = false;
+        let count = null;
         try {
-            setLoading(() => true);
+            setBtnLoading(() => true);
             const { data } = await adminAxios.post(
                 '/product/delivery/update',
-                { ids: modalContent.products, deliveryProfileId: select },
+                { ids: modalContent.productIds, deliveryProfileId: select },
                 {
                     signal: abortControllerRef.current?.signal,
                 }
             );
 
             success = true;
+            count = data.count;
         } catch (error) {
             console.error(error);
             logoutUser({ error });
         } finally {
-            setTimeout(() => {
-                setModalCheck(() => false);
-                setLoading(() => false);
+            const handleFunc = () => {
+                modalContent?.clearSelection && modalContent?.clearSelection();
+            };
 
-                const obj = {
-                    on: true,
-                    size: 'large',
-                };
-                if (success) {
-                    obj.bg = 'bg-green-100';
-                    obj.icon = 'check';
-                    obj.msg = 'Listing updated.';
-                    obj.text = 'text-black text-sm';
-                } else {
-                    obj.bg = 'bg-red-700';
-                    obj.icon = 'sadFace';
-                    obj.msg =
-                        'Oh dear! Something went wrong - please try again.';
-                }
-
-                setShowAlert(() => obj);
-            }, 1000);
+            handleTimeout({
+                setBtnLoading,
+                setLoading,
+                success,
+                count,
+                setModalCheck,
+                handleFunc,
+                setShowAlert,
+                msg: 'Oh dear! Something went wrong - please try again.',
+            });
         }
     };
     return (
         <Template
             loading={loading}
-            submit={{ text: 'Apply', handleClick: apply }}
+            submit={{ text: 'Apply', handleClick: apply, loading: btnLoading }}
             small
             title={
                 <p>
-                    Apply Delivery Profile to {modalContent?.products?.length}{' '}
+                    Apply Delivery Profile to {modalContent?.productIds?.length}{' '}
                     listing
                 </p>
             }
@@ -106,8 +102,8 @@ function Edit_Delivery({}) {
                 <option disabled selected>
                     Select profile...
                 </option>
-                <option disabled className='text-black'>
-                   -------------------
+                <option disabled className="text-black">
+                    -------------------
                 </option>
                 {profiles.map(({ _id, name }) => {
                     return (

@@ -6,6 +6,7 @@ import { useAdminContext } from '../../../context/adminContext';
 import { useEffect, useState } from 'react';
 import { adminAxios } from '../../../api/axios';
 import UserLogout from '../../../hooks/userLogout';
+import _, { property } from 'lodash';
 
 function SideContainer({}) {
     const {
@@ -15,6 +16,7 @@ function SideContainer({}) {
         showStats,
         setShowStats,
         deliveryProfile,
+        deliveryQuantityMap,
     } = useListingPageContext();
     const { allProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
@@ -128,43 +130,54 @@ function SideContainer({}) {
 
                 <select
                     onChange={handleSort}
-                    className="daisy-select daisy-select-sm !rounded border border-dark-gray/50"
+                    className="daisy-select daisy-select-sm !rounded border border-dark-gray/50 text-s"
                     name="sort-product"
                     id="sort-product"
                 >
-                    <optgroup label="Select a sort order" className="text-xs">
-                        <option value={1} data-title="title">
-                            Title: A to Z
-                        </option>
-                        <option value={-1} data-title="title">
-                            Title: Z to A
-                        </option>
+                    <optgroup
+                        label="Select a sort order"
+                        className="font-semibold"
+                    >
+                        {[
+                            {
+                                text: `Title: A to Z`,
+                                title: 'title',
+                                value: 1,
+                            },
 
-                        <option
-                            data-title="additional_data.stock.total"
-                            value={1}
-                        >
-                            Stock: low to high
-                        </option>
-                        <option
-                            data-title="additional_data.stock.total"
-                            value={-1}
-                        >
-                            Stock: high to low
-                        </option>
+                            {
+                                text: `Title: Z to A`,
+                                title: 'title',
+                                value: -1,
+                            },
 
-                        <option
-                            data-title="additional_data.price.max"
-                            value={1}
-                        >
-                            Price: low to high
-                        </option>
-                        <option
-                            value={-1}
-                            data-title="additional_data.price.max"
-                        >
-                            Price: high to low
-                        </option>
+                            {
+                                text: `Stock: low to high`,
+                                title: 'additional_data.stock.total',
+                                value: 1,
+                            },
+                            {
+                                text: `Stock: high to low`,
+                                title: 'additional_data.stock.total',
+                                value: -1,
+                            },
+                            {
+                                text: `Price: low to high`,
+                                title: 'additional_data.price.max',
+                                value: 1,
+                            },
+                            {
+                                text: `Price: high to low`,
+                                title: 'additional_data.price.max',
+                                value: -1,
+                            },
+                        ].map(({ text, value, title }) => {
+                            return (
+                                <option value={value} data-title={title}>
+                                    {text}
+                                </option>
+                            );
+                        })}
                     </optgroup>
                 </select>
             </div>
@@ -186,10 +199,14 @@ function SideContainer({}) {
                         return (
                             <div
                                 onClick={() => {
-                                    setChecks((prevState) => ({
-                                        ...prevState,
-                                        listing_status: lowerCaseText,
-                                    }));
+                                    if (
+                                        allProducts[lowerCaseText]?.length >= 1
+                                    ) {
+                                        setChecks((prevState) => ({
+                                            ...prevState,
+                                            listing_status: lowerCaseText,
+                                        }));
+                                    }
                                 }}
                                 className="flex w-fit cursor-pointer flex-row flex-nowrap gap-2"
                             >
@@ -246,84 +263,78 @@ function SideContainer({}) {
                 />
                 <p>Featured listings</p>
             </div>
+            {[
+                {
+                    title: 'Sections',
+                    options: categoryArray,
+                    property: 'category',
+                    quantityObj: categoryQuantity,
+                },
+                {
+                    title: 'Delivery Profiles',
+                    options: _.orderBy(
+                        deliveryProfile,
+                        [
+                            function ({ _id }) {
+                                return deliveryQuantityMap?.[_id] || 0;
+                            },
+                        ],
+                        ['desc']
+                    ),
+                    property: 'deliveryProfile',
+                    quantityObj: deliveryQuantityMap,
+                },
+            ].map(({ title, options, property, quantityObj }) => {
+                return (
+                    <div key={title} className="flex w-full flex-col gap-2">
+                        <p className="flex flex-nowrap justify-between">
+                            <span className="font-semibold">{title}</span>
 
-            <div className="flex w-full flex-col gap-2">
-                <p className="flex flex-nowrap justify-between">
-                    <span className="font-semibold">Sections</span>
+                            <span className="text-xxs">Manage</span>
+                        </p>
 
-                    <span className="text-xxs">Manage</span>
-                </p>
-
-                <select
-                    onChange={(e) =>
-                        setChecks((prevState) => ({
-                            ...prevState,
-                            section: e.target.value,
-                        }))
-                    }
-                    name="sections"
-                    id="sections"
-                    className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
-                >
-                    <optgroup label="Sections" className="text-s font-medium">
-                        <option selected={!checks?.section} className="text-xs">
-                            All
-                        </option>
-
-                        {categoryArray.map(({ _id, name }) => {
-                            return (
+                        <select
+                            onChange={(e) =>
+                                setChecks((prevState) => ({
+                                    ...prevState,
+                                    [property]: e.target.value,
+                                }))
+                            }
+                            name="sections"
+                            id="sections"
+                            className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
+                        >
+                            <optgroup
+                                label="Sections"
+                                className="text-s font-medium"
+                            >
                                 <option
-                                    disabled={!categoryQuantity?.[_id]}
+                                    selected={!checks?.[property]}
                                     className="text-xs"
-                                    selected={checks?.section == _id}
-                                    value={_id}
                                 >
-                                    {`${name} (${
-                                        categoryQuantity?.[_id] || 0
-                                    })`}
+                                    All
                                 </option>
-                            );
-                        })}
-                    </optgroup>
-                </select>
-            </div>
 
-            <div className="flex w-full flex-col gap-2">
-                <p className="flex flex-nowrap justify-between">
-                    <span className="font-semibold">Delivery Profiles</span>
+                                {options.map(({ _id, name }) => {
+                                    return (
+                                        <option
+                                            disabled={!quantityObj?.[_id]}
+                                            className="text-xs"
+                                            selected={checks?.[property] == _id}
+                                            value={_id}
+                                        >
+                                            {`${name[0].toUpperCase() + name.slice(1)} (${
+                                                quantityObj?.[_id] || 0
+                                            })`}
+                                        </option>
+                                    );
+                                })}
+                            </optgroup>
+                        </select>
+                    </div>
+                );
+            })}
 
-                    <span className="text-xxs">Manage</span>
-                </p>
-
-                <select
-                    onChange={(e) =>
-                        setChecks((prevState) => ({
-                            ...prevState,
-                            deliveryProfile: e.target.value,
-                        }))
-                    }
-                    name="sections"
-                    id="sections"
-                    className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
-                >
-                    <optgroup label="Sections">
-                        <option selected={!checks?.deliveryProfile}>All</option>
-
-                        {deliveryProfile.map((item) => {
-                            return (
-                                <option
-                                    selected={
-                                        item._id == checks?.deliveryProfile
-                                    }
-                                    value={item._id}
-                                >
-                                    {item.name}
-                                </option>
-                            );
-                        })}
-                    </optgroup>
-                </select>
-            </div>
             <div className="h-70"></div>
         </section>
     );

@@ -5,13 +5,18 @@ import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 import { useAdminContext } from '../../../../context/adminContext';
 import updateProduct from './updateProduct';
+import preventProductFromSelection from './preventProductFromSelection';
+import { handleUpdateProduct, handleTimeout } from './handleTimeout';
 
 function Publish({}) {
-    const { modalContent, setModalCheck } = useContent();
+    const { modalContent, setModalCheck, setShowAlert } = useContent();
     const abortControllerRef = useRef(new AbortController());
     const [loading, setLoading] = useState(false);
     const { allProducts, setAllProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
+    const { productIds, setProductIds } = modalContent;
+
+    const [btnLoading, setBtnLoading] = useState();
 
     useEffect(() => {
         return () => {
@@ -20,8 +25,10 @@ function Publish({}) {
     }, []);
 
     const handlePublish = async () => {
+        let success = false;
+        let count = 0;
         try {
-            setLoading(() => true);
+            setBtnLoading(() => true);
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
             const { data } = await adminAxios.post(
@@ -33,37 +40,56 @@ function Publish({}) {
                 },
                 { signal: abortControllerRef.current?.signal }
             );
+
+            success = true;
+
+            count = data.count;
         } catch (error) {
             console.error(error);
 
             logoutUser({ error });
-        }finally{
-            const generateUpdateProduct = updateProduct({
-                listing_status: modalContent.checks?.listing_status,
-                allProducts,
-                productIds: modalContent?.productIds,
-                note: 'Moved to active listings',
+        } finally {
+            //   const   handleFunc = ({
+            //         note: 'Moved to active listings',
+            //         allProducts,
+            //         productIds: modalContent?.productIds,
+            //         setProductIds,
+            //         listing_status: modalContent.checks?.listing_status,
+            //         clearSelection: modalContent?.clearSelection(),
+            //         setAllProducts
+            //     });
+
+            const handleFunc = () =>
+                handleUpdateProduct({
+                    note: 'Moved to active listings',
+                    allProducts,
+                    productIds,
+                    setProductIds,
+                    listing_status: modalContent.checks?.listing_status,
+                    clearSelection: modalContent?.clearSelection(),
+                    setAllProducts,
+                });
+
+            handleTimeout({
+                setBtnLoading,
+                setLoading,
+                success,
+                handleFunc,
+                count,
+                setModalCheck,
+                setShowAlert,
+                msg: `We're unable to publish ${modalContent?.productIds?.length} of your listing. Try again or update each listing individually.`,
             });
-            setTimeout(() => {
-                setLoading(() => false);
-                setModalCheck(() => false);
-                setAllProducts((prevState) => ({
-                    ...prevState,
-                    [modalContent.checks?.listing_status]:
-                        generateUpdateProduct ||
-                        prevState[modalContent.checks?.listing_status],
-                }));
-                modalContent?.clearSelection();
-            }, 1000);
         }
     };
     return (
         <Template
+            loading={loading}
             small={true}
             submit={{
                 text: 'Publish',
                 handleClick: handlePublish,
-                loading,
+                loading: btnLoading,
             }}
             title={`You are about to publish  ${modalContent.productIds?.length} listing`}
         >
