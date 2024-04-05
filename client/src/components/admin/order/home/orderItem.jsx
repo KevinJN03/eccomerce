@@ -91,8 +91,8 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                 lastOrderInArray ? '' : 'border-b-2'
             } flex w-full cursor-pointer flex-row  px-5 py-6 ${
                 isOrderInSet
-                    ? 'bg-green-100/60 hover:bg-green-400/30'
-                    : '  hover:bg-light-grey/30'
+                    ? 'bg-green-100/50 hover:bg-green-100/70'
+                    : '  hover:bg-light-grey/50'
             }`}
         >
             <div className="left ml-5 flex flex-[2] flex-row gap-5">

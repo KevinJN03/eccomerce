@@ -11,11 +11,11 @@ import dayjs from 'dayjs';
 import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import calculateTotal from '../common/calculateTotal';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
 function Buy_Now_Btn({ disable }) {
-    console.log('rerender');
     const {
         isOrderSubmit,
         setOrderSubmit,
@@ -28,10 +28,11 @@ function Buy_Now_Btn({ disable }) {
         setKlarnaDob,
         deliveryDate,
     } = useCheckoutContext();
-    // const [paymentIntentInfo, setPaymentIntentInfo] = useState(null);
 
     const { user } = useAuth();
     const { cart, deliveryOption } = useCart();
+
+    const { delivery_cost } = calculateTotal();
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
@@ -62,6 +63,7 @@ function Buy_Now_Btn({ disable }) {
                 phone: shippingAddress?.mobile,
             },
             cart,
+            delivery_cost,
             deliveryOption,
             deliveryDate,
         });
@@ -126,7 +128,7 @@ function Buy_Now_Btn({ disable }) {
                     'YYYY-M-DD',
                     true
                 ).isValid();
-                console.log({ isKlarnaDobValid , klarnaDObFormat});
+                console.log({ isKlarnaDobValid, klarnaDObFormat });
                 if (!isKlarnaDobValid) {
                     setKlarnaDob((prevState) => ({
                         ...prevState,

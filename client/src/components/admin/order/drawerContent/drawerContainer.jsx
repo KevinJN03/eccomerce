@@ -131,28 +131,22 @@ function DrawerContainer() {
                     </span>
                     <div className="relative flex flex-col">
                         <section className="relative">
-
-                                <motion.button
+                            <motion.button
                                 onClick={() =>
                                     setShowActions((prevState) => !prevState)
                                 }
                                 type="button"
-                                className="flex group flex-row flex-nowrap items-center rounded-full px-3 py-2 border-2 border-transparent  font-semibold transition-all hover:shadow-normal"
+                                className="group flex flex-row flex-nowrap items-center rounded-full border-2 border-transparent px-3 py-2  font-semibold transition-all hover:shadow-normal"
                             >
-                                <span className='z-[2] flex flex-nowrap items-center'>
+                                <span className="z-[2] flex flex-nowrap items-center">
                                     <p className="whitespace-nowrap text-sm">
-                                    More actions
-                                </p>
-                                <ArrowDropDownSharp /> 
+                                        More actions
+                                    </p>
+                                    <ArrowDropDownSharp />
                                 </span>
-                               
 
-                                <div className='absolute origin-center left-0 top-0  h-full w-full rounded-inherit group-hover:scale-[1.03] transition-all bg-white  border-2 border-black'>
-
-                                </div>
+                                <div className="absolute left-0 top-0 h-full  w-full origin-center rounded-inherit border-2 border-black bg-white  transition-all group-hover:scale-[1.03]"></div>
                             </motion.button>
-                            
-
 
                             {showActions && (
                                 <button
@@ -169,7 +163,13 @@ function DrawerContainer() {
                                     <ArrowDropDownSharp />
                                 </button>
                             )}
-                            <Actions {...{ showActions, setShowActions }} />
+                            <Actions
+                                {...{
+                                    showActions,
+                                    setShowActions,
+                                    orderId: orderInfo?._id,
+                                }}
+                            />
                         </section>
                     </div>
                 </div>

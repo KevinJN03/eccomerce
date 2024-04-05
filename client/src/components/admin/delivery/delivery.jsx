@@ -37,6 +37,7 @@ export default function Delivery() {
                             {
                                 text: 'Delivery Profiles',
                                 select: 'delivery-profiles',
+                              
                                 handleClick: () => {
                                     navigate(
                                         '/admin/delivery/delivery-profiles'

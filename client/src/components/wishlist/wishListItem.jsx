@@ -101,6 +101,8 @@ function WishListItem({ product }) {
             },
         },
     };
+
+  
     return (
         <AnimatePresence>
             {!remove.parent && (

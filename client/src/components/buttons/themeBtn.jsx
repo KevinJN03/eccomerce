@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { forwardRef } from 'react';
 
-function ThemeBtn({ text, handleClick, children, bg, className }) {
+function ThemeBtn({ text, handleClick, children, bg, className, isDisableHoverEffect }) {
     return (
         <button
             type="button"
@@ -17,7 +17,7 @@ function ThemeBtn({ text, handleClick, children, bg, className }) {
             )}
 
             <div
-                className={` absolute left-0 top-0  h-full w-full  rounded-full ${bg || 'bg-black'} transition-all group-hover:!scale-x-[1.03] group-hover:!scale-y-[1.05] group-hover:bg-opacity-80 group-hover:shadow-normal`}
+                className={` absolute left-0 top-0  h-full w-full  rounded-full ${bg || 'bg-black'} ${isDisableHoverEffect ? 'group-hover:no-animation' : 'group-hover:!scale-x-[1.03] group-hover:!scale-y-[1.05] group-hover:bg-opacity-80 group-hover:shadow-normal'} transition-all `}
             ></div>
         </button>
     );

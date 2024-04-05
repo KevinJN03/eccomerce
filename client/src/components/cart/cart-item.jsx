@@ -1,30 +1,26 @@
-import heart from '../../assets/heart.png';
 import QTY_SIZE_OPTION from './qty-size-options';
-import close from '../../assets/icons/close.png';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, animate, motion } from 'framer-motion';
-import { CloseRounded, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+    CloseRounded,
+    ConstructionOutlined,
+    Favorite,
+    FavoriteBorder,
+} from '@mui/icons-material';
 
 import Overlay from './overlay';
 import getCartItemVariants from './cartItemVariants';
-import { useHover } from '@uidotdev/usehooks';
 import useWishListHook from '../../hooks/wishlistHook';
-import Hearts from './hearts';
-const arrayRange = (start, stop, step) =>
-    Array.from(
-        { length: (stop - start) / step + 1 },
-        (value, index) => start + index * step
-    );
-
-function Cart_Item({ cartItem, idx, lastIndex }) {
+import _ from 'lodash';
+import dayjs from 'dayjs';
+function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
     const [quantity, setQuantity] = useState(cartItem?.quantity);
     const [findSize, setFindSize] = useState(null);
     const [sizeOptionArray, setSizeOptionArray] = useState([]);
     const [findColor, setFindColor] = useState(null);
     const [isRemoving, setIsRemoving] = useState({ saveForLater: false });
-    let quantityArr = arrayRange(1, 10, 1);
 
     const { dispatch, cart } = useCart();
 
@@ -41,6 +37,8 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
         product: cartItem,
     });
     const [favorite, setFavorite] = useState(false);
+
+    const delivery = deliveryMap?.get(cartItem?.delivery);
     const handleSizeChange = (e) => {
         const { id } =
             e.target.options[e.target.options.selectedIndex]?.dataset;
@@ -153,6 +151,20 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
             },
         },
     };
+
+    const handleDeliverySelect = (e) => {
+        const values = e.target[e.target.selectedIndex].dataset;
+        dispatch({
+            type: 'updateDelivery',
+            cartId: cartItem.cartId,
+            shipping_data: {
+                ...values,
+                one_item: parseFloat(values.one_item),
+                additional_item: parseFloat(values.additional_item),
+            },
+        });
+    };
+
     return (
         <motion.section
             variants={cartItemVariants.section}
@@ -428,75 +440,279 @@ pb-4
                                                         className="!max-w-[80px] text-s text-black/70"
                                                         tabIndex={'0'}
                                                     >
-                                                        {quantityArr.map(
-                                                            (item, index) => {
-                                                                return (
-                                                                    <option
-                                                                        className="text-black/60"
-                                                                        key={
-                                                                            item
-                                                                        }
-                                                                        value={
-                                                                            item
-                                                                        }
-                                                                        // selected = {}
-                                                                        selected={
-                                                                            item ==
-                                                                            cartItem.quantity
-                                                                        }
-                                                                    >
-                                                                        {item}
-                                                                    </option>
-                                                                );
-                                                            }
-                                                        )}
+                                                        {Array(10)
+                                                            .fill('')
+                                                            .map(
+                                                                (
+                                                                    item,
+                                                                    index
+                                                                ) => {
+                                                                    return (
+                                                                        <option
+                                                                            className="text-black/60"
+                                                                            key={`${cartItem.cartId}-qty-${
+                                                                                index +
+                                                                                1
+                                                                            }`}
+                                                                            value={
+                                                                                index +
+                                                                                1
+                                                                            }
+                                                                            // selected = {}
+                                                                            selected={
+                                                                                index +
+                                                                                    1 ==
+                                                                                cartItem.quantity
+                                                                            }
+                                                                        >
+                                                                            {index +
+                                                                                1}
+                                                                        </option>
+                                                                    );
+                                                                }
+                                                            )}
                                                     </select>
                                                 </span>
                                             </div>
                                         </div>
-                                        <button
-                                            type="button"
-                                            id="save-later-btn"
-                                            className=""
-                                            onClick={() => {
-                                                // handleWishlist;
 
-                                                setIsRemoving((prevState) => ({
-                                                    ...prevState,
-                                                    saveForLater: true,
-                                                }));
-                                            }}
-                                            onMouseEnter={() =>
-                                                setIsHoverFavorite(() => true)
-                                            }
-                                            onMouseLeave={() =>
-                                                setIsHoverFavorite(() => false)
-                                            }
-                                        >
-                                            <div className="h-fit w-fit flex items-center flex-row">
-                                                {isHoverFavorite || favorite ? (
-                                                    <Favorite
-                                                        sx={{
-                                                            stroke: 'white',
-                                                            strokeWidth: -0.5,
-                                                            fontSize: '1rem',
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <FavoriteBorder
-                                                        sx={{
-                                                            stroke: 'white',
-                                                            strokeWidth: -0.5,
-                                                            fontSize: '1rem',
-                                                        }}
-                                                    />
+                                        <div className="flex w-full gap-4">
+                                            <button
+                                                type="button"
+                                                id="save-later-btn"
+                                                className=""
+                                                onClick={() => {
+                                                    // handleWishlist;
+
+                                                    setIsRemoving(
+                                                        (prevState) => ({
+                                                            ...prevState,
+                                                            saveForLater: true,
+                                                        })
+                                                    );
+                                                }}
+                                                onMouseEnter={() =>
+                                                    setIsHoverFavorite(
+                                                        () => true
+                                                    )
+                                                }
+                                                onMouseLeave={() =>
+                                                    setIsHoverFavorite(
+                                                        () => false
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex h-fit w-fit flex-row items-center">
+                                                    {isHoverFavorite ||
+                                                    favorite ? (
+                                                        <Favorite
+                                                            sx={{
+                                                                stroke: 'white',
+                                                                strokeWidth:
+                                                                    -0.5,
+                                                                fontSize:
+                                                                    '1rem',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <FavoriteBorder
+                                                            sx={{
+                                                                stroke: 'white',
+                                                                strokeWidth:
+                                                                    -0.5,
+                                                                fontSize:
+                                                                    '1rem',
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+
+                                                <p className="m-0 text-xs">
+                                                    Save for later
+                                                </p>
+                                            </button>
+
+                                            <select
+                                                onChange={handleDeliverySelect}
+                                                name="shipping-select"
+                                                id="shipping-select"
+                                                className=" daisy-select daisy-select-bordered daisy-select-sm w-full rounded-none !text-xxs text-black"
+                                            >
+                                                <option
+                                                    className=""
+                                                    selected={true}
+                                                    disabled
+                                                >
+                                                    Select delivery...
+                                                </option>
+
+                                                {[
+                                                    _.get(
+                                                        delivery,
+                                                        'standard_delivery.0'
+                                                    ),
+                                                    ..._.filter(
+                                                        _.get(
+                                                            delivery,
+                                                            'delivery_upgrades'
+                                                        ),
+                                                        {
+                                                            destination:
+                                                                'domestic',
+                                                        }
+                                                    ),
+                                                ].map(
+                                                    ({
+                                                        _id,
+                                                        charges,
+                                                        shipping,
+                                                        iso_code,
+                                                    }) => {
+                                                        const cost = parseFloat(
+                                                            _.get(
+                                                                cartItem,
+                                                                'quantity'
+                                                            ) == 1
+                                                                ? _.get(
+                                                                      charges,
+                                                                      'one_item'
+                                                                  )
+                                                                : _.get(
+                                                                      charges,
+                                                                      'one_item'
+                                                                  ) +
+                                                                      _.get(
+                                                                          charges,
+                                                                          'additional_item'
+                                                                      ) *
+                                                                          (_.get(
+                                                                              cartItem,
+                                                                              'quantity'
+                                                                          ) -
+                                                                              1)
+                                                        ).toFixed(2);
+
+                                                        return (
+                                                            <option
+                                                                selected={
+                                                                    _.get(
+                                                                        cartItem,
+                                                                        'shipping_data.id'
+                                                                    ) == _id
+                                                                }
+                                                                data-cost={cost}
+                                                                data-id={_id}
+                                                                data-one_item={_.get(
+                                                                    charges,
+                                                                    'one_item'
+                                                                )}
+                                                                data-additional_item={_.get(
+                                                                    charges,
+                                                                    'additional_item'
+                                                                )}
+                                                                data-profile_id={_.get(
+                                                                    delivery,
+                                                                    '_id'
+                                                                )}
+                                                                key={`${cartItem?.cartId}-delivery-option-${_id}`}
+                                                            >
+                                                                {
+                                                                    <>
+                                                                        {`£${cost} (${(() => {
+                                                                            const timeObj =
+                                                                                {
+                                                                                    start: dayjs().date(),
+                                                                                    end: 0,
+                                                                                };
+
+                                                                            const generateValue =
+                                                                                ({
+                                                                                    field,
+                                                                                }) => {
+                                                                                    // adding processing time together with shipping time to calculate estimated delivery time frame.
+                                                                                    [
+                                                                                        _.get(
+                                                                                            delivery,
+                                                                                            `processing_time`
+                                                                                        ),
+                                                                                        shipping,
+                                                                                    ].forEach(
+                                                                                        (
+                                                                                            prop
+                                                                                        ) => {
+                                                                                            if (
+                                                                                                prop?.type ==
+                                                                                                'weeks'
+                                                                                            ) {
+                                                                                                timeObj[
+                                                                                                    field
+                                                                                                ] +=
+                                                                                                    _.get(
+                                                                                                        prop,
+                                                                                                        field
+                                                                                                    ) *
+                                                                                                    7;
+                                                                                            } else if (
+                                                                                                _.get(
+                                                                                                    prop,
+                                                                                                    `type`
+                                                                                                ) ==
+                                                                                                'days'
+                                                                                            ) {
+                                                                                                timeObj[
+                                                                                                    field
+                                                                                                ] +=
+                                                                                                    _.get(
+                                                                                                        prop,
+                                                                                                        field
+                                                                                                    );
+                                                                                            }
+                                                                                        }
+                                                                                    );
+                                                                                };
+
+                                                                            generateValue(
+                                                                                {
+                                                                                    field: 'end',
+                                                                                }
+                                                                            );
+                                                                            generateValue(
+                                                                                {
+                                                                                    field: 'start',
+                                                                                }
+                                                                            );
+
+                                                                            return dayjs()
+                                                                                .add(
+                                                                                    timeObj.end,
+                                                                                    'day'
+                                                                                )
+                                                                                .format(
+                                                                                    `${timeObj.start}-D MMM`
+                                                                                )
+                                                                                .toString();
+                                                                        })()},
+                                                                
+                                                                
+                                                                
+                                                                ${_.get(
+                                                                    shipping,
+                                                                    'service'
+                                                                )})`}
+                                                                    </>
+                                                                }
+                                                            </option>
+                                                        );
+                                                    }
                                                 )}
-                                            </div>
-
-                                            <p className="m-0 text-xs">
-                                                Save for later
-                                            </p>
-                                        </button>
+                                                <option
+                                                    value={_.get(
+                                                        delivery,
+                                                        'standard_delivery.0.charges._id'
+                                                    )}
+                                                ></option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </section>
                                 <div>

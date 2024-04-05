@@ -13,6 +13,7 @@ import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';
 
 import axios from '../../api/axios';
+import ProductContextProvider from '../../context/productContext';
 
 function ItemPage() {
     const [product, setProduct] = useState({ images: [], gender: null });
@@ -45,11 +46,10 @@ function ItemPage() {
             } catch (error) {
                 console.error(error);
             } finally {
-                
             }
         };
 
-        fetchData()
+        fetchData();
 
         return () => {
             clearTimeout(timeoutRef.current);
@@ -73,8 +73,10 @@ function ItemPage() {
             ? e.target.src
             : imageRef.current.src;
     };
+
+    const value = { product, setProduct, loading, handleImgChange };
     return (
-        <>
+        <ProductContextProvider value={value}>
             {/* {loading ? (
                 Loader()
             ) : ( */}
@@ -91,25 +93,16 @@ function ItemPage() {
                         className="mt-3 pl-3"
                     />
                     <section className="item-section">
-                        <Item_List
-                            loading={loading}
-                            images={product?.images}
-                            handleImgChange={handleImgChange}
-                        />
+                        <Item_List />
                         <Main_Image
                             ref={imageRef}
-                            images={product?.images}
-                            loading={loading}
+                          
                         />
-                        <Product_info
-                            loading={loading}
+                      {!loading &&  <Product_info
                             text={example?.text}
-                            title={product?.title}
-                            details={product?.detail}
-                            images={example?.similar_styles_images}
-                            style_it_with_image={example?.style_it_with_image}
-                            product={product}
-                        />
+                            // images={example?.similar_styles_images}
+                            // style_it_with_image={example?.style_it_with_image}
+                        />}
                     </section>
                     {!loading ? (
                         <Reviews product={product} />
@@ -124,7 +117,7 @@ function ItemPage() {
                 </section>
             </section>
             {/* )} */}
-        </>
+        </ProductContextProvider>
     );
 }
 

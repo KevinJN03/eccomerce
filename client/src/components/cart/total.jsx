@@ -4,13 +4,12 @@ import Shipping from './shipping';
 import { forwardRef, useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
-import fetchDeliveryOptions from '../../hooks/fetchDeliveryOption';
+import fetchDeliveryOptions from '../../hooks/useFetchDeliveryOption';
 
-function Total({ subTotal }) {
+function Total({ subTotal, delivery_cost }) {
     const [shippingOptions, setShippingOptions] = useState([]);
     const { deliveryOption } = useCart();
 
-    fetchDeliveryOptions(setShippingOptions);
     return (
         <section className="white sticky top-3 my-4 h-fit py-5  sm:px-3 md:mr-3 md:px-5 sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8">
             <h1 className="mb-3 border-b-2 pb-4 text-xl font-bold tracking-widest sm+md:!hidden">
@@ -28,8 +27,8 @@ function Total({ subTotal }) {
                         Delivery
                     </p>
                     <p>
-                        {deliveryOption.cost
-                            ? `£${deliveryOption.cost}`
+                        {delivery_cost
+                            ? `£${delivery_cost}`
                             : 'FREE'}
                     </p>
                 </div>

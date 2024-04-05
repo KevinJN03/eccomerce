@@ -93,6 +93,7 @@ router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
 router.get('/pdf/test', testPdf);
 router.post('/searchOrder', searchOrder);
+router.post('/privateNote/add', addPrivateNote);
 router.post('/privateNote/edit', editPrivateNote);
 router.delete('/privateNote/delete', deletePrivateNote);
 router.post('/products/all', getAllProducts);

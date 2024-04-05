@@ -208,7 +208,7 @@ function ListingPage() {
                 if (loading) {
                     setTimeout(() => {
                         setLoading(() => false);
-                    },400);
+                    },200);
                 }
             }
         };

@@ -16,8 +16,9 @@ import calculateTotal from '../common/calculateTotal';
 import variants from '../common/framerMotionVariants.jsx';
 import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
 import { v4 as uuidv4 } from 'uuid';
+import useFetchDeliveryOptions from '../../hooks/useFetchDeliveryOption.js';
 function Cart({}) {
-    const { withOutShipping: subTotal } = calculateTotal();
+    const { withOutShipping: subTotal, delivery_cost } = calculateTotal();
     const [loading, setLoading] = useState(true);
 
     const {
@@ -29,23 +30,29 @@ function Cart({}) {
         cartRefresh,
     } = useCart();
 
+    const { deliveryMap, loadState } = useFetchDeliveryOptions();
+
     useEffect(() => {
-        if (loading || cartRefresh) {
+        if (loading || cartRefresh || loadState) {
             setLoading(() => true);
             setCartRefresh(() => true);
             dispatch({ type: 'refresh' });
 
             const timeout = setTimeout(() => {
-                setCartLoading(() => false);
-                setCartRefresh(() => false);
-                setLoading(() => false);
+
+                
+                if (loadState == false) {
+                    setCartLoading(() => false);
+                    setCartRefresh(() => false);
+                    setLoading(() => false);
+                }
             }, 1500);
 
             return () => {
                 clearTimeout(timeout);
             };
         }
-    }, [cartRefresh]);
+    }, [cartRefresh, loadState]);
 
     const cartVariants = {
         initial: {
@@ -64,13 +71,11 @@ function Cart({}) {
         },
     };
     return (
-        <section className="!min-h-main  flex  items-center justify-center  ">
+        <section className="flex  !min-h-main  items-center justify-center  ">
             <AnimatePresence mode="wait">
                 {loading ? (
                     <motion.div key={'cart-loading'} className="">
-                      
-                       <GLoader />
-                     
+                        <GLoader />
                     </motion.div>
                 ) : cart.length > 0 ? (
                     <motion.section
@@ -80,7 +85,7 @@ function Cart({}) {
                         initial={'initial'}
                         animate={'animate'}
                         exit={'exit'}
-                        className="pt-3 flex justify-center gap-4 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center mb-24"
+                        className="mb-24 flex justify-center gap-4 pt-3 md:mx-6 sm+md:flex sm+md:flex-col sm+md:self-center"
                     >
                         {' '}
                         <motion.span
@@ -126,6 +131,7 @@ function Cart({}) {
                                     {cart.map((item, idx) => {
                                         return (
                                             <Cart_Item
+                                                deliveryMap={deliveryMap}
                                                 idx={idx}
                                                 lastIndex={
                                                     idx == cart.length - 1
@@ -137,13 +143,16 @@ function Cart({}) {
                                     })}
                                 </AnimatePresence>
                             </motion.div>
-                            <div className="mt-2 bg-white p-3 py-6 flex justify-end gap-5">
-
-                                <p className='font-gotham text-sm text-black/80'>SUB-TOTAL</p>
-                                <p className='font-gotham text-sm text-black/80'>£{subTotal}</p>
+                            <div className="mt-2 flex justify-end gap-5 bg-white p-3 py-6">
+                                <p className="font-gotham text-sm text-black/80">
+                                    SUB-TOTAL
+                                </p>
+                                <p className="font-gotham text-sm text-black/80">
+                                    £{subTotal}
+                                </p>
                             </div>
                         </div>
-                        <Total subTotal={subTotal} />
+                        <Total subTotal={subTotal} delivery_cost={delivery_cost} />
                     </motion.section>
                 ) : (
                     <Empty_Cart key={'empty-cart'} />

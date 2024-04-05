@@ -3,7 +3,6 @@ import { useCart } from '../../../context/cartContext';
 import axios from '../../../api/axios';
 
 import dayjs from 'dayjs';
-import fetchDeliveryOptions from '../../../hooks/fetchDeliveryOption';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 
 function Shipping_Option({ disable }) {
@@ -13,7 +12,6 @@ function Shipping_Option({ disable }) {
 
     const [profiles, setProfiles] = useState([]);
     
-    fetchDeliveryOptions(setProfiles);
 
     const handleDelivery = (e) => {
         const { id, cost, name, delivery_date } = e.target.dataset;
@@ -58,7 +56,7 @@ function Shipping_Option({ disable }) {
 
     return (
         <>
-            {profiles.map(({ name, cost, processingTime, _id }, idx) => {
+            {/* {profiles.map(({ name, cost, processingTime, _id }, idx) => {
                 const addUnit = processingTime.type == 'weeks' ? 'week' : 'day';
                 const newDeliveryDate = today.add(processingTime.end, addUnit);
 
@@ -88,7 +86,7 @@ function Shipping_Option({ disable }) {
                         ></input>
                     </div>
                 );
-            })}
+            })} */}
         </>
     );
 }

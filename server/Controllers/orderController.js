@@ -25,7 +25,14 @@ export const createPaymentIntent = [
   checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
-    const { cart, shipping, deliveryOption, billing, deliveryDate } = req.body;
+    const {
+      cart,
+      shipping,
+      deliveryOption,
+      billing,
+      deliveryDate,
+      delivery_cost,
+    } = req.body;
     // make a map with all the cart item products
     //
     let cartPrice = 0;
@@ -135,9 +142,7 @@ export const createPaymentIntent = [
       });
     });
     let subTotal = cartPrice;
-    if (_.has(deliveryOption, 'cost')) {
-      cartPrice += deliveryOption.cost;
-    }
+    cartPrice += delivery_cost || 0;
 
     let parseCartPrice = parseFloat(cartPrice).toFixed(2);
     const calculatePrice = parseInt(parseCartPrice.replace('.', ''));
@@ -175,7 +180,7 @@ export const createPaymentIntent = [
         subtotal: parseFloat(subTotal).toFixed(2),
       },
       shipping_option: {
-        cost: deliveryOption?.cost,
+        cost: delivery_cost,
         delivery_date: deliveryDate,
         name: deliveryOption?.name,
         id: deliveryOption?.id,

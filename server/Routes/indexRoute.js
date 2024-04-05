@@ -9,9 +9,9 @@ import {
   resetPassword,
 } from '../Controllers/password-change.js';
 import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
-
+import cartRoute from './cartRoute.js';
 const router = express.Router();
-
+router.use('/cart', cartRoute);
 router.get('/server-status', (req, res) => {
   res.send('OK');
 });

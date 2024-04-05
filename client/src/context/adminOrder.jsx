@@ -19,7 +19,7 @@ export default function AdminOrderContextProvider({ children }) {
 
     const [ordersData, setOrderData] = useState({});
     const [totalDocuments, setTotalDocuments] = useState(null);
-    const [status, setStatus] = useState('New');
+    const [status, setStatus] = useState('new');
     const { logoutUser } = UserLogout();
     const [totalOrders, setTotalOrders] = useState(0);
     const [openDrawer, setOpenDrawer] = useState(false);
@@ -147,7 +147,7 @@ export default function AdminOrderContextProvider({ children }) {
             const { data } = await adminAxios.post('/orders/all', { status });
             setOrderData(() => data);
 
-            if (status == 'New') {
+            if (status == 'new') {
                 setTotalOrders(() => data?.totalCount);
             }
             setTotalDocuments(() => data?.totalCount);

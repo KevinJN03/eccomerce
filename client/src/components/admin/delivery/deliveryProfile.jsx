@@ -9,7 +9,9 @@ import { useContent } from '../../../context/ContentContext.jsx';
 import { useEffect, useRef, useState } from 'react';
 import UserLogout from '../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../api/axios.js';
-import SeamlessDropdown from '../../common/dropdown/seamlessDropdown.jsx';
+import SeamlessDropdown, {
+    ThemeDropDown,
+} from '../../common/dropdown/seamlessDropdown.jsx';
 import { v4 as uuidv4 } from 'uuid';
 
 import Pagination from '../../dashboard/pagination/pagination.jsx';
@@ -198,32 +200,25 @@ function DeliveryProfile({ status, setStatus }) {
                                 )}
 
                                 <section className="relative  mx-2">
-                                    <BubbleButton
-                                        key={uuidv4()}
-                                        className={
-                                            'border border-transparent px-2 py-1'
-                                        }
-                                        handleClick={() => {
-                                            setShow(() => true);
-                                        }}
-                                    >
-                                        <ArrowDropDown />
-                                    </BubbleButton>
-                                    {show && (
-                                        <div
-                                            onClick={() => setShow(() => false)}
-                                            className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
-                                        >
-                                            <ArrowDropDown />
-                                        </div>
-                                    )}
-
-                                    <SeamlessDropdown
+                                    <ThemeDropDown
                                         {...{
+                                            defaultIcon: (
+                                                <BubbleButton
+                                                    key={uuidv4()}
+                                                    className={
+                                                        'border border-transparent px-2 py-1'
+                                                    }
+                                                    handleClick={() => {
+                                                        setShow(() => true);
+                                                    }}
+                                                >
+                                                    <ArrowDropDown />
+                                                </BubbleButton>
+                                            ),
+                                            showIcon: <ArrowDropDown />,
                                             setShow,
                                             show,
                                             options,
-                                            className: '',
                                         }}
                                     />
                                 </section>

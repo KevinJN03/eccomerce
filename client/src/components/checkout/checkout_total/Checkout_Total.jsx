@@ -14,7 +14,7 @@ function Checkout_Total() {
 
     
 
-    const { withShipping, withOutShipping, savePercent, amountOff } =
+    const { withShipping, withOutShipping, savePercent, amountOff, delivery_cost } =
         calculateTotal();
     let total = withShipping;
 
@@ -76,8 +76,8 @@ function Checkout_Total() {
                     <p className="flex justify-between">
                         Delivery{' '}
                         <span>
-                            {deliveryOption?.cost
-                                ? `£ ${deliveryOption.cost}`
+                            {delivery_cost
+                                ? `£ ${delivery_cost}`
                                 : 'FREE'}
                         </span>
                     </p>

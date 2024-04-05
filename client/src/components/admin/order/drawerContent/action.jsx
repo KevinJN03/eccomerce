@@ -3,7 +3,7 @@ import { useAdminOrderContext } from '../../../../context/adminOrder';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
 
-function Actions({ setShowActions, showActions, children }) {
+function Actions({ setShowActions, showActions, children, orderId }) {
     const { setModalCheck, setModalContent } = useContent();
 
     const { orderInfo } = useAdminOrderContext();
@@ -11,7 +11,7 @@ function Actions({ setShowActions, showActions, children }) {
         console.log('clicked');
         setModalContent({
             type: 'printOrder',
-            orders: [orderInfo?._id],
+            orders: [orderId],
         });
         setModalCheck(true);
         setShowActions(false);

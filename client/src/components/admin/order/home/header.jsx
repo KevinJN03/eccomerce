@@ -5,6 +5,9 @@ import { useRef, useState } from 'react';
 import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 import SearchInput from './searchInput';
+import ThemeBtn from '../../../buttons/themeBtn.jsx';
+import BubbleButton from '../../../buttons/bubbleButton.jsx';
+import { useNavigate } from 'react-router-dom';
 function Header({}) {
     const {
         setSearchResult,
@@ -15,6 +18,7 @@ function Header({}) {
     } = useAdminOrderContext();
 
     const { logoutUser } = UserLogout();
+    const navigate = useNavigate();
 
     const handleClick = async () => {
         try {
@@ -43,15 +47,20 @@ function Header({}) {
                     placeHolder={'Search your orders'}
                     handleClick={handleClick}
                     searchText={searchText}
-          
                 />
-
-                <div className="flex w-fit flex-row items-center gap-x-1">
-                    <SettingsRoundedIcon className="!text-xl" />
-                    <p className="whitespace-nowrap text-xs font-medium">
-                        Delivery settings
-                    </p>
-                </div>
+                <BubbleButton
+                    bg={'bg-light-grey'}
+                    handleClick={() => {
+                        navigate(`/admin/delivery`);
+                    }}
+                >
+                    <div className="flex w-fit flex-row flex-nowrap items-center gap-x-1 text-white">
+                        <SettingsRoundedIcon className="!text-xl" />
+                        <p className="whitespace-nowrap text-xs font-medium text-black">
+                            Delivery settings
+                        </p>
+                    </div>
+                </BubbleButton>
             </section>
         </header>
     );

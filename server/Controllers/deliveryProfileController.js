@@ -247,11 +247,10 @@ export const get_single_delivery_profile = asyncHandler(
 
 export const get_many_delivery_profile = asyncHandler(
   async (req, res, next) => {
-    const { id } = req.params;
+    const { ids } = req.body;
 
-    const parseIdToArray = JSON.parse(id);
-
-    const profiles = await DeliveryProfile.find({ _id: parseIdToArray });
+   
+    const profiles = await DeliveryProfile.find({ _id: ids });
 
     res.status(200).send(profiles);
   },

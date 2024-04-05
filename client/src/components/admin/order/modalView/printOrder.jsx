@@ -7,7 +7,7 @@ import { adminAxios } from '../../../../api/axios';
 import UserLogout from '../../../../hooks/userLogout.jsx';
 import defaultChecks from './defaultChecks';
 import { useContent } from '../../../../context/ContentContext.jsx';
-
+import _ from 'lodash';
 function PrintOrder({}) {
     const { setModalCheck, modalContent, setShowAlert } = useContent();
     const [loading, setLoading] = useState(false);
@@ -35,6 +35,7 @@ function PrintOrder({}) {
     }, []);
     const handleClick = async () => {
         let success = false;
+        const dataValue = {};
         try {
             console.log('loaded');
             setLoading(() => true);
@@ -46,13 +47,15 @@ function PrintOrder({}) {
             });
 
             success = true;
+
+            _.assign(dataValue, data);
         } catch (error) {
             console.error('error when trying to generatePdf', error);
         } finally {
             setTimeout(() => {
                 if (success) {
                     window.open(
-                        `./orders/download/${data.file}`,
+                        `./orders/download/${dataValue.file}`,
                         '_blank',
                         'noreferrer'
                     );

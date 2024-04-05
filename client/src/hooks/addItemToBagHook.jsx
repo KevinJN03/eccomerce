@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from '../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
 import { useLayoutContext } from '../context/layoutContext';
+import _, { cloneDeep } from 'lodash';
 function useAddItemToBagHook({ product }) {
     const { dispatch } = useCart();
 
@@ -16,63 +17,66 @@ function useAddItemToBagHook({ product }) {
     const [combineVariation, setCombineVariation] = useState(null);
     const [error, setError] = useState(false);
     const { isHover, setIsHover } = useLayoutContext();
-    useEffect(
-        () => {
-            setPriceState(product?.price?.current);
+    useEffect(() => {
+        setPriceState(
+            _.get(product, 'price.current') ||
+                _.get(product, 'additional_data.price.min')
+        );
+        const getCombineVariation = _.get(
+            product,
+            'variation_data.isVariationCombine'
+        );
+        if (getCombineVariation) {
+            setCombineVariation(() => getCombineVariation);
+        }
 
-            if (product?.isVariationCombine) {
-                setCombineVariation(() => product?.combineVariation);
-            }
+        const variationSelectObj = {};
 
-            const variationSelectObj = {};
+        setVariationSelection((prevState) => ({
+            ...prevState,
+            ...variationSelectObj,
+        }));
 
+        [1, 2].forEach((variationNumber) => {
             if (
-                (product?.isVariation1Present,
-                product?.variation1?.array?.length == 1)
+                _.get(
+                    product,
+                    `variation_data.variaion${variationNumber}_present`
+                ) &&
+                _.get(
+                    product,
+                    `variation_data.variation${variationNumber}_data.array`
+                )?.length == 1
             ) {
-                variationSelectObj.variation1 = product?.variation1?.array[0];
+                variationSelectObj[`variation${variationNumber}`] = _.get(
+                    product,
+                    `variation_data.variation${variationNumber}_data.array.0`
+                );
             }
 
-            if (
-                product?.isVariation2Present &&
-                product?.variation2?.array?.length == 1
-            ) {
-                variationSelectObj.variation2 = product?.variation2?.array[0];
+            if (product?.[`isVariation${variationNumber}Present`]) {
+                setVariationSelection((prevState) => ({
+                    ...prevState,
+                    [`variation${variationNumber}`]: {
+                        ...prevState?.[`variation${variationNumber}`],
+                        title: product?.[`variation${variationNumber}`]?.title,
+                    },
+                }));
             }
+        });
 
-            setVariationSelection((prevState) => ({
-                ...prevState,
-                ...variationSelectObj,
-            }));
+        console.log('variation changed');
 
-            [1, 2].map((variationNumber) => {
-                if (product?.[`isVariation${variationNumber}Present`]) {
-                    setVariationSelection((prevState) => ({
-                        ...prevState,
-                        [`variation${variationNumber}`]: {
-                            ...prevState?.[`variation${variationNumber}`],
-                            title: product?.[`variation${variationNumber}`]
-                                ?.title,
-                        },
-                    }));
-                }
-            });
-
-            console.log('variation changed');
-
-            // check dependency
-        },
-        [
-            // product
-        ]
-    );
+        // check dependency
+    }, [product]);
 
     useEffect(() => {
-        if (product?.isVariationCombine) {
-            const getPrice =
-                combineVariation?.[variationSelect?.variation1?.variation]?.[
-                    variationSelect?.variation2?.variation
-                ]?.price;
+        if (_.get(product, 'variation_data.isVariationCombine')) {
+            const getPrice = _.get(combineVariation, [
+                variationSelect?.variation1?.variation,
+                variationSelect?.variation2?.variation,
+                'price',
+            ]);
 
             setPriceState(() =>
                 parseFloat(
@@ -84,9 +88,9 @@ function useAddItemToBagHook({ product }) {
 
     const handleAddToCart = () => {
         if (
-            (product.isVariation1Present &&
+            (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||
-            (product.isVariation2Present &&
+            (_.get(product, ['variation_data', 'variation2_present']) &&
                 !variationSelect.variation2.variation)
         ) {
             setError(() => true);
@@ -98,17 +102,18 @@ function useAddItemToBagHook({ product }) {
         }
 
         const { alsoLike, detail, reviews, ...rest } = product;
-        const newProduct = JSON.parse(JSON.stringify(rest));
+
+        const newProduct = cloneDeep(rest);
 
         newProduct.id = product._id;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
-        newProduct.price.current = priceState;
-        newProduct.variationSelect = variationSelect;
-        dispatch({ type: 'add', product: newProduct });
-        console.log({ newProduct });
+        _.set(newProduct, 'price.current', priceState);
 
-        console.log({ product });
+        _.set(newProduct, ['variation_data', 'select'], variationSelect);
+      //  newProduct.variationSelect = variationSelect;
+        dispatch({ type: 'add', product: newProduct });
+        // console.log({ newProduct });
         setError(() => false);
 
         const timeout = setTimeout(() => {
@@ -128,7 +133,7 @@ function useAddItemToBagHook({ product }) {
             e.target.options[e.target.selectedIndex].dataset?.variation;
         const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
         const price = e.target.options[e.target.selectedIndex].dataset?.price;
-console.log('variation onchange')
+        console.log('variation onchange');
         setVariationSelection((prevState) => ({
             ...prevState,
             [property]: { ...prevState[property], variation, id },

@@ -53,10 +53,12 @@ function OrderPageContent({}) {
                                 options={[
                                     {
                                         text: 'New',
+                                        select: 'new',
                                         amount: totalOrders,
                                     },
                                     {
                                         text: 'Complete',
+                                        select: 'complete',
                                     },
                                 ]}
                             />

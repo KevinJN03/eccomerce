@@ -5,10 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import containerVariants from './containerVariants';
 import { ClickAwayListener } from '@mui/material';
+import { ThemeDropDown } from '../../../common/dropdown/seamlessDropdown';
+import ThemeBtn from '../../../buttons/themeBtn';
 function Label({ option }) {
     return (
         <label
-            className={`  my-1 flex w-full items-center gap-1 px-3  text-xxs`}
+            className={` flex w-full items-center gap-1  whitespace-nowrap text-s`}
             tabIndex="0"
         >
             <span className="font-semibold">Sort by</span>
@@ -39,7 +41,6 @@ function SideContainer({}) {
         setShow(() => false);
     };
 
-    
     const reset = () => {
         setDestination(() => 'All');
         setDispatchBy(() => 'All');
@@ -51,69 +52,51 @@ function SideContainer({}) {
     };
     return (
         <section className="side-container relative mt-4 flex flex-1 flex-col justify-start gap-5">
-            <div className=" absolute top-0 h-fit rounded-full bg-white z-[1]">
-                <AnimatePresence>
-                    {' '}
-                    {!show && (
-                        <motion.button
-                            initial={{ scale: 0.97 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 0.1 }}
-                            onClick={() => setShow((prevState) => !prevState)}
-                            className="rounded-full border-2 border-black hover:!shadow-my-shadow transition-all active:scale-95"
-                        >
-                            <Label option={option} />
-                        </motion.button>
-                    )}
-                    {show && (
-                        <ClickAwayListener onClickAway={() =>  setShow(() => false)}>
-
-                        <motion.div
-                            className="box-shadow  h-full w-fit rounded-lg bg-white"
-                            variants={containerVariants}
-                            initial={'initial'}
-                            animate={'animate'}
-                            exit={'exit'}
-                        >
-                            <button
-                                className="w-full rounded-t-lg border-2 border-white "
-                                onClick={() =>
+            <div className=" absolute top-0 z-[1] h-fit rounded-full bg-white">
+                <ThemeDropDown
+                    {...{
+                        defaultIcon: (
+                            <ThemeBtn
+                                isDisableHoverEffect={show}
+                                className={'z-[3] px-3 py-1.5'}
+                                bg={`bg-transparent  ${!show ? 'border-2 border-black' : ''}`}
+                                handleClick={() =>
                                     setShow((prevState) => !prevState)
                                 }
                             >
                                 <Label option={option} />
-                            </button>
+                            </ThemeBtn>
+                        ),
+                        // showIcon: ( <div className='px-4'><Label option={option} /></div>),
 
-                            <div
-                                className="flex list-none flex-col
-                        rounded-b-lg   p-0"
-                            >
-                                {optionsArray.map((item, idx) => {
-                                    return (
-                                        <span
-                                            className={`item-center flex gap-x-2 p-2 ${
-                                                option == item
-                                                    ? 'bg-light-grey/50'
-                                                    : ''
-                                            }  hover:bg-light-grey ${
-                                                idx == optionsArray.length - 1
-                                                    ? 'rounded-b-lg'
-                                                    : ''
-                                            }`}
-                                            onClick={() => handleClick(item)}
-                                        >
-                                            {item}
-                                            {item == option && (
-                                                <CheckRoundedIcon className="self-center !text-base" />
-                                            )}
-                                        </span>
-                                    );
-                                })}
-                            </div>
-                        </motion.div>
-                        </ClickAwayListener>
-                    )}
-                </AnimatePresence>
+                        show,
+                        setShow,
+                    }}
+                >
+                    <div className="pt-8">
+                        {optionsArray.map((item, idx) => {
+                            return (
+                                <span
+                                    // key={`${item}-${idx}`}
+                                    className={`item-center flex gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
+                                        option == item ? 'bg-light-grey/50' : ''
+                                    }  hover:bg-light-grey ${
+                                        idx == optionsArray.length - 1
+                                            ? 'rounded-b-lg'
+                                            : ''
+                                    }`}
+                                    onClick={() => handleClick(item)}
+                                >
+                                    {item}
+                                    {item == option && (
+                                        <CheckRoundedIcon className="self-center !text-base" />
+                                    )}
+                                </span>
+                            );
+                        })}
+                    </div>
+                </ThemeDropDown>
+            
             </div>
 
             <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
@@ -196,13 +179,19 @@ function SideContainer({}) {
                 })}
             </div>
 
-            <button
-            onClick={reset}
+
+<ThemeBtn  bg={'bg-light-grey'} className={'px-3 py-2'} handleClick={reset}>
+    <p className='font-medium text-sm'>
+    Reset filters
+    </p>
+</ThemeBtn>
+            {/* <button
+                onClick={reset}
                 type="button"
-                className="w-fit rounded-full bg-light-grey px-4 py-2 text-s font-semibold text-gray-700 hover:bg-dark-gray/50 hover:!shadow-my-shadow transition-all hover:scale-x-105 "
+                className="w-fit rounded-full bg-light-grey px-4 py-2 text-s font-semibold text-gray-700 transition-all hover:scale-x-105 hover:bg-dark-gray/50 hover:!shadow-my-shadow "
             >
                 Reset filters
-            </button>
+            </button> */}
         </section>
     );
 }
