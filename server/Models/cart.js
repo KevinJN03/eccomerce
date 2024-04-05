@@ -27,6 +27,12 @@ const cartSchema = new Schema({
         current: { type: Schema.Types.Number },
         previous: { type: Schema.Types.Number },
       },
+      shipping: {
+        one_item: Schema.Types.Number,
+        additional_item: Schema.Types.Number,
+        cost: Schema.Types.Number,
+        id: Schema.Types.String,
+      },
       variation_data: {
         combineVariation: { type: Schema.Types.Boolean },
         variation1_data: variationObj,
