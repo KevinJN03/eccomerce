@@ -12,22 +12,20 @@ import { useWindowSize } from '@uidotdev/usehooks';
 function Checkout_Total() {
     const { cart } = useCart();
 
-    
-
-    const { withShipping, withOutShipping, savePercent, amountOff, delivery_cost } =
-        calculateTotal();
+    const {
+        withShipping,
+        withOutShipping,
+        savePercent,
+        amountOff,
+        delivery_cost,
+    } = calculateTotal();
     let total = withShipping;
 
     const { deliveryOption } = useCart();
     const { promo } = useCart();
 
-    
-
     return (
-        <motion.section
-            className="lg:sticky top-3  h-fit sm+md:w-[90vw] lg:w-[400px]"
-     
-        >
+        <motion.section className="top-3 h-fit  sm+md:w-[90vw] lg:sticky lg:w-[400px]">
             <section id="checkout-total">
                 <div className="flex flex-row items-center justify-between border-b-2 pb-4">
                     <h1 className="font-gotham text-xl font-bold tracking-wider">
@@ -42,21 +40,8 @@ function Checkout_Total() {
                             cart.map((product) => {
                                 return (
                                     <Checkout_Item
-                                        id={product?.id}
-                                        image={product?.images?.[0]}
-                                      
+                                        data={product}
                                         key={product.cartId}
-                                        price={product.price?.current}
-                                        title={product?.title}
-                                        quantity={product?.quantity}
-                                        variation2={
-                                            product?.variationSelect?.variation2
-                                                ?.variation
-                                        }
-                                        variation1={
-                                            product?.variationSelect?.variation1
-                                                ?.variation
-                                        }
                                     />
                                 );
                             })}
@@ -76,9 +61,7 @@ function Checkout_Total() {
                     <p className="flex justify-between">
                         Delivery{' '}
                         <span>
-                            {delivery_cost
-                                ? `£ ${delivery_cost}`
-                                : 'FREE'}
+                            {delivery_cost ? `£ ${delivery_cost}` : 'FREE'}
                         </span>
                     </p>
                     <p className="flex justify-between font-gotham font-bold">
@@ -86,8 +69,6 @@ function Checkout_Total() {
                     </p>
                 </div>
             </section>
-
-    
         </motion.section>
     );
 }

@@ -18,7 +18,7 @@ const calculateTotal = () => {
             const itemDeliveryCost = parseFloat(
                 _.get(item, 'shipping_data.cost')
             );
-            console.log({isNumber: _.isNumber(itemDeliveryCost), itemDeliveryCost})
+           // console.log({isNumber: _.isNumber(itemDeliveryCost), itemDeliveryCost})
             if (_.isNumber(itemDeliveryCost) && itemDeliveryCost) {
                 delivery_cost += itemDeliveryCost;
             }

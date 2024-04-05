@@ -1,39 +1,48 @@
 import { Link } from 'react-router-dom';
-
+import _ from 'lodash';
 function Checkout_Item({
-    id,
-    image,
-    price,
-    title,
-    quantity,
-    variation1,
     className,
-    variation2,
+
+    data,
 }) {
+    const select = {
+        variation1: _.get(data, 'variation_data.select.variation1.variation'),
+        variation2: _.get(data, 'variation_data.select.variation2.variation'),
+    };
+
     return (
         <div className={`${className || ''} flex flex-row gap-5`}>
             <Link
-                to={`/product/${id}`}
+                to={`/product/${data?.productId}`}
                 target="_blank"
                 rel="noopener noreferrer"
             >
                 <img
-                    src={image}
+                    src={_.get(data, 'images.0')}
                     className="h-28 w-28 object-contain object-center"
                 />
             </Link>
 
             <span className="product-info-container text-inherit">
-                <h3 className="font-bold tracking-wide text-inherit">£{price}</h3>
+                <h3 className="font-bold tracking-wide text-inherit">
+                    £{_.get(data, 'price.current')}
+                </h3>
                 <p id="product-title" className="text-xs text-inherit">
-                    {title}
+                    {_.get(data, 'title')}
                 </p>
                 <span className="flex flex-row gap-x-3 font-bold text-inherit">
-                    {variation1 && <p className='text-inherit'>{variation1}</p>}
-                    {variation2 && <p className='text-inherit'>{variation2}</p>}
+                    {select.variation1 && (
+                        <p className="text-inherit">{select.variation1}</p>
+                    )}
+                    {select.variation2 && (
+                        <p className="text-inherit">{select.variation2}</p>
+                    )}
                 </span>
-                <p className='text-inherit'>
-                    Qty: <span className="font-bold text-inherit">{quantity}</span>
+                <p className="text-inherit">
+                    Qty:{' '}
+                    <span className="font-bold text-inherit">
+                        {_.get(data, 'quantity')}
+                    </span>
                 </p>
             </span>
         </div>

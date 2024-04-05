@@ -104,14 +104,14 @@ function useAddItemToBagHook({ product }) {
         const { alsoLike, detail, reviews, ...rest } = product;
 
         const newProduct = cloneDeep(rest);
-
-        newProduct.id = product._id;
+        newProduct.productId = product._id;
+        // newProduct.id = product._id;
         newProduct.cartId = uuidv4();
         newProduct.quantity = 1;
         _.set(newProduct, 'price.current', priceState);
 
         _.set(newProduct, ['variation_data', 'select'], variationSelect);
-      //  newProduct.variationSelect = variationSelect;
+        //  newProduct.variationSelect = variationSelect;
         dispatch({ type: 'add', product: newProduct });
         // console.log({ newProduct });
         setError(() => false);

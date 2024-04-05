@@ -130,7 +130,9 @@ function Cart({}) {
                                 <AnimatePresence>
                                     {cart.map((item, idx) => {
                                         return (
-                                            <Cart_Item
+                                            
+                                            
+                                                <Cart_Item
                                                 deliveryMap={deliveryMap}
                                                 idx={idx}
                                                 lastIndex={
@@ -139,6 +141,8 @@ function Cart({}) {
                                                 cartItem={item}
                                                 key={item.cartId}
                                             />
+                                          
+                                           
                                         );
                                     })}
                                 </AnimatePresence>

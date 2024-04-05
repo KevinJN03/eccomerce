@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 export const getCartFromLocalStorage = () => {
     return JSON.parse(localStorage.getItem('cart') || '[]');
 };
@@ -6,7 +6,7 @@ export const getCartFromLocalStorage = () => {
 const cartReducer = (state, action) => {
     // JSON.parse(cart)
     let isProductInCart = false;
-    const { product, type } = action;
+    const { type } = action;
     const cart = [];
     const cartFromLS = getCartFromLocalStorage();
     if (_.isEqual(state, cartFromLS)) {
@@ -20,13 +20,22 @@ const cartReducer = (state, action) => {
     }
 
     if (type == 'add') {
+        const { product } = action;
+
         const foundItemInCart = cart.map((item) => {
+            // need to check with id instead
+
+            // item?.variationSelect?.variation1?.variation ==
+            //     product?.variationSelect?.variation1?.variation
+
+            // item?.variationSelect?.variation2?.variation ==
+            //     product?.variationSelect?.variation2?.variation
             if (
-                item.id == product.id &&
-                item?.variationSelect?.variation1?.variation ==
-                    product?.variationSelect?.variation1?.variation &&
-                item?.variationSelect?.variation2?.variation ==
-                    product?.variationSelect?.variation2?.variation
+                item?.productId == product.productId &&
+                _.get(item, 'variation_data.select.variation1.id') ==
+                    _.get(product, 'variation_data.select.variation1.id') &&
+                _.get(item, 'variation_data.select.variation2.id') ==
+                    _.get(product, 'variation_data.select.variation2.id')
             ) {
                 isProductInCart = true;
                 return { ...item, quantity: parseInt(item.quantity) + 1 };
@@ -74,12 +83,14 @@ const cartReducer = (state, action) => {
     if (type == 'edit variation') {
         const newCart = cart.map((item) => {
             if (item.cartId === action.cartId) {
-                const newItem = {
-                    ...item,
-                    variationSelect: {
-                        ...action.variationSelect,
-                    },
-                };
+                const newItem = cloneDeep(item);
+                _.set(newItem, 'variation_data.select', action.select);
+                // const newItem = {
+                //     ...item,
+                //     variationSelect: {
+                //         ...action.variationSelect,
+                //     },
+                // };
 
                 return newItem;
             }
