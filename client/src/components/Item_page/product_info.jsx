@@ -32,7 +32,7 @@ function Product_info({ text, details, images }) {
         setError,
         handleAddToCart,
         handleOnChange,
-    } = useAddItemToBagHook({ product, });
+    } = useAddItemToBagHook({ product });
     const {
         isHoverFavorite,
         setIsHoverFavorite,
@@ -141,9 +141,10 @@ function Product_info({ text, details, images }) {
                 ) */}
             {/* )} */}
 
-            {error && (
+            {error?.on && (
                 <div className="error-box mb-4 bg-red-100 px-3 py-2 text-sm">
-                    Please select from the available colour and size options.
+                    {/* Please select from the available variation options. */}
+                    {error?.msg}
                 </div>
             )}
 
@@ -186,7 +187,7 @@ function Product_info({ text, details, images }) {
             {!loading ? (
                 <>
                     <div className=" flex flex-col border-t-[thin] sm:mx-4 sm+md:mb-10 sm+md:gap-0 lg:mt-6">
-                        {/* <Product_Detail details={details} /> */}
+                        <Product_Detail details={details} />
                         <Return />{' '}
                     </div>
                 </>
@@ -196,7 +197,9 @@ function Product_info({ text, details, images }) {
 
             <section className="similar-style-with-container flex sm:mx-4 sm+md:flex-col-reverse sm+md:gap-8 lg:mt-5 lg:flex-col">
                 {!loading ? (
-                    <Similar_Styles images={product?.images} />
+                    <>
+                        <Similar_Styles images={product?.images} />
+                    </>
                 ) : (
                     <div className="skeleton-pulse h-full w-full"></div>
                 )}

@@ -2,11 +2,11 @@ import { useState } from 'react';
 import DropDown_Detail from '../common/dropdown/dropdown_detail';
 
 function Product_Detail({ details }) {
-    const returnDetail = () => {
-        return details.map((item, index) => {
-            return <li key={index}>{item}</li>;
-        });
-    };
+    // const returnDetail = () => {
+    //     return details.map((item, index) => {
+    //         return <li key={index}>{item}</li>;
+    //     });
+    // };
 
     const [show, setShow] = useState(false);
 
@@ -18,7 +18,7 @@ function Product_Detail({ details }) {
             <DropDown_Detail
                 show={show}
                 toggleShow={toggleShow}
-                details={returnDetail()}
+                details={details}
                 header={'Product Details'}
             />
         </section>

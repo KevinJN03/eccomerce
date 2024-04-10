@@ -3,8 +3,8 @@ import { useCart } from '../context/cartContext';
 import { useLayoutContext } from '../context/layoutContext';
 import _, { cloneDeep } from 'lodash';
 import objectId from 'bson-objectid';
-function useAddItemToBagHook({ product, m }) {
-    const { dispatch, addItem } = useCart();
+function useAddItemToBagHook({ product, }) {
+    const { dispatch, addItem, formatData } = useCart();
 
     const [priceState, setPriceState] = useState(null);
     const [variationSelect, setVariationSelection] = useState(
@@ -15,7 +15,7 @@ function useAddItemToBagHook({ product, m }) {
     );
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState({on: false, msg: ''});
     const { isHover, setIsHover } = useLayoutContext();
     useEffect(() => {
         setPriceState(
@@ -82,7 +82,7 @@ function useAddItemToBagHook({ product, m }) {
                 variationSelect?.variation2?.variation,
                 'price',
             ]);
-
+debugger
             setPriceState(() =>
                 parseFloat(
                     getPrice || product?.additional_data?.price?.min
@@ -98,7 +98,7 @@ function useAddItemToBagHook({ product, m }) {
             (_.get(product, ['variation_data', 'variation2_present']) &&
                 !variationSelect.variation2.variation)
         ) {
-            setError(() => true);
+            setError(() => ({on: true, msg: 'Please select from the available variation options.'}));
             return;
         }
 
@@ -106,26 +106,28 @@ function useAddItemToBagHook({ product, m }) {
             clearTimeout(isHover.timeout);
         }
 
-        const newProduct = cloneDeep(product);
-        const pickedData = _.pick(newProduct, [
-            'variation_data',
-            'images',
-            'title',
-            'delivery',
-            'quantity',
-            'price',
-            'additional_data',
-            'shipping_data',
-            'stock',
-            'status',
-        ]);
-        _.set(pickedData, 'price.current', priceState);
-        _.set(pickedData, ['variation_data', 'select'], variationSelect);
-        _.set(pickedData, 'product_id', product._id);
-        _.set(pickedData, '_id', objectId().toString());
-        _.set(pickedData, 'quantity', 1);
+        // const newProduct = cloneDeep(product);
+        // const pickedData = _.pick(newProduct, [
+        //     'variation_data',
+        //     'images',
+        //     'title',
+        //     'delivery',
+        //     'quantity',
+        //     'price',
+        //     'additional_data',
+        //     'shipping_data',
+        //     'stock',
+        //     'status',
+        // ]);
+        // _.set(pickedData, 'price.current', priceState);
+        // _.set(pickedData, ['variation_data', 'select'], variationSelect);
+        // _.set(pickedData, 'product_id', product._id);
+        // _.set(pickedData, '_id', objectId().toString());
+        // _.set(pickedData, 'quantity', 1);
 
-        addItem({ itemData: pickedData });
+        addItem({
+            itemData: formatData({ product, priceState, variationSelect }),
+        });
         // dispatch({ type: 'ADD', product: pickedData });
 
         setError(() => false);

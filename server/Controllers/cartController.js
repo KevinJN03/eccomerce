@@ -4,8 +4,9 @@ import _, { property } from 'lodash';
 import mongoose from 'mongoose';
 import productAggregateStage from '../utils/productAggregateStage';
 import variationFormat from '../utils/variationFormat.js';
+import cart_wishlist_pipeline from '../utils/cart_wishlist_pipeline.js';
 
-export default function generateModelSchemaRoute(Model, property) {
+export default function generateModelSchemaRoute(Model, route) {
   const queryOptions = {
     new: true,
     // upsert: true,
@@ -57,162 +58,25 @@ export default function generateModelSchemaRoute(Model, property) {
 
       console.log('getting Document from id');
 
-      const data = await Model.aggregate([
-        {
+      const data = await Model.aggregate(
+
+        [
+           {
           $match: {
             _id: new mongoose.Types.ObjectId(id),
-            items: { $exists: true, $ne: [] },
           },
         },
-        { $unwind: { path: '$items', preserveNullAndEmptyArrays: true } },
-        {
-          $lookup: {
-            from: 'deliveryprofiles',
-            localField: 'items.delivery',
-            foreignField: '_id',
-            as: 'items.deliveryInfo',
-          },
-        },
-        {
-          $lookup: {
-            from: 'products',
-            localField: 'items.product_id',
-            foreignField: '_id',
-            as: 'items.productInfo',
-            let: { id: '$_id' },
-            pipeline: [
-              ...productAggregateStage({ stats: false }),
-
-              {
-                $addFields: {
-                  'variation_data.combineVariation': {
-                    $cond: {
-                      if: { $gte: [{ $size: '$variations' }, 2] },
-                      // then: {
-                      //   $map: {
-                      //     input: { $arrayElemAt: ['$variations', 2] },
-                      //     as: 'variation',
-                      //     in: '$$variation.option'
-                      //   },
-                      // },
-
-                      then: {
-                        $objectToArray: {
-                          $arrayElemAt: ['$variations.options', 2],
-                        },
-                      },
-                      else: false,
-                    },
-                  },
-                },
-              },
-
-              {
-                $unwind: {
-                  path: '$variations',
-                  includeArrayIndex: 'variationIndex',
-                },
-              },
-              {
-                $addFields: {
-                  optionArray: { $objectToArray: '$variations.options' },
-                },
-              },
-
-              {
-                $addFields: {
-                  variationOptionArray: {
-                    $map: {
-                      input: '$optionArray',
-                      as: 'variationOption',
-                      in: '$$variationOption.v',
-                    },
-                  },
-                },
-              },
-
-              {
-                $group: {
-                  _id: '$_id',
-                  variations: {
-                    $push: '$variations',
-                  },
-                  doc: { $first: '$$ROOT' },
-                  variationList: {
-                    $push: {
-                      title: '$variations.name',
-                      variationIndex: '$variationIndex',
-                      array: '$variationOptionArray',
-                    },
-                  },
-                },
-              },
-              {
-                $replaceRoot: {
-                  newRoot: {
-                    $mergeObjects: [
-                      '$doc',
-                      { variationList: '$variationList' },
-                    ],
-                  },
-                },
-              },
-              {
-                $unset: [
-                  'variationOptionArray',
-                  'variationIndex',
-                  'optionArray',
-                  '_id',
-                ],
-              },
-
-              // ...variationSortAggregate(),
-            ],
-          },
-        },
-        {
-          $addFields: {
-            items: {
-              $mergeObjects: [
-                '$items',
-                { $arrayElemAt: ['$items.productInfo', 0] },
-                {
-                  variation_data: {
-                    select: '$items.variation_data.select',
-                  },
-                },
-              ],
-            },
-          },
-        },
-
-        {
-          $unset: 'items.productInfo',
-        },
-        {
-          $group: {
-            _id: '$_id',
-            items: {
-              $push: '$items',
-            },
-            doc: { $first: '$$ROOT' },
-          },
-        },
-
-        {
-          $replaceRoot: {
-            newRoot: {
-              $mergeObjects: ['$doc', { items: '$items' }],
-            },
-          },
-        },
-      ]);
+         ...cart_wishlist_pipeline,
+        ]
+       
+      );
 
       var document = {
         ...data[0],
         items: variationFormat({ products: data[0].items }),
       };
-      // }
+      
+      // const document = data;
 
       res.send(document);
     }),
@@ -229,7 +93,7 @@ export default function generateModelSchemaRoute(Model, property) {
       );
 
       // res.send(document);
-      return res.redirect(300, `/api/${property}/${id}`)
+      return res.redirect(301, `/api/${route}/${id}`);
     }),
   ];
 
@@ -242,9 +106,6 @@ export default function generateModelSchemaRoute(Model, property) {
         'items.product_id': itemData.product_id,
         'items.variation_data.select': itemData.variation_data?.select,
       });
-
-      console.log({ findIfExist });
-
       if (findIfExist) {
         const document = await Model.findOneAndUpdate(
           {
@@ -260,7 +121,7 @@ export default function generateModelSchemaRoute(Model, property) {
           },
         );
         //
-        return res.redirect(300, `/api/${property}/${id}`);
+        return res.redirect(301, `/api/${route}/${id}`);
       }
 
       const document = await Model.findByIdAndUpdate(
@@ -277,7 +138,7 @@ export default function generateModelSchemaRoute(Model, property) {
       );
 
       // res.send(document);
-      return res.redirect(300, `/api/${property}/${id}`)
+      return res.redirect(301, `/api/${route}/${id}`);
     }),
   ];
 
@@ -298,8 +159,8 @@ export default function generateModelSchemaRoute(Model, property) {
         },
       );
 
-      // res.send(document);
-      return res.redirect(300, `/api/${property}/${id}`)
+      //  res.send(document);
+      return res.redirect(301, `/api/${route}/${id}`);
     }),
   ];
 

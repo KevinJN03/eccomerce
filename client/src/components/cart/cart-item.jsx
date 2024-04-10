@@ -12,6 +12,7 @@ import _, { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 import ShippingSelectOption from './shippingSelectOption';
 import { useWishlistContext } from '../../context/wishlistContext';
+import SaveLaterOverLay from './saveLaterOverlay';
 function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
     const [isRemoving, setIsRemoving] = useState({ saveForLater: false });
     const { dispatch, cart, removeItem, updateItemProperty } = useCart();
@@ -248,121 +249,9 @@ function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
                             </AnimatePresence>
                             {/* <div className="relative flex h-full w-full items-end justify-center"> */}
                             <AnimatePresence>
-                                {[
-                                    {
-                                        left: 40,
-
-                                        fontSize: 1,
-
-                                        bottom: 1,
-                                    },
-                                    {
-                                        left: 42,
-                                        fontSize: 0.8,
-
-                                        bottom: 2.3,
-                                    },
-
-                                    {
-                                        fontSize: 0.6,
-                                        left: 45,
-
-                                        bottom: 1.7,
-                                    },
-                                    {
-                                        left: 45,
-
-                                        fontSize: 0.45,
-
-                                        bottom: 3,
-                                    },
-                                ].map(
-                                    (
-                                        { left, top, fontSize, ml, bottom, mb },
-                                        idx
-                                    ) => {
-                                        const variants = {
-                                            initial: { opacity: 0 },
-                                            animate: {
-                                                opacity: 1,
-                                                transition: {
-                                                    duration: 0.3,
-                                                    delay: 0.2 * (idx + 1),
-                                                },
-                                            },
-                                            exit: {
-                                                opacity: 0,
-                                                transition: {
-                                                    duration: 0.3,
-                                                    delay: (4 - idx) * 0.2,
-                                                },
-                                            },
-                                        };
-                                        return (
-                                            <AnimatePresence>
-                                                {!isRemoving?.showOverlayOpacityOff && (
-                                                    <motion.div
-                                                        style={{
-                                                            // marginBottom: `${mb}rem`
-
-                                                            bottom: `${bottom}rem`,
-                                                            left: `${left}%`,
-                                                        }}
-                                                        className={`absolute`}
-                                                        key={`heart-${
-                                                            idx + 1
-                                                        }-${cartItem._id}`}
-                                                        variants={variants}
-                                                        initial={'initial'}
-                                                        animate={'animate'}
-                                                        exit={'exit'}
-                                                        onAnimationComplete={(
-                                                            e
-                                                        ) => {
-                                                            if (
-                                                                idx == 0 &&
-                                                                e == 'exit'
-                                                            ) {
-                                                                // handleWishlist();
-                                                                // handleRemove();
-                                                                addItem({
-                                                                    itemData:
-                                                                        cartItem,
-                                                                });
-                                                                removeItem({
-                                                                    itemId: cartItem?._id,
-                                                                });
-                                                            }
-                                                            if (
-                                                                idx == 3 &&
-                                                                e == 'animate'
-                                                            ) {
-                                                                setIsRemoving(
-                                                                    (
-                                                                        prevState
-                                                                    ) => ({
-                                                                        ...prevState,
-                                                                        showOverlayOpacityOff: true,
-                                                                        // showOverlay: false,
-                                                                    })
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        <Favorite
-                                                            className="!fill-black/80"
-                                                            sx={{
-                                                                fontSize:
-                                                                    fontSize +
-                                                                    'rem',
-                                                            }}
-                                                        />
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        );
-                                    }
-                                )}
+                                <SaveLaterOverLay
+                                    {...{ cartItem, isRemoving, setIsRemoving }}
+                                />
                             </AnimatePresence>
                         </motion.div>
                     )}
@@ -618,33 +507,6 @@ pb-4
                                                                 }
                                                             ),
                                                         ]?.map((props) => {
-                                                            // const cost =
-                                                            //     parseFloat(
-                                                            //         _.get(
-                                                            //             cartItem,
-                                                            //             'quantity'
-                                                            //         ) == 1
-                                                            //             ? _.get(
-                                                            //                   charges,
-                                                            //                   'one_item'
-                                                            //               )
-                                                            //             : _.get(
-                                                            //                   charges,
-                                                            //                   'one_item'
-                                                            //               ) +
-                                                            //                   _.get(
-                                                            //                       charges,
-                                                            //                       'additional_item'
-                                                            //                   ) *
-                                                            //                       (_.get(
-                                                            //                           cartItem,
-                                                            //                           'quantity'
-                                                            //                       ) -
-                                                            //                           1)
-                                                            //     ).toFixed(
-                                                            //         2
-                                                            //     );
-
                                                             return (
                                                                 <ShippingSelectOption
                                                                     key={`${cartItem?._id}-${props?._id}`}
@@ -656,118 +518,6 @@ pb-4
                                                                         delivery
                                                                     }
                                                                 />
-                                                                //     <option
-                                                                //         selected={
-                                                                //             _.get(
-                                                                //                 cartItem,
-                                                                //                 'shipping_data.id'
-                                                                //             ) ==
-                                                                //             _id
-                                                                //         }
-                                                                //         data-cost={
-                                                                //             cost
-                                                                //         }
-                                                                //         data-id={
-                                                                //             _id
-                                                                //         }
-                                                                //         data-one_item={_.get(
-                                                                //             charges,
-                                                                //             'one_item'
-                                                                //         )}
-                                                                //         data-additional_item={_.get(
-                                                                //             charges,
-                                                                //             'additional_item'
-                                                                //         )}
-                                                                //         data-profile_id={_.get(
-                                                                //             delivery,
-                                                                //             '_id'
-                                                                //         )}
-                                                                //         key={`${cartItem?._id}-delivery-option-${_id}`}
-                                                                //     >
-                                                                //         {
-                                                                //             <>
-                                                                //                 {`£${cost} (${(() => {
-                                                                //                     const timeObj =
-                                                                //                         {
-                                                                //                             start: dayjs().date(),
-                                                                //                             end: 0,
-                                                                //                         };
-
-                                                                //                     const generateValue =
-                                                                //                         ({
-                                                                //                             field,
-                                                                //                         }) => {
-                                                                //                             // adding processing time together with shipping time to calculate estimated delivery time frame.
-                                                                //                             [
-                                                                //                                 _.get(
-                                                                //                                     delivery,
-                                                                //                                     `processing_time`
-                                                                //                                 ),
-                                                                //                                 shipping,
-                                                                //                             ].forEach(
-                                                                //                                 (
-                                                                //                                     prop
-                                                                //                                 ) => {
-                                                                //                                     if (
-                                                                //                                         prop?.type ==
-                                                                //                                         'weeks'
-                                                                //                                     ) {
-                                                                //                                         timeObj[
-                                                                //                                             field
-                                                                //                                         ] +=
-                                                                //                                             _.get(
-                                                                //                                                 prop,
-                                                                //                                                 field
-                                                                //                                             ) *
-                                                                //                                             7;
-                                                                //                                     } else if (
-                                                                //                                         _.get(
-                                                                //                                             prop,
-                                                                //                                             `type`
-                                                                //                                         ) ==
-                                                                //                                         'days'
-                                                                //                                     ) {
-                                                                //                                         timeObj[
-                                                                //                                             field
-                                                                //                                         ] +=
-                                                                //                                             _.get(
-                                                                //                                                 prop,
-                                                                //                                                 field
-                                                                //                                             );
-                                                                //                                     }
-                                                                //                                 }
-                                                                //                             );
-                                                                //                         };
-
-                                                                //                     generateValue(
-                                                                //                         {
-                                                                //                             field: 'end',
-                                                                //                         }
-                                                                //                     );
-                                                                //                     generateValue(
-                                                                //                         {
-                                                                //                             field: 'start',
-                                                                //                         }
-                                                                //                     );
-
-                                                                //                     return dayjs()
-                                                                //                         .add(
-                                                                //                             timeObj.end,
-                                                                //                             'day'
-                                                                //                         )
-                                                                //                         .format(
-                                                                //                             `${timeObj.start}-D MMM`
-                                                                //                         )
-                                                                //                         .toString();
-                                                                //                 })()},
-
-                                                                // ${_.get(
-                                                                //     shipping,
-                                                                //     'service'
-                                                                // )})`}
-                                                                //             </>
-                                                                //         }
-                                                                //     </option>
                                                             );
                                                         })}
                                                     </>

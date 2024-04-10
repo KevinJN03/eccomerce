@@ -10,6 +10,7 @@ import _, { cloneDeep, isEqual } from 'lodash';
 import cartReducer, { getCartFromLocalStorage } from '../hooks/cartReducer';
 import axios from '../api/axios';
 import { useLayoutContext } from './layoutContext';
+import objectId from 'bson-objectid';
 
 export function Cart_Wishlist_Context({ children, property, Context }) {
     const [state, dispatch] = useReducer(cartReducer, {
@@ -28,6 +29,12 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
 
     const abortControllerRef = useRef(new AbortController());
 
+    useEffect(() => {
+        setStateMap(
+            () => new Map(state.items?.map((item) => [item?.product_id, item]))
+        );
+    }, [state?.items]);
+
     const fetchItems = async ({ setLoadState, disableRefresh }) => {
         try {
             if (!disableRefresh) {
@@ -43,10 +50,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
             console.log(data);
             dispatch({ new_items: data.items, type: 'UPDATE' });
             setIsUpdated(() => true);
-            setStateMap(
-                () =>
-                    new Map(data.items?.map((item) => [item?.product_id, item]))
-            );
+
             return data;
         } catch (error) {
             console.error(`error fetching ${property}`, error);
@@ -81,10 +85,11 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         } catch (error) {
             console.error('error while adding item', error);
         } finally {
+            // if (property == 'cart') {
             const timeout = setTimeout(() => {
                 setIsHover(() => ({ on: false, menu: null }));
 
-                debugger;
+                // debugger;
             }, 3000);
             setIsHover(() => ({
                 on: true,
@@ -92,6 +97,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 timeout,
                 addToCart: true,
             }));
+            // }
         }
     };
 
@@ -105,8 +111,6 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 { signal: abortControllerRef.current?.signal }
             );
             dispatch({ new_items: data.items, type: 'UPDATE' });
-
-            // fetchItems({ disableRefresh: true });
         } catch (error) {
             console.error('error while adding item', error);
         }
@@ -125,12 +129,45 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 },
                 { signal: abortControllerRef.current?.signal }
             );
-            // fetchItems({ disableRefresh: true });
 
             dispatch({ new_items: data.items, type: 'UPDATE' });
         } catch (error) {
             console.error('error while updating item property', error);
         }
+    };
+
+    const formatData = ({ product, priceState, variationSelect }) => {
+        const newProduct = cloneDeep(product);
+        const pickedData = _.pick(newProduct, [
+            'variation_data',
+            'images',
+            'title',
+            'delivery',
+            'quantity',
+            'price',
+            'additional_data',
+            'shipping_data',
+            'stock',
+            'status',
+        ]);
+
+
+        if (priceState) {
+            _.set(pickedData, 'price.current', priceState);
+
+            if (variationSelect) {
+                _.set(
+                    pickedData,
+                    ['variation_data', 'select'],
+                    variationSelect
+                );
+            }
+        }
+        _.set(pickedData, 'product_id', product._id);
+        _.set(pickedData, '_id', objectId().toString());
+        _.set(pickedData, 'quantity', 1);
+
+        return pickedData;
     };
 
     const value = {
@@ -151,6 +188,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         setIsUpdated,
         updateItemProperty,
         stateMap,
+        formatData,
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

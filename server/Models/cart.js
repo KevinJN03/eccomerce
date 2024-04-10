@@ -44,7 +44,8 @@ const ItemSchema = new Schema({
     id: Schema.Types.String,
   },
   variation_data: {
-    combineVariation: { type: Schema.Types.Boolean },
+    combineVariation: { type: Schema.Types.Mixed },
+    isVariationCombine: { type: Schema.Types.Boolean },
     variation1_data: variationObj,
     variation2_data: variationObj,
     select: {

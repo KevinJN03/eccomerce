@@ -2,7 +2,7 @@ import _ from "lodash";
 function variationFormat({products}) {
   return Array.from(products).map(({ variationList, ...remainingProps }) => {
     const newProps = _.cloneDeep(remainingProps);
-    for (let i = 0; i < variationList.length; i++) {
+    for (let i = 0; i < variationList?.length; i++) {
       if (i < 2) {
         _.set(
           newProps,

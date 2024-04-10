@@ -12,14 +12,9 @@ function WishListItem(props) {
     console.log('wishlistItemHook render');
     const { variation_data } = props;
 
-    const { wishlist, wishListDispatch, removeItem, addItem } =
-        useWishlistContext();
+    const { removeItem } = useWishlistContext();
     const [isDisabled, setDisable] = useState(true);
     const [remove, setRemove] = useState({ parent: false, child: false });
-
-    const handleDelete = (id) => {
-        wishListDispatch({ type: 'delete', product_id: id });
-    };
 
     const [variation1, setVariation1] = useState(() => {
         if (props?.isVariation1Present && props.variation1.array?.length == 1) {
@@ -36,6 +31,7 @@ function WishListItem(props) {
 
     const [stockState, setStockState] = useState();
     const [stockState2, setStockState2] = useState();
+
     const {
         priceState,
         setPriceState,
@@ -99,6 +95,13 @@ function WishListItem(props) {
         },
     };
 
+    useEffect(() => {
+        if (error?.on) {
+            console.log({ error });
+
+            setRemove(() => ({ parent: false, child: false }));
+        }
+    }, [error]);
     return (
         <AnimatePresence>
             {!remove.parent && (
@@ -110,12 +113,11 @@ function WishListItem(props) {
                     variants={variants.parent}
                     exit={'exit'}
                     onAnimationComplete={(e) => {
-                        console.log('animation  at parent e: ', e, props);
-
                         if (remove.addToCart) {
                             handleAddToCart();
                         }
-                        handleDelete(props._id);
+                        // handleDelete(props._id);
+                        // removeItem({ itemId: props?._id });
                     }}
                 >
                     <AnimatePresence>
@@ -128,7 +130,7 @@ function WishListItem(props) {
                                             parent: true,
                                         }));
 
-                                        removeItem({ itemId: props?._id });
+                                        // removeItem({ itemId: props?._id });
                                         // handleDelete(product._id);
                                     }
                                 }}
@@ -151,7 +153,7 @@ function WishListItem(props) {
                                     />
                                 </div>
                                 <Link
-                                    to={`/product/${props?._id}?wishlistID=this`}
+                                    to={`/product/${props?.product_id}`}
                                     className="img-wrap"
                                 >
                                     <img
@@ -248,8 +250,6 @@ function WishListItem(props) {
                                                                         item,
                                                                         idx
                                                                     ) => {
-
-                                                                        console.log({variationArray})
                                                                         return (
                                                                             // <option
                                                                             //     value={
@@ -340,6 +340,11 @@ function WishListItem(props) {
                                         MOVE TO BAG
                                     </button>
                                 </div>
+                                {error?.on && (
+                                    <div className="border border-red-400 bg-red-100 p-2">
+                                        <p>{error?.msg}</p>
+                                    </div>
+                                )}
                             </motion.section>
                         )}
                     </AnimatePresence>
