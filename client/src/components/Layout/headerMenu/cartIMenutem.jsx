@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import DeleteIcon from '../../../assets/icons/deleteIcon';
 import { useCart } from '../../../context/cartContext';
 import Overlay from '../../cart/overlay';
@@ -9,12 +9,13 @@ import { useLayoutContext } from '../../../context/layoutContext';
 import _ from 'lodash';
 function CartMenuItem({ cartItem, idx, lastIndex }) {
     const { isHover, setIsHover } = useLayoutContext();
-    const { title, cartId, images, price, quantity, variation_data } = cartItem;
+    const { title, _id, images, price, quantity, variation_data } = cartItem;
 
-    const { dispatch, cart } = useCart();
+    const { dispatch, cart, removeItem } = useCart();
     const [isRemoving, setIsRemoving] = useState({});
     const handleRemove = () => {
-        dispatch({ type: 'remove', cartId: cartId });
+        removeItem({ itemId: cartItem._id });
+        // dispatch({ type: 'REMOVE', _id: _id });
     };
 
     const [cartItemVariants, setCartItemVariants] = useState(() =>
@@ -83,7 +84,12 @@ function CartMenuItem({ cartItem, idx, lastIndex }) {
                                 `select.variation${variationNum}.variation`
                             );
                             return (
-                                <> {getVariation && <p>{getVariation}</p>}</>
+                                <Fragment
+                                    key={`${cartItem?._id}-variationSelect-${idx}`}
+                                >
+                                    {' '}
+                                    {getVariation && <p>{getVariation}</p>}
+                                </Fragment>
                             );
                         })}
 

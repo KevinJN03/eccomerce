@@ -1,28 +1,28 @@
 import _, { cloneDeep } from 'lodash';
 export const getCartFromLocalStorage = () => {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
+    return JSON.parse(localStorage.getItem('cart') || '{}');
 };
 
 const cartReducer = (state, action) => {
-    // JSON.parse(cart)
     let isProductInCart = false;
     const { type } = action;
-    const cart = [];
-    const cartFromLS = getCartFromLocalStorage();
-    if (_.isEqual(state, cartFromLS)) {
-        cart.push(...state);
-    } else {
-        cart.push(...cartFromLS);
+    const cart = { ...state, shouldFetch: true };
+
+    if (type == 'UPDATE') {
+        const { new_items } = action;
+
+        const newState = { ...cart, items: new_items, shouldFetch: false };
+        return newState;
     }
 
-    if (type == 'refresh') {
+    if (type == 'REFRESH') {
         return cart;
     }
 
-    if (type == 'add') {
+    if (type == 'ADD') {
         const { product } = action;
 
-        const foundItemInCart = cart.map((item) => {
+        const foundItemInCart = cart.items.map((item) => {
             // need to check with id instead
 
             // item?.variationSelect?.variation1?.variation ==
@@ -31,11 +31,15 @@ const cartReducer = (state, action) => {
             // item?.variationSelect?.variation2?.variation ==
             //     product?.variationSelect?.variation2?.variation
             if (
-                item?.productId == product.productId &&
-                _.get(item, 'variation_data.select.variation1.id') ==
-                    _.get(product, 'variation_data.select.variation1.id') &&
-                _.get(item, 'variation_data.select.variation2.id') ==
-                    _.get(product, 'variation_data.select.variation2.id')
+                _.isEqual(
+                    _.get(item, 'variation_data.select'),
+                    _.get(product, 'variation_data.select')
+                )
+                // item?.product_id == product.product_id &&
+                // _.get(item, 'variation_data.select.variation1.id') ==
+                //     _.get(product, 'variation_data.select.variation1.id') &&
+                // _.get(item, 'variation_data.select.variation2.id') ==
+                //     _.get(product, 'variation_data.select.variation2.id')
             ) {
                 isProductInCart = true;
                 return { ...item, quantity: parseInt(item.quantity) + 1 };
@@ -45,19 +49,22 @@ const cartReducer = (state, action) => {
         });
 
         if (isProductInCart) {
-            return foundItemInCart;
+            return { ...cart, items: foundItemInCart };
         } else {
-            return [action.product, ...cart];
+            return { ...cart, items: [action.product, ...cart.items] };
         }
     }
 
-    if (type == 'remove') {
-        return cart.filter((product) => product.cartId !== action.cartId);
+    if (type == 'REMOVE') {
+        return {
+            ...cart,
+            items: cart.items.filter((product) => product._id !== action._id),
+        };
     }
 
-    if (type == 'edit quantity') {
-        const newCart = cart.map((item) => {
-            if (item.cartId === action.cartId) {
+    if (type == 'EDIT_QUANTITY') {
+        const newCartItem = cart.items.map((item) => {
+            if (item._id === action._id) {
                 const newItem = _.cloneDeep(item);
                 _.set(newItem, 'quantity', action.quantity);
                 const cost = parseFloat(
@@ -77,12 +84,12 @@ const cartReducer = (state, action) => {
             return item;
         });
 
-        return newCart;
+        return { ...cart, items: newCartItem };
     }
 
-    if (type == 'edit variation') {
-        const newCart = cart.map((item) => {
-            if (item.cartId === action.cartId) {
+    if (type == 'EDIT_VARIATION') {
+        const newCartItem = cart.items.map((item) => {
+            if (item._id === action._id) {
                 const newItem = cloneDeep(item);
                 _.set(newItem, 'variation_data.select', action.select);
                 // const newItem = {
@@ -97,27 +104,29 @@ const cartReducer = (state, action) => {
             return item;
         });
 
-        return newCart;
+        return { ...cart, items: newCartItem };
     }
 
-    if (type == 'remove items') {
+    if (type == 'DELETE') {
         const cartIds = action?.cartIds;
-        const newCart = cart.filter((item) => !cartIds.includes(item.cartId));
+        const newCartItem = cart.items.filter(
+            (item) => !cartIds.includes(item._id)
+        );
 
-        return newCart;
+        return { ...cart, items: newCartItem };
     }
 
-    if (type == 'updateDelivery') {
-        const { shipping_data, cartId } = action;
+    if (type == 'UPDATE_DELIVERY') {
+        const { shipping_data, _id } = action;
 
-        const newCart = cart.map((item) => {
-            if (item?.cartId == cartId) {
+        const newCartItem = cart.items.map((item) => {
+            if (item?._id == _id) {
                 return { ...item, shipping_data };
             }
             return item;
         });
 
-        return newCart;
+        return { ...cart, items: newCartItem };
     }
 
     throw new Error(`${type} is not valid, please use either add or remove`);

@@ -1,6 +1,6 @@
 import express from 'express';
+import WishlistModel from '../Models/wishlist.js';
 import generateModelSchemaRoute from '../Controllers/cartController.js';
-import CartModel from '../Models/cart.js';
 
 const router = express.Router();
 const {
@@ -10,11 +10,12 @@ const {
   removeFromDocument,
   addToDocument,
   updateProperty,
-} = generateModelSchemaRoute(CartModel, 'cart');
+} = generateModelSchemaRoute(WishlistModel, 'wishlist');
 router.post('/create', createDocument);
 router.put('/update/:id', updateDocument);
 router.get('/remove', removeFromDocument);
 router.post('/add', addToDocument);
 router.post('/updateProperty', updateProperty);
 router.get('/:id', retrieveDocument);
+
 export default router;

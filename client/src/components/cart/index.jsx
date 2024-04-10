@@ -1,58 +1,22 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import '../../CSS/cart.scss';
-import heart from '../../assets/heart.png';
-import QTY_SIZE_OPTION from './qty-size-options';
 import Cart_Item from './cart-item';
 import Total from './total';
-import { forwardRef } from 'react';
-import { useScroll, motion, useInView, AnimatePresence } from 'framer-motion';
-import { useWindowSize } from '@uidotdev/usehooks';
-
 import { Link } from 'react-router-dom';
-import zIndex from '@mui/material/styles/zIndex';
 import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
 import calculateTotal from '../common/calculateTotal';
-import variants from '../common/framerMotionVariants.jsx';
 import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
-import { v4 as uuidv4 } from 'uuid';
-import useFetchDeliveryOptions from '../../hooks/useFetchDeliveryOption.js';
+import { AnimatePresence, motion } from 'framer-motion';
+
 function Cart({}) {
     const { withOutShipping: subTotal, delivery_cost } = calculateTotal();
-    const [loading, setLoading] = useState(true);
 
-    const {
-        cart,
-        dispatch,
-        cartLoading,
-        setCartLoading,
-        setCartRefresh,
-        cartRefresh,
-    } = useCart();
-
-    const { deliveryMap, loadState } = useFetchDeliveryOptions();
+    const { cart, loading, fetchItems } = useCart();
 
     useEffect(() => {
-        if (loading || cartRefresh || loadState) {
-            setLoading(() => true);
-            setCartRefresh(() => true);
-            dispatch({ type: 'refresh' });
-
-            const timeout = setTimeout(() => {
-
-                
-                if (loadState == false) {
-                    setCartLoading(() => false);
-                    setCartRefresh(() => false);
-                    setLoading(() => false);
-                }
-            }, 1500);
-
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
-    }, [cartRefresh, loadState]);
+        fetchItems({});
+    }, []);
 
     const cartVariants = {
         initial: {
@@ -130,19 +94,14 @@ function Cart({}) {
                                 <AnimatePresence>
                                     {cart.map((item, idx) => {
                                         return (
-                                            
-                                            
-                                                <Cart_Item
-                                                deliveryMap={deliveryMap}
+                                            <Cart_Item
                                                 idx={idx}
                                                 lastIndex={
                                                     idx == cart.length - 1
                                                 }
                                                 cartItem={item}
-                                                key={item.cartId}
+                                                key={item._id}
                                             />
-                                          
-                                           
                                         );
                                     })}
                                 </AnimatePresence>
@@ -156,7 +115,10 @@ function Cart({}) {
                                 </p>
                             </div>
                         </div>
-                        <Total subTotal={subTotal} delivery_cost={delivery_cost} />
+                        <Total
+                            subTotal={subTotal}
+                            delivery_cost={delivery_cost}
+                        />
                     </motion.section>
                 ) : (
                     <Empty_Cart key={'empty-cart'} />

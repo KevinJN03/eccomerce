@@ -1,14 +1,10 @@
-import { Link } from 'react-router-dom';
 import Payment_Methods from './payment_methods';
 import Shipping from './shipping';
-import { forwardRef, useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { useCart } from '../../context/cartContext';
-import calculateTotal from '../common/calculateTotal';
-import fetchDeliveryOptions from '../../hooks/useFetchDeliveryOption';
 
 function Total({ subTotal, delivery_cost }) {
     const [shippingOptions, setShippingOptions] = useState([]);
-    const { deliveryOption } = useCart();
 
     return (
         <section className="white sticky top-3 my-4 h-fit py-5  sm:px-3 md:mr-3 md:px-5 sm+md:flex sm+md:w-full sm+md:justify-center lg:w-96 lg:px-8">
@@ -22,7 +18,7 @@ function Total({ subTotal, delivery_cost }) {
                     </p>
                     <p>£{subTotal}</p>
                 </div>
-                <div id="delivery-container">
+                <div id="delivery-container" className='flex flex-row items-baseline justify-between mb-6'>
                     <p className="text-base font-semibold tracking-wide">
                         Delivery
                     </p>
@@ -32,10 +28,9 @@ function Total({ subTotal, delivery_cost }) {
                             : 'FREE'}
                     </p>
                 </div>
-                <Shipping options={shippingOptions} />
-                <p className="flex justify-center text-sm text-red-800">
+            {/* {    <p className="flex justify-center text-sm text-red-800 ">
                     Yay! You've saved £38.50
-                </p>
+                </p>} */}
                 <a href="/checkout" className="checkout-btn">
                     CHECKOUT
                 </a>

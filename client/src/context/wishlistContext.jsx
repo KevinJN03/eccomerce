@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from '../api/axios';
+import Cart_Wishlist_Context from './cart_wishlist_context';
 
 const getWishlistFromLS = () => {
     return JSON.parse(localStorage.getItem('wishlist') || '[]');
@@ -42,7 +43,7 @@ const reducer = (state, action) => {
             const { price, variationSelect, wishlistId, wishListTimestamp } =
                 currentWishlistItem;
 
-            product.price.current = price?.current || product.price.current;
+            // product.price.current = price?.current || product.price.current;
             return [
                 product._id,
                 { ...product, variationSelect, wishlistId, wishListTimestamp },
@@ -52,15 +53,17 @@ const reducer = (state, action) => {
 
         return productMap;
     }
-    if (action.type == 'add') {
+    if (action.type == 'ADD') {
         const newSet = new Map([
             [
-                action.productId,
+                action.product_id,
                 {
                     wishListTimestamp: dayjs().toISOString(),
                     wishlistId: uuidv4(),
                     ...action.product,
-                    variationSelect: action?.variationSelect || action.product?.variationSelect
+                    variationSelect:
+                        action?.variationSelect ||
+                        action.product?.variationSelect,
                 },
             ],
             ...wishlist,
@@ -69,11 +72,11 @@ const reducer = (state, action) => {
     }
 
     if (action.type == 'updateVariationSelect') {
-        const wishlistItem = { ...wishlist.get(action.productId) };
+        const wishlistItem = { ...wishlist.get(action.product_id) };
 
         wishlistItem.variationSelect = action.variationSelect;
         const newMap = new Map(wishlist);
-        newMap.set(action.productId, wishlistItem);
+        newMap.set(action.product_id, wishlistItem);
 
         return newMap;
     }
@@ -81,59 +84,97 @@ const reducer = (state, action) => {
     if (action.type == 'delete') {
         const newSet = new Map([...wishlist]);
 
-        newSet.delete(action.productId);
+        newSet.delete(action.product_id);
         return newSet;
     }
 };
 export function WishlistContextProvider({ children }) {
-    const [wishlistProducts, setWishlistProduct] = useState([]);
-    const [wishlist, wishListDispatch] = useReducer(
-        reducer,
-        new Map(getWishlistFromLS())
-    );
-    const [wishlistLoading, setWishListLoading] = useState(true);
+    // const [wishlistProducts, setWishlistProduct] = useState([]);
+    // const [wishlist, wishListDispatch] = useReducer(
+    //     reducer,
+    //     new Map(getWishlistFromLS())
+    // );
+    // const [wishlistLoading, setWishListLoading] = useState(true);
 
-    const [wishlistRefresh, setWishlistRefresh] = useState(false);
-    const abortControllerRef = useRef(new AbortController());
-    useEffect(() => {
-        abortControllerRef.current?.abort();
-        abortControllerRef.current = new AbortController();
-        const convertMaptoArray = Array.from(wishlist);
-        localStorage.setItem('wishlist', JSON.stringify(convertMaptoArray));
+    // const [wishlistRefresh, setWishlistRefresh] = useState(false);
+    // const abortControllerRef = useRef(new AbortController());
+    // useEffect(() => {
+    //     abortControllerRef.current?.abort();
+    //     abortControllerRef.current = new AbortController();
+    //     const convertMapToArray = Array.from(wishlist);
+    //     localStorage.setItem('wishlist', JSON.stringify(convertMapToArray));
+    //     console.log('updateWishlist');
 
-        const updateWishlist = async () => {
-            try {
-                await axios.post(
-                    '/user/wishlist/update',
-                    {
-                        wishlist: convertMaptoArray.map(
-                            ([key, value]) => value
-                        ),
-                    },
-                    { signal: abortControllerRef.current?.signal }
-                );
-            } catch (error) {
-                console.error(error);
-            }
-        };
+    //     const wishlistId = localStorage.getItem('wishlist_id');
 
-        updateWishlist();
-    }, [wishlist]);
+    //     const updateWishlist = async () => {
+    //         try {
+    //             if (wishlistId) {
+    //                 var { data } = await axios.put(
+    //                     `/wishlist/update/${wishlistId}`,
 
-    const value = {
-        wishlist,
-        wishListDispatch,
-        wishlistLoading,
-        setWishListLoading,
-        wishlistProducts,
-        setWishlistProduct,
-        wishlistRefresh,
-        setWishlistRefresh,
-        getWishlistFromLS,
-    };
+    //                     {
+    //                         items: wishlist,
+    //                     },
+    //                     {
+    //                         signal: abortControllerRef.current?.signal,
+    //                     }
+    //                 );
+    //             } else {
+    //                 var { data } = await axios.post(
+    //                     `/wishlist/create`,
+    //                     {
+    //                         items: wishlist,
+    //                     },
+
+    //                     {
+    //                         signal: abortControllerRef.current?.signal,
+    //                     }
+    //                 );
+
+    //                 localStorage.setItem('wishlist_id', data._id);
+    //             }
+    //             localStorage.setItem('wishlist_id', data._id);
+
+    //             console.log('wishlist data: ', data);
+    //             // await axios.post(
+    //             //     '/user/wishlist/update',
+    //             //     {
+    //             //         wishlist: convertMapToArray.map(
+    //             //             ([key, value]) => value
+    //             //         ),
+    //             //     },
+    //             //     { signal: abortControllerRef.current?.signal }
+    //             // );
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+
+    //     updateWishlist();
+
+    //     return () => {
+    //         abortControllerRef.current?.abort();
+    //     };
+    // }, [wishlist]);
+
+    // const value = {
+    //     wishlist,
+    //     wishListDispatch,
+    //     wishlistLoading,
+    //     setWishListLoading,
+    //     wishlistProducts,
+    //     setWishlistProduct,
+    //     wishlistRefresh,
+    //     setWishlistRefresh,
+    //     getWishlistFromLS,
+    // };
     return (
-        <WishlistContext.Provider value={value}>
+        <Cart_Wishlist_Context Context={WishlistContext} property={'wishlist'}>
             {children}
-        </WishlistContext.Provider>
+        </Cart_Wishlist_Context>
+        // <WishlistContext.Provider value={value}>
+        //
+        // </WishlistContext.Provider>
     );
 }

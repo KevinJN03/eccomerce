@@ -8,47 +8,47 @@ const useFetchDeliveryOptions = (setState) => {
     const [loadState, setLoadState] = useState(true);
     const abortControllerRef = useRef(new AbortController());
 
-    useEffect(() => {
-        abortControllerRef.current?.abort();
-        abortControllerRef.current = new AbortController();
+    // useEffect(() => {
+    //     abortControllerRef.current?.abort();
+    //     abortControllerRef.current = new AbortController();
 
-        const fetchData = async () => {
-            const deliveryIdSet = new Set();
-            for (const { delivery } of cart) {
-                console.log({ delivery });
+    //     const fetchData = async () => {
+    //         const deliveryIdSet = new Set();
+    //         for (const { delivery } of cart) {
+    //             console.log({ delivery });
 
-                deliveryIdSet.add(delivery);
-            }
-            try {
-                const { data } = await axios.post(
-                    `delivery/many`,
-                    {
-                        ids: Array.from(deliveryIdSet),
-                    },
-                    {
-                        signal: abortControllerRef.current?.signal,
-                    }
-                );
-                const tempDeliveryMap = new Map();
-                for (const element of data) {
-                    tempDeliveryMap.set(element._id, element);
-                }
+    //             deliveryIdSet.add(delivery);
+    //         }
+    //         try {
+    //             const { data } = await axios.post(
+    //                 `delivery/many`,
+    //                 {
+    //                     ids: Array.from(deliveryIdSet),
+    //                 },
+    //                 {
+    //                     signal: abortControllerRef.current?.signal,
+    //                 }
+    //             );
+    //             const tempDeliveryMap = new Map();
+    //             for (const element of data) {
+    //                 tempDeliveryMap.set(element._id, element);
+    //             }
 
-                setDeliveryMap(() => tempDeliveryMap);
-            } catch (error) {
-                console.error('at fetchDeliveryOptions: ', error);
-            } finally {
-                setLoadState(() => false);
-            }
-        };
+    //             setDeliveryMap(() => tempDeliveryMap);
+    //         } catch (error) {
+    //             console.error('at fetchDeliveryOptions: ', error);
+    //         } finally {
+    //             setLoadState(() => false);
+    //         }
+    //     };
 
-        fetchData();
+    //     fetchData();
 
-        return () => {
-            abortControllerRef.current?.abort();
-        };
-    }, []);
+    //     return () => {
+    //         abortControllerRef.current?.abort();
+    //     };
+    // }, []);
 
-    return { deliveryMap, loadState };
+    return { loadState };
 };
 export default useFetchDeliveryOptions;

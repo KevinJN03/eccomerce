@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/cartContext';
-import { v4 as uuidv4 } from 'uuid';
 import { useLayoutContext } from '../context/layoutContext';
 import _, { cloneDeep } from 'lodash';
-function useAddItemToBagHook({ product }) {
-    const { dispatch } = useCart();
+import objectId from 'bson-objectid';
+function useAddItemToBagHook({ product, m }) {
+    const { dispatch, addItem } = useCart();
 
     const [priceState, setPriceState] = useState(null);
     const [variationSelect, setVariationSelection] = useState(
-        product?.variationSelect || {
+        _.get(product, 'variation_data.select') || {
             variation1: { id: null, variation: null },
             variation2: { id: null, variation: null },
         }
@@ -32,16 +32,16 @@ function useAddItemToBagHook({ product }) {
 
         const variationSelectObj = {};
 
-        setVariationSelection((prevState) => ({
-            ...prevState,
-            ...variationSelectObj,
-        }));
+        // setVariationSelection((prevState) => ({
+        //     ...prevState,
+        //     ...variationSelectObj,
+        // }));
 
         [1, 2].forEach((variationNumber) => {
             if (
                 _.get(
                     product,
-                    `variation_data.variaion${variationNumber}_present`
+                    `variation_data.variation${variationNumber}_present`
                 ) &&
                 _.get(
                     product,
@@ -54,7 +54,12 @@ function useAddItemToBagHook({ product }) {
                 );
             }
 
-            if (product?.[`isVariation${variationNumber}Present`]) {
+            if (
+                _.get(
+                    product,
+                    `variation_data.variation${variationNumber}_present`
+                )
+            ) {
                 setVariationSelection((prevState) => ({
                     ...prevState,
                     [`variation${variationNumber}`]: {
@@ -101,30 +106,29 @@ function useAddItemToBagHook({ product }) {
             clearTimeout(isHover.timeout);
         }
 
-        const { alsoLike, detail, reviews, ...rest } = product;
+        const newProduct = cloneDeep(product);
+        const pickedData = _.pick(newProduct, [
+            'variation_data',
+            'images',
+            'title',
+            'delivery',
+            'quantity',
+            'price',
+            'additional_data',
+            'shipping_data',
+            'stock',
+            'status',
+        ]);
+        _.set(pickedData, 'price.current', priceState);
+        _.set(pickedData, ['variation_data', 'select'], variationSelect);
+        _.set(pickedData, 'product_id', product._id);
+        _.set(pickedData, '_id', objectId().toString());
+        _.set(pickedData, 'quantity', 1);
 
-        const newProduct = cloneDeep(rest);
-        newProduct.productId = product._id;
-        // newProduct.id = product._id;
-        newProduct.cartId = uuidv4();
-        newProduct.quantity = 1;
-        _.set(newProduct, 'price.current', priceState);
+        addItem({ itemData: pickedData });
+        // dispatch({ type: 'ADD', product: pickedData });
 
-        _.set(newProduct, ['variation_data', 'select'], variationSelect);
-        //  newProduct.variationSelect = variationSelect;
-        dispatch({ type: 'add', product: newProduct });
-        // console.log({ newProduct });
         setError(() => false);
-
-        const timeout = setTimeout(() => {
-            setIsHover(() => ({ on: false, menu: null }));
-        }, 3000);
-        setIsHover(() => ({
-            on: true,
-            menu: 'cart',
-            timeout,
-            addToCart: true,
-        }));
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {

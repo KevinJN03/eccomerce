@@ -78,7 +78,7 @@ function Order_Success({}) {
                 if (data.order?.status == 'received') {
                     console.log(data.order?.status);
                     dispatch({
-                        type: 'remove items',
+                        type: 'DELETE',
                         cartIds: data.order?.cartIds,
                     });
                 }

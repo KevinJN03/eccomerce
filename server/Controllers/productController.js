@@ -16,6 +16,7 @@ import { Endpoint } from 'aws-sdk';
 import productAggregateStage from '../utils/productAggregateStage.js';
 import mongoose from 'mongoose';
 import deliveryProfile from '../Models/deliveryProfile.js';
+import variationFormat from '../utils/variationFormat.js';
 
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
@@ -139,14 +140,6 @@ export const get_many_product = [
             },
 
             { $limit: 10 },
-
-            // { $limit: 1 },
-            // {
-            //   $project: {
-            //     result: 1,
-            //     gender: 1,
-            //   },
-            // },
           ],
         },
       },
@@ -234,77 +227,53 @@ export const get_many_product = [
       },
     ]);
 
-    const updateProductVariation = Array.from(products).map(
-      ({ variationList, ...remainingProps }) => {
-        const newProps = _.cloneDeep(remainingProps);
-        for (let i = 0; i < variationList.length; i++) {
-          if (i < 2) {
-            _.set(
-              newProps,
-              ['variation_data', `variation${i + 1}_data`],
-              variationList[i],
-            );
+    const updateProductVariation = variationFormat({ products: products });
+    // Array.from(products).map(
+    //   ({ variationList, ...remainingProps }) => {
+    //     const newProps = _.cloneDeep(remainingProps);
+    //     for (let i = 0; i < variationList.length; i++) {
+    //       if (i < 2) {
+    //         _.set(
+    //           newProps,
+    //           ['variation_data', `variation${i + 1}_data`],
+    //           variationList[i],
+    //         );
 
-            _.set(
-              newProps,
-              ['variation_data', `variation${i + 1}_present`],
-              true,
-            );
-          } else {
-            const combineVariation = {};
+    //         _.set(
+    //           newProps,
+    //           ['variation_data', `variation${i + 1}_present`],
+    //           true,
+    //         );
+    //       } else {
+    //         const combineVariation = {};
 
-            variationList[i].array.forEach(
-              ({ variation, variation2, ...newProps }) => {
-                if (!combineVariation.hasOwnProperty(variation)) {
-                  combineVariation[variation] = {};
-                }
+    //         variationList[i].array.forEach(
+    //           ({ variation, variation2, ...newProps }) => {
+    //             if (!combineVariation.hasOwnProperty(variation)) {
+    //               combineVariation[variation] = {};
+    //             }
 
-                // combineVariation[variation][variation2] = newProps;
+    //             // combineVariation[variation][variation2] = newProps;
 
-                _.set(combineVariation, [variation, variation2], newProps)
-              },
-            );
+    //             _.set(combineVariation, [variation, variation2], newProps)
+    //           },
+    //         );
 
-            newProps.combineVariation = combineVariation;
+    //         newProps.combineVariation = combineVariation;
 
-            _.set(
-              newProps,
-              ['variation_data', 'combineVariation'],
-              combineVariation,
-            );
-            _.set(newProps, ['variation_data', 'isVariationCombine'], true);
-          }
-        }
+    //         _.set(
+    //           newProps,
+    //           ['variation_data', 'combineVariation'],
+    //           combineVariation,
+    //         );
+    //         _.set(newProps, ['variation_data', 'isVariationCombine'], true);
+    //       }
+    //     }
 
-        return newProps;
+    //     return newProps;
 
-        // remainingProps[`isVariation1Present`] = false;
-        // remainingProps[`isVariation2Present`] = false;
-        // for (let i = 0; i < variationList.length; i++) {
-        //   if (i < 2) {
-        //     remainingProps[`variation${i + 1}`] = variationList[i];
-        //     remainingProps[`isVariation${i + 1}Present`] = true;
-        //   } else {
-        //     const combineVariation = {};
-
-        //     variationList[i].array.forEach(
-        //       ({ variation, variation2, ...remainingProps }) => {
-        //         if (!combineVariation.hasOwnProperty(variation)) {
-        //           combineVariation[variation] = {};
-        //         }
-
-        //         combineVariation[variation][variation2] = remainingProps;
-        //       },
-        //     );
-
-        //     remainingProps.combineVariation = combineVariation;
-        //     remainingProps[`isVariationCombine`] = true;
-        //   }
-        // }
-
-        // return remainingProps;
-      },
-    );
+    //   },
+    // );
     res.status(200).send({ products: updateProductVariation, success: true });
   }),
 ];

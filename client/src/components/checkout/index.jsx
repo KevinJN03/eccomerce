@@ -58,7 +58,7 @@ function Checkout() {
         addressType: null,
     });
     const [deliveryDate, setDeliveryDate] = useState('');
-    const { cart } = useCart();
+    const { cart, fetchItems } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
     const [isDataSet, setIsDataSet] = useState(false);
@@ -90,19 +90,21 @@ function Checkout() {
     useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
+        // const data = fetchItems();
 
-        if (cart.length == 0) {
-            setCartLoading(() => true);
+        // console.log(data)
+        // if (items.length == 0) {
+        //     setCartLoading(() => true);
 
-            const timeout = setTimeout(() => {
-                // navigate('/home');
+        //     const timeout = setTimeout(() => {
+        //         // navigate('/home');
 
-                window.location = '/home';
-            }, 4000);
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
+        //         window.location = '/home';
+        //     }, 4000);
+        //     return () => {
+        //         clearTimeout(timeout);
+        //     };
+        // }
 
         const fetchData = async () => {
             try {
@@ -212,7 +214,7 @@ function Checkout() {
                 setError,
             }}
         >
-            <section className="checkout-page-wrapper m-0 h-full min-h-screen w-full max-w-[100vw]  p-0 flex justify-center items-center">
+            <section className="checkout-page-wrapper m-0 flex h-full min-h-screen w-full  max-w-[100vw] items-center justify-center p-0">
                 <Elements stripe={stripePromise}>
                     {cartLoading ? (
                         <div className="flex h-full w-full max-w-[400px] flex-col items-center justify-center gap-y-4">
@@ -228,10 +230,8 @@ function Checkout() {
                         !loading && (
                             <section
                                 id="checkout-page"
-                                className="m-0 flex h-full w-full justify-center items-center p-0 flex-col"
+                                className="m-0 flex h-full w-full flex-col items-center justify-center p-0"
                             >
-
-
                                 <section
                                     id="checkout"
                                     variants={variants}
@@ -346,13 +346,12 @@ function Checkout() {
                                 </section>
 
                                 <footer className="mt-5 w-full self-start bg-white  py-6 text-center">
-                    GLAMO Help
-                </footer>
+                                    GLAMO Help
+                                </footer>
                             </section>
                         )
                     )}
                 </Elements>
-              
             </section>
         </CheckOutProvider>
     );

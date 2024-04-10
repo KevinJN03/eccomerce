@@ -13,7 +13,7 @@ function Checkout_Item({
     return (
         <div className={`${className || ''} flex flex-row gap-5`}>
             <Link
-                to={`/product/${data?.productId}`}
+                to={`/product/${data?.product_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
             >

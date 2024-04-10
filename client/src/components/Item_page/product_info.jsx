@@ -8,13 +8,14 @@ import Shipping from './shipping';
 import Similar_Styles from './style_it_with/similar_style';
 import Style_It_With from './style_it_with/style_it_with';
 
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import WishListBtn from '../buttons/wishlistBtn';
 import { useWishlistContext } from '../../context/wishlistContext';
 import useWishListHook from '../../hooks/wishlistHook';
 import useAddItemToBagHook from '../../hooks/addItemToBagHook';
 import { useProductContext } from '../../context/productContext';
 import _ from 'lodash';
+import { useCart } from '../../context/cartContext';
 
 function Product_info({ text, details, images }) {
     const { product, loading } = useProductContext();
@@ -31,7 +32,7 @@ function Product_info({ text, details, images }) {
         setError,
         handleAddToCart,
         handleOnChange,
-    } = useAddItemToBagHook({ product });
+    } = useAddItemToBagHook({ product, });
     const {
         isHoverFavorite,
         setIsHoverFavorite,
@@ -50,7 +51,7 @@ function Product_info({ text, details, images }) {
 
             {[1, 2].map((item, idx) => {
                 return (
-                    <>
+                    <Fragment key={`${product?._id}-productInfo-${idx}`}>
                         {_.get(product, [
                             `variation_data`,
                             `variation1_present`,
@@ -93,7 +94,7 @@ function Product_info({ text, details, images }) {
                                 <div className="skeleton-pulse mb-4 h-full max-h-[48px] w-full"></div>
                             )
                         )}
-                    </>
+                    </Fragment>
                 );
             })}
             {/* {product?.isVariation1Present && !loading ? (
