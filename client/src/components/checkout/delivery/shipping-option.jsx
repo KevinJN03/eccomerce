@@ -22,12 +22,12 @@ function Shipping_Option({ disable, cartByDelivery }) {
                 value: shippingId,
             });
         } catch (error) {
-            console.error('error at Shipping_Option', error)
+            console.error('error at Shipping_Option', error);
         }
     };
     return (
         <section className=" flex flex-col gap-3">
-            {cartByDelivery.map(({ _id, cartItems, info }) => {
+            {cartByDelivery.map(({ _id, cartItems, info, shipping_costs }) => {
                 return (
                     <section
                         className="flex flex-row flex-nowrap border border-2 p-2"
@@ -122,18 +122,6 @@ function Shipping_Option({ disable, cartByDelivery }) {
                                         charges,
                                         _id: shippingId,
                                     }) => {
-                                        let totalCost = 0;
-                                        let totalQuantity = 0;
-
-                                        cartItems.forEach(({ quantity }) => {
-                                            totalQuantity += quantity;
-                                        });
-                                        // calculate total cost
-                                        totalCost = parseFloat(
-                                            charges.one_item +
-                                                (totalQuantity - 1) *
-                                                    charges.additional_item
-                                        ).toFixed(2);
                                         return (
                                             <div className="w-full">
                                                 <div
@@ -165,20 +153,30 @@ function Shipping_Option({ disable, cartByDelivery }) {
                                                                 shipping?.service
                                                             )}
                                                             <span className="pl-2 font-medium">
-                                                                £{totalCost}
+                                                                £
+                                                                {parseFloat(
+                                                                    _.get(
+                                                                        shipping_costs,
+                                                                        [
+                                                                            shippingId,
+                                                                            'cost',
+                                                                        ]
+                                                                    )
+                                                                ).toFixed(2)}
                                                             </span>
                                                         </p>
 
                                                         <p>
                                                             Estimated delivery:{' '}
                                                             <span className="decoration font-medium underline decoration-dashed underline-offset-2	 ">
-                                                                {generateEstimatedTime(
-                                                                    {
-                                                                        delivery:
-                                                                            info,
-                                                                        shipping,
-                                                                    }
-                                                                )}
+                                                                {_.get(
+                                                                    shipping_costs,
+                                                                    [
+                                                                        shippingId,
+                                                                        'estimated_delivery',
+                                                                    ]
+                                                                ) ||
+                                                                    'Delivery times varies'}
                                                             </span>
                                                         </p>
                                                     </div>

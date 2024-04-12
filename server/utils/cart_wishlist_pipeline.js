@@ -360,12 +360,6 @@ const cart_wishlist_pipeline = [
   },
   {
     $addFields: {
-      costArray: {
-        $concatArrays: [
-          '$profileInfo.standard_delivery',
-          '$profileInfo.delivery_upgrades',
-        ],
-      },
       profile_processing_times: {
         start: convertWeeksToDays({
           field: 'start',
@@ -380,130 +374,135 @@ const cart_wishlist_pipeline = [
   },
   {
     $addFields: {
-      // costArrayTotal: {
-      //   $arrayToObject: {
-      //     $map: {
-      //       input: '$costArray',
-      //       // as: 'delivery',
-      //       in: {
-      //         $let: {
-      //           vars: {
-      //             startDate: {
-      //               $dateAdd: {
-      //                 startDate: new Date(),
-      //                 unit: 'day',
-      //                 amount: {
-      //                   $add: [
-      //                     '$profile_processing_times.start',
-      //                     convertWeeksToDays({
-      //                       field: 'start',
-      //                       property: '$$this.shipping',
-      //                     }),
-      //                   ],
-      //                 },
-      //               },
-      //             },
-      //             endDate: {
-      //               $dateAdd: {
-      //                 startDate: new Date(),
-      //                 unit: 'day',
-      //                 amount: {
-      //                   $add: [
-      //                     '$profile_processing_times.end',
-      //                     convertWeeksToDays({
-      //                       field: 'end',
-      //                       property: '$$this.shipping',
-      //                     }),
-      //                   ],
-      //                 },
-      //               },
-      //             },
-      //           },
-      //           in: {
-      //             k: { $toString: '$$this._id' },
-      //             v: {
-      //               _id: '$$this._id',
-      //               startDate: '$$startDate',
-      //               endDate: '$$endDate',
-      //               estimated_delivery: {
-      //                 $cond: {
-      //                   if: {
-      //                     $eq: [
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%b',
-      //                           date: '$$startDate',
-      //                         },
-      //                       },
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%b',
-      //                           date: '$$endDate',
-      //                         },
-      //                       },
-      //                     ],
-      //                   },
-      //                   then: {
-      //                     $concat: [
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%d',
-      //                           date: '$$startDate',
-      //                         },
-      //                       },
-      //                       '-',
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%d',
-      //                           date: '$$endDate',
-      //                         },
-      //                       },
-      //                       ' ',
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%b',
-      //                           date: '$$endDate',
-      //                         },
-      //                       },
-      //                     ],
-      //                   },
-      //                   else: {
-      //                     $concat: [
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%b %d',
-      //                           date: '$$startDate',
-      //                         },
-      //                       },
-      //                       '-',
-      //                       {
-      //                         $dateToString: {
-      //                           format: '%b %d',
-      //                           date: '$$endDate',
-      //                         },
-      //                       },
-      //                     ],
-      //                   },
-      //                 },
-      //               },
-      //               cost: {
-      //                 $add: [
-      //                   '$$this.charges.one_item',
-      //                   {
-      //                     $multiply: [
-      //                       '$$this.charges.additional_item',
-      //                       { $subtract: ['$deliveryCounts', 1] },
-      //                     ],
-      //                   },
-      //                 ],
-      //               },
-      //             },
-      //           },
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
+      costArrayTotal: {
+        $arrayToObject: {
+          $map: {
+            input: {
+              $concatArrays: [
+                '$profileInfo.standard_delivery',
+                '$profileInfo.delivery_upgrades',
+              ],
+            },
+            // as: 'delivery',
+            in: {
+              $let: {
+                vars: {
+                  startDate: {
+                    $dateAdd: {
+                      startDate: new Date(),
+                      unit: 'day',
+                      amount: {
+                        $add: [
+                          '$profile_processing_times.start',
+                          convertWeeksToDays({
+                            field: 'start',
+                            property: '$$this.shipping',
+                          }),
+                        ],
+                      },
+                    },
+                  },
+                  endDate: {
+                    $dateAdd: {
+                      startDate: new Date(),
+                      unit: 'day',
+                      amount: {
+                        $add: [
+                          '$profile_processing_times.end',
+                          convertWeeksToDays({
+                            field: 'end',
+                            property: '$$this.shipping',
+                          }),
+                        ],
+                      },
+                    },
+                  },
+                },
+                in: {
+                  k: { $toString: '$$this._id' },
+                  v: {
+                    _id: '$$this._id',
+                    startDate: '$$startDate',
+                    endDate: '$$endDate',
+                    estimated_delivery: {
+                      $cond: {
+                        if: {
+                          $eq: [
+                            {
+                              $dateToString: {
+                                format: '%b',
+                                date: '$$startDate',
+                              },
+                            },
+                            {
+                              $dateToString: {
+                                format: '%b',
+                                date: '$$endDate',
+                              },
+                            },
+                          ],
+                        },
+                        then: {
+                          $concat: [
+                            {
+                              $dateToString: {
+                                format: '%d',
+                                date: '$$startDate',
+                              },
+                            },
+                            '-',
+                            {
+                              $dateToString: {
+                                format: '%d',
+                                date: '$$endDate',
+                              },
+                            },
+                            ' ',
+                            {
+                              $dateToString: {
+                                format: '%b',
+                                date: '$$endDate',
+                              },
+                            },
+                          ],
+                        },
+                        else: {
+                          $concat: [
+                            {
+                              $dateToString: {
+                                format: '%b %d',
+                                date: '$$startDate',
+                              },
+                            },
+                            '-',
+                            {
+                              $dateToString: {
+                                format: '%b %d',
+                                date: '$$endDate',
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                    cost: {
+                      $add: [
+                        '$$this.charges.one_item',
+                        {
+                          $multiply: [
+                            '$$this.charges.additional_item',
+                            { $subtract: ['$deliveryCounts', 1] },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 
