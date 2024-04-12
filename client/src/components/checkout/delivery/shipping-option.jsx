@@ -4,49 +4,36 @@ import axios from '../../../api/axios';
 
 import dayjs from 'dayjs';
 import { useCheckoutContext } from '../../../context/checkOutContext';
-import _ from 'lodash';
+import _, { property } from 'lodash';
+import generateEstimatedTime from '../../admin/components/product/new product/utils/generateEstimateTime';
 
-function Shipping_Option({ disable }) {
-    const { cart, setDeliveryOption, deliveryOption } = useCart();
-    const { setDeliveryDate } = useCheckoutContext();
-    const [cartByDelivery, setCartByDelivery] = useState([]);
-
-    useEffect(() => {
-        const newMap = new Map();
-
-        cart.forEach((element) => {
-            const deliveryId = element?.deliveryInfo[0]?._id;
-            if (newMap.has(deliveryId)) {
-                const value = newMap.get(deliveryId);
-                const arr = value.array;
-                arr.push(element);
-                newMap.set(deliveryId, { ...value, array: arr });
-            } else {
-                // newMap.set(deliveryId, [element]);
-                newMap.set(deliveryId, {
-                    array: [element],
-                    info: element?.deliveryInfo?.[0],
-                });
-            }
-        });
-
-        setCartByDelivery(() =>
-            Array.from(newMap, ([_id, { array, info }]) => ({
-                _id,
-                cartItems: array,
-                info,
-            }))
-        );
-    }, [cart]);
+function Shipping_Option({ disable, cartByDelivery }) {
+    const { deliverySelect, setDeliverySelect } = useCheckoutContext();
+    const { updateItemProperty, stateProps } = useCart();
+    const handleClick = ({ _id, shippingId }) => {
+        try {
+            setDeliverySelect((prevState) => ({
+                ...prevState,
+                [_id]: shippingId,
+            }));
+            updateItemProperty({
+                isItem: false,
+                property: `delivery_option.${_id}`,
+                value: shippingId,
+            });
+        } catch (error) {
+            console.error('error at Shipping_Option', error)
+        }
+    };
     return (
         <section className=" flex flex-col gap-3">
             {cartByDelivery.map(({ _id, cartItems, info }) => {
                 return (
                     <section
-                        className="flex flex-row flex-nowrap rounded-md border border-2 p-2"
+                        className="flex flex-row flex-nowrap border border-2 p-2"
                         key={_id}
                     >
-                        <div className="flex-1">
+                        <div className="flex-1 pt-8">
                             {cartItems.map(
                                 ({
                                     images,
@@ -120,7 +107,7 @@ function Shipping_Option({ disable }) {
                                 Choose a delivery method
                             </h3>
 
-                            <div className='w-full flex flex-col gap-3 mt-3'>
+                            <div className="mt-3 flex w-full flex-col gap-3">
                                 {[
                                     _.get(info, ['standard_delivery', 0]),
                                     ..._.filter(
@@ -129,21 +116,77 @@ function Shipping_Option({ disable }) {
                                             destination: 'domestic',
                                         }
                                     ),
-                                ].map(({ shipping, charges }) => {
-                                    return (
-                                        <div className='w-full'>
-                                            <div className="flex flex-row flex-nowrap gap-2 justify-start items-center">
-                                                <input
-                                                className='daisy-radio daisy-radio-bordered daisy-radio-sm'
-                                                    type="radio"
-                                                    name={`shipping-service-${_id}`}
-                                                    id={`shipping-service-${_id}`}
-                                                />
-                                                <p className='whitespace-nowrap'>{shipping?.service}</p>
+                                ].map(
+                                    ({
+                                        shipping,
+                                        charges,
+                                        _id: shippingId,
+                                    }) => {
+                                        let totalCost = 0;
+                                        let totalQuantity = 0;
+
+                                        cartItems.forEach(({ quantity }) => {
+                                            totalQuantity += quantity;
+                                        });
+                                        // calculate total cost
+                                        totalCost = parseFloat(
+                                            charges.one_item +
+                                                (totalQuantity - 1) *
+                                                    charges.additional_item
+                                        ).toFixed(2);
+                                        return (
+                                            <div className="w-full">
+                                                <div
+                                                    onClick={() =>
+                                                        handleClick({
+                                                            _id,
+                                                            shippingId,
+                                                        })
+                                                    }
+                                                    className="flex cursor-pointer flex-row flex-nowrap items-center justify-start gap-2"
+                                                >
+                                                    <input
+                                                        readOnly
+                                                        checked={
+                                                            _.get(
+                                                                deliverySelect,
+                                                                [_id]
+                                                            ) == shippingId
+                                                        }
+                                                        className="daisy-radio-bordered daisy-radio daisy-radio-sm"
+                                                        type="radio"
+                                                        name={`shipping-service-${_id}`}
+                                                        id={`shipping-service-${_id}`}
+                                                    />
+
+                                                    <div>
+                                                        <p className="whitespace-nowrap">
+                                                            {_.upperFirst(
+                                                                shipping?.service
+                                                            )}
+                                                            <span className="pl-2 font-medium">
+                                                                £{totalCost}
+                                                            </span>
+                                                        </p>
+
+                                                        <p>
+                                                            Estimated delivery:{' '}
+                                                            <span className="decoration font-medium underline decoration-dashed underline-offset-2	 ">
+                                                                {generateEstimatedTime(
+                                                                    {
+                                                                        delivery:
+                                                                            info,
+                                                                        shipping,
+                                                                    }
+                                                                )}
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    }
+                                )}
                             </div>
                         </div>
                     </section>

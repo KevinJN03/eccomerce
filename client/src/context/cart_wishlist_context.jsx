@@ -27,6 +27,8 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
     const [isUpdated, setIsUpdated] = useState(false);
     const { isHover, setIsHover } = useLayoutContext();
 
+    const [deliveryCost, setDeliveryCost] = useState(0);
+
     const abortControllerRef = useRef(new AbortController());
 
     useEffect(() => {
@@ -48,7 +50,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
             localStorage.setItem(`${property}_id`, data._id);
             console.log(`------ Fetching ${property} ------`);
             console.log(data);
-            dispatch({ new_items: data.items, type: 'UPDATE' });
+            dispatch({ newData: data, type: 'UPDATE' });
             setIsUpdated(() => true);
 
             return data;
@@ -79,8 +81,11 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 `/${property}/add`,
                 { id: _id, itemData },
                 { signal: abortControllerRef.current?.signal }
-            );
-            dispatch({ new_items: data.items, type: 'UPDATE' });
+            );  
+                      localStorage.setItem(`${property}_id`, data._id);
+
+            dispatch({ newData: data, type: 'UPDATE' });
+
             setIsUpdated(() => true);
         } catch (error) {
             console.error('error while adding item', error);
@@ -110,7 +115,9 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 `/${property}/remove?id=${_id}&itemId=${itemId}`,
                 { signal: abortControllerRef.current?.signal }
             );
-            dispatch({ new_items: data.items, type: 'UPDATE' });
+            localStorage.setItem(`${property}_id`, data._id);
+
+            dispatch({ newData: data, type: 'UPDATE' });
         } catch (error) {
             console.error('error while adding item', error);
         }
@@ -129,8 +136,8 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 },
                 { signal: abortControllerRef.current?.signal }
             );
-
-            dispatch({ new_items: data.items, type: 'UPDATE' });
+            localStorage.setItem(`${property}_id`, data._id);
+            dispatch({ newData: data, type: 'UPDATE' });
         } catch (error) {
             console.error('error while updating item property', error);
         }
@@ -150,7 +157,6 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
             'stock',
             'status',
         ]);
-
 
         if (priceState) {
             _.set(pickedData, 'price.current', priceState);
@@ -172,6 +178,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
 
     const value = {
         [property]: state.items,
+        stateProps: state,
         dispatch,
         deliveryOption,
         setDeliveryOption,
@@ -189,6 +196,8 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         updateItemProperty,
         stateMap,
         formatData,
+        deliveryCost,
+        setDeliveryCost,
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

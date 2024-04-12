@@ -70,7 +70,6 @@ function Checkout() {
     const [error, setError] = useState({});
     const [loading, setLoading] = useState(true);
     const [cartLoading, setCartLoading] = useState();
-
     // useEffect(() => {
     //     if (cart.length == 0) {
     //         setCartLoading(() => true);
@@ -191,7 +190,6 @@ function Checkout() {
                 setBillingAddress,
                 defaultAddresses,
                 setDefaultAddresses,
-
                 select,
                 setSelect,
                 disableOtherComponents,

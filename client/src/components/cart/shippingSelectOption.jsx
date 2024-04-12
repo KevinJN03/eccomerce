@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import generateEstimatedTime from '../admin/components/product/new product/utils/generateEstimateTime';
 
 function ShippingSelectOption({
     _id,
@@ -16,34 +17,6 @@ function ShippingSelectOption({
                   _.get(charges, 'additional_item') *
                       (_.get(cartItem, 'quantity') - 1)
     ).toFixed(2);
-
-    const generateTime = () => {
-        const timeObj = {
-            start: dayjs().date(),
-            end: 0,
-        };
-        const generateValue = ({ field }) => {
-            // adding processing time together with shipping time to calculate estimated delivery time frame.
-            [_.get(delivery, `processing_time`), shipping].forEach((prop) => {
-                if (prop?.type == 'weeks') {
-                    timeObj[field] += _.get(prop, field) * 7;
-                } else if (_.get(prop, `type`) == 'days') {
-                    timeObj[field] += _.get(prop, field);
-                }
-            });
-        };
-
-        generateValue({
-            field: 'end',
-        });
-        generateValue({
-            field: 'start',
-        });
-        return dayjs()
-            .add(timeObj.end, 'day')
-            .format(`${timeObj.start}-D MMM`)
-            .toString();
-    };
     return (
         <option
             selected={_.get(cartItem, 'shipping_data.id') == _id}
@@ -57,7 +30,7 @@ function ShippingSelectOption({
             {
                 <>
                     {`£${cost} (
-                        ${generateTime()}
+                        ${generateEstimatedTime({ delivery, shipping })}
                     
                     ,
 

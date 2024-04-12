@@ -1,8 +1,9 @@
-import _ from "lodash";
-function variationFormat({products}) {
+import _ from 'lodash';
+function variationFormat({ products }) {
   return Array.from(products).map(({ variationList, ...remainingProps }) => {
     const newProps = _.cloneDeep(remainingProps);
     for (let i = 0; i < variationList?.length; i++) {
+      console.log({ variationList });
       if (i < 2) {
         _.set(
           newProps,
@@ -41,4 +42,4 @@ function variationFormat({products}) {
   });
 }
 
-export default variationFormat
+export default variationFormat;

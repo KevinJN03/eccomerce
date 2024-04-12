@@ -23,6 +23,7 @@ const ItemSchema = new Schema({
   //   required: true,
   //   default: mongoose.Types.ObjectId,
   // },
+  timestamp: { type: Schema.Types.Date, default: Date.now },
   cart_id: { type: Schema.Types.String },
   product_id: { type: Schema.Types.ObjectId, ref: 'products' },
   images: [],
@@ -75,6 +76,7 @@ const ItemSchema = new Schema({
 });
 export const cartSchema = new Schema({
   timestamp: { type: Schema.Types.Date, default: Date.now },
+  delivery_option: Schema.Types.Mixed,
 
   items: [ItemSchema],
 });

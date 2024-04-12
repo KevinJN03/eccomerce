@@ -9,10 +9,10 @@ const cartReducer = (state, action) => {
     const cart = { ...state, shouldFetch: true };
 
     if (type == 'UPDATE') {
-        const { new_items } = action;
+        const { newData } = action;
 
-        const newState = { ...cart, items: new_items, shouldFetch: false };
-        return newState;
+        // const newState = { ...cart, items: new_items, shouldFetch: false };
+        return newData;
     }
 
     if (type == 'REFRESH') {

@@ -12,6 +12,25 @@ export default function generateModelSchemaRoute(Model, route) {
     // upsert: true,
     lean: { toObject: true },
   };
+
+  const validator = (field = 'body') => {
+    return [
+      check('id').trim().escape().notEmpty(),
+      asyncHandler(async (req, res, next) => {
+        try {
+          const data = await Model.findOne({ _id: req[field].id });
+          req[field].id = data._id;
+          next();
+        } catch (error) {
+          const data = await Model.create({});
+          console.log({ data });
+          req[field].id = data._id;
+
+          next();
+        }
+      }),
+    ];
+  };
   const createDocument = [
     asyncHandler(async (req, res, next) => {
       const document = await Model.create(req.body);
@@ -24,6 +43,7 @@ export default function generateModelSchemaRoute(Model, route) {
   ];
 
   const updateDocument = [
+    ...validator('params'),
     asyncHandler(async (req, res, next) => {
       const { id } = req.params;
 
@@ -38,6 +58,7 @@ export default function generateModelSchemaRoute(Model, route) {
   ];
 
   const retrieveDocument = [
+    ...validator('params'),
     asyncHandler(async (req, res, next) => {
       const { id } = req.params;
 
@@ -58,24 +79,22 @@ export default function generateModelSchemaRoute(Model, route) {
 
       console.log('getting Document from id');
 
-      const data = await Model.aggregate(
-
-        [
-           {
+      const data = await Model.aggregate([
+        {
           $match: {
-            _id: new mongoose.Types.ObjectId(id),
+            _id: id,
           },
         },
-         ...cart_wishlist_pipeline,
-        ]
-       
-      );
+        ...cart_wishlist_pipeline,
+      ]);
+
+      //group the cart item
 
       var document = {
         ...data[0],
         items: variationFormat({ products: data[0].items }),
       };
-      
+
       // const document = data;
 
       res.send(document);
@@ -83,6 +102,7 @@ export default function generateModelSchemaRoute(Model, route) {
   ];
 
   const removeFromDocument = [
+    ...validator('query'),
     asyncHandler(async (req, res, next) => {
       const { id, itemId } = req.query;
 
@@ -98,8 +118,11 @@ export default function generateModelSchemaRoute(Model, route) {
   ];
 
   const addToDocument = [
+    ...validator(),
     asyncHandler(async (req, res, next) => {
       const { id, itemData } = req.body;
+
+      console.log({ id });
 
       const findIfExist = await Model.findOne({
         _id: id,
@@ -143,15 +166,21 @@ export default function generateModelSchemaRoute(Model, route) {
   ];
 
   const updateProperty = [
+    ...validator(),
     asyncHandler(async (req, res, next) => {
       const { id, itemId, property, value } = req.body;
 
+      const obj = {};
+
+      if (itemId) {
+        obj['items._id'] = new mongoose.Types.ObjectId(itemId);
+      }
       const document = await Model.findOneAndUpdate(
         {
-          _id: new mongoose.Types.ObjectId(id),
-          'items._id': new mongoose.Types.ObjectId(itemId),
+          _id: id,
+          ...obj,
         },
-        { [`items.$.${property}`]: value },
+        { [itemId ? `items.$.${property}` : property]: value },
         {
           new: true,
 

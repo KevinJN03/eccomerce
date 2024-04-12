@@ -2,7 +2,7 @@ import { useCart } from '../../context/cartContext';
 import calculatePromo from './calculatePromo';
 import _ from 'lodash';
 const calculateTotal = () => {
-    const { cart, deliveryOption, promo } = useCart();
+    const { cart, deliveryOption, promo, deliveryCost } = useCart();
     const { amount, type } = promo[0];
     let total = 0;
     let savePercent;
@@ -15,13 +15,13 @@ const calculateTotal = () => {
                 total += _.get(item, 'price.current') * _.get(item, 'quantity');
             }
 
-            const itemDeliveryCost = parseFloat(
-                _.get(item, 'shipping_data.cost')
-            );
+            // const itemDeliveryCost = parseFloat(
+            //     _.get(item, 'shipping_data.cost')
+            // );
            // console.log({isNumber: _.isNumber(itemDeliveryCost), itemDeliveryCost})
-            if (_.isNumber(itemDeliveryCost) && itemDeliveryCost) {
-                delivery_cost += itemDeliveryCost;
-            }
+            // if (_.isNumber(itemDeliveryCost) && itemDeliveryCost) {
+            //     delivery_cost += itemDeliveryCost;
+            // }
         }
 
         const withOutShipping = parseFloat(total).toFixed(2);
@@ -37,7 +37,7 @@ const calculateTotal = () => {
             }
         }
         const newTotal = parseFloat(
-            total + (delivery_cost || 0) - amountOff
+            total + (deliveryCost || 0) - amountOff
         ).toFixed(2);
         const withShipping = newTotal;
 
@@ -46,7 +46,7 @@ const calculateTotal = () => {
             withShipping,
             savePercent,
             amountOff,
-            delivery_cost: parseFloat(delivery_cost).toFixed(2)
+            delivery_cost: parseFloat(deliveryCost).toFixed(2)
         };
     } catch (error) {
         console.error('at calculateTotal: ', error);
