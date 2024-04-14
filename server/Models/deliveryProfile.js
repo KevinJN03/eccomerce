@@ -28,12 +28,12 @@ export const timeObj = (property) => {
           const endValue = _.get(this, `${property}.end`);
           //  this.get('processing_time')?.end || this.get('shipping')?.end;
 
-          console.log({
-            startValue,
-            endValue,
-            check: startValue <= endValue,
-            this: this,
-          });
+          // console.log({
+          //   startValue,
+          //   endValue,
+          //   check: startValue <= endValue,
+          //   this: this,
+          // });
 
           return startValue <= endValue;
         },

@@ -46,143 +46,175 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       const orderNumber = paymentIntent.metadata?.orderNumber;
 
       const userId = paymentIntent?.customer;
+      const order = await Order.findById(orderNumber, null, {
+        lean: { toObject: true },
+      });
 
-      const order = await Order.findById(orderNumber);
+      const cartObj = {};
 
-      const cartObj = order?.cartObj;
+      order.items.forEach((item) => {
+        if (_.has(cartObj, item.product)) {
+          cartObj[item.product].push(item);
+        } else {
+          cartObj[item.product] = [item];
+        }
+      });
       const productsArray = Object.keys(cartObj);
+
       const foundProducts = await Product.find({ _id: { $in: productsArray } });
 
-      const reduceStock = await foundProducts.map((productObject) => {
-        const getCartVariationInfoArray = cartObj[productObject.id];
-        getCartVariationInfoArray.map((variationDetail) => {
-          if (productObject?.variations) {
-            if (productObject.variations.length < 3) {
-              const foundObj = { price: null, stock: null };
-              const findOptionsforVariation1 = productObject.variations.find(
-                (item) => item.name === variationDetail.variation1.title,
-              );
-              const findOptionsforVariation2 = productObject.variations.find(
-                (item) => item.name === variationDetail.variation2.title,
-              );
-              let isStockChange = false;
+      foundProducts.forEach((productObject) => {
+        const ItemsArray = cartObj[productObject.id];
 
-              const foundVariations = [
-                findOptionsforVariation1,
-                findOptionsforVariation2,
-              ].map((variation, index) => {
-                if (variation?.options) {
-                  const foundOptionVariation = variation.options.get(
-                    variationDetail[`variation${index + 1}`].id,
-                  );
+        ItemsArray.forEach((variationDetail) => {
+          if (_.get(productObject, 'variations')?.length < 3) {
+            // let isStockChange = false;
+            // if (productObject.variations.length < 3) {
+            // find if a variation has the quantityHeader.on set to true
 
-                  if (foundOptionVariation?.stock) {
-                    variation.options.set(
-                      variationDetail[`variation${index + 1}`].id,
-                      {
-                        ...foundOptionVariation,
-                        stock:
-                          foundOptionVariation.stock -
-                            variationDetail.quantity || 0,
-                      },
-                    );
+            const findQuantityVariation = null;
 
-                    isStockChange = true;
-                  }
-                }
-              });
+            // const findQuantityVariation = productObject.variations.find(
+            //   (variation) => _.get(variation, 'quantityHeader.on') == true,
+            // );
 
-              if (!isStockChange) {
-                productObject.stock =
-                  productObject.stock - variationDetail.quantity || 0;
-              }
-            } else {
-              const findOptionsforVariation =
-                productObject.variations[2].options;
+            for (let i = 0; i < productObject.variations.length; i++) {
+              if (
+                _.get(productObject.variations[i], 'quantityHeader.on') == true
+              ) {
+                findQuantityVariation = {
+                  ...variation[i],
+                  variationIndex: i + 1,
+                };
 
-              if (findOptionsforVariation) {
-                const foundOptionVariation = findOptionsforVariation.get(
-                  variationDetail?.variation2?.id,
-                );
-
-                if (foundOptionVariation) {
-                  productObject.variations[2].options.set(
-                    variationDetail?.variation2?.id,
-                    {
-                      ...foundOptionVariation,
-                      stock:
-                        foundOptionVariation.stock - variationDetail.quantity ||
-                        0,
-                    },
-                  );
-                } else {
-                  console.log('didnt find variation, may have been deleted');
-                }
+                break;
               }
             }
+
+            if (findQuantityVariation) {
+              const variationOptions = findQuantityVariation.options;
+              const foundVariationId = _.get(variationDetail, [
+                `variation${findQuantityVariation.variationIndex}`,
+                id,
+              ]);
+              const foundVariation = variationOptions.get(foundVariationId);
+
+              variationOptions.set(foundVariationId, {
+                ...foundVariation,
+                stock: (foundVariation.stock -= variationDetail.quantity),
+              });
+
+              // isStockChange = true;
+            } else {
+              productObject.stock =
+                productObject.stock - variationDetail.quantity || 0;
+            }
+            //
+
+            // const findOptionsforVariation1 = productObject.variations.find(
+            //   (item) => item.name === variationDetail.variation1.title,
+            // );
+            // const findOptionsforVariation2 = productObject.variations.find(
+            //   (item) => item.name === variationDetail.variation2.title,
+            // );
+            // let isStockChange = false;
+
+            // const foundVariations = [
+            //   findOptionsforVariation1,
+            //   findOptionsforVariation2,
+            // ].map((variation, index) => {
+            //   if (variation?.options) {
+            //     const foundOptionVariation = variation.options.get(
+            //       variationDetail[`variation${index + 1}`].id,
+            //     );
+
+            //     if (foundOptionVariation?.stock) {
+            //       variation.options.set(
+            //         variationDetail[`variation${index + 1}`].id,
+            //         {
+            //           ...foundOptionVariation,
+            //           stock:
+            //             foundOptionVariation.stock - variationDetail.quantity ||
+            //             0,
+            //         },
+            //       );
+
+            //       isStockChange = true;
+            //     }
+            //   }
+            // });
+
+            // }
+          } else if (_.get(productObject, 'variations')?.length >= 3) {
+            const variationCombineOption = productObject.variations[2].options;
+
+            if (variationCombineOption) {
+              const foundOptionVariation = variationCombineOption.get(
+                variationDetail?.variation2?.id,
+              );
+
+              if (foundOptionVariation) {
+                variationCombineOption.set(foundOptionVariation.id, {
+                  ...foundOptionVariation,
+                  stock: (foundOptionVariation.stock -=
+                    variationDetail.quantity),
+                });
+              } else {
+                console.log('didnt find variation, may have been deleted');
+              }
+            }
+          } else {
+            console.log('reach else block');
           }
         });
 
         return productObject.save();
       });
 
-      const result = Promise.all([...reduceStock])
+      // const result = await Promise.all([...reduceStock]);
 
-        .then(async (res) => {
-          // let paymentType = '';
+      const getPaymentMethod = await stripe.paymentMethods.retrieve(
+        paymentIntent?.payment_method,
+      );
 
-          const getPaymentMethod = await stripe.paymentMethods.retrieve(
-            paymentIntent?.payment_method,
-          );
-          /*     if (getPaymentMethod?.type == 'card') {
-            paymentType = getPaymentMethod.card?.brand;
-          } else {
-            paymentType = getPaymentMethod?.type;
-          }
-          console.log({ paymentType }); */
-          const updateOrder = await Order.findOneAndUpdate(
-            { _id: orderNumber },
-            {
-              $unset: { cartObj: '' },
-              $set: {
-                status: 'received',
-                payment_type:
-                  getPaymentMethod?.card?.brand || getPaymentMethod?.type,
-                payment_intent_id: paymentIntent?.id,
-              },
-            },
-            {
-              populate: {
-                path: 'items.product customer',
-              },
-              new: true,
-              lean: { toObject: true },
-            },
-          ).exec();
+      const updateOrder = await Order.findOneAndUpdate(
+        { _id: orderNumber },
+        {
+          $set: {
+            status: 'received',
+            payment_type:
+              getPaymentMethod?.card?.brand || getPaymentMethod?.type,
+            payment_intent_id: paymentIntent?.id,
+          },
+        },
+        {
+          populate: {
+            path: 'items.product customer itemsByProfile.items.product',
+          },
+          new: true,
+          lean: { toObject: true },
+        },
+      ).exec();
 
-          const updateUser = await User.findByIdAndUpdate(
-            userId,
-            {
-              $push: { orders: orderNumber },
-            },
-            {
-              upsert: true,
-              new: true,
-            },
-          );
+      // const updateUser = await User.findByIdAndUpdate(
+      //   userId,
+      //   {
+      //     $push: { orders: orderNumber },
+      //   },
+      //   {
+      //     upsert: true,
+      //     new: true,
+      //   },
+      // );
 
-          const emailHtml = render(<OrderReceived order={updateOrder} />);
+      const emailHtml = render(<OrderReceived order={updateOrder} />);
 
-          const sendEmail = await transporter.sendMail({
-            from: 'kevinjean321@gmail.com',
-            to: updateOrder?.customer?.email,
-            subject: 'Thanks for your order!',
-            html: emailHtml,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      await transporter.sendMail({
+        from: 'kevinjean321@gmail.com',
+        to: updateOrder?.customer?.email,
+        subject: 'Thanks for your order!',
+        html: emailHtml,
+      });
 
       res.status(200).send({ success: true });
       return;

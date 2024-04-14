@@ -63,8 +63,8 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
     shipping,
     payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
   });
-
-  const [itemsObj] = Object.entries(cartInfo.deliveryInfoObj).map(
+  const itemsArray = [];
+  const itemsByProfileArray = Object.entries(cartInfo.deliveryInfoObj).map(
     ([key, value]) => {
       const {
         itemsByProfile,
@@ -110,6 +110,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
         },
       );
 
+      itemsArray.push(...items);
       return {
         items,
         shippingInfo,
@@ -117,7 +118,6 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
     },
   );
 
-  console.log({ itemsObj });
   //   const profile = await DeliveryProfile.findById(deliveryOption?.id, null, {
   //     toObject: true,
   //     new: true,
@@ -138,7 +138,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
       },
       delivery_cost: total?.delivery_cost,
     },
-    itemsByProfile: itemsObj,
+    itemsByProfile: itemsByProfileArray,
     shipping_option: {
       //   cost: total?.delivery_cost,
       //   delivery_date: deliveryDate,
@@ -148,7 +148,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
       //   type: profile?.processingTime?.type,
     },
 
-    items: itemsObj.items,
+    items: itemsArray,
     cartId: cart_id,
   };
 

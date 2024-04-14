@@ -14,8 +14,8 @@ function variationFormat({ products }) {
           // combineVariation[variation][variation2] = {newProps};
 
           _.set(combineVariation, [variation, variation2], {
-            variation,
-            variation2,
+            variation: variation2,
+
             ...newProps,
           });
         },

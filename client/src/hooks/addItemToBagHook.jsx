@@ -5,8 +5,10 @@ import _, { cloneDeep } from 'lodash';
 import objectId from 'bson-objectid';
 function useAddItemToBagHook({ product }) {
     const { dispatch, addItem, formatData } = useCart();
-
-    const [priceState, setPriceState] = useState(null);
+    const { variation_data } = product;
+    const [priceState, setPriceState] = useState(
+        _.get(product, 'price.current')
+    );
     const [variationSelect, setVariationSelection] = useState(
         _.get(product, 'variation_data.select') || {
             variation1: { id: null, variation: null },
@@ -18,15 +20,14 @@ function useAddItemToBagHook({ product }) {
     const [error, setError] = useState({ on: false, msg: '' });
     const { isHover, setIsHover } = useLayoutContext();
     useEffect(() => {
-        // setPriceState(
-        //     _.get(product, 'price.current') ||
-        //         _.get(product, 'additional_data.price.min')
-        // );
+        setPriceState(
+            _.get(product, 'price.current') ||
+                _.get(product, 'additional_data.price.min')
+        );
         setCombineVariation(
             () => _.get(product, 'variation_data.combineVariation') || {}
         );
 
-        debugger
         const variationSelectObj = {};
 
         // setVariationSelection((prevState) => ({
@@ -79,16 +80,19 @@ function useAddItemToBagHook({ product }) {
                 variationSelect?.variation2?.variation,
                 'price',
             ]);
-            debugger;
             setPriceState(() =>
                 parseFloat(
-                    getPrice || product?.additional_data?.price?.min
+                    getPrice ||
+                        _.get(product, 'price.current') ||
+                        product?.additional_data?.price?.min
                 ).toFixed(2)
             );
         }
     }, [variationSelect.variation1, variationSelect.variation2]);
 
     const handleAddToCart = () => {
+
+        console.log({variationSelect})
         if (
             (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||
@@ -106,44 +110,39 @@ function useAddItemToBagHook({ product }) {
             clearTimeout(isHover.timeout);
         }
 
-        // const newProduct = cloneDeep(product);
-        // const pickedData = _.pick(newProduct, [
-        //     'variation_data',
-        //     'images',
-        //     'title',
-        //     'delivery',
-        //     'quantity',
-        //     'price',
-        //     'additional_data',
-        //     'shipping_data',
-        //     'stock',
-        //     'status',
-        // ]);
-        // _.set(pickedData, 'price.current', priceState);
-        // _.set(pickedData, ['variation_data', 'select'], variationSelect);
-        // _.set(pickedData, 'product_id', product._id);
-        // _.set(pickedData, '_id', objectId().toString());
-        // _.set(pickedData, 'quantity', 1);
+ 
 
         addItem({
             itemData: formatData({ product, priceState, variationSelect }),
         });
-        // dispatch({ type: 'ADD', product: pickedData });
 
         setError(() => false);
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {
-        const id = e.target.options[e.target.selectedIndex].dataset?.id;
-        const variation =
-            e.target.options[e.target.selectedIndex].dataset?.variation;
-        const stock = e.target.options[e.target.selectedIndex].dataset?.stock;
-        const price = e.target.options[e.target.selectedIndex].dataset?.price;
-        console.log('variation onchange');
-        setVariationSelection((prevState) => ({
-            ...prevState,
-            [property]: { ...prevState[property], variation, id },
-        }));
+        const { price, stock, id, variation } =
+            e.target.options[e.target.selectedIndex].dataset;
+
+        if (
+            property == 'variation2' &&
+            _.get(variation_data, 'isVariationCombine')
+        ) {
+            const findVariation = _.get(variation_data, [
+                'combineVariation',
+                variationSelect?.variation1?.variation,
+                variation,
+            ]);
+            setVariationSelection((prevState) => ({
+                ...prevState,
+                [property]: { ...prevState[property], ...findVariation },
+            }));
+            debugger;
+        } else {
+            setVariationSelection((prevState) => ({
+                ...prevState,
+                [property]: { ...prevState[property], variation, id },
+            }));
+        }
 
         if (stock == 0 || stock) {
             setStockState(() => stock);
