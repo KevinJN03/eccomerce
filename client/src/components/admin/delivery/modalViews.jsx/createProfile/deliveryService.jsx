@@ -534,10 +534,10 @@ function DeliveryService({
                                         key={`${service._id}-other`}
                                         selected={
                                             service?.shipping?.service ==
-                                            'other'
+                                            'Other Delivery Courier' || service?.shipping?.service == 'other'
                                         }
                                         className=""
-                                        data-service={`other`}
+                                        data-service={`Other Delivery Courier`}
                                         data-type={'days'}
                                     >
                                         Other{' '}

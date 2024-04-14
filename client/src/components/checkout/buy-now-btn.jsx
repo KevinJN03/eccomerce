@@ -12,6 +12,7 @@ import paypal_pp_icon from '../../assets/icons/paypal-pp-logo.svg';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import calculateTotal from '../common/calculateTotal';
+import _ from 'lodash';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
@@ -30,7 +31,7 @@ function Buy_Now_Btn({ disable }) {
     } = useCheckoutContext();
 
     const { user } = useAuth();
-    const { cart, deliveryOption } = useCart();
+    const { cart, deliveryOption, total, promo, stateProps } = useCart();
 
     const { delivery_cost } = calculateTotal();
     const stripe = useStripe();
@@ -63,9 +64,10 @@ function Buy_Now_Btn({ disable }) {
                 phone: shippingAddress?.mobile,
             },
             cart,
-            delivery_cost,
-            deliveryOption,
-            deliveryDate,
+            total,
+            promo: _.get(promo, 0),
+            cart_id: localStorage.getItem('cart_id'),
+            cartInfo: stateProps,
         });
 
         return data;

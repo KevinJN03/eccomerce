@@ -14,6 +14,7 @@ import mongoose from 'mongoose';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import PrivateNote from '../Models/privateNote.js';
+import generatePaymentIntent from '../utils/generatePaymentIntent.js';
 
 dayjs(customParseFormat);
 const stripe = Stripe(process.env.STRIPE_KEY);
@@ -23,185 +24,191 @@ export const createPaymentIntent = [
   // check('shipping').escape(),
   // check('billing').escape(),
   checkAuthenticated,
-  asyncHandler(async (req, res, next) => {
-    const userId = req.session.passport.user;
-    const {
-      cart,
-      shipping,
-      deliveryOption,
-      billing,
-      deliveryDate,
-      delivery_cost,
-    } = req.body;
-    // make a map with all the cart item products
-    //
-    let cartPrice = 0;
-    const cartMap = new Map();
-    const cartObj = {};
-    const itemsArray = [];
-    const cartIds = [];
-    cart.map(
-      ({
-        id,
-        variationSelect,
-        quantity,
-        isVariation1Present,
-        isVariation2Present,
-        isVariationCombine,
-        cartId,
-        price,
-      }) => {
-        const obj = {
-          id,
-          ...variationSelect,
+  generatePaymentIntent,
+  // asyncHandler(async (req, res, next) => {
+  //   const userId = req.session.passport.user;
+  //   const {
+  //     cart,
+  //     shipping,
+  //     deliveryOption,
+  //     billing,
+  //     deliveryDate,
+  //     delivery_cost,
+  //   } = req.body;
+  //   // make a map with all the cart item products
+  //   //
+  //   let cartPrice = 0;
+  //   const cartMap = new Map();
+  //   const cartObj = {};
+  //   const itemsArray = [];
+  //   const cartIds = [];
 
-          quantity,
-          isVariation1Present,
-          isVariation2Present,
-          isVariationCombine,
-          price: price?.current,
-        };
-        itemsArray.push({ ...obj, product: id });
-        cartIds.push(cartId);
-        if (!cartMap.has(id)) {
-          obj.cartId = cartId;
-          const array = [obj];
+  //   console.log({ body: req.body });
+  //   cart.map(
+  //     ({
+  //       id,
+  //       variationSelect,
+  //       quantity,
+  //       isVariation1Present,
+  //       isVariation2Present,
+  //       isVariationCombine,
+  //       variation_data,
+  //       product_id,
+  //       _id,
+  //       price,
+  //       ...rest
+  //     }) => {
+  //       const obj = {
+  //         id: product_id,
+  //         ...variationSelect,
 
-          cartObj[id] = array;
-          cartMap.set(id, array);
-        } else {
-          obj.cartId = cartId;
-          const getArray = cartMap.get(id);
+  //         quantity,
+  //         isVariation1Present: _.get(variation_data, 'variation1_present') || false,
+  //         isVariation2Present: _.get(variation_data, 'variation2_present') || false,
+  //         isVariationCombine :  _.get(variation_data, 'isVariationCombine') || false,
+  //         price: price?.current,
+  //       };
+  //       itemsArray.push({ ...obj, product: id });
+  //       cartIds.push(_id);
+  //       if (!cartMap.has(_id)) {
+  //         obj._id = _id;
+  //         const array = [obj];
 
-          getArray.push(obj);
-          cartMap.set(getArray);
-        }
-      },
-    );
+  //         cartObj[id] = array;
+  //         cartMap.set(id, array);
+  //       } else {
+  //         obj._id = _id;
+  //         const getArray = cartMap.get(id);
 
-    const productsArray = Object.keys(cartObj);
+  //         getArray.push(obj);
+  //         cartMap.set(getArray);
+  //       }
+  //     },
+  //   );
 
-    const getAllCartProducts = await Product.find({
-      _id: { $in: productsArray },
-    });
+  //   const productsArray = Object.keys(cartObj);
 
-    const getResult = getAllCartProducts.map((product) => {
-      const getVariationSelectArray = cartObj[product.id];
+  //   const getAllCartProducts = await Product.find({
+  //     _id: { $in: productsArray },
+  //   });
 
-      getVariationSelectArray.map((variationDetail) => {
-        if (product?.variations) {
-          if (product.variations.length < 3) {
-            const foundObj = { price: null, stock: null };
-            const findOptionsforVariation1 = product.variations.find(
-              (item) => item.name === variationDetail.variation1.title,
-            );
-            const findOptionsforVariation2 = product.variations.find(
-              (item) => item.name === variationDetail.variation2.title,
-            );
+  //   const getResult = getAllCartProducts.map((product) => {
+  //     const getVariationSelectArray = cartObj[product.id];
 
-            const findPrice_StockArray = [
-              findOptionsforVariation1,
-              findOptionsforVariation2,
-            ].map((variation, index) => {
-              if (variation?.options) {
-                const foundOptionVariation = variation.options.get(
-                  variationDetail[`variation${index + 1}`].id,
-                );
+  //     getVariationSelectArray.map((variationDetail) => {
+  //       if (product?.variations) {
+  //         if (product.variations.length < 3) {
+  //           const foundObj = { price: null, stock: null };
+  //           const findOptionsforVariation1 = product.variations.find(
+  //             (item) => item.name === variationDetail.variation1.title,
+  //           );
+  //           const findOptionsforVariation2 = product.variations.find(
+  //             (item) => item.name === variationDetail.variation2.title,
+  //           );
 
-                if (_.has(foundOptionVariation, 'price')) {
-                  foundObj.price = foundOptionVariation.price;
-                }
+  //           const findPrice_StockArray = [
+  //             findOptionsforVariation1,
+  //             findOptionsforVariation2,
+  //           ].map((variation, index) => {
+  //             if (variation?.options) {
+  //               const foundOptionVariation = variation.options.get(
+  //                 variationDetail[`variation${index + 1}`].id,
+  //               );
 
-                if (_.has(foundOptionVariation, 'stock')) {
-                  foundObj.stock = foundOptionVariation.stock;
-                }
-              }
-            });
+  //               if (_.has(foundOptionVariation, 'price')) {
+  //                 foundObj.price = foundOptionVariation.price;
+  //               }
 
-            if (foundObj.price) {
-              cartPrice += foundObj.price * variationDetail?.quantity;
-            } else {
-              cartPrice += product?.price?.current * variationDetail.quantity;
-            }
-          } else {
-            const findOptionsforVariation = product.variations[2].options;
+  //               if (_.has(foundOptionVariation, 'stock')) {
+  //                 foundObj.stock = foundOptionVariation.stock;
+  //               }
+  //             }
+  //           });
 
-            if (findOptionsforVariation) {
-              const foundOptionVariation = findOptionsforVariation.get(
-                variationDetail?.variation2?.id,
-              );
+  //           if (foundObj.price) {
+  //             cartPrice += foundObj.price * variationDetail?.quantity;
+  //           } else {
+  //             cartPrice += product?.price?.current * variationDetail.quantity;
+  //           }
+  //         } else {
+  //           const findOptionsforVariation = product.variations[2].options;
 
-              if (foundOptionVariation) {
-                cartPrice +=
-                  foundOptionVariation?.price * variationDetail?.quantity;
-              } else {
-              }
-            }
-          }
-        }
-      });
-    });
-    let subTotal = cartPrice;
-    cartPrice += delivery_cost || 0;
+  //           if (findOptionsforVariation) {
+  //             const foundOptionVariation = findOptionsforVariation.get(
+  //               variationDetail?.variation2?.id,
+  //             );
 
-    let parseCartPrice = parseFloat(cartPrice).toFixed(2);
-    const calculatePrice = parseInt(parseCartPrice.replace('.', ''));
+  //             if (foundOptionVariation) {
+  //               cartPrice +=
+  //                 foundOptionVariation?.price * variationDetail?.quantity;
+  //             } else {
+  //             }
+  //           }
+  //         }
+  //       }
+  //     });
+  //   });
+  //   let subTotal = cartPrice;
+  //   cartPrice += delivery_cost || 0;
 
-    /* use off_session inorder to allow klarna payment */
-    const orderNumber = generateOrderNumber();
+  //   let parseCartPrice = parseFloat(cartPrice).toFixed(2);
+  //   const calculatePrice = parseInt(parseCartPrice.replace('.', ''));
 
-    console.log({ calculatePrice });
-    const paymentIntent = await stripe.paymentIntents.create({
-      metadata: {
-        orderNumber,
-      },
-      amount: calculatePrice,
-      currency: 'gbp',
-      customer: userId,
-      // setup_future_usage: 'off_session',
-      shipping,
-      payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
-    });
+  //   /* use off_session inorder to allow klarna payment */
+  //   const orderNumber = generateOrderNumber();
 
-    console.log({ orderNumber });
+  //   console.log({ calculatePrice });
+  //   const paymentIntent = await stripe.paymentIntents.create({
+  //     metadata: {
+  //       orderNumber,
+  //     },
+  //     amount: calculatePrice,
+  //     currency: 'gbp',
+  //     customer: userId,
+  //     // setup_future_usage: 'off_session',
+  //     shipping,
+  //     payment_method_types: ['card', 'paypal', 'klarna', 'afterpay_clearpay'],
+  //   });
 
-    const profile = await DeliveryProfile.findById(deliveryOption?.id, null, {
-      toObject: true,
-      new: true,
-    });
-    const orderObj = {
-      _id: orderNumber,
-      customer: userId,
-      status: 'processing',
-      shipping_address: shipping,
-      billing_address: billing,
-      transaction_cost: {
-        total: parseCartPrice,
-        subtotal: parseFloat(subTotal).toFixed(2),
-      },
-      shipping_option: {
-        cost: delivery_cost,
-        delivery_date: deliveryDate,
-        name: deliveryOption?.name,
-        id: deliveryOption?.id,
-        time: profile?.processingTime?.end,
-        type: profile?.processingTime?.type,
-      },
+  //   console.log({ orderNumber });
 
-      items: itemsArray,
-      cartObj,
-      cartIds,
-    };
+  //   const profile = await DeliveryProfile.findById(deliveryOption?.id, null, {
+  //     toObject: true,
+  //     new: true,
+  //   });
+  //   const orderObj = {
+  //     _id: orderNumber,
+  //     customer: userId,
+  //     status: 'processing',
+  //     shipping_address: shipping,
+  //     billing_address: billing,
+  //     transaction_cost: {
+  //       total: parseCartPrice,
+  //       subtotal: parseFloat(subTotal).toFixed(2),
+  //     },
+  //     shipping_option: {
+  //       cost: delivery_cost,
+  //       delivery_date: deliveryDate,
+  //       name: deliveryOption?.name,
+  //       id: deliveryOption?.id,
+  //       time: profile?.processingTime?.end,
+  //       type: profile?.processingTime?.type,
+  //     },
 
-    const order = await Order.create(orderObj);
-    // console.log({ order });
-    res.status(200).send({
-      success: true,
-      clientSecret: paymentIntent.client_secret,
-      orderNumber: orderNumber,
-      id: paymentIntent.id,
-    });
-  }),
+  //     items: itemsArray,
+  //     cartObj,
+  //     cartIds,
+  //   };
+
+  //   const order = await Order.create(orderObj);
+  //   // console.log({ order });
+  //   // res.status(200).send({
+  //   //   success: true,
+  //   //   clientSecret: paymentIntent.client_secret,
+  //   //   orderNumber: orderNumber,
+  //   //   id: paymentIntent.id,
+  //   // });
+  // }),
 ];
 
 export const getOrderDetails = [

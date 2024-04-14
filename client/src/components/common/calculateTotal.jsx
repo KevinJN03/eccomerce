@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
-import calculatePromo from './calculatePromo';
 import _ from 'lodash';
+import calculatePromo from '../utils/calculatePromo';
 function calculateTotal() {
-    const { cart, deliveryOption, promo, deliveryCost, stateProps } = useCart();
-    const { amount, type } = promo[0];
+    const {
+        cart,
+        deliveryOption,
+        promo,
+        deliveryCost,
+        stateProps,
+        total,
+        setTotal,
+    } = useCart();
 
     const [values, setValues] = useState({
         withOutShipping: 0,
@@ -32,8 +39,6 @@ function calculateTotal() {
                         stateProps?.delivery_option?.[key],
                         'cost',
                     ]) || 0;
-                    debugger;
-
             }
             for (let item of cart) {
                 if (_.get(item, 'price.current')) {
@@ -52,35 +57,34 @@ function calculateTotal() {
 
             const withOutShipping = parseFloat(total).toFixed(2);
 
-            if (type === 'fixed') {
-                const newAmount = parseFloat(amount).toFixed(2);
-                savePercent = Math.ceil((newAmount * 100) / withOutShipping);
+            if (promo?.length >= 1) {
+                // const { amount, type } = promo[0];
 
-                if (amount > withOutShipping) {
-                    amountOff = withOutShipping;
-                } else {
-                    amountOff = parseFloat(amount).toFixed(2);
-                }
+                const result = calculatePromo(promo[0], withOutShipping);
+
+                savePercent = result.savePercent;
+                amountOff = result.amountOff;
             }
             const newTotal = parseFloat(
                 total + (delivery_cost || 0) - amountOff
             ).toFixed(2);
             const withShipping = newTotal;
-
-            setValues(() => ({
+            const valueObj = {
                 withOutShipping,
                 withShipping,
                 savePercent,
                 amountOff,
                 delivery_cost: parseFloat(delivery_cost).toFixed(2),
-            }));
-            // return {
+            };
+            setValues(() => valueObj);
+
+            setTotal(() => valueObj); // return {
 
             // };
         } catch (error) {
             console.error('at calculateTotal: ', error);
         }
-    }, [cart]);
+    }, [cart, promo]);
 
     return { ...values };
 }

@@ -1,18 +1,19 @@
 import { model, Schema } from 'mongoose';
 
+const variationOptionSchema = new Schema({
+  stock: { type: Schema.Types.Number },
+  price: { type: Schema.Types.Number },
+  variation: { type: Schema.Types.String },
+  variation2: { type: Schema.Types.String },
+  visible: { type: Schema.Types.Boolean },
+  id: { type: Schema.Types.String },
+});
 const variationSchema = new Schema(
   {
     name: { type: String },
     options: {
       type: Schema.Types.Map,
-      of: new Schema({
-        stock: { type: Schema.Types.Number },
-        price: { type: Schema.Types.Number },
-        variation: { type: Schema.Types.String },
-        variation2: { type: Schema.Types.String },
-        visible: { type: Schema.Types.Boolean },
-        id: { type: Schema.Types.String },
-      }),
+      of: variationOptionSchema,
     },
     default: Boolean,
     quantityHeader: Object,
@@ -86,5 +87,6 @@ export const productSchema = new Schema(
 );
 
 productSchema.virtual('id');
+
 
 export default model('product', productSchema);

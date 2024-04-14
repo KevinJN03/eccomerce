@@ -77,7 +77,8 @@ const ItemSchema = new Schema({
 export const cartSchema = new Schema({
   timestamp: { type: Schema.Types.Date, default: Date.now },
   delivery_option: Schema.Types.Mixed,
-
+  coupon: { type: Schema.Types.ObjectId, ref: 'coupon' },
+  giftCard: { type: Schema.Types.ObjectId, ref: 'giftCard' },
   items: [ItemSchema],
 });
 

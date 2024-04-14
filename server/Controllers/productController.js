@@ -143,29 +143,30 @@ export const get_many_product = [
           ],
         },
       },
-      {
-        $addFields: {
-          'variation_data.combineVariation': {
-            $cond: {
-              if: { $gte: [{ $size: '$variations' }, 2] },
-              // then: {
-              //   $map: {
-              //     input: { $arrayElemAt: ['$variations', 2] },
-              //     as: 'variation',
-              //     in: '$$variation.option'
-              //   },
-              // },
 
-              then: {
-                $objectToArray: {
-                  $arrayElemAt: ['$variations.options', 2],
-                },
-              },
-              else: false,
-            },
-          },
-        },
-      },
+      // {
+      //   $addFields: {
+      //     'variation_data.combineVariation': {
+      //       $cond: {
+      //         if: { $gte: [{ $size: '$variations' }, 2] },
+      //         // then: {
+      //         //   $map: {
+      //         //     input: { $arrayElemAt: ['$variations', 2] },
+      //         //     as: 'variation',
+      //         //     in: '$$variation.option'
+      //         //   },
+      //         // },
+
+      //         then: {
+      //           $objectToArray: {
+      //             $arrayElemAt: ['$variations.options', 2],
+      //           },
+      //         },
+      //         else: false,
+      //       },
+      //     },
+      //   },
+      // },
 
       {
         $unwind: {
@@ -214,6 +215,124 @@ export const get_many_product = [
           },
         },
       },
+
+      {
+        $addFields: {
+          variation_data: {
+            // $arrayToObject: {
+            $reduce: {
+              input: '$variationList',
+              initialValue: '$variation_data',
+              in: {
+                $cond: {
+                  if: {
+                    $lt: ['$$this.variationIndex', 2],
+                  },
+
+                  then: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_present',
+                                ],
+                              },
+                              v: true,
+                            },
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_data',
+                                ],
+                              },
+                              v: '$$this',
+                            },
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+
+                  else: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [
+                            { k: 'isVariationCombine', v: true },
+                            // {
+                            //   k: 'testcombineVariation',
+                            //   v: {
+                            //     $reduce: {
+                            //       input: '$$this.array',
+                            //       initialValue: { Magenta: [{ tester: true }] },
+                            //       in: {
+                            //         $mergeObjects: [
+                            //           '$$value',
+                            //           {
+                            //             $arrayToObject: [
+                            //               [
+                            //                 {
+                            //                   k: '$$this.variation',
+                            //                   v: {
+                            //                     $mergeObjects: [
+                                                  
+                            //                       // {
+                            //                       //   $getField: {
+                            //                       //     input: '$$value',
+                            //                       //     field: '$this.variation',
+                            //                       //   },
+                            //                       // },
+
+                            //                       {
+                            //                         $arrayToObject: [
+                            //                           [
+                            //                             {
+                            //                               k: '$$this.variation2',
+                            //                               v: '$$this',
+                            //                             },
+                            //                           ],
+                            //                         ],
+                            //                       },
+                            //                     ],
+                            //                   },
+                            //                 },
+                            //               ],
+                            //             ],
+                            //           },
+                            //         ],
+                            //       },
+                            //     },
+                            //   },
+                            // },
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            // },
+          },
+        },
+      },
       {
         $unset: ['variationOptionArray', 'variationIndex', 'optionArray'],
       },
@@ -228,53 +347,8 @@ export const get_many_product = [
     ]);
 
     const updateProductVariation = variationFormat({ products: products });
-    // Array.from(products).map(
-    //   ({ variationList, ...remainingProps }) => {
-    //     const newProps = _.cloneDeep(remainingProps);
-    //     for (let i = 0; i < variationList.length; i++) {
-    //       if (i < 2) {
-    //         _.set(
-    //           newProps,
-    //           ['variation_data', `variation${i + 1}_data`],
-    //           variationList[i],
-    //         );
 
-    //         _.set(
-    //           newProps,
-    //           ['variation_data', `variation${i + 1}_present`],
-    //           true,
-    //         );
-    //       } else {
-    //         const combineVariation = {};
-
-    //         variationList[i].array.forEach(
-    //           ({ variation, variation2, ...newProps }) => {
-    //             if (!combineVariation.hasOwnProperty(variation)) {
-    //               combineVariation[variation] = {};
-    //             }
-
-    //             // combineVariation[variation][variation2] = newProps;
-
-    //             _.set(combineVariation, [variation, variation2], newProps)
-    //           },
-    //         );
-
-    //         newProps.combineVariation = combineVariation;
-
-    //         _.set(
-    //           newProps,
-    //           ['variation_data', 'combineVariation'],
-    //           combineVariation,
-    //         );
-    //         _.set(newProps, ['variation_data', 'isVariationCombine'], true);
-    //       }
-    //     }
-
-    //     return newProps;
-
-    //   },
-    // );
-    res.status(200).send({ products: updateProductVariation, success: true });
+    res.status(200).send({ products: products, success: true });
   }),
 ];
 export const get_single_product = asyncHandler(async (req, res, next) => {

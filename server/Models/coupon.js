@@ -12,8 +12,12 @@ const couponSchema = new Schema({
     max: [16, 'the coupon/gift card must be between 6 and 16 character'],
   },
   expires: { type: Schema.Types.Date, default: tomorrowDate },
-  amount: Schema.Types.Mixed,
-  type: { type: Schema.Types.String, default: 'fixed' },
+  amount: { type: Schema.Types.Number, min: [5, 'amount must be at least 5'] },
+  type: {
+    type: Schema.Types.String,
+    enum: ['fixed', 'percentage'],
+    default: 'fixed',
+  },
   total_use: { type: Schema.Types.Number, default: 5 },
 });
 

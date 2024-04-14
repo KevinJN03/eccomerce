@@ -1,4 +1,4 @@
-import QTY_SIZE_OPTION from './qty-size-options';
+import Variation2Options from './variation2Options';
 import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { CloseRounded, Favorite, FavoriteBorder } from '@mui/icons-material';
 import Overlay from './overlay';
 import getCartItemVariants from './cartItemVariants';
 import useWishListHook from '../../hooks/wishlistHook';
-import _, { cloneDeep } from 'lodash';
+import _, { cloneDeep, property, values } from 'lodash';
 import dayjs from 'dayjs';
 import ShippingSelectOption from './shippingSelectOption';
 import { useWishlistContext } from '../../context/wishlistContext';
@@ -30,93 +30,101 @@ function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
     const [favorite, setFavorite] = useState(false);
     const delivery = _.get(cartItem, ['deliveryInfo', 0]);
 
-    const handleSizeChange = (e) => {
-        const { id } =
+    const handleVariationChange = (e) => {
+        const { ...values } =
             e.target.options[e.target.options.selectedIndex]?.dataset;
 
-        let variationIndex = null;
-        if (!_.get(cartItem, 'variation_data', 'isVariationCombine')) {
-            const findSizeVariation = [
-                _.get(cartItem, 'variation_data', 'variation1_data'),
-                _.get(cartItem, 'variation_data', 'variation2_data'),
-                //  cartItem?.variation1,
 
-                //  cartItem?.variation2,
-            ].find((item, idx) => {
-                if (item.title == 'Size') {
-                    variationIndex = idx + 1;
-                    return item;
-                }
-            });
+        updateItemProperty({
+            itemId: cartItem._id,
+            property: 'variation_data.select.variation2',
+            value: values,
+        });
 
-            if (findSizeVariation?.array) {
-                const foundVariation = findSizeVariation.array.find(
-                    (item) => item.id == id
-                );
+        
 
-                if (foundVariation) {
-                    const updatedVariationSelect = cloneDeep(
-                        _.get(cartItem, 'variation_data.select')
-                    );
-                    _.set(
-                        updatedVariationSelect,
-                        [`variation${variationIndex}`],
-                        { ...foundVariation }
-                    );
+        // if (!_.get(cartItem, 'variation_data', 'isVariationCombine')) {
+        //     const findSizeVariation = [
+        //         _.get(cartItem, 'variation_data', 'variation1_data'),
+        //         _.get(cartItem, 'variation_data', 'variation2_data'),
+        //         //  cartItem?.variation1,
 
-                    // {
-                    //     [`variation${variationIndex}`]: {
-                    //         ...cartItem.variationSelect?.[
-                    //             `variation${variationIndex}`
-                    //         ],
-                    //         ...foundVariation,
-                    //     },
-                    // };
+        //         //  cartItem?.variation2,
+        //     ].find((item, idx) => {
+        //         if (item.title == 'Size') {
+        //             variationIndex = idx + 1;
+        //             return item;
+        //         }
+        //     });
 
-                    dispatch({
-                        type: 'EDIT_VARIATION',
-                        _id: cartItem?._id,
-                        select: updatedVariationSelect,
-                    });
-                }
-            }
-        } else {
-            const selectedVariation1 = _.get(
-                cartItem,
-                'variation_data.select.variation1.variation'
-            );
-            const findVariation = _.get(
-                cartItem,
-                `variation_data.select.variation1.${selectedVariation1}`
-            );
+        //     if (findSizeVariation?.array) {
+        //         const foundVariation = findSizeVariation.array.find(
+        //             (item) => item.id == id
+        //         );
 
-            //    cartItem?.combineVariation?.[selectedVariation1];
+        //         if (foundVariation) {
+        //             const updatedVariationSelect = cloneDeep(
+        //                 _.get(cartItem, 'variation_data.select')
+        //             );
+        //             _.set(
+        //                 updatedVariationSelect,
+        //                 [`variation${variationIndex}`],
+        //                 { ...foundVariation }
+        //             );
 
-            if (findVariation) {
-                const newVariation = findVariation[e.target.value];
-                const selectObj = _.cloneDeep(
-                    _.get(cartItem, ['variation_data', 'select'])
-                );
-                _.set(selectObj, ['variation2'], {
-                    ...selectObj?.variation2,
-                    ...newVariation,
-                });
+        //             // {
+        //             //     [`variation${variationIndex}`]: {
+        //             //         ...cartItem.variationSelect?.[
+        //             //             `variation${variationIndex}`
+        //             //         ],
+        //             //         ...foundVariation,
+        //             //     },
+        //             // };
 
-                // const updatedVariationSelect = {
-                //         ..._.get(cartItem, ['variation_data', 'select' ]),
-                //         variation2: {
-                //             ...cartItem.variationSelect.variation2,
-                //             ...newVariation,
-                //         },
-                //     };
+        //             dispatch({
+        //                 type: 'EDIT_VARIATION',
+        //                 _id: cartItem?._id,
+        //                 select: updatedVariationSelect,
+        //             });
+        //         }
+        //     }
+        // } else {
+        //     const selectedVariation1 = _.get(
+        //         cartItem,
+        //         'variation_data.select.variation1.variation'
+        //     );
+        //     const findVariation = _.get(
+        //         cartItem,
+        //         `variation_data.select.variation1.${selectedVariation1}`
+        //     );
 
-                dispatch({
-                    type: 'EDIT_VARIATION',
-                    _id: product?._id,
-                    select: selectObj,
-                });
-            }
-        }
+        //     //    cartItem?.combineVariation?.[selectedVariation1];
+
+        //     if (findVariation) {
+        //         const newVariation = findVariation[e.target.value];
+        //         const selectObj = _.cloneDeep(
+        //             _.get(cartItem, ['variation_data', 'select'])
+        //         );
+        //         _.set(selectObj, ['variation2'], {
+        //             ...selectObj?.variation2,
+        //             ...newVariation,
+        //         });
+
+        //         // const updatedVariationSelect = {
+        //         //         ..._.get(cartItem, ['variation_data', 'select' ]),
+        //         //         variation2: {
+        //         //             ...cartItem.variationSelect.variation2,
+        //         //             ...newVariation,
+        //         //         },
+        //         //     };
+
+        //         dispatch({
+        //             type: 'EDIT_VARIATION',
+        //             _id: product?._id,
+        //             select: selectObj,
+        //         });
+        //     }
+        // }
     };
 
     const handleQuantityChange = (e) => {
@@ -345,13 +353,13 @@ pb-4
                                                 'variation_data.select.variation2.variation'
                                             ) && (
                                                 <div className="cursor-pointer border-r-[1px] pr-2">
-                                                    <QTY_SIZE_OPTION
+                                                    <Variation2Options
                                                         handleOnChange={
-                                                            handleSizeChange
+                                                            handleVariationChange
                                                         }
                                                         options={_.get(
                                                             cartItem,
-                                                            'variation_data.variation2.array'
+                                                            'variation_data.variation2_data.array'
                                                         )}
                                                         select={_.get(
                                                             cartItem,
@@ -475,7 +483,7 @@ pb-4
                                                 </p>
                                             </button>
 
-                                            <select
+                                            {/* <select
                                                 onChange={handleDeliverySelect}
                                                 name="shipping-select"
                                                 id="shipping-select"
@@ -528,7 +536,7 @@ pb-4
                                                         'standard_delivery.0.charges._id'
                                                     )}
                                                 ></option>
-                                            </select>
+                                            </select> */}
                                         </div>
                                     </div>
                                 </section>

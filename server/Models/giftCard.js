@@ -12,10 +12,14 @@ const GiftCardSchema = new Schema({
   expires: Schema.Types.Date,
   amount: {
     type: Schema.Types.Number,
-    min: [5, 'Gift Card moust be £5 or over'],
+    min: [5, 'Gift Card must be £5 or over'],
   },
 
-  type: { type: Schema.Types.String, default: 'fixed' },
+  type: {
+    type: Schema.Types.String,
+    enum: ['fixed', 'percentage'],
+    default: 'fixed',
+  },
 });
 
 GiftCardSchema.pre('save', async function (next) {

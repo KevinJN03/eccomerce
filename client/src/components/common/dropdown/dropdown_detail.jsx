@@ -15,22 +15,10 @@ function DropDown_Detail({
     toggleShow,
     disable,
 }) {
-    // const toggleShow = () => {
-
-    //     if (display != undefined) {
-    //         setDisplay(show);
-    //     }
-    // };
 
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
 
-    // if (triggerClose != null) {
-    //     useEffect(() => {
-    //         setShow(false);
-    //         setTriggerClose(false);
-    //         setDisplay(true);
-    //     }, [triggerClose]);
-    // }
+
 
     return (
         <section

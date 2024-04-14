@@ -6,20 +6,22 @@ import AppliedCoupon from './appliedCoupon';
 import MultiplePromo from './multiplePromo';
 import { useCart } from '../../context/cartContext';
 import { useCheckoutContext } from '../../context/checkOutContext';
+import _ from 'lodash';
 
 function Promo({ disable }) {
     const [option, setOption] = useState('promo');
     // const [Promo, setPromo] = useState({ bool: false });
-    const [openMultiple, setOpenMultiple] = useState(false);
-    const [display, setDisplay] = useState(false);
+    const [modalCheck, setModalCheck] = useState(false);
     const { promo } = useCart();
     const [show, setShow] = useState(false);
     useEffect(() => {
         if (promo.length > 1) {
-            setOpenMultiple(true);
+            setModalCheck(true);
         }
     }, [promo]);
-    const [triggerClose, setTriggerClose] = useState(false);
+
+
+   
     const details = () => {
         return (
             <div className="promo-container">
@@ -29,8 +31,8 @@ function Promo({ disable }) {
                         { text: 'VOUCHER', type: 'voucher' },
                     ].map(({ text, type }) => {
                         return (
-                            <span
-                                className={`flex h-20 mb-2 items-center justify-center font-semibold tracking-wider text-center ${
+                            <div
+                                className={`mb-2 flex h-20 cursor-pointer items-center justify-center text-center font-semibold tracking-wider ${
                                     option == type
                                         ? 'active-promo-voucher'
                                         : 'promo-voucher'
@@ -38,24 +40,11 @@ function Promo({ disable }) {
                                 onClick={() => setOption(type)}
                             >
                                 {text}
-                            </span>
+                            </div>
                         );
                     })}
-
                 </section>
-                {option == 'promo' ? (
-                    <Promo_Student
-                        triggerClose={setTriggerClose}
-                        setDisplay={setDisplay}
-                        display={display}
-                    />
-                ) : (
-                    <Voucher
-                        triggerClose={setTriggerClose}
-                        setDisplay={setDisplay}
-                        display={display}
-                    />
-                )}
+                {option == 'promo' ? <Promo_Student setShow={setShow} /> : <Voucher  setShow={setShow} />}
             </div>
         );
     };
@@ -77,7 +66,7 @@ function Promo({ disable }) {
     return (
         <section
             id="promo-section"
-            className={`${!promo[0].bool ? '!pb-8' : ''} ${
+            className={`${!_.get(promo, [0, 'bool']) ? '!pb-8' : ''} ${
                 disable ? 'disable-component' : 'display-component'
             }`}
         >
@@ -88,15 +77,11 @@ function Promo({ disable }) {
                 headerClass="promo-header"
                 details={details()}
                 borderNone="true"
-                className={` ${promo[0].bool && 'pb-4'} px-6`}
-                triggerClose={triggerClose}
-                setTriggerClose={setTriggerClose}
-                display={display}
-                setDisplay={setDisplay}
+                className={` ${_.get(promo, [0, 'bool']) && 'pb-4'} px-6`}
                 disable={disable}
             />
-            {promo[0].bool && display && <AppliedCoupon />}
-            <MultiplePromo setCheck={setOpenMultiple} check={openMultiple} />
+            {_.get(promo, [0]) && !show && <AppliedCoupon />}
+            <MultiplePromo setCheck={setModalCheck} check={modalCheck}  setShow={setShow}/>
         </section>
     );
 }

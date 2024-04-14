@@ -3,7 +3,7 @@ import { useCart } from '../context/cartContext';
 import { useLayoutContext } from '../context/layoutContext';
 import _, { cloneDeep } from 'lodash';
 import objectId from 'bson-objectid';
-function useAddItemToBagHook({ product, }) {
+function useAddItemToBagHook({ product }) {
     const { dispatch, addItem, formatData } = useCart();
 
     const [priceState, setPriceState] = useState(null);
@@ -15,21 +15,18 @@ function useAddItemToBagHook({ product, }) {
     );
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
-    const [error, setError] = useState({on: false, msg: ''});
+    const [error, setError] = useState({ on: false, msg: '' });
     const { isHover, setIsHover } = useLayoutContext();
     useEffect(() => {
-        setPriceState(
-            _.get(product, 'price.current') ||
-                _.get(product, 'additional_data.price.min')
+        // setPriceState(
+        //     _.get(product, 'price.current') ||
+        //         _.get(product, 'additional_data.price.min')
+        // );
+        setCombineVariation(
+            () => _.get(product, 'variation_data.combineVariation') || {}
         );
-        const getCombineVariation = _.get(
-            product,
-            'variation_data.isVariationCombine'
-        );
-        if (getCombineVariation) {
-            setCombineVariation(() => getCombineVariation);
-        }
 
+        debugger
         const variationSelectObj = {};
 
         // setVariationSelection((prevState) => ({
@@ -82,7 +79,7 @@ function useAddItemToBagHook({ product, }) {
                 variationSelect?.variation2?.variation,
                 'price',
             ]);
-debugger
+            debugger;
             setPriceState(() =>
                 parseFloat(
                     getPrice || product?.additional_data?.price?.min
@@ -98,7 +95,10 @@ debugger
             (_.get(product, ['variation_data', 'variation2_present']) &&
                 !variationSelect.variation2.variation)
         ) {
-            setError(() => ({on: true, msg: 'Please select from the available variation options.'}));
+            setError(() => ({
+                on: true,
+                msg: 'Please select from the available variation options.',
+            }));
             return;
         }
 

@@ -3,7 +3,6 @@ import { useCart } from '../../../context/cartContext';
 import Checkout_Item from './checkout-item';
 import calculateTotal from '../../common/calculateTotal';
 import { useEffect, useState } from 'react';
-import calculatePromo from '../../common/calculatePromo';
 import { motion, useScroll } from 'framer-motion';
 import closeIcon from '../../../assets/icons/close.png';
 import { useCheckoutContext } from '../../../context/checkOutContext';

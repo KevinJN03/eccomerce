@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Shipping_Option from './shipping-option';
 import { useCart } from '../../../context/cartContext';
 import { useCheckoutContext } from '../../../context/checkOutContext';
+import _ from 'lodash';
 
 function Delivery({ disable }) {
     const { cart, stateProps } = useCart();
@@ -10,8 +11,6 @@ function Delivery({ disable }) {
     useEffect(() => {
         const objectToArray = Object.entries(stateProps?.deliveryInfoObj).map(
             ([key, { itemsByProfile, shipping_costs, ...value }]) => {
-
-                
                 return {
                     _id: key,
                     info: value,
@@ -21,7 +20,7 @@ function Delivery({ disable }) {
             }
         );
 
-        setBetaDeliveryInfo(() => objectToArray);
+        setBetaDeliveryInfo(() => _.sortBy(objectToArray, ['_id' ]));
     }, [stateProps?.deliveryInfoObj]);
 
     // useEffect(() => {

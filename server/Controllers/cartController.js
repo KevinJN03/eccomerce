@@ -86,6 +86,8 @@ export default function generateModelSchemaRoute(Model, route) {
           },
         },
         ...cart_wishlist_pipeline,
+
+       
       ]);
 
       //group the cart item

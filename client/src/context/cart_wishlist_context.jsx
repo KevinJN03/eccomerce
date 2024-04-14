@@ -20,12 +20,13 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
     });
 
     const [stateMap, setStateMap] = useState(new Map());
-    const [promo, setPromo] = useState([{ bool: false }]);
+    const [promo, setPromo] = useState([]);
     const [deliveryOption, setDeliveryOption] = useState({});
     const [loading, setLoading] = useState(false);
     const [stateRefresh, setStateRefresh] = useState(false);
     const [isUpdated, setIsUpdated] = useState(false);
     const { isHover, setIsHover } = useLayoutContext();
+    const [total, setTotal] = useState({});
 
     const [deliveryCost, setDeliveryCost] = useState(0);
 
@@ -81,8 +82,8 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 `/${property}/add`,
                 { id: _id, itemData },
                 { signal: abortControllerRef.current?.signal }
-            );  
-                      localStorage.setItem(`${property}_id`, data._id);
+            );
+            localStorage.setItem(`${property}_id`, data._id);
 
             dispatch({ newData: data, type: 'UPDATE' });
 
@@ -198,6 +199,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         formatData,
         deliveryCost,
         setDeliveryCost,
+        total, setTotal
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
