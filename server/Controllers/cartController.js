@@ -86,8 +86,6 @@ export default function generateModelSchemaRoute(Model, route) {
           },
         },
         ...cart_wishlist_pipeline,
-
-       
       ]);
 
       //group the cart item
@@ -126,18 +124,22 @@ export default function generateModelSchemaRoute(Model, route) {
 
       console.log({ id });
 
-      const findIfExist = await Model.findOne({
+      const findObj = {
         _id: id,
         'items.product_id': itemData.product_id,
-        'items.variation_data.select': itemData.variation_data?.select,
-      });
+        'items.variation_data.select.variation1.variation': _.get(
+          itemData,
+          'variation_data.select.variation1.variation',
+        ),
+        'items.variation_data.select.variation2.variation': _.get(
+          itemData,
+          'variation_data.select.variation2.variation',
+        ),
+      };
+      const findIfExist = await Model.findOne(findObj);
       if (findIfExist) {
-        const document = await Model.findOneAndUpdate(
-          {
-            _id: id,
-            'items.product_id': itemData.product_id,
-            'items.variation_data.select': itemData.variation_data?.select,
-          },
+        await Model.findOneAndUpdate(
+          findObj,
           { $inc: { 'items.$.quantity': 1 } },
           {
             new: true,
@@ -145,11 +147,11 @@ export default function generateModelSchemaRoute(Model, route) {
             lean: { toObject: true },
           },
         );
-        //
+
         return res.redirect(301, `/api/${route}/${id}`);
       }
 
-      const document = await Model.findByIdAndUpdate(
+    await Model.findByIdAndUpdate(
         { _id: id },
         {
           $push: {

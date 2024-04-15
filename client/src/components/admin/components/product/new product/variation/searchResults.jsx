@@ -1,6 +1,8 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import OptionError from './error/optionError';
 import { v4 as uuidv4 } from 'uuid';
+
+import { MenuItem, MenuList } from '@mui/material';
 function VariationResults({
     variation,
     searchText,
@@ -10,9 +12,11 @@ function VariationResults({
     option,
 }) {
     return (
-        <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
-            <ul className="rounded-inherit border-2">
-                {variation.length > 0 && variation.map((item) => {
+        // <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
+
+        <MenuList>
+            {variation.length > 0 &&
+                variation.map((item) => {
                     const { variation } = item;
                     let variationStr = variation.toLowerCase();
                     let searchTextStr = searchText.toLowerCase();
@@ -21,49 +25,54 @@ function VariationResults({
                         searchTextStr
                     ) {
                         return (
-                            <li
+                            <MenuItem
                                 key={uuidv4()}
-                                className="flex cursor-pointer flex-row flex-nowrap justify-between px-3 py-3 text-sm hover:bg-[var(--light-grey)]"
+                                // sx={{
+                                //     padding: '16px 10px',
+                                //     display: 'flex',
+                                //     justifyContent: 'between',
+                                //     alignItems: 'center',
+                                //     width: '100%',
+                                // }}
                                 onClick={() => addOption(item)}
                             >
-                                <p className="bg-transparent text-sm">
-                                    {item.variation}
-                                </p>
-                                <AddRoundedIcon className="bg-transparent" />
-                            </li>
+                                <div className="flex w-full cursor-pointer flex-row flex-nowrap justify-between px-3 py-3 text-sm  ">
+                                    <p className="bg-transparent text-sm">
+                                        {item.variation}
+                                    </p>
+                                    <AddRoundedIcon className="bg-transparent" />
+                                </div>
+                            </MenuItem>
                         );
                     }
                 })}
 
-                {searchText == '' && variation.length > 0 && (
-                    <li
-                        className="px-3 cursor-pointer py-3 hover:bg-[var(--light-grey)]"
-                        onClick={addRemainingColors}
-                    >
+            {searchText == '' && variation?.length > 0 && (
+                <MenuItem onClick={addRemainingColors}>
+                    <div className="cursor-pointer px-3 py-3 ">
                         Add all options{' '}
                         <span className="text-sm font-semibold">
                             ({variation.length})
                         </span>{' '}
                         left
-                    </li>
-                )}
+                    </div>
+                </MenuItem>
+            )}
 
-                {searchText.length > 0 &&
-                    searchText.length < 20 &&
-                    !variation.some(
-                        (item) =>
-                            item.variation.toLowerCase() ===
-                            searchText.toLowerCase()
-                    ) &&
-                    !option.some(
-                        (item) =>
-                            item.variation.toLowerCase() ===
-                            searchText.toLowerCase()
-                    ) && (
-                        <li
-                            onClick={handleCustom}
-                            className="flex  cursor-pointer flex-row justify-between px-3 py-3 hover:bg-[var(--light-grey)]"
-                        >
+            {searchText.length > 0 &&
+                searchText.length < 20 &&
+                !variation.some(
+                    (item) =>
+                        item.variation.toLowerCase() ===
+                        searchText.toLowerCase()
+                ) &&
+                !option.some(
+                    (item) =>
+                        item.variation.toLowerCase() ===
+                        searchText.toLowerCase()
+                ) && (
+                    <MenuItem onClick={handleCustom}>
+                        <div className="flex  cursor-pointer flex-row justify-between px-3 py-3">
                             <p className="max-w-full bg-transparent text-sm ">
                                 Custom Option:{' '}
                                 <span className="bg-transparent font-medium">
@@ -71,11 +80,11 @@ function VariationResults({
                                 </span>
                             </p>
                             <AddRoundedIcon className="bg-transparent" />
-                        </li>
-                    )}
-                {searchText.length > 20 && <OptionError />}
-            </ul>
-        </div>
+                        </div>
+                    </MenuItem>
+                )}
+            {searchText.length > 20 && <OptionError />}
+        </MenuList>
     );
 }
 

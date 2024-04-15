@@ -68,83 +68,43 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
 
         ItemsArray.forEach((variationDetail) => {
           if (_.get(productObject, 'variations')?.length < 3) {
-            // let isStockChange = false;
-            // if (productObject.variations.length < 3) {
-            // find if a variation has the quantityHeader.on set to true
-
-            const findQuantityVariation = null;
-
-            // const findQuantityVariation = productObject.variations.find(
-            //   (variation) => _.get(variation, 'quantityHeader.on') == true,
-            // );
+            const findQuantityVariation = {};
 
             for (let i = 0; i < productObject.variations.length; i++) {
               if (
-                _.get(productObject.variations[i], 'quantityHeader.on') == true
+                _.get(productObject, [
+                  'variations',
+                  i,
+                  'quantityHeader',
+                  'on',
+                ]) == true
               ) {
-                findQuantityVariation = {
-                  ...variation[i],
-                  variationIndex: i + 1,
-                };
-
+                _.assign(
+                  findQuantityVariation,
+                  _.merge(productObject.variations[i].toObject(), {
+                    variationIndex: i + 1,
+                  }),
+                );
                 break;
               }
             }
 
-            if (findQuantityVariation) {
+            if (!_.isEmpty(findQuantityVariation)) {
               const variationOptions = findQuantityVariation.options;
               const foundVariationId = _.get(variationDetail, [
                 `variation${findQuantityVariation.variationIndex}`,
-                id,
+                'id',
               ]);
-              const foundVariation = variationOptions.get(foundVariationId);
+              const foundVariation = variationOptions?.get(foundVariationId);
 
               variationOptions.set(foundVariationId, {
                 ...foundVariation,
                 stock: (foundVariation.stock -= variationDetail.quantity),
               });
-
-              // isStockChange = true;
             } else {
               productObject.stock =
                 productObject.stock - variationDetail.quantity || 0;
             }
-            //
-
-            // const findOptionsforVariation1 = productObject.variations.find(
-            //   (item) => item.name === variationDetail.variation1.title,
-            // );
-            // const findOptionsforVariation2 = productObject.variations.find(
-            //   (item) => item.name === variationDetail.variation2.title,
-            // );
-            // let isStockChange = false;
-
-            // const foundVariations = [
-            //   findOptionsforVariation1,
-            //   findOptionsforVariation2,
-            // ].map((variation, index) => {
-            //   if (variation?.options) {
-            //     const foundOptionVariation = variation.options.get(
-            //       variationDetail[`variation${index + 1}`].id,
-            //     );
-
-            //     if (foundOptionVariation?.stock) {
-            //       variation.options.set(
-            //         variationDetail[`variation${index + 1}`].id,
-            //         {
-            //           ...foundOptionVariation,
-            //           stock:
-            //             foundOptionVariation.stock - variationDetail.quantity ||
-            //             0,
-            //         },
-            //       );
-
-            //       isStockChange = true;
-            //     }
-            //   }
-            // });
-
-            // }
           } else if (_.get(productObject, 'variations')?.length >= 3) {
             const variationCombineOption = productObject.variations[2].options;
 
@@ -170,8 +130,6 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
 
         return productObject.save();
       });
-
-      // const result = await Promise.all([...reduceStock]);
 
       const getPaymentMethod = await stripe.paymentMethods.retrieve(
         paymentIntent?.payment_method,

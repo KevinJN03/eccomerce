@@ -36,37 +36,43 @@ function useAddItemToBagHook({ product }) {
         // }));
 
         [1, 2].forEach((variationNumber) => {
-            if (
-                _.get(
-                    product,
-                    `variation_data.variation${variationNumber}_present`
-                ) &&
-                _.get(
-                    product,
-                    `variation_data.variation${variationNumber}_data.array`
-                )?.length == 1
-            ) {
+            const isPresent = _.get(
+                product,
+                `variation_data.variation${variationNumber}_present`
+            );
+            const variationArray = _.get(
+                product,
+                `variation_data.variation${variationNumber}_data.array`
+            );
+            if (isPresent && variationArray?.length == 1) {
                 variationSelectObj[`variation${variationNumber}`] = _.get(
                     product,
                     `variation_data.variation${variationNumber}_data.array.0`
                 );
             }
 
-            if (
-                _.get(
-                    product,
-                    `variation_data.variation${variationNumber}_present`
-                )
-            ) {
-                setVariationSelection((prevState) => ({
-                    ...prevState,
-                    [`variation${variationNumber}`]: {
-                        ...prevState?.[`variation${variationNumber}`],
-                        title: product?.[`variation${variationNumber}`]?.title,
-                    },
-                }));
-            }
+            // if (
+            //     _.get(
+            //         product,
+            //         `variation_data.variation${variationNumber}_present`
+            //     )
+            // ) {
+            //     setVariationSelection((prevState) => ({
+            //         ...prevState,
+            //         [`variation${variationNumber}`]: {
+            //             ...prevState?.[`variation${variationNumber}`],
+            //             title: product?.[`variation${variationNumber}`]?.title,
+            //         },
+            //     }));
+            // }
         });
+
+        if (!_.isEmpty(variationSelectObj)) {
+            setVariationSelection((prevState) => ({
+                ...prevState,
+                ...variationSelectObj,
+            }));
+        }
 
         console.log('variation changed');
 
@@ -91,8 +97,7 @@ function useAddItemToBagHook({ product }) {
     }, [variationSelect.variation1, variationSelect.variation2]);
 
     const handleAddToCart = () => {
-
-        console.log({variationSelect})
+        console.log({ variationSelect });
         if (
             (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||
@@ -109,8 +114,6 @@ function useAddItemToBagHook({ product }) {
         if (isHover?.timeout) {
             clearTimeout(isHover.timeout);
         }
-
- 
 
         addItem({
             itemData: formatData({ product, priceState, variationSelect }),

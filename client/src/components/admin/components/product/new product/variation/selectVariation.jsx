@@ -17,11 +17,16 @@ import SearchResult from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
 import OptionError from './error/optionError';
 import { useNewProduct } from '../../../../../../context/newProductContext';
+import _ from 'lodash';
+import ObjectID from 'bson-objectid';
+import ThemeBtn from '../../../../../buttons/themeBtn';
+import BubbleButton from '../../../../../buttons/bubbleButton';
+import { Menu, MenuItem } from '@mui/material';
 
 function SelectVariation({}) {
     const { setTemporaryVariation, temporaryVariation } = useVariation();
 
-    const { setModalCheck, contentDispatch, modalContent } = useNewProduct();
+    const { contentDispatch, modalContent } = useNewProduct();
     const currentVariation = modalContent.currentVariation;
     const [option, setOption] = useState(
         currentVariation ? currentVariation.options : new Map()
@@ -35,6 +40,7 @@ function SelectVariation({}) {
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
     const [optionArray, setOptionArray] = useState([]);
+    const [anchorEl, setAnchorEl] = useState(null);
     useEffect(() => {
         const result = getValuesFromMap(option);
         setOptionArray(result);
@@ -86,32 +92,15 @@ function SelectVariation({}) {
     };
 
     const deleteColor = (variationOption) => {
-        // const filterOption = newArr.filter(
-        //     (item) => item.id != variationOption.id
-        // );
+        setOption((prevState) => {
+            const newOptionMap = new Map(prevState);
+            newOptionMap.delete(variationOption.id);
 
-        debugger;
-        option.delete(variationOption.id);
-        setOption((prevState) => new Map(option));
-
-        // if(newArr.find((item) => item.id == variationOption.id) == false){
-
+            return newOptionMap;
+        });
         if (variationOption && variationOption.type != 'custom') {
             setVariation([variationOption, ...variation]);
         }
-
-        // }
-    };
-
-    const addRemainingColors = () => {
-        setOption((prevState) => {
-            const newMap = new Map(prevState);
-            variation.map((item) => {
-                newMap.set(item.id, item);
-            });
-            return newMap;
-        });
-        setVariation([]);
     };
 
     const deleteVariation = () => {
@@ -143,17 +132,18 @@ function SelectVariation({}) {
 
     const createVariation = () => {
         try {
-            if (modalContent.currentVariation) {
-                const { id } = modalContent.currentVariation;
-                const newTemporaryVariation = [...temporaryVariation].map(
-                    (item) => {
-                        if (item.id == id) {
-                            return { ...item, options: option, name: name };
-                        } else {
-                            return item;
-                        }
+            if (modalContent?.currentVariation) {
+                const newTemporaryVariation = _.cloneDeep(
+                    temporaryVariation
+                ).map((item) => {
+                    if (
+                        item._id == _.get(modalContent, 'currentVariation._id')
+                    ) {
+                        return { ...item, options: option, name: name };
+                    } else {
+                        return item;
                     }
-                );
+                });
                 setTemporaryVariation(() => newTemporaryVariation);
             } else {
                 const findName = temporaryVariation.some((item) => {
@@ -166,14 +156,18 @@ function SelectVariation({}) {
                     return false;
                 });
 
-                if (findName)
-                    throw new Error(
-                        'Variation name already exists. Please try again.'
+                if (findName) {
+                    setError(
+                        () => 'Variation name already exists. Please try again.'
                     );
+
+                    return;
+                }
+
                 const newVariation = {
                     name,
                     options: option,
-                    id: defaultVariation ? defaultMap.get(name).id : uuidv4(),
+                    _id: ObjectID()?.toString(),
                     default: defaultVariation,
                     disabled: false,
                     quantityHeader: { on: false },
@@ -195,6 +189,16 @@ function SelectVariation({}) {
         setError(null);
     };
 
+    const addRemainingColors = () => {
+        setOption((prevState) => {
+            const newMap = new Map(prevState);
+            variation.map((item) => {
+                newMap.set(item.id, item);
+            });
+            return newMap;
+        });
+        setVariation([]);
+    };
     return (
         <section className="select-variation relative  h-full w-full">
             {error && <ErrorAlert msg={error} clearError={clearError} />}
@@ -210,7 +214,7 @@ function SelectVariation({}) {
                         </label>
                         <input
                             type="text"
-                            className="input input-bordered min-w-full max-w-xs !rounded-md"
+                            className="input-bordered input min-w-full max-w-xs !rounded-md"
                             required
                             value={name}
                             onChange={(e) => onNameChange(e.target.value)}
@@ -240,9 +244,7 @@ function SelectVariation({}) {
                 </div>
 
                 <section
-                    className={` ${
-                        defaultVariation && 'dropdown'
-                    } w-[400px] border-none`}
+                    className={` ${defaultVariation} w-[400px] border-none`}
                 >
                     <div
                         className="searchOption relative flex !w-full  flex-row items-center"
@@ -253,23 +255,17 @@ function SelectVariation({}) {
                             value={searchText}
                             className="input input-lg !min-w-full rounded-md pr-10"
                             placeholder="Enter an option..."
-                            onChange={(e) => setSearchText(e.target.value)}
+                            onClick={(e) => {
+                                setAnchorEl(e.currentTarget);
+
+                                console.log(e.currentTarget);
+                            }}
+                            onChange={(e) => {
+                                setSearchText(e.target.value);
+                            }}
                         />
                         <ArrowDropDownIcon className="absolute right-3" />
-                        {!defaultVariation && (
-                            <button
-                                type="button"
-                                className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
-                                onClick={handleCustom}
-                                disabled={
-                                    searchText.length < 1 ||
-                                    searchText.length > 20
-                                }
-                            >
-                                Add
-                            </button>
-                        )}
-                    </div>
+                    </div>{' '}
                     {!defaultVariation && searchText.length > 20 && (
                         <OptionError
                             msg={
@@ -277,55 +273,88 @@ function SelectVariation({}) {
                             }
                         />
                     )}
-                    <SearchResult
-                        addRemainingColors={addRemainingColors}
-                        searchText={searchText}
-                        variation={variation}
-                        addOption={addOption}
-                        handleCustom={handleCustom}
-                        option={optionArray}
-                    />
-                </section>
-
-                <div className="options-wrapper mt-3 flex min-h-[200px] basis-full flex-col gap-y-2  ">
-                    {option.size > 0 &&
-                        optionArray.map((item) => {
-                            const { variation, id } = item;
-                            return (
-                                <div
-                                    className="border-1 cursor-pointer flex flex-row items-center justify-between rounded-lg p-2"
-                                    key={id}
+                    <Menu
+                        open={anchorEl}
+                        anchorEl={anchorEl}
+                        onClose={() => setAnchorEl(null)}
+                        PaperProps={{
+                            style: {
+                                maxHeight: '20ch',
+                                width: '100%',
+                                maxWidth: '400px',
+                                marginTop: '10px',
+                                borderRadius: '10px',
+                            },
+                        }}
+                    >
+                        {!defaultVariation && (
+                            <MenuItem>
+                                <button
+                                    type="button"
+                                    className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
+                                    onClick={handleCustom}
+                                    disabled={
+                                        searchText.length < 1 ||
+                                        searchText.length > 20
+                                    }
                                 >
-                                    <span className="flex flex-row items-center gap-3">
-                                        <MenuRoundedIcon fontSize="small" />
-                                        <p className="text-sm">{variation}</p>
-                                    </span>
-                                    <span
-                                        onClick={() => deleteColor(item)}
-                                        className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300"
-                                    >
-                                        <DeleteRoundedIcon
-                                            fontSize="small"
-                                            className="bg-transparent"
-                                        />
-                                    </span>
-                                </div>
-                            );
-                        })}
+                                    Add
+                                </button>
+                            </MenuItem>
+                        )}
+
+                        <SearchResult
+                            addRemainingColors={addRemainingColors}
+                            searchText={searchText}
+                            variation={variation}
+                            addOption={addOption}
+                            handleCustom={handleCustom}
+                            option={optionArray}
+                        />
+                    </Menu>
+                </section>
+                <div className="options-wrapper mt-3 flex min-h-[200px] w-full  basis-full flex-col gap-y-2  ">
+                    {optionArray.map(({ variation, id, ...item }) => {
+                        return (
+                            <div
+                                className="border-1 flex w-full w-full cursor-pointer  flex-row items-center justify-between rounded-lg p-2"
+                                key={id}
+                            >
+                                <span className="flex flex-row items-center gap-3">
+                                    <MenuRoundedIcon fontSize="small" />
+                                    <p className="text-sm">{variation}</p>
+                                </span>
+                                <span
+                                    onClick={() =>
+                                        deleteColor({
+                                            ...item,
+                                            id,
+                                            name,
+                                        })
+                                    }
+                                    className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300"
+                                >
+                                    <DeleteRoundedIcon
+                                        fontSize="small"
+                                        className="bg-transparent"
+                                    />
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
             </section>
             {/* //variation-footer !mt-auto !bottom-[-25px] py-4 */}
             <section className="variation-footer !bottom-[-25px] !mt-auto pt-4">
-                <button
-                    onClick={deleteVariation}
-                    type="button"
-                    className="no-wrap first-letter: mr-auto flex flex-row items-center justify-center rounded-full !bg-[var(--light-grey)] px-3  py-[10px] transition-all  ease-in-out hover:scale-[1.02] hover:!bg-gray-300"
-                >
-                    <DeleteRoundedIcon className="!bg-transparent !fill-red-800" />
-                    <span className=" !bg-transparent font-medium tracking-tight text-red-800">
-                        Delete variation
-                    </span>
-                </button>
+                <ThemeBtn handleClick={deleteVariation} bg={'bg-light-grey'}>
+                    <div>
+                        <DeleteRoundedIcon className="!bg-transparent !fill-red-800" />
+                        <span className=" !bg-transparent font-medium tracking-tight text-red-800">
+                            Delete variation
+                        </span>
+                    </div>
+                </ThemeBtn>
+
                 <div className="flex min-h-full flex-row flex-nowrap items-center gap-x-4">
                     {(exist && (
                         <ErrorMessage message={'Variation already exist'} />
@@ -337,16 +366,13 @@ function SelectVariation({}) {
                             <ErrorMessage message={'Add at least 1 option'} />
                         ))}
 
-                    <button
-                        type="button"
-                        className="apply-btn"
+                    <ThemeBtn
+                        text={'Done'}
+                        handleClick={createVariation}
                         disabled={
                             option.size < 1 || name.length < 1 || exist || error
                         }
-                        onClick={createVariation}
-                    >
-                        Done
-                    </button>
+                    />
                 </div>
             </section>
         </section>

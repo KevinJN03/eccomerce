@@ -15,18 +15,21 @@ import {
 import { useNewProduct } from '../../../../../../../context/newProductContext';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
+import { useTableContext } from '../../../../../../../context/tableContext';
+import _ from 'lodash';
 function Row({
     singleVariation,
-    checkAll,
-    setCheckAll,
-    variationList,
-    isQuantityHeaderOn,
-    isPriceHeaderOn,
-    selected,
-    setSelected,
+
     update,
-    isCombine,
 }) {
+    const {
+        variationList,
+        isQuantityHeaderOn,
+        isPriceHeaderOn,
+        isCombine,
+        checkSet,
+        setCheckSet,
+    } = useTableContext();
     const [error, setError] = useState({ price: null, stock: null });
 
     const [visible, setVisible] = useState(
@@ -35,119 +38,71 @@ function Row({
     const [inputCheck, setInputCheck] = useState(false);
 
     const { check } = useVariation();
-    const [price, setPrice] = useState(singleVariation?.price);
 
-    const [stock, setStock] = useState(singleVariation?.stock);
+    // const [stock, setStock] = useState(singleVariation?.stock);
     const [trigger, setTrigger] = useState(false);
 
     const { setVariations, combineDispatch } = useNewProduct();
-
-    useEffect(() => {
-        if (check == true) {
-            onClickAway();
-        }
-
-        updateList(price, stock);
-    }, [check]);
-
-    useEffect(() => {
-        if (checkAll == 'clear') {
-            setInputCheck(() => false);
-            return;
-        }
-        if (checkAll == true) {
-            // debugger
-            setInputCheck(() => true);
-        } else if (checkAll == false) {
-            setInputCheck(() => false);
-        }
-    }, [checkAll]);
-
-    useEffect(() => {
-        if (inputCheck && visible) {
-            selected.set(singleVariation.id, singleVariation);
-        } else if (!inputCheck) {
-            setCheckAll(null);
-
-            selected.delete(singleVariation.id);
-        }
-
-        setSelected(() => new Map(selected));
-    }, [inputCheck]);
-    const handleCheck = (e) => {
-        e.stopPropagation();
-        setInputCheck(!inputCheck);
-    };
-
-    // once update is apply, update input field
-
-    useEffect(() => {
-        const findItemInSelect = selected.has(singleVariation.id);
-
-        if (findItemInSelect == false) return;
-
-        setPrice(() => update.price);
-        setError((prevState) => {
-            return { ...prevState, price: null };
-        });
-
-        setTrigger(() => !trigger);
-        updateList(update.price, stock);
-    }, [update.price]);
-
-    useEffect(() => {
-        const findItemInSelect = selected.has(singleVariation.id);
-        if (findItemInSelect == false) return;
-
-        setStock(() => update.quantity);
-        setError((prevState) => {
-            return { ...prevState, stock: null };
-        });
-        setTrigger(() => !trigger);
-
-        updateList(price, update.quantity);
-    }, [update.quantity]);
+    console.log('row rerender');
 
     // useEffect(() => {
+    //     if (check == true) {
+    //         onClickAway();
+    //     }
+
     //     updateList(price, stock);
-    // }, [visible]);
+    // }, [check]);
 
+    const handleCheck = (e) => {
+        e.stopPropagation();
+        // setInputCheck(!inputCheck);
+        setCheckSet((prevSet) => {
+            const newSet = new Set(prevSet);
+            if (newSet.has(singleVariation.id)) {
+                newSet.delete(singleVariation.id);
+            } else {
+                newSet.add(singleVariation.id);
+            }
+            return newSet;
+        });
+    };
     const handlePrice = (value) => {
-        const options = {
-            ...priceOptions,
-            value,
-            setValue: setPrice,
-            setError,
-        };
+        // const options = {
+        //     ...priceOptions,
+        //     value,
+        //     setValue: setPrice,
+        //     setError,
+        // };
+
+        console.log({value})
 
         return handleValue(options);
     };
 
-    const handleStock = (value) => {
-        const options = {
-            ...quantityOptions,
-            value,
-            setValue: setStock,
-            setError,
-        };
-        return handleValue(options);
-    };
+    // const handleStock = (value) => {
+    //     const options = {
+    //         ...quantityOptions,
+    //         value,
+    //         setValue: setStock,
+    //         setError,
+    //     };
+    //     return handleValue(options);
+    // };
 
     function onClickAway() {
-    
-        if (
-            (!price && !stock) ||
-            (singleVariation.price == price &&
-                singleVariation.stock == stock &&
-                singleVariation.visible == visible)
-        ) {
-            return;
-        }
-        const newPrice = formatData(price, 2);
-        const newStock = formatData(stock, 0);
-        setPrice(() => newPrice);
-        setStock(() => newStock);
-        updateList(newPrice, newStock);
+        // if (
+        //     (!price && !stock) ||
+        //     (singleVariation.price == price &&
+        //         singleVariation.stock == stock &&
+        //         singleVariation.visible == visible)
+        // ) {
+        //     return;
+        // }
+        // const newPrice = formatData(price, 2);
+        // const newStock = formatData(stock, 0);
+        // setPrice(() => newPrice);
+        // setStock(() => newStock);
+        // updateList(newPrice, newStock);
     }
     function updateList(priceState, stockState) {
         const { options } = variationList;
@@ -206,17 +161,6 @@ function Row({
         },
     };
 
-    // const inputVariant = {
-    //     inputCheck: {
-    //         opacity: 1,
-    //         backgroundColor: '#dcf8d2',
-    //         transition: { checked: { duration: 2 } },
-    //     },
-    //     uncheck: {
-    //         opacity: 0.8,
-    //         transition: { checked: { duration: 2 } },
-    //     },
-    // };
     return (
         <AnimatePresence>
             <ClickAwayListener onClickAway={onClickAway}>
@@ -237,21 +181,12 @@ function Row({
                             <motion.input
                                 id={`check-${singleVariation.id}`}
                                 name={`check-${singleVariation.id}`}
-                                key={inputCheck}
-                                // onAnimationComplete={(definition) => {
-                                //     (
-                                //         'Completed animating',
-                                //         definition,
-                                //         this.definition
-                                //     );
-                                // }}
-                                // variants={inputVariant}
-                                // animate={inputCheck ? 'inputCheck' : 'uncheck'}
-                                // initial={false}
+                                // key={inputCheck}
                                 type="checkbox"
                                 className={`daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2  border-dark-gray`}
-                                /* inputCheck && !variation.disabled */
-                                checked={inputCheck && visible}
+                                checked={
+                                    checkSet.has(singleVariation.id) && visible
+                                }
                                 onChange={handleCheck}
                                 disabled={!visible}
                             />
@@ -279,11 +214,6 @@ function Row({
                         
                 ${!visible && '!opacity-60 '}
                 `}
-                            //             className={`  ${
-                            //                 (error.price || error.stock) && '!align-top'
-                            //             } align-middle
-                            // ${!visible && '!opacity-60 '}
-                            // `}
                         >
                             <p className="text-sm font-light">
                                 {singleVariation?.variation2}
@@ -292,8 +222,8 @@ function Row({
                     )}
 
                     {isPriceHeaderOn && (
-                        <RowInput
-                            value={price}
+                        <Input
+                            value={_.get(singleVariation, 'price') || 0}
                             property={'price'}
                             handleOnchange={handlePrice}
                             error={error}
@@ -304,10 +234,10 @@ function Row({
                     )}
 
                     {isQuantityHeaderOn && (
-                        <RowInput
-                            value={stock}
+                        <Input
+                            value={_.get(singleVariation, 'stock') || 0}
                             property={'stock'}
-                            handleOnchange={handleStock}
+                            handleOnchange={() => console.log('jkl')}
                             error={error}
                             visible={visible}
                             id={`${singleVariation.id}-stock`}
@@ -323,7 +253,8 @@ function Row({
                         }  !text-right`}
                     >
                         <div className="flex h-auto items-center justify-end">
-                            {parseInt(stock) === 0 && (
+                            {parseInt(_.get(singleVariation, 'stock')) ===
+                                0 && (
                                 <span
                                     className={`mr-4 flex h-5 items-center justify-center rounded-full bg-black px-2 py-2 text-s text-white ${
                                         !visible && '!opacity-0'
@@ -347,53 +278,52 @@ function Row({
 }
 
 export function RowInput(props) {
-    const { visible, value, error, property, handleOnchange } = props;
-    const { publish, publishErrorDispatch, publishError, isAllInputValid } =
-        useNewProduct();
+    const { visible } = props;
 
-    const addToValidateError = (err) => {
-        if (err || error[property]) {
-            // ('error');
-            publishErrorDispatch({
-                type: 'addToValidateInput',
-                path: props?.id,
-                error: err ? err : error[property],
-            });
-        }
+    // const addToValidateError = (err) => {
+    //     if (err || error[property]) {
+    //         // ('error');
+    //         publishErrorDispatch({
+    //             type: 'addToValidateInput',
+    //             path: props?.id,
+    //             error: err ? err : error[property],
+    //         });
+    //     }
 
-        // ('trying', publishError);
-    };
-    useEffect(() => {
-        if (publishError.has('validateInput') && props?.id) {
-            const isPresent = publishError.get('validateInput').has(props?.id);
+    //     // ('trying', publishError);
+    // };
 
-            if ((isPresent && !error[property]) || !visible) {
-                ('deleting here');
-                publishErrorDispatch({
-                    type: 'deleteValidateInput',
-                    path: props?.id,
-                });
+    // useEffect(() => {
+    //     if (publishError.has('validateInput') && props?.id) {
+    //         const isPresent = publishError.get('validateInput').has(props?.id);
 
-                return;
-            }
-        }
-        if (visible) {
-            addToValidateError();
-        }
-    }, [value, visible]);
-    useEffect(() => {
-        if (publish.firstAttempt) {
-            const err = handleOnchange(value);
-            if (visible && err) {
-                ('run useEffect for publish.firstattempt');
-                addToValidateError(err);
-                // isAllInputValid.current = false;
+    //         if ((isPresent && !error[property]) || !visible) {
+    //             ('deleting here');
+    //             publishErrorDispatch({
+    //                 type: 'deleteValidateInput',
+    //                 path: props?.id,
+    //             });
 
-                return;
-            }
-            // isAllInputValid.current = true;
-        }
-    }, [publish]);
+    //             return;
+    //         }
+    //     }
+    //     if (visible) {
+    //         addToValidateError();
+    //     }
+    // }, [value, visible]);
+    // useEffect(() => {
+    //     if (publish.firstAttempt) {
+    //         const err = handleOnchange(value);
+    //         if (visible && err) {
+    //             ('run useEffect for publish.firstattempt');
+    //             addToValidateError(err);
+    //             // isAllInputValid.current = false;
+
+    //             return;
+    //         }
+    //         // isAllInputValid.current = true;
+    //     }
+    // }, [publish]);
 
     return (
         <td className={`relative ${!visible && 'opacity-0'}`}>

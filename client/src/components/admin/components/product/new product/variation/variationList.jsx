@@ -2,7 +2,7 @@ import { useVariation } from '../../../../../../context/variationContext';
 import { Fragment, useEffect, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import Table from './table/table.jsx';
-import SingleList from './singleList';
+import VariationTableContainer from './variationTableContainer.jsx';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 
 function VariationList({}) {
@@ -13,7 +13,7 @@ function VariationList({}) {
     return (
         <>
             {combine?.on && (
-                <SingleList
+                <VariationTableContainer
                     key={combine.id}
                     variation={combine}
                     isCombine={true}
@@ -21,9 +21,9 @@ function VariationList({}) {
             )}
             {!combine?.on &&
                 variations.length > 0 &&
-                variations.map((variation) => {
+                variations.map((variation, idx) => {
                     return (
-                        <SingleList
+                        <VariationTableContainer
                             key={variation._id}
                             variation={variation}
                             isCombine={false}

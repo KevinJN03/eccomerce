@@ -10,6 +10,7 @@ export default function handleValue(options) {
     } = options;
 
     let err = null;
+
     const minValue = options?.minValue || 0;
     if (!value || isNaN(value)) {
         err = `Please enter a valid ${text}.`;
