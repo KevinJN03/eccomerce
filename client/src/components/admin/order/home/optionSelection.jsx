@@ -37,8 +37,11 @@ function OptionSelection({ options, status, setStatus, className }) {
                     return (
                         <div
                             onClick={() => {
-                                option?.handleClick() ||
+                                if (option?.handleClick) {
+                                    option?.handleClick();
+                                } else {
                                     setStatus(() => option.select);
+                                }
                             }}
                             className="relative cursor-pointer"
                             onMouseEnter={() => setHover(() => option.select)}
@@ -47,8 +50,8 @@ function OptionSelection({ options, status, setStatus, className }) {
                             <p className="flex flex-row flex-nowrap items-center gap-1 pb-3 text-base">
                                 {option.text}
                                 {option?.amount && (
-                                    <span className="text-sm">
-                                        {option.amount}
+                                    <span className="text-sm pl-1">
+                                        { option.amount}
                                     </span>
                                 )}
                             </p>
@@ -70,7 +73,7 @@ function OptionSelection({ options, status, setStatus, className }) {
                     );
                 })}
             </div>
-            <div class=" m-0 h-[2px] w-full bg-light-grey !py-0"></div>
+            <div className=" m-0 h-[2px] w-full bg-light-grey !py-0"></div>
         </section>
     );
 }

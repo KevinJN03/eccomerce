@@ -9,8 +9,12 @@ import {
   resetPassword,
 } from '../Controllers/password-change.js';
 import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
+import cartRoute from './cartRoute.js';
+import wishlistRoute from './wishlistRoute.js';
 
 const router = express.Router();
+router.use('/cart', cartRoute);
+router.use('/wishlist', wishlistRoute);
 
 router.get('/server-status', (req, res) => {
   res.send('OK');
@@ -48,4 +52,3 @@ router.post('forget-password', forgetPassword);
 // );
 
 export default router;
-

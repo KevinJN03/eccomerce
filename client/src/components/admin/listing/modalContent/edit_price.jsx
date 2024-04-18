@@ -8,33 +8,26 @@ import OptionError from '../../components/product/new product/variation/error/op
 import { priceOptions } from '../../components/product/new product/utils/handleValueOptions';
 
 import handleValue from '../../components/product/new product/utils/handleValue';
+import _ from 'lodash';
 function EditPrice({}) {
-    const { modalContent } = useContent();
+    const { modalContent, setShowAlert, setModalCheck } = useContent();
     const { logoutUser } = UserLogout();
     const [productData, setProductData] = useState({});
-    const [productDataMap, setProductDataMap] = useState(new Map());
+
     const [newPrice, setNewPrice] = useState({});
     const [amount, setAmount] = useState();
     const [originalPrice, setOriginalPrice] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
     const [select, setSelect] = useState('increase_by_amount');
-    const [finishLoading, setFinishLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState({});
-    const [failedProductIds, setFailedProductIds] = useState([]);
+    const [failedData, setFailedData] = useState({});
     useEffect(() => {
         adminAxios
-            .get(`product/${modalContent?.products}`)
+            .get(`product/${_.get(modalContent, ['productIds', 0])}`)
             .then(({ data }) => {
                 setProductData(() => data[0]);
-                setProductDataMap(
-                    () =>
-                        new Map(
-                            data.map(({ _id, ...rest }) => [
-                                _id,
-                                { ...rest, _id },
-                            ])
-                        )
-                );
+
                 setOriginalPrice(() => ({
                     max: data[0].additional_data.price?.max,
                     min: data[0].additional_data.price?.min,
@@ -82,7 +75,6 @@ function EditPrice({}) {
             select == 'percentage_decrease' ||
             select == 'percentage_increase'
         ) {
-            
             if (parseValue < 0 || isNaN(parseValue)) {
                 setError(() => ({
                     price: 'Percent must be a positive number.',
@@ -136,71 +128,86 @@ function EditPrice({}) {
         setError(() => ({}));
     }, [select]);
     useEffect(() => {
-        setFailedProductIds(() => []);
+        setFailedData((prevState) => ({ ...prevState, failedProductIds: [] }));
     }, [amount]);
 
     const handleClick = async () => {
         let success = false;
 
         const errorData = [];
+        const failedDataValue = {};
+        let count = null;
         try {
-            setLoading(() => true);
+            setBtnLoading(() => true);
             const { data } = await adminAxios.post('/product/price/update', {
                 productIds:
-                    failedProductIds.length > 0 &&
-                    failedProductIds.length != productDataMap.size
-                        ? modalContent?.products.filter(
-                              (id) =>
-                                  !failedProductIds.some(
-                                      ({ id: failedId }) => failedId == id
-                                  )
-                          )
-                        : modalContent?.products,
+                    failedData?.failedProductIds?.length > 0 &&
+                    failedData?.eligibleId?.length > 0
+                        ? failedData?.eligibleId
+                        : modalContent?.productIds,
 
                 selectedOption: select,
                 amount,
             });
 
+            count = data?.count;
+
             success = true;
         } catch (error) {
             logoutUser({ error });
             console.log(error);
-            if (error.response.data?.failedProductIds) {
-                errorData.push(...error.response.data.failedProductIds);
-
-                console.log({ errorData });
+            if (error.response.status == 409) {
+                _.assign(failedDataValue, error.response.data);
             }
 
-            if (error.response.data?.error?.amount) {
+            if (error.response.status == 400) {
                 setError((prevState) => ({
                     ...prevState,
-                    price: error.response.data.error.amount,
+                    ...error.response.data,
                 }));
             }
         } finally {
             setTimeout(() => {
-                setLoading(() => false);
+                setBtnLoading(() => false);
+
                 if (success) {
-                    setFinishLoading(() => true);
+                    setLoading(() => true)
+                    setTimeout(() => {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-green-100',
+                            icon: 'check',
+                            size: 'large',
+                            msg:
+                                count > 1
+                                    ? `You've updated ${count} listings.`
+                                    : 'Listing updated.',
+                            text: 'text-black text-base',
+                        }));
+                        setModalCheck(() => false);
+                        modalContent?.setTriggerSearch(
+                            (prevState) => !prevState
+                        );
+                    }, 2000);
                 } else {
-                    setFailedProductIds(() => errorData);
+                    setFailedData(() => failedDataValue);
                 }
-            }, 1200);
+            }, 1000);
         }
     };
     return (
         <Template
             handleClearSelection={modalContent.clearSelection}
-            title={`Editing price for ${modalContent.products?.length} listing`}
-            finishLoading={finishLoading}
+            title={`Editing price for ${modalContent.productIds?.length} listing`}
+            loading={loading}
             submit={{
                 handleClick,
-                loading,
+                loading: btnLoading,
                 disabled: !amount || error?.price,
                 text:
-                    failedProductIds.length > 0 &&
-                    failedProductIds.length != productDataMap.size
-                        ? `Apply to ${productDataMap.size - failedProductIds.length} eligible Listings`
+                    failedData?.failedProductIds?.length > 0 &&
+                    failedData?.eligibleId?.length > 0
+                        ? `Apply to ${failedData?.eligibleId?.length} eligible Listings`
                         : 'Apply',
             }}
         >
@@ -301,7 +308,7 @@ function EditPrice({}) {
                                 </p>
                                 {amount && !error?.price ? (
                                     <div className="flex flex-row items-center gap-1">
-                                        <p className="text-lg font-semibold text-green-700 whitespace-nowrap">
+                                        <p className="whitespace-nowrap text-lg font-semibold text-green-700">
                                             Now{' '}
                                             {originalPrice?.min ==
                                             originalPrice?.max
@@ -345,39 +352,41 @@ function EditPrice({}) {
                     </section>
                 )}
 
-                {failedProductIds.length > 0 && (
+                {failedData?.failedProductIds?.length > 0 && (
                     <div className="my-4 flex flex-col gap-8 px-6">
                         <div className="w-full rounded-md bg-red-800 p-6">
                             <p className="text-sm text-white">
-                                {productDataMap.size == failedProductIds.length
+                                {modalContent?.productIds?.length ==
+                                failedData?.failedProductIds?.length
                                     ? 'None of the selected listings could be updated'
-                                    : `${failedProductIds.length} listing could not be updated`}
+                                    : `${failedData?.failedProductIds?.length} listings could not be updated`}
                             </p>
                         </div>
-                        {failedProductIds.map(({ id, msg }) => {
-                            const productInfo = productDataMap.get(id);
-                            return (
-                                <div
-                                    key={`failedProductId-${id}`}
-                                    className="flex flex-row gap-6"
-                                >
-                                    <img
-                                        src={productInfo?.images[0]}
-                                        alt=""
-                                        className="h-14 w-14 rounded"
-                                    />
+                        {failedData?.failedProductIds?.map(
+                            ({ id, msg, images, title }) => {
+                                return (
+                                    <div
+                                        key={`failedProductId-${id}`}
+                                        className="flex flex-row gap-6"
+                                    >
+                                        <img
+                                            src={images?.[0]}
+                                            alt=""
+                                            className="h-14 w-14 rounded"
+                                        />
 
-                                    <div>
-                                        <p className="font-raleway text-[1.05rem] font-semibold text-black/80">
-                                            {productInfo?.title}
-                                        </p>
-                                        <p className="font-raleway text-[1.05rem] font-semibold text-red-700">
-                                            {msg}
-                                        </p>
+                                        <div>
+                                            <p className="font-raleway text-[1.05rem] font-semibold text-black/80">
+                                                {title}
+                                            </p>
+                                            <p className="font-raleway text-[1.05rem] font-semibold text-red-700">
+                                                {msg}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            }
+                        )}
                     </div>
                 )}
             </section>

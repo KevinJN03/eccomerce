@@ -3,58 +3,50 @@ import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 import axios from '../../api/axios';
 import { useState } from 'react';
-import calculatePromo from '../common/calculatePromo';
 import { v4 as uuidv4 } from 'uuid';
 import ActivePromo from './active-promo';
 import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
-function Promo_Student({ triggerClose, display, setDisplay }) {
+import _ from 'lodash';
+function Promo_Student({ setShow,}) {
     const [promoText, setPromoText] = useState();
     const [error, setError] = useState({ bool: false });
     const { savePercent, amountOff } = calculateTotal();
-    const { promo, setPromo } = useCart();
-    const handleClick = () => {
-        if (promoText) {
-            axios
-                .get(`/coupon?code=${promoText}`)
-                .then((res) => {
-                    if (res.status == 200) {
-                        const { code, amount, type } = res.data;
-                        const newObj = {
-                            id: uuidv4(),
-                            bool: true,
-                            code,
-                            amount,
-                            type,
-                            promoType: 'coupon',
-                        };
+    const { promo, setPromo, updateItemProperty } = useCart();
+    const handleClick = async () => {
+        try {
+            console.log({ promo });
+            if (promoText) {
+                const { data } = await axios.get(`/coupon?code=${promoText}`);
 
-                        if (!promo[0].code) {
-                            setPromo([newObj]);
-                        } else {
-                            setPromo([...promo, newObj]);
-                        }
-                        triggerClose(true);
-                        setError({ bool: false });
-                    }
-                })
-                .catch((error) => {
-                    'error at promo', error;
-                    setError({ msg: 'invalidCoupon', bool: true });
-                });
+                // const { code, amount, type } = data;
+                const newObj = {
+                    bool: true,
+                    ...data,
+                    promoType: 'coupon',
+                };
 
-            promoText;
-        } else {
-            setError({ msg: 'emptyField', bool: true });
+                if (promo?.length < 1) {
+                    updateItemProperty({ property: 'coupon', value: data._id });
+                    setShow(() => false);
+                }
+                setPromo((prevState) => [...prevState, newObj]);
+                setError({ bool: false });
+            } else {
+                setError({ msg: 'emptyField', bool: true });
+            }
+        } catch (error) {
+            setError({ msg: 'invalidCoupon', bool: true });
         }
     };
     return (
         <section id="promo-body">
-            {!display && promo[0].bool && promo[0].promoType == 'coupon' && (
-                <ActivePromo type="promo" />
-            )}
+            {_.get(promo, [0, 'bool']) &&
+                _.get(promo, [0, 'promoType']) == 'coupon' && (
+                    <ActivePromo type="promo" />
+                )}
             <Promo_Voucher_header header_text="ADD A PROMO / STUDENT CODE" />
-            <div id="promo-input-container" className='flex flex-col'>
+            <div id="promo-input-container" className="flex flex-col">
                 <Input
                     header={'PROMO/STUDENT CODE:'}
                     button_text="APPLY CODE"

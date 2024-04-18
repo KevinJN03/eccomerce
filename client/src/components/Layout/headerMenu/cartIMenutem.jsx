@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import DeleteIcon from '../../../assets/icons/deleteIcon';
 import { useCart } from '../../../context/cartContext';
 import Overlay from '../../cart/overlay';
@@ -6,15 +6,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import getCartItemVariants from '../../cart/cartItemVariants';
 import { TrendingUpTwoTone } from '@mui/icons-material';
 import { useLayoutContext } from '../../../context/layoutContext';
+import _ from 'lodash';
 function CartMenuItem({ cartItem, idx, lastIndex }) {
     const { isHover, setIsHover } = useLayoutContext();
-    const { title, cartId, images, price, quantity, variationSelect } =
-        cartItem;
+    const { title, _id, images, price, quantity, variation_data } = cartItem;
 
-    const { dispatch, cart } = useCart();
+    const { dispatch, cart, removeItem } = useCart();
     const [isRemoving, setIsRemoving] = useState({});
     const handleRemove = () => {
-        dispatch({ type: 'remove', cartId: cartId });
+        removeItem({ itemId: cartItem._id });
+        // dispatch({ type: 'REMOVE', _id: _id });
     };
 
     const [cartItemVariants, setCartItemVariants] = useState(() =>
@@ -70,12 +71,31 @@ function CartMenuItem({ cartItem, idx, lastIndex }) {
 
                     <p className="mb-1">{title}</p>
                     <div className="variationSelect flex flex-row flex-wrap gap-x-2">
-                        {variationSelect.variation1?.variation && (
-                            <p>{variationSelect.variation1.variation}</p>
-                        )}
-                        {variationSelect.variation2?.variation && (
+                        {/* {_.get(
+                            variation_data,
+                            'select.variation1.variation'
+                        ) && (
+                            <p>{variation_data.select.variation1.variation}</p>
+                        )} */}
+
+                        {[1, 2].map((variationNum, idx) => {
+                            const getVariation = _.get(
+                                variation_data,
+                                `select.variation${variationNum}.variation`
+                            );
+                            return (
+                                <Fragment
+                                    key={`${cartItem?._id}-variationSelect-${idx}`}
+                                >
+                                    {' '}
+                                    {getVariation && <p>{getVariation}</p>}
+                                </Fragment>
+                            );
+                        })}
+
+                        {/* {variationSelect.variation2?.variation && (
                             <p>{variationSelect.variation2.variation}</p>
-                        )}
+                        )} */}
                         <p>Qty: {quantity}</p>
                     </div>
 

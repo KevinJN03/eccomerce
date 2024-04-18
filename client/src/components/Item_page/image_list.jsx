@@ -1,5 +1,7 @@
 import '../../CSS/item_page.scss';
-function Item_List({ images, handleImgChange, loading }) {
+import { useProductContext } from '../../context/productContext';
+function Item_List({  }) {
+    const { product, handleImgChange, loading } = useProductContext();
     return (
         <section id="item-list-section">
             <section id="item-list-wrapper">
@@ -15,7 +17,7 @@ function Item_List({ images, handleImgChange, loading }) {
                     </>
                 ) : (
                     <>
-                        {images.map((image, index) => {
+                        {product?.images?.map((image, index) => {
                             return (
                                 <div className="photo-wrapper" key={index}>
                                     <img

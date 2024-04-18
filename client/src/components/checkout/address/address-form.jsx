@@ -206,16 +206,30 @@ function Address_Form({ type }) {
             {/* {(viewContent == 'add' || viewContent == 'edit') && ( */}
 
             <>
-                <p className="mb-6 text-[18px] font-bold tracking-wider">
-                    {text}
-                </p>
 
-                <div className="address-form-wrapper">
-                    <div className="address-input-wrapper">
+            <div className='flex flex-nowrap justify-between gap-3 items-start'>
+                <p className="mb-6 text-lg font-bold tracking-wider">
+                    {text} 
+                </p>
+                {enableCancelBtn && (
+                        <button
+                            disabled={loading}
+                            onClick={cancel}
+                            className=" "
+                            id="checkout-change-btn"
+                        >
+                            CANCEL
+                        </button>
+                    )}
+            </div>
+                
+
+                <div className="address-form-wrapper gap-24 flex flex-nowrap">
+                    <div className="address-input-wrapper md+lg:w-6/12">
                         {newInputArray.map(
                             ({ label, placeHolder, property }, idx) => {
                                 return (
-                                    <>
+                                    
                                         <Input
                                             {...inputProps}
                                             key={label}
@@ -225,7 +239,7 @@ function Address_Form({ type }) {
                                             }
                                             property={property}
                                         />
-                                    </>
+                                    
                                 );
                             }
                         )}
@@ -253,7 +267,7 @@ function Address_Form({ type }) {
                             {temporaryMainAddress?.country || select}
                         </p>
                         <button
-                            className="my-4 !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
+                            className="my-4 w-full whitespace-nowrap !bg-primary px-3 py-3 font-gotham font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100 "
                             type="button"
                             onClick={() => handleSubmit()}
                         >
@@ -270,16 +284,16 @@ function Address_Form({ type }) {
                             </p>
                         )}
                     </div>
-                    {enableCancelBtn && (
+                    {/* {enableCancelBtn && (
                         <button
                             disabled={loading}
                             onClick={cancel}
-                            className="sm+md:absolute sm+md:right-0 sm+md:top-1"
+                            className="sm+md:absolute sm+md:right-0 sm+md:top-1 flex-1"
                             id="checkout-change-btn"
                         >
                             CANCEL
                         </button>
-                    )}
+                    )} */}
                 </div>
             </>
         </motion.section>

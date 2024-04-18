@@ -9,8 +9,8 @@ export const get_all_coupons = asyncHandler(async (req, res, next) => {
   res.status(200).send({ coupons });
 });
 export const create_coupon = asyncHandler(async (req, res, next) => {
-  const { code, amount } = req.body;
-  const newCoupon = await Coupon.create({ code, amount });
+  const { code, amount, type } = req.body;
+  const newCoupon = await Coupon.create({ code, amount, type });
   res.status(200).send(newCoupon);
 });
 
@@ -20,7 +20,7 @@ export const get_single_coupon = asyncHandler(async (req, res, next) => {
   const coupon = await Coupon.findOne({ code: code.toUpperCase() });
 
   if (coupon) {
-    res.status(200).send({ coupon });
+    res.status(200).send(coupon);
   } else {
     const err = new Error('Coupon Not Found');
     err.statusCode = 404;

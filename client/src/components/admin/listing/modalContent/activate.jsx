@@ -6,15 +6,16 @@ import { adminAxios } from '../../../../api/axios';
 import updateProduct from './updateProduct';
 import { useAdminContext } from '../../../../context/adminContext';
 import preventProductFromSelection from './preventProductFromSelection';
+import { handleTimeout, handleUpdateProduct } from './handleTimeout';
 
 function Activate({}) {
-    const { modalContent, setModalCheck } = useContent();
+    const { modalContent, setModalCheck, setShowAlert } = useContent();
     const abortControllerRef = useRef(new AbortController());
     const { allProducts, setAllProducts } = useAdminContext();
     const [loading, setLoading] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
     const { logoutUser } = UserLogout();
     const { productIds, setProductIds } = modalContent;
-debugger
     useEffect(() => {
         return () => {
             abortControllerRef.current?.abort();
@@ -22,8 +23,10 @@ debugger
     }, []);
 
     const handleActivate = async () => {
+        let success = false;
+        let count = null;
         try {
-            setLoading(() => true);
+            setBtnLoading(() => true);
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
 
@@ -36,36 +39,44 @@ debugger
                 },
                 { signal: abortControllerRef.current?.signal }
             );
+
+            success = true;
+            count = data.count;
         } catch (error) {
             console.error('error at Deactivate: ', error?.message);
             logoutUser({ error });
         } finally {
-            const generateUpdateProduct = updateProduct({
-                listing_status: modalContent.checks?.listing_status,
-                allProducts,
-                productIds: modalContent?.productIds,
-                note: 'Moved to active listings',
+            const handleFunc = () =>
+                handleUpdateProduct({
+                    note: 'Moved to inactive listings',
+                    allProducts,
+                    productIds,
+                    setProductIds,
+                    listing_status: modalContent.checks?.listing_status,
+                    clearSelection: modalContent?.clearSelection(),
+                    setAllProducts,
+                });
+
+            handleTimeout({
+                setBtnLoading,
+                setLoading,
+                success,
+                handleFunc,
+                count,
+                setModalCheck,
+                setShowAlert,
+                setAllProducts,
+                msg: `We're unable to activate ${productIds?.length} of your listing. Try again or update each listing individually.`,
             });
-            setTimeout(() => {
-                setLoading(() => false);
-                setModalCheck(() => false);
-                setAllProducts((prevState) => ({
-                    ...prevState,
-                    [modalContent.checks?.listing_status]:
-                        generateUpdateProduct ||
-                        prevState[modalContent.checks?.listing_status],
-                }));
-                modalContent?.clearSelection();
-              preventProductFromSelection({setProductIds, productIds})
-            }, 1000);
         }
     };
     return (
         <Template
+            loading={loading}
             submit={{
                 text: 'Activate',
                 handleClick: handleActivate,
-                loading,
+                loading: btnLoading,
             }}
             small
             title={`You are about to activate ${modalContent.productIds?.length} listing`}

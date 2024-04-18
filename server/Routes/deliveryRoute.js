@@ -3,6 +3,6 @@ import { get_many_delivery_profile } from '../Controllers/deliveryProfileControl
 
 const router = express.Router();
 
-router.get('/many/:id', get_many_delivery_profile);
+router.post('/many/', get_many_delivery_profile);
 
 export default router;

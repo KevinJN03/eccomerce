@@ -24,7 +24,7 @@ function HeaderRight({}) {
         cart,
         setCartLoading,
         dispatch: cartDispatch,
-        setCartRefresh,
+        fetchItems,
     } = useCart();
     const { pathname } = useLocation();
     const handleMouseLeave = (e) => {
@@ -57,7 +57,7 @@ function HeaderRight({}) {
     };
     const handleCartClick = (e) => {
         if (pathname == '/cart') {
-            setCartRefresh(() => true);
+            fetchItems({});
             return;
         }
 
@@ -87,6 +87,7 @@ function HeaderRight({}) {
         // }
 
         if (cart.length > 0 && isHover.menu != 'cart') {
+            fetchItems({});
             console.log('refresh here', isHover.menu);
 
             setIsHover(() => ({
@@ -96,18 +97,12 @@ function HeaderRight({}) {
         }
     };
 
-    const handleWishlistClick = () => {
-        // wishListDispatch({ type: 'latestWishlist' });
-
-        setWishlistRefresh((prevState) => !prevState);
-    };
-
     return (
         <section className="header-right relative flex h-full w-fit max-w-fit ">
             <section className="top z-[2] flex h-full  max-w-fit items-center justify-around !bg-primary sm:gap-5 sm:pl-3 lg:gap-1">
                 <button
                     id="profile"
-                    className="header-icons relative flex h-full w-fit  items-center justify-center rounded border  border-transparent px-2 focus:border-white active:!border-white"
+                    className="header-icons  relative flex h-full w-fit  items-center justify-center rounded border  border-transparent px-2 focus:border-white active:!border-white"
                     onMouseEnter={() => {
                         setIsHover(() => ({
                             on: true,
@@ -127,7 +122,6 @@ function HeaderRight({}) {
                     <Pointer isHover={isHover.menu == 'profile'} />
                 </button>
                 <Link
-                    onClick={handleWishlistClick}
                     to="/wishlist"
                     className="header-icons flex h-full !cursor-pointer   items-center justify-center px-2"
                 >
@@ -161,9 +155,9 @@ function HeaderRight({}) {
 
                         <Pointer isHover={isHover.menu == 'cart'} />
                         <AnimatePresence>
-                            {cart.length > 0 && (
+                            {cart?.length > 0 && (
                                 <motion.div
-                                    key={cart.length}
+                                    // key={cart?.length}
                                     variants={cartVariants}
                                     animate={'animate'}
                                     initial={'initial'}

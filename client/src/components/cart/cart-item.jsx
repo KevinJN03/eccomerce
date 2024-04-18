@@ -1,140 +1,169 @@
-import heart from '../../assets/heart.png';
-import QTY_SIZE_OPTION from './qty-size-options';
-import close from '../../assets/icons/close.png';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import Variation2Options from './variation2Options';
+import { useEffect, useState } from 'react';
 import { useCart } from '../../context/cartContext';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, animate, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CloseRounded, Favorite, FavoriteBorder } from '@mui/icons-material';
 
 import Overlay from './overlay';
 import getCartItemVariants from './cartItemVariants';
-import { useHover } from '@uidotdev/usehooks';
 import useWishListHook from '../../hooks/wishlistHook';
-import Hearts from './hearts';
-const arrayRange = (start, stop, step) =>
-    Array.from(
-        { length: (stop - start) / step + 1 },
-        (value, index) => start + index * step
-    );
-
-function Cart_Item({ cartItem, idx, lastIndex }) {
-    const [quantity, setQuantity] = useState(cartItem?.quantity);
-    const [findSize, setFindSize] = useState(null);
-    const [sizeOptionArray, setSizeOptionArray] = useState([]);
-    const [findColor, setFindColor] = useState(null);
+import _, { cloneDeep, property, values } from 'lodash';
+import dayjs from 'dayjs';
+import ShippingSelectOption from './shippingSelectOption';
+import { useWishlistContext } from '../../context/wishlistContext';
+import SaveLaterOverLay from './saveLaterOverlay';
+function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
     const [isRemoving, setIsRemoving] = useState({ saveForLater: false });
-    let quantityArr = arrayRange(1, 10, 1);
+    const { dispatch, cart, removeItem, updateItemProperty } = useCart();
 
-    const { dispatch, cart } = useCart();
+    const { addItem } = useWishlistContext();
 
     const handleRemove = () => {
-        dispatch({ type: 'remove', cartId: cartItem.cartId });
+        removeItem({ itemId: cartItem._id });
+        // dispatch({ type: 'REMOVE', _id: cartItem._id });
     };
 
-    const {
-        isHoverFavorite,
-        setIsHoverFavorite,
-
-        handleWishlist,
-    } = useWishListHook({
+    const { isHoverFavorite, setIsHoverFavorite } = useWishListHook({
         product: cartItem,
     });
     const [favorite, setFavorite] = useState(false);
-    const handleSizeChange = (e) => {
-        const { id } =
+    const delivery = _.get(cartItem, ['deliveryInfo', 0]);
+
+    const handleVariationChange = (e) => {
+        const { ...values } =
             e.target.options[e.target.options.selectedIndex]?.dataset;
 
-        let variationIndex = null;
-        if (!cartItem?.isVariationCombine) {
-            const findSizeVariation = [
-                cartItem?.variation1,
-                cartItem?.variation2,
-            ].find((item, idx) => {
-                if (item.title == 'Size') {
-                    variationIndex = idx + 1;
-                    return item;
-                }
-            });
 
-            if (findSizeVariation?.array) {
-                const foundVariation = findSizeVariation.array.find(
-                    (item) => item.id == id
-                );
+        updateItemProperty({
+            itemId: cartItem._id,
+            property: 'variation_data.select.variation2',
+            value: values,
+        });
 
-                if (foundVariation) {
-                    const updatedVariationSelect = {
-                        ...cartItem?.variationSelect,
-                        [`variation${variationIndex}`]: {
-                            ...cartItem.variationSelect?.[
-                                `variation${variationIndex}`
-                            ],
-                            ...foundVariation,
-                        },
-                    };
+        
 
-                    dispatch({
-                        type: 'edit variation',
-                        cartId: cartItem?.cartId,
-                        variationSelect: updatedVariationSelect,
-                    });
-                }
-            }
-        } else {
-            const selectedVariation1 =
-                cartItem.variationSelect.variation1?.variation;
-            const findVariation =
-                cartItem?.combineVariation?.[selectedVariation1];
+        // if (!_.get(cartItem, 'variation_data', 'isVariationCombine')) {
+        //     const findSizeVariation = [
+        //         _.get(cartItem, 'variation_data', 'variation1_data'),
+        //         _.get(cartItem, 'variation_data', 'variation2_data'),
+        //         //  cartItem?.variation1,
 
-            if (findVariation) {
-                const newVariation = findVariation[e.target.value];
-                const updatedVariationSelect = {
-                    ...cartItem.variationSelect,
-                    variation2: {
-                        ...cartItem.variationSelect.variation2,
-                        ...newVariation,
-                    },
-                };
+        //         //  cartItem?.variation2,
+        //     ].find((item, idx) => {
+        //         if (item.title == 'Size') {
+        //             variationIndex = idx + 1;
+        //             return item;
+        //         }
+        //     });
 
-                // dispatch({
-                //     type: 'edit variation',
-                //     cartId: product?.cartId,
-                //     variationSelect: updatedVariationSelect,
-                // });
-            }
-        }
+        //     if (findSizeVariation?.array) {
+        //         const foundVariation = findSizeVariation.array.find(
+        //             (item) => item.id == id
+        //         );
+
+        //         if (foundVariation) {
+        //             const updatedVariationSelect = cloneDeep(
+        //                 _.get(cartItem, 'variation_data.select')
+        //             );
+        //             _.set(
+        //                 updatedVariationSelect,
+        //                 [`variation${variationIndex}`],
+        //                 { ...foundVariation }
+        //             );
+
+        //             // {
+        //             //     [`variation${variationIndex}`]: {
+        //             //         ...cartItem.variationSelect?.[
+        //             //             `variation${variationIndex}`
+        //             //         ],
+        //             //         ...foundVariation,
+        //             //     },
+        //             // };
+
+        //             dispatch({
+        //                 type: 'EDIT_VARIATION',
+        //                 _id: cartItem?._id,
+        //                 select: updatedVariationSelect,
+        //             });
+        //         }
+        //     }
+        // } else {
+        //     const selectedVariation1 = _.get(
+        //         cartItem,
+        //         'variation_data.select.variation1.variation'
+        //     );
+        //     const findVariation = _.get(
+        //         cartItem,
+        //         `variation_data.select.variation1.${selectedVariation1}`
+        //     );
+
+        //     //    cartItem?.combineVariation?.[selectedVariation1];
+
+        //     if (findVariation) {
+        //         const newVariation = findVariation[e.target.value];
+        //         const selectObj = _.cloneDeep(
+        //             _.get(cartItem, ['variation_data', 'select'])
+        //         );
+        //         _.set(selectObj, ['variation2'], {
+        //             ...selectObj?.variation2,
+        //             ...newVariation,
+        //         });
+
+        //         // const updatedVariationSelect = {
+        //         //         ..._.get(cartItem, ['variation_data', 'select' ]),
+        //         //         variation2: {
+        //         //             ...cartItem.variationSelect.variation2,
+        //         //             ...newVariation,
+        //         //         },
+        //         //     };
+
+        //         dispatch({
+        //             type: 'EDIT_VARIATION',
+        //             _id: product?._id,
+        //             select: selectObj,
+        //         });
+        //     }
+        // }
     };
 
     const handleQuantityChange = (e) => {
-        setQuantity(() => e.target.value);
-        dispatch({
-            type: 'edit quantity',
-            quantity: e.target.value,
-            cartId: cartItem.cartId,
+        // dispatch({
+        //     type: 'EDIT_QUANTITY',
+        //     quantity: e.target.value,
+        //     _id: cartItem._id,
+        // });
+
+        updateItemProperty({
+            itemId: cartItem._id,
+            property: 'quantity',
+            value: e.target.value,
         });
     };
 
-    useEffect(() => {
-        const variationSelectArray = Object.entries(
-            cartItem?.variationSelect
-        ).map(([key, value]) => {
-            if (value?.title == 'Colour') {
-                setFindColor(() => ({
-                    variation: value?.variation,
-                    variationType: key,
-                }));
-            }
+    // useEffect(() => {
+    //     const variationSelectArray = Object.entries(
+    //         _.get(cartItem, 'variation_data.select')
+    //     ).map(([key, value]) => {
+    //         if (value?.title == 'Colour') {
+    //             setFindColor(() => ({
+    //                 variation: value?.variation,
+    //                 variationType: key,
+    //             }));
+    //         }
 
-            if (value?.title == 'Size') {
-                setFindSize(() => ({
-                    variation: value?.variation,
-                    variationType: key,
-                }));
+    //         if (value?.title == 'Size') {
+    //             setFindSize(() => ({
+    //                 variation: value?.variation,
+    //                 variationType: key,
+    //             }));
 
-                setSizeOptionArray(() => cartItem?.[key]?.array || []);
-            }
-        });
-    }, []);
+    //             setSizeOptionArray(() =>
+    //                 _.get(cartItem, `variation_data.${key}.array`)
+    //             );
+    //         }
+    //     });
+    // }, []);
 
     const [cartItemVariants, setCartItemVariants] = useState(() =>
         getCartItemVariants({
@@ -153,6 +182,30 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
             },
         },
     };
+
+    const handleDeliverySelect = (e) => {
+        const values = e.target[e.target.selectedIndex].dataset;
+        dispatch({
+            type: 'UPDATE_DELIVERY',
+            _id: cartItem._id,
+            shipping_data: {
+                ...values,
+                one_item: parseFloat(values.one_item),
+                additional_item: parseFloat(values.additional_item),
+            },
+        });
+
+        updateItemProperty({
+            itemId: cartItem._id,
+            property: 'shipping_data',
+            value: {
+                ...values,
+                one_item: parseFloat(values.one_item),
+                additional_item: parseFloat(values.additional_item),
+            },
+        });
+    };
+
     return (
         <motion.section
             variants={cartItemVariants.section}
@@ -171,7 +224,7 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                 <AnimatePresence>
                     {isRemoving?.showOverlay && (
                         <motion.div
-                            key={`saveLaterOverlay-${cartItem.cartId}`}
+                            key={`saveLaterOverlay-${cartItem._id}`}
                             exit={'exit'}
                             className=" absolute left-0 top-0 z-[1] flex h-full w-full flex-col items-center justify-center"
                         >
@@ -204,114 +257,9 @@ function Cart_Item({ cartItem, idx, lastIndex }) {
                             </AnimatePresence>
                             {/* <div className="relative flex h-full w-full items-end justify-center"> */}
                             <AnimatePresence>
-                                {[
-                                    {
-                                        left: 40,
-
-                                        fontSize: 1,
-
-                                        bottom: 1,
-                                    },
-                                    {
-                                        left: 42,
-                                        fontSize: 0.8,
-
-                                        bottom: 2.3,
-                                    },
-
-                                    {
-                                        fontSize: 0.6,
-                                        left: 45,
-
-                                        bottom: 1.7,
-                                    },
-                                    {
-                                        left: 45,
-
-                                        fontSize: 0.45,
-
-                                        bottom: 3,
-                                    },
-                                ].map(
-                                    (
-                                        { left, top, fontSize, ml, bottom, mb },
-                                        idx
-                                    ) => {
-                                        const variants = {
-                                            initial: { opacity: 0 },
-                                            animate: {
-                                                opacity: 1,
-                                                transition: {
-                                                    duration: 0.3,
-                                                    delay: 0.2 * (idx + 1),
-                                                },
-                                            },
-                                            exit: {
-                                                opacity: 0,
-                                                transition: {
-                                                    duration: 0.3,
-                                                    delay: (4 - idx) * 0.2,
-                                                },
-                                            },
-                                        };
-                                        return (
-                                            <AnimatePresence>
-                                                {!isRemoving?.showOverlayOpacityOff && (
-                                                    <motion.div
-                                                        style={{
-                                                            // marginBottom: `${mb}rem`
-
-                                                            bottom: `${bottom}rem`,
-                                                            left: `${left}%`,
-                                                        }}
-                                                        className={`absolute`}
-                                                        key={`heart-${
-                                                            idx + 1
-                                                        }-${cartItem.cartId}`}
-                                                        variants={variants}
-                                                        initial={'initial'}
-                                                        animate={'animate'}
-                                                        exit={'exit'}
-                                                        onAnimationComplete={(
-                                                            e
-                                                        ) => {
-                                                            if (
-                                                                idx == 0 &&
-                                                                e == 'exit'
-                                                            ) {
-                                                                handleWishlist();
-                                                                handleRemove();
-                                                            }
-                                                            if (
-                                                                idx == 3 &&
-                                                                e == 'animate'
-                                                            ) {
-                                                                setIsRemoving(
-                                                                    (
-                                                                        prevState
-                                                                    ) => ({
-                                                                        ...prevState,
-                                                                        showOverlayOpacityOff: true,
-                                                                        // showOverlay: false,
-                                                                    })
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        <Favorite
-                                                            className="!fill-black/80"
-                                                            sx={{
-                                                                fontSize:
-                                                                    fontSize +
-                                                                    'rem',
-                                                            }}
-                                                        />
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        );
-                                    }
-                                )}
+                                <SaveLaterOverLay
+                                    {...{ cartItem, isRemoving, setIsRemoving }}
+                                />
                             </AnimatePresence>
                         </motion.div>
                     )}
@@ -350,7 +298,7 @@ pb-4
                relative flex h-full w-full flex-row `}
                             >
                                 <Link
-                                    to={`/product/${cartItem.id}`}
+                                    to={`/product/${cartItem.product_id}`}
                                     className="cart-img-container h-full"
                                 >
                                     <img
@@ -389,27 +337,34 @@ pb-4
                                             {cartItem.title}
                                         </p>
                                         <div className="cart-options">
-                                            {findColor && (
+                                            {_.get(
+                                                cartItem,
+                                                'variation_data.select.variation1.variation'
+                                            ) && (
                                                 <span className="border-r-[1px] pr-2 text-s text-black/70">
-                                                    {findColor?.variation}
+                                                    {_.get(
+                                                        cartItem,
+                                                        'variation_data.select.variation1.variation'
+                                                    )}
                                                 </span>
                                             )}
-                                            {cartItem?.isVariation2Present && (
+                                            {_.get(
+                                                cartItem,
+                                                'variation_data.select.variation2.variation'
+                                            ) && (
                                                 <div className="cursor-pointer border-r-[1px] pr-2">
-                                                    <QTY_SIZE_OPTION
+                                                    <Variation2Options
                                                         handleOnChange={
-                                                            handleSizeChange
+                                                            handleVariationChange
                                                         }
-                                                        options={
-                                                            cartItem?.variation2
-                                                                ?.array
-                                                        }
-                                                        select={
-                                                            cartItem
-                                                                ?.variationSelect
-                                                                ?.variation2
-                                                                ?.variation
-                                                        }
+                                                        options={_.get(
+                                                            cartItem,
+                                                            'variation_data.variation2_data.array'
+                                                        )}
+                                                        select={_.get(
+                                                            cartItem,
+                                                            'variation_data.select.variation2.variation'
+                                                        )}
                                                         type="size"
                                                     />
                                                     <div className="border-r-2 pr-2" />
@@ -428,75 +383,161 @@ pb-4
                                                         className="!max-w-[80px] text-s text-black/70"
                                                         tabIndex={'0'}
                                                     >
-                                                        {quantityArr.map(
-                                                            (item, index) => {
-                                                                return (
-                                                                    <option
-                                                                        className="text-black/60"
-                                                                        key={
-                                                                            item
-                                                                        }
-                                                                        value={
-                                                                            item
-                                                                        }
-                                                                        // selected = {}
-                                                                        selected={
-                                                                            item ==
-                                                                            cartItem.quantity
-                                                                        }
-                                                                    >
-                                                                        {item}
-                                                                    </option>
-                                                                );
-                                                            }
+                                                        {cartItem.quantity >
+                                                            10 && (
+                                                            <option selected>
+                                                                {
+                                                                    cartItem.quantity
+                                                                }
+                                                            </option>
                                                         )}
+                                                        {Array(10)
+                                                            .fill('')
+                                                            .map(
+                                                                (
+                                                                    item,
+                                                                    index
+                                                                ) => {
+                                                                    return (
+                                                                        <option
+                                                                            className="text-black/60"
+                                                                            key={`${cartItem._id}-qty-${
+                                                                                index +
+                                                                                1
+                                                                            }`}
+                                                                            value={
+                                                                                index +
+                                                                                1
+                                                                            }
+                                                                            // selected = {}
+                                                                            selected={
+                                                                                index +
+                                                                                    1 ==
+                                                                                cartItem.quantity
+                                                                            }
+                                                                        >
+                                                                            {index +
+                                                                                1}
+                                                                        </option>
+                                                                    );
+                                                                }
+                                                            )}
                                                     </select>
                                                 </span>
                                             </div>
                                         </div>
-                                        <button
-                                            type="button"
-                                            id="save-later-btn"
-                                            className=""
-                                            onClick={() => {
-                                                // handleWishlist;
 
-                                                setIsRemoving((prevState) => ({
-                                                    ...prevState,
-                                                    saveForLater: true,
-                                                }));
-                                            }}
-                                            onMouseEnter={() =>
-                                                setIsHoverFavorite(() => true)
-                                            }
-                                            onMouseLeave={() =>
-                                                setIsHoverFavorite(() => false)
-                                            }
-                                        >
-                                            <div className="h-fit w-fit flex items-center flex-row">
-                                                {isHoverFavorite || favorite ? (
-                                                    <Favorite
-                                                        sx={{
-                                                            stroke: 'white',
-                                                            strokeWidth: -0.5,
-                                                            fontSize: '1rem',
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <FavoriteBorder
-                                                        sx={{
-                                                            stroke: 'white',
-                                                            strokeWidth: -0.5,
-                                                            fontSize: '1rem',
-                                                        }}
-                                                    />
+                                        <div className="flex w-full gap-4">
+                                            <button
+                                                type="button"
+                                                id="save-later-btn"
+                                                className=""
+                                                onClick={() => {
+                                                    // handleWishlist;
+
+                                                    setIsRemoving(
+                                                        (prevState) => ({
+                                                            ...prevState,
+                                                            saveForLater: true,
+                                                        })
+                                                    );
+                                                }}
+                                                onMouseEnter={() =>
+                                                    setIsHoverFavorite(
+                                                        () => true
+                                                    )
+                                                }
+                                                onMouseLeave={() =>
+                                                    setIsHoverFavorite(
+                                                        () => false
+                                                    )
+                                                }
+                                            >
+                                                <div className="flex h-fit w-fit flex-row items-center">
+                                                    {isHoverFavorite ||
+                                                    favorite ? (
+                                                        <Favorite
+                                                            sx={{
+                                                                stroke: 'white',
+                                                                strokeWidth:
+                                                                    -0.5,
+                                                                fontSize:
+                                                                    '1rem',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <FavoriteBorder
+                                                            sx={{
+                                                                stroke: 'white',
+                                                                strokeWidth:
+                                                                    -0.5,
+                                                                fontSize:
+                                                                    '1rem',
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+
+                                                <p className="m-0 text-xs">
+                                                    Save for later
+                                                </p>
+                                            </button>
+
+                                            {/* <select
+                                                onChange={handleDeliverySelect}
+                                                name="shipping-select"
+                                                id="shipping-select"
+                                                className=" daisy-select daisy-select-bordered daisy-select-sm w-full rounded-none !text-xxs text-black"
+                                            >
+                                                <option
+                                                    className=""
+                                                    selected={true}
+                                                    disabled
+                                                >
+                                                    Select delivery...
+                                                </option>
+
+                                                {!_.isEmpty(delivery) && (
+                                                    <>
+                                                        {[
+                                                            _.get(
+                                                                delivery,
+                                                                'standard_delivery.0'
+                                                            ),
+                                                            ..._.filter(
+                                                                _.get(
+                                                                    delivery,
+                                                                    'delivery_upgrades'
+                                                                ),
+                                                                {
+                                                                    destination:
+                                                                        'domestic',
+                                                                }
+                                                            ),
+                                                        ]?.map((props) => {
+                                                            return (
+                                                                <ShippingSelectOption
+                                                                    key={`${cartItem?._id}-${props?._id}`}
+                                                                    {...props}
+                                                                    cartItem={
+                                                                        cartItem
+                                                                    }
+                                                                    delivery={
+                                                                        delivery
+                                                                    }
+                                                                />
+                                                            );
+                                                        })}
+                                                    </>
                                                 )}
-                                            </div>
-
-                                            <p className="m-0 text-xs">
-                                                Save for later
-                                            </p>
-                                        </button>
+                                                <option
+                                                    value={_.get(
+                                                        delivery,
+                                                        'standard_delivery.0.charges._id'
+                                                    )}
+                                                ></option>
+                                            </select> */}
+                                        </div>
                                     </div>
                                 </section>
                                 <div>

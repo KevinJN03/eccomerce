@@ -4,7 +4,7 @@ import OptionError from '../variation/error/optionError';
 import { forwardRef, useEffect, useState } from 'react';
 import { useNewProduct } from '../../../../../../context/newProductContext';
 export const Input = forwardRef(function Input(
-    { visible, value, error, property, handleOnchange },
+    { visible, value, error, property, handleOnchange, ...props },
     ref
 ) {
     return (

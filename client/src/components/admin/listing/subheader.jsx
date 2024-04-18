@@ -16,6 +16,7 @@ function SubHeader({}) {
         productIds,
         handleClick,
         text,
+        setTriggerSearch,
     } = useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
@@ -28,13 +29,13 @@ function SubHeader({}) {
             />
 
             <div className="flex w-fit flex-row flex-nowrap rounded border border-dark-gray/50">
-                <button
+                {/* <button
                     disabled={!selectionSet?.size}
                     type="button"
                     className="rounded-l-inherit px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
                 >
                     Renew
-                </button>
+                </button> */}
                 {text[checks?.listing_status] && (
                     <button
                         onClick={() =>
@@ -47,7 +48,7 @@ function SubHeader({}) {
                         }
                         disabled={!selectionSet?.size}
                         type="button"
-                        className="border-x border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
+                        className="border-r border-dark-gray/50 px-3 text-xs font-medium text-black/70 hover:bg-light-grey/60 disabled:cursor-default disabled:bg-orange-50/50"
                     >
                         {text[checks?.listing_status]}
                     </button>
@@ -112,13 +113,13 @@ function SubHeader({}) {
                                                 setModalCheck(() => true);
                                                 setModalContent(() => ({
                                                     type: id,
-
+                                                    setTriggerSearch,
                                                     clearSelection: () => {
                                                         setSelectionSet(
                                                             new Set()
                                                         );
                                                     },
-                                                    products:
+                                                    productIds:
                                                         Array.from(
                                                             selectionSet
                                                         ),

@@ -4,7 +4,7 @@ function Hearts({ idx, cartItem, bottom, left, fontSize, variants }) {
     return (
         <motion.div
             className={`!bottom-[${bottom}] relative left-[${left}%]`}
-            key={`heart-${idx + 1}-${cartItem.cartId}`}
+            key={`heart-${idx + 1}-${cartItem._id}`}
             variants={variants}
             initial={'initial'}
             animate={'animate'}

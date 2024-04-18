@@ -5,55 +5,47 @@ import axios from '../../api/axios';
 import ActivePromo from './active-promo';
 import { v4 as uuidv4 } from 'uuid';
 import { useCart } from '../../context/cartContext.jsx';
-
-function Voucher({ triggerClose, setDisplay, display }) {
+import _ from 'lodash';
+function Voucher({setShow}) {
     const [voucherText, setVoucherText] = useState();
     const [error, setError] = useState({ bool: false });
-    const { promo, setPromo } = useCart();
-    const handleClick = (e) => {
-        if (voucherText) {
-            axios
-                .get(`/giftCard?code=${voucherText}`)
-                .then((res) => {
-                    if (res.status == 200) {
-                        const { code, amount, type } = res.data;
-                        let newObj = {
-                            id: uuidv4(),
-                            bool: true,
-                            code,
-                            amount,
-                            type,
-                            promoType: 'voucher',
-                        };
+    const { promo, setPromo, updateItemProperty } = useCart();
+    const handleClick = async (e) => {
+        try {
+            if (voucherText) {
+                const { data } = await axios.get(
+                    `/giftCard?code=${voucherText}`
+                )
 
-                        if (!promo[0].code) {
-                            setPromo([newObj]);
-                        } else {
-                            setPromo([...promo, newObj]);
-                        }
+                if (promo?.length < 1) {
+                    updateItemProperty({ property: 'giftCard', value: data._id });
+                    setShow(() => false);
+                }
 
-                        setDisplay(true);
-                        setError({ bool: false });
-                        triggerClose(true);
-                    }
-                    res;
-                })
-                .catch((error) => {
-                    'error at promo', error;
-                    setError({ msg: 'invalidCoupon', bool: true });
-                });
+                setPromo((prevState) => [
+                    ...prevState,
+                    {
+                        bool: true,
+                        ...data,
+                        promoType: 'giftCard',
+                    },
+                ]);
 
-            voucherText;
-        } else {
-            setError({ msg: 'emptyField', bool: true });
+                setError({ bool: false });
+            } else {
+                setError({ msg: 'emptyField', bool: true });
+            }
+        } catch (error) {
+            setError({ msg: 'invalidCoupon', bool: true });
         }
     };
 
     return (
         <section id="promo-body">
-            {promo[0].bool && promo[0].promoType == 'voucher' && (
-                <ActivePromo type="voucher" />
-            )}
+            {_.get(promo, [0]) &&
+                _.get(promo, [0, 'promoType']) == 'giftCard' && (
+                    <ActivePromo type="voucher" />
+                )}
             <Promo_Voucher_header header_text="ADD A VOUCHER" />
             <div id="promo-input-container">
                 <Input

@@ -13,9 +13,11 @@ import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';
 
 import axios from '../../api/axios';
+import ProductContextProvider from '../../context/productContext';
+import _ from 'lodash';
 
 function ItemPage() {
-    const [product, setProduct] = useState({ images: [], gender: null });
+    const [product, setProduct] = useState({});
 
     const [state, dispatch] = useGenderCategory();
 
@@ -45,11 +47,10 @@ function ItemPage() {
             } catch (error) {
                 console.error(error);
             } finally {
-                
             }
         };
 
-        fetchData()
+        fetchData();
 
         return () => {
             clearTimeout(timeoutRef.current);
@@ -57,14 +58,7 @@ function ItemPage() {
         };
     }, []);
 
-    function getRoute() {
-        const { id } = useParams();
-        const route = location.pathname.split('/')[1];
-        'path', route;
-    }
-    function Loader() {
-        return <span className="loading loading-infinity loading-lg"></span>;
-    }
+ 
 
     const example = exampleData;
     const imageRef = useRef(null);
@@ -73,58 +67,48 @@ function ItemPage() {
             ? e.target.src
             : imageRef.current.src;
     };
+
+    const value = { product, setProduct, loading, handleImgChange };
     return (
-        <>
-            {/* {loading ? (
-                Loader()
-            ) : ( */}
-            <section className="item-page-wrapper">
-                <section id="item-page">
-                    <Navigation_Links
-                        shouldUpdateGender={true}
-                        product={{
-                            title: product?.title,
-                            gender: product?.gender,
-                            category: product?.category,
-                        }}
-                        loading={loading}
-                        className="mt-3 pl-3"
-                    />
-                    <section className="item-section">
-                        <Item_List
+        <ProductContextProvider value={value}>
+            {!_.isEmpty(product) && (
+                <section className="item-page-wrapper">
+                    <section id="item-page">
+                        <Navigation_Links
+                            shouldUpdateGender={true}
+                            product={{
+                                title: product?.title,
+                                gender: product?.gender,
+                                category: product?.category,
+                            }}
                             loading={loading}
-                            images={product?.images}
-                            handleImgChange={handleImgChange}
+                            className="mt-3 pl-3"
                         />
-                        <Main_Image
-                            ref={imageRef}
-                            images={product?.images}
+                        <section className="item-section">
+                            <Item_List />
+                            <Main_Image ref={imageRef} />
+                            {!loading && (
+                                <Product_info
+                                    text={example?.text}
+                                    // images={example?.similar_styles_images}
+                                    // style_it_with_image={example?.style_it_with_image}
+                                />
+                            )}
+                        </section>
+                        {!loading ? (
+                            <Reviews product={product} />
+                        ) : (
+                            <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
+                        )}
+                        <div className=" item-page-divider border-5 w-full sm+md:mb-10 lg:!hidden"></div>
+                        <Recommended
+                            products={product?.alsoLike || []}
                             loading={loading}
-                        />
-                        <Product_info
-                            loading={loading}
-                            text={example?.text}
-                            title={product?.title}
-                            details={product?.detail}
-                            images={example?.similar_styles_images}
-                            style_it_with_image={example?.style_it_with_image}
-                            product={product}
                         />
                     </section>
-                    {!loading ? (
-                        <Reviews product={product} />
-                    ) : (
-                        <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
-                    )}
-                    <div className=" item-page-divider border-5 w-full sm+md:mb-10 lg:!hidden"></div>
-                    <Recommended
-                        products={product?.alsoLike || []}
-                        loading={loading}
-                    />
                 </section>
-            </section>
-            {/* )} */}
-        </>
+            )}
+        </ProductContextProvider>
     );
 }
 

@@ -1,7 +1,5 @@
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState, useReducer, useRef } from 'react';
 import SideBar from '../components/sidebar/sidebar';
-import Navbar from '../components/navbar/navbar';
-import disableLayout from '../../../hooks/disableLayout';
 
 import './admin.scss';
 import './dark.scss';
@@ -11,16 +9,10 @@ import {
     useDarkMode,
     DarkModeContextProvider,
 } from '../../../context/darkModeContext';
-import { useContext } from 'react';
 import { ContentProvider } from '../../../context/ContentContext';
-import { useAdminContext } from '../../../context/adminContext';
 
-import Manage from '../components/product/new product/variation/manage/manage';
-import SelectVariation from '../components/product/new product/variation/selectVariation';
 import Main from '../components/product/new product/variation/main';
-import Update from '../components/product/new product/variation/update';
-import Order_Edit from '../order/home/edit_order';
-import UpdateOrder from '../order/home/updateOrder';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     CheckRounded,
@@ -28,9 +20,12 @@ import {
     CloseSharp,
     MoodBad,
     MoodBadTwoTone,
+    NotificationsOutlined,
+    SentimentDissatisfiedTwoTone,
 } from '@mui/icons-material';
 
 import sadEmoji from '../../../assets/icons/sad-emoji.svg';
+import sadFace from '../../../assets/icons/sadFace.png';
 import { Box, Modal } from '@mui/material';
 import Delete from '../listing/modalContent/delete.jsx';
 import ChangeSection from '../listing/modalContent/changeSection.jsx';
@@ -42,15 +37,14 @@ import Activate from '../listing/modalContent/activate.jsx';
 import Publish from '../listing/modalContent/publish.jsx';
 import Edit_Delivery from '../listing/modalContent/edit_delivery.jsx';
 import ProcessOrder from '../delivery/modalViews.jsx/processOrder.jsx';
-import CreateProfile from '../delivery/modalViews.jsx/createProfile.jsx';
+import CreateProfile from '../delivery/modalViews.jsx/createProfile/createProfile.jsx';
+import DeleteProfile from '../delivery/modalViews.jsx/deleteProfile.jsx';
+import DeliveryOption from '../delivery/modalViews.jsx/deliveryOption.jsx';
+import PrintOrder from '../order/modalView/printOrder.jsx';
 function Admin({}) {
     const { darkMode } = useDarkMode();
 
-    const [showAlert, setShowAlert] = useState({
-        msg: 'Listing Updated.',
-        on: false,
-        small: false,
-    });
+    const [showAlert, setShowAlert] = useState({});
     const [open, setOpen] = useState(true);
 
     const [modalCheck, setModalCheck] = useState(false);
@@ -58,6 +52,7 @@ function Admin({}) {
         type: 'change_section',
     });
     const [openSearch, setOpenSearch] = useState(false);
+    const timeoutRef = useRef();
     const views = {
         delete: <Delete />,
         change_section: <ChangeSection />,
@@ -71,6 +66,9 @@ function Admin({}) {
         publish: <Publish />,
         processOrder: <ProcessOrder />,
         createProfile: <CreateProfile />,
+        deleteProfile: <DeleteProfile />,
+        deliveryOption: <DeliveryOption />,
+        printOrder: <PrintOrder/>
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -93,19 +91,33 @@ function Admin({}) {
     });
 
     useEffect(() => {
-        let timeout = null;
+        clearTimeout(timeoutRef.current);
+
         if (showAlert?.on) {
-            timeout = setTimeout(() => {
-                setShowAlert(() => ({ on: false, msg: null, small: null }));
-            }, 5000);
+            timeoutRef.current = setTimeout(() => {
+                setShowAlert(() => ({ on: false }));
+            }, showAlert?.timeout || 5000);
         }
+    }, [showAlert]);
 
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [showAlert.on]);
+    const icons = {
+        bell: <NotificationsOutlined />,
+        check: <CheckRounded />,
+        sadFace: (
+            <div className="relative h-10 w-10">
+                <div
+                    className={`absolute left-0 top-0 h-full w-full rounded-full border-4 border-white `}
+                />
+                <img
+                    width="40"
+                    height="40"
+                    src={sadFace}
+                    alt="disappointed--v1"
+                />
+            </div>
+        ),
+    };
 
-    console.log('admin rerender');
     return (
         <section className={`admin ${darkMode ? 'dark' : ''}`}>
             <ContentProvider
@@ -128,57 +140,70 @@ function Admin({}) {
                 ) : (
                     <section className="home relative">
                         <AnimatePresence>
-                            {showAlert?.on && showAlert?.small === true && (
-                                <motion.section
-                                    className="fixed left-0 z-50 flex w-full justify-center"
-                                    variants={generateAlertVariant('20px')}
-                                    initial={'initial'}
-                                    animate={'animate'}
-                                    exit={'exit'}
-                                >
-                                    <div className="flex w-full max-w-md flex-row gap-3 rounded !bg-red-800 p-3 ">
-                                        <span>
-                                            <img
-                                                src={sadEmoji}
-                                                alt="sad mode emoji"
-                                            />
-                                        </span>
-
-                                        <p className="text-white">
-                                            {showAlert?.msg}
-                                        </p>
-
-                                        <button
-                                            className="ml-auto self-start"
-                                            onClick={() => setShowAlert({})}
+                            {showAlert?.on &&
+                                (showAlert?.size === 'small' ||
+                                    showAlert?.size === 'medium') && (
+                                    <motion.section
+                                        className="fixed left-0 z-[51] flex w-full justify-center"
+                                        variants={generateAlertVariant('20px')}
+                                        initial={'initial'}
+                                        animate={'animate'}
+                                        exit={'exit'}
+                                    >
+                                        <div
+                                            className={`flex w-full max-w-lg flex-row gap-3 rounded px-5 py-5 shadow-normal ${showAlert?.bg || 'bg-gray-200'}`}
                                         >
-                                            <CloseSharp className="!fill-white " />
-                                        </button>
-                                    </div>
-                                </motion.section>
-                            )}
-                            {showAlert?.on && showAlert?.small === false && (
+                                            {showAlert?.icon && (
+                                                <div
+                                                    className={`flex h-fit w-fit items-center  justify-center rounded-full ${showAlert?.icon == 'sadFace' ? 'bg-transparent' : 'bg-white'}  p-2 !text-[1.8rem]`}
+                                                >
+                                                    {icons?.[showAlert?.icon]}
+                                                </div>
+                                            )}
+
+                                            <div
+                                                className={`mt-0.5 font-normal tracking-wide ${showAlert?.text || 'text-base text-white'} `}
+                                            >
+                                                {showAlert?.msg}
+                                            </div>
+
+                                            <button
+                                                className="ml-auto self-start"
+                                                onClick={() => setShowAlert({})}
+                                            >
+                                                <CloseSharp className="!fill-white " />
+                                            </button>
+                                        </div>
+                                    </motion.section>
+                                )}
+                            {showAlert?.on && showAlert?.size == 'large' && (
                                 <motion.section
-                                    className="fixed left-0 top-0 z-50 flex w-full items-center justify-center  !bg-green-100 p-5 "
+                                    className={`fixed left-0 top-0 z-[51] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
                                     variants={generateAlertVariant('0px')}
                                     initial={'initial'}
                                     animate={'animate'}
                                     exit={'exit'}
                                 >
                                     <div className="flex w-fit flex-row items-center gap-3">
-                                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white">
-                                            <CheckRounded className="!text-[1.8rem]" />
-                                        </div>
+                                        {showAlert?.icon && (
+                                            <div
+                                                className={`flex h-fit w-fit items-center  justify-center rounded-full ${showAlert?.icon == 'sadFace' ? 'bg-transparent' : 'bg-white'}  p-2 !text-[1.8rem]`}
+                                            >
+                                                {icons?.[showAlert?.icon]}
+                                            </div>
+                                        )}
 
-                                        <p className="text-sm">
+                                        <div
+                                            className={`mt-0.5  font-normal tracking-wide ${showAlert?.text || 'text-base text-white'}`}
+                                        >
                                             {showAlert?.msg}
-                                        </p>
+                                        </div>
                                     </div>
                                     <button
                                         className="absolute right-8 top-1/2 translate-y-[-50%]"
                                         onClick={() => setShowAlert({})}
                                     >
-                                        <CloseRounded className="!fill-black !text-[1.8rem]" />
+                                        <CloseRounded className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`} />
                                     </button>
                                 </motion.section>
                             )}
@@ -200,30 +225,28 @@ function Admin({}) {
                             <Outlet />
 
                             <Modal
-                             
                                 open={modalCheck}
                                 onClose={() => setModalCheck(false)}
                                 style={{
-                            
-                                     overflowY: 'auto',
+                                    overflowY: 'auto',
                                 }}
                             >
                                 <Box
                                     sx={{
-                                    
                                         position: 'absolute',
                                         top: '15%',
                                         left: '50%',
-                                      
 
                                         transform: 'translate(-50%, -0%)',
                                         boxSizing: 'border-box',
-                                        // maxWidth: '600px',
-                                        // width: '100%',
+                                        maxWidth: '800px',
+                                        width: '100%',
+
                                         borderRadius: '4px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+
                                         border: 'none',
-                                        
-                                       
                                     }}
                                 >
                                     {views?.[modalContent?.type]}

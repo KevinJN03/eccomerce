@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="235" viewBox="0 0 160 235">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #707070;
+        stroke-width: 1.2px;
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        font-size: 33.333px;
+        fill: #525252;
+        font-family: Gotham;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M11,3H148a7,7,0,0,1,7,7V225a7,7,0,0,1-7,7H11a7,7,0,0,1-7-7V10A7,7,0,0,1,11,3Z"/>
+  <text id="_1" data-name="1" class="cls-2" x="74.25" y="129.875">1</text>
+</svg>

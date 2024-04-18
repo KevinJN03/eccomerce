@@ -35,7 +35,7 @@ function Template({ children }) {
 
                 <footer
                     ref={footerRef}
-                    className="sticky z-0 bottom-0 mt-auto flex w-full justify-center bg-white p-5"
+                    className=" bottom-0 mt-auto flex w-full justify-center bg-white p-5"
                 >
                     GLAMO Help
                 </footer>

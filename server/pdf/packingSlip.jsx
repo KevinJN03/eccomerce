@@ -35,6 +35,7 @@ function PackingSlip({ order, checks }) {
 
       <View style={{display: 'flex', flexDirection: 'row' , alignItems: 'center', gap: '10pt'}}> 
         {checks?.shop_info == 'shop_icon' && (
+       
           <Image
             src={`${CLOUDFRONT_URL}/files/logos/glamo-black-logo.png`}
             style={{ height: '40pt', width: '40pt', objectFit: 'cover' }}

@@ -26,6 +26,7 @@ import EmailTailwind from '../components/emailTailwind.jsx';
 import Header from '../components/header.jsx';
 import dayjs from 'dayjs';
 import 'dotenv/config';
+import _ from 'lodash';
 
 const { CLOUDFRONT_URL, CLIENT_URL } = process.env;
 function OrderReceived({ order }) {
@@ -129,18 +130,29 @@ function OrderReceived({ order }) {
                       YOUR ORDER
                     </Text>
                     <Hr />
-                    <Text className="p-0 m-0 text-green-700">
-                      Estimated delivery date:{' '}
-                      {order?.shipping_option?.delivery_date}
-                    </Text>
-                    <Text className="m-0 p-0 pb-3">
-                      Delivery Method: {order?.shipping_option?.name}
-                    </Text>
-                    <Section className="bg-white">
-                      {order?.items?.map((itemProps, idx) => {
-                        return <Item {...itemProps} key={idx} />;
-                      })}
-                    </Section>
+                    {_.get(order, 'itemsByProfile')?.map(
+                      ({ items, shippingInfo }) => {
+                        return (
+                          <>
+                            <Text className="p-0 m-0 text-green-700">
+                              Estimated delivery date:{' '}
+                              {dayjs(shippingInfo?.endDate).format(
+                                'dddd, D MMMM, YYYY',
+                              )}
+                            </Text>
+                            <Text className="m-0 p-0 pb-3">
+                              Delivery Method:{' '}
+                              {_.get(shippingInfo, 'shipping.service')}
+                            </Text>
+                            <Section className="bg-white">
+                              {items?.map((itemProps, idx) => {
+                                return <Item {...itemProps} key={idx} />;
+                              })}
+                            </Section>
+                          </>
+                        );
+                      },
+                    )}
 
                     <Hr />
                     {/* <Row className="w-full p-0 m-0"> */}

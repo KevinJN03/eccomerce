@@ -32,16 +32,7 @@ export default function formatFormData(value) {
     for (const item of filteredFiles) {
         formData.append('files', item);
     }
-    for (const { _id } of profile) {
-        formData.append('delivery[]', _id);
-    }
-
-    // for (const item of mappedBlocks) {
-    //     formData.append('detail[]', item);
-    // }
-    // for (const item of variations) {
-    //     formData.append('variations[]', JSON.stringify(item));
-    // }
+    formData.append('delivery', profile?._id);
     const newVariations = [...variations];
 
     if (combine.on) {

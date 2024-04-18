@@ -8,13 +8,16 @@ import CartMenuItem from './cartIMenutem';
 import Cart_Item from '../../cart/cart-item';
 import { useLayoutContext } from '../../../context/layoutContext';
 import { CheckCircleOutlineSharp } from '@mui/icons-material';
+import { v4 } from 'uuid';
 function CartMenu({}) {
     const { withOutShipping: subTotal } = calculateTotal();
-    const { dispatch: cartDispatch, cart, setCartRefresh } = useCart();
+    const {
+        cart,
+
+        isUpdated,
+    } = useCart();
     const { isHover, setIsHover } = useLayoutContext();
-    // useEffect(() => {
-    //     cartDispatch({ type: 'refresh' });
-    // }, []);
+    const [loading, setLoading] = useState(!isUpdated);
 
     return (
         <section className="cartMenu">
@@ -55,7 +58,7 @@ function CartMenu({}) {
                         {cart.map((item, idx) => {
                             return (
                                 <CartMenuItem
-                                    key={`cartId-${item.cartId}`}
+                                    key={`${item._id}`}
                                     cartItem={item}
                                     idx={idx}
                                     lastIndex={idx == cart.length - 1}
@@ -80,6 +83,7 @@ function CartMenu({}) {
                     </p>
                 </div>
             </div>
+
             <div className="flex flex-row flex-nowrap items-center gap-3 border-b border-dark-gray/50 bg-light-grey p-3 px-3">
                 <Link
                     onClick={() => setIsHover(() => false)}

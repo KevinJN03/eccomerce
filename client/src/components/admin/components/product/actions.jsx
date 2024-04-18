@@ -14,11 +14,7 @@ function Actions({ showAction, setShowAction, className, product }) {
     const closeAction = () => {
         setShowAction(() => false);
     };
-    const changeSection = () => {
-        setModalContent(() => ({ type: 'changeSection' }));
-        setModalCheck(() => true);
-        closeAction();
-    };
+
 
     return (
         <AnimatePresence>
@@ -88,7 +84,13 @@ function Actions({ showAction, setShowAction, className, product }) {
                         </div>
                         <div className="border-b border-gray-300 py-2">
                             <p
-                                onClick={changeSection}
+                                onClick={() => {
+                                    handleClick({
+                                        productIds: [product?._id],
+                                        type: 'change_section',
+                                    });
+                                    closeAction();
+                                }}
                                 className="cursor-pointer whitespace-nowrap py-2 pl-4 pr-14 hover:bg-light-grey/50"
                             >
                                 Change Section

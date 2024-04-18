@@ -7,37 +7,31 @@ import AddToCart from '../Item_page/addToCart';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AnimatePresence, motion } from 'framer-motion';
-function WishListItem({ product }) {
-    const { wishlist, wishListDispatch } = useWishlistContext();
+import _ from 'lodash';
+function WishListItem(props) {
+    console.log('wishlistItemHook render');
+    const { variation_data } = props;
 
+    const { removeItem } = useWishlistContext();
     const [isDisabled, setDisable] = useState(true);
     const [remove, setRemove] = useState({ parent: false, child: false });
 
-    const handleDelete = (id) => {
-        wishListDispatch({ type: 'delete', productId: id });
-    };
-
     const [variation1, setVariation1] = useState(() => {
-        if (
-            product?.isVariation1Present &&
-            product.variation1.array?.length == 1
-        ) {
-            return product.variation1.array[0]?.variation;
+        if (props?.isVariation1Present && props.variation1.array?.length == 1) {
+            return props.variation1.array[0]?.variation;
         }
         return null;
     });
     const [variation2, setVariation2] = useState(() => {
-        if (
-            product?.isVariation2Present &&
-            product.variation2.array?.length == 2
-        ) {
-            return product.variation2.array[0]?.variation;
+        if (props?.isVariation2Present && props.variation2.array?.length == 2) {
+            return props.variation2.array[0]?.variation;
         }
         return null;
     });
 
     const [stockState, setStockState] = useState();
     const [stockState2, setStockState2] = useState();
+
     const {
         priceState,
         setPriceState,
@@ -51,7 +45,7 @@ function WishListItem({ product }) {
         setError,
         handleAddToCart,
         handleOnChange,
-    } = useAddItemToBagHook({ product });
+    } = useAddItemToBagHook({ product: props });
 
     useEffect(() => {
         if (stockState <= 0) {
@@ -67,16 +61,15 @@ function WishListItem({ product }) {
         }
     }, [stockState, stockState2]);
 
-    useEffect(() => {
-        console.log('variation change', product.wishlistId);
-        wishListDispatch({
-            type: 'updateVariationSelect',
-            wishlistId: product.wishlistId,
-            variationSelect,
+    // useEffect(() => {
+    //     wishListDispatch({
+    //         type: 'updateVariationSelect',
+    //         wishlistId: product.wishlistId,
+    //         variationSelect,
 
-            productId: product._id
-        });
-    }, [variationSelect]);
+    //         product_id: product._id
+    //     });
+    // }, [variationSelect]);
 
     const variants = {
         parent: {
@@ -101,23 +94,30 @@ function WishListItem({ product }) {
             },
         },
     };
+
+    useEffect(() => {
+        if (error?.on) {
+            console.log({ error });
+
+            setRemove(() => ({ parent: false, child: false }));
+        }
+    }, [error]);
     return (
         <AnimatePresence>
             {!remove.parent && (
                 <motion.section
-                    key={`id-${product.wishlistId}`}
+                    key={`id-${props._id}`}
                     className="h-fit w-[19.75rem]  max-w-[19.75rem] origin-right"
                     initial={false}
                     animate={false}
                     variants={variants.parent}
                     exit={'exit'}
                     onAnimationComplete={(e) => {
-                        console.log('animation  at parent e: ', e, product);
-
                         if (remove.addToCart) {
                             handleAddToCart();
                         }
-                        handleDelete(product._id);
+                        // handleDelete(props._id);
+                        // removeItem({ itemId: props?._id });
                     }}
                 >
                     <AnimatePresence>
@@ -129,6 +129,8 @@ function WishListItem({ product }) {
                                             child: true,
                                             parent: true,
                                         }));
+
+                                        // removeItem({ itemId: props?._id });
                                         // handleDelete(product._id);
                                     }
                                 }}
@@ -151,21 +153,21 @@ function WishListItem({ product }) {
                                     />
                                 </div>
                                 <Link
-                                    to={`/product/${product?._id}?wishlistID=this`}
+                                    to={`/product/${props?.product_id}`}
                                     className="img-wrap"
                                 >
                                     <img
                                         className={
                                             'h-[25rem] w-full object-cover'
                                         }
-                                        src={product?.images[0]}
+                                        src={props?.images[0]}
                                         alt=""
                                     />
                                 </Link>
 
                                 <div className="flex h-fit flex-col gap-3">
                                     <p className="h-12 overflow-hidden text-ellipsis   text-sm ">
-                                        {product?.title}
+                                        {props?.title}
                                     </p>
 
                                     <p className="text-sm font-semibold">
@@ -194,22 +196,27 @@ function WishListItem({ product }) {
                                                 stockState,
                                                 setStockState,
                                             }) => {
+                                                const variationArray = _.get(
+                                                    props,
+                                                    `variation_data.variation${index}_data.array`
+                                                );
                                                 return (
                                                     <div
                                                         key={uuidv4()}
                                                         className="border-t-2"
                                                     >
-                                                        {product?.[
-                                                            `variation${index}`
-                                                        ]?.array.length == 1 ? (
+                                                        {variationArray?.length ==
+                                                        // props?.[
+                                                        //     `variation${index}`
+                                                        // ]?.array.length
+
+                                                        1 ? (
                                                             <p className="flex h-12 items-center text-left">
                                                                 {
                                                                     currentVariation?.variation
                                                                 }
                                                             </p>
-                                                        ) : product?.[
-                                                              `variation${index}`
-                                                          ]?.array.length >
+                                                        ) : variationArray?.length >
                                                           1 ? (
                                                             <select
                                                                 onChange={(
@@ -233,14 +240,12 @@ function WishListItem({ product }) {
                                                                     selected
                                                                 >
                                                                     Select{' '}
-                                                                    {product?.[
+                                                                    {props?.[
                                                                         `variation${index}`
                                                                     ]?.title ||
                                                                         'option'}
                                                                 </option>
-                                                                {product?.[
-                                                                    `variation${index}`
-                                                                ]?.array?.map(
+                                                                {variationArray?.map(
                                                                     (
                                                                         item,
                                                                         idx
@@ -323,10 +328,10 @@ function WishListItem({ product }) {
                                             }))
                                         }
                                         disabled={
-                                            (product.isVariation1Present &&
+                                            (props.isVariation1Present &&
                                                 !variationSelect.variation1
                                                     .variation) ||
-                                            (product.isVariation2Present &&
+                                            (props.isVariation2Present &&
                                                 !variationSelect.variation2
                                                     .variation)
                                         }
@@ -335,6 +340,11 @@ function WishListItem({ product }) {
                                         MOVE TO BAG
                                     </button>
                                 </div>
+                                {error?.on && (
+                                    <div className="border border-red-400 bg-red-100 p-2">
+                                        <p>{error?.msg}</p>
+                                    </div>
+                                )}
                             </motion.section>
                         )}
                     </AnimatePresence>

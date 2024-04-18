@@ -1,18 +1,15 @@
-import { useAdminOrderContext } from '../../../../context/adminOrder';
 import { useEffect, useState } from 'react';
 import PackingSlipOption from './packingSlipOptions';
 import OrderReceiptOption from './orderReceiptOption';
 
 import Option from './option';
 import { adminAxios } from '../../../../api/axios';
-import { useNavigate } from 'react-router-dom';
-import MessageFooter from '../../../dashboard/messageFooter';
-import { AnimatePresence, motion } from 'framer-motion';
 import UserLogout from '../../../../hooks/userLogout.jsx';
 import defaultChecks from './defaultChecks';
-
+import { useContent } from '../../../../context/ContentContext.jsx';
+import _ from 'lodash';
 function PrintOrder({}) {
-    const { setModalCheck, modalContent } = useAdminOrderContext();
+    const { setModalCheck, modalContent, setShowAlert } = useContent();
     const [loading, setLoading] = useState(false);
     const [coupons, setCoupons] = useState({});
     const [showOptions, setShowOptions] = useState({
@@ -26,7 +23,6 @@ function PrintOrder({}) {
     const { logoutUser } = UserLogout();
 
     useEffect(() => {
-        
         adminAxios
             .get('coupon/all')
             .then(({ data }) => {
@@ -38,25 +34,45 @@ function PrintOrder({}) {
             });
     }, []);
     const handleClick = async () => {
+        let success = false;
+        const dataValue = {};
         try {
-            console.log('loaded')
-            setLoading(() => true)
+            console.log('loaded');
+            setLoading(() => true);
+
             const { data } = await adminAxios.post('pdf/export', {
                 ids: modalContent?.orders,
 
                 printChecks,
             });
 
-            window.open(
-                `./orders/download/${data.file}`,
-                '_blank',
-                'noreferrer'
-            );
+            success = true;
+
+            _.assign(dataValue, data);
         } catch (error) {
-            console.error('error when trying to generatePdf');
+            console.error('error when trying to generatePdf', error);
         } finally {
-            setLoading(() => false);
-            setModalCheck(() => false);
+            setTimeout(() => {
+                if (success) {
+                    window.open(
+                        `./orders/download/${dataValue.file}`,
+                        '_blank',
+                        'noreferrer'
+                    );
+                } else {
+                    setShowAlert(() => ({
+                        on: true,
+                        bg: 'bg-red-800',
+                        icon: 'sadFace',
+                        size: 'medium',
+                        text: 'text-sm text-white',
+                        timeout: 10000,
+                        msg: 'Oh dear! Something went wrong - please try again.',
+                    }));
+                }
+                setLoading(() => false);
+                setModalCheck(() => false);
+            }, 1000);
         }
     };
 
@@ -64,7 +80,7 @@ function PrintOrder({}) {
         setModalCheck(false);
     };
     return (
-        <section className="relative w-full rounded-inherit">
+        <section className="relative w-full rounded-inherit bg-white">
             <p className="min-w-full border-b-[1px] border-dark-gray/30 bg-light-grey/30 px-4 py-3 font-medium">
                 You're about to print {modalContent.orders?.length} order(s)
             </p>
@@ -146,7 +162,6 @@ function PrintOrder({}) {
 
             <section className=" flex justify-end gap-3 px-4 py-3">
                 <button
-            
                     type="button"
                     className="rounded border-[1px] border-light-grey px-3 py-2 text-s font-medium hover:bg-light-grey/30"
                     onClick={cancel}
@@ -155,19 +170,22 @@ function PrintOrder({}) {
                 </button>
                 <button
                     onClick={handleClick}
-                    disabled={Object.values(printChecks).every(
-                        (item) => item?.on != true
-                    ) || loading}
+                    disabled={
+                        Object.values(printChecks).every(
+                            (item) => item?.on != true
+                        ) || loading
+                    }
                     type="button"
-                    className=" rounded flex justify-center items-center bg-black w-[90px]  box-content px-3 py-2 hover:opacity-70   text-center text-s font-medium text-white disabled:opacity-50"
+                    className=" box-content flex w-[90px] items-center justify-center rounded  bg-black px-3 py-2 text-center   text-s font-medium text-white hover:opacity-70 disabled:opacity-50"
                 >
-             
                     {loading ? (
-                        <span className="daisy-loading daisy-loading-xs daisy-loading-spinner  !text-white"></span>
+                        <span className="daisy-loading daisy-loading-spinner daisy-loading-xs  !text-white"></span>
                     ) : (
-                        <p className='whitespace-nowrap !text-white'> Print Order(s)</p>
+                        <p className="whitespace-nowrap !text-white">
+                            {' '}
+                            Print Order(s)
+                        </p>
                     )}
-                
                 </button>
             </section>
         </section>

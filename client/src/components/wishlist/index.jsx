@@ -9,80 +9,72 @@ import EmptyWishList from './empty.jsx';
 import { Diversity2Outlined } from '@mui/icons-material';
 
 function WishList({}) {
-    const {
-        wishlist,
-        wishListDispatch,
-        wishlistLoading,
-        setWishListLoading,
-        wishlistRefresh,
-        getWishlistFromLS,
-    } = useWishlistContext();
-    const [wishlistProducts, setWishlistProduct] = useState([]);
+    const { wishlist, wishListDispatch, loading } = useWishlistContext();
     const abortControllerRef = useRef(new AbortController());
 
-    const fetchData = async () => {
-        try {
-            setWishListLoading(() => true);
-            const productIdArray = [];
-            const wishlistMap = new Map(getWishlistFromLS());
-            for (const id of wishlistMap.keys()) {
-                productIdArray.push(id);
-            }
-            if (productIdArray.length < 1) {
-                setTimeout(() => {
-                    setWishListLoading(() => false);
-                }, 1000);
+    // const fetchData = async () => {
+    //     try {
+    //         setWishListLoading(() => true);
+    //         const productIdArray = [];
+    //         const wishlistMap = new Map(getWishlistFromLS());
+    //         for (const id of wishlistMap.keys()) {
+    //             productIdArray.push(id);
+    //         }
+    //         if (productIdArray.length < 1) {
+    //             setTimeout(() => {
+    //                 setWishListLoading(() => false);
+    //             }, 1000);
 
-                return;
-            }
-            const { data } = await axios.get(`product/many/${productIdArray}`, {
-                signal: abortControllerRef.current?.signal,
-            });
+    //             return;
+    //         }
+    //         const { data } = await axios.get(`product/many/${productIdArray}`, {
+    //             signal: abortControllerRef.current?.signal,
+    //         });
 
-            // setProducts(() => data?.products || []);
-            wishListDispatch({
-                type: 'refresh',
-                products: data?.products || [],
-            });
-        } catch (error) {
-            console.error(error);
-        } finally {
-        }
-    };
+    //         // setProducts(() => data?.products || []);
+    //         wishListDispatch({
+    //             type: 'REFRESH',
+    //             products: data?.products || [],
+    //         });
+    //     } catch (error) {
+    //         console.error(error);
+    //     } finally {
+    //     }
+    // };
 
-    useEffect(() => {
-        abortControllerRef.current?.abort();
+    // useEffect(() => {
+    //     abortControllerRef.current?.abort();
 
-        abortControllerRef.current = new AbortController();
+    //     abortControllerRef.current = new AbortController();
 
-        fetchData();
+    //     // fetchData();
 
-        return () => {
-            abortControllerRef.current?.abort();
-        };
-    }, [wishlistRefresh]);
+    //     return () => {
+    //         abortControllerRef.current?.abort();
+    //     };
+    // }, [wishlistRefresh]);
 
-    useEffect(() => {
-        const productsArray = [];
+    // useEffect(() => {
+    //     // const productsArray = [];
 
-        wishlist.forEach(function (value, key) {
-            productsArray.push(value);
-        });
-        console.log({ productsArray });
-        setWishlistProduct(() => productsArray);
+    //     // wishlist.forEach(function (value, key) {
+    //     //     productsArray.push(value);
+    //     // });
+    //     // console.log({ productsArray });
+    //     // setWishlistProduct(() => productsArray);
 
-        const timeout = setTimeout(() => {
-            setWishListLoading(() => false);
-        }, 1000);
+    //     // const timeout = setTimeout(() => {
+    //     //     setWishListLoading(() => false);
+    //     // }, 1000);
 
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [wishlist]);
+    //     // return () => {
+    //     //     clearTimeout(timeout);
+    //     // };
+    // }, [wishlist]);
     return (
         <div className="flex w-full flex-col bg-white">
             <AnimatePresence mode="wait">
-                {wishlistLoading ? (
+                {loading ? (
                     <motion.section
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -96,7 +88,7 @@ function WishList({}) {
                     >
                         <GLoader />
                     </motion.section>
-                ) : wishlistProducts.length > 0 ? (
+                ) : wishlist.length > 0 ? (
                     <motion.section
                         key={'wishlist-container'}
                         initial={{ opacity: 0 }}
@@ -130,21 +122,19 @@ function WishList({}) {
                                 </select>
 
                                 <p>
-                                    {`${wishlistProducts.length} ${
-                                        wishlistProducts.length > 1
-                                            ? 'items'
-                                            : 'item'
+                                    {`${wishlist.length} ${
+                                        wishlist.length > 1 ? 'items' : 'item'
                                     }`}
                                 </p>
                             </div>
 
-                            <section className="flex h-full flex-row flex-wrap gap-y-10 mb-28">
+                            <section className="mb-28 flex h-full flex-row flex-wrap gap-y-10">
                                 <AnimatePresence>
-                                    {wishlistProducts.map((product) => {
+                                    {wishlist.map((product) => {
                                         return (
                                             <WishListItem
-                                                product={product}
-                                                key={`wishlistId-${product.wishlistId}`}
+                                                {...product}
+                                                key={`wishlistId-${product._id}`}
                                             />
                                         );
                                     })}
@@ -152,14 +142,20 @@ function WishList({}) {
                             </section>
                         </div>
 
-                        <div className="flex w-full flex-col items-center justify-center h-full bg-light-grey/40 py-10 gap-5 mb-8">
+                        <div className="mb-8 flex h-full w-full flex-col items-center justify-center gap-5 bg-light-grey/40 py-10">
                             <Diversity2Outlined className="!text-4xl" />
-                            <p className='max-w-52 text-center'>
+                            <p className="max-w-52 text-center">
                                 Sign in to sync your Saved Items across all your
                                 devices.
                             </p>
 
-                            <a href="/portal/login" className='bg-white border-2 border-dark-gray py-3 px-28 font-gotham hover:bg-light-grey transition-all '> SIGN IN</a>
+                            <a
+                                href="/portal/login"
+                                className="border-2 border-dark-gray bg-white px-28 py-3 font-gotham transition-all hover:bg-light-grey "
+                            >
+                                {' '}
+                                SIGN IN
+                            </a>
                         </div>
                     </motion.section>
                 ) : (

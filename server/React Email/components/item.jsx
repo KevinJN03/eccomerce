@@ -4,19 +4,25 @@ import { useEffect, Fragment } from 'react';
 import { v4 as uuid } from 'uuid';
 import { Text, Img, Row, Column } from '@react-email/components';
 
-function Item({ variation1, variation2, product, price, quantity }) {
+function Item({
+  variation1,
+  variation2,
+  product,
+  price,
+  quantity,
+  images,
+  title,
+}) {
   return (
     <Row className="mb-4">
       <Column className="w-[100px] h-[140px]">
         <Img
-          src={product?.images?.[0]}
+          src={product?.images?.[0] || images?.[0]}
           className="border-none outline-none w-[100px] h-[140px] object-cover"
         />
       </Column>
       <Column className="pl-5 align-top">
-        <Text className="text-s p-0 pb-1 m-0 font-medium">
-          {product?.title}
-        </Text>
+        <Text className="text-s p-0 pb-1 m-0 font-medium">{title}</Text>
 
         <Text className="text-s p-0 pb-1 m-0 font-semibold">
           £{price?.toFixed(2) || price}

@@ -22,7 +22,6 @@ export const tableLayout = {
         <>
             <col span="1" width={'10%'} />
             <col span="1" width={'15%'} />
-
             <col span="1" width={'25%'} />
             <col span="1" width={'25%'} />
             <col span="1" width={'25%'} />

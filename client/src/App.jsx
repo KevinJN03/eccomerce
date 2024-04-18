@@ -7,6 +7,7 @@ import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { CartProvider } from './context/cartContext';
 import Layout from './components/Layout/layout';
+import { WishlistContextProvider } from './context/wishlistContext';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
 function App() {
@@ -14,9 +15,9 @@ function App() {
         <div id="App">
             <LayoutProvider>
                 <CartProvider>
-                    {/* <Layout> */}
+                    <WishlistContextProvider>
                         <Router />
-                    {/* </Layout> */}
+                    </WishlistContextProvider>
                 </CartProvider>
             </LayoutProvider>
         </div>

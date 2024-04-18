@@ -73,7 +73,11 @@ function Footer({ type }) {
                 clearTimeout(timeout);
                 setLoading(() => false);
             }
-        } catch (error) {}
+        } catch (error) {
+
+            setLoading(() => false);
+
+        }
     };
 
     async function publishData(formData, draft) {
@@ -109,7 +113,7 @@ function Footer({ type }) {
     }
 
     return (
-        <div className="sticky bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
+        <div className="sticky z-[3] bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <BubbleButton handleClick={() => navigate('/admin/products')} />
             <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button

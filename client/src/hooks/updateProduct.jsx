@@ -9,6 +9,7 @@ import {
     characterList,
 } from 'draft-js';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 function UpdateProduct(props, value) {
     const {
         setTitle,
@@ -26,18 +27,17 @@ function UpdateProduct(props, value) {
     props?.singleValue &&
         useEffect(() => {
             const { singleValue } = props;
-            ('here');
             setTitle(() => singleValue?.title);
             setPriceValue((prev) => ({
                 ...prev,
-                value: singleValue?.price?.current,
+                value: _.get(singleValue, 'price.current') || 0,
             }));
             setStockValue((prev) => ({ ...prev, value: singleValue?.stock }));
             setCategory(() => singleValue?.category?._id || '');
 
             setGender(() => singleValue?.gender || '');
 
-            setProfile(() => singleValue?.delivery || []);
+            setProfile(() => singleValue?.delivery);
 
             const newVariations = (singleValue?.variations || []).map(
                 (data) => {

@@ -1,0 +1,161 @@
+{
+    "domestic": [
+        {
+            "courier": "Australia Post",
+            "options": [
+                {
+                    "text": "Express Post",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Parcel Post",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Standard Post",
+                    "start": 2,
+                    "end": 6
+                }
+            ]
+        },
+        {
+            "courier": "StarTrack",
+            "options": [
+                {
+                    "text": "Premium",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Express",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "Parcel",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Road Express",
+                    "start": 2,
+                    "end": 5
+                }
+            ]
+        },
+        {
+            "courier": "Sendle",
+            "options": [
+                {
+                    "text": "Same-Day",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Economy",
+                    "start": 2,
+                    "end": 6
+                }
+            ]
+        },
+        {
+            "courier": "CouriersPlease",
+            "options": [
+                {
+                    "text": "Same-Day",
+                    "start": 1,
+                    "end": 1
+                },
+                {
+                    "text": "Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "Road Express",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Standard",
+                    "start": 2,
+                    "end": 7
+                }
+            ]
+        }
+    ],
+    "international": [
+        {
+            "courier": "Australia Post International",
+            "options": [
+                {
+                    "text": "Express Courier International",
+                    "start": 2,
+                    "end": 4
+                },
+                {
+                    "text": "Standard International",
+                    "start": 6,
+                    "end": 10
+                },
+                {
+                    "text": "Economy Air",
+                    "start": 6,
+                    "end": 14
+                }
+            ]
+        },
+        {
+            "courier": "DHL Express",
+            "options": [
+                {
+                    "text": "DHL Express Worldwide",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "DHL Express Easy",
+                    "start": 3,
+                    "end": 6
+                }
+            ]
+        },
+        {
+            "courier": "FedEx International",
+            "options": [
+                {
+                    "text": "International Priority",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "International Economy",
+                    "start": 3,
+                    "end": 7
+                }
+            ]
+        },
+        {
+            "courier": "UPS Worldwide",
+            "options": [
+                {
+                    "text": "UPS Worldwide Express",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Worldwide Expedited",
+                    "start": 2,
+                    "end": 5
+                }
+            ]
+        }
+    ]
+}

@@ -3,45 +3,20 @@ import Row from './row';
 import { useEffect, useMemo, useState } from 'react';
 import { tableLayout } from './tableLayout';
 import { getValuesFromMap } from '../variationData';
+import TableProvider, {
+    useTableContext,
+} from '../../../../../../../context/tableContext';
 function Table({
     variationList,
-    selected,
-    setSelected,
+ 
     update,
     isCombine,
-    setCheckAll,
-    checkAll,
+
     layout,
 }) {
-    const count = variationList.options?.size;
 
-    const variationOptions = getValuesFromMap(variationList.options);
-
-    // useEffect(() => {
-    //     const result = getValuesFromMap(variationList.options);
-
-    //     setVariationOptions(result);
-    // }, [variationList]);
-
-    useEffect(() => {
-        if (checkAll == false && selected.size == count) {
-            setSelected(new Map());
-        }
-    }, [checkAll]);
-    useEffect(() => {
-        if (selected.size == count) {
-            setCheckAll(true);
-        }
-
-        if (selected.size == 0) {
-            setCheckAll(false);
-        }
-    }, [selected]);
-
-    const handleCheckAll = () => {
-        setCheckAll(!checkAll);
-    };
-
+    const { checkSet, setCheckSet, handleCheckAllVariations, variationOptions } =
+        useTableContext();
     return (
         <table className="result-table w-full !bg-white">
             <colgroup>{tableLayout[layout]}</colgroup>
@@ -51,10 +26,9 @@ function Table({
                     <th>
                         <input
                             type="checkbox"
-                            className="daisy-checkbox h-4 w-4 border-2 border-dark-gray no-animation !rounded-[3px]"
-                            // defaultChecked={checkAll}
-                            checked={checkAll}
-                            onChange={handleCheckAll}
+                            className="daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2 border-dark-gray"
+                            checked={checkSet.size > 0}
+                            onChange={handleCheckAllVariations}
                         />
                     </th>
                 )}
@@ -70,16 +44,10 @@ function Table({
                     return (
                         <Row
                             key={item.id}
-                            setCheckAll={setCheckAll}
-                            checkAll={checkAll}
                             singleVariation={item}
                             variationList={variationList}
-                            isQuantityHeaderOn={variationList.quantityHeader.on}
-                            isPriceHeaderOn={variationList.priceHeader.on}
-                            selected={selected}
-                            setSelected={setSelected}
+                   
                             update={update}
-                            isCombine={isCombine}
                         />
                     );
                     // });

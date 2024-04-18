@@ -1,0 +1,182 @@
+{
+    "domestic": [
+        {
+            "courier": "Deutsche Post (DHL)",
+            "options": [
+                {
+                    "text": "DHL Paket",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "DHL Paket Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "DHL Paket International",
+                    "start": 3,
+                    "end": 5
+                }
+            ]
+        },
+        {
+            "courier": "DPD",
+            "options": [
+                {
+                    "text": "DPD CLASSIC",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "DPD EXPRESS",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "DPD Garantie-Zustellung",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "Hermes",
+            "options": [
+                {
+                    "text": "Hermes Paket",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "Hermes Päckchen",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "Hermes Spedition",
+                    "start": 2,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "UPS",
+            "options": [
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                }
+            ]
+        }
+    ],
+
+    "international": [
+        {
+            "courier": "Deutsche Post (DHL)",
+            "options": [
+                {
+                    "text": "DHL Paket International",
+                    "start": 3,
+                    "end": 8
+                },
+                {
+                    "text": "DHL Express Worldwide",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "DHL Global Mail",
+                    "start": 6,
+                    "end": 12
+                },
+                {
+                    "text": "DHL eCommerce",
+                    "start": 7,
+                    "end": 15
+                }
+            ]
+        },
+        {
+            "courier": "UPS",
+            "options": [
+                {
+                    "text": "UPS Express Saver",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "UPS Standard",
+                    "start": 2,
+                    "end": 5
+                },
+                {
+                    "text": "UPS Worldwide Expedited",
+                    "start": 3,
+                    "end": 6
+                },
+                {
+                    "text": "UPS Worldwide Express Plus",
+                    "start": 1,
+                    "end": 2
+                }
+            ]
+        },
+        {
+            "courier": "FedEx",
+            "options": [
+                {
+                    "text": "FedEx International Priority",
+                    "start": 1,
+                    "end": 4
+                },
+                {
+                    "text": "FedEx International Economy",
+                    "start": 3,
+                    "end": 7
+                },
+                {
+                    "text": "FedEx International First",
+                    "start": 1,
+                    "end": 3
+                },
+                {
+                    "text": "FedEx International Priority Freight",
+                    "start": 1,
+                    "end": 4
+                }
+            ]
+        },
+        {
+            "courier": "DPD",
+            "options": [
+                {
+                    "text": "DPD Classic",
+                    "start": 2,
+                    "end": 4
+                },
+                {
+                    "text": "DPD Express",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "DPD Direct",
+                    "start": 1,
+                    "end": 2
+                },
+                {
+                    "text": "DPD Road Classic",
+                    "start": 3,
+                    "end": 5
+                }
+            ]
+        }
+    ]
+}

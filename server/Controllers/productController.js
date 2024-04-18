@@ -8,13 +8,15 @@ import productValidator from '../utils/productValidator.js';
 import s3Upload, { s3Delete } from '../utils/s3Service.js';
 
 import 'dotenv/config';
-import { has } from 'lodash';
+import _, { has } from 'lodash';
 import multerUpload from '../utils/multerUpload';
 import sortCombineVariation from '../utils/sortCOmbineVariations.js';
 import generateProduct from '../utils/generateProduct.js';
 import { Endpoint } from 'aws-sdk';
 import productAggregateStage from '../utils/productAggregateStage.js';
 import mongoose from 'mongoose';
+import deliveryProfile from '../Models/deliveryProfile.js';
+import variationFormat from '../utils/variationFormat.js';
 
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
@@ -73,6 +75,7 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
     {
       $set: {
         category: { $arrayElemAt: ['$category', 0] },
+        delivery: { $arrayElemAt: ['$delivery', 0] },
       },
     },
     ...productAggregateStage({ stats: true }),
@@ -137,40 +140,33 @@ export const get_many_product = [
             },
 
             { $limit: 10 },
-
-            // { $limit: 1 },
-            // {
-            //   $project: {
-            //     result: 1,
-            //     gender: 1,
-            //   },
-            // },
           ],
         },
       },
-      {
-        $addFields: {
-          combineVariation: {
-            $cond: {
-              if: { $gte: [{ $size: '$variations' }, 2] },
-              // then: {
-              //   $map: {
-              //     input: { $arrayElemAt: ['$variations', 2] },
-              //     as: 'variation',
-              //     in: '$$variation.option'
-              //   },
-              // },
 
-              then: {
-                $objectToArray: {
-                  $arrayElemAt: ['$variations.options', 2],
-                },
-              },
-              else: false,
-            },
-          },
-        },
-      },
+      // {
+      //   $addFields: {
+      //     'variation_data.combineVariation': {
+      //       $cond: {
+      //         if: { $gte: [{ $size: '$variations' }, 2] },
+      //         // then: {
+      //         //   $map: {
+      //         //     input: { $arrayElemAt: ['$variations', 2] },
+      //         //     as: 'variation',
+      //         //     in: '$$variation.option'
+      //         //   },
+      //         // },
+
+      //         then: {
+      //           $objectToArray: {
+      //             $arrayElemAt: ['$variations.options', 2],
+      //           },
+      //         },
+      //         else: false,
+      //       },
+      //     },
+      //   },
+      // },
 
       {
         $unwind: {
@@ -219,6 +215,124 @@ export const get_many_product = [
           },
         },
       },
+
+      {
+        $addFields: {
+          variation_data: {
+            // $arrayToObject: {
+            $reduce: {
+              input: '$variationList',
+              initialValue: '$variation_data',
+              in: {
+                $cond: {
+                  if: {
+                    $lt: ['$$this.variationIndex', 2],
+                  },
+
+                  then: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_present',
+                                ],
+                              },
+                              v: true,
+                            },
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_data',
+                                ],
+                              },
+                              v: '$$this',
+                            },
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+
+                  else: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [
+                            { k: 'isVariationCombine', v: true },
+                            // {
+                            //   k: 'testcombineVariation',
+                            //   v: {
+                            //     $reduce: {
+                            //       input: '$$this.array',
+                            //       initialValue: { Magenta: [{ tester: true }] },
+                            //       in: {
+                            //         $mergeObjects: [
+                            //           '$$value',
+                            //           {
+                            //             $arrayToObject: [
+                            //               [
+                            //                 {
+                            //                   k: '$$this.variation',
+                            //                   v: {
+                            //                     $mergeObjects: [
+                                                  
+                            //                       // {
+                            //                       //   $getField: {
+                            //                       //     input: '$$value',
+                            //                       //     field: '$this.variation',
+                            //                       //   },
+                            //                       // },
+
+                            //                       {
+                            //                         $arrayToObject: [
+                            //                           [
+                            //                             {
+                            //                               k: '$$this.variation2',
+                            //                               v: '$$this',
+                            //                             },
+                            //                           ],
+                            //                         ],
+                            //                       },
+                            //                     ],
+                            //                   },
+                            //                 },
+                            //               ],
+                            //             ],
+                            //           },
+                            //         ],
+                            //       },
+                            //     },
+                            //   },
+                            // },
+                          ],
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            // },
+          },
+        },
+      },
       {
         $unset: ['variationOptionArray', 'variationIndex', 'optionArray'],
       },
@@ -232,38 +346,9 @@ export const get_many_product = [
       },
     ]);
 
-    const updateProductVariation = Array.from(products).map(
-      ({ variationList, ...remainingProps }) => {
-        const result = {};
+    const updateProductVariation = variationFormat({ products: products });
 
-        remainingProps[`isVariation1Present`] = false;
-        remainingProps[`isVariation2Present`] = false;
-        for (let i = 0; i < variationList.length; i++) {
-          if (i < 2) {
-            remainingProps[`variation${i + 1}`] = variationList[i];
-            remainingProps[`isVariation${i + 1}Present`] = true;
-          } else {
-            const combineVariation = {};
-
-            variationList[i].array.forEach(
-              ({ variation, variation2, ...remainingProps }) => {
-                if (!combineVariation.hasOwnProperty(variation)) {
-                  combineVariation[variation] = {};
-                }
-
-                combineVariation[variation][variation2] = remainingProps;
-              },
-            );
-
-            remainingProps.combineVariation = combineVariation;
-            remainingProps[`isVariationCombine`] = true;
-          }
-        }
-
-        return remainingProps;
-      },
-    );
-    res.status(200).send({ products: updateProductVariation, success: true });
+    res.status(200).send({ products: products, success: true });
   }),
 ];
 export const get_single_product = asyncHandler(async (req, res, next) => {
@@ -376,12 +461,12 @@ export const delete_product = asyncHandler(async (req, res, next) => {
     return s3Delete('products', item);
   });
 
-  const result = await Promise.all([
+  const [products] = await Promise.all([
     Product.deleteMany({ _id: idsArray }),
     ...deleteProductsImages,
   ]);
-
-  res.send({ msg: 'deletion successful' });
+  console.log(products);
+  res.send({ msg: 'deletion successful', count: products?.deletedCount });
 });
 
 // // create a new Product
@@ -461,7 +546,6 @@ export const create_new_product = [
       req,
       newProduct.id,
     );
- 
 
     Object.assign(newProduct, productData);
     try {
@@ -565,3 +649,70 @@ export const increment_visit = asyncHandler(async (req, res, next) => {
 
   res.status(200).send({ id, success: true, product });
 });
+
+export const update_product_delivery_profile = [
+  check('deliveryProfileId', 'Profile Id does not exist')
+    .escape()
+    .trim()
+    .notEmpty()
+    .custom((value) => {
+      const find = deliveryProfile.findById(value);
+
+      if (find) {
+        return true;
+      }
+
+      return false;
+    }),
+
+  check('ids', 'Provide the product ids to update')
+    .isArray()
+    .isLength({ min: 1 }),
+  asyncHandler(async (req, res, next) => {
+    const { ids, deliveryProfileId } = req.body;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.status(404).send(errors.mapped());
+    }
+    const products = await Product.updateMany(
+      {
+        _id: ids,
+      },
+      { delivery: deliveryProfileId },
+    );
+
+    res.send({
+      msg: 'products delivery profile updated',
+      count: products.modifiedCount,
+    });
+  }),
+];
+
+export const update_product_category = [
+  asyncHandler(async (req, res, next) => {
+    const { ids, category } = req.body;
+
+    const objectIds = [];
+    ids.forEach((id) => {
+      try {
+        objectIds.push(new mongoose.Types.ObjectId(id));
+      } catch {
+        console.error(error);
+      }
+    });
+
+    const products = await Product.updateMany(
+      { _id: { $in: objectIds } },
+      {
+        // category: new mongoose.Types.ObjectId(category),
+        category,
+      },
+      { lean: { toObject: true } },
+    );
+
+    console.log(products);
+
+    res.status(200).send({ total: objectIds.length });
+  }),
+];

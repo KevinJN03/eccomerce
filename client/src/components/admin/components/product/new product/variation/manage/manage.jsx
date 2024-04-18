@@ -5,8 +5,11 @@ import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import VariationItem from './variationItem.jsx';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
-import '../../new_product.scss'
+import '../../new_product.scss';
 import _ from 'lodash';
+import BubbleButton from '../../../../../../buttons/bubbleButton.jsx';
+import ThemeBtn from '../../../../../../buttons/themeBtn.jsx';
+
 function Manage({}) {
     const {
         variations,
@@ -56,31 +59,6 @@ function Manage({}) {
             return false;
         });
     }
-
-    const deleteVariation = ({ id, name }) => {
-        // updatedDefaultMap(name, id, true);
-
-        let newArr = [...temporaryVariation];
-
-        let update = newArr.map((item) => {
-            if (item.id == id) {
-                return { ...item, disabled: true };
-            }
-            return item;
-        });
-        setTemporaryVariation(update);
-    };
-
-    const editVariation = (item) => {
-        const { name } = item;
-
-        contentDispatch({
-            type: 'select',
-            currentVariation: item,
-            title: name,
-        });
-    };
-
     const cancel = () => {
         setModalCheck(() => false);
     };
@@ -115,7 +93,6 @@ function Manage({}) {
 
     const apply = () => {
         const newArr = [...arr];
-        debugger;
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -130,14 +107,14 @@ function Manage({}) {
             combineDispatch({ type: 'combineVariations', variations: update });
             setModalCheck(() => false);
         } else {
-            combineDispatch('clear');
+            combineDispatch({ type: 'clear' });
             const newUpdate = newArr.map((item) => {
                 const { options, quantityHeader, priceHeader } = item;
 
                 const newOptions = new Map();
 
                 for (const [key, value] of options.entries()) {
-                    const newObj = { ...value };
+                    const newObj = _.cloneDeep(value);
 
                     if (!quantityHeader.on) {
                         delete newObj?.stock;
@@ -145,7 +122,7 @@ function Manage({}) {
                     if (!priceHeader.on) {
                         delete newObj?.price;
                     }
-
+                    newObj.visible = true;
                     newOptions.set(key, newObj);
                 }
 
@@ -184,11 +161,7 @@ function Manage({}) {
                 Manage variations
             </h2>
 
-            <VariationItem
-                deleteVariation={deleteVariation}
-                editVariation={editVariation}
-                variations={temporaryVariation}
-            />
+            <VariationItem />
             {notDisabled < 2 && (
                 <button
                     onClick={() => contentDispatch({ type: 'main' })}
@@ -241,21 +214,28 @@ function Manage({}) {
                     )}
             </section>
             <footer className="variation-footer ">
-                <button
+                {/* <button
                     type="button"
                     className="cancel-btn rounded-full px-3 py-2"
                     onClick={cancel}
                 >
                     Cancel
-                </button>
-                <button
+                    
+                </button> */}
+                <BubbleButton handleClick={cancel} />
+                <ThemeBtn
+                    text={'Apply'}
+                    handleClick={apply}
+                    disabled={disableApply}
+                />
+                {/* <button
                     type="button"
                     className="apply-btn"
                     onClick={apply}
                     disabled={disableApply}
                 >
                     Apply
-                </button>
+                </button> */}
             </footer>
         </section>
     );

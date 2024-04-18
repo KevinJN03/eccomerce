@@ -13,16 +13,13 @@ import { WishlistContextProvider } from './context/wishlistContext.jsx';
 ReactDOM.createRoot(document.getElementById('root')).render(
     /* <React.StrictMode>  */
     <AuthContextProvider>
-        <WishlistContextProvider>
-            <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="en-gb"
-            >
-                <DarkModeContextProvider>
-                    <App />
-                </DarkModeContextProvider>
-            </LocalizationProvider>
-        </WishlistContextProvider>
+        {/* <WishlistContextProvider> */}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+            <DarkModeContextProvider>
+                <App />
+            </DarkModeContextProvider>
+        </LocalizationProvider>
+        {/* </WishlistContextProvider> */}
     </AuthContextProvider>
 
     /* </React.StrictMode>   */

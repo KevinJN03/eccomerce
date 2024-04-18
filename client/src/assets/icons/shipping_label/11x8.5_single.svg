@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="235" viewBox="0 0 320 235">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #6c6a6a;
+        stroke-width: 1.2px;
+        fill-rule: evenodd;
+      }
+
+      .cls-2 {
+        fill: #fff;
+        stroke-dasharray: 4.8 2.4;
+      }
+
+      .cls-3 {
+        font-size: 33.333px;
+        fill: gray;
+        font-family: Gotham;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M3,2H318V233H3V2Z"/>
+  <path class="cls-2" d="M159.832,3V232.486"/>
+  <text id="_1" data-name="1" class="cls-3" x="71.778" y="129.391">1</text>
+</svg>

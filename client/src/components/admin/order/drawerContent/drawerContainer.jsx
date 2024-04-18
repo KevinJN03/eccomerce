@@ -25,6 +25,7 @@ import containerVariants from '../home/containerVariants';
 import { ClickAwayListener } from '@mui/material';
 import { adminAxios } from '../../../../api/axios';
 import Actions from './action';
+import BubbleButton from '../../../buttons/bubbleButton';
 
 function Label({ setShowActions }) {
     return (
@@ -130,91 +131,45 @@ function DrawerContainer() {
                     </span>
                     <div className="relative flex flex-col">
                         <section className="relative">
-                            <AnimatePresence>
-                                <Label setShowActions={setShowActions} />
+                            <motion.button
+                                onClick={() =>
+                                    setShowActions((prevState) => !prevState)
+                                }
+                                type="button"
+                                className="group flex flex-row flex-nowrap items-center rounded-full border-2 border-transparent px-3 py-2  font-semibold transition-all hover:shadow-normal"
+                            >
+                                <span className="z-[2] flex flex-nowrap items-center">
+                                    <p className="whitespace-nowrap text-sm">
+                                        More actions
+                                    </p>
+                                    <ArrowDropDownSharp />
+                                </span>
 
-                                {showActions && (
-                                    <ClickAwayListener
-                                        onClickAway={() => {
-                                            if (showActions) {
-                                                setShowActions(() => false);
-                                            }
-                                        }}
-                                    >
-                                        <motion.div
-                                            key={'more-action'}
-                                            variants={containerVariants}
-                                            className="absolute left-0 top-[0px] z-[1] flex w-fit flex-col rounded-lg border-transparent bg-white pt-[0.6rem]  shadow-3xl"
-                                        >
-                                            <button
-                                                onClick={() =>
-                                                    setShowActions(
-                                                        (prevState) =>
-                                                            !prevState
-                                                    )
-                                                }
-                                                className="flex flex-row flex-nowrap items-center  pl-[0.875rem] font-semibold"
-                                            >
-                                                <p className="whitespace-nowrap text-xs font-semibold">
-                                                    More actions
-                                                </p>
-                                                <ArrowDropDownSharp />
-                                            </button>
+                                <div className="absolute left-0 top-0 h-full  w-full origin-center rounded-inherit border-2 border-black bg-white  transition-all group-hover:scale-[1.03]"></div>
+                            </motion.button>
 
-                                            {/* {[
-                                                {
-                                                    text: 'Print',
-                                                    icon: (
-                                                        <PrintSharp fontSize="small" />
-                                                    ),
-                                                    handleClick: printOrder,
-                                                },
-                                                {
-                                                    text: 'Add a package',
-                                                    icon: (
-                                                        <Inventory2Sharp fontSize="small" />
-                                                    ),
-                                                },
-                                                {
-                                                    text: 'Mark as gift',
-                                                    icon: (
-                                                        <RedeemSharp fontSize="small" />
-                                                    ),
-                                                },
-                                            ].map(
-                                                (
-                                                    { text, icon, handleClick },
-                                                    idx
-                                                ) => {
-                                                    return (
-                                                        <button
-                                                            key={text}
-                                                            onClick={
-                                                                handleClick
-                                                            }
-                                                            className={`flex cursor-pointer flex-row flex-nowrap items-center gap-3 py-2 pl-3 pr-6 hover:bg-light-grey  ${
-                                                                idx == 2
-                                                                    ? 'rounded-b-inherit'
-                                                                    : ''
-                                                            }`}
-                                                        >
-                                                            <span>{icon}</span>
-                                                            <p className=" whitespace-nowrap">
-                                                                {' '}
-                                                                {text}
-                                                            </p>
-                                                        </button>
-                                                    );
-                                                }
-                                            )} */}
-                                            <Actions
-                                                setShowActions={setShowActions}
-                                                orderId={orderInfo?._id}
-                                            />
-                                        </motion.div>
-                                    </ClickAwayListener>
-                                )}
-                            </AnimatePresence>
+                            {showActions && (
+                                <button
+                                    onClick={() =>
+                                        setShowActions(
+                                            (prevState) => !prevState
+                                        )
+                                    }
+                                    className="  absolute left-0 top-0 z-[3] flex flex-row flex-nowrap items-center border-2 border-transparent  px-3 py-2 font-semibold"
+                                >
+                                    <p className="whitespace-nowrap text-sm font-semibold">
+                                        More actions
+                                    </p>
+                                    <ArrowDropDownSharp />
+                                </button>
+                            )}
+                            <Actions
+                                {...{
+                                    showActions,
+                                    setShowActions,
+                                    orderId: orderInfo?._id,
+                                }}
+                            />
                         </section>
                     </div>
                 </div>

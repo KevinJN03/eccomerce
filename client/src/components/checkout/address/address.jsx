@@ -193,14 +193,14 @@ function Address({
                         id="address"
                         className={`${loading ? 'opacity-50' : 'opacity-100'}`}
                     >
-                        <HelmetProvider>
+                        {/* <HelmetProvider>
                             <Helmet>
                                 <script
                                     type="text/javascript"
                                     src="http://api.addressnow.co.uk/js/addressnow-2.20.min.js?key=hk78-xb99-fb17-wb83"
                                 ></script>
                             </Helmet>
-                        </HelmetProvider>
+                        </HelmetProvider> */}
                         {!disableHeader && (
                             <h1 className="checkout-title">
                                 {addressType} ADDRESS

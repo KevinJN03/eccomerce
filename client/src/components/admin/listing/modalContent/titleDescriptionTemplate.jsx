@@ -11,11 +11,13 @@ import {
 function TitleDescriptionTemplate({ property, textbox }) {
     const [sampleText, setSampleText] = useState('12344');
     const [select, setSelect] = useState('add_to_front');
-    const { modalContent, setModalCheck } = useContent();
+    const { modalContent, setModalCheck, setShowAlert } = useContent();
     const [products, setProducts] = useState([]);
     const [finishLoading, setFinishLoading] = useState(false);
     const { logoutUser } = UserLogout();
     const [loading, setLoading] = useState(false);
+
+    const [btnLoading, setBtnLoading] = useState(false);
     const [defaultText, setDefaultText] = useState('');
     const [productIndex, setProductIndex] = useState(0);
     const [text, setText] = useState({
@@ -41,7 +43,7 @@ function TitleDescriptionTemplate({ property, textbox }) {
         const fetchData = async () => {
             try {
                 const { data } = await adminAxios.get(
-                    `product/${modalContent?.products}`
+                    `product/${modalContent?.productIds}`
                 );
                 setProducts(() => data);
 
@@ -134,28 +136,63 @@ function TitleDescriptionTemplate({ property, textbox }) {
     }, [select, productIndex]);
 
     const handleClick = async () => {
+        let success = false;
+
+        let count = null;
         try {
             abortControllerRef.current?.abort;
             abortControllerRef.current = new AbortController();
-            setLoading(() => true);
+            setBtnLoading(() => true);
 
             await adminAxios.post(
                 '/product/title/update',
                 {
                     property,
                     selectedOption: select,
-                    productIds: modalContent?.products,
+                    productIds: modalContent?.productIds,
                     optionData: text[select],
                 },
                 { signal: abortControllerRef.current?.signal }
             );
+            success = true;
         } catch (error) {
             logoutUser({ error });
         } finally {
             setTimeout(() => {
-                setLoading(() => false);
-                setFinishLoading(() => true);
-            }, 1300);
+                setBtnLoading(() => false);
+                setLoading(() => true);
+
+                setTimeout(() => {
+                    if (success) {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-green-100',
+                            icon: 'check',
+                            size: 'large',
+                            msg:
+                                count > 1
+                                    ? `You've updated ${count} listings.`
+                                    : 'Listing updated.',
+                            text: 'text-black text-base',
+                        }));
+                    } else {
+                        setShowAlert(() => ({
+                            on: true,
+                            bg: 'bg-red-800',
+                            icon: 'sadFace',
+                            size: 'medium',
+                            text: 'text-sm text-white',
+                            timeout: 10000,
+                            msg: `We're unable to update the ${property} for ${modalContent?.productIds?.length} of your listing. Try again or update each listing individually.`,
+                        }));
+                    }
+
+                    modalContent?.setTriggerSearch((prevState) => !prevState);
+                    setLoading(() => false);
+
+                    setModalCheck(() => false);
+                }, 1300);
+            }, 1000);
         }
     };
 
@@ -178,11 +215,12 @@ function TitleDescriptionTemplate({ property, textbox }) {
     };
     return (
         <Template
+            loading={loading}
             handleClearSelection={modalContent?.clearSelection}
             finishLoading={finishLoading}
-            title={`Editing ${property} for ${modalContent.products?.length} listing`}
+            title={`Editing ${property} for ${modalContent.productIds?.length} listing`}
             submit={{
-                loading,
+                loading: btnLoading,
                 handleClick,
                 disabled:
                     select == 'find_and_replace'
@@ -521,19 +559,19 @@ function TitleDescriptionTemplate({ property, textbox }) {
                         {sampleText}
                     </p>
                 </section>
-                <div className="mt-1 flex items-center justify-end self-end gap-2">
+                <div className="mt-1 flex items-center justify-end gap-2 self-end">
                     <button
                         type="button"
                         disabled={productIndex == 0}
-                        className="h-fit w-fit hover:bg-light-grey disabled:opacity-35 flex items-center justify-center p-2"
+                        className="flex h-fit w-fit items-center justify-center p-2 hover:bg-light-grey disabled:opacity-35"
                         onClick={handlePrevious}
                     >
                         <ArrowBackIosNewRounded fontSize="small" />
                     </button>
                     <button
-                    disabled={productIndex == products.length - 1}
+                        disabled={productIndex == products.length - 1}
                         type="button"
-                        className="h-fit w-fit hover:bg-light-grey disabled:opacity-35 flex items-center justify-center p-2"
+                        className="flex h-fit w-fit items-center justify-center p-2 hover:bg-light-grey disabled:opacity-35"
                         onClick={handleNext}
                     >
                         <ArrowForwardIosRounded fontSize="small" />
