@@ -66,8 +66,11 @@ function Manage({}) {
     const notDisableVariations = () => {
         let countPriceHeader = 0;
         let countQuantityHeader = 0;
+        let combineQuantity = 1;
         const filtered = temporaryVariation.filter((item) => {
             if (item.disabled == false) {
+                combineQuantity *= item.options?.size;
+                debugger
                 if (item.priceHeader.on) {
                     countPriceHeader++;
                 }
@@ -78,17 +81,18 @@ function Manage({}) {
                 return item;
             }
         });
-
         let newObj = {
             countPriceHeader,
             countQuantityHeader,
             arr: filtered,
+            combineQuantity,
         };
         return newObj;
     };
 
     const notDisableVariation = notDisableVariations();
-    const { countPriceHeader, countQuantityHeader, arr } = notDisableVariation;
+    const { countPriceHeader, countQuantityHeader, arr, combineQuantity } =
+        notDisableVariation;
     const notDisabled = arr.length;
 
     const apply = () => {
@@ -203,10 +207,7 @@ function Manage({}) {
                                 in at least one area,
                                 <span className="font-semibold">
                                     {' '}
-                                    {notDisableVariation.arr[0].options.size *
-                                        notDisableVariation.arr[1].options
-                                            .size}{' '}
-                                    option combinations
+                                    {combineQuantity} option combinations
                                 </span>{' '}
                                 will be created automatically.
                             </p>

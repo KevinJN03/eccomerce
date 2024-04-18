@@ -12,8 +12,6 @@ function VariationResults({
     option,
 }) {
     return (
-        // <div className="dropdown-menu dropdown-menu-bottom-center mt-2 max-h-[200px] w-full overflow-y-scroll border-none bg-white p-0">
-
         <MenuList>
             {variation.length > 0 &&
                 variation.map((item) => {
@@ -63,7 +61,7 @@ function VariationResults({
                         _.lowerCase(item?.variation) === _.lowerCase(searchText)
                 ) && (
                     <MenuItem onClick={handleCustom}>
-                        <div className="flex  cursor-pointer flex-row justify-between px-3 py-3">
+                        <div className="flex w-full cursor-pointer flex-row justify-between px-3 py-3">
                             <p className="max-w-full bg-transparent text-sm ">
                                 Custom Option:{' '}
                                 <span className="bg-transparent font-medium">

@@ -1,3 +1,4 @@
+import ObjectID from 'bson-objectid';
 import { v4 as uuidv4 } from 'uuid';
 
 export const colorList = [
@@ -108,7 +109,7 @@ export const filteredVariation = (name, options) => {
 export const generateCustomVariation = (text) => {
     const customVariation = {
         variation: text,
-        id: uuidv4(),
+        id: ObjectID().toString(),
         type: 'custom',
     };
 
