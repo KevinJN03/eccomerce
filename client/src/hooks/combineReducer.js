@@ -1,5 +1,4 @@
 import ObjectID from 'bson-objectid';
-import { options } from 'prettier-plugin-tailwindcss';
 export default function combineReducer(state, action) {
     if (action.type == 'UPDATE_OPTIONS') {
 return {...state, options: action.options}
