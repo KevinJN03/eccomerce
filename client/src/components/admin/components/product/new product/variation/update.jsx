@@ -45,34 +45,54 @@ function Update({ category, closeModal }) {
 
     const apply = () => {
         try {
-            // need to allow add code to deal with combine
             if (error[category]) {
                 return;
             }
-            console.log('click');
-            const newVariations = _.cloneDeep(variations).map((item) => {
-                if (item._id == variationList._id) {
-                    const newMap = new Map(item?.options);
+            const checkSetToArray = Array.from(checkSet);
 
-                    const checkSetToArray = Array.from(checkSet);
+            if (_.get(combine, 'combine')) {
+                debugger
+                const newOptionMap = new Map(_.get(combine, 'options'));
+                checkSetToArray.forEach((item) => {
+                    if (newOptionMap.has(item)) {
+                        const getVariation = newOptionMap.get(element);
+                        newOptionMap.set(element, {
+                            ...getVariation,
+                            [category == 'quantity' ? 'stock' : category]:
+                                value,
+                        });
+                    }
+                });
 
-                    checkSetToArray.forEach((element) => {
-                        if (newMap.has(element)) {
-                            const getVariation = newMap.get(element);
-                            newMap.set(element, {
-                                ...getVariation,
-                                [category == 'quantity' ? 'stock' : category]:
-                                    value,
-                            });
-                        }
-                    });
+                combineDispatch({
+                    type: 'UPDATE_OPTIONS',
+                    options: newOptionMap,
+                });
+            } else {
+                const newVariations = _.cloneDeep(variations).map((item) => {
+                    if (item._id == variationList._id) {
+                        const newMap = new Map(item?.options);
 
-                    return { ...item, options: newMap };
-                }
+                        checkSetToArray.forEach((element) => {
+                            if (newMap.has(element)) {
+                                const getVariation = newMap.get(element);
+                                newMap.set(element, {
+                                    ...getVariation,
+                                    [category == 'quantity'
+                                        ? 'stock'
+                                        : category]: value,
+                                });
+                            }
+                        });
 
-                return item;
-            });
-            setVariations(() => newVariations);
+                        return { ...item, options: newMap };
+                    }
+
+                    return item;
+                });
+                setVariations(() => newVariations);
+            }
+
             closeModal();
         } catch (error) {
             console.error('error at update: ', error);

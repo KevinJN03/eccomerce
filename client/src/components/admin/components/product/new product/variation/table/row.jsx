@@ -74,7 +74,7 @@ function Row({
         //     setError,
         // };
 
-        console.log({value})
+        console.log({ value });
 
         return handleValue(options);
     };
@@ -104,32 +104,32 @@ function Row({
         // setStock(() => newStock);
         // updateList(newPrice, newStock);
     }
-    function updateList(priceState, stockState) {
-        const { options } = variationList;
-        // get the variation, then update variation
-        const newObj = options.get(singleVariation.id);
-        isPriceHeaderOn ? (newObj.price = priceState) : delete newObj.price;
-        isQuantityHeaderOn ? (newObj.stock = stockState) : delete newObj.stock;
-        newObj.visible = visible;
-        const newOptions = new Map(options).set(singleVariation.id, newObj);
+    // function updateList(priceState, stockState) {
+    //     const { options } = variationList;
+    //     // get the variation, then update variation
+    //     const newObj = options.get(singleVariation.id);
+    //     isPriceHeaderOn ? (newObj.price = priceState) : delete newObj.price;
+    //     isQuantityHeaderOn ? (newObj.stock = stockState) : delete newObj.stock;
+    //     newObj.visible = visible;
+    //     const newOptions = new Map(options).set(singleVariation.id, newObj);
 
-        if (!isCombine) {
-            setVariations((prevState) => {
-                return prevState.map((item) => {
-                    if (item.id == variationList.id) {
-                        return { ...item, options: newOptions };
-                    }
-                    return item;
-                });
-            });
-        } else {
-            combineDispatch({
-                type: 'update',
-                id: singleVariation.id,
-                newObj: newObj,
-            });
-        }
-    }
+    //     if (!isCombine) {
+    //         setVariations((prevState) => {
+    //             return prevState.map((item) => {
+    //                 if (item.id == variationList.id) {
+    //                     return { ...item, options: newOptions };
+    //                 }
+    //                 return item;
+    //             });
+    //         });
+    //     } else {
+    //         combineDispatch({
+    //             type: 'update',
+    //             id: singleVariation.id,
+    //             newObj: newObj,
+    //         });
+    //     }
+    // }
     const tableRowVariants = {
         hover: {
             backgroundColor: '#eee',
@@ -222,27 +222,38 @@ function Row({
                     )}
 
                     {isPriceHeaderOn && (
-                        <Input
-                            value={_.get(singleVariation, 'price') || 0}
-                            property={'price'}
-                            handleOnchange={handlePrice}
-                            error={error}
-                            visible={visible}
-                            id={`${singleVariation.id}-price`}
-                            isValueValidate={true}
-                        />
+                        <td
+                            className={`relative ${!_.get(singleVariation, 'visible') ? 'opacity-0' : 'opacity-100'}`}
+                        >
+                            <Input
+                                value={_.get(singleVariation, 'price') || 0}
+                                property={'price'}
+                                handleOnchange={handlePrice}
+                                error={error}
+                                visible={visible}
+                                id={`${singleVariation.id}-price`}
+                                isValueValidate={true}
+                            />
+                        </td>
                     )}
 
                     {isQuantityHeaderOn && (
-                        <Input
-                            value={_.get(singleVariation, 'stock') || 0}
-                            property={'stock'}
-                            handleOnchange={() => console.log('jkl')}
-                            error={error}
-                            visible={visible}
-                            id={`${singleVariation.id}-stock`}
-                            isValueValidate={true}
-                        />
+                        <>
+                            {' '}
+                            <td
+                                className={`relative ${!_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-100'}`}
+                            >
+                                <Input
+                                    value={_.get(singleVariation, 'stock') || 0}
+                                    property={'stock'}
+                                    handleOnchange={() => console.log('jkl')}
+                                    error={error}
+                                    visible={_.get(singleVariation, 'visible')}
+                                    id={`${singleVariation.id}-stock`}
+                                    isValueValidate={true}
+                                />
+                            </td>
+                        </>
                     )}
 
                     <td

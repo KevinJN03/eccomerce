@@ -82,16 +82,19 @@ function SelectVariation({}) {
     };
 
     const addOption = (variationOption) => {
+
         if (searchText.length > 0) {
             setSearchText('');
         }
         setOption((prevState) => {
-            return new Map(prevState).set(variationOption.id, variationOption);
+            const newMap = new Map(prevState);
+            newMap.set(variationOption.id, variationOption);
+            return newMap;
         });
         filterColor(variationOption.id);
     };
 
-    const deleteColor = (variationOption) => {
+    const deleteOption = (variationOption) => {
         setOption((prevState) => {
             const newOptionMap = new Map(prevState);
             newOptionMap.delete(variationOption.id);
@@ -326,10 +329,10 @@ function SelectVariation({}) {
                                 </span>
                                 <span
                                     onClick={() =>
-                                        deleteColor({
+                                        deleteOption({
                                             ...item,
                                             id,
-                                            name,
+                                            variation,
                                         })
                                     }
                                     className="rounded-full !bg-[var(--light-grey)] p-2 transition-all hover:!bg-gray-300"

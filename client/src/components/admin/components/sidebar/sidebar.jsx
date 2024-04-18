@@ -2,7 +2,6 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './sidebar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
-import glamo_icon from '../../../../../dist/assets/glamo-black-logo-61d90fbe.svg';
 
 import shop_icon from '../../../../assets/icons/shop.png';
 import axios from '../../../../api/axios';

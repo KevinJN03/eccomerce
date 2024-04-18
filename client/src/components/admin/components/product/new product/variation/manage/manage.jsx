@@ -59,21 +59,6 @@ function Manage({}) {
             return false;
         });
     }
-
-    const deleteVariation = ({ id, name }) => {
-        // updatedDefaultMap(name, id, true);
-
-        let newArr = [...temporaryVariation];
-
-        let update = newArr.map((item) => {
-            if (item.id == id) {
-                return { ...item, disabled: true };
-            }
-            return item;
-        });
-        setTemporaryVariation(update);
-    };
-
     const cancel = () => {
         setModalCheck(() => false);
     };
@@ -122,14 +107,14 @@ function Manage({}) {
             combineDispatch({ type: 'combineVariations', variations: update });
             setModalCheck(() => false);
         } else {
-            combineDispatch('clear');
+            combineDispatch({ type: 'clear' });
             const newUpdate = newArr.map((item) => {
                 const { options, quantityHeader, priceHeader } = item;
 
                 const newOptions = new Map();
 
                 for (const [key, value] of options.entries()) {
-                    const newObj = { ...value };
+                    const newObj = _.cloneDeep(value);
 
                     if (!quantityHeader.on) {
                         delete newObj?.stock;
@@ -137,7 +122,7 @@ function Manage({}) {
                     if (!priceHeader.on) {
                         delete newObj?.price;
                     }
-
+                    newObj.visible = true;
                     newOptions.set(key, newObj);
                 }
 

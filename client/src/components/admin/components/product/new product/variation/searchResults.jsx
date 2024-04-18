@@ -1,7 +1,7 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import OptionError from './error/optionError';
 import { v4 as uuidv4 } from 'uuid';
-
+import _ from 'lodash';
 import { MenuItem, MenuList } from '@mui/material';
 function VariationResults({
     variation,
@@ -18,25 +18,18 @@ function VariationResults({
             {variation.length > 0 &&
                 variation.map((item) => {
                     const { variation } = item;
-                    let variationStr = variation.toLowerCase();
-                    let searchTextStr = searchText.toLowerCase();
+                    let variationStr = _.lowerCase(variation);
+                    let searchTextStr = _.lowerCase(searchText);
                     if (
                         variationStr.substring(0, searchTextStr.length) ==
                         searchTextStr
                     ) {
                         return (
-                            <MenuItem
-                                key={uuidv4()}
-                                // sx={{
-                                //     padding: '16px 10px',
-                                //     display: 'flex',
-                                //     justifyContent: 'between',
-                                //     alignItems: 'center',
-                                //     width: '100%',
-                                // }}
-                                onClick={() => addOption(item)}
-                            >
-                                <div className="flex w-full cursor-pointer flex-row flex-nowrap justify-between px-3 py-3 text-sm  ">
+                            <MenuItem>
+                                <div
+                                    onClick={() => addOption(item)}
+                                    className="flex w-full cursor-pointer flex-row flex-nowrap justify-between px-3 py-3 text-sm  "
+                                >
                                     <p className="bg-transparent text-sm">
                                         {item.variation}
                                     </p>
@@ -63,13 +56,11 @@ function VariationResults({
                 searchText.length < 20 &&
                 !variation.some(
                     (item) =>
-                        item.variation.toLowerCase() ===
-                        searchText.toLowerCase()
+                        _.lowerCase(item?.variation) === _.lowerCase(searchText)
                 ) &&
                 !option.some(
                     (item) =>
-                        item.variation.toLowerCase() ===
-                        searchText.toLowerCase()
+                        _.lowerCase(item?.variation) === _.lowerCase(searchText)
                 ) && (
                     <MenuItem onClick={handleCustom}>
                         <div className="flex  cursor-pointer flex-row justify-between px-3 py-3">
