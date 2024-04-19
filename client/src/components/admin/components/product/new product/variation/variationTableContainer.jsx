@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Table from './table/table';
 import { motion, AnimatePresence, easeIn, easeOut } from 'framer-motion';
 import { useVariation } from '../../../../../../context/variationContext';
@@ -8,7 +8,8 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import TableProvider from '../../../../../../context/tableContext';
 import { Box, Modal } from '@mui/material';
 import Update from './update';
-function VariationTableContainer({ variation, isCombine,  }) {
+import _ from 'lodash';
+function VariationTableContainer({ variation, isCombine }) {
     const { name, options, priceHeader, quantityHeader } = variation;
     const { contentDispatch, setModalCheck } = useNewProduct();
     const [update, setUpdate] = useState({
@@ -36,18 +37,7 @@ function VariationTableContainer({ variation, isCombine,  }) {
     };
     const handleUpdate = (category) => {
         setModalOpen(() => true);
-
         setModalProps(() => ({ category }));
-
-        // contentDispatch({
-        //     type: 'update',
-        //     category,
-        //     checkSet,
-        //     setCheckSet,
-        //     setUpdate,
-        //     update,
-        //     setCheckAll,
-        // });
     };
 
     const layout = determineLayout();
@@ -74,6 +64,7 @@ function VariationTableContainer({ variation, isCombine,  }) {
         isQuantityHeaderOn: variation.quantityHeader.on,
         isPriceHeaderOn: variation.priceHeader.on,
         isCombine,
+        layout,
     };
     return (
         <TableProvider value={value}>
@@ -109,37 +100,35 @@ function VariationTableContainer({ variation, isCombine,  }) {
                                 >
                                     {`${checkSet.size} selected`}{' '}
                                 </motion.p>
-                                {priceHeader.on && (
-                                    <button
-                                        type="button"
-                                        className="theme-btn"
-                                        onClick={() => handleUpdate('price')}
-                                    >
-                                        Update price
-                                    </button>
-                                )}
-                                {quantityHeader.on && (
-                                    <button
-                                        type="button"
-                                        className="theme-btn"
-                                        onClick={() => handleUpdate('quantity')}
-                                    >
-                                        Update Quantity
-                                    </button>
-                                )}
+                                {[
+                                    { property: 'price', on: priceHeader.on },
+                                    {
+                                        property: 'quantity',
+                                        on: quantityHeader.on,
+                                    },
+                                ].map(({ on, property }) => {
+                                    return (
+                                        <Fragment key={property}>
+                                            {on && (
+                                                <button
+                                                    type="button"
+                                                    className="theme-btn"
+                                                    onClick={() =>
+                                                        handleUpdate(property)
+                                                    }
+                                                >
+                                                    Update{' '}
+                                                    {_.upperFirst(property)}
+                                                </button>
+                                            )}
+                                        </Fragment>
+                                    );
+                                })}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </section>
-                <Table
-                    key={variation.id}
-                    variationList={variation}
-                    update={update}
-                    isCombine={isCombine}
-                    setCheckAll={setCheckAll}
-                    checkAll={checkAll}
-                    layout={layout}
-                />
+                <Table key={variation.id} />
                 <Modal
                     open={modalOpen}
                     onClose={() => setModalOpen(() => false)}

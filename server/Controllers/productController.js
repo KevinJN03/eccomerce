@@ -292,7 +292,7 @@ export const get_many_product = [
                             //                   k: '$$this.variation',
                             //                   v: {
                             //                     $mergeObjects: [
-                                                  
+
                             //                       // {
                             //                       //   $getField: {
                             //                       //     input: '$$value',
@@ -533,9 +533,9 @@ export const create_new_product = [
   productValidator,
 
   asyncHandler(async (req, res, next) => {
-    const resultValidation = validationResult(req);
+    const resultValidation = validationResult(req).formatWith(({ msg }) => msg);
     if (!resultValidation.isEmpty()) {
-      res.status(400).send(resultValidation.errors);
+      res.status(400).send(resultValidation.mapped());
       return;
     }
     const { gender, category } = req.body;
@@ -577,10 +577,10 @@ export const update_product = [
 
   productValidator,
   asyncHandler(async (req, res, next) => {
-    const result = validationResult(req);
+    const result = validationResult(req).formatWith(({ msg }) => msg);
 
     if (!result.isEmpty()) {
-      res.status(400).send(result.errors);
+      res.status(400).send(result.mapped);
       return;
     }
 

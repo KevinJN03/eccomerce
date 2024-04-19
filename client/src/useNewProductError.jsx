@@ -1,19 +1,20 @@
 import { useEffect } from 'react';
 import { useNewProduct } from './context/newProductContext';
+import _ from 'lodash';
 
 export default function useNewProductError(path, setState, options) {
     const { publishError } = useNewProduct();
 
     useEffect(() => {
-        if (publishError?.has(path)) {
+        if (_.has(publishError, path)) {
             options?.obj
                 ? setState((obj) => {
                       return {
                           ...obj,
-                          [options.property]: publishError.get(path).msg,
+                          [options.property]: _.get(publishError, path),
                       };
                   })
-                : setState(() => publishError.get(path).msg);
+                : setState(() => _.get( publishError, path));
         }
     }, [publishError]);
 }

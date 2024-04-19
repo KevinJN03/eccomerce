@@ -45,16 +45,12 @@ function Update({ category, closeModal }) {
 
     const apply = () => {
         try {
-            if (error[category]) {
-                return;
-            }
             const checkSetToArray = Array.from(checkSet);
 
-            if (_.get(combine, 'combine')) {
-                debugger
+            if (_.get(combine, 'on')) {
                 const newOptionMap = new Map(_.get(combine, 'options'));
-                checkSetToArray.forEach((item) => {
-                    if (newOptionMap.has(item)) {
+                checkSetToArray.forEach((element) => {
+                    if (newOptionMap.has(element)) {
                         const getVariation = newOptionMap.get(element);
                         newOptionMap.set(element, {
                             ...getVariation,
@@ -90,9 +86,10 @@ function Update({ category, closeModal }) {
 
                     return item;
                 });
+
                 setVariations(() => newVariations);
             }
-
+            setCheckSet(() => new Set());
             closeModal();
         } catch (error) {
             console.error('error at update: ', error);
@@ -106,17 +103,38 @@ function Update({ category, closeModal }) {
         let firstSelectItemValue = checkSet.entries().next().value[1][
             newCategory
         ];
-        for (const value of checkSet.values()) {
-            const newValue = value[newCategory]?.toString();
-            if (newValue != firstSelectItemValue?.toString()) {
-                isAllValueSame = false;
-                break;
+        const checkSetToArray = Array.from(checkSet);
+
+        const newOptionsMap = new Map(variationList?.options);
+        const firstOption = newOptionsMap.get(checkSetToArray[0]);
+        debugger;
+        for (let i = 1; i < checkSetToArray.length; i++) {
+            const item = checkSetToArray[i];
+            if (newOptionsMap.has(item)) {
+                const getVariation = newOptionsMap.get(item);
+
+                if (getVariation[newCategory] != firstOption[newCategory]) {
+                    isAllValueSame = false;
+                    break;
+                }
+                // valuesArray.push(getVariation[newCategory]);
             }
         }
-        if (!firstSelectItemValue && isAllValueSame == true) {
-            firstSelectItemValue = 0;
-        }
-        return { amount: firstSelectItemValue, check: isAllValueSame };
+
+        // for (const value of checkSet.values()) {
+        //     const newValue = value[newCategory]?.toString();
+        //     if (newValue != firstSelectItemValue?.toString()) {
+        //         isAllValueSame = false;
+        //         break;
+        //     }
+        // }
+        // if (!firstSelectItemValue && isAllValueSame == true) {
+        //     firstSelectItemValue = 0;
+        // }
+        return {
+            amount: _.get(firstOption, newCategory) || 0,
+            check: isAllValueSame,
+        };
     }
 
     const ref = useClickAway(() => {

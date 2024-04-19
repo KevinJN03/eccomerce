@@ -6,17 +6,16 @@ import { getValuesFromMap } from '../variationData';
 import TableProvider, {
     useTableContext,
 } from '../../../../../../../context/tableContext';
-function Table({
-    variationList,
- 
-    update,
-    isCombine,
-
-    layout,
-}) {
-
-    const { checkSet, setCheckSet, handleCheckAllVariations, variationOptions } =
-        useTableContext();
+function Table({}) {
+    const {
+        checkSet,
+        setCheckSet,
+        handleCheckAllVariations,
+        variationOptions,
+        isCombine,
+        layout,
+        variationList,
+    } = useTableContext();
     return (
         <table className="result-table w-full !bg-white">
             <colgroup>{tableLayout[layout]}</colgroup>
@@ -41,15 +40,7 @@ function Table({
             </tr>
             {variationOptions.length > 0 &&
                 variationOptions.map((item) => {
-                    return (
-                        <Row
-                            key={item.id}
-                            singleVariation={item}
-                            variationList={variationList}
-                   
-                            update={update}
-                        />
-                    );
+                    return <Row key={item.id} singleVariation={item} />;
                     // });
                 })}
         </table>

@@ -74,9 +74,7 @@ function Footer({ type }) {
                 setLoading(() => false);
             }
         } catch (error) {
-
             setLoading(() => false);
-
         }
     };
 
@@ -103,17 +101,32 @@ function Footer({ type }) {
 
             const errorData = error.response.data;
 
-            errorData?.[0]?.type == 'field'
-                ? publishErrorDispatch({ type: 'set', data: errorData })
-                : publishErrorDispatch({
-                      type: 'default',
-                      data: errorData,
-                  });
+            console.log({ errorData });
+
+            if (error.response.status == 500) {
+                publishErrorDispatch({
+                    type: 'default',
+                    data: errorData,
+                });
+
+                return;
+            }
+            publishErrorDispatch({
+                type: 'set',
+                data: errorData,
+            });
+
+            // errorData?.[0]?.type == 'field'
+            //     ? publishErrorDispatch({ type: 'set', data: errorData })
+            //     : publishErrorDispatch({
+            //           type: 'default',
+            //           data: errorData,
+            //       });
         }
     }
 
     return (
-        <div className="sticky z-[3] bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
+        <div className="sticky bottom-0 z-[3] flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <BubbleButton handleClick={() => navigate('/admin/products')} />
             <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button

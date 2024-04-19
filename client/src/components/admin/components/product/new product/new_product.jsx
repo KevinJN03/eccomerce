@@ -34,6 +34,7 @@ import { inView } from 'framer-motion';
 import dayjs from 'dayjs';
 import useScrollpsy from '../../../../../hooks/useScrollpsy.jsx';
 import Delete from './delivery/delete.jsx';
+import _ from 'lodash';
 const views = {
     manage: <Manage />,
     select: <SelectVariation />,
@@ -42,7 +43,7 @@ const views = {
     delivery_main: <Delivery_Main />,
     delivery_new: <Delivery_New edit={false} />,
     delivery_edit: <Delivery_New edit={true} />,
-    delivery_delete: <Delete/>
+    delivery_delete: <Delete />,
 };
 
 function New_Product({ Content, type }) {
@@ -68,17 +69,17 @@ function New_Product({ Content, type }) {
         200
     );
 
-    
     return (
         <VariationProvider>
             <div className="product-listing flex h-full min-h-screen flex-col justify-start ">
                 <section className="mb-6 flex h-fit w-full flex-col gap-6 pl-16 pr-20 pt-6">
                     <Link
-                      to={'/admin/products'}
-                    className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1">
-                        <div className="flex relative items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
+                        to={'/admin/products'}
+                        className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1"
+                    >
+                        <div className="relative flex items-center justify-center transition-all group-hover:translate-x-[-0.4rem]">
                             {/* <KeyboardBackspaceRounded fontSize="small" /> */}
-                            <ArrowBackRounded fontSize="small"/>
+                            <ArrowBackRounded fontSize="small" />
                         </div>
 
                         <p className="text-base font-semibold">
@@ -87,29 +88,31 @@ function New_Product({ Content, type }) {
                     </Link>
                     <div className="flex w-full flex-col">
                         <div className="flex-no-wrap flex w-full flex-row justify-between">
-                            <div className='flex flex-col gap-3'>
+                            <div className="flex flex-col gap-3">
                                 <h3 className=" text-xl font-semibold tracking-wider">
                                     {!type ? 'New Listing' : mountTitle}
                                 </h3>
                                 <div className="flex flex-nowrap items-center gap-3">
                                     <p
-                                        className={`w-fit rounded-full font-normal text-xs tracking-wide ${
+                                        className={`w-fit rounded-full text-xs font-normal tracking-wide ${
                                             product?.status == 'active'
                                                 ? 'bg-green-200'
-                                               
-                                                  : 'bg-black/90 text-white'
+                                                : 'bg-black/90 text-white'
                                         }  px-2 py-1`}
                                     >
-                                        {product?.status[0].toUpperCase() + product?.status.substring(1) }
+                                        {product?.status[0].toUpperCase() +
+                                            product?.status.substring(1)}
                                     </p>
 
-                                { product?.status == 'active' &&    <p>
-                                        Listed on{' '}
-                                        {dayjs(product?.timestamp).format(
-                                            'DD MMM, YYYY'
-                                        )}
-                                        .
-                                    </p>}
+                                    {product?.status == 'active' && (
+                                        <p>
+                                            Listed on{' '}
+                                            {dayjs(product?.timestamp).format(
+                                                'DD MMM, YYYY'
+                                            )}
+                                            .
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -172,9 +175,9 @@ function New_Product({ Content, type }) {
                                 href={`#${section.id}`}
                                 className={`${
                                     activeId == section.id
-                                        ? 'text-admin-accent !border-b-admin-accent bg-green-50'
+                                        ? '!border-b-admin-accent bg-green-50 text-admin-accent'
                                         : '!border-white'
-                                }hover:text-admin-accent hover:border-admin-accent flex h-full items-center justify-center border-b-2  text-sm`}
+                                }hover:text-admin-accent flex h-full items-center justify-center border-b-2 text-sm  hover:border-admin-accent`}
                             >
                                 {section.text}
                             </a>
@@ -182,7 +185,7 @@ function New_Product({ Content, type }) {
                     })}
                     <a
                         href="#settings"
-                        className="hover:text-admin-accent hover:border-admin-accent flex h-full flex-nowrap items-center justify-center gap-2 border-b-2 border-transparent text-sm "
+                        className="flex h-full flex-nowrap items-center justify-center gap-2 border-b-2 border-transparent text-sm hover:border-admin-accent hover:text-admin-accent "
                     >
                         <SettingsRounded fontSize="small" />
                         Settings
@@ -190,7 +193,7 @@ function New_Product({ Content, type }) {
                 </div>
 
                 <section className="flex w-full max-w-[1366px] flex-col gap-y-3 rounded-none bg-[var(--light-grey)] py-4 pl-16 pr-20">
-                    {publishError.get('default') && (
+                    {_.get(publishError, 'default') && (
                         <div className="alert alert-error">
                             <svg
                                 onClick={() =>
@@ -211,7 +214,7 @@ function New_Product({ Content, type }) {
                                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                                 />
                             </svg>
-                            <span>{publishError.get('default')}</span>
+                            <span>{_.get(publishError, 'default')}</span>
                         </div>
                     )}
                     <About />
@@ -222,7 +225,6 @@ function New_Product({ Content, type }) {
                     <Details />
 
                     <Delivery />
-
                 </section>
 
                 <Footer type={type} />

@@ -20,8 +20,8 @@ export default function CategorySelect({
             value={state}
             onChange={handleChange}
         >
-            <option disabled key={uuidV4()}>
-                {title}
+            <option disabled selected>
+                Select {title}
             </option>
             {options.map((option, index) => {
                 //

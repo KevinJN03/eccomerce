@@ -10,18 +10,12 @@ import {
     motion,
     AnimatePresence,
     easeInOut,
-    useAnimation,
 } from 'framer-motion';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
-import { useVariation } from '../../../../../../../context/variationContext';
 import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
 import { useTableContext } from '../../../../../../../context/tableContext';
 import _ from 'lodash';
-function Row({
-    singleVariation,
-
-    update,
-}) {
+function Row({ singleVariation }) {
     const {
         variationList,
         isQuantityHeaderOn,
@@ -31,31 +25,11 @@ function Row({
         setCheckSet,
     } = useTableContext();
     const [error, setError] = useState({ price: null, stock: null });
-
-    const [visible, setVisible] = useState(
-        singleVariation.visible == false ? false : true
-    );
-    const [inputCheck, setInputCheck] = useState(false);
-
-    const { check } = useVariation();
-
-    // const [stock, setStock] = useState(singleVariation?.stock);
-    const [trigger, setTrigger] = useState(false);
-
-    const { setVariations, combineDispatch } = useNewProduct();
-    console.log('row rerender');
-
-    // useEffect(() => {
-    //     if (check == true) {
-    //         onClickAway();
-    //     }
-
-    //     updateList(price, stock);
-    // }, [check]);
-
+    const { setVariations, combineDispatch, variations } = useNewProduct();
+    const [priceValue, setPriceValue] = useState(null);
+    const [stockValue, setStockValue] = useState(null);
     const handleCheck = (e) => {
         e.stopPropagation();
-        // setInputCheck(!inputCheck);
         setCheckSet((prevSet) => {
             const newSet = new Set(prevSet);
             if (newSet.has(singleVariation.id)) {
@@ -66,70 +40,71 @@ function Row({
             return newSet;
         });
     };
-    const handlePrice = (value) => {
-        // const options = {
-        //     ...priceOptions,
-        //     value,
-        //     setValue: setPrice,
-        //     setError,
-        // };
 
-        console.log({ value });
+    const handleOnchange = ({ value, optionObj, setValue }) => {
+        const options = {
+            ...optionObj,
+            value,
+            setValue,
+            setError,
+        };
 
         return handleValue(options);
     };
+    useEffect(() => {
+        if (_.has(singleVariation, 'price')) {
+            setPriceValue(() => singleVariation?.price);
+        }
 
-    // const handleStock = (value) => {
-    //     const options = {
-    //         ...quantityOptions,
-    //         value,
-    //         setValue: setStock,
-    //         setError,
-    //     };
-    //     return handleValue(options);
-    // };
+        if (_.has(singleVariation, 'stock')) {
+            setStockValue(() => singleVariation.stock);
+        }
+    }, [singleVariation]);
+
+    const updateOptionsInVariations = (newObject) => {
+        const newVariations = _.cloneDeep(variations).map((item) => {
+            if (item._id == variationList._id) {
+                const newOptionMap = new Map(item.options);
+                newOptionMap.set(newObject.id, newObject);
+
+                return { ...item, options: newOptionMap };
+            }
+
+            return item;
+        });
+
+        return newVariations;
+    };
 
     function onClickAway() {
-        // if (
-        //     (!price && !stock) ||
-        //     (singleVariation.price == price &&
-        //         singleVariation.stock == stock &&
-        //         singleVariation.visible == visible)
-        // ) {
-        //     return;
-        // }
-        // const newPrice = formatData(price, 2);
-        // const newStock = formatData(stock, 0);
-        // setPrice(() => newPrice);
-        // setStock(() => newStock);
-        // updateList(newPrice, newStock);
-    }
-    // function updateList(priceState, stockState) {
-    //     const { options } = variationList;
-    //     // get the variation, then update variation
-    //     const newObj = options.get(singleVariation.id);
-    //     isPriceHeaderOn ? (newObj.price = priceState) : delete newObj.price;
-    //     isQuantityHeaderOn ? (newObj.stock = stockState) : delete newObj.stock;
-    //     newObj.visible = visible;
-    //     const newOptions = new Map(options).set(singleVariation.id, newObj);
+        if (
+            (!priceValue && !stockValue) ||
+            (singleVariation.price == priceValue &&
+                singleVariation.stock == stockValue)
+        ) {
+            return;
+        }
+        const newObject = { ...singleVariation };
+        if (isPriceHeaderOn) {
+            newObject.price = formatData(priceValue, 2);
+        }
+        if (isQuantityHeaderOn) {
+            newObject.stock = formatData(stockValue, 0);
+        }
+        if (isCombine) {
+            combineDispatch({
+                type: 'update',
+                id: singleVariation.id,
+                newObj: newObject,
+            });
+        } else {
+            const newVariations = updateOptionsInVariations(newObject);
 
-    //     if (!isCombine) {
-    //         setVariations((prevState) => {
-    //             return prevState.map((item) => {
-    //                 if (item.id == variationList.id) {
-    //                     return { ...item, options: newOptions };
-    //                 }
-    //                 return item;
-    //             });
-    //         });
-    //     } else {
-    //         combineDispatch({
-    //             type: 'update',
-    //             id: singleVariation.id,
-    //             newObj: newObj,
-    //         });
-    //     }
-    // }
+            setVariations(() => newVariations);
+        }
+    }
+    
+
     const tableRowVariants = {
         hover: {
             backgroundColor: '#eee',
@@ -161,14 +136,31 @@ function Row({
         },
     };
 
+    const toggleVisible = () => {
+        const newObject = {
+            ...singleVariation,
+            visible: !singleVariation.visible,
+        };
+        if (isCombine) {
+            combineDispatch({
+                type: 'update',
+                id: singleVariation.id,
+                newObj: newObject,
+            });
+        } else {
+            const newVariations = updateOptionsInVariations(newObject);
+            setVariations(() => newVariations);
+        }
+    };
     return (
         <AnimatePresence>
             <ClickAwayListener onClickAway={onClickAway}>
                 <motion.tr
                     className={`mt-10 h-full max-h-28 w-full min-w-full border-b-2 ${
-                        inputCheck && visible && '!bg-gray-200'
+                        checkSet.has(singleVariation.id) &&
+                        singleVariation.visible &&
+                        '!bg-gray-200'
                     }`}
-                    key={trigger}
                     variants={tableRowVariants}
                     initial="initial"
                     animate={'animate'}
@@ -185,10 +177,11 @@ function Row({
                                 type="checkbox"
                                 className={`daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2  border-dark-gray`}
                                 checked={
-                                    checkSet.has(singleVariation.id) && visible
+                                    checkSet.has(singleVariation.id) &&
+                                    singleVariation.visible
                                 }
                                 onChange={handleCheck}
-                                disabled={!visible}
+                                disabled={!singleVariation.visible}
                             />
                         </motion.td>
                     )}
@@ -198,7 +191,7 @@ function Row({
                             (error.price || error.stock) && ' !align-top'
                         } 
                         
-                ${!visible && '!opacity-60 '}
+                ${!singleVariation.visible && '!opacity-60 '}
                 `}
                     >
                         <p className="text-sm font-light">
@@ -212,7 +205,7 @@ function Row({
                                 (error.price || error.stock) && ' !align-top'
                             } 
                         
-                ${!visible && '!opacity-60 '}
+                ${!singleVariation.visible && '!opacity-60 '}
                 `}
                         >
                             <p className="text-sm font-light">
@@ -223,14 +216,25 @@ function Row({
 
                     {isPriceHeaderOn && (
                         <td
-                            className={`relative ${!_.get(singleVariation, 'visible') ? 'opacity-0' : 'opacity-100'}`}
+                            className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
                         >
                             <Input
-                                value={_.get(singleVariation, 'price') || 0}
+                                value={
+                                    priceValue
+
+                                    // ||
+                                    // _.get(singleVariation, 'price')
+                                }
                                 property={'price'}
-                                handleOnchange={handlePrice}
+                                handleOnchange={(e) =>
+                                    handleOnchange({
+                                        value: e.target.value,
+                                        optionObj: priceOptions,
+                                        setValue: setPriceValue,
+                                    })
+                                }
                                 error={error}
-                                visible={visible}
+                                visible={singleVariation.visible}
                                 id={`${singleVariation.id}-price`}
                                 isValueValidate={true}
                             />
@@ -241,12 +245,18 @@ function Row({
                         <>
                             {' '}
                             <td
-                                className={`relative ${!_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-100'}`}
+                                className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
                             >
                                 <Input
-                                    value={_.get(singleVariation, 'stock') || 0}
+                                    value={stockValue}
                                     property={'stock'}
-                                    handleOnchange={() => console.log('jkl')}
+                                    handleOnchange={(e) =>
+                                        handleOnchange({
+                                            value: e.target.value,
+                                            optionObj: quantityOptions,
+                                            setValue: setStockValue,
+                                        })
+                                    }
                                     error={error}
                                     visible={_.get(singleVariation, 'visible')}
                                     id={`${singleVariation.id}-stock`}
@@ -268,78 +278,21 @@ function Row({
                                 0 && (
                                 <span
                                     className={`mr-4 flex h-5 items-center justify-center rounded-full bg-black px-2 py-2 text-s text-white ${
-                                        !visible && '!opacity-0'
+                                        !singleVariation.visible && '!opacity-0'
                                     }`}
                                 >
                                     Sold out
                                 </span>
                             )}
                             <Switch
-                                state={visible}
-                                toggle={() =>
-                                    setVisible((prevState) => !prevState)
-                                }
+                                state={singleVariation.visible}
+                                toggle={toggleVisible}
                             />
                         </div>
                     </td>
                 </motion.tr>
             </ClickAwayListener>
         </AnimatePresence>
-    );
-}
-
-export function RowInput(props) {
-    const { visible } = props;
-
-    // const addToValidateError = (err) => {
-    //     if (err || error[property]) {
-    //         // ('error');
-    //         publishErrorDispatch({
-    //             type: 'addToValidateInput',
-    //             path: props?.id,
-    //             error: err ? err : error[property],
-    //         });
-    //     }
-
-    //     // ('trying', publishError);
-    // };
-
-    // useEffect(() => {
-    //     if (publishError.has('validateInput') && props?.id) {
-    //         const isPresent = publishError.get('validateInput').has(props?.id);
-
-    //         if ((isPresent && !error[property]) || !visible) {
-    //             ('deleting here');
-    //             publishErrorDispatch({
-    //                 type: 'deleteValidateInput',
-    //                 path: props?.id,
-    //             });
-
-    //             return;
-    //         }
-    //     }
-    //     if (visible) {
-    //         addToValidateError();
-    //     }
-    // }, [value, visible]);
-    // useEffect(() => {
-    //     if (publish.firstAttempt) {
-    //         const err = handleOnchange(value);
-    //         if (visible && err) {
-    //             ('run useEffect for publish.firstattempt');
-    //             addToValidateError(err);
-    //             // isAllInputValid.current = false;
-
-    //             return;
-    //         }
-    //         // isAllInputValid.current = true;
-    //     }
-    // }, [publish]);
-
-    return (
-        <td className={`relative ${!visible && 'opacity-0'}`}>
-            <Input {...props} />
-        </td>
     );
 }
 

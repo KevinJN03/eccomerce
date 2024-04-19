@@ -316,11 +316,11 @@ function SelectVariation({}) {
                         />
                     </Menu>
                 </section>
-                <div className="options-wrapper mt-3 flex min-h-[200px] w-full  basis-full flex-col gap-y-2  ">
+                <div className="options-wrapper mt-4 flex min-h-[200px] w-full  basis-full flex-col gap-y-3  ">
                     {optionArray.map(({ variation, id, ...item }) => {
                         return (
                             <div
-                                className="border-1 flex w-full w-full cursor-pointer  flex-row items-center justify-between rounded-lg p-2"
+                                className="border-1 flex border w-full cursor-pointer  flex-row items-center justify-between rounded-lg p-3"
                                 key={id}
                             >
                                 <span className="flex flex-row items-center gap-3">

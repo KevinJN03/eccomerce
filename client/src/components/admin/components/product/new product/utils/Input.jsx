@@ -19,7 +19,7 @@ export const Input = forwardRef(function Input(
                     ref={ref}
                     id={property}
                     name={property}
-                    onChange={(e) => handleOnchange(e.target.value)}
+                    onChange={handleOnchange}
                     autoComplete="off"
                     value={value}
                     type="number"

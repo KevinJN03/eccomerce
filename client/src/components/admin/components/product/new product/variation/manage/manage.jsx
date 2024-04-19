@@ -70,7 +70,6 @@ function Manage({}) {
         const filtered = temporaryVariation.filter((item) => {
             if (item.disabled == false) {
                 combineQuantity *= item.options?.size;
-                debugger
                 if (item.priceHeader.on) {
                     countPriceHeader++;
                 }

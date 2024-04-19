@@ -72,7 +72,11 @@ function VariationResults({
                         </div>
                     </MenuItem>
                 )}
-            {searchText.length > 20 && <OptionError />}
+            {searchText.length > 20 && (
+                <OptionError
+                    msg={'Option Name must be between 1 and 20 characters.'}
+                />
+            )}
         </MenuList>
     );
 }

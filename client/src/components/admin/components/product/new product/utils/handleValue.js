@@ -42,10 +42,14 @@ export default function handleValue(options) {
         });
     }
 
-    options?.isObject
-        ? setValue((obj) => {
-              return { ...obj, value, on: true };
-          })
-        : setValue(() => value);
-    return err;
+    if (options?.isObject) {
+        setValue((obj) => {
+            return { ...obj, value, on: true };
+        });
+
+        return;
+    }
+
+    setValue(() => value);
+    return
 }

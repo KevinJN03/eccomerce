@@ -82,7 +82,9 @@ export default function Main() {
     'defaultMap: ', defaultMap;
     return (
         <section className="variation-main relative h-full bg-white">
-            <h1 className="mb-2 font-semibold text-lg">What type of variation is it?</h1>
+            <h1 className="mb-2 text-lg font-semibold">
+                What type of variation is it?
+            </h1>
             <p>
                 You can add up to 2 variations. Use the variation types listed
                 here for peak discoverability. You can add a custom variation,
@@ -112,7 +114,13 @@ export default function Main() {
                 <button
                     type="button"
                     className="mb-14 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"
-                    onClick={() => contentDispatch({ type: 'select' })}
+                    onClick={() =>
+                        contentDispatch({
+                            type: 'select',
+                            default: false,
+                            title: '',
+                        })
+                    }
                 >
                     <AddRoundedIcon className="bg-transparent" />
                     <span className="bg-transparent">Create your Own</span>
