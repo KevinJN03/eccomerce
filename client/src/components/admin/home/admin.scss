@@ -236,17 +236,16 @@ h1 {
 }
 
 .input {
-    @apply rounded-lg;
+    @apply rounded-md border #{!important};
+    // @apply min-h-12 p-3;
 
-    border-width: 1px !important;
-    border-color: transparent;
-    box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
-    transition: all 0.4s ease-in-out;
+    // box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
+    // transition: all 0.4s ease-in-out;
     &:hover {
         border-color: black;
     }
     &:focus {
-        border: 1px solid black !important;
+        @apply border border-black bg-white;
         outline-color: var(--about-primary) !important;
     }
 }
@@ -254,7 +253,7 @@ h1 {
 .daisy-progress {
     @apply bg-white #{!important};
     &::-webkit-progress-value {
-        @apply bg-admin-primary rounded-none #{!important};
+        @apply rounded-none bg-admin-primary #{!important};
     }
 
     &::-moz-progress-bar,

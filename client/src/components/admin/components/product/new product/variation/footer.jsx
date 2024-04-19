@@ -12,6 +12,9 @@ function Footer({ type }) {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const combineRef = useRef();
+    const variationsRef = useRef();
+
     const {
         description,
         title,
@@ -24,19 +27,19 @@ function Footer({ type }) {
         publishError,
         priceValue,
         stockValue,
-        publish,
         combine,
         setPublish,
-        isAllInputValid,
         minVariationPrice,
-        product,
     } = useNewProduct();
 
-    // const { publish, setPulish, publishError, publishErrorDispatch,  ...values } = useNewProduct();
-    const [loading, setLoading] = useState(false);
     useEffect(() => {
-        publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
-    }, [publish]);
+        combineRef.current = combine;
+    }, [combine]);
+    useEffect(() => {
+        variationsRef.current = variations;
+    }, [variations]);
+
+    const [loading, setLoading] = useState(false);
 
     const publishProduct = (e, draft = false) => {
         e.preventDefault();
@@ -50,10 +53,10 @@ function Footer({ type }) {
             setLoading(() => true);
             const timeout = setTimeout(() => {
                 const value = {
-                    combine,
+                    combine: combineRef.current,
                     description,
                     title,
-                    variations,
+                    variations: variationsRef.current,
                     files,
                     category,
                     gender,
@@ -62,7 +65,6 @@ function Footer({ type }) {
                     stockValue,
                     publishError,
                     publishErrorDispatch,
-                    isAllInputValid,
                     minVariationPrice,
                 };
                 const formData = formatFormData(value);
@@ -93,16 +95,9 @@ function Footer({ type }) {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            setLoading(() => false);
-
             navigate('/admin/products');
         } catch (error) {
-            setLoading(() => false);
-
             const errorData = error.response.data;
-
-            console.log({ errorData });
-
             if (error.response.status == 500) {
                 publishErrorDispatch({
                     type: 'default',
@@ -112,16 +107,11 @@ function Footer({ type }) {
                 return;
             }
             publishErrorDispatch({
-                type: 'set',
+                type: 'SET',
                 data: errorData,
             });
-
-            // errorData?.[0]?.type == 'field'
-            //     ? publishErrorDispatch({ type: 'set', data: errorData })
-            //     : publishErrorDispatch({
-            //           type: 'default',
-            //           data: errorData,
-            //       });
+        } finally {
+            setLoading(() => false);
         }
     }
 

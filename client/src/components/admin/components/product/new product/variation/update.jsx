@@ -107,7 +107,6 @@ function Update({ category, closeModal }) {
 
         const newOptionsMap = new Map(variationList?.options);
         const firstOption = newOptionsMap.get(checkSetToArray[0]);
-        debugger;
         for (let i = 1; i < checkSetToArray.length; i++) {
             const item = checkSetToArray[i];
             if (newOptionsMap.has(item)) {
@@ -116,21 +115,9 @@ function Update({ category, closeModal }) {
                 if (getVariation[newCategory] != firstOption[newCategory]) {
                     isAllValueSame = false;
                     break;
-                }
-                // valuesArray.push(getVariation[newCategory]);
-            }
+                }            }
         }
 
-        // for (const value of checkSet.values()) {
-        //     const newValue = value[newCategory]?.toString();
-        //     if (newValue != firstSelectItemValue?.toString()) {
-        //         isAllValueSame = false;
-        //         break;
-        //     }
-        // }
-        // if (!firstSelectItemValue && isAllValueSame == true) {
-        //     firstSelectItemValue = 0;
-        // }
         return {
             amount: _.get(firstOption, newCategory) || 0,
             check: isAllValueSame,

@@ -26,7 +26,7 @@ export const Input = forwardRef(function Input(
                     className={`input-number input !h-full w-full rounded-lg ${
                         property == 'price' ? '!px-6' : '!px-2'
                     }  py-3 ${
-                        error?.[property] && '!border-red-300 !bg-red-200'
+                        error?.[property] && '!border-red-700 bg-red-100'
                     }`}
                     disabled={!visible}
                 />

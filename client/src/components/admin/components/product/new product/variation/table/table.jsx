@@ -25,7 +25,7 @@ function Table({}) {
                     <th>
                         <input
                             type="checkbox"
-                            className="daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2 border-dark-gray"
+                            className="daisy-checkbox daisy-checkbox-sm no-animation !rounded-[3px] border-2 border-dark-gray"
                             checked={checkSet.size > 0}
                             onChange={handleCheckAllVariations}
                         />

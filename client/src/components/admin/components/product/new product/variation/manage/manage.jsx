@@ -16,6 +16,7 @@ function Manage({}) {
         setVariations,
         temporaryVariation,
         setTemporaryVariation,
+      
     } = useVariation();
 
     const {
@@ -25,6 +26,8 @@ function Manage({}) {
         combineDispatch,
         contentDispatch,
         setModalCheck,
+        setPriceValue,
+        setStockValue,
     } = useNewProduct();
     const [priceSelection, setPriceSelection] = useState('');
     const [quantitySelection, setQuantitySelection] = useState('');
@@ -108,6 +111,8 @@ function Manage({}) {
 
             setVariations(() => update);
             combineDispatch({ type: 'combineVariations', variations: update });
+            setStockValue(() => null);
+            setPriceValue(() => null);
             setModalCheck(() => false);
         } else {
             combineDispatch({ type: 'clear' });
@@ -120,12 +125,14 @@ function Manage({}) {
                     const newObj = _.cloneDeep(value);
 
                     if (!quantityHeader.on) {
-                        delete newObj?.stock;
+                        _.unset(newObj, 'stock');
+                        setStockValue(() => null);
                     }
                     if (!priceHeader.on) {
-                        delete newObj?.price;
+                        _.unset(newObj, 'price');
+                        setPriceValue(() => null);
                     }
-                    newObj.visible = true;
+                    _.set(newObj, 'visible', true);
                     newOptions.set(key, newObj);
                 }
 

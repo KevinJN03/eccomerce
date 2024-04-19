@@ -580,7 +580,7 @@ export const update_product = [
     const result = validationResult(req).formatWith(({ msg }) => msg);
 
     if (!result.isEmpty()) {
-      res.status(400).send(result.mapped);
+      res.status(400).send(result.mapped());
       return;
     }
 

@@ -41,6 +41,8 @@ function DeliveryProfile(props) {
                 text: 'Save and apply',
                 handleClick: (data) => {
                     modalContent.setProfile(() => data);
+                    modalContent?.handleClick();
+
                 },
             },
         }));
@@ -52,6 +54,8 @@ function DeliveryProfile(props) {
         setTimeout(() => {
             const { handleCancel, ...profileProp } = props;
             modalContent.setProfile(() => profileProp);
+            modalContent?.handleClick();
+
             setLoading(() => false);
             setModalCheck(() => false);
         }, 500);
@@ -226,9 +230,11 @@ function DeliveryOption({}) {
                     <h2 className="text-2xl font-semibold">Delivery options</h2>
                     <p>Select a delivery profile or create a new one.</p>
                 </div>
-                {loading ? (
+                {true ? (
                     <div className="flex  h-44 w-full items-center justify-center">
-                        <div className="spinner-circle spinner-lg [--spinner-color:var(--slate-12)]"></div>
+                        <div class="spinner-dot-intermittent [--spinner-color:var(--pink-8)]"></div>
+
+                        <div className="spinner-circle spinner-lg"></div>
                     </div>
                 ) : (
                     <>

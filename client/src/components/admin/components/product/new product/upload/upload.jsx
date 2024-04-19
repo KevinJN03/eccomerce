@@ -8,7 +8,7 @@ import DragItem from './dragItem';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 function Upload({}) {
-    const { files, setFiles } = useNewProduct();
+    const { files, setFiles, publishErrorDispatch } = useNewProduct();
 
     const handleOnDragEnd = (result) => {
         try {
@@ -16,15 +16,14 @@ function Upload({}) {
             const items = Array.from(files);
             const reorderedItems = items[result.source.index];
             const nextReorderItem = items[result.destination.index];
-            
+
             // items.splice(result.destination.index, 1, reorderedItems);
             // items.splice(result.source.index, 1, nextReorderItem);
             items[result.destination.index] = reorderedItems;
             items[result.source.index] = nextReorderItem;
-            
+
             setFiles(() => items);
         } catch (error) {
-            
             setFiles(() => files);
         }
     };
@@ -49,6 +48,8 @@ function Upload({}) {
                 return file;
             })
         );
+
+        publishErrorDispatch({ type: 'CLEAR', path: 'files' });
     };
 
     const deletePhoto = (oldFile) => {
@@ -62,7 +63,6 @@ function Upload({}) {
         newFiles.splice(findIndex, 1);
         newFiles.push(updateFile);
         setFiles(newFiles);
-        
     };
 
     return (

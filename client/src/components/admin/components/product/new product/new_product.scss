@@ -45,7 +45,7 @@
         @apply format bg-white;
 
         input {
-            @apply mb-8 mt-3 min-w-full outline;
+            @apply mb-8 mt-3 min-w-full;
         }
     }
 
@@ -53,7 +53,7 @@
         @apply format;
 
         input {
-            @apply w-64 outline #{!important};
+            @apply w-64 #{!important};
         }
 
         .price-input,
@@ -116,10 +116,10 @@
 
 }
 
-.outline {
-    @apply input rounded-md p-3;
-    height: 48px;
-}
+// .outline {
+//     @apply input rounded-md p-3;
+//     height: 48px;
+// }
 
 // Price & Inventory Section
 

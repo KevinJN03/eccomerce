@@ -16,7 +16,6 @@ const views = {
 
 import { useNewProduct } from '../../../../../../context/newProductContext';
 import OptionError from '../variation/error/optionError';
-import useNewProductError from '../../../../../../useNewProductError';
 import { useContent } from '../../../../../../context/ContentContext';
 import _ from 'lodash';
 import BubbleButton from '../../../../../buttons/bubbleButton';
@@ -32,19 +31,11 @@ function Delivery() {
     } = useNewProduct();
 
     const { setModalCheck, setModalContent } = useContent();
-    const [deliveryError, setDeliveryError] = useState('');
     const [triggerRefresh, setTriggerRefresh] = useState(false);
-    useNewProductError('delivery', setDeliveryError);
-    useEffect(() => {
-        setDeliveryError('');
-        publishErrorDispatch({ type: 'clear', path: 'delivery' });
-    }, [profile]);
 
-    const openModal = () => {
-        contentDispatch({ type: 'delivery_main' });
-        setModalCheck(() => true);
+    const handleClick = () => {
+        publishErrorDispatch({ type: 'CLEAR', path: 'delivery' });
     };
-
     return (
         <section className="new-product-wrapper">
             <section id="delivery" className="">
@@ -54,12 +45,6 @@ function Delivery() {
 
 `}
                 />
-                {deliveryError && (
-                    <OptionError
-                        className={'m-0 px-0 pb-0'}
-                        msg={deliveryError}
-                    />
-                )}
 
                 {!_.isEmpty(profile) ? (
                     <div className="mt-10 flex flex-col gap-2  font-semibold">
@@ -137,19 +122,25 @@ function Delivery() {
                             handleClick={() => {
                                 setModalContent(() => ({
                                     type: 'deliveryOption',
-                                 
                                     setProfile,
                                     setTriggerRefresh,
+                                    handleClick
                                 }));
                                 setModalCheck(() => true);
-
                             }}
                         >
-                            <p className='text-base font-medium text-black '>
-                            Select profile
+                            <p className="text-base font-medium text-black ">
+                                Select profile
                             </p>
                         </ThemeBtn>
                     </div>
+                )}
+
+                {publishError?.delivery && (
+                    <OptionError
+                        className={'m-0 px-0 pb-0'}
+                        msg={publishError.delivery}
+                    />
                 )}
             </section>
         </section>

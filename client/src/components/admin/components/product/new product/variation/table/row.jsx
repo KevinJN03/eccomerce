@@ -6,11 +6,7 @@ import { Input } from '../../utils/Input';
 import '../../new_product.scss';
 import { ClickAwayListener } from '@mui/material';
 import handleValue from '../../utils/handleValue';
-import {
-    motion,
-    AnimatePresence,
-    easeInOut,
-} from 'framer-motion';
+import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
 import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
 import { useTableContext } from '../../../../../../../context/tableContext';
@@ -25,7 +21,8 @@ function Row({ singleVariation }) {
         setCheckSet,
     } = useTableContext();
     const [error, setError] = useState({ price: null, stock: null });
-    const { setVariations, combineDispatch, variations } = useNewProduct();
+    const { setVariations, combineDispatch, variations, publishErrorDispatch } =
+        useNewProduct();
     const [priceValue, setPriceValue] = useState(null);
     const [stockValue, setStockValue] = useState(null);
     const handleCheck = (e) => {
@@ -46,6 +43,7 @@ function Row({ singleVariation }) {
             ...optionObj,
             value,
             setValue,
+            publishErrorDispatch,
             setError,
         };
 
@@ -103,7 +101,6 @@ function Row({ singleVariation }) {
             setVariations(() => newVariations);
         }
     }
-    
 
     const tableRowVariants = {
         hover: {
@@ -175,7 +172,7 @@ function Row({ singleVariation }) {
                                 name={`check-${singleVariation.id}`}
                                 // key={inputCheck}
                                 type="checkbox"
-                                className={`daisy-checkbox no-animation h-4 w-4 !rounded-[3px] border-2  border-dark-gray`}
+                                className={`daisy-checkbox no-animation daisy-checkbox-sm !rounded-[3px] border-2  border-dark-gray`}
                                 checked={
                                     checkSet.has(singleVariation.id) &&
                                     singleVariation.visible

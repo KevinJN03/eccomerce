@@ -28,14 +28,17 @@ function UpdateProduct(props, value) {
         useEffect(() => {
             const { singleValue } = props;
             setTitle(() => singleValue?.title);
-            setPriceValue((prev) => ({
-                ...prev,
-                value: _.get(singleValue, 'price.current') || 0,
-            }));
-            setStockValue((prev) => ({ ...prev, value: singleValue?.stock }));
+            // setPriceValue((prev) => ({
+            //     ...prev,
+            //     value: _.get(singleValue, 'price.current') || 0,
+            // }));
+            setPriceValue(() => _.get(singleValue, 'price.current'));
+            setStockValue(() => _.get(singleValue, 'stock'));
+
+            // setStockValue((prev) => ({ ...prev, value: singleValue?.stock }));
             setCategory(() => singleValue?.category?._id || '');
 
-            setGender(() => singleValue?.gender || '');
+            setGender(() => singleValue?.gender || null);
 
             setProfile(() => singleValue?.delivery);
 

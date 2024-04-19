@@ -1,12 +1,11 @@
 import New_Product_Header from './header';
 import CategorySelect from './select/select';
-import {  useEffect, useState } from 'react';
-import  { adminAxios } from '../../../../../api/axios';
+import { useEffect, useState } from 'react';
+import { adminAxios } from '../../../../../api/axios';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import OptionError from './variation/error/optionError';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
 import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
-import useNewProductError from '../../../../../useNewProductError';
 function Details() {
     const {
         category,
@@ -19,27 +18,15 @@ function Details() {
     const [genderError, setGenderError] = useState('');
 
     const [categoryError, setCategoryError] = useState('');
-    useNewProductError('category', setCategoryError);
-    useNewProductError('gender', setGenderError);
-
-    useEffect(() => {
-        setGenderError('');
-        publishErrorDispatch({ type: 'clear', path: 'gender' });
-    }, [gender]);
-
-    useEffect(() => {
-        setCategoryError('');
-        publishErrorDispatch({ type: 'clear', path: 'category' });
-    }, [category]);
 
     const [allCategory, setAllCategory] = useState([]);
 
     const fetchData = async (route) => {
         try {
             const result = await adminAxios.get('category/all');
-        
+
             const status = result.status;
-       
+
             if (status == 200) {
                 setCategoryError('');
             }
@@ -105,18 +92,19 @@ function Details() {
 
                     <div className="my-3 flex flex-col gap-y-8">
                         <span className="flex h-full  flex-col ">
-                            {categoryError && (
-                                <OptionError
-                                    msg={categoryError?.msg || categoryError}
-                                    className={'mb-2 px-0 pb-0'}
-                                />
-                            )}
-                            <span className="flex !h-full flex-nowrap items-center gap-2">
+                            
+                            <div className="flex !h-full flex-nowrap items-center gap-2">
                                 <CategorySelect
                                     isCategory={true}
-                                    setState={setCategory}
                                     state={category}
                                     options={allCategory}
+                                    handleChange={(e) => {
+                                        setCategory(() => e.target.value);
+                                        publishErrorDispatch({
+                                            type: 'CLEAR',
+                                            path: 'category',
+                                        });
+                                    }}
                                     title="Category"
                                 />
                                 {categoryError?.restart && (
@@ -131,21 +119,35 @@ function Details() {
                                         <LoopRoundedIcon />
                                     </motion.button>
                                 )}
-                            </span>
-                        </span>
-                        <div>
-                            {genderError && (
+                            </div>
+
+                            {publishError?.category && (
                                 <OptionError
-                                    msg={genderError}
-                                    className={'mb-2 px-0 !pt-0 pb-0'}
+                                    msg={publishError.category}
+                                    className={'mb-2 px-0 pb-0'}
                                 />
                             )}
+                        </span>
+                        <div>
                             <CategorySelect
                                 options={['Men', 'Women']}
                                 title="Gender"
-                                setState={setGender}
+                                handleChange={(e) => {
+                                    setGender(() => e.target.value);
+                                    publishErrorDispatch({
+                                        type: 'CLEAR',
+                                        path: 'gender',
+                                    });
+                                }}
                                 state={gender}
                             />
+
+                            {publishError?.gender && (
+                                <OptionError
+                                    msg={publishError.gender}
+                                    className={'mb-2 px-0 pb-0'}
+                                />
+                            )}
                         </div>
                     </div>
                 </section>

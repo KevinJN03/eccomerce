@@ -33,30 +33,28 @@ export const NewProductProvider = (props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [profile, setProfile] = useState({});
-    const [globalUpdate, setGlobalUpdate] = useState({
-        price: null,
-        quantity: null,
-    });
+
     const [category, setCategory] = useState();
     const [publishError, publishErrorDispatch] = useReducer(
         publishError_Reducer,
         {}
     );
 
-    const [priceValue, setPriceValue] = useState({
-        value: '',
-        on: false,
-    });
-    const [stockValue, setStockValue] = useState({ value: '', on: false });
+    // const [priceValue, setPriceValue] = useState({
+    //     value: '',
+    //     on: false,
+    // });
+    const [priceValue, setPriceValue] = useState(null);
+    const [stockValue, setStockValue] = useState(null);
+
+    // const [stockValue, setStockValue] = useState({ value: '', on: false });
     const [publish, setPublish] = useState({
         firstAttempt: false,
         value: false,
         count: 0,
     });
 
-    const [gender, setGender] = useState();
-    const isAllInputValid = useRef(true);
-
+    const [gender, setGender] = useState(null);
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
         type: 'main',
@@ -94,15 +92,14 @@ export const NewProductProvider = (props) => {
         setGender,
         profile,
         setProfile,
-        globalUpdate,
-        setGlobalUpdate,
+
         publishError,
         publishErrorDispatch,
         priceValue,
         setPriceValue,
         stockValue,
         setStockValue,
-        isAllInputValid,
+
         publish,
         setPublish,
         combine,
@@ -124,6 +121,21 @@ export const NewProductProvider = (props) => {
 };
 
 function publishError_Reducer(state, action) {
+    if (action.type == 'SET') {
+        // action?.data?.forEach((element) => {
+        //     const { path } = element;
+        //     map.set(path, element);
+        // });
+        return action.data;
+    }
+
+    if (action.type == 'ADD') {
+        const newState = _.cloneDeep(state);
+        _.set(newState, action.path, action.msg);
+
+        return newState;
+    }
+
     if (action.type == 'default') {
         return { ...state, default: _.get(action, 'data.msg.0') };
     }
@@ -139,8 +151,8 @@ function publishError_Reducer(state, action) {
         return state;
     }
     if (action == 'clearValidateInput') {
-        const newState = _.cloneDeep(state)
-        _.unset(newState, 'validateInput')
+        const newState = _.cloneDeep(state);
+        _.unset(newState, 'validateInput');
         return newState;
     }
 
@@ -178,9 +190,9 @@ function publishError_Reducer(state, action) {
             if (_.keys(validateInputObj).length <= 1) {
                 _.unset(newState, 'validateInput');
                 _.unset(newState, 'isAllInputValid');
-            }else {
-                _.unset(validateInputObj, action.path )
-                _.set(newState, 'validateInput', validateInputObj)
+            } else {
+                _.unset(validateInputObj, action.path);
+                _.set(newState, 'validateInput', validateInputObj);
             }
         }
 
@@ -197,15 +209,7 @@ function publishError_Reducer(state, action) {
         // return map;
     }
 
-    if (action.type == 'set') {
-        // action?.data?.forEach((element) => {
-        //     const { path } = element;
-        //     map.set(path, element);
-        // });
-
-        return action.data;
-    }
-    if (action.type == 'clear') {
+    if (action.type == 'CLEAR') {
         const newState = _.cloneDeep(state);
         _.unset(newState, action.path);
 

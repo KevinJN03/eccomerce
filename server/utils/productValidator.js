@@ -1,20 +1,34 @@
 import { body, check, validationResult } from 'express-validator';
+import _ from 'lodash';
 
-function customVariationValidator({ value, minValue, maxValue, msg }) {
-  const parseValue = JSON.parse(value.replace(/&quot;/g, '"'));
+function customVariationValidator({ value, minValue, maxValue, msg, checker }) {
+  const parseValue = parseFloat(value);
+  console.log({ checker, parseValue, value });
 
-  if (!parseValue.on) return true;
-  if (parseValue.on && !parseValue.value) return false;
-  if (parseValue.value < minValue || parseValue.value > maxValue)
+  if (checker) {
+    return parseValue;
+  }
+
+  if (parseValue < minValue || parseValue > maxValue || !parseValue) {
+    console.log('error throwing');
     throw new Error(msg);
+  }
 
-  return true;
+  return parseValue;
+
+  // if (!parseValue.on) return true;
+  // if (parseValue.on && !parseValue.value) return false;
+  // if (parseValue.value < minValue || parseValue.value > maxValue)
+  //   throw new Error(msg);
+
+  // return true;
 }
 
 const productValidator = [
   check('files').custom((value, { req }) => {
+    console.log({ value });
     if (req.files.length < 1) {
-      throw new Error('Please add a photo.');
+      throw new Error('Please add at least one photo.');
     }
 
     return true;
@@ -36,45 +50,50 @@ const productValidator = [
     .trim()
     .escape()
     .notEmpty()
-    .custom((value) => {
-      if (value === 'undefined') {
-        throw new Error();
-      }
-
-      return true;
-    }),
+    .isIn(['men', 'women']),
   body('price', 'Please enter a valid price.')
     .trim()
     .escape()
-    .custom((value) =>
-      customVariationValidator({
+    .optional({ nullable: true })
+    .custom((value, { req }) => {
+      const newVariation = _.map(req.body.variations, (array) =>
+        JSON.parse(array),
+      );
+
+      return customVariationValidator({
         value,
         minValue: 0.17,
         maxValue: 42933.2,
         msg: 'Price must be between £0.17 and £42,933.20.',
-      }),
-    ),
+        checker: _.some(newVariation, { priceHeader: { on: true } }),
+      });
+    }),
 
-  body('isAllInputValid', 'Please enter a value in all inputs.').custom(
-    (value) => {
-      const parseValue = JSON.parse(value);
+  // body('isAllInputValid', 'Please enter a value in all inputs.').custom(
+  //   (value) => {
+  //     const parseValue = JSON.parse(value);
 
-      // if (value) return true;
-      // return false;
-      return parseValue;
-    },
-  ),
+  //     // if (value) return true;
+  //     // return false;
+  //     return parseValue;
+  //   },
+  // ),
   body('stock', 'Please enter a valid stock.')
     .trim()
     .escape()
-    .custom((value) =>
-      customVariationValidator({
+    .optional({ nullable: true })
+    .custom((value, { req }) => {
+      const newVariation = _.map(req.body.variations, (array) =>
+        JSON.parse(array),
+      );
+      return customVariationValidator({
         value,
         minValue: 0,
         maxValue: 999,
         msg: 'Quantity must be between 0 and 999.',
-      }),
-    ),
+        checker: _.some(newVariation, { quantityHeader: { on: true } }),
+      });
+    }),
 
   // .notEmpty(),
 
@@ -90,10 +109,18 @@ const productValidator = [
   //       throw new Error();
   //     }
   //   }),
-  body('delivery', 'Please add a delivery profiles.')
+  body('delivery', 'Add a delivery option to this listing')
     .trim()
-    .escape()
-    .notEmpty(),
+    .notEmpty()
+    .not()
+    .equals('undefined')
+    .escape(),
+
+  // .custom((value) => {
+  //   console.log({ delivery: value });
+
+  //   return value;
+  // }),
 ];
 
 export default productValidator;

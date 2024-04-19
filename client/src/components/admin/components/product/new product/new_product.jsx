@@ -72,7 +72,7 @@ function New_Product({ Content, type }) {
     return (
         <VariationProvider>
             <div className="product-listing flex h-full min-h-screen flex-col justify-start ">
-                <section className="mb-6 flex h-fit w-full flex-col gap-6 pl-16 pr-20 pt-6">
+                <section className="mb-3 flex h-fit w-full flex-col gap-6 pl-16 pr-20 pt-6">
                     <Link
                         to={'/admin/products'}
                         className="group flex w-fit cursor-pointer flex-row flex-nowrap items-center gap-1"
@@ -89,21 +89,24 @@ function New_Product({ Content, type }) {
                     <div className="flex w-full flex-col">
                         <div className="flex-no-wrap flex w-full flex-row justify-between">
                             <div className="flex flex-col gap-3">
-                                <h3 className=" text-xl font-semibold tracking-wider">
-                                    {!type ? 'New Listing' : mountTitle}
+                                <h3 className=" text-2xl font-semibold tracking-wider">
+                                    {/* {mountTitle || 'New Listing'} */}
+
+                                    {type == 'new' ? 'New Listing' : mountTitle}
                                 </h3>
                                 <div className="flex flex-nowrap items-center gap-3">
-                                    <p
-                                        className={`w-fit rounded-full text-xs font-normal tracking-wide ${
-                                            product?.status == 'active'
-                                                ? 'bg-green-200'
-                                                : 'bg-black/90 text-white'
-                                        }  px-2 py-1`}
-                                    >
-                                        {product?.status[0].toUpperCase() +
-                                            product?.status.substring(1)}
-                                    </p>
-
+                                    {product?.status && (
+                                        <p
+                                            className={`w-fit rounded-full text-xs font-normal tracking-wide ${
+                                                product?.status == 'active'
+                                                    ? 'bg-green-200'
+                                                    : 'bg-black/90 text-white'
+                                            }  px-2 py-1`}
+                                        >
+                                            {product?.status[0].toUpperCase() +
+                                                product?.status.substring(1)}
+                                        </p>
+                                    )}
                                     {product?.status == 'active' && (
                                         <p>
                                             Listed on{' '}
@@ -131,7 +134,7 @@ function New_Product({ Content, type }) {
                                         </p>
                                     </Link>
                                 )}
-                                {type != 'copy' && (
+                                {type != 'copy' && product?.status && (
                                     <Link
                                         to={`/admin/products/copy/${product?._id}`}
                                         target="_blank"
@@ -144,12 +147,14 @@ function New_Product({ Content, type }) {
                                     </Link>
                                 )}
 
-                                <button
-                                    type="button"
-                                    className="rounded-full p-2 transition-all ease-in-out hover:bg-light-grey/50"
-                                >
-                                    <MoreVertSharp />
-                                </button>
+                                {product?.status && (
+                                    <button
+                                        type="button"
+                                        className="rounded-full p-2 transition-all ease-in-out hover:bg-light-grey/50"
+                                    >
+                                        <MoreVertSharp />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -175,7 +180,7 @@ function New_Product({ Content, type }) {
                                 href={`#${section.id}`}
                                 className={`${
                                     activeId == section.id
-                                        ? '!border-b-admin-accent bg-green-50 text-admin-accent'
+                                        ? '!border-b-admin-accent text-admin-accent'
                                         : '!border-white'
                                 }hover:text-admin-accent flex h-full items-center justify-center border-b-2 text-sm  hover:border-admin-accent`}
                             >
