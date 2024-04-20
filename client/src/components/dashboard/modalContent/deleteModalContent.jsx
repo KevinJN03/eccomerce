@@ -29,11 +29,11 @@ function DeleteModalContent({
             <div className="bottom flex w-full flex-col gap-y-3">
                 <button
                     onClick={handleClick}
-                    className="!bg-primary flex justify-center h-12 items-center font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
+                    className="flex h-12 items-center justify-center !bg-primary font-bold tracking-wider text-white opacity-90 transition-all hover:opacity-100"
                 >
                     {loading ? (
                         <svg
-                            className="spinner-ring spinner-xs [--spinner-color:var(--gray-1)]"
+                            className="spinner-ring spinner-xs ![--spinner-color:var(--gray-1)]"
                             viewBox="25 25 50 50"
                             strokeWidth="5"
                         >
@@ -44,7 +44,7 @@ function DeleteModalContent({
                     )}
                 </button>
                 <button
-                    className="border-2 bg-white  h-12 flex justify-center items-center font-bold tracking-wider !text-primary transition-all hover:!bg-[var(--light-grey)]"
+                    className="flex h-12  items-center justify-center border-2 bg-white font-bold tracking-wider !text-primary transition-all hover:!bg-[var(--light-grey)]"
                     onClick={closeModal}
                 >
                     CANCEL

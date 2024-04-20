@@ -8,21 +8,27 @@ import { AnimatePresence } from 'framer-motion';
 import { useTableContext } from '../../../../../../context/tableContext';
 import BubbleButton from '../../../../../buttons/bubbleButton.jsx';
 import ThemeBtn from '../../../../../buttons/themeBtn.jsx';
-import _ from 'lodash';
+import _, { property } from 'lodash';
 import { useClickAway } from '@uidotdev/usehooks';
 import { useVariation } from '../../../../../../context/variationContext.jsx';
 import { useNewProduct } from '../../../../../../context/newProductContext.jsx';
 function Update({ category, closeModal }) {
-    const [error, setError] = useState({ price: null, quantity: null });
     const [value, setValue] = useState('');
     const { variations, setVariations } = useVariation();
-    const { combine, combineDispatch } = useNewProduct();
+
+    const [property, setProperty] = useState(`update-${category}`);
+    const { combine, combineDispatch, publishErrorDispatch, publishError } =
+        useNewProduct();
 
     const { checkSet, setCheckSet, variationList, isCombine } =
         useTableContext();
-
+    const [checkSetToArray, setCheckSetToArray] = useState(
+        Array.from(checkSet)
+    );
     const [current, setCurrent] = useState({});
     const num = category == 'price' ? 2 : 0;
+
+    const errorMsg = _.get(publishError, property);
 
     useEffect(() => {
         const value = checkValue();
@@ -30,35 +36,51 @@ function Update({ category, closeModal }) {
     }, []);
 
     const handleOnchange = (value) => {
+        const options = {
+            publishErrorDispatch,
+            value,
+            setValue,
+            property: property,
+        };
         if (category == 'price') {
-            handleValue({ ...priceOptions, setError, value, setValue });
-        } else if (category == 'quantity') {
+            handleValue({
+                ...priceOptions,
+                ...options,
+            });
+        } else if (category == 'stock') {
             handleValue({
                 ...quantityOptions,
-                property: category,
-                setError,
-                value,
-                setValue,
+                ...options,
             });
         }
     };
 
     const apply = () => {
         try {
-            const checkSetToArray = Array.from(checkSet);
+            if (errorMsg) {
+                return;
+            }
 
-            if (_.get(combine, 'on')) {
-                const newOptionMap = new Map(_.get(combine, 'options'));
+            const updateVariationOptionData = (optionMap) => {
                 checkSetToArray.forEach((element) => {
-                    if (newOptionMap.has(element)) {
-                        const getVariation = newOptionMap.get(element);
-                        newOptionMap.set(element, {
+                    if (optionMap.has(element)) {
+                        const getVariation = optionMap.get(element);
+                        optionMap.set(element, {
                             ...getVariation,
-                            [category == 'quantity' ? 'stock' : category]:
-                                value,
+                            [category]: value,
+                        });
+
+                        publishErrorDispatch({
+                            type: 'CLEAR',
+                            path: `${element}-${category}`,
                         });
                     }
                 });
+            };
+
+            if (_.get(combine, 'on')) {
+                const newOptionMap = new Map(_.get(combine, 'options'));
+                updateVariationOptionData(newOptionMap);
 
                 combineDispatch({
                     type: 'UPDATE_OPTIONS',
@@ -68,18 +90,7 @@ function Update({ category, closeModal }) {
                 const newVariations = _.cloneDeep(variations).map((item) => {
                     if (item._id == variationList._id) {
                         const newMap = new Map(item?.options);
-
-                        checkSetToArray.forEach((element) => {
-                            if (newMap.has(element)) {
-                                const getVariation = newMap.get(element);
-                                newMap.set(element, {
-                                    ...getVariation,
-                                    [category == 'quantity'
-                                        ? 'stock'
-                                        : category]: value,
-                                });
-                            }
-                        });
+                        updateVariationOptionData(newMap);
 
                         return { ...item, options: newMap };
                     }
@@ -97,14 +108,7 @@ function Update({ category, closeModal }) {
     };
 
     function checkValue() {
-        let newCategory = category;
-        if (newCategory == 'quantity') newCategory = 'stock';
         let isAllValueSame = true;
-        let firstSelectItemValue = checkSet.entries().next().value[1][
-            newCategory
-        ];
-        const checkSetToArray = Array.from(checkSet);
-
         const newOptionsMap = new Map(variationList?.options);
         const firstOption = newOptionsMap.get(checkSetToArray[0]);
         for (let i = 1; i < checkSetToArray.length; i++) {
@@ -112,14 +116,15 @@ function Update({ category, closeModal }) {
             if (newOptionsMap.has(item)) {
                 const getVariation = newOptionsMap.get(item);
 
-                if (getVariation[newCategory] != firstOption[newCategory]) {
+                if (getVariation[category] != firstOption[category]) {
                     isAllValueSame = false;
                     break;
-                }            }
+                }
+            }
         }
 
         return {
-            amount: _.get(firstOption, newCategory) || 0,
+            amount: _.get(firstOption, category) || 0,
             check: isAllValueSame,
         };
     }
@@ -134,8 +139,8 @@ function Update({ category, closeModal }) {
     return (
         <section className="update flex w-full flex-col">
             <h1 className="pb-3 text-3xl font-semibold tracking-wide">
-                Update {category} for {checkSet.size}{' '}
-                {checkSet.size > 1 ? 'variants' : 'variant'}
+                Update {category == 'stock' ? 'quantity' : category} for{' '}
+                {checkSet.size} {checkSet.size > 1 ? 'variants' : 'variant'}
             </h1>
             <p className="mb-4 mt-1 text-sm text-black/70">
                 Current {category}:{' '}
@@ -158,7 +163,7 @@ function Update({ category, closeModal }) {
                         type="number"
                         className={`input-number border-1 input-bordered input input-lg min-w-full rounded-md ${
                             category == 'price' ? '!px-6' : ' px-2'
-                        } ${error?.[category] && 'border-red-400 bg-red-100'}`}
+                        } ${errorMsg && 'border-red-400 bg-red-100'}`}
                     />
                     {category == 'price' && (
                         <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
@@ -167,10 +172,10 @@ function Update({ category, closeModal }) {
                     )}
                 </div>
                 <AnimatePresence>
-                    {error?.[category] && (
+                    {errorMsg && (
                         <OptionError
                             className={'!gap-1 !px-0 py-2'}
-                            msg={error?.[category]}
+                            msg={errorMsg}
                         />
                     )}
                 </AnimatePresence>
@@ -180,7 +185,7 @@ function Update({ category, closeModal }) {
                 <BubbleButton handleClick={closeModal} />
 
                 <span className="flex flex-row items-center gap-3">
-                    {(error?.[category] || value.length < 1) && (
+                    {(errorMsg || value.length < 1) && (
                         <p className="text-sm opacity-60">
                             Enter valid {category}
                         </p>
@@ -189,7 +194,7 @@ function Update({ category, closeModal }) {
                     <ThemeBtn
                         handleClick={apply}
                         text={'Apply'}
-                        disabled={error[category]}
+                        disabled={errorMsg}
                     />
                 </span>
             </div>

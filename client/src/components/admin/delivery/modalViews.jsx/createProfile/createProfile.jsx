@@ -94,7 +94,7 @@ function CreateProfile({}) {
                     </>
                 ) : (
                     <div className="flex  h-44 w-full items-center justify-center">
-                        <div className="spinner-circle spinner-lg [--spinner-color:var(--slate-12)]"></div>
+                        <div className="spinner-circle spinner-lg ![--spinner-color:var(--slate-12)]"></div>
                     </div>
                 )}
 

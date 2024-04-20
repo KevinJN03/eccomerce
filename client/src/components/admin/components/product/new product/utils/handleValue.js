@@ -9,7 +9,6 @@ export default function handleValue({
     minValue,
 }) {
     let error = null;
-
     if (!value || isNaN(value)) {
         error = `Please enter a valid ${text}.`;
     } else if (value == 0) {

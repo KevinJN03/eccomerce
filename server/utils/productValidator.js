@@ -2,11 +2,11 @@ import { body, check, validationResult } from 'express-validator';
 import _ from 'lodash';
 
 function customVariationValidator({ value, minValue, maxValue, msg, checker }) {
-  const parseValue = parseFloat(value);
+  const parseValue = value;
   console.log({ checker, parseValue, value });
 
   if (checker) {
-    return parseValue;
+    return true;
   }
 
   if (parseValue < minValue || parseValue > maxValue || !parseValue) {
@@ -15,13 +15,6 @@ function customVariationValidator({ value, minValue, maxValue, msg, checker }) {
   }
 
   return parseValue;
-
-  // if (!parseValue.on) return true;
-  // if (parseValue.on && !parseValue.value) return false;
-  // if (parseValue.value < minValue || parseValue.value > maxValue)
-  //   throw new Error(msg);
-
-  // return true;
 }
 
 const productValidator = [
@@ -52,8 +45,10 @@ const productValidator = [
     .notEmpty()
     .isIn(['men', 'women']),
   body('price', 'Please enter a valid price.')
+    .notEmpty()
     .trim()
     .escape()
+    .toFloat()
     .optional({ nullable: true })
     .custom((value, { req }) => {
       const newVariation = _.map(req.body.variations, (array) =>
@@ -68,19 +63,12 @@ const productValidator = [
         checker: _.some(newVariation, { priceHeader: { on: true } }),
       });
     }),
-
-  // body('isAllInputValid', 'Please enter a value in all inputs.').custom(
-  //   (value) => {
-  //     const parseValue = JSON.parse(value);
-
-  //     // if (value) return true;
-  //     // return false;
-  //     return parseValue;
-  //   },
-  // ),
   body('stock', 'Please enter a valid stock.')
+    .notEmpty()
+
     .trim()
     .escape()
+    .toInt()
     .optional({ nullable: true })
     .custom((value, { req }) => {
       const newVariation = _.map(req.body.variations, (array) =>

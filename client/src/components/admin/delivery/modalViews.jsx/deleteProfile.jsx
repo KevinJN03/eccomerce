@@ -61,7 +61,7 @@ function DeleteProfile({}) {
 
             {loading ? (
                 <div className=" flex h-24 items-center justify-center">
-                    <div className="spinner-circle spinner-md [--spinner-color:0,0,0]" />
+                    <div className="spinner-circle spinner-md ![--spinner-color:0,0,0]" />
                 </div>
             ) : (
                 <p className="text-sm">

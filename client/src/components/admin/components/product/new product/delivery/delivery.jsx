@@ -75,6 +75,7 @@ function Delivery() {
                                             profileId: profile?._id,
                                             setProfile,
                                             setTriggerRefresh,
+                                            handleClick,
                                         }));
 
                                         setModalCheck(() => true);
@@ -91,7 +92,7 @@ function Delivery() {
                                             type: 'createProfile',
                                             version: 'edit',
                                             profileId: profile?._id,
-
+                                            handleClick,
                                             setTriggerRefresh,
                                         }));
 
@@ -124,7 +125,7 @@ function Delivery() {
                                     type: 'deliveryOption',
                                     setProfile,
                                     setTriggerRefresh,
-                                    handleClick
+                                    handleClick,
                                 }));
                                 setModalCheck(() => true);
                             }}

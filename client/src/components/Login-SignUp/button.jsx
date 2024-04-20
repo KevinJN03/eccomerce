@@ -12,14 +12,14 @@ function Button({ error, text, submit, disable, loading }) {
         >
             {loading ? (
                 <svg
-                    className="spinner-ring spinner-sm [--spinner-color:var(--gray-1)]"
+                    className="spinner-ring spinner-sm ![--spinner-color:var(--gray-1)]"
                     viewBox="25 25 50 50"
                     strokeWidth="5"
                 >
                     <circle cx="50" cy="50" r="20" />
                 </svg>
             ) : (
-                <span className='text-white'> {text}</span>
+                <span className="text-white"> {text}</span>
             )}
         </button>
     );

@@ -102,7 +102,7 @@ function Index({}) {
         }
     };
     return (
-        <section className='w-full'>
+        <section className="w-full">
             <Header
                 icon={home_icon}
                 text={'ADDRESS BOOK'}
@@ -111,7 +111,7 @@ function Index({}) {
             />
             {loading ? (
                 <div className="flex h-[400px]  w-full items-center justify-center">
-                    <div className="spinner-circle [--spinner-color:var(--gray-9)] "></div>
+                    <div className="spinner-circle ![--spinner-color:var(--gray-9)] "></div>
                 </div>
             ) : (
                 <section className="">{content()}</section>

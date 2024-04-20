@@ -20,7 +20,7 @@ function Price_Inventory() {
         variations,
     } = useNewProduct();
     const onClickAway = ({ setValue, value, toDecimals }) => {
-        if (!value) return;
+     if (!value) return;
 
         const formatValue = formatData(value, toDecimals);
         setValue(() => formatValue);
@@ -35,7 +35,7 @@ function Price_Inventory() {
     });
 
     const onPriceClickAwayRef = useClickAway(() => {
-        console.log('here');
+        console.log('here', priceValue);
         onClickAway({
             setValue: setPriceValue,
             toDecimals: 2,
@@ -64,7 +64,7 @@ function Price_Inventory() {
         checker: checkPrice,
         visible: true,
         property: 'price',
-        value: priceValue,
+        value: priceValue || '',
         handleOnchange: (e) =>
             handleOnchange({
                 setValue: setPriceValue,
@@ -74,6 +74,7 @@ function Price_Inventory() {
         error: publishError,
         setValue: setPriceValue,
         ref: onPriceClickAwayRef,
+        enablePoundSign: true,
     };
 
     const stockInputProps = {
@@ -82,7 +83,7 @@ function Price_Inventory() {
         checker: checkQuantity,
         visible: true,
         property: 'stock',
-        value: stockValue,
+        value: stockValue || '',
         handleOnchange: (e) =>
             handleOnchange({
                 setValue: setStockValue,
@@ -92,6 +93,7 @@ function Price_Inventory() {
         error: publishError,
         setValue: setStockValue,
         ref: onStockClickAwayRef,
+        enablePoundSign: false
     };
 
     return (

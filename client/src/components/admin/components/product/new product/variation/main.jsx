@@ -5,6 +5,7 @@ import { useVariation } from '../../../../../../context/variationContext';
 import { useEffect, useState } from 'react';
 import { useAdminContext } from '../../../../../../context/adminContext';
 import { useNewProduct } from '../../../../../../context/newProductContext';
+import BubbleButton from '../../../../../buttons/bubbleButton.jsx';
 export default function Main() {
     const [defaultVariations, setDefaultVariations] = useState([]);
     const { temporaryVariation } = useVariation();
@@ -111,7 +112,23 @@ export default function Main() {
                         );
                     })}
                 </div>
-                <button
+<div className='mt-6 mb-10'>
+    <BubbleButton
+                
+                    handleClick={() =>
+                        contentDispatch({
+                            type: 'select',
+                            default: false,
+                            title: '',
+                        })
+                    }
+                >
+                    <AddRoundedIcon className="bg-transparent" />
+                    <span className="bg-transparent">Create your Own</span>
+                </BubbleButton>
+</div>
+                
+                {/* <button
                     type="button"
                     className="mb-14 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"
                     onClick={() =>
@@ -124,7 +141,7 @@ export default function Main() {
                 >
                     <AddRoundedIcon className="bg-transparent" />
                     <span className="bg-transparent">Create your Own</span>
-                </button>
+                </button> */}
             </div>
 
             <footer className="variation-footer">

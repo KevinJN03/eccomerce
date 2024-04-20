@@ -141,7 +141,7 @@ function Footer({ type }) {
                 )}
                 {loading && (
                     <div className="w-full">
-                        <div className="spinner-dot-pulse spinner-sm [--spinner-color:var(--white)]">
+                        <div className="spinner-dot-pulse spinner-sm ![--spinner-color:var(--white)]">
                             <div className="spinner-pulse-dot "></div>
                         </div>
                     </div>

@@ -28,9 +28,8 @@ function LoginForm({ onSubmit, loading, error, setError }) {
 
     return (
         <section className="flex  h-full w-full flex-col flex-nowrap justify-center">
-            <section className="flex w-8/12  h-full flex-col flex-nowrap  self-center">
+            <section className="flex h-full  w-8/12 flex-col flex-nowrap  self-center">
                 <Input
-                
                     value={email}
                     property={'email'}
                     setValue={setEmail}
@@ -64,7 +63,7 @@ function LoginForm({ onSubmit, loading, error, setError }) {
                 >
                     {loading ? (
                         <svg
-                            className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                            className="spinner-ring spinner-sm !m-0 !p-0 ![--spinner-color:var(--test123)]"
                             viewBox="25 25 50 50"
                             strokeWidth="5"
                         >

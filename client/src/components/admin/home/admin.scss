@@ -237,10 +237,10 @@ h1 {
 
 .input {
     @apply rounded-md border #{!important};
-    // @apply min-h-12 p-3;
+     @apply min-h-12 p-3;
 
-    // box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
-    // transition: all 0.4s ease-in-out;
+    box-shadow: inset 0px 0px 2.4px 1px rgba(165, 165, 165, 1);
+    transition: all 0.4s ease-in-out;
     &:hover {
         border-color: black;
     }

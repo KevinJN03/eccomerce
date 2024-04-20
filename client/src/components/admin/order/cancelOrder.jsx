@@ -1,5 +1,5 @@
-import { useEffect, useState, } from 'react';
-import { useParams, useNavigate} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { adminAxios } from '../../../api/axios';
 import UserLogout from '../../../hooks/userLogout';
 
@@ -10,7 +10,7 @@ function CancelOrder({}) {
     const [loading, setLoading] = useState(true);
     const { logoutUser } = UserLogout();
     const { id } = useParams();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     useEffect(() => {
         // window.scroll(0, 0);
         adminAxios
@@ -28,20 +28,22 @@ function CancelOrder({}) {
         <section className="flex w-full">
             {loading && (
                 <div className="mt-5 flex w-full justify-center">
-                    <div class="spinner-circle [--spinner-color:var(--slate-12)]"></div>
+                    <div class="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
                 </div>
             )}
             {!loading && (
                 <section className="flex flex-col gap-5 p-5 pr-10">
-                    <section className='flex flex-col gap-5 lg:w-10/12 '>
-                        <h1 className="mb-3 text-4xl font-EBGaramond">Cancel an order</h1>
+                    <section className="flex flex-col gap-5 lg:w-10/12 ">
+                        <h1 className="mb-3 font-EBGaramond text-4xl">
+                            Cancel an order
+                        </h1>
 
-                        <p className='text-sm'>
+                        <p className="text-sm">
                             When you cancel, your buyer will get a full refund.
                             Buyers will be able to leave a review up to 48 hours
                             after you cancel. The order will be moved to
-                            Completed on your Orders page and marked
-                            as “cancelled”.
+                            Completed on your Orders page and marked as
+                            “cancelled”.
                         </p>
 
                         <div className="mt-1">
@@ -84,7 +86,7 @@ function CancelOrder({}) {
                                                 name="returning-item"
                                                 className="daisy-radio daisy-radio-md border-2 border-dark-gray"
                                             />
-                                            <p className='text-sm'>{text}</p>
+                                            <p className="text-sm">{text}</p>
                                         </div>
                                     );
                                 })}
@@ -96,9 +98,11 @@ function CancelOrder({}) {
                         <p className="text-base font-semibold">
                             Order Number: {order?._id}
                         </p>
-                        <p className='text-sm'>Buyer: {order.customer?.fullName}</p>
+                        <p className="text-sm">
+                            Buyer: {order.customer?.fullName}
+                        </p>
 
-                        <p className='text-sm'>
+                        <p className="text-sm">
                             {`${order.items?.length} ${
                                 order.items?.length > 1 ? 'items' : 'item'
                             }`}
@@ -220,7 +224,10 @@ function CancelOrder({}) {
                         </div>
 
                         <div className="mt-3 flex gap-3 self-end">
-                            <button onClick={() => navigate('/admin/orders')} className="theme-btn rounded-full border-2 border-black px-8 py-3 text-sm font-medium">
+                            <button
+                                onClick={() => navigate('/admin/orders')}
+                                className="theme-btn rounded-full border-2 border-black px-8 py-3 text-sm font-medium"
+                            >
                                 Back
                             </button>
                             <button className="theme-btn rounded-full border-2 border-black bg-black px-8 py-3 text-sm font-medium text-white">

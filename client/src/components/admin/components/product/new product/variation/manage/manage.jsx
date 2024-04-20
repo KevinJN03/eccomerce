@@ -16,13 +16,13 @@ function Manage({}) {
         setVariations,
         temporaryVariation,
         setTemporaryVariation,
-      
     } = useVariation();
 
     const {
         setPublish,
         publishErrorDispatch,
         setApply,
+        publishError,
         combineDispatch,
         contentDispatch,
         setModalCheck,
@@ -98,6 +98,8 @@ function Manage({}) {
     const notDisabled = arr.length;
 
     const apply = () => {
+        const clonePublishError = _.cloneDeep(publishError);
+
         const newArr = [...arr];
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
@@ -113,6 +115,10 @@ function Manage({}) {
             combineDispatch({ type: 'combineVariations', variations: update });
             setStockValue(() => null);
             setPriceValue(() => null);
+
+            publishErrorDispatch({ type: 'CLEAR', path: 'price' });
+            publishErrorDispatch({ type: 'CLEAR', path: 'stock' });
+
             setModalCheck(() => false);
         } else {
             combineDispatch({ type: 'clear' });
@@ -127,10 +133,12 @@ function Manage({}) {
                     if (!quantityHeader.on) {
                         _.unset(newObj, 'stock');
                         setStockValue(() => null);
+                        _.unset(clonePublishError, `${key}-stock`);
                     }
                     if (!priceHeader.on) {
                         _.unset(newObj, 'price');
                         setPriceValue(() => null);
+                        _.unset(clonePublishError, `${key}-price`);
                     }
                     _.set(newObj, 'visible', true);
                     newOptions.set(key, newObj);
@@ -142,7 +150,8 @@ function Manage({}) {
 
             setModalCheck(() => false);
         }
-        publishErrorDispatch('clearValidateInput');
+        // publishErrorDispatch('clearValidateInput');
+        publishErrorDispatch({ type: 'SET', data: clonePublishError });
         setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
     };
 

@@ -1,5 +1,5 @@
 import Switch from '../toggleSwitch/switch';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Fragment } from 'react';
 
 import formatData from '../formatData';
 import { Input } from '../../utils/Input';
@@ -11,7 +11,8 @@ import { useNewProduct } from '../../../../../../../context/newProductContext';
 import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
 import { useTableContext } from '../../../../../../../context/tableContext';
 import _ from 'lodash';
-function Row({ singleVariation }) {
+import tableRowVariants from './tableVariant';
+function Row({ singleVariation, lastIndex }) {
     const {
         variationList,
         isQuantityHeaderOn,
@@ -19,10 +20,16 @@ function Row({ singleVariation }) {
         isCombine,
         checkSet,
         setCheckSet,
+        showAllVariants,
     } = useTableContext();
     const [error, setError] = useState({ price: null, stock: null });
-    const { setVariations, combineDispatch, variations, publishErrorDispatch } =
-        useNewProduct();
+    const {
+        setVariations,
+        combineDispatch,
+        variations,
+        publishErrorDispatch,
+        publishError,
+    } = useNewProduct();
     const [priceValue, setPriceValue] = useState(null);
     const [stockValue, setStockValue] = useState(null);
     const handleCheck = (e) => {
@@ -102,37 +109,6 @@ function Row({ singleVariation }) {
         }
     }
 
-    const tableRowVariants = {
-        hover: {
-            backgroundColor: '#eee',
-            duration: 0,
-            transition: {
-                type: 'spring',
-                stiffness: 30,
-                duration: 0.1,
-                backgroundColor: { ease: easeInOut, duration: 0.1 },
-            },
-        },
-        initial: {
-            opacity: 1,
-            y: '0%',
-            backgroundColor: '#dcf8d2',
-        },
-        animate: {
-            opacity: 1,
-            y: '0%',
-            backgroundColor: '#FFFFFF',
-            transition: {
-                duration: 1,
-                backgroundColor: { ease: easeInOut, duration: 1 },
-            },
-        },
-        exit: {
-            backgroundColor: '#FFFFFF',
-            transition: { backgroundColor: { ease: easeInOut, duration: 0.2 } },
-        },
-    };
-
     const toggleVisible = () => {
         const newObject = {
             ...singleVariation,
@@ -153,7 +129,7 @@ function Row({ singleVariation }) {
         <AnimatePresence>
             <ClickAwayListener onClickAway={onClickAway}>
                 <motion.tr
-                    className={`mt-10 h-full max-h-28 w-full min-w-full border-b-2 ${
+                    className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants' : 'border-b-2'} ${
                         checkSet.has(singleVariation.id) &&
                         singleVariation.visible &&
                         '!bg-gray-200'
@@ -211,56 +187,67 @@ function Row({ singleVariation }) {
                         </td>
                     )}
 
-                    {isPriceHeaderOn && (
-                        <td
-                            className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
-                        >
-                            <Input
-                                value={
-                                    priceValue
-
-                                    // ||
-                                    // _.get(singleVariation, 'price')
-                                }
-                                property={'price'}
-                                handleOnchange={(e) =>
-                                    handleOnchange({
-                                        value: e.target.value,
-                                        optionObj: priceOptions,
-                                        setValue: setPriceValue,
-                                    })
-                                }
-                                error={error}
-                                visible={singleVariation.visible}
-                                id={`${singleVariation.id}-price`}
-                                isValueValidate={true}
-                            />
-                        </td>
-                    )}
-
-                    {isQuantityHeaderOn && (
-                        <>
-                            {' '}
-                            <td
-                                className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
-                            >
-                                <Input
-                                    value={stockValue}
-                                    property={'stock'}
-                                    handleOnchange={(e) =>
-                                        handleOnchange({
-                                            value: e.target.value,
-                                            optionObj: quantityOptions,
-                                            setValue: setStockValue,
-                                        })
-                                    }
-                                    error={error}
-                                    visible={_.get(singleVariation, 'visible')}
-                                    id={`${singleVariation.id}-stock`}
-                                    isValueValidate={true}
-                                />
-                            </td>
-                        </>
+                    {[
+                        {
+                            isOn: isPriceHeaderOn,
+                            property: 'price',
+                            value: priceValue,
+                            options: priceOptions,
+                            setValue: setPriceValue,
+                            enablePoundSign: true,
+                        },
+                        {
+                            isOn: isQuantityHeaderOn,
+                            property: 'stock',
+                            value: stockValue,
+                            options: quantityOptions,
+                            setValue: setStockValue,
+                            enablePoundSign: false,
+                        },
+                    ].map(
+                        ({
+                            isOn,
+                            property,
+                            value,
+                            setValue,
+                            options,
+                            enablePoundSign,
+                        }) => {
+                            return (
+                                <Fragment
+                                    key={`${singleVariation.id}-header${property}`}
+                                >
+                                    {isOn && (
+                                        <td
+                                            className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
+                                        >
+                                            <Input
+                                                enablePoundSign={
+                                                    enablePoundSign
+                                                }
+                                                value={value}
+                                                property={`${singleVariation.id}-${property}`}
+                                                handleOnchange={(e) =>
+                                                    handleOnchange({
+                                                        value: e.target.value,
+                                                        optionObj: {
+                                                            ...options,
+                                                            property: `${singleVariation.id}-${property}`,
+                                                        },
+                                                        setValue: setValue,
+                                                    })
+                                                }
+                                                visible={
+                                                    singleVariation.visible
+                                                }
+                                                id={`${singleVariation.id}-${property}`}
+                                                isValueValidate={true}
+                                            />
+                                        </td>
+                                    )}
+                                </Fragment>
+                            );
+                        }
                     )}
 
                     <td
@@ -271,15 +258,14 @@ function Row({ singleVariation }) {
                         }  !text-right`}
                     >
                         <div className="flex h-auto items-center justify-end">
-                            {parseInt(_.get(singleVariation, 'stock')) ===
-                                0 && (
-                                <span
-                                    className={`mr-4 flex h-5 items-center justify-center rounded-full bg-black px-2 py-2 text-s text-white ${
+                            {stockValue == 0 && (
+                                <p
+                                    className={`mr-4 flex h-5 items-center justify-center whitespace-nowrap rounded-full bg-black px-2 py-2 text-xs text-white ${
                                         !singleVariation.visible && '!opacity-0'
                                     }`}
                                 >
                                     Sold out
-                                </span>
+                                </p>
                             )}
                             <Switch
                                 state={singleVariation.visible}

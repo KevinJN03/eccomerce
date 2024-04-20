@@ -18,8 +18,8 @@ function PayPalHome({}) {
     useEffect(() => {
         axios('user/payment-method/paypal')
             .then(({ data }) => {
-                (data)
-                debugger
+                data;
+                debugger;
                 setOptions((prevState) => ({
                     ...prevState,
                     clientSecret: data.client_secret,
@@ -36,7 +36,7 @@ function PayPalHome({}) {
         <>
             {loading ? (
                 <svg
-                    className="spinner-ring spinner-sm [--spinner-color:var(--slate-12)]"
+                    className="spinner-ring spinner-sm ![--spinner-color:var(--slate-12)]"
                     viewBox="25 25 50 50"
                     strokeWidth="5"
                 >

@@ -17,4 +17,5 @@ export const quantityOptions = {
         underZero: 'Quantity must be between 0 and 999.',
     },
     maxValue: 999,
+    minValue: 1,
 };

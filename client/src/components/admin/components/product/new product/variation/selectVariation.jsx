@@ -14,6 +14,7 @@ import ObjectID from 'bson-objectid';
 import ThemeBtn from '../../../../../buttons/themeBtn';
 import { Menu, MenuItem } from '@mui/material';
 import { useDebounce } from '@uidotdev/usehooks';
+import BubbleButton from '../../../../../buttons/bubbleButton';
 
 function SelectVariation({}) {
     const { setTemporaryVariation, temporaryVariation } = useVariation();
@@ -252,7 +253,7 @@ function SelectVariation({}) {
                         <input
                             type="text"
                             value={searchText}
-                            className="input input-lg !min-w-full rounded-md pr-10"
+                            className="input input-lg !min-w-full rounded-md pr-10 mr-1.5"
                             placeholder="Enter an option..."
                             onClick={(e) => {
                                 setAnchorEl(e.currentTarget);
@@ -268,6 +269,28 @@ function SelectVariation({}) {
                             }}
                         />
                         <ArrowDropDownIcon className="absolute right-3" />
+
+                        {!defaultVariation && (
+                            <BubbleButton
+                                handleClick={handleCustom}
+                                text={'Add'}
+                                disabled={
+                                    searchText.length < 1 ||
+                                    searchText.length > 20
+                                }
+                            ></BubbleButton>
+                            //   <button
+                            //       type="button"
+                            //       className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
+                            //       onClick={handleCustom}
+                            //       disabled={
+                            //           searchText.length < 1 ||
+                            //           searchText.length > 20
+                            //       }
+                            //   >
+                            //       Add
+                            //   </button>
+                        )}
                     </div>{' '}
                     {!defaultVariation && searchText.length > 20 && (
                         <OptionError
@@ -290,8 +313,8 @@ function SelectVariation({}) {
                             },
                         }}
                     >
-                        {!defaultVariation && (
-                            <MenuItem>
+                        {/* {!defaultVariation && (
+                          
                                 <button
                                     type="button"
                                     className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
@@ -303,8 +326,7 @@ function SelectVariation({}) {
                                 >
                                     Add
                                 </button>
-                            </MenuItem>
-                        )}
+                        )} */}
 
                         <SearchResult
                             addRemainingColors={addRemainingColors}
@@ -320,7 +342,7 @@ function SelectVariation({}) {
                     {optionArray.map(({ variation, id, ...item }) => {
                         return (
                             <div
-                                className="border-1 flex border w-full cursor-pointer  flex-row items-center justify-between rounded-lg p-3"
+                                className="border-1 flex w-full cursor-pointer flex-row  items-center justify-between rounded-lg border p-3"
                                 key={id}
                             >
                                 <span className="flex flex-row items-center gap-3">

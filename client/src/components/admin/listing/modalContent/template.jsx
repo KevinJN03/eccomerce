@@ -67,7 +67,7 @@ function Template({
                 </>
             ) : (
                 <div className="flex h-24 w-full items-center justify-center">
-                    <div className="spinner-dot-circle [--spinner-color:var(--slate-8)]">
+                    <div className="spinner-dot-circle ![--spinner-color:var(--slate-8)]">
                         <div className="spinner-dot"></div>
                         <div className="spinner-dot"></div>
                         <div className="spinner-dot"></div>

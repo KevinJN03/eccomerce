@@ -34,7 +34,7 @@ function Description({}) {
                 <textarea
                     onChange={handleOnchange}
                     value={description}
-                    className={`input mt-4 min-h-[200px] w-full min-w-full rounded-lg border-black p-3 text-sm ${publishError?.description ? '!border-red-700 bg-red-100' : ''}`}
+                    className={`input mt-4 h-full !min-h-60 w-full min-w-full rounded-lg border-black p-3 text-sm ${publishError?.description ? '!border-red-700 bg-red-100' : ''}`}
                 />
             </section>
             {publishError?.description && (

@@ -42,8 +42,8 @@ async function generateProduct(req, id, endPoint = 'products') {
     images: imageArr,
     description,
   };
-  productData.stock = stock;
-  _.set(productData, 'price.current', price);
+  productData.stock = _.isNaN(stock) ? null : stock;
+  _.set(productData, 'price.current', _.isNaN(price) ? null : price);
 
   const sharpResult = [];
   for (const item of files) {

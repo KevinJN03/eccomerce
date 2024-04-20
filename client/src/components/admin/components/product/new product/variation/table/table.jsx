@@ -6,6 +6,8 @@ import { getValuesFromMap } from '../variationData';
 import TableProvider, {
     useTableContext,
 } from '../../../../../../../context/tableContext';
+import BubbleButton from '../../../../../../buttons/bubbleButton';
+import _ from 'lodash';
 function Table({}) {
     const {
         checkSet,
@@ -15,7 +17,10 @@ function Table({}) {
         isCombine,
         layout,
         variationList,
+        showAllVariants,
+        setShowAllVariants,
     } = useTableContext();
+
     return (
         <table className="result-table w-full !bg-white">
             <colgroup>{tableLayout[layout]}</colgroup>
@@ -25,7 +30,7 @@ function Table({}) {
                     <th>
                         <input
                             type="checkbox"
-                            className="daisy-checkbox daisy-checkbox-sm no-animation !rounded-[3px] border-2 border-dark-gray"
+                            className="daisy-checkbox no-animation daisy-checkbox-sm !rounded-[3px] border-2 border-dark-gray"
                             checked={checkSet.size > 0}
                             onChange={handleCheckAllVariations}
                         />
@@ -39,10 +44,35 @@ function Table({}) {
                 <th className=" !text-right ">Visible </th>
             </tr>
             {variationOptions.length > 0 &&
-                variationOptions.map((item) => {
-                    return <Row key={item.id} singleVariation={item} />;
-                    // });
+                [
+                    ...(showAllVariants
+                        ? variationOptions
+                        : _.slice(variationOptions, 0, 9)),
+                ].map((item, idx) => {
+                    return (
+                        <Row
+                            key={item.id}
+                            singleVariation={item}
+                            lastIndex={idx == 8 ? true : false}
+                        />
+                    );
                 })}
+            {!showAllVariants && variationOptions?.length >= 10 && (
+                <tr className="w-full">
+                    <td colSpan={'100%'} className="relative !py-0">
+                        <div className="w-full ">
+                            <BubbleButton
+                                className={'w-full min-w-full py-3'}
+                                handleClick={() => {
+                                    setShowAllVariants(() => true);
+                                }}
+                            >
+                                <p className="whitespace-nowrap text-base font-medium">{`Show all ${variationOptions?.length} variants`}</p>
+                            </BubbleButton>
+                        </div>
+                    </td>
+                </tr>
+            )}
         </table>
     );
 }

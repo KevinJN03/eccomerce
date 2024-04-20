@@ -11,17 +11,12 @@ import Update from './update';
 import _ from 'lodash';
 function VariationTableContainer({ variation, isCombine }) {
     const { name, options, priceHeader, quantityHeader } = variation;
-    const { contentDispatch, setModalCheck } = useNewProduct();
-    const [update, setUpdate] = useState({
-        price: null,
-        quantity: null,
-        bool: false,
-    });
-    const [checkAll, setCheckAll] = useState(false);
+
     const [checkSet, setCheckSet] = useState(new Set());
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalProps, setModalProps] = useState({});
+    const [showAllVariants, setShowAllVariants] = useState(false);
 
     const determineLayout = () => {
         if (isCombine) {
@@ -58,13 +53,13 @@ function VariationTableContainer({ variation, isCombine }) {
     const value = {
         checkSet,
         setCheckSet,
-        setCheckAll,
-        checkAll,
+
         variationList: variation,
         isQuantityHeaderOn: variation.quantityHeader.on,
         isPriceHeaderOn: variation.priceHeader.on,
         isCombine,
         layout,
+        showAllVariants, setShowAllVariants
     };
     return (
         <TableProvider value={value}>
@@ -92,18 +87,21 @@ function VariationTableContainer({ variation, isCombine }) {
                                 animate="animate"
                                 exit="exit"
                             >
-                                <motion.p
-                                    key={checkSet.size}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="self-center"
-                                >
-                                    {`${checkSet.size} selected`}{' '}
-                                </motion.p>
+                                <p className="self-center">
+                                    <motion.span
+                                        // key={checkSet.size}
+                                        // initial={{ opacity: 0 }}
+                                        // animate={{ opacity: 1 }}
+                                        className="self-center"
+                                    >
+                                        {checkSet.size}
+                                    </motion.span>
+                                    {` selected`}
+                                </p>
                                 {[
                                     { property: 'price', on: priceHeader.on },
                                     {
-                                        property: 'quantity',
+                                        property: 'stock',
                                         on: quantityHeader.on,
                                     },
                                 ].map(({ on, property }) => {
@@ -118,7 +116,11 @@ function VariationTableContainer({ variation, isCombine }) {
                                                     }
                                                 >
                                                     Update{' '}
-                                                    {_.upperFirst(property)}
+                                                    {_.upperFirst(
+                                                        property == 'stock'
+                                                            ? 'quantity'
+                                                            : property
+                                                    )}
                                                 </button>
                                             )}
                                         </Fragment>

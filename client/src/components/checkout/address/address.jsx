@@ -167,7 +167,7 @@ function Address({
 
     useEffect(() => {
         if (isDataSet) {
-            console.log('main address when load:', mainAddress)
+            console.log('main address when load:', mainAddress);
             const isAddressEmpty = _.isEmpty(mainAddress);
             console.log({ isAddressEmpty });
             if (isAddressEmpty) {
@@ -246,7 +246,7 @@ function Address({
                     </section>
 
                     {loading && (
-                        <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 [--spinner-color:var(--gray-12)]"></div>
+                        <div className="spinner-circle absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100 ![--spinner-color:var(--gray-12)]"></div>
                     )}
                 </motion.section>
             </ClickAwayListener>
