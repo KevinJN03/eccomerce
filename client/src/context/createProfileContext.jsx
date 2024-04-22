@@ -28,12 +28,12 @@ function CreateProfileContextProvider({ children }) {
     const [allProfileNames, setAllProfileNames] = useState(new Set());
     const [duplicateUpgrades, setDuplicateUpgrades] = useState(new Set());
     const [countries, setCountries] = useState(() => {
-        overwrite([
-            {
-                code: 'GB',
-                name: 'United Kingdom',
-            },
-        ]);
+        // overwrite([
+        //     {
+        //         code: 'GB',
+        //         name: 'United Kingdom',
+        //     },
+        // ]);
 
         return _.orderBy(getData(), ['name'], ['asc']);
     });

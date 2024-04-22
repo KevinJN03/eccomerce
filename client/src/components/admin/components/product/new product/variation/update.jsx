@@ -12,6 +12,7 @@ import _, { property } from 'lodash';
 import { useClickAway } from '@uidotdev/usehooks';
 import { useVariation } from '../../../../../../context/variationContext.jsx';
 import { useNewProduct } from '../../../../../../context/newProductContext.jsx';
+import { Input } from '../utils/Input.jsx';
 function Update({ category, closeModal }) {
     const [value, setValue] = useState('');
     const { variations, setVariations } = useVariation();
@@ -33,6 +34,10 @@ function Update({ category, closeModal }) {
     useEffect(() => {
         const value = checkValue();
         setCurrent(value);
+
+        return() => {
+            publishErrorDispatch({type: 'CLEAR', path: property})
+        }
     }, []);
 
     const handleOnchange = (value) => {
@@ -155,8 +160,15 @@ function Update({ category, closeModal }) {
                     New {category}
                     <span className="ml-1 text-xl text-red-700">*</span>
                 </label>{' '}
-                <div className="relative">
-                    <input
+                <div className=" !w-full">
+                    <Input
+                        visible={true}
+                        value={value}
+                        property={'price'}
+                        handleOnchange={(e) => handleOnchange(e.target.value)}
+                        enablePoundSign={category == 'price' ? true : false}
+                    />
+                    {/* <input
                         ref={ref}
                         value={value}
                         onChange={(e) => handleOnchange(e.target.value)}
@@ -169,7 +181,7 @@ function Update({ category, closeModal }) {
                         <span className="absolute left-3 top-2/4 translate-y-[-50%] ">
                             £
                         </span>
-                    )}
+                    )} */}
                 </div>
                 <AnimatePresence>
                     {errorMsg && (

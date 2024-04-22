@@ -46,7 +46,7 @@ function VerticalItem({ product, index }) {
                         return newSet;
                     });
                 }}
-                className=" daisy-checkbox daisy-checkbox-xs mt-6  rounded-sm"
+                className=" daisy-checkbox daisy-checkbox-xs mt-6  !rounded-sm"
                 type="checkbox"
                 name={`select-${product?._id}`}
                 id={`select-${product?._id}`}

@@ -94,7 +94,7 @@ function DrawerContainer() {
                     <CloseSharp className="!fill-primary/80" />
                 </div>
             </div>
-            <div className="!h-full w-full !bg-white p-8">
+            <div className="w-full !bg-white p-8 min-h-screen">
                 <header className="flex flex-row justify-between">
                     <div className="left">
                         <h3 className="text-xl font-semibold ">

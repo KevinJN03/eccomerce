@@ -53,6 +53,8 @@ function Table({}) {
                         <Row
                             key={item.id}
                             singleVariation={item}
+                            beforeLastIndex={idx == 7 ? true : false}
+
                             lastIndex={idx == 8 ? true : false}
                         />
                     );

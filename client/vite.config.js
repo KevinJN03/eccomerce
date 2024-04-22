@@ -14,14 +14,7 @@ export default defineConfig({
     server: {
         https: true,
     },
-    // optimizeDeps: {
-    //     include: ['prettier-plugin-tailwindcss'], // optionally specify dependency name
-    //     esbuildOptions: {
-    //         supported: {
-    //             'top-level-await': true,
-    //         },
-    //     },
-    // },
+
 
     base: './',
     mode: 'development',

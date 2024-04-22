@@ -253,7 +253,7 @@ function ListingPage() {
     return (
         <ListingPageProvider newValue={value}>
             <section className="progress-bar z-50 flex min-h-screen w-full flex-col">
-                <div className="sticky top-0 flex h-0.5 w-full items-start self-start">
+                <div className="sticky top-0 flex h-1 w-full items-start self-start">
                     <AnimatePresence>
                         {progressValue > 0 && (
                             <motion.progress
@@ -267,7 +267,7 @@ function ListingPage() {
                                         duration: 0.3,
                                     },
                                 }}
-                                className="daisy-progress  !m-0 h-full  w-full !rounded-none !p-0"
+                                className="daisy-progress  !m-0 !h-1  w-full !rounded-none !p-0 "
                                 value={progressValue}
                                 max="100"
                             ></motion.progress>

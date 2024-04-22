@@ -8,8 +8,15 @@ import objectSupport from 'dayjs/plugin/objectSupport';
 import { CartProvider } from './context/cartContext';
 import Layout from './components/Layout/layout';
 import { WishlistContextProvider } from './context/wishlistContext';
+import { overwrite } from 'country-list';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
+
+overwrite([
+    {code: 'GB', 
+    name: 'United Kingdom'
+}
+])
 function App() {
     return (
         <div id="App">

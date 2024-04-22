@@ -25,7 +25,7 @@ function Option({
                 }
                 checked={printChecks?.[property]?.on}
                 type="checkbox"
-                className="daisy-checkbox daisy-checkbox-xs rounded"
+                className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
             />
             <div className="ml-2 flex w-full flex-col">
                 <p className="text-xs font-medium">{title}</p>

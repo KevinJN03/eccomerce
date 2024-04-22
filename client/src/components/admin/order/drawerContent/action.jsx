@@ -2,11 +2,14 @@ import { Inventory2Sharp, PrintSharp, RedeemSharp } from '@mui/icons-material';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
+import { Box, Modal } from '@mui/material';
+import { useState } from 'react';
+import AddToPackage from '../modalView/addToPackage/addToPackage';
 
 function Actions({ setShowActions, showActions, children, orderId }) {
     const { setModalCheck, setModalContent } = useContent();
 
-    const { orderInfo } = useAdminOrderContext();
+    const { orderInfo, setModalOpen } = useAdminOrderContext();
     const printOrder = () => {
         console.log('clicked');
         setModalContent({
@@ -17,6 +20,10 @@ function Actions({ setShowActions, showActions, children, orderId }) {
         setShowActions(false);
     };
 
+    const addToPackage = () => {
+        setModalOpen(() => true);
+        setShowActions(() => false);
+    };
     return (
         <SeamlessDropdown {...{ setShow: setShowActions, show: showActions }}>
             <section className="mt-9">
@@ -39,6 +46,7 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                                 className="disable-drawer"
                             />
                         ),
+                        handleClick: addToPackage,
                     },
                     {
                         text: 'Mark as gift',
@@ -68,6 +76,30 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                 })}
                 {children}
             </section>
+
+            {/* <Modal open={modalOpen} onClose={() => setModalOpen(() => false)}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '15%',
+                        left: '50%',
+
+                        transform: 'translate(-50%, -0%)',
+                        boxSizing: 'border-box',
+                        maxWidth: '1200px',
+                        width: '75vw',
+
+                        borderRadius: '4px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // height: '100vh',
+
+                        border: 'none',
+                    }}
+                >
+                    <AddToPackage setModalOpen={setModalOpen} />
+                </Box>
+            </Modal> */}
         </SeamlessDropdown>
     );
 }

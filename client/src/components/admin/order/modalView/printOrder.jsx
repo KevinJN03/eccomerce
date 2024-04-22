@@ -80,7 +80,7 @@ function PrintOrder({}) {
         setModalCheck(false);
     };
     return (
-        <section className="relative w-full rounded-inherit bg-white">
+        <section className="relative w-full max-w-xl rounded-inherit bg-white">
             <p className="min-w-full border-b-[1px] border-dark-gray/30 bg-light-grey/30 px-4 py-3 font-medium">
                 You're about to print {modalContent.orders?.length} order(s)
             </p>

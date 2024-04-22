@@ -67,7 +67,7 @@ function About() {
                                         />
                                     )}
                                 </span>
-                                <span className="daisy-label-text-alt mt-2 text-black/70">
+                                <span className={`daisy-label-text-alt mt-2 ${publishError?.title ? '!text-red-800': 'text-black/70'}`}>
                                     {`${title.length}/140`}
                                 </span>
                             </div>

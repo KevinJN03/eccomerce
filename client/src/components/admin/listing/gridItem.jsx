@@ -179,7 +179,7 @@ function GridItem({ product, index }) {
                                     });
                                 }}
                                 type="checkbox"
-                                className="daisy-checkbox daisy-checkbox-xs rounded border hover:border-dark-gray hover:!bg-light-grey/50"
+                                className="daisy-checkbox daisy-checkbox-xs !rounded-sm border hover:border-dark-gray hover:!bg-light-grey/50"
                                 name={`${product?._id}-checkbox`}
                                 id={`${product?._id}-checkbox`}
                             />

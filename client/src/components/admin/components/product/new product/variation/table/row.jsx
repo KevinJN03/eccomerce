@@ -6,13 +6,13 @@ import { Input } from '../../utils/Input';
 import '../../new_product.scss';
 import { ClickAwayListener } from '@mui/material';
 import handleValue from '../../utils/handleValue';
-import { motion, AnimatePresence, easeInOut } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNewProduct } from '../../../../../../../context/newProductContext';
 import { priceOptions, quantityOptions } from '../../utils/handleValueOptions';
 import { useTableContext } from '../../../../../../../context/tableContext';
 import _ from 'lodash';
 import tableRowVariants from './tableVariant';
-function Row({ singleVariation, lastIndex }) {
+function Row({ singleVariation, lastIndex, beforeLastIndex }) {
     const {
         variationList,
         isQuantityHeaderOn,
@@ -129,7 +129,7 @@ function Row({ singleVariation, lastIndex }) {
         <AnimatePresence>
             <ClickAwayListener onClickAway={onClickAway}>
                 <motion.tr
-                    className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants' : 'border-b-2'} ${
+                    className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.75)_30%,_rgba(255,255,255,1)_90%)]' : beforeLastIndex && !showAllVariants ? 'showAllVariants  relative  border-b-2 after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.5)_90%,_rgba(255,255,255,0.7)_100%)]' : 'border-b-2'} ${
                         checkSet.has(singleVariation.id) &&
                         singleVariation.visible &&
                         '!bg-gray-200'

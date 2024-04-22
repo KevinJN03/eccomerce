@@ -95,7 +95,7 @@ function PackingSlipOption({
                             type="checkbox"
                             name="dispatch-from"
                             id="dispatch-from"
-                            className="daisy-checkbox daisy-checkbox-xs rounded"
+                            className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                             value={'dispatch_from'}
                             onChange={toggleCheck}
                             checked={checks?.dispatch_from}
@@ -123,7 +123,7 @@ function PackingSlipOption({
                                 <input
                                     type="checkbox"
                                     id={option?.replaceAll(' ', '-')}
-                                    className="daisy-checkbox daisy-checkbox-xs rounded"
+                                    className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                                     checked={checks?.[convertOption]}
                                     onChange={toggleCheck}
                                     value={convertOption}
@@ -144,7 +144,7 @@ function PackingSlipOption({
                                 value={'coupon'}
                                 type="checkbox"
                                 id={'add-coupon-code'}
-                                className="daisy-checkbox daisy-checkbox-xs rounded"
+                                className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                             />
                             <p>Add coupon code</p>
                         </div>
@@ -162,7 +162,7 @@ function PackingSlipOption({
                                 }));
                             }}
                             disabled={!checks?.coupon}
-                            className="daisy-select daisy-select-bordered daisy-select-sm h-fit rounded text-xs"
+                            className="daisy-select daisy-select-bordered daisy-select-sm h-fit !rounded-sm text-xs"
                             name="promotion-code-option"
                             id="promotion-code-option"
                         >
@@ -207,7 +207,7 @@ function PackingSlipOption({
                                 checked={checks?.note?.on}
                                 type="checkbox"
                                 id={'add-coupon-code'}
-                                className="daisy-checkbox daisy-checkbox-xs rounded"
+                                className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                             />
                             <p>Add a personalised note</p>
                         </div>

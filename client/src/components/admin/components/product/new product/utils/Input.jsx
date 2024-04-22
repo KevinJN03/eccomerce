@@ -13,11 +13,11 @@ export const Input = forwardRef(function Input(
         e.stopPropagation();
         e.target.blur();
 
-        e.cancelable && e.preventDefault()
+        e.cancelable && e.preventDefault();
     };
     return (
-        <section className="!bg-transparent">
-            <div className="relative flex !h-fit items-center">
+        <section className="!bg-transparent !w-full">
+            <div className="relative flex !w-full !h-fit items-center">
                 {enablePoundSign && (
                     <span className=" absolute left-2 top-2/4 !my-auto translate-y-[-50%] animate-none items-center font-medium transition-none">
                         £
@@ -32,7 +32,7 @@ export const Input = forwardRef(function Input(
                     value={value}
                     onWheel={handleOnWheel}
                     type="number"
-                    className={` input-number	input !h-full w-full touch-none rounded-lg ${
+                    className={`input-number input !h-full !min-w-full	!w-full  touch-none rounded-lg ${
                         enablePoundSign ? '!px-6' : '!px-2'
                     }  py-3 ${
                         _.get(publishError, property) &&

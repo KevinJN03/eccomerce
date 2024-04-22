@@ -45,7 +45,7 @@ function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
                     checked={selectionSet?.size}
                     onChange={toggleSelection}
                     type="checkbox"
-                    className="daisy-checkbox daisy-checkbox-xs mr-2 rounded-sm checked:border-orange-400"
+                    className="daisy-checkbox daisy-checkbox-xs mr-2 !rounded-sm checked:border-orange-400"
                 />
                 <p className="font-gotham text-sm text-inherit">
                     {selectionSet?.size}

@@ -20,7 +20,15 @@ import '../../home/admin.scss';
 import SearchOrder from './searchOrder';
 import { adminAxios } from '../../../../api/axios';
 import OptionSelection from './optionSelection';
+import AddToPackage from '../modalView/addToPackage/addToPackage';
+import { makeStyles } from '@mui/styles';
 
+const useStyles = makeStyles({
+    root: {
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        overflow: 'scroll',
+    },
+});
 function OrderPageContent({}) {
     const {
         loading,
@@ -35,7 +43,10 @@ function OrderPageContent({}) {
         totalOrders,
         status,
         setStatus,
+        modalOpen,
+        setModalOpen,
     } = useAdminOrderContext();
+    const classes = useStyles();
 
     return (
         <section className="order-page ">
@@ -92,12 +103,43 @@ function OrderPageContent({}) {
                         backgroundColor: 'transparent',
                         boxShadow: 'none',
                         width: '50%',
-                        minHeight: '100vh',
+                        // minHeight: '100vh',
+                        // height: '100vh',
+                        // overflow: 'visible',
                     },
                 }}
             >
                 <DrawerContainer />
             </Drawer>
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(() => false)}
+                sx={{
+                    overflowY: 'auto',
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '10%',
+                        // top: '0%',
+
+                        left: '50%',
+
+                        transform: 'translate(-50%, -0%)',
+                        boxSizing: 'border-box',
+                        maxWidth: '1200px',
+                        width: '75vw',
+
+                        borderRadius: '4px',
+                        // display: 'flex',
+                        // justifyContent: 'center',
+                        border: 'none',
+                    }}
+                >
+                    <AddToPackage />
+                </Box>
+            </Modal>
         </section>
     );
 }

@@ -34,6 +34,7 @@ export default function AdminOrderContextProvider({ children }) {
     const [modalCheck, setModalCheck] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [searchedTerm, setSearchTerm] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
     const [modalContent, adminOrderModalContentDispatch] = useReducer(
         adminOrderModalReducer,
         { type: 'printOrder' }
@@ -104,7 +105,6 @@ export default function AdminOrderContextProvider({ children }) {
 
                 remainingAmount -= orderArray[i].totalDocuments;
             } else {
-               
                 let slicePoint = 0;
 
                 const iterateCount = Math.ceil(
@@ -250,7 +250,8 @@ export default function AdminOrderContextProvider({ children }) {
         allOrderPerPage,
         modalContent,
         adminOrderModalContentDispatch,
-        modalCheck, setModalCheck,
+        modalCheck,
+        setModalCheck,
         isSearchingOrder,
         setSearchingOrder,
 
@@ -263,6 +264,7 @@ export default function AdminOrderContextProvider({ children }) {
         setSearchTerm,
         searchText,
         setSearchText,
+        modalOpen, setModalOpen
     };
 
     return (

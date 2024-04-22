@@ -130,7 +130,7 @@ function SideContainer({}) {
 
                 <select
                     onChange={handleSort}
-                    className="daisy-select daisy-select-sm !rounded border border-dark-gray/50 text-s"
+                    className="daisy-select daisy-select-bordered daisy-select-sm !rounded  border-dark-gray/50 text-s"
                     name="sort-product"
                     id="sort-product"
                 >
@@ -216,7 +216,7 @@ function SideContainer({}) {
                                         checks?.listing_status == lowerCaseText
                                     }
                                     type="radio"
-                                    className="daisy-radio daisy-radio-xs"
+                                    className="daisy-radio daisy-radio-xs "
                                     name="listing-status"
                                     disabled={
                                         !allProducts[lowerCaseText]?.length
@@ -254,7 +254,7 @@ function SideContainer({}) {
                 }
             >
                 <input
-                    className="daisy-checkbox daisy-checkbox-xs rounded-sm"
+                    className="daisy-checkbox daisy-checkbox-xs !rounded-sm "
                     type="checkbox"
                     name="featured"
                     id="featured"
@@ -302,7 +302,7 @@ function SideContainer({}) {
                             }
                             name="sections"
                             id="sections"
-                            className="daisy-select daisy-select-sm w-full !rounded border border-dark-gray/50"
+                            className="daisy-select daisy-select-bordered daisy-select-sm w-full !rounded border-dark-gray/50"
                         >
                             <optgroup
                                 label="Sections"

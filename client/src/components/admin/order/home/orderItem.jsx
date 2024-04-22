@@ -103,7 +103,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             onChange={toggleSelection}
                             type="checkbox"
                             id=""
-                            className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
+                            className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 !rounded-sm"
                         />
                     )}
                 </div>
@@ -119,10 +119,10 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             <ArrowDropDownSharp />
                         </p>
                         <p>
-                            <span className="text-xxs underline underline-offset-1">
+                            <span className="text-xs underline underline-offset-1">
                                 #{order?._id}
                             </span>
-                            <span className="ml-2 text-xxs">
+                            <span className="ml-2 text-xs">
                                 £
                                 {parseFloat(
                                     order.transaction_cost?.total
@@ -146,11 +146,11 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                   ).format('MMM DD, YYYY')}`
                                 : 'Ordered'}
                         </p>
-                        <p className="text-xxs">
+                        <p className="text-xs">
                             Ordered{' '}
                             {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
                         </p>
-                        <p className="my-3 text-xxs">
+                        <p className="my-3 text-xs">
                             {['received', 'processing'].includes(order?.status)
                                 ? `${
                                       order.shipping_option?.name
@@ -170,7 +170,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                 id="deliver-to"
                                 className="disable-drawer relative left-[-6px] flex h-5 w-fit flex-row flex-nowrap items-center gap-[2px] border-2 border-transparent pl-1   focus:border-light-grey active:border-light-grey"
                             >
-                                <p className="disable-drawer text-xxs text-black/85 underline-offset-1 hover:underline">
+                                <p className="disable-drawer text-xs text-black/85 underline-offset-1 hover:underline">
                                     Deliver To
                                 </p>
                                 <ExpandMoreRounded
@@ -181,11 +181,11 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                     }`}
                                 />
                             </button>
-                            <p className="text-xxs font-semibold">
+                            <p className="text-xs font-semibold">
                                 {order.shipping_address?.name}
                             </p>
                             {!showFullAddress && (
-                                <p className="text-xxs">
+                                <p className="text-xs">
                                     {order.shipping_address.address?.city},{' '}
                                     {
                                         countryLookup.byIso(
@@ -198,7 +198,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             {showFullAddress && (
                                 <div>
                                     {' '}
-                                    <p className="text-xxs" ref={addressRef}>
+                                    <p className="text-xs" ref={addressRef}>
                                         {address?.line1}
                                         <br />
 

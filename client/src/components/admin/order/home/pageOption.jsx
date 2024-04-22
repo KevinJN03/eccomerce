@@ -31,7 +31,7 @@ function PageOptions({}) {
         <section className="flex w-full flex-row items-center justify-end gap-3  py-3">
             <select
                 onChange={(e) => setOrderPerPage(parseInt(e.target.value))}
-                className="daisy-select daisy-select-sm !h-9 rounded-sm border-[1px] border-dark-gray text-xs font-semibold !outline-none"
+                className="daisy-select daisy-select-sm !h-9 !rounded-sm daisy-select-bordered border-dark-gray text-xs font-semibold !outline-none"
             >
                 {[20, 35, 50].map((value) => {
                     return (
@@ -53,7 +53,7 @@ function PageOptions({}) {
                             }
                             name="page"
                             id="page-select"
-                            className="daisy-select daisy-select-xs !h-9 w-12 rounded-sm border-[1px] border-dark-gray p-2 text-xs "
+                            className="daisy-select daisy-select-xs !h-9 w-12 !rounded-sm daisy-select-bordered border-dark-gray p-2 text-xs "
                         >
                             {[...Array(resultMap?.size).keys()].map((value) => {
                                 return (
