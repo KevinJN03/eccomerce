@@ -21,6 +21,7 @@ import Item from '../components/item.jsx';
 import Thanks from '../components/thanks.jsx';
 import Footer from '../components/footer.jsx';
 import MoreQuestions from '../components/morequestions.jsx';
+import _ from 'lodash';
 function OrderShipped({ order }) {
   const orderDate = dayjs(order?.createdAt).format('dddd DD MMMM YYYY');
 
@@ -38,6 +39,49 @@ function OrderShipped({ order }) {
     tnt: 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=',
   };
 
+  const isMonthDifferent =
+    dayjs(_.get(order, 'shipped.min_delivery_date')).diff(
+      dayjs(_.get(order, 'shipped.max_delivery_date')),
+      'month',
+    ) >= 1;
+
+  let estimated_delivery = '';
+
+  if (
+    dayjs(_.get(order, 'shipped.min_delivery_date')).diff(
+      _.get(order, 'shipped.max_delivery_date'),
+      'day',
+    ) <= 1
+  ) {
+    estimated_delivery = `${dayjs(
+      _.get(order, 'shipped.max_delivery_date'),
+    ).format('dddd DD MMMM, YYYY')}`;
+  } else if (isMonthDifferent) {
+    estimated_delivery = `${dayjs(
+      _.get(order, 'shipped.min_delivery_date'),
+    ).format('ddd DD MMMM')} - ${dayjs(
+      _.get(order, 'shipped.max_delivery_date'),
+    ).format('ddd DD MMMM, YYYY')}}`;
+  } else {
+    estimated_delivery = `${dayjs(
+      _.get(order, 'shipped.min_delivery_date'),
+    ).format('ddd DD')} - ${dayjs(
+      _.get(order, 'shipped.max_delivery_date'),
+    ).format('ddd DD MMMM, YYYY')}}`;
+  }
+
+  const trackingLink = `${
+    courierLinks[_.get(order, 'shipped.courier')?.toLowerCase()] ||
+    'https://parcelsapp.com/en/tracking/'
+  }${_.get(order, 'shipped.tracking_number')}`;
+
+  const deliveryMethods = Array.from(
+    new Set(
+      order?.itemsByProfile.map(({ shippingInfo }) => {
+        return _.get(shippingInfo, 'shipping.service');
+      }),
+    ),
+  );
   return (
     <Html lang="en">
       <EmailHead />
@@ -72,26 +116,28 @@ function OrderShipped({ order }) {
 
                   <Text className="p-0 m-0">Order date: {orderDate}</Text>
                   <Text className="p-0 m-0 text-green-700">
-                    Estimated delivery date:{' '}
-                    {order?.shipping_option?.delivery_date}
+                    Estimated delivery date: {estimated_delivery}
                   </Text>
-                  <Container align="center" className="pt-3">
+                  <Container align="center" className="mt-3">
                     <Button
-                      href={`${courierLinks[order?.courier?.toLowerCase()]}${
-                        order?.trackingNumber
-                      }`}
-                      className="tracking-wider py-3 bg-[#2d2d2d] font-semibold px-16 text-white text-sm cursor-pointer"
+                      href={trackingLink}
+                      className="tracking-wider  bg-[#2d2d2d] font-semibold px-16 cursor-pointer"
                     >
-                      TRACK PARCEL
+                      <Text className="text-white text-sm ">TRACK PARCEL</Text>
                     </Button>
                   </Container>
                 </Column>
               </Row>
 
-              <Row className=" !bg-light-grey w-full !max-w-[600px] !min-w-full p-0">
+              <Row className=" !bg-light-grey w-full !max-w-[600px] !min-w-full mb-4">
                 {/* <Container className="p-4 !bg-light-grey"> */}
-                <Column className="!bg-light-grey p-5 w-full min-w-full">
-                  <Container className="test bg-white p-4 w-full min-w-full">
+                <td
+                  className="!bg-light-grey w-full text-left "
+                  style={{
+                    padding: '0 20px',
+                  }}
+                >
+                  <Container className=" !bg-white w-full !p-5">
                     <Text className="m-0 p-0 font-semibold tracking-wide text-base">
                       DELIVERY DETAILS
                     </Text>
@@ -123,59 +169,76 @@ function OrderShipped({ order }) {
                         {order?.shipping_address?.phone}
                       </Text>
                     </Container>
-                    <Text className="m-0 p-0 py-2 font-semibold text-gray-500 tracking-wide text-base">
-                      DELIVERY METHOD
-                    </Text>
-
-                    <Text className="p-0 m-0">
-                      {order?.shipping_option?.name}
-                    </Text>
                   </Container>
-                </Column>
-                {/* </Container> */}
+                </td>
               </Row>
 
               <Row className=" !bg-light-grey w-full max-w-[600px] m-0">
                 {/* <Container className="p-4 !bg-light-grey w-full"> */}
-                <Column className="px-5 pb-0 w-full min-w-full">
-                  <Container className="bg-white p-4 min-w-full">
-                    <Text className="font-semibold text-base m-0 p-0">
-                      {`${order?.items?.length} ${
-                        order?.items?.length > 1 ? 'ITEMS' : 'ITEM'
-                      } SENT`}
-                    </Text>
-                    <Hr />
+                {/* <Column className="px-5 pb-0 w-full min-w-full"> */}
+
+                <td
+                  className="!bg-light-grey w-full text-left "
+                  style={{
+                    padding: '0 20px',
+                  }}
+                >
+                <Container className="bg-white p-4 min-w-full">
+                  <Text className="font-semibold text-base m-0 p-0">
+                    {`${order?.items?.length} ${
+                      order?.items?.length > 1 ? 'ITEMS' : 'ITEM'
+                    } SENT`}
+                  </Text>
+                  <Hr />
+                  <Text className="p-0 m-0 text-green-700">
+                    Estimated delivery date:{' '}
+                    {/* {order?.shipping_option?.delivery_date} */}
+                    {estimated_delivery}
+                  </Text>
+                  {deliveryMethods.length >= 0 && (
                     <Text className="p-0 m-0 text-green-700">
-                      Estimated delivery date:{' '}
-                      {order?.shipping_option?.delivery_date}
+                      {deliveryMethods.length <= 1
+                        ? 'Delivery method'
+                        : 'Delivery methods'}
+                      : {deliveryMethods.join(', ')}
                     </Text>
-                    <Hr />{' '}
-                    <Row className="bg-white " align="center">
-                      <Column className="pt-3 pb-0 bg-white" align="center">
-                        <Section className="bg-white">
-                          {order?.items?.map((itemProps, idx) => {
-                            return <Item {...itemProps} key={idx} />;
-                          })}
-                        </Section>
-                        <Hr />{' '}
-                        <Container
+                  )}
+                  <Hr />{' '}
+                  <Row className="bg-white " align="center">
+                    <Column className="pt-3 pb-0 bg-white" align="center">
+                      <Section className="bg-white">
+                        {order?.items?.map((itemProps, idx) => {
+                          return <Item {...itemProps} key={idx} />;
+                        })}
+                      </Section>
+                      <Hr />{' '}
+                      <Container className="my-3 mx-auto w-full text-center">
+                        <Button
+                          href={trackingLink}
+                          className="tracking-wider  bg-[#2d2d2d] font-semibold px-16 cursor-pointer  text-center"
+                        >
+                          <Text className="text-white text-sm ">
+                            TRACK PARCEL
+                          </Text>
+                        </Button>
+                      </Container>
+                      {/* <Container
                           className="pt-2 mx text-center"
                           align="center"
                         >
                           <Button
-                            href={`${
-                              courierLinks[order?.courier?.toLowerCase()] ||
-                              'https://parcelsapp.com/en/tracking/'
-                            }${order?.trackingNumber}`}
+                            href={trackingLink}
                             className="tracking-wider py-3 bg-[#2d2d2d] text-sm font-semibold px-16 text-white cursor-pointer"
                           >
                             TRACK PARCEL
                           </Button>
-                        </Container>
-                      </Column>
-                    </Row>
-                  </Container>
-                </Column>
+                        </Container> */}
+                    </Column>
+                  </Row>
+                </Container>
+
+                </td>
+                {/* </Column> */}
               </Row>
               <Row>
                 <Container>
@@ -184,9 +247,7 @@ function OrderShipped({ order }) {
               </Row>
               <Row>
                 {' '}
-                <Container>
                   <MoreQuestions />
-                </Container>
               </Row>
               <Row>
                 <Container>

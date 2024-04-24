@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GenerateAddress from './generateAddress.jsx';
 import dayjs from 'dayjs';
-import{isEmpty }from 'lodash';
+import _ from 'lodash';
 import { Text, View, Image, renderToStream } from '@react-pdf/renderer';
 function OrderInformation({ order, feature, checks }) {
   const [fromAddress, setFromAddress] = useState({
@@ -62,7 +62,9 @@ function OrderInformation({ order, feature, checks }) {
             Scheduled to dispatch by
           </Text>
           <Text>
-            {dayjs(order.shipping_option?.delivery_date).format('DD MMM, YYYY')}
+            {dayjs(_.get(order, 'shipped.delivery_date')).format(
+              'DD MMM, YYYY',
+            )}
           </Text>
         </View>
 

@@ -8,13 +8,14 @@ import passport from 'passport';
 import 'dotenv/config.js';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
+import minMax from 'dayjs/plugin/minMax';
 import OrderShipped from '../React Email/emails/orderShipped.jsx';
 import * as React from 'react';
 import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import ReturnOrder from '../React Email/emails/returnOrder.jsx';
-import { renderToStream, renderToBuffer } from '@react-pdf/renderer';
+import { renderToStream } from '@react-pdf/renderer';
 import Pdf from '../pdf/pdf.jsx';
 import s3Upload, {
   generateSignedUrl,
@@ -31,6 +32,9 @@ import productValidator from '../utils/productValidator.js';
 import generateProduct from '../utils/generateProduct.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
+import { forEach } from 'lodash';
+import _ from 'lodash';
+dayjs.extend(minMax);
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 const { SENDER } = process.env;
@@ -191,8 +195,111 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
   res.status(200).send({ order, success: true });
 });
 
+export const shipOrder = [
+  check('courier', 'Select a courier').escape().trim().notEmpty(),
+  check('tracking_number', 'Invalid Tracking Number')
+    .escape()
+    .trim()
+    .notEmpty(),
+  check('dispatch_date', 'Select a Dispatch Date').escape().trim().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { preview } = req.body;
+    // const oldOrderInfo = await Order.findById(id, null, {
+    //   lean: { toObject: true },
+    //   new: true,
+    // });
+
+    // const addUnit = oldOrderInfo?.shipping_option?.type?.substring(
+    //   0,
+    //   oldOrderInfo?.shipping_option?.type?.length - 1,
+    // );
+
+    // const newDeliveryDate = dayjs()
+    //   .add(oldOrderInfo?.shipping_option?.time, addUnit)
+    //   .format('dddd, D MMMM, YYYY');
+
+    // find earliest and latest deliveryDate
+
+    const orderInfo = await Order.findById(id, null, {
+      lean: { toObject: true },
+      new: true,
+    });
+    const arrays = {
+      start: [],
+      end: [],
+    };
+    orderInfo.itemsByProfile.forEach(({ shippingInfo }) => {
+      const { start, end, type } = _.get(shippingInfo, 'processing_time');
+      let startDate = dayjs().add(start, type.slice(0, -1));
+      let endDate = dayjs().add(end, type.slice(0, -1));
+
+      arrays.start.push(startDate);
+      arrays.end.push(endDate);
+    });
+
+    const findMinStartDate = dayjs
+      .min(arrays.start)
+      .set('h', 23)
+      .set('m', 59)
+      .set('s', 0)
+      .set('ms', 0)
+      .toISOString();
+    const findMaxEndDate = dayjs
+      .max(arrays.end)
+      .set('h', 23)
+      .set('m', 59)
+      .set('s', 0)
+      .set('ms', 0)
+      .toISOString();
+    console.log({ findMinStartDate, findMaxEndDate });
+
+    if (preview) {
+      res
+        .status(200)
+        .send({
+          success: true,
+          html: render(<OrderShipped order={orderInfo} />),
+        });
+      return;
+    }
+
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      {
+        shipped: {
+          ...req.body,
+          max_delivery_date: findMaxEndDate,
+          min_delivery_date: findMinStartDate,
+        },
+        // ...req.body,
+        // ship_date: new Date(),
+        // 'shipping_option.delivery_date': newDeliveryDate,
+      },
+      {
+        populate: { path: 'items.product customer' },
+        new: true,
+        lean: { toObject: true },
+      },
+    ).exec();
+
+    const emailHtml = render(<OrderShipped order={order} />);
+    const mailOptions = {
+      from: SENDER,
+      to: order?.customer?.email,
+      subject: 'Your order’s on its way!',
+      html: emailHtml,
+    };
+
+    const sendEmail = await transporter.sendMail(mailOptions);
+    const responseObject = { success: true, msg: 'order shipped email sent' };
+
+    res.send({ success: true, msg: 'order shipped email sent' });
+  }),
+];
+// ----------------------------------------------------
 export const updateOrder = [
-  check('courier', 'Please enter a valid courier of 3 or more characters.')
+  check('courier', 'Select a courier')
     .trim()
     .escape()
     .custom((value, { req }) => {
@@ -204,10 +311,7 @@ export const updateOrder = [
       return true;
     }),
 
-  check(
-    'trackingNumber',
-    'Please enter a valid password of 12 or more characters.',
-  )
+  check('trackingNumber', 'Invalid Tracking Number')
     .trim()
     .escape()
     .custom((value, { req }) => {

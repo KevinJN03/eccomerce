@@ -16,6 +16,7 @@ import {
   updateStatus,
   editTitle,
   editPrice,
+  shipOrder,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -88,6 +89,7 @@ router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
+router.put('/order/:id/shipped', shipOrder);
 router.post('/orders/all', getAdminOrders);
 router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);

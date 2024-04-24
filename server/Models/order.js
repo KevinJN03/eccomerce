@@ -88,19 +88,20 @@ const OrderSchema = new Schema({
     // type: { type: Schema.Types.String },
     // id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
   },
-  //   address: {
-  //     type: Schema.Types.Mixed,
-  //   },
-  //   transaction_cost: { type: Schema.Types.Number },
 
-  cartObj: { type: Schema.Types.Mixed, ref: 'product' },
+  // cartObj: { type: Schema.Types.Mixed, ref: 'product' },
   cartId: { type: Schema.Types.ObjectId, ref: 'cart' },
+  shipped: {
+    tracking_number: { type: Schema.Types.String },
+    courier: { type: Schema.Types.String },
+    dispatch_date: { type: Schema.Types.Date },
+    // delivery_date: { type: Schema.Types.Date },
+    max_delivery_date: { type: Schema.Types.Date },
+    min_delivery_date: { type: Schema.Types.Date },
+  },
 
-  trackingNumber: { type: Schema.Types.String },
-  courier: { type: Schema.Types.String },
   payment_intent_id: { type: Schema.Types.String },
   refund_id: { type: Schema.Types.String },
-  ship_date: { type: Schema.Types.Date },
   return_date: { type: Schema.Types.Date },
   cancel_date: { type: Schema.Types.Date },
   cancel: {

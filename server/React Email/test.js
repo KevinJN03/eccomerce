@@ -30,7 +30,7 @@ router.get(
       ],
       lean: { toObject: true },
     }).exec();
-    const emailHtml = render(<OrderReceived order={order} />);
+    const emailHtml = render(<OrderShipped order={order} />);
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
     // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
     const emailTestId = v4();
