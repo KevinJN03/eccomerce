@@ -15,13 +15,15 @@ import UserLogout from '../../../../../hooks/userLogout.jsx';
 import OptionError from '../../../components/product/new product/variation/error/optionError.jsx';
 import { adminAxios } from '../../../../../api/axios.js';
 import Parser from 'html-react-parser';
+import { useContent } from '../../../../../context/ContentContext.jsx';
 
 function AddToPackage({}) {
     const { orderInfo, setModalOpen } = useAdminOrderContext();
     const { logoutUser } = UserLogout();
+    const { showAlert, setShowAlert } = useContent();
 
     const [preview, setPreview] = useState(false);
-
+    const [btnLoad, setBtnLoad] = useState(false);
     const [resultData, setResultData] = useState({});
     const [packageDetail, setPackageDetail] = useState({
         dispatch_date: dayjs()
@@ -32,6 +34,7 @@ function AddToPackage({}) {
         courier: 'Royal Mail',
         tracking_number: '',
         email_me_copy: false,
+        note: '',
     });
 
     const [location, setLocation] = useState(
@@ -42,23 +45,43 @@ function AddToPackage({}) {
 
     const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-        if (preview) {
-            handleAddToOrder();
-        }
-    }, [preview]);
-
-    const handleAddToOrder = async () => {
+    const handleAddToOrder = async ({ preview }) => {
+        let success = false;
         try {
+            if (!preview) {
+                setBtnLoad(() => true);
+            }
             const { data } = await adminAxios.put(
                 `/order/${orderInfo?._id}/shipped`,
                 { ...packageDetail, preview }
             );
             console.log({ data });
             setResultData(() => data);
+            success = true;
         } catch (error) {
             logoutUser({ error });
             console.error(error);
+            if (error.response?.status == 400) {
+                setErrors((prevState) => ({
+                    ...prevState,
+                    ...error.response?.data,
+                }));
+            }
+        } finally {
+            setTimeout(() => {
+                if (success) {
+                    setShowAlert(() => ({
+                        on: true,
+                        size: 'large',
+                        icon: 'check',
+                        bg: 'bg-green-100',
+                        text: 'text-black',
+                        msg: `Orders marked as complete! Remember to hand off packages to the carrier by ${dayjs(_.get(packageDetail, 'dispatch_date')).format('ddd, DD MMM')}`,
+                    }));
+                    setModalOpen(() => false);
+                }
+                setBtnLoad(() => false);
+            }, 1000);
         }
     };
 
@@ -101,22 +124,18 @@ function AddToPackage({}) {
                         <div className=" left h-fit w-full flex-[0.5] rounded-2xl border border-green-700 bg-green-200 p-6">
                             <Brief_Info />
                         </div>
-                        <div className="right w-full flex-1 ">
+                        <div className="right min-h-screen w-full flex-1 rounded-2xl border border-dark-gray ">
                             <div
-                                className="border-red !rounded-2xl "
+                                className="border-red "
                                 style={{
-                                    borderRadius: '1rem',
-                                     overflow: 'hidden',
-                                    // width: '100%',
+                                    borderRadius: 'inherit',
+                                    overflow: 'hidden',
+                                    //  width: '100%',
                                 }}
                                 dangerouslySetInnerHTML={{
                                     __html: _.get(resultData, 'html'),
                                 }}
                             />
-                            {/* {_.get(resultData, 'html') && (
-                                <td>{Parser(_.get(resultData, 'html'))}</td>
-                            )} */}
-                            {/* <Markup content={_.get(resultData, 'html')} /> */}
                         </div>
                     </div>
                 </section>
@@ -190,7 +209,16 @@ function AddToPackage({}) {
                                 to use again later.
                             </p>
                             {showNote ? (
-                                <textarea className=" daisy-textarea daisy-textarea-bordered h-40 !w-full min-w-full" />
+                                <textarea
+                                    className=" daisy-textarea daisy-textarea-bordered h-40 !w-full min-w-full"
+                                    onChange={(e) =>
+                                        setPackageDetail((prevState) => ({
+                                            ...prevState,
+                                            note: e.target.value,
+                                        }))
+                                    }
+                                    value={_.get(packageDetail, 'note')}
+                                />
                             ) : (
                                 <ThemeBtn
                                     bg={'bg-light-grey'}
@@ -399,14 +427,28 @@ function AddToPackage({}) {
                             <BubbleButton
                                 handleClick={() => {
                                     setPreview(() => true);
+                                    setResultData(() => null);
+                                    handleAddToOrder({ preview: true });
                                 }}
                                 text={'Preview buyer notification'}
                             ></BubbleButton>
 
                             <ThemeBtn
-                                text={'Add to Order'}
-                                handleClick={handleAddToOrder}
-                            />
+                                handleClick={() =>
+                                    handleAddToOrder({ preview })
+                                }
+                                disabled={btnLoad}
+                            >
+                                <div>
+                                    {btnLoad ? (
+                                        <div class="spinner-circle ![--spinner-color:225_225_225] ![--spinner-size:25px]"></div>
+                                    ) : (
+                                        <p className="text-base  font-medium text-white">
+                                            Add to Order
+                                        </p>
+                                    )}
+                                </div>
+                            </ThemeBtn>
                         </div>
                     </footer>
                 </>

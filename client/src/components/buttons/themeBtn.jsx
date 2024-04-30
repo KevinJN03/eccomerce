@@ -14,7 +14,7 @@ function ThemeBtn({
         <button
             disabled={disabled || false}
             type="button"
-            className={` group relative w-fit cursor-pointer ${className || 'px-4 py-3'}`}
+            className={` group relative w-fit cursor-pointer disabled:!cursor-not-allowed ${className || 'px-4 py-3'}`}
             onClick={handleClick}
         >
             {!children ? (

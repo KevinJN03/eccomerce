@@ -99,10 +99,12 @@ function OrderShipped({ order, preview }) {
     <Html lang="en" align="center">
       <EmailHead />
       <EmailTailwind>
-        <Body align="center" className="!text-center !mx-auto">
+        <Body align="center" className="!text-center w-full">
           <Container
             align="center"
-            className={`${preview ? '' : 'max-w-[37.5rem]'} !bg-light-grey `}
+            className={`${
+              preview ? 'min-w-full' : 'max-w-[37.5rem]'
+            } !bg-light-grey `}
           >
             <Section className="w-full" align="center">
               <Header />
@@ -229,18 +231,37 @@ function OrderShipped({ order, preview }) {
                   </Container>
                 </Column>
               </Row>
-              <Row>
-                <Column align="center" className="w-full !mx-auto">
+              <Row className='w-full'>
+                <Column align="center" className="w-full !mx-auto !px-5 !max-w-[37.5rem] ">
+                  {_.get(order, 'shipped.note') && (
+                    <Container
+                      className={` bg-light-grey text-center w-full`}
+                      align="center"
+                    >
+                      <Text className="!mb-0 !pb-0">
+                        <span className="font-semibold">Note from Glamo</span>{' '}
+                      </Text>
+                      <Text className="!my-0 !py-0 text-black/70  !break-all w-full">
+                        {_.get(order, 'shipped.note')}
+                      </Text>
+                    </Container>
+                  )}
                   <Thanks />
                 </Column>
               </Row>
               <Row>
-                <Column align="center" className="!min-w-full w-full bg-[#dedfe4]">
+                <Column
+                  align="center"
+                  className="!min-w-full w-full bg-[#dedfe4]"
+                >
                   <MoreQuestions preview={preview} />
                 </Column>
               </Row>
               <Row>
-                <Column align="center" className="!mx-auto !min-w-full w-full bg-[#333333]">
+                <Column
+                  align="center"
+                  className="!mx-auto !min-w-full w-full bg-[#333333]"
+                >
                   <Footer />
                 </Column>
               </Row>

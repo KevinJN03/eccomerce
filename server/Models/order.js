@@ -98,6 +98,7 @@ const OrderSchema = new Schema({
     // delivery_date: { type: Schema.Types.Date },
     max_delivery_date: { type: Schema.Types.Date },
     min_delivery_date: { type: Schema.Types.Date },
+    note: { type: Schema.Types.String },
   },
 
   payment_intent_id: { type: Schema.Types.String },

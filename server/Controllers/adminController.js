@@ -202,6 +202,7 @@ export const shipOrder = [
     .trim()
     .notEmpty(),
   check('dispatch_date', 'Select a Dispatch Date').escape().trim().notEmpty(),
+  check('note').escape().trim(),
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { preview, dispatch_date } = req.body;
@@ -220,6 +221,12 @@ export const shipOrder = [
     //   .format('dddd, D MMMM, YYYY');
 
     // find earliest and latest deliveryDate
+
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if(!errors.isEmpty() && !preview){
+      return res.status(400).send(errors.mapped())
+    }
 
     const orderInfo = await Order.findById(id, null, {
       populate: 'customer',
