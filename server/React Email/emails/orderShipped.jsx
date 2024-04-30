@@ -22,7 +22,7 @@ import Thanks from '../components/thanks.jsx';
 import Footer from '../components/footer.jsx';
 import MoreQuestions from '../components/morequestions.jsx';
 import _ from 'lodash';
-function OrderShipped({ order }) {
+function OrderShipped({ order, preview }) {
   const orderDate = dayjs(order?.createdAt).format('dddd DD MMMM YYYY');
 
   const courierLinks = {
@@ -82,21 +82,32 @@ function OrderShipped({ order }) {
       }),
     ),
   );
+
+  const TrackButton = () => {
+    return (
+      <Container className="mt-3 w-full text-center mx-auto">
+        <Button
+          href={trackingLink}
+          className="tracking-wider text-center  bg-[#2d2d2d] font-semibold px-16 cursor-pointer"
+        >
+          <Text className="text-white text-sm ">TRACK PARCEL</Text>
+        </Button>
+      </Container>
+    );
+  };
   return (
-    <Html lang="en">
+    <Html lang="en" align="center">
       <EmailHead />
       <EmailTailwind>
-        <Body>
+        <Body align="center" className="!text-center !mx-auto">
           <Container
-            className="!bg-light-grey w-full max-w-[600px]"
             align="center"
+            className={`${preview ? '' : 'max-w-[37.5rem]'} !bg-light-grey `}
           >
             <Section className="w-full" align="center">
-              <Row>
-                <Header />
-              </Row>
+              <Header />
 
-              <Row className="w-full box-border !max-w-[600px] !min-w-full">
+              <Row className="w-full box-border  !min-w-full">
                 <Column
                   className="text-center p-4 w-full min-w-full"
                   align="center"
@@ -109,8 +120,8 @@ function OrderShipped({ order }) {
                   />
                   <Text className="font-bold">WE’VE SENT IT!</Text>
                   <Text>
-                    Hi {order?.customer?.firstName}, your parcel is on its way
-                    and it should be with you soon!
+                    Hi {_.get(order, 'customer.firstName') || ''}, your parcel
+                    is on its way and it should be with you soon!
                   </Text>
                   <Text className="p-0 m-0">Order No.: {order?._id}</Text>
 
@@ -118,30 +129,28 @@ function OrderShipped({ order }) {
                   <Text className="p-0 m-0 text-green-700">
                     Estimated delivery date: {estimated_delivery}
                   </Text>
-                  <Container align="center" className="mt-3">
-                    <Button
-                      href={trackingLink}
-                      className="tracking-wider  bg-[#2d2d2d] font-semibold px-16 cursor-pointer"
-                    >
-                      <Text className="text-white text-sm ">TRACK PARCEL</Text>
-                    </Button>
-                  </Container>
+
+                  <TrackButton />
                 </Column>
               </Row>
 
-              <Row className=" !bg-light-grey w-full !max-w-[600px] !min-w-full mb-4">
-                {/* <Container className="p-4 !bg-light-grey"> */}
-                <td
-                  className="!bg-light-grey w-full text-left "
+              <Row className=" !bg-light-grey min-w-full mb-4">
+                <Column
+                  align="center"
+                  className="!bg-light-grey min-w-full "
                   style={{
                     padding: '0 20px',
                   }}
                 >
-                  <Container className=" !bg-white w-full !p-5">
+                  <Container
+                    className={`min-w-full ${
+                      preview ? '!border-[1.25rem] !border-white' : '!p-5'
+                    } !m-0 !bg-white`}
+                  >
                     <Text className="m-0 p-0 font-semibold tracking-wide text-base">
                       DELIVERY DETAILS
                     </Text>
-                    <Hr />
+                    <Hr />{' '}
                     <Text className="m-0 p-0 py-2 font-semibold text-gray-500 tracking-wide text-base">
                       {' '}
                       DELIVERY ADDRESS
@@ -170,89 +179,70 @@ function OrderShipped({ order }) {
                       </Text>
                     </Container>
                   </Container>
-                </td>
+                </Column>
               </Row>
 
-              <Row className=" !bg-light-grey w-full max-w-[600px] m-0">
-                {/* <Container className="p-4 !bg-light-grey w-full"> */}
-                {/* <Column className="px-5 pb-0 w-full min-w-full"> */}
-
-                <td
-                  className="!bg-light-grey w-full text-left "
+              <Row className=" !bg-light-grey w-full m-0">
+                <Column
+                  id="test-colum"
+                  align="center"
+                  className="!bg-light-grey  !mx-auto "
                   style={{
                     padding: '0 20px',
                   }}
                 >
-                <Container className="bg-white p-4 min-w-full">
-                  <Text className="font-semibold text-base m-0 p-0">
-                    {`${order?.items?.length} ${
-                      order?.items?.length > 1 ? 'ITEMS' : 'ITEM'
-                    } SENT`}
-                  </Text>
-                  <Hr />
-                  <Text className="p-0 m-0 text-green-700">
-                    Estimated delivery date:{' '}
-                    {/* {order?.shipping_option?.delivery_date} */}
-                    {estimated_delivery}
-                  </Text>
-                  {deliveryMethods.length >= 0 && (
-                    <Text className="p-0 m-0 text-green-700">
-                      {deliveryMethods.length <= 1
-                        ? 'Delivery method'
-                        : 'Delivery methods'}
-                      : {deliveryMethods.join(', ')}
+                  <Container
+                    className={`bg-white min-w-full p-5 ${
+                      preview ? 'border-[1.25rem]  !border-white' : ''
+                    }`}
+                  >
+                    <Text className="font-semibold text-base m-0 p-0">
+                      {`${order?.items?.length} ${
+                        order?.items?.length > 1 ? 'ITEMS' : 'ITEM'
+                      } SENT`}
                     </Text>
-                  )}
-                  <Hr />{' '}
-                  <Row className="bg-white " align="center">
-                    <Column className="pt-3 pb-0 bg-white" align="center">
-                      <Section className="bg-white">
-                        {order?.items?.map((itemProps, idx) => {
-                          return <Item {...itemProps} key={idx} />;
-                        })}
-                      </Section>
-                      <Hr />{' '}
-                      <Container className="my-3 mx-auto w-full text-center">
-                        <Button
-                          href={trackingLink}
-                          className="tracking-wider  bg-[#2d2d2d] font-semibold px-16 cursor-pointer  text-center"
-                        >
-                          <Text className="text-white text-sm ">
-                            TRACK PARCEL
-                          </Text>
-                        </Button>
-                      </Container>
-                      {/* <Container
-                          className="pt-2 mx text-center"
-                          align="center"
-                        >
-                          <Button
-                            href={trackingLink}
-                            className="tracking-wider py-3 bg-[#2d2d2d] text-sm font-semibold px-16 text-white cursor-pointer"
-                          >
-                            TRACK PARCEL
-                          </Button>
-                        </Container> */}
-                    </Column>
-                  </Row>
-                </Container>
-
-                </td>
-                {/* </Column> */}
+                    <Hr />{' '}
+                    <Text className="p-0 m-0 text-green-700">
+                      Estimated delivery date:{' '}
+                      {/* {order?.shipping_option?.delivery_date} */}
+                      {estimated_delivery}
+                    </Text>
+                    {deliveryMethods.length >= 0 && (
+                      <Text className="p-0 m-0 text-green-700">
+                        {deliveryMethods.length <= 1
+                          ? 'Delivery method'
+                          : 'Delivery methods'}
+                        : {deliveryMethods.join(', ')}
+                      </Text>
+                    )}
+                    <Hr />{' '}
+                    <Row className="bg-white " align="center">
+                      <Column className="pt-3 pb-0 bg-white" align="center">
+                        <Section className="bg-white">
+                          {order?.items?.map((itemProps, idx) => {
+                            return <Item {...itemProps} key={idx} />;
+                          })}
+                        </Section>
+                        <Hr /> <TrackButton />
+                      </Column>
+                    </Row>
+                  </Container>
+                </Column>
               </Row>
               <Row>
-                <Container>
+                <Column align="center" className="w-full !mx-auto">
                   <Thanks />
-                </Container>
+                </Column>
               </Row>
               <Row>
-                {' '}
-                  <MoreQuestions />
+                <Column align="center" className="!min-w-full w-full bg-[#dedfe4]">
+                  <MoreQuestions preview={preview} />
+                </Column>
               </Row>
               <Row>
-                <Container>
+                <Column align="center" className="!mx-auto !min-w-full w-full bg-[#333333]">
                   <Footer />
-                </Container>
+                </Column>
               </Row>
             </Section>
           </Container>

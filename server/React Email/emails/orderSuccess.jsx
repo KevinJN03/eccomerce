@@ -886,7 +886,7 @@ export default function OrderSuccess({
 
                           <Thanks />
 
-                          <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] max-w-[600px]">
+                          <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] ">
                             <Text className="m-0 p-0 font-semibold text-base pb-2">
                               ANY QUESTIONS?
                             </Text>

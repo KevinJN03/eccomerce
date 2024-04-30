@@ -97,13 +97,18 @@ function AddToPackage({}) {
                         Preview buyer notification
                     </h1>
 
-                    <div className="bottom flex w-full flex-row  gap-5">
-                        <div className="left h-fit w-full flex-[0.5] rounded-2xl border border-green-700 bg-green-200 p-6">
+                    <div className="bottom flex w-full flex-row  gap-5 pb-32">
+                        <div className=" left h-fit w-full flex-[0.5] rounded-2xl border border-green-700 bg-green-200 p-6">
                             <Brief_Info />
                         </div>
-                        <div className="right w-full flex-1">
+                        <div className="right w-full flex-1 ">
                             <div
-                            className='border-black border'
+                                className="border-red !rounded-2xl "
+                                style={{
+                                    borderRadius: '1rem',
+                                     overflow: 'hidden',
+                                    // width: '100%',
+                                }}
                                 dangerouslySetInnerHTML={{
                                     __html: _.get(resultData, 'html'),
                                 }}

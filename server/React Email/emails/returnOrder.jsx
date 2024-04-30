@@ -37,7 +37,7 @@ function ReturnOrder({ order }) {
       <EmailTailwind>
         <Body>
           <Container
-            className="!bg-light-grey w-full max-w-[600px]"
+            className="!bg-light-grey w-full "
             align="center"
           >
             <Section>

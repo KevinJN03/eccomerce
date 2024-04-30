@@ -17,7 +17,7 @@ import {
 function Thanks({ className }) {
   return (
     <Container
-      className={` bg-light-grey text-center my-4 !min-w-[600px] max-w-[600px]`}
+      className={` bg-light-grey text-center my-4 `}
       align="center"
     >
       <Text className="m-0 p-0 text-xs text-center">Thanks,</Text>

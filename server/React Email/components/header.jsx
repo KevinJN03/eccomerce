@@ -4,10 +4,10 @@ import 'dotenv/config';
 const clientUrl = process.env.CLIENT_URL;
 function Header({}) {
   return (
-    <Row className="bg-[#2d2d2d] py-4" align="center">
-      <Column align='center' className='text-center'>
-        <Container align='center' className='text-center'>
-          <Button href={clientUrl} className='text-center'>
+    <Row className="bg-[#2d2d2d] w-full " >
+      <Column align='center' className='text-center w-full '>
+        <Container  className='!text-center mx-auto '>
+          <Button href={clientUrl} className='text-center  py-4'>
             <Img
             
               src={

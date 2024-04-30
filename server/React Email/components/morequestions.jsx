@@ -16,10 +16,12 @@ import {
   Container,
 } from '@react-email/components';
 
-function MoreQuestions({}) {
+function MoreQuestions({ preview }) {
   return (
-    <Container className="bg-[#dedfe4]  m-0 !min-w-[600px] max-w-[600px]">
-      <td className='px-5 py-7'>
+    <Container className="bg-[#dedfe4] min-w-full ">
+      <div
+        className={`p-5 w-full`}
+      >
         <Text className="m-0 p-0 font-semibold text-base pb-2">
           ANY QUESTIONS?
         </Text>
@@ -62,7 +64,8 @@ function MoreQuestions({}) {
             );
           })}{' '}
         </Section>
-      </td>
+        {/* </td> */}
+      </div>
     </Container>
   );
 }

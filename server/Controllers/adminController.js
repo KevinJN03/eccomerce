@@ -204,7 +204,7 @@ export const shipOrder = [
   check('dispatch_date', 'Select a Dispatch Date').escape().trim().notEmpty(),
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const { preview } = req.body;
+    const { preview, dispatch_date } = req.body;
     // const oldOrderInfo = await Order.findById(id, null, {
     //   lean: { toObject: true },
     //   new: true,
@@ -222,6 +222,7 @@ export const shipOrder = [
     // find earliest and latest deliveryDate
 
     const orderInfo = await Order.findById(id, null, {
+      populate: 'customer',
       lean: { toObject: true },
       new: true,
     });
@@ -231,8 +232,8 @@ export const shipOrder = [
     };
     orderInfo.itemsByProfile.forEach(({ shippingInfo }) => {
       const { start, end, type } = _.get(shippingInfo, 'processing_time');
-      let startDate = dayjs().add(start, type.slice(0, -1));
-      let endDate = dayjs().add(end, type.slice(0, -1));
+      let startDate = dayjs(dispatch_date).add(start, type.slice(0, -1));
+      let endDate = dayjs(dispatch_date).add(end, type.slice(0, -1));
 
       arrays.start.push(startDate);
       arrays.end.push(endDate);
@@ -254,24 +255,29 @@ export const shipOrder = [
       .toISOString();
     console.log({ findMinStartDate, findMaxEndDate });
 
+    const shippedObj = {
+      ...req.body,
+      max_delivery_date: findMaxEndDate,
+      min_delivery_date: findMinStartDate,
+    };
+
     if (preview) {
-      res
-        .status(200)
-        .send({
-          success: true,
-          html: render(<OrderShipped order={orderInfo} />),
-        });
+      res.status(200).send({
+        success: true,
+        html: render(
+          <OrderShipped
+            order={{ ...orderInfo, shipped: shippedObj }}
+            preview={true}
+          />,
+        ),
+      });
       return;
     }
 
     const order = await Order.findOneAndUpdate(
       { _id: id },
       {
-        shipped: {
-          ...req.body,
-          max_delivery_date: findMaxEndDate,
-          min_delivery_date: findMinStartDate,
-        },
+        shipped: shippedObj,
         // ...req.body,
         // ship_date: new Date(),
         // 'shipping_option.delivery_date': newDeliveryDate,
