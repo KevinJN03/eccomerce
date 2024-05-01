@@ -22,6 +22,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import containerVariants from './containerVariants';
 import { ClickAwayListener } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import _ from 'lodash';
 function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
         useAdminOrderContext();
@@ -35,6 +36,23 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const addressRef = useRef(null);
 
     const { logoutUser } = userLogout();
+
+    const [shippingOptions, setShippingOptions] = useState({
+        services: Array.from(
+            new Set(
+                _.map(order?.itemsByProfile, (element) =>
+                    _.get(element, 'shippingInfo.shipping.service')
+                )
+            )
+        ).join(', '),
+        cost: _.reduce(
+            order?.itemsByProfile,
+            (total, element) => {
+                return (total += _.get(element, 'shippingInfo.cost'));
+            },
+            0
+        ),
+    });
 
     const navigate = useNavigate();
     const handleCopy = () => {
@@ -70,7 +88,6 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                 return;
             }
             const { data } = await adminAxios.get(`order/${order?._id}`);
-            console.log({ data }, 'here');
             setOrderInfo(() => ({ ...data?.order }));
             success = true;
         } catch (error) {
@@ -151,13 +168,25 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
                         </p>
                         <p className="my-3 text-xs">
-                            {['received', 'processing'].includes(order?.status)
+                            {order.status != 'shipped' && (
+                                <>
+                                    {shippingOptions?.services}{' '}
+                                    <span>
+                                        ($
+                                        {parseFloat(
+                                            shippingOptions?.cost
+                                        ).toFixed(2)}
+                                        )
+                                    </span>
+                                </>
+                            )}
+                            {/* {['received', 'processing'].includes(order?.status)
                                 ? `${
                                       order.shipping_option?.name
                                   } (£${order.shipping_option?.cost?.toFixed(
                                       2
                                   )})`
-                                : ''}
+                                : ''} */}
                         </p>
 
                         <div className="relative flex flex-col ">
@@ -297,7 +326,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                     {showOptions && (
                         <div
                             onClick={() => setShowOptions(true)}
-                            className="disable-drawer absolute top-0 left-0 z-[3] flex h-10 w-10 items-center  justify-center rounded-full"
+                            className="disable-drawer absolute left-0 top-0 z-[3] flex h-10 w-10 items-center  justify-center rounded-full"
                         >
                             <MoreVertSharp className="disable-drawer" />
                         </div>

@@ -4,6 +4,7 @@ import {
     useReducer,
     useState,
     useEffect,
+    useRef,
 } from 'react';
 import { adminOrderModalReducer } from '../hooks/adminOrderModalReducer';
 import UserLogout from '../hooks/userLogout';
@@ -15,8 +16,17 @@ export const useAdminOrderContext = () => {
 };
 
 export default function AdminOrderContextProvider({ children }) {
+    const defaultFilterList = {
+        new: {
+            sort_by: 'dispatch by date',
+            by_date: 'all',
+            destination: 'all',
+            mark_as_gift: false,
+            has_note_from_buyer: false,
+        },
+        complete: {},
+    };
     const [loading, setLoading] = useState(true);
-
     const [ordersData, setOrderData] = useState({});
     const [totalDocuments, setTotalDocuments] = useState(null);
     const [status, setStatus] = useState('new');
@@ -35,15 +45,16 @@ export default function AdminOrderContextProvider({ children }) {
     const [searchText, setSearchText] = useState('');
     const [searchedTerm, setSearchTerm] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
+
     const [modalContent, adminOrderModalContentDispatch] = useReducer(
         adminOrderModalReducer,
         { type: 'printOrder' }
     );
-    const [modalLoad, setModalLoad] = useState(false);
     const [isSearchingOrder, setSearchingOrder] = useState(false);
     const [searchResult, setSearchResult] = useState([]);
     const [resultMap, setResultMap] = useState(() => new Map());
-
+    const [filterList, setFilterList] = useState(defaultFilterList);
+const abortControllerRef = useRef(new AbortController())
     const getCurrentPageResult = (totalNumberOfPage) => {
         let remainingAmount = orderPerPage;
         let startingPoint = null;
@@ -144,7 +155,13 @@ export default function AdminOrderContextProvider({ children }) {
 
     const fetchData = async () => {
         try {
-            const { data } = await adminAxios.post('/orders/all', { status });
+            abortControllerRef.current?.abort()
+            abortControllerRef.current = new AbortController()
+            console.log({ filter: filterList[status] });
+            const { data } = await adminAxios.post('/orders/all', {
+                status,
+                filter: filterList[status],
+            }, {signal: abortControllerRef.current.signal});
             setOrderData(() => data);
 
             if (status == 'new') {
@@ -161,15 +178,21 @@ export default function AdminOrderContextProvider({ children }) {
             }, 1200);
         }
     };
-    useEffect(() => {
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     fetchData();
+    // }, []);
 
     useEffect(() => {
         setLoading(true);
 
         fetchData();
-    }, [status]);
+
+
+        return () => {
+            abortControllerRef.current?.abort()
+
+        }
+    }, [status, filterList]);
 
     useEffect(() => {
         setLoading(true);
@@ -196,6 +219,8 @@ export default function AdminOrderContextProvider({ children }) {
 
             setResultMap(() => newResultMap);
             // setAllOrderPerPage(()=> newResultMap.get(currentPage));
+        }else {
+            setResultMap(() => new Map())
         }
     }, [ordersData]);
 
@@ -264,7 +289,11 @@ export default function AdminOrderContextProvider({ children }) {
         setSearchTerm,
         searchText,
         setSearchText,
-        modalOpen, setModalOpen
+        modalOpen,
+        filterList,
+        setFilterList,
+        setModalOpen,
+        defaultFilterList,
     };
 
     return (

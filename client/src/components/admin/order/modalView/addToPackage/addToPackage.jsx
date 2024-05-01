@@ -69,7 +69,7 @@ function AddToPackage({}) {
             }
         } finally {
             setTimeout(() => {
-                if (success) {
+                if (success && !preview) {
                     setShowAlert(() => ({
                         on: true,
                         size: 'large',
@@ -125,17 +125,22 @@ function AddToPackage({}) {
                             <Brief_Info />
                         </div>
                         <div className="right min-h-screen w-full flex-1 rounded-2xl border border-dark-gray ">
-                            <div
-                                className="border-red "
-                                style={{
-                                    borderRadius: 'inherit',
-                                    overflow: 'hidden',
-                                    //  width: '100%',
-                                }}
-                                dangerouslySetInnerHTML={{
-                                    __html: _.get(resultData, 'html'),
-                                }}
-                            />
+                            {!_.get(resultData, 'html') ? (
+                                <div className="flex h-full w-full items-center justify-center">
+                                    <span className="daisy-loading daisy-loading-bars daisy-loading-lg"></span>
+                                </div>
+                            ) : (
+                                <div
+                                    style={{
+                                        borderRadius: 'inherit',
+                                        overflow: 'hidden',
+                                        //  width: '100%',
+                                    }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: _.get(resultData, 'html'),
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 </section>

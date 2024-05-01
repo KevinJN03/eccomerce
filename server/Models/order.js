@@ -121,6 +121,7 @@ const OrderSchema = new Schema({
       date: { required: true, type: Schema.Types.Date, default: Date.now },
     },
   ],
+  mark_as_gift: { type: Schema.Types.Boolean, default: false },
 });
 
 export default model('order', OrderSchema);

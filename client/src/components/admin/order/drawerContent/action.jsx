@@ -5,13 +5,14 @@ import { useContent } from '../../../../context/ContentContext';
 import { Box, Modal } from '@mui/material';
 import { useState } from 'react';
 import AddToPackage from '../modalView/addToPackage/addToPackage';
+import UserLogout from '../../../../hooks/userLogout';
+import { adminAxios } from '../../../../api/axios';
 
 function Actions({ setShowActions, showActions, children, orderId }) {
-    const { setModalCheck, setModalContent } = useContent();
-
-    const { orderInfo, setModalOpen } = useAdminOrderContext();
+    const { setModalCheck, setModalContent, setShowAlert } = useContent();
+    const { logoutUser } = UserLogout();
+    const { setOrderInfo, setModalOpen } = useAdminOrderContext();
     const printOrder = () => {
-        console.log('clicked');
         setModalContent({
             type: 'printOrder',
             orders: [orderId],
@@ -20,7 +21,27 @@ function Actions({ setShowActions, showActions, children, orderId }) {
         setShowActions(false);
     };
 
-    const addToPackage = () => {
+    const addToPackage = async () => {
+        try {
+            const { data } = await adminAxios.get(`order/${orderId}`);
+            setOrderInfo(() => ({ ...data?.order }));
+            setModalOpen(() => true);
+            setShowActions(() => false);
+        } catch (error) {
+            logoutUser({ error });
+            console.error(error);
+
+            if (error.response.status != 401) {
+                setShowAlert(() => ({
+                    on: true,
+                    size: 'small',
+                    bg: 'bg-red-700',
+                    icon: 'sadFace',
+                    msg: 'Failed to get order information. Please try again later.',
+                }));
+            }
+        }
+
         setModalOpen(() => true);
         setShowActions(() => false);
     };

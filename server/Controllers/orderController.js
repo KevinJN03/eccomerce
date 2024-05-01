@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import PrivateNote from '../Models/privateNote.js';
 import generatePaymentIntent from '../utils/generatePaymentIntent.js';
+import orderAggregatePipeline from '../utils/orderAggregatePipeline.js';
 
 dayjs(customParseFormat);
 const stripe = Stripe(process.env.STRIPE_KEY);
@@ -243,148 +244,60 @@ export const getOrderDetails = [
   }),
 ];
 
-export const getAdminOrders = asyncHandler(async (req, res, next) => {
-  //   const orders = await Order.find(null, null, {
-  //     sort: { createdAt: -1, _id: 1 },
-  //     populate: {
-  //       path: 'items.product',
-  // select: 'title _id images'
-  //     },
-  //   });
-  const { status } = req.body;
-  const newValueArray = ['received'];
-  const matchObj =
-    status.toLowerCase() === 'new'
-      ? {
-          $match: { status: { $in: newValueArray } },
-        }
-      : { $match: { status: { $nin: newValueArray } } };
-
-  const ordersByDate = await Order.aggregate([
-    matchObj,
-    { $unwind: '$items' },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'items.product',
-        foreignField: '_id',
-        as: 'productLookup',
-      },
-    },
-    {
-      $project: {
-        productLookup: {
-          variations: 0,
-          reviews: 0,
-          detail: 0,
-          category: 0,
-          gender: 0,
-          price: 0,
-          delivery: 0,
-        },
-      },
-    },
-    // {
-    //   $unwind: '$productLookup',
-    // },
-    // {
-    //   $addFields: {
-    //     // 'items.product': '$productLookup',
-    //     // 'items.product': { $arrayElemAt: ['$productLookup', 0] },
-    //     $map: {
-    //       input: '$items',
-    //       as: 'singleItem',
-    //       in: {},
+export const getAdminOrders = [
+  check('status').escape().trim().toLowerCase(),
+  asyncHandler(async (req, res, next) => {
+    //   const orders = await Order.find(null, null, {
+    //     sort: { createdAt: -1, _id: 1 },
+    //     populate: {
+    //       path: 'items.product',
+    // select: 'title _id images'
     //     },
-    //   },
-    // },
+    //   });
+    const { status, filter } = req.body;
 
-    // {
-    //   $unset: 'productLookup',
-    // },
-    {
-      $addFields: {
-        dateArray: {
-          $split: ['$shipping_option.delivery_date', ', '],
+    const matchArray = [];
+    const aggregatePipeline = _.cloneDeep(orderAggregatePipeline);
+    if (filter?.destination == 'everywhere_else') {
+      matchArray.push({
+        'shipping_address.address.country': { $nin: ['GB', 'US'] },
+      });
+    } else if (filter?.destination != 'all') {
+      matchArray.push({
+        'shipping_address.address.country': { $eq: filter.destination },
+      });
+    }
+
+    if (status === 'new') {
+      matchArray.push({
+        status: { $in: ['received'] },
+      });
+    } else {
+      matchArray.push({ status: { $nin: ['received'] } });
+    }
+
+    if (matchArray.length >= 1) {
+      aggregatePipeline.unshift({
+        $match: {
+          $and: matchArray,
         },
-      },
-    },
+      });
+    }
+    console.log(matchArray);
 
-    // {
-    //   $addFields: {
-    //     newDate: {
-    //       $concat: [
-    //         { $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 0, 2] },
-    //         ' ',
-    //         {
-    //           $substrBytes: [{ $arrayElemAt: ['$dateArray', 1] }, 3, -1],
-    //         },
+    const ordersByDate = await Order.aggregate(aggregatePipeline);
 
-    //         ' ',
-    //         { $arrayElemAt: ['$dateArray', 2] },
-    //       ],
-    //     },
-    //   },
-    // },
-    // {
-    //   $addFields: {
-    //     updatedDate: { $toDate: '$newDate' },
-    //   },
-    // },
-    {
-      $addFields: {
-        'items.product': { $arrayElemAt: ['$productLookup', 0] },
-      },
-    },
-    {
-      $unset: 'productLookup',
-    },
-    {
-      $group: {
-        _id: '$_id',
-        itemsArray: { $push: '$items' },
-        detail: { $first: '$$ROOT' },
-      },
-    },
-    {
-      $sort: { _id: 1 },
-    },
-    {
-      $replaceRoot: {
-        newRoot: { $mergeObjects: ['$detail', { items: '$itemsArray' }] },
-      },
-    },
-
-    {
-      $group: {
-        _id: {
-          $dateToString: {
-            format: '%Y-%m-%d',
-            // date: { $toDate: '$newDate' },
-            date: '$createdAt',
-          },
-        },
-
-        totalDocuments: { $sum: 1 },
-        orders: {
-          $push: '$$ROOT',
-        },
-      },
-    },
-
-    { $sort: { _id: -1 } },
-  ]);
-
-  const totalCount = ordersByDate.reduce(
-    (total, obj) => total + obj.totalDocuments,
-    0,
-  );
-  res.status(200).send({
-    ordersByDate,
-    success: true,
-    totalCount,
-  });
-});
+    const totalCount = ordersByDate.reduce(
+      (total, obj) => total + obj.totalDocuments,
+      0,
+    );
+    res.status(200).send({
+      ordersByDate,
+      success: true,
+      totalCount,
+    });
+  }),
+];
 
 export const addPrivateNote = [
   check('note', 'invalid note').trim().escape().notEmpty(),

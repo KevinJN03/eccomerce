@@ -1,12 +1,11 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useState } from 'react';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { AnimatePresence, motion } from 'framer-motion';
 
-import containerVariants from './containerVariants';
-import { ClickAwayListener } from '@mui/material';
 import { ThemeDropDown } from '../../../common/dropdown/seamlessDropdown';
 import ThemeBtn from '../../../buttons/themeBtn';
+import { useAdminOrderContext } from '../../../../context/adminOrder';
+import _ from 'lodash';
 function Label({ option }) {
     return (
         <label
@@ -21,10 +20,8 @@ function Label({ option }) {
 }
 function SideContainer({}) {
     const [show, setShow] = useState(false);
-    const [option, setOption] = useState('Dispatch by date');
-
-    const [dispatchBy, setDispatchBy] = useState('All');
-    const [destination, setDestination] = useState('All');
+    const { setFilterList, filterList, status, defaultFilterList } =
+        useAdminOrderContext();
     const [orderDetail, setOrderDetail] = useState({
         'Has note from buyer': null,
         'Mark as gift': null,
@@ -37,18 +34,24 @@ function SideContainer({}) {
     ];
 
     const handleClick = (item) => {
-        setOption(() => item);
+        // setOption(() => item);
+        setFilterList((prevState) => ({
+            ...prevState,
+            [status]: { ...prevState?.[status], sort_by: item },
+        }));
         setShow(() => false);
     };
 
     const reset = () => {
-        setDestination(() => 'All');
-        setDispatchBy(() => 'All');
+        setFilterList((prevState) => ({
+            ...prevState,
+            [status]: { ...defaultFilterList?.[status] },
+        }));
         setOrderDetail(() => ({
             'Has note from buyer': null,
             'Mark as gift': null,
         }));
-        setOption(() => 'Dispatch by date');
+        // setOption(() => 'Dispatch by date');
     };
     return (
         <section className="side-container relative mt-4 flex flex-1 flex-col justify-start gap-5">
@@ -64,7 +67,11 @@ function SideContainer({}) {
                                     setShow((prevState) => !prevState)
                                 }
                             >
-                                <Label option={option} />
+                                <Label
+                                    option={_.upperFirst(
+                                        _.get(filterList, [status, 'sort_by'])
+                                    )}
+                                />
                             </ThemeBtn>
                         ),
                         // showIcon: ( <div className='px-4'><Label option={option} /></div>),
@@ -74,21 +81,28 @@ function SideContainer({}) {
                     }}
                 >
                     <div className="pt-8">
-                        {optionsArray.map((item, idx) => {
+                        {optionsArray.map((option, idx) => {
+                            const lowerCaseOption = option.toLowerCase();
+                            const getSortBy = _.get(filterList, [
+                                status,
+                                'sort_by',
+                            ]);
                             return (
                                 <span
                                     // key={`${item}-${idx}`}
                                     className={`item-center flex gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
-                                        option == item ? 'bg-light-grey/50' : ''
+                                        getSortBy == lowerCaseOption
+                                            ? 'bg-light-grey/50'
+                                            : ''
                                     }  hover:bg-light-grey ${
                                         idx == optionsArray.length - 1
                                             ? 'rounded-b-lg'
                                             : ''
                                     }`}
-                                    onClick={() => handleClick(item)}
+                                    onClick={() => handleClick(lowerCaseOption)}
                                 >
-                                    {item}
-                                    {item == option && (
+                                    {option}
+                                    {lowerCaseOption == getSortBy && (
                                         <CheckRoundedIcon className="self-center !text-base" />
                                     )}
                                 </span>
@@ -96,7 +110,6 @@ function SideContainer({}) {
                         })}
                     </div>
                 </ThemeDropDown>
-            
             </div>
 
             <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
@@ -109,19 +122,34 @@ function SideContainer({}) {
                     'Within a week',
                     'No estimate',
                 ].map((item) => {
+                    const lowerCaseItem = item
+                        .toLowerCase()
+                        .replaceAll(' ', '_');
                     return (
                         <div
                             key={item}
                             className="flex flex-row flex-nowrap gap-x-2"
+                            onClick={() => {
+                                setFilterList((prevState) => ({
+                                    ...prevState,
+                                    [status]: {
+                                        ...prevState?.[status],
+                                        by_date: lowerCaseItem,
+                                    },
+                                }));
+                            }}
                         >
                             <input
-                                onChange={() => setDispatchBy(item)}
-                                checked={dispatchBy == item}
+                                readOnly
+                                checked={
+                                    _.get(filterList, [status, 'by_date']) ==
+                                    lowerCaseItem
+                                }
                                 type="radio"
                                 name="dispatch-by-date"
-                                className="daisy-radio daisy-radio-sm"
+                                className="daisy-radio daisy-radio-sm cursor-pointer"
                             />
-                            <p>{item}</p>
+                            <p className="cursor-pointer">{item}</p>
                         </div>
                     );
                 })}
@@ -130,24 +158,38 @@ function SideContainer({}) {
             <div className="destination flex flex-col gap-y-2">
                 <p className="text-base font-semibold">Destination</p>
                 {[
-                    'All',
-                    'United Kingdom',
-                    'United States',
-                    'Everywhere else',
-                ].map((item) => {
+                    { text: 'All', value: 'all' },
+                    { text: 'United Kingdom', value: 'GB' },
+                    { text: 'United States', value: 'US' },
+                    { text: 'Everywhere else', value: 'everywhere_else' },
+                ].map(({ text, value }) => {
                     return (
                         <div
-                            key={item}
+                            key={text}
                             className="flex flex-row flex-nowrap gap-x-2"
+                            onClick={() => {
+                                setFilterList((prevState) => ({
+                                    ...prevState,
+                                    [status]: {
+                                        ...prevState?.[status],
+                                        destination: value,
+                                    },
+                                }));
+                            }}
                         >
                             <input
-                                onChange={() => setDestination(item)}
-                                checked={destination == item}
+                                readOnly
+                                checked={
+                                    _.get(filterList, [
+                                        status,
+                                        'destination',
+                                    ]) == value
+                                }
                                 type="radio"
                                 name="destination"
-                                className="daisy-radio daisy-radio-sm"
+                                className="daisy-radio daisy-radio-sm cursor-pointer"
                             />
-                            <p>{item}</p>
+                            <p className="cursor-pointer">{text}</p>
                         </div>
                     );
                 })}
@@ -156,35 +198,49 @@ function SideContainer({}) {
             <div className="destination flex flex-col gap-y-2">
                 <p className="text-base font-semibold">Order details</p>
                 {['Has note from buyer', 'Mark as gift'].map((item) => {
+                    const lowerCaseItem = item
+                        .toLowerCase()
+                        .replaceAll(' ', '_');
                     return (
                         <div
                             key={item}
                             className="flex flex-row flex-nowrap gap-x-2"
+                            onClick={() => {
+                                setFilterList((prevState) => ({
+                                    ...prevState,
+                                    [status]: {
+                                        ...prevState?.[status],
+                                        [lowerCaseItem]: !_.get(prevState, [
+                                            status,
+                                            lowerCaseItem,
+                                        ]),
+                                    },
+                                }));
+                            }}
                         >
                             <input
-                                onChange={() =>
-                                    setOrderDetail((prevState) => ({
-                                        ...prevState,
-                                        [item]: !prevState[item],
-                                    }))
-                                }
-                                checked={orderDetail?.[item]}
+                                readOnly
+                                checked={_.get(filterList, [
+                                    status,
+                                    lowerCaseItem,
+                                ])}
                                 type="checkbox"
                                 name="order-detail"
-                                className="daisy-checkbox daisy-checkbox-sm rounded-md"
+                                className="daisy-checkbox daisy-checkbox-sm cursor-pointer !rounded-sm"
                             />
-                            <p>{item}</p>
+                            <p className="cursor-pointer">{item}</p>
                         </div>
                     );
                 })}
             </div>
 
-
-<ThemeBtn  bg={'bg-light-grey'} className={'px-3 py-2'} handleClick={reset}>
-    <p className='font-medium text-sm'>
-    Reset filters
-    </p>
-</ThemeBtn>
+            <ThemeBtn
+                bg={'bg-light-grey'}
+                className={'px-3 py-2'}
+                handleClick={reset}
+            >
+                <p className="text-sm font-medium">Reset filters</p>
+            </ThemeBtn>
             {/* <button
                 onClick={reset}
                 type="button"

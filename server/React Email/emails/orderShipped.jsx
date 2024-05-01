@@ -149,7 +149,7 @@ function OrderShipped({ order, preview }) {
                       preview ? '!border-[1.25rem] !border-white' : '!p-5'
                     } !m-0 !bg-white`}
                   >
-                    <Text className="m-0 p-0 font-semibold tracking-wide text-base">
+                    <Text className="m-0 p-0 font-semibold tracking-wide text-base border-b-8 border-white">
                       DELIVERY DETAILS
                     </Text>
                     <Hr />{' '}
@@ -180,6 +180,18 @@ function OrderShipped({ order, preview }) {
                         {order?.shipping_address?.phone}
                       </Text>
                     </Container>
+                    {deliveryMethods.length >= 0 && (
+                      <>
+                        <Text className="m-0 p-0 py-2 font-semibold text-gray-500 tracking-wide text-base">
+                          {deliveryMethods?.length > 1
+                            ? 'DELIVERY METHODS'
+                            : 'DELIVERY METHOD'}
+                        </Text>
+                        <Text className="p-0 m-0 ">
+                          {deliveryMethods.join(', ')}
+                        </Text>
+                      </>
+                    )}
                   </Container>
                 </Column>
               </Row>
@@ -198,25 +210,25 @@ function OrderShipped({ order, preview }) {
                       preview ? 'border-[1.25rem]  !border-white' : ''
                     }`}
                   >
-                    <Text className="font-semibold text-base m-0 p-0">
+                    <Text className="font-semibold text-base m-0 p-0 border-white border-b-8">
                       {`${order?.items?.length} ${
                         order?.items?.length > 1 ? 'ITEMS' : 'ITEM'
                       } SENT`}
                     </Text>
                     <Hr />{' '}
-                    <Text className="p-0 m-0 text-green-700">
+                    <Text className="border-y-8 border-white m-0 text-green-700">
                       Estimated delivery date:{' '}
                       {/* {order?.shipping_option?.delivery_date} */}
                       {estimated_delivery}
                     </Text>
-                    {deliveryMethods.length >= 0 && (
+                    {/* {deliveryMethods.length >= 0 && (
                       <Text className="p-0 m-0 text-green-700">
                         {deliveryMethods.length <= 1
                           ? 'Delivery method'
                           : 'Delivery methods'}
                         : {deliveryMethods.join(', ')}
                       </Text>
-                    )}
+                    )} */}
                     <Hr />{' '}
                     <Row className="bg-white " align="center">
                       <Column className="pt-3 pb-0 bg-white" align="center">
@@ -231,8 +243,11 @@ function OrderShipped({ order, preview }) {
                   </Container>
                 </Column>
               </Row>
-              <Row className='w-full'>
-                <Column align="center" className="w-full !mx-auto !px-5 !max-w-[37.5rem] ">
+              <Row className="w-full">
+                <Column
+                  align="center"
+                  className="w-full !mx-auto !px-5 !max-w-[37.5rem] "
+                >
                   {_.get(order, 'shipped.note') && (
                     <Container
                       className={` bg-light-grey text-center w-full`}
