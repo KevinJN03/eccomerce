@@ -90,7 +90,7 @@ function SideContainer({}) {
                             return (
                                 <span
                                     // key={`${item}-${idx}`}
-                                    className={`item-center flex gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
+                                    className={` cursor-pointer item-center flex gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
                                         getSortBy == lowerCaseOption
                                             ? 'bg-light-grey/50'
                                             : ''

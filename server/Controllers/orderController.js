@@ -276,6 +276,22 @@ export const getAdminOrders = [
       matchArray.push({ status: { $nin: ['received'] } });
     }
 
+    if (filter?.mark_as_gift) {
+      matchArray.push({ mark_as_gift: { $eq: true } });
+    }
+    const sortObj = { _id: -1 };
+
+    if (filter?.sort_by == 'oldest') {
+      sortObj._id = 1;
+      aggregatePipeline.push({ $sort: { _id: 1 } });
+    }
+
+    if (filter?.sort_by == 'destination') {
+      sortObj['shipping_address.address.country'] = 1;
+    }
+    console.log({ sortObj });
+    aggregatePipeline.push({ $sort: sortObj });
+
     if (matchArray.length >= 1) {
       aggregatePipeline.unshift({
         $match: {
@@ -284,6 +300,38 @@ export const getAdminOrders = [
       });
     }
     console.log(matchArray);
+
+    aggregatePipeline.unshift({
+      $addFields: {
+        ship_date: {
+          $map: {
+            input: '$itemsByProfile',
+            as: 'profile',
+            in: {
+              $dateAdd: {
+                startDate: '$createdAt',
+                unit: {
+                  $substrBytes: [
+                    '$$profile.shippingInfo.processing_time.type',
+                    0,
+                    {
+                      $subtract: [
+                        {
+                          $strLenCP:
+                            '$$profile.shippingInfo.processing_time.type',
+                        },
+                        1,
+                      ],
+                    },
+                  ],
+                },
+                amount: '$$profile.shippingInfo.processing_time.end',
+              },
+            },
+          },
+        },
+      },
+    });
 
     const ordersByDate = await Order.aggregate(aggregatePipeline);
 
