@@ -6,6 +6,45 @@ import { ThemeDropDown } from '../../../common/dropdown/seamlessDropdown';
 import ThemeBtn from '../../../buttons/themeBtn';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import _ from 'lodash';
+
+function OptionSection({ title, options, property }) {
+    const { setFilterList, filterList, status } = useAdminOrderContext();
+    return (
+        <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
+            <p className="text-base font-semibold">{title}</p>
+            {options.map((item) => {
+                const lowerCaseItem = item.toLowerCase().replaceAll(' ', '_');
+                return (
+                    <div
+                        key={item}
+                        className="flex flex-row flex-nowrap gap-x-2"
+                        onClick={() => {
+                            setFilterList((prevState) => ({
+                                ...prevState,
+                                [status]: {
+                                    ...prevState?.[status],
+                                    [property]: lowerCaseItem,
+                                },
+                            }));
+                        }}
+                    >
+                        <input
+                            readOnly
+                            checked={
+                                _.get(filterList, [status, property]) ==
+                                lowerCaseItem
+                            }
+                            type="radio"
+                            name="dispatch-by-date"
+                            className="daisy-radio daisy-radio-sm cursor-pointer"
+                        />
+                        <p className="cursor-pointer">{item}</p>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
 function Label({ option }) {
     return (
         <label
@@ -53,6 +92,7 @@ function SideContainer({}) {
         }));
         // setOption(() => 'Dispatch by date');
     };
+
     return (
         <section className="side-container relative mt-4 flex flex-1 flex-col justify-start gap-5">
             <div className=" absolute top-0 z-[1] h-fit rounded-full bg-white">
@@ -90,7 +130,7 @@ function SideContainer({}) {
                             return (
                                 <span
                                     // key={`${item}-${idx}`}
-                                    className={` cursor-pointer item-center flex gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
+                                    className={` item-center flex cursor-pointer gap-x-2 whitespace-nowrap py-2 pl-4 pr-8 ${
                                         getSortBy == lowerCaseOption
                                             ? 'bg-light-grey/50'
                                             : ''
@@ -111,49 +151,32 @@ function SideContainer({}) {
                     </div>
                 </ThemeDropDown>
             </div>
-
-            <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
-                <p className="text-base font-semibold">Dispatch by date</p>
-                {[
-                    'All',
-                    'Overdue',
-                    'Today',
-                    'Tomorrow',
-                    'Within a week',
-                    'No estimate',
-                ].map((item) => {
-                    const lowerCaseItem = item
-                        .toLowerCase()
-                        .replaceAll(' ', '_');
-                    return (
-                        <div
-                            key={item}
-                            className="flex flex-row flex-nowrap gap-x-2"
-                            onClick={() => {
-                                setFilterList((prevState) => ({
-                                    ...prevState,
-                                    [status]: {
-                                        ...prevState?.[status],
-                                        by_date: lowerCaseItem,
-                                    },
-                                }));
-                            }}
-                        >
-                            <input
-                                readOnly
-                                checked={
-                                    _.get(filterList, [status, 'by_date']) ==
-                                    lowerCaseItem
-                                }
-                                type="radio"
-                                name="dispatch-by-date"
-                                className="daisy-radio daisy-radio-sm cursor-pointer"
-                            />
-                            <p className="cursor-pointer">{item}</p>
-                        </div>
-                    );
-                })}
-            </div>
+            {status == 'new' ? (
+                <OptionSection
+                    property={'by_date'}
+                    options={[
+                        'All',
+                        'Overdue',
+                        'Today',
+                        'Tomorrow',
+                        'Within a week',
+                        'No estimate',
+                    ]}
+                    title={'Dispatch by date'}
+                />
+            ) : (
+                <OptionSection
+                    property={'completed_status'}
+                    options={[
+                        'All',
+                        'Processing',
+                        'Shipped',
+                        'Delivered',
+                        'Cancelled',
+                    ]}
+                    title={'Completed Status'}
+                />
+            )}
 
             <div className="destination flex flex-col gap-y-2">
                 <p className="text-base font-semibold">Destination</p>

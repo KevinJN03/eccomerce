@@ -268,13 +268,18 @@ export const getAdminOrders = [
       });
     }
 
-    if (status === 'new') {
-      matchArray.push({
-        status: { $in: ['received'] },
-      });
-    } else {
+    if (filter?.completed_status == 'all') {
       matchArray.push({ status: { $nin: ['received'] } });
+    } else {
+      matchArray.push({ status: { $in: [filter?.completed_status] } });
     }
+    // if (status === 'new') {
+    //   matchArray.push({
+    //     status: { $in: ['received'] },
+    //   });
+    // } else {
+    //   matchArray.push({ status: { $nin: ['received'] } });
+    // }
 
     if (filter?.mark_as_gift) {
       matchArray.push({ mark_as_gift: { $eq: true } });
@@ -334,15 +339,18 @@ export const getAdminOrders = [
     });
 
     const ordersByDate = await Order.aggregate(aggregatePipeline);
-
-    const totalCount = ordersByDate.reduce(
-      (total, obj) => total + obj.totalDocuments,
-      0,
-    );
+    const totalCount = await Order.aggregate([
+      {
+        $match: {
+          $and: matchArray,
+        },
+      },
+      { $count: 'totalCount' },
+    ]);
     res.status(200).send({
       ordersByDate,
       success: true,
-      totalCount,
+      ...totalCount[0],
     });
   }),
 ];

@@ -224,8 +224,8 @@ export const shipOrder = [
 
     const errors = validationResult(req).formatWith(({ msg }) => msg);
 
-    if(!errors.isEmpty() && !preview){
-      return res.status(400).send(errors.mapped())
+    if (!errors.isEmpty() && !preview) {
+      return res.status(400).send(errors.mapped());
     }
 
     const orderInfo = await Order.findById(id, null, {
@@ -308,6 +308,18 @@ export const shipOrder = [
     const responseObject = { success: true, msg: 'order shipped email sent' };
 
     res.send({ success: true, msg: 'order shipped email sent' });
+  }),
+];
+
+export const mark_as_gift = [
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const order = await Order.findByIdAndUpdate(id, [
+      {
+        $set: { mark_as_gift: { $not: '$mark_as_gift' } },
+      },
+    ]);
+    res.send(order);
   }),
 ];
 // ----------------------------------------------------

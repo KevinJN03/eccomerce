@@ -43,7 +43,6 @@ function OrderPageContent({}) {
         modalOpen,
         setModalOpen,
     } = useAdminOrderContext();
-    const classes = useStyles();
 
     return (
         <section className="order-page ">
@@ -71,7 +70,7 @@ function OrderPageContent({}) {
                                 ]}
                             />
                             {loading ? (
-                                <section className="mt-14 flex min-w-full justify-center">
+                                <section className="mt-14 w-full flex-1 flex justify-center">
                                     <GLoader />
                                 </section>
                             ) : (

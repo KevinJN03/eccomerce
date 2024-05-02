@@ -15,6 +15,7 @@ import {
     MailOutlineOutlined,
     CloseSharp,
     UndoOutlined,
+    RedeemSharp,
 } from '@mui/icons-material';
 import truck_icon from '../../../../assets/icons/shipping-truck.png';
 import Actions from '../drawerContent/action';
@@ -267,6 +268,16 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                             Copy address
                                         </button>
                                     </span>
+                                </div>
+                            )}
+
+                            {_.get(order, 'mark_as_gift') && (
+                                <div className="flex flex-row flex-nowrap items-center gap-2 py-3">
+                                    <RedeemSharp
+                                        className="!fill-green-800"
+                                        fontSize="small"
+                                    />
+                                    <p className="text-xs">Marked as gift</p>
                                 </div>
                             )}
                         </div>

@@ -94,7 +94,7 @@ function DrawerContainer() {
                     <CloseSharp className="!fill-primary/80" />
                 </div>
             </div>
-            <div className="w-full !bg-white p-8 min-h-screen">
+            <div className="min-h-screen w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">
                         <h3 className="text-xl font-semibold ">
@@ -185,6 +185,19 @@ function DrawerContainer() {
                     </p>
                 </div>
                 <AddressContainer country={country} />
+                {orderInfo?.mark_as_gift && (
+                    <div className="mt-4 flex flex-col gap-3">
+                        <h3 className="text-sm font-semibold">Gift Detail</h3>
+
+                        <div className="flex flex-row flex-nowrap items-center gap-2 pt-4 pb-7 w-full px-3 border rounded">
+                            <RedeemSharp
+                                className="!fill-green-800"
+                                fontSize="small"
+                            />
+                            <p className="text-xs">Marked as gift</p>
+                        </div>
+                    </div>
+                )}
                 <Receipt />
             </div>
         </div>

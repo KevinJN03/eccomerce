@@ -2,16 +2,17 @@ import { Inventory2Sharp, PrintSharp, RedeemSharp } from '@mui/icons-material';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
-import { Box, Modal } from '@mui/material';
-import { useState } from 'react';
-import AddToPackage from '../modalView/addToPackage/addToPackage';
+
 import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
+import _ from 'lodash';
+import { useRef } from 'react';
 
 function Actions({ setShowActions, showActions, children, orderId }) {
     const { setModalCheck, setModalContent, setShowAlert } = useContent();
     const { logoutUser } = UserLogout();
-    const { setOrderInfo, setModalOpen } = useAdminOrderContext();
+    const { setOrderInfo, setModalOpen, orderInfo } = useAdminOrderContext();
+    const abortControllerRef = useRef(new AbortController());
     const printOrder = () => {
         setModalContent({
             type: 'printOrder',
@@ -21,9 +22,46 @@ function Actions({ setShowActions, showActions, children, orderId }) {
         setShowActions(false);
     };
 
+    const handleMarkGift = async () => {
+        try {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await adminAxios.get(
+                `/order/${orderId}/mark_as_gift`,
+                { signal: abortControllerRef.current.signal }
+            );
+
+            setShowAlert(() => ({
+                on: true,
+                size: 'large',
+                bg: 'bg-green-100',
+                icon: 'check',
+                msg: 'Gift status updated successfully',
+                text: 'text-black',
+            }));
+        } catch (error) {
+            logoutUser({ error });
+            if (error.response.status != 401) {
+                setShowAlert(() => ({
+                    on: true,
+                    size: 'small',
+                    bg: 'bg-red-900',
+                    icon: 'sadFace',
+                    msg: 'Failed to get gift status. Please try again later.',
+                }));
+            }
+        } finally {
+            setShowActions(() => false);
+        }
+    };
+
     const addToPackage = async () => {
         try {
-            const { data } = await adminAxios.get(`order/${orderId}`);
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await adminAxios.get(`order/${orderId}`, {
+                signal: abortControllerRef.current.signal,
+            });
             setOrderInfo(() => ({ ...data?.order }));
             setModalOpen(() => true);
             setShowActions(() => false);
@@ -35,7 +73,7 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                 setShowAlert(() => ({
                     on: true,
                     size: 'small',
-                    bg: 'bg-red-700',
+                    bg: 'bg-red-900',
                     icon: 'sadFace',
                     msg: 'Failed to get order information. Please try again later.',
                 }));
@@ -77,6 +115,7 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                                 className="disable-drawer"
                             />
                         ),
+                        handleClick: handleMarkGift,
                     },
                 ].map(({ text, icon, handleClick }, idx) => {
                     return (
@@ -97,32 +136,7 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                 })}
                 {children}
             </section>
-
-            {/* <Modal open={modalOpen} onClose={() => setModalOpen(() => false)}>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '15%',
-                        left: '50%',
-
-                        transform: 'translate(-50%, -0%)',
-                        boxSizing: 'border-box',
-                        maxWidth: '1200px',
-                        width: '75vw',
-
-                        borderRadius: '4px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        // height: '100vh',
-
-                        border: 'none',
-                    }}
-                >
-                    <AddToPackage setModalOpen={setModalOpen} />
-                </Box>
-            </Modal> */}
         </SeamlessDropdown>
     );
 }
-
 export default Actions;

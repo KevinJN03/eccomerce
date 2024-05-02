@@ -51,7 +51,7 @@ function OptionSelection({ options, status, setStatus, className }) {
                                 {option.text}
                                 {option?.amount && (
                                     <span className="text-sm pl-1">
-                                        { option.amount}
+                                { option.amount}
                                     </span>
                                 )}
                             </p>

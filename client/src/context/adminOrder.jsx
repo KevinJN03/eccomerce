@@ -23,8 +23,15 @@ export default function AdminOrderContextProvider({ children }) {
             destination: 'all',
             mark_as_gift: false,
             has_note_from_buyer: false,
+            completed_status: 'received',
         },
-        complete: {},
+        complete: {
+            completed_status: 'all',
+            sort_by: 'dispatch by date',
+            destination: 'all',
+            mark_as_gift: false,
+            has_note_from_buyer: false,
+        },
     };
     const [loading, setLoading] = useState(true);
     const [ordersData, setOrderData] = useState({});
@@ -54,7 +61,7 @@ export default function AdminOrderContextProvider({ children }) {
     const [searchResult, setSearchResult] = useState([]);
     const [resultMap, setResultMap] = useState(() => new Map());
     const [filterList, setFilterList] = useState(defaultFilterList);
-const abortControllerRef = useRef(new AbortController())
+    const abortControllerRef = useRef(new AbortController());
     const getCurrentPageResult = (totalNumberOfPage) => {
         let remainingAmount = orderPerPage;
         let startingPoint = null;
@@ -155,13 +162,17 @@ const abortControllerRef = useRef(new AbortController())
 
     const fetchData = async () => {
         try {
-            abortControllerRef.current?.abort()
-            abortControllerRef.current = new AbortController()
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
             console.log({ filter: filterList[status] });
-            const { data } = await adminAxios.post('/orders/all', {
-                status,
-                filter: filterList[status],
-            }, {signal: abortControllerRef.current.signal});
+            const { data } = await adminAxios.post(
+                '/orders/all',
+                {
+                    status,
+                    filter: filterList[status],
+                },
+                { signal: abortControllerRef.current.signal }
+            );
             setOrderData(() => data);
 
             if (status == 'new') {
@@ -178,20 +189,15 @@ const abortControllerRef = useRef(new AbortController())
             }, 1200);
         }
     };
-    // useEffect(() => {
-    //     fetchData();
-    // }, []);
 
     useEffect(() => {
         setLoading(true);
 
         fetchData();
 
-
         return () => {
-            abortControllerRef.current?.abort()
-
-        }
+            abortControllerRef.current?.abort();
+        };
     }, [status, filterList]);
 
     useEffect(() => {
@@ -219,8 +225,8 @@ const abortControllerRef = useRef(new AbortController())
 
             setResultMap(() => newResultMap);
             // setAllOrderPerPage(()=> newResultMap.get(currentPage));
-        }else {
-            setResultMap(() => new Map())
+        } else {
+            setResultMap(() => new Map());
         }
     }, [ordersData]);
 

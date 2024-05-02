@@ -17,6 +17,7 @@ import {
   editTitle,
   editPrice,
   shipOrder,
+  mark_as_gift,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -90,6 +91,9 @@ router.get('/product', get_all_products);
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
 router.put('/order/:id/shipped', shipOrder);
+
+router.get('/order/:id/mark_as_gift', mark_as_gift);
+
 router.post('/orders/all', getAdminOrders);
 router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
