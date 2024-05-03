@@ -1,7 +1,7 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useEffect, useState } from 'react';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
-import { forEach } from 'lodash';
+import _, { forEach } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ClickAwayListener } from '@mui/material';
 import variant from './variant';
@@ -10,35 +10,12 @@ import SelectionInput from './selectionInput';
 import { useContent } from '../../../../context/ContentContext';
 
 function SubHeader({}) {
-    const {
-        selectionSet,
-        setSelectionSet,
-        allOrderPerPage,
-        adminOrderModalContentDispatch,
-        resultMap,
-        currentPage,
-    } = useAdminOrderContext();
+    const { selectionSet, setSelectionSet, ordersData, allOrderIds, setAllOrdersId } =
+        useAdminOrderContext();
     const { setModalCheck, setModalContent } = useContent();
 
     const [showAction, setShowAction] = useState(false);
-    const [allOrderIds, setAllOrdersId] = useState();
-
-    const getIdsFromPage = () => {
-        const orderIdArray = [];
-        const newAllOrderPerPage = [...resultMap.get(currentPage)];
-        newAllOrderPerPage.forEach((obj) => {
-            const getOnlyIds = obj.orders?.map((order) => order?._id);
-
-            orderIdArray.push(...getOnlyIds);
-        });
-
-        return orderIdArray;
-    };
-    useEffect(() => {
-        if (resultMap.size > 0) {
-            setAllOrdersId(() => getIdsFromPage());
-        }
-    }, [currentPage, resultMap]);
+    
 
     const toggleAction = () => {
         setShowAction((prevState) => !prevState);

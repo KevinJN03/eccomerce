@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState, useRef } from 'react';
+import { useEffect, useReducer, useState, useRef, useMemo } from 'react';
 
 import Header from './header';
 import SubHeader from './subheader';
@@ -14,35 +14,28 @@ import { Box, Drawer, Modal } from '@mui/material';
 import DrawerContainer from '../drawerContent/drawerContainer';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
 import { adminOrderModalReducer } from '../../../../hooks/adminOrderModalReducer';
-// import Modal from '../components/modal/modal';
 import views from '../modalView/modalView';
 import '../../home/admin.scss';
 import SearchOrder from './searchOrder';
-import { adminAxios } from '../../../../api/axios';
 import OptionSelection from './optionSelection';
 import AddToPackage from '../modalView/addToPackage/addToPackage';
-import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles({
-    root: {
-        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-        overflow: 'scroll',
-    },
-});
+
 function OrderPageContent({}) {
     const {
         loading,
         isSearchingOrder,
-        resultMap,
         openDrawer,
         setOpenDrawer,
-        currentPage,
-        totalOrders,
+        pageCount,
         status,
         setStatus,
         modalOpen,
         setModalOpen,
+        ordersData,
     } = useAdminOrderContext();
+
+
 
     return (
         <section className="order-page ">
@@ -61,7 +54,7 @@ function OrderPageContent({}) {
                                     {
                                         text: 'New',
                                         select: 'new',
-                                        amount: totalOrders,
+                                        amount: pageCount,
                                     },
                                     {
                                         text: 'Complete',
@@ -70,7 +63,7 @@ function OrderPageContent({}) {
                                 ]}
                             />
                             {loading ? (
-                                <section className="mt-14 w-full flex-1 flex justify-center">
+                                <section className="mt-14 flex w-full flex-1 justify-center">
                                     <GLoader />
                                 </section>
                             ) : (
@@ -78,9 +71,10 @@ function OrderPageContent({}) {
                                     <PageOptions />
 
                                     <Containers
-                                        ordersByDate={resultMap.get(
-                                            currentPage
-                                        )}
+                                        ordersByDate={
+                                            ordersData?.ordersByDate
+                                         
+                                        }
                                     />
                                 </>
                             )}

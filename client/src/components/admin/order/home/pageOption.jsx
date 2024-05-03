@@ -2,15 +2,17 @@ import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRound
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 function PageOptions({}) {
     const {
         orderPerPage,
         setOrderPerPage,
-        numberOfPage,
         currentPage,
         setCurrentPage,
-        resultMap,
+        ordersData,
+        allOrderIds,
     } = useAdminOrderContext();
+    const maxPage = _.get(ordersData, 'maxPage');
 
     const previousPage = () => {
         if (currentPage == 1) {
@@ -21,7 +23,7 @@ function PageOptions({}) {
     };
 
     const nextPage = () => {
-        if (currentPage == resultMap?.size) {
+        if (currentPage == maxPage) {
             return;
         }
 
@@ -31,9 +33,9 @@ function PageOptions({}) {
         <section className="flex w-full flex-row items-center justify-end gap-3  py-3">
             <select
                 onChange={(e) => setOrderPerPage(parseInt(e.target.value))}
-                className="daisy-select daisy-select-sm !h-9 !rounded-sm daisy-select-bordered border-dark-gray text-xs font-semibold !outline-none"
+                className="daisy-select daisy-select-bordered daisy-select-sm !h-9 !rounded-sm border-dark-gray text-xs font-semibold !outline-none"
             >
-                {[20, 35, 50].map((value) => {
+                {[10,20, 35, 50].map((value) => {
                     return (
                         <option
                             value={value}
@@ -42,7 +44,7 @@ function PageOptions({}) {
                     );
                 })}
             </select>
-            {resultMap?.size > 1 && (
+            {maxPage > 1 && (
                 <>
                     {' '}
                     <div className="flex flex-row items-center gap-2">
@@ -53,22 +55,24 @@ function PageOptions({}) {
                             }
                             name="page"
                             id="page-select"
-                            className="daisy-select daisy-select-xs !h-9 w-12 !rounded-sm daisy-select-bordered border-dark-gray p-2 text-xs "
+                            className="daisy-select daisy-select-bordered daisy-select-xs !h-9 w-12 !rounded-sm border-dark-gray p-2 text-xs "
                         >
-                            {[...Array(resultMap?.size).keys()].map((value) => {
-                                return (
-                                    <option
-                                        value={value + 1}
-                                        selected={value + 1 == currentPage}
-                                        key={uuidv4()}
-                                    >
-                                        {value + 1}
-                                    </option>
-                                );
-                            })}
+                            {Array(maxPage)
+                                .fill('')
+                                .map((value, idx) => {
+                                    return (
+                                        <option
+                                            value={idx + 1}
+                                            selected={idx + 1 == currentPage}
+                                            key={`page-select-${idx + 1}`}
+                                        >
+                                            {idx + 1}
+                                        </option>
+                                    );
+                                })}
                         </select>
                     </div>
-                    <p className="text-xs">of {resultMap?.size}</p>
+                    <p className="text-xs">of {maxPage}</p>
                     <div className="flex flex-row items-center gap-4">
                         <button
                             onClick={previousPage}
@@ -79,7 +83,7 @@ function PageOptions({}) {
                         </button>
                         <button
                             onClick={nextPage}
-                            disabled={currentPage == resultMap?.size}
+                            disabled={currentPage == maxPage}
                             className="disabled:opacity-50"
                         >
                             <ArrowForwardIosRoundedIcon className="!fill-dark-gray !text-lg hover:!fill-dark-gray/90" />

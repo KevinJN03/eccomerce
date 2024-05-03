@@ -319,7 +319,8 @@ export const mark_as_gift = [
         $set: { mark_as_gift: { $not: '$mark_as_gift' } },
       },
     ]);
-    res.send(order);
+    // res.send(order);
+    res.redirect(`/api/admin/order/${id}`);
   }),
 ];
 // ----------------------------------------------------
@@ -678,8 +679,7 @@ export const searchOrder = [
       //   $limit: 5,
       // },
     ]);
-    console.log({ searchText, should, searchResult });
-    res.status(200).send({ searchResult, success: true });
+    res.status(200).send({ searchResult, searchText });
   }),
 ];
 

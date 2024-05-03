@@ -45,7 +45,7 @@ function DrawerContainer() {
         setOpenDrawer,
         setSearchText,
         setSearchingOrder,
-        setSearchResult,
+        
     } = useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
@@ -69,21 +69,21 @@ function DrawerContainer() {
         setShowActions(false);
     };
 
-    const orderHistory = async () => {
-        try {
-            setOpenDrawer(() => false);
-            setSearchingOrder(() => true);
-            setSearchText(() => orderInfo.customer?._id);
+    // const orderHistory = async () => {
+    //     try {
+    //         setOpenDrawer(() => false);
+    //         setSearchingOrder(() => true);
+    //         setSearchText(() => orderInfo.customer?._id);
 
-            const { data } = await adminAxios('searchOrder', {
-                searchText: orderInfo.customer?._id,
-            });
+    //         const { data } = await adminAxios('searchOrder', {
+    //             searchText: orderInfo.customer?._id,
+    //         });
 
-            setSearchResult(() => data.searchResult);
-        } catch (error) {
-            logoutUser({ error });
-        }
-    };
+    //         setSearchResult(() => data.searchResult);
+    //     } catch (error) {
+    //         logoutUser({ error });
+    //     }
+    // };
     return (
         <div className=" relative flex w-full flex-row gap-1 ">
             <div className="relative h-fit w-12 bg-transparent">
@@ -168,6 +168,7 @@ function DrawerContainer() {
                                     showActions,
                                     setShowActions,
                                     orderId: orderInfo?._id,
+                                    order: orderInfo
                                 }}
                             />
                         </section>

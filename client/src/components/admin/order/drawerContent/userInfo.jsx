@@ -14,7 +14,7 @@ function UserInfo({}) {
     const {
         orderInfo,
         setOpenDrawer,
-        setSearchResult,
+        
         setSearchingOrder,
         setSearchText,
     } = useAdminOrderContext();
@@ -35,7 +35,6 @@ function UserInfo({}) {
                 searchText: orderInfo.customer?._id,
             });
             setSearchText(() => orderInfo.customer?._id);
-            setSearchResult(() => data.searchResult);
         } catch (error) {
             console.error('error while fetching order history: ', error);
             logoutUser({ error });

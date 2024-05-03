@@ -14,12 +14,8 @@ function Note({ idx, note, date, _id, lastIdx }) {
     const {
         orderInfo,
         setOrderInfo,
-        status,
-        setOrderData,
-        setSearchResult,
-        searchedTerm,
-        setSearchTerm,
-        isSearchingOrder,
+
+        setTriggerFetchData,
     } = useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
@@ -34,38 +30,9 @@ function Note({ idx, note, date, _id, lastIdx }) {
                 orderId: orderInfo?._id,
                 note: text,
             });
+            setTriggerFetchData((prevState) => !prevState);
 
-            // const { data: orderResult } = await adminAxios.post('/orders/all', {
-            //     status,
-            // });
-
-            // const { data: searchDataResult } = await adminAxios.post(
-            //     `searchOrder`,
-            //     {
-            //         searchText: searchedTerm,
-            //     }
-            // );
-
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
-            setOrderData(() => orderResult || {});
+           
             setEdit(() => false);
             setOrderInfo(() => data.order);
         } catch (error) {
@@ -77,27 +44,9 @@ function Note({ idx, note, date, _id, lastIdx }) {
             const { data } = await adminAxios.delete(
                 `privateNote/delete?noteId=${_id}&orderId=${orderInfo?._id}`
             );
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
+            setTriggerFetchData((prevState) => !prevState);
 
-            setOrderData(() => orderResult || {});
+          
             setOrderInfo(() => data.order);
         } catch (error) {
             console.error(error);
@@ -193,12 +142,8 @@ function PrivateNote({}) {
     const {
         orderInfo,
         setOrderInfo,
-        status,
-        ordersData,
-        setOrderData,
-        isSearchingOrder,
-        searchedTerm,
-        setSearchResult,
+      
+        setTriggerFetchData,
     } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const toggle = () => {
@@ -217,30 +162,10 @@ function PrivateNote({}) {
                 orderId: orderInfo?._id,
             });
 
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-         
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
             setOrderInfo(() => data.order);
-            setOrderData(() => orderResult || {});
             setOpen(() => false);
             setNote(() => '');
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             console.error(error);
             logoutUser({ error });

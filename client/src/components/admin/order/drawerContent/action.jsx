@@ -8,10 +8,10 @@ import { adminAxios } from '../../../../api/axios';
 import _ from 'lodash';
 import { useRef } from 'react';
 
-function Actions({ setShowActions, showActions, children, orderId }) {
+function Actions({ setShowActions, showActions, children, orderId, order }) {
     const { setModalCheck, setModalContent, setShowAlert } = useContent();
     const { logoutUser } = UserLogout();
-    const { setOrderInfo, setModalOpen, orderInfo } = useAdminOrderContext();
+    const { setOrderInfo, setModalOpen, setTriggerFetchData } = useAdminOrderContext();
     const abortControllerRef = useRef(new AbortController());
     const printOrder = () => {
         setModalContent({
@@ -30,6 +30,10 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                 `/order/${orderId}/mark_as_gift`,
                 { signal: abortControllerRef.current.signal }
             );
+            setTriggerFetchData((prevState) => !prevState)
+
+            setOrderInfo(() => data.order);
+
 
             setShowAlert(() => ({
                 on: true,
@@ -108,7 +112,7 @@ function Actions({ setShowActions, showActions, children, orderId }) {
                         handleClick: addToPackage,
                     },
                     {
-                        text: 'Mark as gift',
+                        text: _.get(order, 'mark_as_gift') ? 'Unmark as gift': 'Mark as gift',
                         icon: (
                             <RedeemSharp
                                 fontSize="small"

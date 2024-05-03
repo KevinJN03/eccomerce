@@ -19,9 +19,7 @@ import {
 } from '@mui/icons-material';
 import truck_icon from '../../../../assets/icons/shipping-truck.png';
 import Actions from '../drawerContent/action';
-import { AnimatePresence, motion } from 'framer-motion';
-import containerVariants from './containerVariants';
-import { ClickAwayListener } from '@mui/material';
+
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
@@ -160,7 +158,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         <p className="text-xs font-medium">
                             {['received', 'processing'].includes(order?.status)
                                 ? `Ship by ${dayjs(
-                                      order.shipping_option?.delivery_date
+                                      _.get(order, 'ship_date')
                                   ).format('MMM DD, YYYY')}`
                                 : 'Ordered'}
                         </p>
@@ -181,13 +179,6 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                     </span>
                                 </>
                             )}
-                            {/* {['received', 'processing'].includes(order?.status)
-                                ? `${
-                                      order.shipping_option?.name
-                                  } (£${order.shipping_option?.cost?.toFixed(
-                                      2
-                                  )})`
-                                : ''} */}
                         </p>
 
                         <div className="relative flex flex-col ">
@@ -343,6 +334,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         </div>
                     )}
                     <Actions
+                        order={order}
                         orderId={order?._id}
                         setShowActions={setShowOptions}
                         showActions={showOptions}

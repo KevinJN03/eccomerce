@@ -160,7 +160,6 @@ function SideContainer({}) {
                         'Today',
                         'Tomorrow',
                         'Within a week',
-                        'No estimate',
                     ]}
                     title={'Dispatch by date'}
                 />

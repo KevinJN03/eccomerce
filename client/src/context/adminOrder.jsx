@@ -9,6 +9,7 @@ import {
 import { adminOrderModalReducer } from '../hooks/adminOrderModalReducer';
 import UserLogout from '../hooks/userLogout';
 import { adminAxios } from '../api/axios';
+import _ from 'lodash';
 const AdminOrderContext = createContext(null);
 
 export const useAdminOrderContext = () => {
@@ -35,233 +36,133 @@ export default function AdminOrderContextProvider({ children }) {
     };
     const [loading, setLoading] = useState(true);
     const [ordersData, setOrderData] = useState({});
-    const [totalDocuments, setTotalDocuments] = useState(null);
     const [status, setStatus] = useState('new');
     const { logoutUser } = UserLogout();
-    const [totalOrders, setTotalOrders] = useState(0);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [orderInfo, setOrderInfo] = useState({});
     const [selectionSet, setSelectionSet] = useState(() => new Set());
     const [checkAllSelection, setCheckAllSelection] = useState(false);
     const [orderPerPage, setOrderPerPage] = useState(20);
-    const [allOrderPerPage, setAllOrderPerPage] = useState([]);
-    const [numberOfPage, setNumberOfPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageOrders, setCurrentPageOrders] = useState([]);
     const [modalCheck, setModalCheck] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [searchedTerm, setSearchTerm] = useState('');
+    const [searchData, setSearchData] = useState({});
     const [modalOpen, setModalOpen] = useState(false);
-
+    const [allOrderIds, setAllOrdersId] = useState([]);
     const [modalContent, adminOrderModalContentDispatch] = useReducer(
         adminOrderModalReducer,
         { type: 'printOrder' }
     );
     const [isSearchingOrder, setSearchingOrder] = useState(false);
-    const [searchResult, setSearchResult] = useState([]);
-    const [resultMap, setResultMap] = useState(() => new Map());
     const [filterList, setFilterList] = useState(defaultFilterList);
+    const [triggerFetchData, setTriggerFetchData] = useState(false);
+    const [searchDataLoading, setSearchDataLoading] = useState(false);
+
+    const [pageCount, setPageCount] = useState();
     const abortControllerRef = useRef(new AbortController());
-    const getCurrentPageResult = (totalNumberOfPage) => {
-        let remainingAmount = orderPerPage;
-        let startingPoint = null;
-        if (totalNumberOfPage >= currentPage) {
-            startingPoint = orderPerPage * (currentPage - 1);
-        } else {
-            startingPoint = 0;
-            setCurrentPage(1);
-        }
-
-        const resultArray = [];
-
-        for (let i = 0; i < ordersData.ordersByDate.length; i++) {
-            if (remainingAmount <= 0) {
-                break;
-            }
-            if (ordersData.ordersByDate[i].totalDocuments <= startingPoint) {
-                startingPoint -= ordersData.ordersByDate[i].totalDocuments;
-                continue;
-            } else {
-                const newOrders = ordersData.ordersByDate[i].orders.slice(
-                    startingPoint,
-                    remainingAmount
-                );
-
-                resultArray.push({
-                    ...ordersData.ordersByDate[i],
-                    orders: newOrders,
-                });
-                startingPoint = 0;
-                remainingAmount -= newOrders.length;
-            }
-        }
-
-        return resultArray;
-    };
-
-    const getResultMap = () => {
-        let counter = 1;
-
-        let remainingAmount = orderPerPage;
-        const map = new Map();
-        const orderArray = [...ordersData.ordersByDate];
-
-        for (let i = 0; i < orderArray.length; i++) {
-            if (remainingAmount <= 0) {
-                // counter++;
-                remainingAmount = orderPerPage;
-                console.log('hit 0');
-            }
-
-            if (orderArray[i].totalDocuments <= remainingAmount) {
-                if (!map.has(counter)) {
-                    map.set(counter, [orderArray[i]]);
-                } else {
-                    const counterArray = map.get(counter);
-                    map.set(counter, [...counterArray, orderArray[i]]);
-                }
-
-                remainingAmount -= orderArray[i].totalDocuments;
-            } else {
-                let slicePoint = 0;
-
-                const iterateCount = Math.ceil(
-                    orderArray[i].totalDocuments / orderPerPage
-                );
-
-                // iterate count need to be checked
-                // 1
-                for (let j = 0; j <= iterateCount; j++) {
-                    if (remainingAmount <= 0) {
-                        remainingAmount = orderPerPage;
-                        counter++;
-                    }
-                    if (!map.has(counter)) {
-                        map.set(counter, []);
-                    }
-                    const counterArray = map.get(counter);
-                    const newOrders = orderArray[i].orders.slice(
-                        slicePoint,
-                        remainingAmount
-                    );
-
-                    map.set(counter, [
-                        ...counterArray,
-                        { ...orderArray[i], orders: newOrders },
-                    ]);
-                    slicePoint += newOrders.length;
-                    remainingAmount -= newOrders.length;
-                }
-
-                slicePoint = 0;
-            }
-        }
-
-        return map;
-    };
 
     const fetchData = async () => {
+        let count = null;
         try {
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
-            console.log({ filter: filterList[status] });
+            setSelectionSet(() => new Set());
             const { data } = await adminAxios.post(
                 '/orders/all',
                 {
                     status,
                     filter: filterList[status],
+                    limit: orderPerPage,
+                    page: currentPage,
                 },
                 { signal: abortControllerRef.current.signal }
             );
-            setOrderData(() => data);
 
-            if (status == 'new') {
-                setTotalOrders(() => data?.totalCount);
-            }
-            setTotalDocuments(() => data?.totalCount);
-            setCurrentPage(1);
+            setOrderData(() => data);
+            count = data?.pageCount;
+
+            setAllOrdersId(() =>
+                _.flatMapDeep(_.get(data, 'ordersByDate'), (element) => {
+                    return _.map(_.get(element, 'orders'), '_id');
+                })
+            );
+
+            // setCurrentPage(1);
         } catch (error) {
             console.error('error while getting orders', error);
             logoutUser({ error });
         } finally {
             setTimeout(() => {
                 setLoading(false);
+
+                if (status == 'new') {
+                    setPageCount(() => count);
+                }
             }, 1200);
         }
     };
+    const fetchSearchData = async () => {
+        try {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            setSearchingOrder(() => true);
+            const { data } = await adminAxios.post(
+                `searchOrder`,
+                {
+                    searchText,
+                },
 
+                { signal: abortControllerRef.current.signal }
+            );
+
+            setSearchData(() => data);
+        } catch (error) {
+            console.error('error while getting search result', error);
+            logoutUser({ error });
+        } finally {
+            setTimeout(() => {
+                setSearchDataLoading(() => false);
+            }, 1200);
+        }
+    };
     useEffect(() => {
         setLoading(true);
-
         fetchData();
 
         return () => {
             abortControllerRef.current?.abort();
         };
-    }, [status, filterList]);
+    }, [status, filterList, currentPage, orderPerPage]);
 
     useEffect(() => {
-        setLoading(true);
-        const timeout = setTimeout(() => {
-            setLoading(false);
-        }, 1200);
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [currentPage]);
-
-    useEffect(() => {
-        if (ordersData.ordersByDate?.length > 0) {
-            const totalNumberOfPage = Math.ceil(
-                ordersData?.totalCount / orderPerPage
-            );
-            const resultForPage = getCurrentPageResult(totalNumberOfPage);
-
-            setNumberOfPage(Math.ceil(totalDocuments / orderPerPage));
-
-            const newResultMap = getResultMap();
-            console.log(newResultMap);
-
-            setResultMap(() => newResultMap);
-            // setAllOrderPerPage(()=> newResultMap.get(currentPage));
+        if (isSearchingOrder) {
+            fetchSearchData();
         } else {
-            setResultMap(() => new Map());
+            fetchData();
         }
-    }, [ordersData]);
-
-    useEffect(() => {
-        setLoading(true);
-
-        if (ordersData.ordersByDate?.length > 0) {
-            if (
-                Math.ceil(ordersData?.totalCount / orderPerPage) < currentPage
-            ) {
-                setCurrentPage(() => 1);
-            }
-
-            const newResultMap = getResultMap();
-            console.log(newResultMap);
-
-            setResultMap(() => newResultMap);
-        }
-
-        const timeout = setTimeout(() => {
-            setLoading(false);
-        }, 1200);
 
         return () => {
-            clearTimeout(timeout);
+            abortControllerRef.current?.abort();
         };
-    }, [orderPerPage]);
+    }, [triggerFetchData]);
+
+    // useEffect(() => {
+    //     setLoading(true);
+    //     const timeout = setTimeout(() => {
+    //         setLoading(false);
+    //     }, 1200);
+
+    //     return () => {
+    //         clearTimeout(timeout);
+    //     };
+    // }, [currentPage]);
 
     const value = {
         loading,
         setLoading,
         status,
         setStatus,
-        totalOrders,
-        setTotalOrders,
         openDrawer,
         setOpenDrawer,
         orderInfo,
@@ -272,27 +173,20 @@ export default function AdminOrderContextProvider({ children }) {
         setCheckAllSelection,
         orderPerPage,
         setOrderPerPage,
-        numberOfPage,
-        setNumberOfPage,
+        pageCount,
+        setPageCount,
         currentPage,
         setCurrentPage,
         currentPageOrders,
         setCurrentPageOrders,
-        allOrderPerPage,
         modalContent,
         adminOrderModalContentDispatch,
         modalCheck,
         setModalCheck,
         isSearchingOrder,
         setSearchingOrder,
-
-        searchResult,
-        setSearchResult,
         ordersData,
         setOrderData,
-        resultMap,
-        searchedTerm,
-        setSearchTerm,
         searchText,
         setSearchText,
         modalOpen,
@@ -300,6 +194,15 @@ export default function AdminOrderContextProvider({ children }) {
         setFilterList,
         setModalOpen,
         defaultFilterList,
+        allOrderIds,
+        setAllOrdersId,
+        triggerFetchData,
+        setTriggerFetchData,
+        searchData,
+        setSearchData,
+        searchDataLoading,
+        setSearchDataLoading,
+        fetchSearchData,
     };
 
     return (

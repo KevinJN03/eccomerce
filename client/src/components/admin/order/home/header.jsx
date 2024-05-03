@@ -10,30 +10,20 @@ import BubbleButton from '../../../buttons/bubbleButton.jsx';
 import { useNavigate } from 'react-router-dom';
 function Header({}) {
     const {
-        setSearchResult,
-        setSearchingOrder,
-        setSearchTerm,
         searchText,
         setSearchText,
+        fetchSearchData,
+        setSearchDataLoading
     } = useAdminOrderContext();
 
     const { logoutUser } = UserLogout();
     const navigate = useNavigate();
 
     const handleClick = async () => {
-        try {
-            document.activeElement.blur();
-            setSearchResult(() => []);
-            setSearchingOrder(true);
-            const { data } = await adminAxios.post(`searchOrder`, {
-                searchText,
-            });
-            setSearchTerm(() => searchText);
-            setSearchResult(() => data.searchResult);
-        } catch (error) {
-            console.error('error while getting search result', error);
-            logoutUser({ error });
-        }
+        document.activeElement.blur();
+        setSearchDataLoading(() => true);
+
+        fetchSearchData();
     };
 
     return (

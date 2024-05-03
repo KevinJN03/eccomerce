@@ -145,7 +145,7 @@ function OrderInformation({ order, feature, checks }) {
           flexDirection: 'column',
         }}
       >
-        {!isEmpty(checks.note?.text) && (
+        {!_.isEmpty(checks.note?.text) && (
           <View style={{ marginBottom: '8pt' }}>
             <Text style={{ fontWeight: 'semibold' }}>A note from the shop</Text>
             <Text style={{ width: '100%', whiteSpace: 'normal' }}>

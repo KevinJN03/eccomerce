@@ -397,7 +397,7 @@ function AddToPackage({}) {
                     </section>
                     <footer
                         id="stickyElementFooter"
-                        className=" !sticky !bottom-0 left-0 z-[1] mt-60 flex w-full flex-1 flex-row justify-between bg-white pb-6 "
+                        className=" !sticky !bottom-0 left-0 z-[1] mt-60 flex w-full flex-1 flex-row justify-between bg-white  pt-3 pb-6 "
                     >
                         <div className="left flex flex-row gap-4">
                             <BubbleButton
@@ -414,7 +414,7 @@ function AddToPackage({}) {
                                         })
                                     );
                                 }}
-                                className="flex cursor-pointer flex-row flex-nowrap items-center gap-2"
+                                className="flex cursor-pointer flex-row flex-nowrap items-center gap-2 "
                             >
                                 <input
                                     readOnly

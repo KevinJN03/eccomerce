@@ -247,14 +247,7 @@ export const getOrderDetails = [
 export const getAdminOrders = [
   check('status').escape().trim().toLowerCase(),
   asyncHandler(async (req, res, next) => {
-    //   const orders = await Order.find(null, null, {
-    //     sort: { createdAt: -1, _id: 1 },
-    //     populate: {
-    //       path: 'items.product',
-    // select: 'title _id images'
-    //     },
-    //   });
-    const { status, filter } = req.body;
+    const { filter, limit, page } = req.body;
 
     const matchArray = [];
     const aggregatePipeline = _.cloneDeep(orderAggregatePipeline);
@@ -273,13 +266,6 @@ export const getAdminOrders = [
     } else {
       matchArray.push({ status: { $in: [filter?.completed_status] } });
     }
-    // if (status === 'new') {
-    //   matchArray.push({
-    //     status: { $in: ['received'] },
-    //   });
-    // } else {
-    //   matchArray.push({ status: { $nin: ['received'] } });
-    // }
 
     if (filter?.mark_as_gift) {
       matchArray.push({ mark_as_gift: { $eq: true } });
@@ -294,9 +280,34 @@ export const getAdminOrders = [
     if (filter?.sort_by == 'destination') {
       sortObj['shipping_address.address.country'] = 1;
     }
-    console.log({ sortObj });
     aggregatePipeline.push({ $sort: sortObj });
-
+    console.log({ filter });
+    if (filter?.by_date == 'overdue') {
+      matchArray.push({ ship_date: { $lt: dayjs().startOf('day').toDate() } });
+    } else if (filter?.by_date == 'today') {
+      matchArray.push({
+        ship_date: {
+          $gt: dayjs().startOf('day').toDate(),
+          $lt: dayjs().endOf('day').toDate(),
+        },
+      });
+    } else if (filter?.by_date == 'tomorrow') {
+      matchArray.push({
+        ship_date: {
+          $gt: dayjs().add(1, 'day').startOf('day').toDate(),
+          $lt: dayjs().add(1, 'day').endOf('day').toDate(),
+        },
+      });
+    } else if (filter?.by_date == 'within_a_week') {
+      matchArray.push({
+        ship_date: {
+          $gt: dayjs().startOf('day').toDate(),
+          $lt: dayjs().add(1, 'week').endOf('day').toDate(),
+        },
+      });
+    }
+    const skip_limit_stage = [{ $skip: (page - 1) * limit }, { $limit: limit }];
+    aggregatePipeline.unshift(...skip_limit_stage);
     if (matchArray.length >= 1) {
       aggregatePipeline.unshift({
         $match: {
@@ -304,53 +315,74 @@ export const getAdminOrders = [
         },
       });
     }
-    console.log(matchArray);
 
-    aggregatePipeline.unshift({
+    const shipDateStage = {
       $addFields: {
         ship_date: {
-          $map: {
-            input: '$itemsByProfile',
-            as: 'profile',
-            in: {
-              $dateAdd: {
-                startDate: '$createdAt',
-                unit: {
-                  $substrBytes: [
-                    '$$profile.shippingInfo.processing_time.type',
-                    0,
-                    {
-                      $subtract: [
-                        {
-                          $strLenCP:
-                            '$$profile.shippingInfo.processing_time.type',
-                        },
-                        1,
-                      ],
-                    },
-                  ],
+          $max: {
+            $map: {
+              input: '$itemsByProfile',
+              as: 'profile',
+              in: {
+                $dateAdd: {
+                  startDate: '$createdAt',
+                  unit: {
+                    $substrBytes: [
+                      '$$profile.shippingInfo.processing_time.type',
+                      0,
+                      {
+                        $subtract: [
+                          {
+                            $strLenCP:
+                              '$$profile.shippingInfo.processing_time.type',
+                          },
+                          1,
+                        ],
+                      },
+                    ],
+                  },
+                  amount: '$$profile.shippingInfo.processing_time.end',
                 },
-                amount: '$$profile.shippingInfo.processing_time.end',
               },
             },
           },
         },
       },
-    });
+    };
 
-    const ordersByDate = await Order.aggregate(aggregatePipeline);
-    const totalCount = await Order.aggregate([
-      {
-        $match: {
-          $and: matchArray,
+    aggregatePipeline.unshift(shipDateStage);
+
+    const [ordersByDate, totalCount, PageOrderCount] = await Promise.all([
+      Order.aggregate(aggregatePipeline),
+      Order.aggregate([
+        shipDateStage,
+        {
+          $match: {
+            $and: matchArray,
+          },
         },
-      },
-      { $count: 'totalCount' },
+        // ...skip_limit_stage,
+        { $count: 'totalCount' },
+      ]),
+      Order.aggregate([
+        shipDateStage,
+        {
+          $match: {
+            $and: matchArray,
+          },
+        },
+        ...skip_limit_stage,
+        { $count: 'pageCount' },
+      ]),
     ]);
+
     res.status(200).send({
       ordersByDate,
       success: true,
       ...totalCount[0],
+      ...PageOrderCount[0],
+      
+      maxPage: Math.ceil(_.get(totalCount, '0.totalCount') / limit),
     });
   }),
 ];
