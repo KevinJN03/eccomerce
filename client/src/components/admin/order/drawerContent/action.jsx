@@ -11,7 +11,8 @@ import { useRef } from 'react';
 function Actions({ setShowActions, showActions, children, orderId, order }) {
     const { setModalCheck, setModalContent, setShowAlert } = useContent();
     const { logoutUser } = UserLogout();
-    const { setOrderInfo, setModalOpen, setTriggerFetchData } = useAdminOrderContext();
+    const { setOrderInfo, setModalOpen, setTriggerFetchData, handleMarkGift } =
+        useAdminOrderContext();
     const abortControllerRef = useRef(new AbortController());
     const printOrder = () => {
         setModalContent({
@@ -20,43 +21,6 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
         });
         setModalCheck(true);
         setShowActions(false);
-    };
-
-    const handleMarkGift = async () => {
-        try {
-            abortControllerRef.current?.abort();
-            abortControllerRef.current = new AbortController();
-            const { data } = await adminAxios.get(
-                `/order/${orderId}/mark_as_gift`,
-                { signal: abortControllerRef.current.signal }
-            );
-            setTriggerFetchData((prevState) => !prevState)
-
-            setOrderInfo(() => data.order);
-
-
-            setShowAlert(() => ({
-                on: true,
-                size: 'large',
-                bg: 'bg-green-100',
-                icon: 'check',
-                msg: 'Gift status updated successfully',
-                text: 'text-black',
-            }));
-        } catch (error) {
-            logoutUser({ error });
-            if (error.response.status != 401) {
-                setShowAlert(() => ({
-                    on: true,
-                    size: 'small',
-                    bg: 'bg-red-900',
-                    icon: 'sadFace',
-                    msg: 'Failed to get gift status. Please try again later.',
-                }));
-            }
-        } finally {
-            setShowActions(() => false);
-        }
     };
 
     const addToPackage = async () => {
@@ -112,14 +76,20 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
                         handleClick: addToPackage,
                     },
                     {
-                        text: _.get(order, 'mark_as_gift') ? 'Unmark as gift': 'Mark as gift',
+                        text: _.get(order, 'mark_as_gift')
+                            ? 'Unmark as gift'
+                            : 'Mark as gift',
                         icon: (
                             <RedeemSharp
                                 fontSize="small"
                                 className="disable-drawer"
                             />
                         ),
-                        handleClick: handleMarkGift,
+                        handleClick: () =>
+                            handleMarkGift({
+                                orderId: [orderId],
+                                setShowActions,
+                            }),
                     },
                 ].map(({ text, icon, handleClick }, idx) => {
                     return (

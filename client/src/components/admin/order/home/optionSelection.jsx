@@ -1,7 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
-function OptionSelection({ options, status, setStatus, className }) {
+function OptionSelection({
+    options,
+    status,
+    setStatus,
+    className,
+    
+}) {
     const [hover, setHover] = useState('');
 
     const variant = ({ currentStatus }) => {
@@ -49,9 +55,9 @@ function OptionSelection({ options, status, setStatus, className }) {
                         >
                             <p className="flex flex-row flex-nowrap items-center gap-1 pb-3 text-base">
                                 {option.text}
-                                {option?.amount && (
-                                    <span className="text-sm pl-1">
-                                { option.amount}
+                                {option?.showAmount && (
+                                    <span className="pl-1 text-sm">
+                                        {option?.amount || 0}
                                     </span>
                                 )}
                             </p>

@@ -313,14 +313,33 @@ export const shipOrder = [
 
 export const mark_as_gift = [
   asyncHandler(async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findByIdAndUpdate(id, [
-      {
-        $set: { mark_as_gift: { $not: '$mark_as_gift' } },
-      },
-    ]);
+    const { id } = req.body;
+
+    if (id.length > 1) {
+      await Order.updateMany({ _id: id }, [
+        {
+          $set: { mark_as_gift: req.body.mark_as_gift },
+        },
+      ]);
+    } else {
+      await Order.findByIdAndUpdate(id[0], [
+        {
+          $set: { mark_as_gift: { $not: '$mark_as_gift' } },
+        },
+      ]);
+    }
+
     // res.send(order);
-    res.redirect(`/api/admin/order/${id}`);
+
+    if (id.length == 1) {
+      return res.redirect(`/api/admin/order/${id}`);
+    } else {
+      res.send({
+        success: true,
+        msg: `Orders status updated to ${req.body?.mark_as_gift}`,
+        updateOrderInfo: false
+      });
+    }
   }),
 ];
 // ----------------------------------------------------
@@ -585,11 +604,28 @@ export const testPdf = asyncHandler(async (req, res, next) => {
 // search orders
 
 export const searchOrder = [
-  check('searchText').trim('#').trim().escape(),
+  check('searchText', 'Enter a value to search for.')
+    .trim('#')
+    .trim()
+    .escape()
+    .notEmpty(),
   asyncHandler(async (req, res, next) => {
-    const { searchText } = req.body;
+    const { searchText, limit, page } = req.body;
     let objectId = null;
 
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.send({
+        searchResult: [],
+        searchText,
+        totalCount: 0,
+        // pageCount,
+        page: 1,
+        maxPage: 1,
+        errors: errors.mapped(),
+      });
+    }
     const should = [
       {
         autocomplete: {
@@ -614,72 +650,87 @@ export const searchOrder = [
           path: 'customer',
         },
       });
-    } catch (error) {
-      objectId = null;
-      console.error('parse string to objectId failed: ', error?.message);
-    }
+    } catch (error) {}
+    const searchStage = {
+      $search: {
+        index: 'orders_search_index',
+        compound: {
+          should,
+        },
+      },
+    };
+    const skip_limit_stage = [{ $skip: (page - 1) * limit }, { $limit: limit }];
 
-    const searchResult = await Order.aggregate([
-      {
-        $search: {
-          index: 'orders_search_index',
-          compound: {
-            should,
+    const [totalCountResult, searchResult] = await Promise.all([
+      Order.aggregate([searchStage, { $count: 'totalCount' }]),
+      // Order.aggregate([
+      //   searchStage,
+      //   ...skip_limit_stage,
+      //   { $count: 'pageCount' },
+      // ]),
+      Order.aggregate([
+        searchStage,
+        ...skip_limit_stage,
+        { $unwind: '$items' },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'items.product',
+            foreignField: '_id',
+            as: 'productLookup',
           },
         },
-      },
-
-      { $unwind: '$items' },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'items.product',
-          foreignField: '_id',
-          as: 'productLookup',
-        },
-      },
-      {
-        $project: {
-          productLookup: {
-            variations: 0,
-            reviews: 0,
-            detail: 0,
-            category: 0,
-            gender: 0,
-            price: 0,
-            delivery: 0,
-            stock: 0,
+        {
+          $project: {
+            productLookup: {
+              variations: 0,
+              reviews: 0,
+              detail: 0,
+              category: 0,
+              gender: 0,
+              price: 0,
+              delivery: 0,
+              stock: 0,
+            },
           },
         },
-      },
-      {
-        $addFields: {
-          'items.product': { $arrayElemAt: ['$productLookup', 0] },
+        {
+          $addFields: {
+            'items.product': { $arrayElemAt: ['$productLookup', 0] },
+          },
         },
-      },
-      {
-        $unset: 'productLookup',
-      },
-      {
-        $group: {
-          _id: '$_id',
-          itemsArray: { $push: '$items' },
-          doc: { $first: '$$ROOT' },
+        {
+          $unset: 'productLookup',
         },
-      },
-      {
-        $replaceRoot: {
-          newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+        {
+          $group: {
+            _id: '$_id',
+            itemsArray: { $push: '$items' },
+            doc: { $first: '$$ROOT' },
+          },
         },
-      },
-      {
-        $sort: { _id: 1 },
-      },
-      // {
-      //   $limit: 5,
-      // },
+        {
+          $replaceRoot: {
+            newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+        // {
+        //   $limit: 5,
+        // },
+      ]),
     ]);
-    res.status(200).send({ searchResult, searchText });
+    const totalCount = _.get(totalCountResult, '0.totalCount') || 0;
+    res.status(200).send({
+      searchResult,
+      searchText,
+      totalCount,
+      // pageCount,
+      page,
+      maxPage: Math.ceil(totalCount / limit),
+    });
   }),
 ];
 

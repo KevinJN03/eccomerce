@@ -23,8 +23,14 @@ import Actions from '../drawerContent/action';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
-    const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
-        useAdminOrderContext();
+    const {
+        setOpenDrawer,
+        setOrderInfo,
+        selectionSet,
+        setSelectionSet,
+        markGiftSelection,
+        setMarkGiftSelection,
+    } = useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
 
@@ -66,15 +72,28 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const isOrderInSet = selectionSet?.has(order?._id);
 
     const toggleSelection = () => {
-        setSelectionSet((prevSet) => {
-            const newSet = new Set(prevSet);
-            if (prevSet?.has(order?._id)) {
-                newSet.delete(order._id);
-            } else {
-                newSet.add(order?._id);
-            }
-            return newSet;
-        });
+        const newSelectionSet = new Set(selectionSet);
+        const newMarkGift = _.cloneDeep(markGiftSelection);
+        if (newSelectionSet?.has(order?._id)) {
+            newSelectionSet.delete(order._id);
+            newMarkGift[order?.mark_as_gift || false] -= 1;
+        } else {
+            newSelectionSet.add(order?._id);
+            newMarkGift[order?.mark_as_gift || false] += 1;
+        }
+
+        setSelectionSet(() => newSelectionSet);
+        setMarkGiftSelection(() => newMarkGift);
+
+        // setSelectionSet((prevSet) => {
+        //     const newSet = new Set(prevSet);
+        //     if (prevSet?.has(order?._id)) {
+        //         newSet.delete(order._id);
+        //     } else {
+        //         newSet.add(order?._id);
+        //     }
+        //     return newSet;
+        // });
     };
 
     const handleClick = async (e) => {

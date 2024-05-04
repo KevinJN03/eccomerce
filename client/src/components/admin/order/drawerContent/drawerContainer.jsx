@@ -86,14 +86,14 @@ function DrawerContainer() {
     // };
     return (
         <div className=" relative flex w-full flex-row gap-1 ">
-            <div className="relative h-fit w-12 bg-transparent">
+            {/* <div className="relative h-fit w-12 bg-transparent">
                 <div
                     onClick={() => setOpenDrawer(false)}
                     className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
                 >
                     <CloseSharp className="!fill-primary/80" />
                 </div>
-            </div>
+            </div> */}
             <div className="min-h-screen w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">

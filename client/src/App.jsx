@@ -13,10 +13,9 @@ dayjs.extend(objectSupport);
 dayjs.extend(utc);
 
 overwrite([
-    {code: 'GB', 
-    name: 'United Kingdom'
-}
-])
+    { code: 'GB', name: 'United Kingdom' },
+    { code: 'US', name: 'United States' },
+]);
 function App() {
     return (
         <div id="App">

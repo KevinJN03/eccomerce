@@ -13,17 +13,31 @@ function Header({}) {
         searchText,
         setSearchText,
         fetchSearchData,
-        setSearchDataLoading
+        setSearchDataLoading,
+        setCurrentPage,
+        setLoading,
+        setTriggerFetchData,
+        setSearchingOrder,
     } = useAdminOrderContext();
 
     const { logoutUser } = UserLogout();
     const navigate = useNavigate();
 
     const handleClick = async () => {
-        document.activeElement.blur();
-        setSearchDataLoading(() => true);
+        console.log('clicked');
+        if (searchText) {
+            setSearchDataLoading(() => true);
+            // setCurrentPage(() => 1);
+            fetchSearchData(1);
+        } else {
+            setSearchDataLoading(() => false);
+            setLoading(() => true);
+            setCurrentPage(() => 1);
+            setSearchingOrder(() => false);
+            setTriggerFetchData((prevState) => !prevState);
+        }
 
-        fetchSearchData();
+        document.activeElement.blur();
     };
 
     return (

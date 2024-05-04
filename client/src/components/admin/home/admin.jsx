@@ -211,7 +211,7 @@ function Admin({}) {
 
                         <SideBar />
                         <motion.div
-                            className={`homeContainer`}
+                            className={`homeContainer min-h-screen`}
                             initial={false}
                             animate={{
                                 marginLeft: open ? '15rem' : '3.875rem',

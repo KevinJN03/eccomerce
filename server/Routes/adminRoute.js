@@ -92,7 +92,7 @@ router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
 router.put('/order/:id/shipped', shipOrder);
 
-router.get('/order/:id/mark_as_gift', mark_as_gift);
+router.post('/order/mark_as_gift', mark_as_gift);
 
 router.post('/orders/all', getAdminOrders);
 router.post('/pdf/export', exportPdf);

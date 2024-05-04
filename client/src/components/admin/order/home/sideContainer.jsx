@@ -59,12 +59,9 @@ function Label({ option }) {
 }
 function SideContainer({}) {
     const [show, setShow] = useState(false);
-    const { setFilterList, filterList, status, defaultFilterList } =
+    const { setFilterList, filterList, status, defaultFilterList , } =
         useAdminOrderContext();
-    const [orderDetail, setOrderDetail] = useState({
-        'Has note from buyer': null,
-        'Mark as gift': null,
-    });
+
     const optionsArray = [
         'Dispatch by date',
         'Destination',
@@ -82,17 +79,13 @@ function SideContainer({}) {
     };
 
     const reset = () => {
-        setFilterList((prevState) => ({
-            ...prevState,
-            [status]: { ...defaultFilterList?.[status] },
-        }));
-        setOrderDetail(() => ({
-            'Has note from buyer': null,
-            'Mark as gift': null,
-        }));
-        // setOption(() => 'Dispatch by date');
+        if (!_.isEqual(filterList[status], defaultFilterList[status])) {
+            setFilterList((prevState) => ({
+                ...prevState,
+                [status]: { ...defaultFilterList?.[status] },
+            }));
+        }
     };
-
     return (
         <section className="side-container relative mt-4 flex flex-1 flex-col justify-start gap-5">
             <div className=" absolute top-0 z-[1] h-fit rounded-full bg-white">
@@ -255,21 +248,13 @@ function SideContainer({}) {
                     );
                 })}
             </div>
-
             <ThemeBtn
                 bg={'bg-light-grey'}
                 className={'px-3 py-2'}
                 handleClick={reset}
             >
-                <p className="text-sm font-medium">Reset filters</p>
-            </ThemeBtn>
-            {/* <button
-                onClick={reset}
-                type="button"
-                className="w-fit rounded-full bg-light-grey px-4 py-2 text-s font-semibold text-gray-700 transition-all hover:scale-x-105 hover:bg-dark-gray/50 hover:!shadow-my-shadow "
-            >
-                Reset filters
-            </button> */}
+                <p className="text-s px-1 font-medium">Reset filters</p>
+            </ThemeBtn>  
         </section>
     );
 }

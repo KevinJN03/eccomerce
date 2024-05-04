@@ -3,6 +3,7 @@ import { useAdminOrderContext } from '../../../../context/adminOrder';
 import OrderItem from './orderItem';
 import _ from 'lodash';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import { Pagination } from '@mui/material';
 
 function SearchOrder({}) {
     const {
@@ -13,12 +14,17 @@ function SearchOrder({}) {
         searchDataLoading,
         setTriggerFetchData,
         setLoading,
+        currentPage,
+        setCurrentPage,
+        setSearchDataLoading,
+        fetchSearchData
     } = useAdminOrderContext();
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     const clearSearch = () => {
+        setCurrentPage(() => 1);
         setSearchingOrder(() => false);
         setSearchText(() => '');
         setSearchData(() => ({}));
@@ -26,6 +32,8 @@ function SearchOrder({}) {
         setLoading(() => true);
         setTriggerFetchData((prevState) => !prevState);
     };
+
+    const maxPage = _.get(searchData, 'maxPage');
 
     return (
         <section className="search-order flex w-full flex-row flex-nowrap gap-7 p-5">
@@ -38,10 +46,9 @@ function SearchOrder({}) {
                     <>
                         <div className="banner flex w-full items-center justify-between rounded border-[1px] bg-green-100 p-4">
                             <p className="text-sm font-semibold">
-                                {_.get(searchData, 'searchResult.length')}{' '}
-                                orders matching "
-                                {_.get(searchData, 'searchText')}" across all
-                                your progress steps
+                                {_.get(searchData, 'totalCount')} orders
+                                matching "{_.get(searchData, 'searchText')}"
+                                across all your progress steps
                             </p>
                             <p
                                 className="cursor-pointer text-xxs text-black/95 underline underline-offset-1 hover:text-gray-700/70 "
@@ -71,6 +78,22 @@ function SearchOrder({}) {
                                 }
                             )}
                         </div>
+
+                        {maxPage > 1 && (
+                            <Pagination
+                                page={currentPage}
+                                onChange={(e, value) => {
+                                    
+                                    setSearchDataLoading(() => true);
+                                    fetchSearchData(value)
+                                    // setCurrentPage(() => value);
+                                }}
+                                count={maxPage}
+                                variant="outlined"
+                                shape="rounded"
+                                className="mb-8"
+                            />
+                        )}
                     </>
                 )}
             </section>

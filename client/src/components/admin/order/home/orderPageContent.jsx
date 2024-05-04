@@ -10,7 +10,7 @@ import SideContainer from './sideContainer';
 import AdminOrderContextProvider, {
     useAdminOrderContext,
 } from '../../../../context/adminOrder';
-import { Box, Drawer, Modal } from '@mui/material';
+import { Box, Drawer, Modal, Pagination } from '@mui/material';
 import DrawerContainer from '../drawerContent/drawerContainer';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
 import { adminOrderModalReducer } from '../../../../hooks/adminOrderModalReducer';
@@ -19,7 +19,8 @@ import '../../home/admin.scss';
 import SearchOrder from './searchOrder';
 import OptionSelection from './optionSelection';
 import AddToPackage from '../modalView/addToPackage/addToPackage';
-
+import _ from 'lodash';
+import { CloseSharp } from '@mui/icons-material';
 
 function OrderPageContent({}) {
     const {
@@ -27,25 +28,29 @@ function OrderPageContent({}) {
         isSearchingOrder,
         openDrawer,
         setOpenDrawer,
-        pageCount,
+        totalCount,
         status,
         setStatus,
         modalOpen,
         setModalOpen,
+        currentPage,
+        setCurrentPage,
         ordersData,
+        searchData,
+        fetchData,
+        setLoading,
     } = useAdminOrderContext();
-
-
+    const maxPage = _.get(ordersData, 'maxPage');
 
     return (
-        <section className="order-page ">
-            <section className="w-full">
+        <section className="order-page h-full min-h-screen ">
+            <section className="w-full pb-8 ">
                 <Header />
                 {isSearchingOrder ? (
                     <SearchOrder />
                 ) : (
-                    <section className="flex flex-row gap-7">
-                        <section className="left flex-[4] px-5">
+                    <section className="flex h-full min-h-screen flex-row gap-7">
+                        <section className="left flex-[4] pl-5">
                             <SubHeader />
                             <OptionSelection
                                 status={status}
@@ -54,7 +59,8 @@ function OrderPageContent({}) {
                                     {
                                         text: 'New',
                                         select: 'new',
-                                        amount: pageCount,
+                                        amount: totalCount,
+                                        showAmount: true,
                                     },
                                     {
                                         text: 'Complete',
@@ -63,19 +69,28 @@ function OrderPageContent({}) {
                                 ]}
                             />
                             {loading ? (
-                                <section className="mt-14 flex w-full flex-1 justify-center">
+                                <section className="mt-14 flex w-full justify-center">
                                     <GLoader />
                                 </section>
                             ) : (
                                 <>
                                     <PageOptions />
-
                                     <Containers
-                                        ordersByDate={
-                                            ordersData?.ordersByDate
-                                         
-                                        }
+                                        ordersByDate={ordersData?.ordersByDate}
                                     />
+                                    {maxPage > 1 && (
+                                        <Pagination
+                                            page={currentPage}
+                                            onChange={(e, value) => {
+                                                // setCurrentPage(() => value);
+                                                setLoading(() => true);
+                                                fetchData(value);
+                                            }}
+                                            count={maxPage}
+                                            variant="outlined"
+                                            shape="rounded"
+                                        />
+                                    )}
                                 </>
                             )}
                         </section>
@@ -99,7 +114,17 @@ function OrderPageContent({}) {
                     },
                 }}
             >
-                <DrawerContainer />
+                <section className="relative">
+                    <div className="absolute left-[-4rem] top-0 z-50 h-20 w-12 border-4 border-red-500 bg-transparent">
+                        <div
+                            onClick={() => setOpenDrawer(() => false)}
+                            className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
+                        >
+                            <CloseSharp className="!fill-primary/80" />
+                        </div>
+                    </div>
+                    <DrawerContainer />
+                </section>
             </Drawer>
             <Modal
                 open={modalOpen}
@@ -108,6 +133,9 @@ function OrderPageContent({}) {
                     overflowY: 'auto',
                 }}
             >
+                {/* <div className=''>
+                    X
+                </div> */}
                 <Box
                     sx={{
                         position: 'absolute',

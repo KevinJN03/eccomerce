@@ -6,7 +6,7 @@ import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import randomstring from 'randomstring';
 import 'dotenv/config';
 import Stripe from 'stripe';
-import _ from 'lodash';
+import _, { sortBy } from 'lodash';
 import generateOrderNumber from '../utils/generateOrderNumber.js';
 import Order from '../Models/order.js';
 import DeliveryProfile from '../Models/deliveryProfile.js';
@@ -246,144 +246,203 @@ export const getOrderDetails = [
 
 export const getAdminOrders = [
   check('status').escape().trim().toLowerCase(),
+  check('page').escape().trim().toInt(),
+  check('limit').escape().trim().toInt(),
+
   asyncHandler(async (req, res, next) => {
-    const { filter, limit, page } = req.body;
+    const { filter, limit } = req.body;
+    const recursiveGetData = async (page, isMaxPage) => {
+      const matchArray = [];
+      const skip_limit_stage = [
+        { $skip: (page - 1) * limit },
+        { $limit: limit },
+      ];
 
-    const matchArray = [];
-    const aggregatePipeline = _.cloneDeep(orderAggregatePipeline);
-    if (filter?.destination == 'everywhere_else') {
-      matchArray.push({
-        'shipping_address.address.country': { $nin: ['GB', 'US'] },
-      });
-    } else if (filter?.destination != 'all') {
-      matchArray.push({
-        'shipping_address.address.country': { $eq: filter.destination },
-      });
-    }
+      const aggregatePipeline = _.cloneDeep(orderAggregatePipeline);
+      if (filter?.destination == 'everywhere_else') {
+        matchArray.push({
+          'shipping_address.address.country': { $nin: ['GB', 'US'] },
+        });
+      } else if (filter?.destination != 'all') {
+        matchArray.push({
+          'shipping_address.address.country': { $eq: filter.destination },
+        });
+      }
 
-    if (filter?.completed_status == 'all') {
-      matchArray.push({ status: { $nin: ['received'] } });
-    } else {
-      matchArray.push({ status: { $in: [filter?.completed_status] } });
-    }
+      if (filter?.completed_status == 'all') {
+        matchArray.push({ status: { $nin: ['received'] } });
+      } else {
+        matchArray.push({ status: { $in: [filter?.completed_status] } });
+      }
 
-    if (filter?.mark_as_gift) {
-      matchArray.push({ mark_as_gift: { $eq: true } });
-    }
-    const sortObj = { _id: -1 };
+      if (filter?.mark_as_gift) {
+        matchArray.push({ mark_as_gift: { $eq: true } });
+      }
 
-    if (filter?.sort_by == 'oldest') {
-      sortObj._id = 1;
-      aggregatePipeline.push({ $sort: { _id: 1 } });
-    }
+      aggregatePipeline.unshift(...skip_limit_stage);
 
-    if (filter?.sort_by == 'destination') {
-      sortObj['shipping_address.address.country'] = 1;
-    }
-    aggregatePipeline.push({ $sort: sortObj });
-    console.log({ filter });
-    if (filter?.by_date == 'overdue') {
-      matchArray.push({ ship_date: { $lt: dayjs().startOf('day').toDate() } });
-    } else if (filter?.by_date == 'today') {
-      matchArray.push({
-        ship_date: {
-          $gt: dayjs().startOf('day').toDate(),
-          $lt: dayjs().endOf('day').toDate(),
+      // const sortObj = { _id: 1 };
+      const sortObj = {};
+
+      const sortOrderGroup = { _id: -1 };
+      const sortOrdersObj = {};
+      // Planning on sorting by the sortBy field
+
+      if (filter?.sort_by == 'dispatch by date') {
+        sortObj.ship_date = -1;
+        sortOrdersObj.ship_date = -1;
+      } else if (filter?.sort_by == 'newest') {
+        sortObj.createdAt = -1;
+        sortOrdersObj.createdAt = -1;
+      } else if (filter?.sort_by == 'oldest') {
+        sortObj.createdAt = 1;
+        sortOrdersObj.createdAt = 1;
+        // sortObj.ship_date = 1;
+        // aggregatePipeline.unshift({ $sort: sortObj });
+
+        sortOrderGroup._id = 1;
+      } else if (filter?.sort_by == 'destination') {
+        sortObj['shipping_address.address.country'] = 1;
+      }
+
+      aggregatePipeline.unshift({ $sort: { ...sortObj, _id: 1 } });
+      aggregatePipeline.push({ $sort: sortOrderGroup });
+
+      aggregatePipeline.push({
+        $addFields: {
+          orders: {
+            $sortArray: {
+              input: '$orders',
+              sortBy: { ...sortOrdersObj, _id: 1 },
+            },
+          },
         },
       });
-    } else if (filter?.by_date == 'tomorrow') {
-      matchArray.push({
-        ship_date: {
-          $gt: dayjs().add(1, 'day').startOf('day').toDate(),
-          $lt: dayjs().add(1, 'day').endOf('day').toDate(),
-        },
-      });
-    } else if (filter?.by_date == 'within_a_week') {
-      matchArray.push({
-        ship_date: {
-          $gt: dayjs().startOf('day').toDate(),
-          $lt: dayjs().add(1, 'week').endOf('day').toDate(),
-        },
-      });
-    }
-    const skip_limit_stage = [{ $skip: (page - 1) * limit }, { $limit: limit }];
-    aggregatePipeline.unshift(...skip_limit_stage);
-    if (matchArray.length >= 1) {
-      aggregatePipeline.unshift({
-        $match: {
-          $and: matchArray,
-        },
-      });
-    }
+      if (filter?.by_date == 'overdue') {
+        matchArray.unshift({
+          ship_date: { $lt: dayjs().startOf('day').toDate() },
+        });
+      } else if (filter?.by_date == 'today') {
+        matchArray.unshift({
+          ship_date: {
+            $gt: dayjs().startOf('day').toDate(),
+            $lt: dayjs().endOf('day').toDate(),
+          },
+        });
+      } else if (filter?.by_date == 'tomorrow') {
+        matchArray.unshift({
+          ship_date: {
+            $gt: dayjs().add(1, 'day').startOf('day').toDate(),
+            $lt: dayjs().add(1, 'day').endOf('day').toDate(),
+          },
+        });
+      } else if (filter?.by_date == 'within_a_week') {
+        matchArray.unshift({
+          ship_date: {
+            $gt: dayjs().startOf('day').toDate(),
+            $lt: dayjs().add(1, 'week').endOf('day').toDate(),
+          },
+        });
+      }
 
-    const shipDateStage = {
-      $addFields: {
-        ship_date: {
-          $max: {
-            $map: {
-              input: '$itemsByProfile',
-              as: 'profile',
-              in: {
-                $dateAdd: {
-                  startDate: '$createdAt',
-                  unit: {
-                    $substrBytes: [
-                      '$$profile.shippingInfo.processing_time.type',
-                      0,
-                      {
-                        $subtract: [
-                          {
-                            $strLenCP:
-                              '$$profile.shippingInfo.processing_time.type',
-                          },
-                          1,
-                        ],
-                      },
-                    ],
+      if (matchArray.length >= 1) {
+        aggregatePipeline.unshift({
+          $match: {
+            $and: matchArray,
+          },
+        });
+      }
+
+      const shipDateStage = {
+        $addFields: {
+          ship_date: {
+            $max: {
+              $map: {
+                input: '$itemsByProfile',
+                as: 'profile',
+                in: {
+                  $dateAdd: {
+                    startDate: '$createdAt',
+                    unit: {
+                      $substrBytes: [
+                        '$$profile.shippingInfo.processing_time.type',
+                        0,
+                        {
+                          $subtract: [
+                            {
+                              $strLenCP:
+                                '$$profile.shippingInfo.processing_time.type',
+                            },
+                            1,
+                          ],
+                        },
+                      ],
+                    },
+                    amount: '$$profile.shippingInfo.processing_time.end',
                   },
-                  amount: '$$profile.shippingInfo.processing_time.end',
                 },
               },
             },
           },
         },
-      },
+      };
+
+      aggregatePipeline.unshift(shipDateStage);
+      console.log(
+        {
+          sortOrdersObj,
+          sortObj,
+          sortOrderGroup,
+        },
+        aggregatePipeline,
+      );
+
+      const [ordersByDate, totalCountResult, pageCountResult] =
+        await Promise.all([
+          Order.aggregate(aggregatePipeline),
+          Order.aggregate([
+            shipDateStage,
+            {
+              $match: {
+                $and: matchArray,
+              },
+            },
+            // ...skip_limit_stage,
+            { $count: 'totalCount' },
+          ]),
+          Order.aggregate([
+            shipDateStage,
+            {
+              $match: {
+                $and: matchArray,
+              },
+            },
+            ...skip_limit_stage,
+            { $count: 'pageCount' },
+          ]),
+        ]);
+
+      const totalCount = _.get(totalCountResult, '0.totalCount') || 0;
+      const pageCount = _.get(pageCountResult, '0.pageCount') || 0;
+      const maxPage = Math.ceil(totalCount / limit);
+      console.log(`getting data for page ${page}`, maxPage);
+
+      if (ordersByDate.length > 0 || isMaxPage) {
+        return res.status(200).send({
+          ordersByDate,
+          success: true,
+          totalCount,
+          pageCount,
+          page,
+
+          maxPage,
+        });
+      } else {
+        recursiveGetData(maxPage || 1, true);
+      }
     };
 
-    aggregatePipeline.unshift(shipDateStage);
-
-    const [ordersByDate, totalCount, PageOrderCount] = await Promise.all([
-      Order.aggregate(aggregatePipeline),
-      Order.aggregate([
-        shipDateStage,
-        {
-          $match: {
-            $and: matchArray,
-          },
-        },
-        // ...skip_limit_stage,
-        { $count: 'totalCount' },
-      ]),
-      Order.aggregate([
-        shipDateStage,
-        {
-          $match: {
-            $and: matchArray,
-          },
-        },
-        ...skip_limit_stage,
-        { $count: 'pageCount' },
-      ]),
-    ]);
-
-    res.status(200).send({
-      ordersByDate,
-      success: true,
-      ...totalCount[0],
-      ...PageOrderCount[0],
-      
-      maxPage: Math.ceil(_.get(totalCount, '0.totalCount') / limit),
-    });
+    return recursiveGetData(req.body?.page, false);
   }),
 ];
 

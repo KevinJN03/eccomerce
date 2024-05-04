@@ -22,8 +22,6 @@ const orderAggregatePipeline = [
     },
   },
 
-
-
   {
     $addFields: {
       'items.product': { $arrayElemAt: ['$productLookup', 0] },
@@ -39,9 +37,9 @@ const orderAggregatePipeline = [
       detail: { $first: '$$ROOT' },
     },
   },
-  {
-    $sort: { _id: 1 },
-  },
+  // {
+  //   $sort: { _id: 1 },
+  // },
   {
     $replaceRoot: {
       newRoot: { $mergeObjects: ['$detail', { items: '$itemsArray' }] },
@@ -52,7 +50,7 @@ const orderAggregatePipeline = [
     $group: {
       _id: {
         $dateToString: {
-           format: '%Y-%m-%d',
+          format: '%Y-%m-%d',
           // date: { $toDate: '$newDate' },
           date: '$createdAt',
         },
@@ -64,8 +62,6 @@ const orderAggregatePipeline = [
       },
     },
   },
-
-  // { $sort: { _id: 1 } },
 ];
 
 export default orderAggregatePipeline;
