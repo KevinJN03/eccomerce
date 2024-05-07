@@ -339,10 +339,10 @@ function Router({ Header, Footer }) {
                             element: <AdminOrder />,
                         },
 
-                        // {
-                        //     path: 'orders/:id/cancel_order',
-                        //     element: <CancelOrder />,
-                        // },
+                        {
+                            path: 'orders/:id/cancel_order',
+                            element: <CancelOrder />,
+                        },
                         {
                             path: 'orders/edit/:id',
                             element: <Order_Edit />,

@@ -16,6 +16,8 @@ import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import PrivateNote from '../Models/privateNote.js';
 import generatePaymentIntent from '../utils/generatePaymentIntent.js';
 import orderAggregatePipeline from '../utils/orderAggregatePipeline.js';
+import getMatchStage from '../utils/matchStageOrderAggregate.js';
+import shipDateStage from '../utils/shipDateStage.js';
 
 dayjs(customParseFormat);
 const stripe = Stripe(process.env.STRIPE_KEY);
@@ -251,99 +253,88 @@ export const getAdminOrders = [
 
   asyncHandler(async (req, res, next) => {
     const { filter, limit } = req.body;
-    const recursiveGetData = async (page, isMaxPage) => {
-      const matchArray = [];
+    const recursiveGetData = async (page) => {
+      const betaSortObj = { group: { _id: -1 }, orderArray: {}, document: {} };
+      const matchArray = getMatchStage({ filter });
+      const totalCountResult = await Order.aggregate([
+        shipDateStage,
+        {
+          $match: {
+            $and: matchArray,
+          },
+        },
+        // ...skip_limit_stage,
+        { $count: 'totalCount' },
+      ]);
+
+      const totalCount = _.get(totalCountResult, '0.totalCount') || 0;
+      const maxPage = Math.ceil(totalCount / limit) || 1;
+      const newPageNumber = page <= maxPage ? page : maxPage;
       const skip_limit_stage = [
-        { $skip: (page - 1) * limit },
+        { $skip: (newPageNumber - 1) * limit },
         { $limit: limit },
       ];
 
       const aggregatePipeline = _.cloneDeep(orderAggregatePipeline);
-      if (filter?.destination == 'everywhere_else') {
-        matchArray.push({
-          'shipping_address.address.country': { $nin: ['GB', 'US'] },
-        });
-      } else if (filter?.destination != 'all') {
-        matchArray.push({
-          'shipping_address.address.country': { $eq: filter.destination },
-        });
-      }
 
-      if (filter?.completed_status == 'all') {
-        matchArray.push({ status: { $nin: ['received'] } });
-      } else {
-        matchArray.push({ status: { $in: [filter?.completed_status] } });
-      }
+      if (filter?.sort_by == 'dispatch by date') {
+        betaSortObj;
 
-      if (filter?.mark_as_gift) {
-        matchArray.push({ mark_as_gift: { $eq: true } });
+        _.set(betaSortObj, 'document.ship_date', -1);
+        _.set(betaSortObj, 'orderArray.ship_date', -1);
+      } else if (filter?.sort_by == 'newest') {
+        _.set(betaSortObj, 'document.createdAt', -1);
+        _.set(betaSortObj, 'orderArray.createdAt', -1);
+      } else if (filter?.sort_by == 'oldest') {
+        _.set(betaSortObj, 'document.createdAt', 1);
+        _.set(betaSortObj, 'orderArray.createdAt', 1);
+        _.set(betaSortObj, 'group._id', 1);
+      } else if (filter?.sort_by == 'destination') {
+        // _.set(betaSortObj, 'document.createdAt', -1);
+        // _.set(betaSortObj, 'orderArray.createdAt', -1);
+
+        betaSortObj['document']['shipping_address.address.city'] = 1;
+        betaSortObj['document']['shipping_address.address.country'] = 1;
+
+        _.set(betaSortObj, 'group._id', 1);
+
+        aggregatePipeline.pop();
+        aggregatePipeline.push({
+          $group: {
+            _id: {
+              $concat: [
+                { $toLower: '$shipping_address.address.city' },
+                ', ',
+                { $toUpper: '$shipping_address.address.country' },
+              ],
+            },
+            byDestination: { $first: true },
+            country: { $first: '$shipping_address.address.country' },
+            city: { $first: '$shipping_address.address.city' },
+
+            totalDocuments: { $sum: 1 },
+            orders: {
+              $push: '$$ROOT',
+            },
+          },
+        });
       }
 
       aggregatePipeline.unshift(...skip_limit_stage);
-
-      // const sortObj = { _id: 1 };
-      const sortObj = {};
-
-      const sortOrderGroup = { _id: -1 };
-      const sortOrdersObj = {};
-      // Planning on sorting by the sortBy field
-
-      if (filter?.sort_by == 'dispatch by date') {
-        sortObj.ship_date = -1;
-        sortOrdersObj.ship_date = -1;
-      } else if (filter?.sort_by == 'newest') {
-        sortObj.createdAt = -1;
-        sortOrdersObj.createdAt = -1;
-      } else if (filter?.sort_by == 'oldest') {
-        sortObj.createdAt = 1;
-        sortOrdersObj.createdAt = 1;
-        // sortObj.ship_date = 1;
-        // aggregatePipeline.unshift({ $sort: sortObj });
-
-        sortOrderGroup._id = 1;
-      } else if (filter?.sort_by == 'destination') {
-        sortObj['shipping_address.address.country'] = 1;
-      }
-
-      aggregatePipeline.unshift({ $sort: { ...sortObj, _id: 1 } });
-      aggregatePipeline.push({ $sort: sortOrderGroup });
-
+      aggregatePipeline.unshift({
+        $sort: { ...betaSortObj['document'], _id: 1 },
+      });
+      aggregatePipeline.push({ $sort: betaSortObj['group'] });
       aggregatePipeline.push({
         $addFields: {
           orders: {
             $sortArray: {
               input: '$orders',
-              sortBy: { ...sortOrdersObj, _id: 1 },
+              sortBy: { ...betaSortObj['orderArray'], _id: 1 },
             },
           },
         },
       });
-      if (filter?.by_date == 'overdue') {
-        matchArray.unshift({
-          ship_date: { $lt: dayjs().startOf('day').toDate() },
-        });
-      } else if (filter?.by_date == 'today') {
-        matchArray.unshift({
-          ship_date: {
-            $gt: dayjs().startOf('day').toDate(),
-            $lt: dayjs().endOf('day').toDate(),
-          },
-        });
-      } else if (filter?.by_date == 'tomorrow') {
-        matchArray.unshift({
-          ship_date: {
-            $gt: dayjs().add(1, 'day').startOf('day').toDate(),
-            $lt: dayjs().add(1, 'day').endOf('day').toDate(),
-          },
-        });
-      } else if (filter?.by_date == 'within_a_week') {
-        matchArray.unshift({
-          ship_date: {
-            $gt: dayjs().startOf('day').toDate(),
-            $lt: dayjs().add(1, 'week').endOf('day').toDate(),
-          },
-        });
-      }
 
       if (matchArray.length >= 1) {
         aggregatePipeline.unshift({
@@ -352,94 +343,38 @@ export const getAdminOrders = [
           },
         });
       }
+      aggregatePipeline.unshift(shipDateStage);
 
-      const shipDateStage = {
-        $addFields: {
-          ship_date: {
-            $max: {
-              $map: {
-                input: '$itemsByProfile',
-                as: 'profile',
-                in: {
-                  $dateAdd: {
-                    startDate: '$createdAt',
-                    unit: {
-                      $substrBytes: [
-                        '$$profile.shippingInfo.processing_time.type',
-                        0,
-                        {
-                          $subtract: [
-                            {
-                              $strLenCP:
-                                '$$profile.shippingInfo.processing_time.type',
-                            },
-                            1,
-                          ],
-                        },
-                      ],
-                    },
-                    amount: '$$profile.shippingInfo.processing_time.end',
-                  },
-                },
-              },
+      console.log(betaSortObj);
+      const [ordersByDate, pageCountResult] = await Promise.all([
+        Order.aggregate(aggregatePipeline),
+        Order.aggregate([
+          shipDateStage,
+          {
+            $match: {
+              $and: matchArray,
             },
           },
-        },
-      };
+          ...skip_limit_stage,
+          { $count: 'pageCount' },
+        ]),
+      ]);
 
-      aggregatePipeline.unshift(shipDateStage);
+      const pageCount = _.get(pageCountResult, '0.pageCount') || 0;
       console.log(
-        {
-          sortOrdersObj,
-          sortObj,
-          sortOrderGroup,
-        },
-        aggregatePipeline,
+        `getting data for page ${page} with newPage being ${newPageNumber}`,
       );
 
-      const [ordersByDate, totalCountResult, pageCountResult] =
-        await Promise.all([
-          Order.aggregate(aggregatePipeline),
-          Order.aggregate([
-            shipDateStage,
-            {
-              $match: {
-                $and: matchArray,
-              },
-            },
-            // ...skip_limit_stage,
-            { $count: 'totalCount' },
-          ]),
-          Order.aggregate([
-            shipDateStage,
-            {
-              $match: {
-                $and: matchArray,
-              },
-            },
-            ...skip_limit_stage,
-            { $count: 'pageCount' },
-          ]),
-        ]);
+      return res.status(200).send({
+        ordersByDate,
+        byDestination: filter?.sort_by == 'destination' ? true : false,
+        success: true,
+        totalCount,
+        pageCount,
+        page: newPageNumber,
 
-      const totalCount = _.get(totalCountResult, '0.totalCount') || 0;
-      const pageCount = _.get(pageCountResult, '0.pageCount') || 0;
-      const maxPage = Math.ceil(totalCount / limit);
-      console.log(`getting data for page ${page}`, maxPage);
-
-      if (ordersByDate.length > 0 || isMaxPage) {
-        return res.status(200).send({
-          ordersByDate,
-          success: true,
-          totalCount,
-          pageCount,
-          page,
-
-          maxPage,
-        });
-      } else {
-        recursiveGetData(maxPage || 1, true);
-      }
+        maxPage,
+      });
     };
 
     return recursiveGetData(req.body?.page, false);

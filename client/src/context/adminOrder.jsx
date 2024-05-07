@@ -129,7 +129,7 @@ export default function AdminOrderContextProvider({ children }) {
             logoutUser({ error });
         } finally {
             timeoutRef.current = setTimeout(() => {
-                setLoading(false);
+                setLoading(() => false);
 
                 if (status == 'new') {
                     setTotalCount(() => count);
@@ -141,7 +141,7 @@ export default function AdminOrderContextProvider({ children }) {
             }, 600);
         }
     };
-    const fetchSearchData = async (page = currentPage) => {
+    const fetchSearchData = async (page = currentPage, text = searchText) => {
         let success = true;
         try {
             clearTimeout(timeoutRef?.current);
@@ -154,7 +154,7 @@ export default function AdminOrderContextProvider({ children }) {
             const { data } = await adminAxios.post(
                 `searchOrder`,
                 {
-                    searchText,
+                    searchText: text,
                     limit: orderPerPage,
                     page,
                 },
@@ -192,19 +192,19 @@ export default function AdminOrderContextProvider({ children }) {
             abortControllerRef.current?.abort();
             clearTimeout(timeoutRef?.current);
         };
-    }, [status, filterList, orderPerPage]);
+    }, [status, filterList, orderPerPage, triggerFetchData]);
 
-    useEffect(() => {
-        if (isSearchingOrder) {
-            fetchSearchData();
-        } else {
-            fetchData();
-        }
+    // useEffect(() => {
+    //     if (isSearchingOrder) {
+    //         fetchSearchData();
+    //     } else {
+    //         fetchData();
+    //     }
 
-        return () => {
-            abortControllerRef.current?.abort();
-        };
-    }, [triggerFetchData]);
+    //     return () => {
+    //         abortControllerRef.current?.abort();
+    //     };
+    // }, [triggerFetchData]);
 
     // useEffect(() => {
     //     setLoading(true);
@@ -238,7 +238,7 @@ export default function AdminOrderContextProvider({ children }) {
 
             setTriggerFetchData((prevState) => !prevState);
             if (data?.updateOrderInfo != false) {
-                setOrderInfo(() => data.order);
+                setOrderInfo(({ position }) => ({ ...data.order, position }));
             }
 
             setShowAlert(() => ({
@@ -264,9 +264,29 @@ export default function AdminOrderContextProvider({ children }) {
             setShowActions(() => false);
         }
     };
+
+    const searchForOrder = async (text = searchText) => {
+        console.log('clicked');
+        if (text) {
+            // setSearchingOrder(() => true);
+
+            setSearchDataLoading(() => true);
+            // setCurrentPage(() => 1);
+            fetchSearchData(1, text);
+        } else {
+            setSearchDataLoading(() => false);
+            setLoading(() => true);
+            setCurrentPage(() => 1);
+            setSearchingOrder(() => false);
+            setTriggerFetchData((prevState) => !prevState);
+        }
+
+        document.activeElement.blur();
+    };
     const value = {
         loading,
         setLoading,
+        searchForOrder,
         status,
         setStatus,
         openDrawer,

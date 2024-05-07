@@ -25,11 +25,9 @@ import EmailHead from '../components/emailHead.jsx';
 import EmailTailwind from '../components/emailTailwind.jsx';
 import Header from '../components/header.jsx';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 function OrderCancel({ order }) {
-  const totalItems = order?.items.reduce(
-    (Accum, currentValue) => Accum + currentValue?.quantity,
-    0,
-  );
+  const totalItems = _.get(order, 'items.length');
   const orderDate = dayjs(order?.createdAt).format('dddd DD MMMM YYYY');
   return (
     <Html>
@@ -37,8 +35,8 @@ function OrderCancel({ order }) {
         <EmailHead />
       </Head>
       <EmailTailwind>
-        <Body>
-          <Container align="center" className="bg-[#eeeeee] w-[600px]">
+        <Body className=" w-full">
+          <Container align="center" className="bg-[#eeeeee] max-w-[37.5rem]">
             <Section>
               <Header />
               <Row>
@@ -58,7 +56,9 @@ function OrderCancel({ order }) {
                   </Text>
 
                   <Text className="p-0 m-0">Order No.: {order?._id}</Text>
-                  <Text className="p-0 m-0 leading-4">Order Date: {orderDate}</Text>
+                  <Text className="p-0 m-0 leading-4">
+                    Order Date: {orderDate}
+                  </Text>
                 </Column>
               </Row>
               <Section className="px-5 pt-0">
@@ -74,7 +74,6 @@ function OrderCancel({ order }) {
                   <Column className="px-4 pb-0 bg-white" align="center">
                     <Section className="bg-white">
                       {order?.items?.map((itemProps, idx) => {
-                     
                         return <Item {...itemProps} key={idx} />;
                       })}
                     </Section>
@@ -83,10 +82,7 @@ function OrderCancel({ order }) {
                 </Row>
                 <Row>
                   <Column className="bg-white p-5 pt-0">
-                    <TotalContainer
-                      order={order}
-                     
-                    />
+                    <TotalContainer order={order} />
                   </Column>
                 </Row>
               </Section>

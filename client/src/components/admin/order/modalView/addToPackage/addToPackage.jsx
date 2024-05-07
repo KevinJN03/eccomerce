@@ -27,9 +27,7 @@ function AddToPackage({}) {
     const [resultData, setResultData] = useState({});
     const [packageDetail, setPackageDetail] = useState({
         dispatch_date: dayjs()
-            .set('hour', 0)
-            .set('minute', 0)
-            .set('second', 0)
+            .startOf()
             .toISOString(),
         courier: 'Royal Mail',
         tracking_number: '',
@@ -174,9 +172,7 @@ function AddToPackage({}) {
                                     {[0, 1, 2].map((num) => {
                                         const date = dayjs()
                                             .add(num, 'day')
-                                            .set('hour', 0)
-                                            .set('minute', 0)
-                                            .set('second', 0);
+                                            .startOf('day');
                                         const formatDate =
                                             date.format('ddd DD MMM');
 
@@ -397,7 +393,7 @@ function AddToPackage({}) {
                     </section>
                     <footer
                         id="stickyElementFooter"
-                        className=" !sticky !bottom-0 left-0 z-[1] mt-60 flex w-full flex-1 flex-row justify-between bg-white  pt-3 pb-6 "
+                        className=" !sticky !bottom-0 left-0 z-[1] mt-60 flex w-full flex-1 flex-row justify-between bg-white  pb-6 pt-3 "
                     >
                         <div className="left flex flex-row gap-4">
                             <BubbleButton

@@ -22,7 +22,7 @@ import Actions from '../drawerContent/action';
 
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
-function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
+function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
     const {
         setOpenDrawer,
         setOrderInfo,
@@ -106,7 +106,8 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                 return;
             }
             const { data } = await adminAxios.get(`order/${order?._id}`);
-            setOrderInfo(() => ({ ...data?.order }));
+            const position = window.pageYOffset;
+            setOrderInfo(() => ({ ...data?.order, position }));
             success = true;
         } catch (error) {
             logoutUser({ error });
@@ -174,12 +175,12 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         </div>
                     </div>
                     <div className="flex flex-1 flex-col">
-                        <p className="text-xs font-medium">
+                        <p className="text-sm font-semibold">
                             {['received', 'processing'].includes(order?.status)
                                 ? `Ship by ${dayjs(
                                       _.get(order, 'ship_date')
                                   ).format('MMM DD, YYYY')}`
-                                : 'Ordered'}
+                                : _.upperFirst(order.status)}
                         </p>
                         <p className="text-xs">
                             Ordered{' '}
@@ -190,7 +191,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                 <>
                                     {shippingOptions?.services}{' '}
                                     <span>
-                                        ($
+                                        (£
                                         {parseFloat(
                                             shippingOptions?.cost
                                         ).toFixed(2)}
@@ -358,7 +359,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         setShowActions={setShowOptions}
                         showActions={showOptions}
                     >
-                        <button
+                        {/* <button
                             onClick={() =>
                                 navigate(
                                     `/admin/orders/${order?._id}/cancel_order`
@@ -381,7 +382,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                 />
                             </span>
                             <p className=" w-full whitespace-nowrap">Refund</p>
-                        </button>
+                        </button> */}
                     </Actions>
                 </section>
             </div>

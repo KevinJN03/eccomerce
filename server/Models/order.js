@@ -80,14 +80,14 @@ const OrderSchema = new Schema({
     delivery_cost: Schema.Types.Number,
   },
 
-  shipping_option: {
-    cost: { type: Schema.Types.Number },
-    // delivery_date: { type: Schema.Types.String },
-    // name: { type: Schema.Types.String },
-    // time: { type: Schema.Types.Number },
-    // type: { type: Schema.Types.String },
-    // id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
-  },
+  // shipping_option: {
+  //   cost: { type: Schema.Types.Number },
+  //   // delivery_date: { type: Schema.Types.String },
+  //   // name: { type: Schema.Types.String },
+  //   // time: { type: Schema.Types.Number },
+  //   // type: { type: Schema.Types.String },
+  //   // id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
+  // },
 
   // cartObj: { type: Schema.Types.Mixed, ref: 'product' },
   cartId: { type: Schema.Types.ObjectId, ref: 'cart' },
@@ -95,20 +95,21 @@ const OrderSchema = new Schema({
     tracking_number: { type: Schema.Types.String },
     courier: { type: Schema.Types.String },
     dispatch_date: { type: Schema.Types.Date },
-    // delivery_date: { type: Schema.Types.Date },
     max_delivery_date: { type: Schema.Types.Date },
     min_delivery_date: { type: Schema.Types.Date },
     note: { type: Schema.Types.String },
   },
-
-  payment_intent_id: { type: Schema.Types.String },
-  refund_id: { type: Schema.Types.String },
-  return_date: { type: Schema.Types.Date },
-  cancel_date: { type: Schema.Types.Date },
+  refund: {
+    _id: { type: Schema.Types.String },
+    date: { type: Schema.Types.Date },
+  },
   cancel: {
     reason: { type: Schema.Types.String },
-    additional_information: { type: Schema.Types.String, maxlength: 500 },
+    returning_items: { type: Schema.Types.Boolean },
+    message_to_buyer: { type: Schema.Types.String, maxlength: 500 },
+    date: { type: Schema.Types.Date },
   },
+
   private_note: [
     {
       _id: {
@@ -122,6 +123,8 @@ const OrderSchema = new Schema({
     },
   ],
   mark_as_gift: { type: Schema.Types.Boolean, default: false },
+  completed_date: { type: Schema.Types.Date, default: null },
+  payment_intent_id: { type: Schema.Types.String },
 });
 
 export default model('order', OrderSchema);

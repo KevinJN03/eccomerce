@@ -37,7 +37,7 @@ function OptionError({ msg, className, small, disableIcon }) {
                 />
             )}
             <p
-                className={`${small ? 'text-xs' : 'text-sm'} max-w-full break-words text-red-800`}
+                className={`${small ? 'text-xs' : 'text-base'} max-w-full break-words text-red-800`}
             >
                 {msg}
             </p>

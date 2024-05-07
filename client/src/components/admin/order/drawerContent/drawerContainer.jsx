@@ -42,15 +42,10 @@ function Label({ setShowActions }) {
 function DrawerContainer() {
     const {
         orderInfo,
-        setOpenDrawer,
-        setSearchText,
-        setSearchingOrder,
+       
         
     } = useAdminOrderContext();
 
-    const { logoutUser } = useAdminContext();
-    const { setModalCheck, adminOrderModalContentDispatch } =
-        useAdminOrderContext();
     const [country, setCountry] = useState(
         () =>
             countryLookup.byIso(orderInfo.shipping_address.address?.country)
@@ -59,41 +54,12 @@ function DrawerContainer() {
 
     const [showActions, setShowActions] = useState(false);
 
-    const printOrder = () => {
-        console.log('clicked');
-        adminOrderModalContentDispatch({
-            type: 'printOrder',
-            orders: [orderInfo?._id],
-        });
-        setModalCheck(true);
-        setShowActions(false);
-    };
+    
 
-    // const orderHistory = async () => {
-    //     try {
-    //         setOpenDrawer(() => false);
-    //         setSearchingOrder(() => true);
-    //         setSearchText(() => orderInfo.customer?._id);
-
-    //         const { data } = await adminAxios('searchOrder', {
-    //             searchText: orderInfo.customer?._id,
-    //         });
-
-    //         setSearchResult(() => data.searchResult);
-    //     } catch (error) {
-    //         logoutUser({ error });
-    //     }
-    // };
+  
     return (
-        <div className=" relative flex w-full flex-row gap-1 ">
-            {/* <div className="relative h-fit w-12 bg-transparent">
-                <div
-                    onClick={() => setOpenDrawer(false)}
-                    className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
-                >
-                    <CloseSharp className="!fill-primary/80" />
-                </div>
-            </div> */}
+        <div  className=" relative flex w-full flex-row gap-1 ">
+   
             <div className="min-h-screen w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">

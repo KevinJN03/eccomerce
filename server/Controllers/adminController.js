@@ -186,10 +186,15 @@ export const getSingleOrder = asyncHandler(async (req, res, next) => {
       path: 'items.product customer',
       select: 'tittle _id images firstName lastName email title',
     },
+    lean: { toObject: true },
   });
 
+  if (_.get(order, 'refund._id')) {
+    const refund = await stripe.refunds.retrieve(order.refund._id);
+    _.set(order, 'refund.amount', refund.amount / 100);
+  }
   if (!order) {
-    return res.status(404).send({ msg: 'Order not dfound.', success: false });
+    return res.status(404).send({ msg: 'Order not found.', success: false });
   }
 
   res.status(200).send({ order, success: true });
@@ -206,21 +211,6 @@ export const shipOrder = [
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { preview, dispatch_date } = req.body;
-    // const oldOrderInfo = await Order.findById(id, null, {
-    //   lean: { toObject: true },
-    //   new: true,
-    // });
-
-    // const addUnit = oldOrderInfo?.shipping_option?.type?.substring(
-    //   0,
-    //   oldOrderInfo?.shipping_option?.type?.length - 1,
-    // );
-
-    // const newDeliveryDate = dayjs()
-    //   .add(oldOrderInfo?.shipping_option?.time, addUnit)
-    //   .format('dddd, D MMMM, YYYY');
-
-    // find earliest and latest deliveryDate
 
     const errors = validationResult(req).formatWith(({ msg }) => msg);
 
@@ -246,20 +236,8 @@ export const shipOrder = [
       arrays.end.push(endDate);
     });
 
-    const findMinStartDate = dayjs
-      .min(arrays.start)
-      .set('h', 23)
-      .set('m', 59)
-      .set('s', 0)
-      .set('ms', 0)
-      .toISOString();
-    const findMaxEndDate = dayjs
-      .max(arrays.end)
-      .set('h', 23)
-      .set('m', 59)
-      .set('s', 0)
-      .set('ms', 0)
-      .toISOString();
+    const findMinStartDate = dayjs.min(arrays.start).endOf('day').toISOString();
+    const findMaxEndDate = dayjs.max(arrays.end).endOf('day').toISOString();
     console.log({ findMinStartDate, findMaxEndDate });
 
     const shippedObj = {
@@ -285,6 +263,7 @@ export const shipOrder = [
       { _id: id },
       {
         shipped: shippedObj,
+        status: 'shipped',
         // ...req.body,
         // ship_date: new Date(),
         // 'shipping_option.delivery_date': newDeliveryDate,
@@ -337,9 +316,64 @@ export const mark_as_gift = [
       res.send({
         success: true,
         msg: `Orders status updated to ${req.body?.mark_as_gift}`,
-        updateOrderInfo: false
+        updateOrderInfo: false,
       });
     }
+  }),
+];
+
+export const cancelOrder = [
+  check('reason', 'Choose a reason').escape().trim().notEmpty(),
+  check('returning_items', 'Choose an answer')
+    .escape()
+    .trim()
+    .notEmpty()
+    .toBoolean(),
+  check('message_to_buyer', 'Keep note below 500 characters')
+    .escape()
+    .trim()
+    .isLength({ max: 500 }),
+  check('id').escape().trim(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.body;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.mapped());
+    }
+    const date = dayjs().toDate();
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      {
+        status: 'cancelled',
+        cancel: { ...req.body, date },
+        completed_date: date,
+      },
+      {
+        populate: { path: 'items.product customer' },
+        new: true,
+        lean: { toObject: true },
+      },
+    ).exec();
+
+    if (order?.payment_intent_id) {
+      const refund = await stripe.refunds.create({
+        payment_intent: order.payment_intent_id,
+      });
+
+      await Order.findByIdAndUpdate(id, { refund: { _id: refund.id, date } });
+      console.log({ refund });
+    }
+
+    const emailHtml = render(<OrderCancel order={order} />);
+    const mailOptions = {
+      from: SENDER,
+      to: order?.customer?.email,
+      subject: 'Your GLAMO order has been cancelled',
+      html: emailHtml,
+    };
+
+    const sendEmail = await transporter.sendMail(mailOptions);
+    res.send({ success: true });
   }),
 ];
 // ----------------------------------------------------

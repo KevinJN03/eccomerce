@@ -14,9 +14,10 @@ function UserInfo({}) {
     const {
         orderInfo,
         setOpenDrawer,
-        
+
         setSearchingOrder,
         setSearchText,
+        searchForOrder,
     } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const [show, setShow] = useState(false);
@@ -30,18 +31,21 @@ function UserInfo({}) {
     };
 
     const orderHistory = async () => {
-        try {
-            const { data } = await adminAxios.post('searchOrder', {
-                searchText: orderInfo.customer?._id,
-            });
-            setSearchText(() => orderInfo.customer?._id);
-        } catch (error) {
-            console.error('error while fetching order history: ', error);
-            logoutUser({ error });
-        } finally {
-            setOpenDrawer(() => false);
-            setSearchingOrder(() => true);
-        }
+        setSearchText(() => orderInfo.customer?._id);
+        searchForOrder(orderInfo.customer?._id);
+        setOpenDrawer(() => false);
+        // try {
+        //     const { data } = await adminAxios.post('searchOrder', {
+        //         searchText: orderInfo.customer?._id,
+        //     });
+        //     setSearchText(() => orderInfo.customer?._id);
+        // } catch (error) {
+        //     console.error('error while fetching order history: ', error);
+        //     logoutUser({ error });
+        // } finally {
+        //     setOpenDrawer(() => false);
+        //     setSearchingOrder(() => true);
+        // }
     };
     return (
         <div className="my-3 flex flex-row gap-3 rounded-sm border-[1px]  p-4">

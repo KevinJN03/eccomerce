@@ -30,7 +30,7 @@ router.get(
       ],
       lean: { toObject: true },
     }).exec();
-    const emailHtml = render(<OrderShipped order={order} />);
+    const emailHtml = render(<OrderCancel order={order} />);
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
     // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
     const emailTestId = v4();
@@ -42,7 +42,7 @@ router.get(
       html: emailHtml,
     };
     console.log({ emailTestId });
-    // const sendEmail = await transporter.sendMail(mailOptions);
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

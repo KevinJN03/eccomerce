@@ -1,4 +1,4 @@
-import { Inventory2Sharp, PrintSharp, RedeemSharp } from '@mui/icons-material';
+import { CloseSharp, Inventory2Sharp, PrintSharp, RedeemSharp, UndoOutlined } from '@mui/icons-material';
 import { useAdminOrderContext } from '../../../../context/adminOrder';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
@@ -7,12 +7,15 @@ import UserLogout from '../../../../hooks/userLogout';
 import { adminAxios } from '../../../../api/axios';
 import _ from 'lodash';
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Actions({ setShowActions, showActions, children, orderId, order }) {
     const { setModalCheck, setModalContent, setShowAlert } = useContent();
     const { logoutUser } = UserLogout();
     const { setOrderInfo, setModalOpen, setTriggerFetchData, handleMarkGift } =
         useAdminOrderContext();
+
+    const navigate = useNavigate();
     const abortControllerRef = useRef(new AbortController());
     const printOrder = () => {
         setModalContent({
@@ -108,6 +111,28 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
                         </button>
                     );
                 })}
+                <button
+                    onClick={() =>
+                        navigate(`/admin/orders/${order?._id}/cancel_order`)
+                    }
+                    className={` flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 border-t py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
+                >
+                    <span>
+                        <CloseSharp fontSize="small" />
+                    </span>
+                    <p className=" w-full whitespace-nowrap">Cancel</p>
+                </button>
+                <button
+                    className={`flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
+                >
+                    <span>
+                        <UndoOutlined
+                            className="!rotate-[-45deg]"
+                            fontSize="small"
+                        />
+                    </span>
+                    <p className=" w-full whitespace-nowrap">Refund</p>
+                </button>
                 {children}
             </section>
         </SeamlessDropdown>

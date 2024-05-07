@@ -12,33 +12,10 @@ function Header({}) {
     const {
         searchText,
         setSearchText,
-        fetchSearchData,
-        setSearchDataLoading,
-        setCurrentPage,
-        setLoading,
-        setTriggerFetchData,
-        setSearchingOrder,
+        
+        searchForOrder,
     } = useAdminOrderContext();
 
-    const { logoutUser } = UserLogout();
-    const navigate = useNavigate();
-
-    const handleClick = async () => {
-        console.log('clicked');
-        if (searchText) {
-            setSearchDataLoading(() => true);
-            // setCurrentPage(() => 1);
-            fetchSearchData(1);
-        } else {
-            setSearchDataLoading(() => false);
-            setLoading(() => true);
-            setCurrentPage(() => 1);
-            setSearchingOrder(() => false);
-            setTriggerFetchData((prevState) => !prevState);
-        }
-
-        document.activeElement.blur();
-    };
 
     return (
         <header className="flex w-full flex-row items-center justify-between border-b-2 py-4 pl-6 pr-12">
@@ -49,7 +26,7 @@ function Header({}) {
                         setSearchText(e.target.value);
                     }}
                     placeHolder={'Search your orders'}
-                    handleClick={handleClick}
+                    handleClick={searchForOrder}
                     searchText={searchText}
                 />
                 <BubbleButton

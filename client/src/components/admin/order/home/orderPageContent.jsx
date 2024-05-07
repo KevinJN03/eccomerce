@@ -21,6 +21,7 @@ import OptionSelection from './optionSelection';
 import AddToPackage from '../modalView/addToPackage/addToPackage';
 import _ from 'lodash';
 import { CloseSharp } from '@mui/icons-material';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function OrderPageContent({}) {
     const {
@@ -34,16 +35,24 @@ function OrderPageContent({}) {
         modalOpen,
         setModalOpen,
         currentPage,
-        setCurrentPage,
         ordersData,
-        searchData,
         fetchData,
         setLoading,
+        setOrderInfo,
+        orderInfo,
     } = useAdminOrderContext();
     const maxPage = _.get(ordersData, 'maxPage');
 
+    useEffect(() => {
+        const element = document.getElementById('order-page');
+
+        if (orderInfo?.position) {
+            window.scrollTo(0, orderInfo.position);
+        }
+    }, [loading]);
+
     return (
-        <section className="order-page h-full min-h-screen ">
+        <section id="order-page" className="order-page h-full min-h-screen ">
             <section className="w-full pb-8 ">
                 <Header />
                 {isSearchingOrder ? (
@@ -73,25 +82,35 @@ function OrderPageContent({}) {
                                     <GLoader />
                                 </section>
                             ) : (
-                                <>
-                                    <PageOptions />
-                                    <Containers
-                                        ordersByDate={ordersData?.ordersByDate}
-                                    />
-                                    {maxPage > 1 && (
-                                        <Pagination
-                                            page={currentPage}
-                                            onChange={(e, value) => {
-                                                // setCurrentPage(() => value);
-                                                setLoading(() => true);
-                                                fetchData(value);
-                                            }}
-                                            count={maxPage}
-                                            variant="outlined"
-                                            shape="rounded"
+                                <AnimatePresence>
+                                    <motion.section
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: 1,
+                                            transition: { duration: 0.5 },
+                                        }}
+                                    >
+                                        <PageOptions />
+                                        <Containers
+                                            ordersByDate={
+                                                ordersData?.ordersByDate
+                                            }
                                         />
-                                    )}
-                                </>
+                                        {maxPage > 1 && (
+                                            <Pagination
+                                                page={currentPage}
+                                                onChange={(e, value) => {
+                                                    // setCurrentPage(() => value);
+                                                    setLoading(() => true);
+                                                    fetchData(value);
+                                                }}
+                                                count={maxPage}
+                                                variant="outlined"
+                                                shape="rounded"
+                                            />
+                                        )}
+                                    </motion.section>
+                                </AnimatePresence>
                             )}
                         </section>
                         <SideContainer />
@@ -102,7 +121,14 @@ function OrderPageContent({}) {
                 style={{ zIndex: 50 }}
                 anchor="right"
                 open={openDrawer}
-                onClose={() => setOpenDrawer(false)}
+                onClose={() => {
+                    setOpenDrawer(false);
+                }}
+                ModalProps={{
+                    onTransitionExited: () => {
+                        setOrderInfo(() => ({}));
+                    },
+                }}
                 PaperProps={{
                     sx: {
                         backgroundColor: 'transparent',

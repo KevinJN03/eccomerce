@@ -8,7 +8,7 @@ import { useAdminOrderContext } from '../../../../context/adminOrder';
 import _ from 'lodash';
 
 function OptionSection({ title, options, property }) {
-    const { setFilterList, filterList, status } = useAdminOrderContext();
+    const { setFilterList, filterList, status, setLoading } = useAdminOrderContext();
     return (
         <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
             <p className="text-base font-semibold">{title}</p>
@@ -19,6 +19,8 @@ function OptionSection({ title, options, property }) {
                         key={item}
                         className="flex flex-row flex-nowrap gap-x-2"
                         onClick={() => {
+                            setLoading(() => true);
+
                             setFilterList((prevState) => ({
                                 ...prevState,
                                 [status]: {
@@ -59,7 +61,7 @@ function Label({ option }) {
 }
 function SideContainer({}) {
     const [show, setShow] = useState(false);
-    const { setFilterList, filterList, status, defaultFilterList , } =
+    const { setFilterList, filterList, status, defaultFilterList, setLoading } =
         useAdminOrderContext();
 
     const optionsArray = [
@@ -183,6 +185,7 @@ function SideContainer({}) {
                             key={text}
                             className="flex flex-row flex-nowrap gap-x-2"
                             onClick={() => {
+                                setLoading(() => true);
                                 setFilterList((prevState) => ({
                                     ...prevState,
                                     [status]: {
@@ -221,6 +224,8 @@ function SideContainer({}) {
                             key={item}
                             className="flex flex-row flex-nowrap gap-x-2"
                             onClick={() => {
+                                setLoading(() => true);
+
                                 setFilterList((prevState) => ({
                                     ...prevState,
                                     [status]: {
@@ -253,8 +258,8 @@ function SideContainer({}) {
                 className={'px-3 py-2'}
                 handleClick={reset}
             >
-                <p className="text-s px-1 font-medium">Reset filters</p>
-            </ThemeBtn>  
+                <p className="px-1 text-s font-medium">Reset filters</p>
+            </ThemeBtn>
         </section>
     );
 }
