@@ -69,22 +69,15 @@ function CancelOrder({}) {
             logoutUser({ error });
             isSuccessful = false;
             setErrors(() => error?.response?.data);
-            if (error?.response?.status != 401) {
+            if (error?.response?.status == 400) {
+                window.scrollTo(0, 0);
+            } else {
                 setShowAlert(() => ({
                     on: true,
                     size: 'medium',
                     bg: 'bg-red-900',
                     icon: 'sadFace',
-                    msg: (
-                        <p className='text-white text-base'>
-                            Failed to cancel order. Please try again later.
-                            <br/>
-                            {error?.response?.status == 500
-                                ? `\r\n Error msg: ${_.get(error, 'response.data.msg.0')}`
-                                : ''}
-                            
-                        </p>
-                    ),
+                    msg: _.get(error, 'response.data.msg.0'),
                 }));
             }
             setBtnLoading(() => false);
@@ -99,7 +92,6 @@ function CancelOrder({}) {
     };
     return (
         <section className="flex h-screen w-full">
-         
             {loading ? (
                 <div className="mt-5 flex w-full justify-center">
                     <div class="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
@@ -118,9 +110,9 @@ function CancelOrder({}) {
                             All set! Your order is cancelled
                         </h3>
                         <p className="text-center text-sm">
-                            We sent your buyer a email to confirm. If you
-                            issued a refund, it should appear in their account
-                            within 2 to 5 business days.
+                            We sent your buyer a email to confirm. If you issued
+                            a refund, it should appear in their account within 2
+                            to 5 business days.
                         </p>
                         <ThemeBtn
                             text={'Return to Orders'}

@@ -31,6 +31,11 @@ export default async function errorHandler(error, req, res, next) {
     error.message =
       'Error occurs while adding or deleting images. Please contact Administrator for asssistance.';
   }
+
+  if(error?.code == 'payment_method_provider_decline'){
+    error.message = 'A refund has already been processed for this transaction.'
+
+  }
   res.status(500).json({
     // if js an array is ann object
     msg: typeof error.message === 'object' ? error.message : [error.message],

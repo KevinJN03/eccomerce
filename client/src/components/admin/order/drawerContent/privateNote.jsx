@@ -14,13 +14,13 @@ function Note({ idx, note, date, _id, lastIdx }) {
     const {
         orderInfo,
         setOrderInfo,
-
+fetchData,
         setTriggerFetchData,
     } = useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
     const saveEdit = async () => {
-        try {
+        try {   
             if (text.trim().length == 0) {
                 setError(() => ({ msg: "Note can't be empty" }));
                 return;
@@ -30,11 +30,11 @@ function Note({ idx, note, date, _id, lastIdx }) {
                 orderId: orderInfo?._id,
                 note: text,
             });
-            setTriggerFetchData((prevState) => !prevState);
 
            
             setEdit(() => false);
             setOrderInfo(() => data.order);
+            fetchData()
         } catch (error) {
             logoutUser({ error });
         }
@@ -44,10 +44,8 @@ function Note({ idx, note, date, _id, lastIdx }) {
             const { data } = await adminAxios.delete(
                 `privateNote/delete?noteId=${_id}&orderId=${orderInfo?._id}`
             );
-            setTriggerFetchData((prevState) => !prevState);
-
-          
             setOrderInfo(() => data.order);
+            fetchData()
         } catch (error) {
             console.error(error);
             logoutUser({ error });
@@ -142,7 +140,7 @@ function PrivateNote({}) {
     const {
         orderInfo,
         setOrderInfo,
-      
+        fetchData,
         setTriggerFetchData,
     } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
@@ -165,7 +163,7 @@ function PrivateNote({}) {
             setOrderInfo(() => data.order);
             setOpen(() => false);
             setNote(() => '');
-            setTriggerFetchData((prevState) => !prevState);
+            fetchData()
         } catch (error) {
             console.error(error);
             logoutUser({ error });
