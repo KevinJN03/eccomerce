@@ -6,7 +6,7 @@ import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import randomstring from 'randomstring';
 import 'dotenv/config';
 import Stripe from 'stripe';
-import _, { sortBy } from 'lodash';
+import _, { escape, sortBy } from 'lodash';
 import generateOrderNumber from '../utils/generateOrderNumber.js';
 import Order from '../Models/order.js';
 import DeliveryProfile from '../Models/deliveryProfile.js';
@@ -250,6 +250,7 @@ export const getAdminOrders = [
   check('status').escape().trim().toLowerCase(),
   check('page').escape().trim().toInt(),
   check('limit').escape().trim().toInt(),
+  check('filter.destination').escape().trim().toUpperCase(),
 
   asyncHandler(async (req, res, next) => {
     const { filter, limit } = req.body;
@@ -263,7 +264,6 @@ export const getAdminOrders = [
             $and: matchArray,
           },
         },
-        // ...skip_limit_stage,
         { $count: 'totalCount' },
       ]);
 

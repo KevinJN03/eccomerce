@@ -2,51 +2,14 @@ import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useState } from 'react';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 
-import { ThemeDropDown } from '../../../common/dropdown/seamlessDropdown';
-import ThemeBtn from '../../../buttons/themeBtn';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { ThemeDropDown } from '../../../../common/dropdown/seamlessDropdown';
+import ThemeBtn from '../../../../buttons/themeBtn';
+import { useAdminOrderContext } from '../../../../../context/adminOrderContext';
 import _ from 'lodash';
+import { getName } from 'country-list';
+import { v4 } from 'uuid';
+import OptionSection from './OptionSection';
 
-function OptionSection({ title, options, property }) {
-    const { setFilterList, filterList, status, setLoading } = useAdminOrderContext();
-    return (
-        <div className="dispatch-by-date mt-12 flex flex-col gap-y-2">
-            <p className="text-base font-semibold">{title}</p>
-            {options.map((item) => {
-                const lowerCaseItem = item.toLowerCase().replaceAll(' ', '_');
-                return (
-                    <div
-                        key={item}
-                        className="flex flex-row flex-nowrap gap-x-2"
-                        onClick={() => {
-                            setLoading(() => true);
-
-                            setFilterList((prevState) => ({
-                                ...prevState,
-                                [status]: {
-                                    ...prevState?.[status],
-                                    [property]: lowerCaseItem,
-                                },
-                            }));
-                        }}
-                    >
-                        <input
-                            readOnly
-                            checked={
-                                _.get(filterList, [status, property]) ==
-                                lowerCaseItem
-                            }
-                            type="radio"
-                            name="dispatch-by-date"
-                            className="daisy-radio daisy-radio-sm cursor-pointer"
-                        />
-                        <p className="cursor-pointer">{item}</p>
-                    </div>
-                );
-            })}
-        </div>
-    );
-}
 function Label({ option }) {
     return (
         <label
@@ -61,8 +24,15 @@ function Label({ option }) {
 }
 function SideContainer({}) {
     const [show, setShow] = useState(false);
-    const { setFilterList, filterList, status, defaultFilterList, setLoading } =
-        useAdminOrderContext();
+    const {
+        setFilterList,
+        filterList,
+        status,
+        defaultFilterList,
+        setLoading,
+        searchParams,
+        setSearchParams,
+    } = useAdminOrderContext();
 
     const optionsArray = [
         'Dispatch by date',
@@ -73,6 +43,9 @@ function SideContainer({}) {
 
     const handleClick = (item) => {
         // setOption(() => item);
+        searchParams.set('sort_by', item);
+        setSearchParams(searchParams);
+
         setFilterList((prevState) => ({
             ...prevState,
             [status]: { ...prevState?.[status], sort_by: item },
@@ -146,33 +119,51 @@ function SideContainer({}) {
                     </div>
                 </ThemeDropDown>
             </div>
-            {status == 'new' ? (
-                <OptionSection
-                    property={'by_date'}
-                    options={[
-                        'All',
-                        'Overdue',
-                        'Today',
-                        'Tomorrow',
-                        'Within a week',
-                    ]}
-                    title={'Dispatch by date'}
-                />
-            ) : (
-                <OptionSection
-                    property={'completed_status'}
-                    options={[
-                        'All',
-                        'Processing',
-                        'Shipped',
-                        'Delivered',
-                        'Cancelled',
-                    ]}
-                    title={'Completed Status'}
-                />
-            )}
 
-            <div className="destination flex flex-col gap-y-2">
+            <div className="mt-12">
+                {status == 'new' ? (
+                    <OptionSection
+                        property={'by_date'}
+                        options={[
+                            'All',
+                            'Overdue',
+                            'Today',
+                            'Tomorrow',
+                            'Within a week',
+                        ]}
+                        title={'Dispatch by date'}
+                    />
+                ) : (
+                    <OptionSection
+                        key={'dttfyguhijok'}
+                        property={'completed_status'}
+                        options={[
+                            'All',
+                            'Processing',
+                            'Shipped',
+                            'Delivered',
+                            'Cancelled',
+                        ]}
+                        title={'Completed Status'}
+                    />
+                )}
+            </div>
+
+            <OptionSection
+                property={'destination'}
+                options={[
+                    'All',
+                    'GB',
+                    'US',
+                    'everywhere_else',
+                    // { text: 'All', value: 'all' },
+                    // { text: 'United Kingdom', value: 'GB' },
+                    // { text: 'United States', value: 'US' },
+                    // { text: 'Everywhere else', value: 'everywhere_else' },
+                ]}
+                title={'Destination'}
+            />
+            {/* <div className="destination flex flex-col gap-y-2">
                 <p className="text-base font-semibold">Destination</p>
                 {[
                     { text: 'All', value: 'all' },
@@ -211,7 +202,7 @@ function SideContainer({}) {
                         </div>
                     );
                 })}
-            </div>
+            </div> */}
 
             <div className="destination flex flex-col gap-y-2">
                 <p className="text-base font-semibold">Order details</p>
@@ -225,7 +216,11 @@ function SideContainer({}) {
                             className="flex flex-row flex-nowrap gap-x-2"
                             onClick={() => {
                                 setLoading(() => true);
-
+                                searchParams.set(
+                                    lowerCaseItem,
+                                    !_.get(filterList, [status, lowerCaseItem])
+                                );
+                                setSearchParams(searchParams)
                                 setFilterList((prevState) => ({
                                     ...prevState,
                                     [status]: {

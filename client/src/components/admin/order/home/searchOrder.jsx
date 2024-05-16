@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import OrderItem from './orderItem';
 import _ from 'lodash';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
@@ -11,13 +11,16 @@ function SearchOrder({}) {
         setSearchText,
         searchData,
         setSearchData,
-        searchDataLoading,
+        
         setTriggerFetchData,
         setLoading,
         currentPage,
         setCurrentPage,
         setSearchDataLoading,
-        fetchSearchData
+        fetchSearchData,
+        searchParams, setSearchParams,
+        loading,
+        handleChangePageNumber
     } = useAdminOrderContext();
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -28,7 +31,8 @@ function SearchOrder({}) {
         setSearchingOrder(() => false);
         setSearchText(() => '');
         setSearchData(() => ({}));
-
+        searchParams.delete('searchText')
+        setSearchParams(searchParams)
         setLoading(() => true);
         setTriggerFetchData((prevState) => !prevState);
     };
@@ -38,7 +42,7 @@ function SearchOrder({}) {
     return (
         <section className="search-order flex w-full flex-row flex-nowrap gap-7 p-5">
             <section className="left flex flex-[4] flex-col gap-2">
-                {searchDataLoading ? (
+                {loading ? (
                     <div className="mt-14 flex justify-center">
                         <GLoader />
                     </div>
@@ -50,12 +54,12 @@ function SearchOrder({}) {
                                 matching "{_.get(searchData, 'searchText')}"
                                 across all your progress steps
                             </p>
-                            <p
+                            <a
                                 className="cursor-pointer text-xxs text-black/95 underline underline-offset-1 hover:text-gray-700/70 "
                                 onClick={clearSearch}
                             >
                                 Clear search
-                            </p>
+                            </a>
                         </div>
 
                         <div className="search-result-container rounded border-[1px]">
@@ -83,9 +87,9 @@ function SearchOrder({}) {
                             <Pagination
                                 page={currentPage}
                                 onChange={(e, value) => {
-                                    
-                                    setSearchDataLoading(() => true);
-                                    fetchSearchData(value)
+                                    handleChangePageNumber(value)
+                                    // setLoading(() => true);
+                                    // fetchSearchData(value);
                                     // setCurrentPage(() => value);
                                 }}
                                 count={maxPage}

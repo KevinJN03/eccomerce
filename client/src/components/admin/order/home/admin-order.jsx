@@ -1,10 +1,12 @@
-import AdminOrderContextProvider from '../../../../context/adminOrder';
-import OrderPageContent from './orderPageCOntent';
+import { Outlet } from 'react-router-dom';
+import AdminOrderContextProvider from '../../../../context/adminOrderContext';
+import OrderPageContent from './orderPageContent';
 
 function AdminOrder({}) {
     return (
         <AdminOrderContextProvider>
-            <OrderPageContent />
+            <OrderPageContent/>
+          
         </AdminOrderContextProvider>
     );
 }

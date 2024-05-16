@@ -79,17 +79,6 @@ const OrderSchema = new Schema({
     },
     delivery_cost: Schema.Types.Number,
   },
-
-  // shipping_option: {
-  //   cost: { type: Schema.Types.Number },
-  //   // delivery_date: { type: Schema.Types.String },
-  //   // name: { type: Schema.Types.String },
-  //   // time: { type: Schema.Types.Number },
-  //   // type: { type: Schema.Types.String },
-  //   // id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
-  // },
-
-  // cartObj: { type: Schema.Types.Mixed, ref: 'product' },
   cartId: { type: Schema.Types.ObjectId, ref: 'cart' },
   shipped: {
     tracking_number: { type: Schema.Types.String },
@@ -100,8 +89,8 @@ const OrderSchema = new Schema({
     note: { type: Schema.Types.String },
   },
   refund: {
-    _id: { type: Schema.Types.String },
-    date: { type: Schema.Types.Date },
+    id: [{ type: Schema.Types.String }],
+    // date: { type: Schema.Types.Date },
   },
   cancel: {
     reason: { type: Schema.Types.String },
@@ -125,6 +114,8 @@ const OrderSchema = new Schema({
   mark_as_gift: { type: Schema.Types.Boolean, default: false },
   completed_date: { type: Schema.Types.Date, default: null },
   payment_intent_id: { type: Schema.Types.String },
+  charge_id: { type: Schema.Types.String },
+  
 });
 
 export default model('order', OrderSchema);

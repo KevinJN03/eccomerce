@@ -8,6 +8,7 @@ import ThemeBtn from '../../buttons/themeBtn';
 import OptionError from '../components/product/new product/variation/error/optionError';
 import confettiIcon from '../../../assets/icons/confetti.png';
 import { useContent } from '../../../context/ContentContext';
+import RefundSuccess from './home/refund/refundSuccess';
 function CancelOrder({}) {
     const [order, setOrder] = useState({});
     const [message, setMessage] = useState('');
@@ -25,8 +26,9 @@ function CancelOrder({}) {
         returning_items: null,
         message_to_buyer: '',
         id,
+        cancel_order: true,
     });
-
+    const { handleCancel } = useContent();
     const abortControllerRef = useRef(new AbortController());
     const navigate = useNavigate();
     useEffect(() => {
@@ -52,44 +54,6 @@ function CancelOrder({}) {
         };
     }, []);
 
-    const handleCancel = async () => {
-        let isSuccessful = false;
-        try {
-            setBtnLoading(() => true);
-
-            abortControllerRef.current?.abort();
-            abortControllerRef.current = new AbortController();
-            const { data } = await adminAxios.post(
-                `/order/${id}/cancelled`,
-                { ...info },
-                { signal: abortControllerRef.current.signal }
-            );
-            isSuccessful = true;
-        } catch (error) {
-            logoutUser({ error });
-            isSuccessful = false;
-            setErrors(() => error?.response?.data);
-            if (error?.response?.status == 400) {
-                window.scrollTo(0, 0);
-            } else {
-                setShowAlert(() => ({
-                    on: true,
-                    size: 'medium',
-                    bg: 'bg-red-900',
-                    icon: 'sadFace',
-                    msg: _.get(error, 'response.data.msg.0'),
-                }));
-            }
-            setBtnLoading(() => false);
-        } finally {
-            if (isSuccessful) {
-                setTimeout(() => {
-                    setSuccess(() => true);
-                    setBtnLoading(() => false);
-                }, 600);
-            }
-        }
-    };
     return (
         <section className="flex h-screen w-full">
             {loading ? (
@@ -97,31 +61,7 @@ function CancelOrder({}) {
                     <div class="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
                 </div>
             ) : success ? (
-                <section className="flex w-full flex-col items-center justify-center gap-4">
-                    <div className="rounded-full bg-light-grey p-10 ">
-                        <img
-                            src={confettiIcon}
-                            alt="confetti"
-                            className="h-20 w-20"
-                        />
-                    </div>
-                    <div className="flex max-w-lg flex-col items-center justify-center gap-5">
-                        <h3 className="text-2xl font-semibold">
-                            All set! Your order is cancelled
-                        </h3>
-                        <p className="text-center text-sm">
-                            We sent your buyer a email to confirm. If you issued
-                            a refund, it should appear in their account within 2
-                            to 5 business days.
-                        </p>
-                        <ThemeBtn
-                            text={'Return to Orders'}
-                            handleClick={() => {
-                                navigate('/admin/orders');
-                            }}
-                        ></ThemeBtn>
-                    </div>
-                </section>
+                <RefundSuccess />
             ) : (
                 <section className="flex flex-col gap-5 p-5 pr-10">
                     <section className="flex flex-col gap-5 lg:w-10/12 ">
@@ -427,7 +367,16 @@ function CancelOrder({}) {
                             </ThemeBtn>
                             <ThemeBtn
                                 text={'Cancel order'}
-                                handleClick={handleCancel}
+                                handleClick={() =>
+                                    handleCancel({
+                                        info,
+                                        setBtnLoading,
+                                        abortControllerRef,
+                                        setErrors,
+                                        setSuccess,
+                                        id,
+                                    })
+                                }
                             >
                                 <div>
                                     {btnLoading ? (

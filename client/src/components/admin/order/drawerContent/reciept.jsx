@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
@@ -48,13 +48,13 @@ function Receipt({}) {
                                         <div className="flex flex-row gap-3">
                                             <img
                                                 src={item.product?.images[0]}
-                                                className="!h-10 !w-full max-w-10 rounded-sm object-cover"
+                                                className="!h-10 !w-full max-w-10 rounded object-cover"
                                             />
                                             <div className="flex flex-col gap-1">
                                                 <a
                                                     target="_blank"
                                                     href={`/product/${item.product?._id}`}
-                                                    className="text-xs underline underline-offset-1"
+                                                    className="text-xs underline underline-offset-1 mb-2"
                                                 >
                                                     {item.product?.title}
                                                 </a>
@@ -67,10 +67,10 @@ function Receipt({}) {
                                                         <Fragment
                                                             key={`variation${variationNum}`}
                                                         >
-                                                            {variationObj?.title && (
+                                                            {variationObj?.variation && (
                                                                 <p className="text-xs">
                                                                     {
-                                                                        variationObj?.title
+                                                                        variationObj?.title || `Variation ${variationNum}`
                                                                     }
                                                                     :{' '}
                                                                     <span>
@@ -114,7 +114,7 @@ function Receipt({}) {
                                 </p>
                             </td>
                         </tr> */}
-{/* 
+                        {/* 
                         <tr>
                             <td colSpan={3} className="pt-1">
                                 <p className="flex justify-between text-xs">
@@ -125,10 +125,7 @@ function Receipt({}) {
                         </tr>
                         */}
                         <tr>
-                            <td
-                                colSpan={3}
-                                className=" pt-4"
-                            >
+                            <td colSpan={3} className=" pt-4">
                                 <p className="flex justify-between text-xs font-medium">
                                     Subtotal
                                     <span className="!text-right">
@@ -144,7 +141,10 @@ function Receipt({}) {
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={3} className="pt-1 border-b-[1px] pb-4">
+                            <td
+                                colSpan={3}
+                                className="border-b-[1px] pb-4 pt-1"
+                            >
                                 <p className="flex justify-between text-xs">
                                     Discount{' '}
                                     <span className="!text-right">
@@ -191,6 +191,47 @@ function Receipt({}) {
                                 </p>
                             </td>
                         </tr>
+                        {orderInfo?.refund?.amount > 0 && (
+                            <>
+                                {' '}
+                                <tr>
+                                    <td colSpan={3} className=" pt-0.5">
+                                        <p className="flex justify-between text-xs font-light text-red-700">
+                                            Refunded
+                                            <span className="!text-right text-red-700">
+                                                -£
+                                                {parseFloat(
+                                                    _.get(
+                                                        orderInfo,
+                                                        'refund.amount'
+                                                    )
+                                                )?.toFixed(2)}
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colSpan={3} className=" pt-0.5">
+                                        <p className="flex justify-between text-xs font-medium">
+                                            Adjusted total
+                                            <span className="!text-right">
+                                                £
+                                                {parseFloat(
+                                                    _.get(
+                                                        orderInfo,
+                                                        'transaction_cost.total'
+                                                    ) -
+                                                        _.get(
+                                                            orderInfo,
+                                                            'refund.amount'
+                                                        )
+                                                )?.toFixed(2)}
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </>
+                        )}
                         {orderInfo?.payment_type && (
                             <tr>
                                 <td colSpan={3} className="pt-6">

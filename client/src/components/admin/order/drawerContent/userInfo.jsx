@@ -3,7 +3,7 @@ import {
     PersonOutlineTwoTone,
     NorthEastRounded,
 } from '@mui/icons-material';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import variant from '../home/variant';
@@ -31,7 +31,7 @@ function UserInfo({}) {
     };
 
     const orderHistory = async () => {
-        setSearchText(() => orderInfo.customer?._id);
+        // setSearchText(() => orderInfo.customer?._id);
         searchForOrder(orderInfo.customer?._id);
         setOpenDrawer(() => false);
         // try {
@@ -59,7 +59,7 @@ function UserInfo({}) {
                         className="flex flex-row items-center gap-[2px]"
                     >
                         <p className="text-xxs underline underline-offset-1">
-                            {orderInfo.customer?.fullName}
+                            {`${orderInfo.customer?.firstName} ${orderInfo.customer?.lastName}`}
                         </p>
                         <ArrowDropDownSharp className="!text-xl" />
                     </button>

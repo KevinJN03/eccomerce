@@ -61,23 +61,20 @@ import {
   get_setting,
   update_settings,
 } from '../Controllers/settingController.js';
+
 const router = express.Router();
 router.get('/category/all', get_all_category);
-//  router.get('/product/search', searchProduct)
 router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
-
 router.get('/count', count_all);
 router.get('/order/:id', getSingleOrder);
 router.get('/orders', getAllOrders);
 router.get('/coupon/all', get_all_coupons);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:ids', delete_product);
-
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.get('/delivery/paginate', get_delivery_profile_pagination);
-
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
 router.post('/delivery/update', update_delivery_profile);
@@ -93,9 +90,7 @@ router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
 router.put('/order/:id/shipped', shipOrder);
 router.post('/order/:id/cancelled', cancelOrder);
-
 router.post('/order/mark_as_gift', mark_as_gift);
-
 router.post('/orders/all', getAdminOrders);
 router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
@@ -114,5 +109,4 @@ router.put('/setting/update', update_settings);
 router.post('/product/price/update', editPrice);
 router.post('/product/delivery/update', update_product_delivery_profile);
 router.put('/product/category/update', update_product_category);
-// router.get('/check', checkLogin)
 export default router;

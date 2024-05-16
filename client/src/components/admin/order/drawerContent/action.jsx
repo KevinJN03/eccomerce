@@ -1,5 +1,11 @@
-import { CloseSharp, Inventory2Sharp, PrintSharp, RedeemSharp, UndoOutlined } from '@mui/icons-material';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import {
+    CloseSharp,
+    Inventory2Sharp,
+    PrintSharp,
+    RedeemSharp,
+    UndoOutlined,
+} from '@mui/icons-material';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
 
@@ -123,9 +129,9 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
                     <p className=" w-full whitespace-nowrap">Cancel</p>
                 </button>
                 <button
-                onClick={() =>
-                    navigate(`/admin/orders/${order?._id}/refund_order`)
-                }
+                    onClick={() =>
+                        navigate(`/admin/orders/${order?._id}/refund_order`)
+                    }
                     className={`flex w-full cursor-pointer flex-row flex-nowrap items-center gap-3 py-2 pl-3 pr-6 text-start hover:bg-light-grey  `}
                 >
                     <span>

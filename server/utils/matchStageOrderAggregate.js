@@ -2,11 +2,11 @@ import dayjs from "dayjs";
 
 const getMatchStage = ({ filter }) => {
   const matchArray = [];
-  if (filter?.destination == 'everywhere_else') {
+  if (filter?.destination == 'EVERYWHERE_ELSE') {
     matchArray.push({
       'shipping_address.address.country': { $nin: ['GB', 'US'] },
     });
-  } else if (filter?.destination != 'all') {
+  } else if (filter?.destination != 'ALL') {
     matchArray.push({
       'shipping_address.address.country': { $eq: filter.destination },
     });

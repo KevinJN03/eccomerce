@@ -178,27 +178,31 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
   res.status(200).send(users);
 });
 
-export const getSingleOrder = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+export const getSingleOrder = [
+  check('id').escape().trim().toUpperCase(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
 
-  const order = await Order.findOne({ _id: id?.toUpperCase() }, null, {
-    populate: {
-      path: 'items.product customer',
-      select: 'tittle _id images firstName lastName email title',
-    },
-    lean: { toObject: true },
-  });
+    const order = await Order.findOne({ _id: id }, null, {
+      populate: {
+        path: 'items.product customer',
+        select: 'tittle _id images firstName lastName email title',
+      },
+      lean: { toObject: true },
+    });
 
-  if (_.get(order, 'refund._id')) {
-    const refund = await stripe.refunds.retrieve(order.refund._id);
-    _.set(order, 'refund.amount', refund.amount / 100);
-  }
-  if (!order) {
-    return res.status(404).send({ msg: 'Order not found.', success: false });
-  }
+    if (!order) {
+      return res.status(404).send({ msg: 'Order not found.', success: false });
+    }
+    if (_.get(order, 'charge_id')) {
+      const charge = await stripe.charges.retrieve(order.charge_id);
+      _.set(order, 'refund.amount', charge.amount_refunded / 100);
+      // _.set(order, 'refund.data', charge);
+    }
 
-  res.status(200).send({ order, success: true });
-});
+    res.status(200).send({ order, success: true });
+  }),
+];
 
 export const shipOrder = [
   check('courier', 'Select a courier').escape().trim().notEmpty(),
@@ -334,36 +338,48 @@ export const cancelOrder = [
     .trim()
     .isLength({ max: 500 }),
   check('id').escape().trim(),
+  check('cancel_order').escape().trim().toBoolean(),
   asyncHandler(async (req, res, next) => {
-    const { id } = req.body;
+    const { cancel_order } = req.body;
+    const { id } = req.params;
     const errors = validationResult(req).formatWith(({ msg }) => msg);
     if (!errors.isEmpty()) {
       return res.status(400).send(errors.mapped());
     }
     const date = dayjs().toDate();
-    const order = await Order.findOneAndUpdate(
-      { _id: id },
-      {
-        status: 'cancelled',
-        cancel: { ...req.body, date },
-        completed_date: date,
-      },
-      {
-        populate: { path: 'items.product customer' },
-        new: true,
-        lean: { toObject: true },
-      },
-    ).exec();
+    const updateObj = {
+      cancel: { ...req.body, date },
+      completed_date: date,
+    };
+
+    if (cancel_order) {
+      updateObj.status = 'cancelled';
+    }
+    const order = await Order.findOneAndUpdate({ _id: id }, updateObj, {
+      populate: { path: 'items.product customer' },
+      new: true,
+      lean: { toObject: true },
+    }).exec();
 
     if (order?.payment_intent_id) {
-      const refund = await stripe.refunds.create({
+      const refundObj = {
         payment_intent: order.payment_intent_id,
-      });
+        metadata: { ...req.body, order_id: id },
+      };
 
-      await Order.findByIdAndUpdate(id, { refund: { _id: refund.id, date } });
-      console.log({ refund });
+      if (req.body?.charge) {
+        refundObj.amount = parseFloat(req.body.charge) * 100;
+      }
+      const refund = await stripe.refunds.create(refundObj);
+
+      await Order.findByIdAndUpdate(
+        id,
+        {
+          $push: { 'refund.id': refund.id },
+        },
+        { new: true, useFindAndModify: false },
+      );
     }
-
     const emailHtml = render(<OrderCancel order={order} />);
     const mailOptions = {
       from: SENDER,

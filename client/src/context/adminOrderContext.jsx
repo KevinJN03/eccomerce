@@ -9,8 +9,9 @@ import {
 import { adminOrderModalReducer } from '../hooks/adminOrderModalReducer';
 import UserLogout from '../hooks/userLogout';
 import { adminAxios } from '../api/axios';
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { useContent } from './ContentContext';
+import { useLocation, useSearchParams } from 'react-router-dom';
 const AdminOrderContext = createContext(null);
 
 export const useAdminOrderContext = () => {
@@ -18,6 +19,14 @@ export const useAdminOrderContext = () => {
 };
 
 export default function AdminOrderContextProvider({ children }) {
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [status, setStatus] = useState(() =>
+        location.pathname.split('/').pop()
+    );
+    const statusRef = useRef(status);
+
     const defaultFilterList = {
         new: {
             sort_by: 'dispatch by date',
@@ -35,11 +44,30 @@ export default function AdminOrderContextProvider({ children }) {
             has_note_from_buyer: false,
         },
     };
+    const [filterList, setFilterList] = useState(() => {
+        const newFilterList = _.cloneDeep(defaultFilterList);
+
+        const allSearchParams = Object.fromEntries([...searchParams]);
+
+        _.merge(newFilterList[status], allSearchParams);
+
+        ['has_note_from_buyer', 'mark_as_gift'].forEach((property) => {
+            if (_.isString(newFilterList[status][property])) {
+                newFilterList[status][property] = Boolean(
+                    newFilterList[status][property]
+                );
+            }
+        });
+
+        _.unset(newFilterList[status], 'page');
+        _.unset(newFilterList[status], 'order_per_page');
+        return newFilterList;
+    });
 
     const defaultMarkGiftSelection = { true: 0, false: 0 };
     const [loading, setLoading] = useState(true);
     const [ordersData, setOrderData] = useState({});
-    const [status, setStatus] = useState('new');
+
     const { logoutUser } = UserLogout();
     const [openDrawer, setOpenDrawer] = useState(false);
     const [orderInfo, setOrderInfo] = useState({});
@@ -53,8 +81,12 @@ export default function AdminOrderContextProvider({ children }) {
     );
 
     const [checkAllSelection, setCheckAllSelection] = useState(false);
-    const [orderPerPage, setOrderPerPage] = useState(20);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [orderPerPage, setOrderPerPage] = useState(
+        searchParams.get('order_per_page') || 20
+    );
+    const [currentPage, setCurrentPage] = useState(
+        () => searchParams.get('page') || 1
+    );
     const [currentPageOrders, setCurrentPageOrders] = useState([]);
     const [modalCheck, setModalCheck] = useState(false);
     const [searchText, setSearchText] = useState('');
@@ -66,12 +98,9 @@ export default function AdminOrderContextProvider({ children }) {
         { type: 'printOrder' }
     );
     const [isSearchingOrder, setSearchingOrder] = useState(false);
-    const [filterList, setFilterList] = useState(defaultFilterList);
     const [triggerFetchData, setTriggerFetchData] = useState(false);
-    const [searchDataLoading, setSearchDataLoading] = useState(false);
     const { setShowAlert } = useContent();
     const [totalCount, setTotalCount] = useState();
-
     const [alertObj, setAlertObj] = useState({
         on: true,
         size: 'medium',
@@ -82,6 +111,12 @@ export default function AdminOrderContextProvider({ children }) {
     const abortControllerRef = useRef(new AbortController());
     const refreshRef = useRef(false);
     const timeoutRef = useRef(null);
+
+    useEffect(() => {
+        const path = location.pathname.split('/').pop();
+        setStatus(() => path);
+    }, [location.pathname]);
+
     const fetchData = async (page = currentPage) => {
         let count = null;
         let success = true;
@@ -122,7 +157,9 @@ export default function AdminOrderContextProvider({ children }) {
             setAllMarkGiftSelection(() => markAsGiftObj);
             setAllOrdersId(() => getAllIds);
             refreshRef.current = false;
-            setCurrentPage(() => data?.page || 1);
+            setCurrentPage(() => data.page);
+            searchParams.set('page', data.page);
+            setSearchParams(searchParams);
         } catch (error) {
             console.error('error while getting orders', error);
             success = false;
@@ -166,13 +203,12 @@ export default function AdminOrderContextProvider({ children }) {
 
             setCurrentPage(() => data?.page || 1);
         } catch (error) {
-            console.error('error while getting search result', error);
             success = false;
 
             logoutUser({ error });
         } finally {
             timeoutRef.current = setTimeout(() => {
-                setSearchDataLoading(() => false);
+                setLoading(() => false);
 
                 if (!success) {
                     setShowAlert(alertObj);
@@ -182,9 +218,11 @@ export default function AdminOrderContextProvider({ children }) {
     };
     useEffect(() => {
         setLoading(true);
-        // fetchData();
-        if (isSearchingOrder) {
-            fetchSearchData();
+
+        const getParamValue = searchParams.get('searchText');
+        if (getParamValue) {
+            fetchSearchData(1, getParamValue);
+            setSearchText(() => getParamValue);
         } else {
             fetchData();
         }
@@ -192,30 +230,20 @@ export default function AdminOrderContextProvider({ children }) {
             abortControllerRef.current?.abort();
             clearTimeout(timeoutRef?.current);
         };
-    }, [status, filterList, orderPerPage, triggerFetchData]);
+    }, [
+        status,
+        // filterList,
+        orderPerPage,
+        triggerFetchData,
+        searchParams.get('sort_by'),
+        searchParams.get('by_date'),
+        searchParams.get('destination'),
+        searchParams.get('mark_as_gift'),
+        searchParams.get('has_note_from_buyer'),
+        searchParams.get('completed_status'),
+        searchParams.get('searchText'),
 
-    // useEffect(() => {
-    //     if (isSearchingOrder) {
-    //         fetchSearchData();
-    //     } else {
-    //         fetchData();
-    //     }
-
-    //     return () => {
-    //         abortControllerRef.current?.abort();
-    //     };
-    // }, [triggerFetchData]);
-
-    // useEffect(() => {
-    //     setLoading(true);
-    //     const timeout = setTimeout(() => {
-    //         setLoading(false);
-    //     }, 1200);
-
-    //     return () => {
-    //         clearTimeout(timeout);
-    //     };
-    // }, [currentPage]);
+    ]);
 
     const handleMarkGift = async ({
         orderId,
@@ -266,22 +294,81 @@ export default function AdminOrderContextProvider({ children }) {
     };
 
     const searchForOrder = async (text = searchText) => {
-        console.log('clicked');
         if (text) {
-            // setSearchingOrder(() => true);
-
-            setSearchDataLoading(() => true);
-            // setCurrentPage(() => 1);
-            fetchSearchData(1, text);
+            setSearchParams({ searchText: text });
+           
         } else {
-            setSearchDataLoading(() => false);
-            setLoading(() => true);
-            setCurrentPage(() => 1);
-            setSearchingOrder(() => false);
-            setTriggerFetchData((prevState) => !prevState);
+            searchParams.delete('searchText');
+
+            setSearchParams(searchParams);
+       
         }
+      
 
         document.activeElement.blur();
+    };
+
+    const handleOnClose = () => {
+        searchParams.delete('orderId');
+        setSearchParams(searchParams);
+        setOpenDrawer(() => false);
+    };
+
+    const orderInfoAbortController = useRef(new AbortController());
+
+    const handleFetchOrderInfo = async () => {
+        let success = false;
+        try {
+            orderInfoAbortController.current?.abort();
+            orderInfoAbortController.current = new AbortController();
+            const { data } = await adminAxios.get(
+                `order/${searchParams.get('orderId')}`,
+                {
+                    signal: orderInfoAbortController.current.signal,
+                }
+            );
+            const position = window.pageYOffset;
+            setOrderInfo(() => ({ ...data?.order, position }));
+            success = true;
+        } catch (error) {
+            logoutUser({ error });
+        } finally {
+            if (success) {
+                setOpenDrawer(() => true);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (searchParams.get('orderId')) {
+            handleFetchOrderInfo();
+        } else {
+            setOpenDrawer(() => false);
+        }
+
+        return () => {
+            orderInfoAbortController.current?.abort();
+        };
+    }, [searchParams.get('orderId')]);
+
+    const handleChangePageNumber = (num) => {
+        setLoading(() => true);
+        searchParams.set('page', num);
+        setSearchParams(searchParams);
+
+        if(searchParams.get('searchText')){
+            fetchSearchData(num)
+        }else {
+                   fetchData(num);
+ 
+        }
+    };
+
+    const handleOrderPerPage = (num) => {
+        searchParams.set('order_per_page', num);
+
+        setSearchParams(searchParams);
+        setOrderPerPage(parseInt(num));
     };
     const value = {
         loading,
@@ -326,8 +413,7 @@ export default function AdminOrderContextProvider({ children }) {
         setTriggerFetchData,
         searchData,
         setSearchData,
-        searchDataLoading,
-        setSearchDataLoading,
+
         fetchSearchData,
         fetchData,
         markGiftSelection,
@@ -336,6 +422,12 @@ export default function AdminOrderContextProvider({ children }) {
         setAllMarkGiftSelection,
         defaultMarkGiftSelection,
         handleMarkGift,
+        searchParams,
+        setSearchParams,
+        handleOnClose,
+        handleFetchOrderInfo,
+        handleChangePageNumber,
+        handleOrderPerPage,
     };
 
     return (

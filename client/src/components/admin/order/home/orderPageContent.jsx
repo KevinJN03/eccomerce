@@ -5,11 +5,10 @@ import SubHeader from './subheader';
 
 import PageOptions from './pageOption';
 import Containers from './containers';
-import SideContainer from './sideContainer';
 
 import AdminOrderContextProvider, {
     useAdminOrderContext,
-} from '../../../../context/adminOrder';
+} from '../../../../context/adminOrderContext';
 import { Box, Drawer, Modal, Pagination } from '@mui/material';
 import DrawerContainer from '../drawerContent/drawerContainer';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
@@ -22,13 +21,14 @@ import AddToPackage from '../modalView/addToPackage/addToPackage';
 import _ from 'lodash';
 import { CloseSharp } from '@mui/icons-material';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import SideContainer from './sideContainer/sideContainer';
 
-function OrderPageContent({}) {
+function OrderPageContent({ children }) {
     const {
         loading,
         isSearchingOrder,
         openDrawer,
-        setOpenDrawer,
         totalCount,
         status,
         setStatus,
@@ -36,13 +36,15 @@ function OrderPageContent({}) {
         setModalOpen,
         currentPage,
         ordersData,
-        fetchData,
-        setLoading,
+
         setOrderInfo,
         orderInfo,
+
+        handleOnClose,
+        handleChangePageNumber,
     } = useAdminOrderContext();
     const maxPage = _.get(ordersData, 'maxPage');
-
+    const navigate = useNavigate();
     useEffect(() => {
         const element = document.getElementById('order-page');
 
@@ -70,10 +72,16 @@ function OrderPageContent({}) {
                                         select: 'new',
                                         amount: totalCount,
                                         showAmount: true,
+                                        handleClick: () => {
+                                            navigate('./new');
+                                        },
                                     },
                                     {
                                         text: 'Complete',
                                         select: 'complete',
+                                        handleClick: () => {
+                                            navigate('./complete');
+                                        },
                                     },
                                 ]}
                             />
@@ -91,18 +99,15 @@ function OrderPageContent({}) {
                                         }}
                                     >
                                         <PageOptions />
-                                        <Containers
-                                            ordersByDate={
-                                                ordersData?.ordersByDate
-                                            }
-                                        />
+                                        <Outlet />
                                         {maxPage > 1 && (
                                             <Pagination
                                                 page={currentPage}
                                                 onChange={(e, value) => {
                                                     // setCurrentPage(() => value);
-                                                    setLoading(() => true);
-                                                    fetchData(value);
+                                                    handleChangePageNumber(
+                                                        value
+                                                    );
                                                 }}
                                                 count={maxPage}
                                                 variant="outlined"
@@ -121,9 +126,7 @@ function OrderPageContent({}) {
                 style={{ zIndex: 50 }}
                 anchor="right"
                 open={openDrawer}
-                onClose={() => {
-                    setOpenDrawer(false);
-                }}
+                onClose={handleOnClose}
                 ModalProps={{
                     onTransitionExited: () => {
                         setOrderInfo(() => ({}));
@@ -143,7 +146,7 @@ function OrderPageContent({}) {
                 <section className="relative">
                     <div className="absolute left-[-4rem] top-0 z-50 h-20 w-12 border-4 border-red-500 bg-transparent">
                         <div
-                            onClick={() => setOpenDrawer(() => false)}
+                            onClick={handleOnClose}
                             className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
                         >
                             <CloseSharp className="!fill-primary/80" />
@@ -154,7 +157,9 @@ function OrderPageContent({}) {
             </Drawer>
             <Modal
                 open={modalOpen}
-                onClose={() => setModalOpen(() => false)}
+                onClose={() => {
+                    setModalOpen(() => false);
+                }}
                 sx={{
                     overflowY: 'auto',
                 }}

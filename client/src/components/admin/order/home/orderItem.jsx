@@ -2,7 +2,7 @@ import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import dayjs from 'dayjs';
 import SingleItem from './singleItem';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
 import { useRef, useState } from 'react';
 import { adminAxios } from '../../../../api/axios';
@@ -30,6 +30,8 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
         setSelectionSet,
         markGiftSelection,
         setMarkGiftSelection,
+        setSearchParams,
+        searchParams, handleFetchOrderInfo
     } = useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
@@ -84,16 +86,6 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
 
         setSelectionSet(() => newSelectionSet);
         setMarkGiftSelection(() => newMarkGift);
-
-        // setSelectionSet((prevSet) => {
-        //     const newSet = new Set(prevSet);
-        //     if (prevSet?.has(order?._id)) {
-        //         newSet.delete(order._id);
-        //     } else {
-        //         newSet.add(order?._id);
-        //     }
-        //     return newSet;
-        // });
     };
 
     const handleClick = async (e) => {
@@ -105,23 +97,24 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
             ) {
                 return;
             }
-            const { data } = await adminAxios.get(`order/${order?._id}`);
-            const position = window.pageYOffset;
-            setOrderInfo(() => ({ ...data?.order, position }));
+            searchParams.set('orderId', order?._id);
+            setSearchParams(searchParams);
+            handleFetchOrderInfo
+            // const { data } = await adminAxios.get(`order/${order?._id}`);
+            // const position = window.pageYOffset;
+            // setOrderInfo(() => ({ ...data?.order, position }));
             success = true;
         } catch (error) {
-            logoutUser({ error });
-            console.error('errow while fetching order', error);
+  
         } finally {
-            if (success) {
-                setOpenDrawer(true);
-            }
+            // if (success) {
+            //     setOpenDrawer(true);
+            // }
         }
     };
 
     return (
         <section
-            // htmlFor="my-drawer-4"
             onClick={handleClick}
             className={`flex flex-row gap-3 ${
                 lastOrderInArray ? '' : 'border-b-2'
@@ -175,7 +168,9 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
                         </div>
                     </div>
                     <div className="flex flex-1 flex-col">
-                        <p className="text-sm font-semibold">
+                        <p
+                            className={`text-sm font-semibold ${order.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                        >
                             {['received', 'processing'].includes(order?.status)
                                 ? `Ship by ${dayjs(
                                       _.get(order, 'ship_date')

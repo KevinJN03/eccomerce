@@ -5,7 +5,7 @@ import {
 } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import ThemeBtn from '../../../../buttons/themeBtn.jsx';
-import { useAdminOrderContext } from '../../../../../context/adminOrder.jsx';
+import { useAdminOrderContext } from '../../../../../context/adminOrderContext.jsx';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { getName } from 'country-list';
@@ -18,7 +18,7 @@ import Parser from 'html-react-parser';
 import { useContent } from '../../../../../context/ContentContext.jsx';
 
 function AddToPackage({}) {
-    const { orderInfo, setModalOpen } = useAdminOrderContext();
+    const { orderInfo, setModalOpen, handleOnClose } = useAdminOrderContext();
     const { logoutUser } = UserLogout();
     const { showAlert, setShowAlert } = useContent();
 
@@ -26,9 +26,7 @@ function AddToPackage({}) {
     const [btnLoad, setBtnLoad] = useState(false);
     const [resultData, setResultData] = useState({});
     const [packageDetail, setPackageDetail] = useState({
-        dispatch_date: dayjs()
-            .startOf()
-            .toISOString(),
+        dispatch_date: dayjs().startOf().toISOString(),
         courier: 'Royal Mail',
         tracking_number: '',
         email_me_copy: false,

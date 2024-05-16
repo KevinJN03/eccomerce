@@ -1,13 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
-function OptionSelection({
-    options,
-    status,
-    setStatus,
-    className,
-    
-}) {
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
+function OptionSelection({ options, status, setStatus, className }) {
     const [hover, setHover] = useState('');
 
     const variant = ({ currentStatus }) => {

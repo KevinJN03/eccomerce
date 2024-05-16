@@ -73,7 +73,8 @@ import WishList from './components/wishlist/index.jsx';
 import DeliveryProfile from './components/admin/delivery/deliveryProfile.jsx';
 import Postage from './components/admin/delivery/postage.jsx';
 import Upgrades from './components/admin/delivery/upgrades.jsx';
-import RefundOrder from './components/admin/order/home/refundOrder.jsx';
+import RefundOrder from './components/admin/order/home/refund/refundOrder.jsx';
+import Containers from './components/admin/order/home/containers.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -338,6 +339,15 @@ function Router({ Header, Footer }) {
                         {
                             path: 'orders',
                             element: <AdminOrder />,
+                            children: [{
+                                path: 'new',
+                                element: <Containers/>
+                            }, 
+                            {
+                                path: 'complete',
+                                element: <Containers/>
+                            }, 
+                        ]
                         },
 
                         {

@@ -4,23 +4,19 @@ import { useState } from 'react';
 import { useAdminContext } from '../../../../context/adminContext';
 import { ClickAwayListener } from '@mui/material';
 import { adminAxios } from '../../../../api/axios';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import dayjs from 'dayjs';
 
 function Note({ idx, note, date, _id, lastIdx }) {
     const [error, setError] = useState({});
     const [edit, setEdit] = useState(false);
     const [text, setText] = useState(note);
-    const {
-        orderInfo,
-        setOrderInfo,
-fetchData,
-        setTriggerFetchData,
-    } = useAdminOrderContext();
+    const { orderInfo, setOrderInfo, fetchData, setTriggerFetchData } =
+        useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
     const saveEdit = async () => {
-        try {   
+        try {
             if (text.trim().length == 0) {
                 setError(() => ({ msg: "Note can't be empty" }));
                 return;
@@ -31,10 +27,9 @@ fetchData,
                 note: text,
             });
 
-           
             setEdit(() => false);
             setOrderInfo(() => data.order);
-            fetchData()
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             logoutUser({ error });
         }
@@ -45,7 +40,7 @@ fetchData,
                 `privateNote/delete?noteId=${_id}&orderId=${orderInfo?._id}`
             );
             setOrderInfo(() => data.order);
-            fetchData()
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             console.error(error);
             logoutUser({ error });
@@ -137,12 +132,8 @@ function PrivateNote({}) {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState({});
     const [note, setNote] = useState('');
-    const {
-        orderInfo,
-        setOrderInfo,
-        fetchData,
-        setTriggerFetchData,
-    } = useAdminOrderContext();
+    const { orderInfo, setOrderInfo, setTriggerFetchData } =
+        useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const toggle = () => {
         setOpen((prevState) => !prevState);
@@ -163,7 +154,7 @@ function PrivateNote({}) {
             setOrderInfo(() => data.order);
             setOpen(() => false);
             setNote(() => '');
-            fetchData()
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             console.error(error);
             logoutUser({ error });

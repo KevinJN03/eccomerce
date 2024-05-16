@@ -5,7 +5,7 @@ import { ClickAwayListener } from '@mui/material';
 import { v4 as uuidV4 } from 'uuid';
 import Drawer from '../drawerContent/drawerContainer';
 import OrderList from './orderList';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
 
 import boxIcon from '../../../../assets/icons/magic-box.png';
@@ -14,13 +14,21 @@ import { CloseRounded } from '@mui/icons-material';
 import { getName } from 'country-list';
 import { AnimatePresence, motion } from 'framer-motion';
 function Containers({ ordersByDate }) {
-    const { setFilterList, filterList, status, defaultFilterList, setLoading } =
-        useAdminOrderContext();
+    const {
+        setFilterList,
+        filterList,
+        status,
+        defaultFilterList,
+        setLoading,
+        ordersData,
+        searchParams,
+        setSearchParams,
+    } = useAdminOrderContext();
     return (
         <section className="mb-10 flex w-full flex-col gap-4">
-            {ordersByDate?.length >= 1 ? (
+            {ordersData?.ordersByDate?.length >= 1 ? (
                 <>
-                    {ordersByDate?.map((item, idx) => {
+                    {ordersData?.ordersByDate?.map((item, idx) => {
                         return (
                             <OrderList
                                 orderObj={item}
@@ -71,8 +79,9 @@ function Containers({ ordersByDate }) {
                                                             <div className="flex flex-row  items-center border border-dark-gray">
                                                                 <p className="px-3 py-2">
                                                                     {_.upperFirst(
-                                                                        typeof value ==
-                                                                            'boolean'
+                                                                        _.isBoolean(
+                                                                            value
+                                                                        )
                                                                             ? key
                                                                             : getName(
                                                                                   value
@@ -92,6 +101,20 @@ function Containers({ ordersByDate }) {
                                                                             () =>
                                                                                 true
                                                                         );
+                                                                        searchParams.set(
+                                                                            key,
+                                                                            _.get(
+                                                                                defaultFilterList,
+                                                                                [
+                                                                                    status,
+                                                                                    key,
+                                                                                ]
+                                                                            )
+                                                                        );
+                                                                        setSearchParams(
+                                                                            searchParams
+                                                                        );
+
                                                                         setFilterList(
                                                                             (
                                                                                 prevState

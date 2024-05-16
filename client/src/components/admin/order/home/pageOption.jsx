@@ -1,6 +1,6 @@
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 function PageOptions({}) {
@@ -8,11 +8,9 @@ function PageOptions({}) {
         orderPerPage,
         setOrderPerPage,
         currentPage,
-        setCurrentPage,
         ordersData,
-        allOrderIds,
-        fetchData,
-        setLoading
+        handleChangePageNumber,
+        handleOrderPerPage,
     } = useAdminOrderContext();
     const maxPage = _.get(ordersData, 'maxPage');
 
@@ -20,27 +18,19 @@ function PageOptions({}) {
         if (currentPage == 1) {
             return;
         }
-
-        // setCurrentPage(() => currentPage - 1);
-        setLoading(() => true)
-
-        fetchData(currentPage - 1);
+        handleChangePageNumber(currentPage - 1);
     };
 
     const nextPage = () => {
         if (currentPage == maxPage) {
             return;
         }
-        setLoading(() => true)
-
-        // setCurrentPage(() => currentPage + 1);
-        fetchData(currentPage + 1);
-        // setCurrentPage((prevPage) => prevPage + 1);
+        handleChangePageNumber(currentPage + 1);
     };
     return (
         <section className="flex w-full flex-row items-center justify-end gap-3  py-3">
             <select
-                onChange={(e) => setOrderPerPage(parseInt(e.target.value))}
+                onChange={(e) => handleOrderPerPage(e.target.value)}
                 className="daisy-select daisy-select-bordered daisy-select-sm !h-9 !rounded-sm border-dark-gray text-sm font-semibold !outline-none"
             >
                 {[5, 10, 20, 35, 50].map((value) => {
@@ -60,9 +50,7 @@ function PageOptions({}) {
                         <select
                             onChange={(e) => {
                                 // setCurrentPage(() => parseInt(e.target.value));
-                                setLoading(() => true)
-
-                                fetchData(e.target.value);
+                                handleChangePageNumber(e.target.value);
                             }}
                             name="page"
                             id="page-select"
@@ -73,7 +61,7 @@ function PageOptions({}) {
                                 .map((value, idx) => {
                                     return (
                                         <option
-                                        className='!text-sm'
+                                            className="!text-sm"
                                             value={idx + 1}
                                             selected={idx + 1 == currentPage}
                                             key={`page-select-${idx + 1}`}

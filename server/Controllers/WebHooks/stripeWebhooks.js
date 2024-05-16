@@ -40,15 +40,23 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
     }
 
     if (event.type === 'charge.succeeded') {
-      const { payment_intent } = event.data.object;
+      const { payment_intent, id: charge_id } = event.data.object;
       const paymentIntent =
         await stripe.paymentIntents.retrieve(payment_intent);
       const orderNumber = paymentIntent.metadata?.orderNumber;
 
       const userId = paymentIntent?.customer;
-      const order = await Order.findById(orderNumber, null, {
-        lean: { toObject: true },
-      });
+
+      const order = await Order.findByIdAndUpdate(
+        orderNumber,
+        { charge_id, payment_intent_id: payment_intent },
+        {
+          lean: { toObject: true },
+        },
+      );
+      // const order = await Order.findById(orderNumber, null, {
+      //   lean: { toObject: true },
+      // });
 
       const cartObj = {};
 
@@ -142,7 +150,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
             status: 'received',
             payment_type:
               getPaymentMethod?.card?.brand || getPaymentMethod?.type,
-            payment_intent_id: paymentIntent?.id,
+            // payment_intent_id: paymentIntent?.id,
           },
         },
         {

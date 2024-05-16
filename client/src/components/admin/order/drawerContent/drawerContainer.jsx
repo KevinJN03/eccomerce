@@ -1,31 +1,19 @@
-import secure_icon from '../../../../assets/icons/secure-document.png';
-
-import { useAdminContext } from '../../../../context/adminContext';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
-// import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import AddressContainer from './addressContainer';
 import Receipt from './reciept';
 import {
-    CloseSharp,
-    PersonOutlineTwoTone,
-    AddRounded,
     ArrowDropDownSharp,
     CheckRounded,
-    PrintSharp,
-    Inventory2Sharp,
     RedeemSharp,
 } from '@mui/icons-material';
 import PrivateNote from './privateNote';
 import UserInfo from './userInfo';
-import { AnimatePresence, motion } from 'framer-motion';
-import containerVariants from '../home/containerVariants';
-import { ClickAwayListener } from '@mui/material';
-import { adminAxios } from '../../../../api/axios';
+import { motion } from 'framer-motion';
+
 import Actions from './action';
-import BubbleButton from '../../../buttons/bubbleButton';
 
 function Label({ setShowActions }) {
     return (
@@ -40,11 +28,7 @@ function Label({ setShowActions }) {
     );
 }
 function DrawerContainer() {
-    const {
-        orderInfo,
-       
-        
-    } = useAdminOrderContext();
+    const { orderInfo, status } = useAdminOrderContext();
 
     const [country, setCountry] = useState(
         () =>
@@ -54,21 +38,21 @@ function DrawerContainer() {
 
     const [showActions, setShowActions] = useState(false);
 
-    
-
-  
     return (
-        <div  className=" relative flex w-full flex-row gap-1 ">
-   
+        <div className=" relative flex w-full flex-row gap-1 ">
             <div className="min-h-screen w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">
                         <h3 className="text-xl font-semibold ">
                             Order from {orderInfo.shipping_address?.name}
                         </h3>
-                        <p className="text-xxs underline ring-offset-1">
+                        <a
+                            href={`/admin/orders/${status}?searchText=${orderInfo?._id}&orderId=${orderInfo?._id}`}
+                            target="_blank"
+                            className="cursor-pointer text-xxs underline ring-offset-1"
+                        >
                             #{orderInfo?._id}
-                        </p>
+                        </a>
                         <p className="text-xxs">
                             {orderInfo?.items?.length} item, £
                             {parseFloat(
@@ -134,7 +118,7 @@ function DrawerContainer() {
                                     showActions,
                                     setShowActions,
                                     orderId: orderInfo?._id,
-                                    order: orderInfo
+                                    order: orderInfo,
                                 }}
                             />
                         </section>
@@ -156,7 +140,7 @@ function DrawerContainer() {
                     <div className="mt-4 flex flex-col gap-3">
                         <h3 className="text-sm font-semibold">Gift Detail</h3>
 
-                        <div className="flex flex-row flex-nowrap items-center gap-2 pt-4 pb-7 w-full px-3 border rounded">
+                        <div className="flex w-full flex-row flex-nowrap items-center gap-2 rounded border px-3 pb-7 pt-4">
                             <RedeemSharp
                                 className="!fill-green-800"
                                 fontSize="small"

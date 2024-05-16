@@ -1,21 +1,15 @@
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
-import { useRef, useState } from 'react';
-import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext.jsx';
 import SearchInput from './searchInput';
-import ThemeBtn from '../../../buttons/themeBtn.jsx';
 import BubbleButton from '../../../buttons/bubbleButton.jsx';
-import { useNavigate } from 'react-router-dom';
 function Header({}) {
     const {
         searchText,
         setSearchText,
-        
+
         searchForOrder,
     } = useAdminOrderContext();
-
 
     return (
         <header className="flex w-full flex-row items-center justify-between border-b-2 py-4 pl-6 pr-12">
@@ -26,7 +20,7 @@ function Header({}) {
                         setSearchText(e.target.value);
                     }}
                     placeHolder={'Search your orders'}
-                    handleClick={searchForOrder}
+                    handleClick={() => searchForOrder()}
                     searchText={searchText}
                 />
                 <BubbleButton

@@ -34,7 +34,7 @@ const optionsArray = [
         icon: <img src={clipboard_icon} className='icons w-[30px] h-[30px]'/>,
         // icon: <CreditCardRoundedIcon className="icons" />,
         title: 'Orders',
-        link: '/admin/orders',
+        link: '/admin/orders/new',
     },
     {
         icon: <LocalShippingIcon className="icons" />,

@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { adminAxios } from '../api/axios';
 import UserLogout from '../hooks/userLogout';
+import _ from 'lodash';
 const ContentContext = createContext(null);
 export const useContent = () => {
     return useContext(ContentContext);
@@ -101,6 +102,51 @@ export function ContentProvider({ children, value }) {
         }
     };
 
+    const handleCancel = async ({
+        info,
+        setBtnLoading,
+        abortControllerRef,
+        setErrors,
+        setSuccess,
+        id
+    }) => {
+        let isSuccessful = false;
+        try {
+            setBtnLoading(() => true);
+
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await adminAxios.post(
+                `/order/${id}/cancelled`,
+                { ...info },
+                { signal: abortControllerRef.current.signal }
+            );
+            isSuccessful = true;
+        } catch (error) {
+            logoutUser({ error });
+            isSuccessful = false;
+            setErrors(() => error?.response?.data);
+            if (error?.response?.status == 400) {
+                window.scrollTo(0, 0);
+            } else {
+                setShowAlert(() => ({
+                    on: true,
+                    size: 'medium',
+                    bg: 'bg-red-900',
+                    icon: 'sadFace',
+                    msg: _.get(error, 'response.data.msg.0'),
+                }));
+            }
+            setBtnLoading(() => false);
+        } finally {
+            if (isSuccessful) {
+                setTimeout(() => {
+                    setSuccess(() => true);
+                    setBtnLoading(() => false);
+                }, 600);
+            }
+        }
+    };
     const newValue = {
         ...value,
         profile,
@@ -109,6 +155,7 @@ export function ContentProvider({ children, value }) {
         setLoading,
         fetchSetting,
         save,
+        handleCancel,
     };
     return (
         <ContentContext.Provider value={newValue}>
