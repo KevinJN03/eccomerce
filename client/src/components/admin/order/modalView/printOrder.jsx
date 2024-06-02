@@ -55,7 +55,7 @@ function PrintOrder({}) {
             setTimeout(() => {
                 if (success) {
                     window.open(
-                        `./orders/download/${dataValue.file}`,
+                        `./download/${dataValue.file}`,
                         '_blank',
                         'noreferrer'
                     );

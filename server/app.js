@@ -22,21 +22,11 @@ import errorHandler from './errorHandler.js';
 import passport from './utils/passport/passport.js';
 import https from 'https';
 import fs from 'fs';
-import indexRoute from './Routes/indexRoute';
-import asyncHandler from 'express-async-handler';
-import transporter from './utils/nodemailer.js';
-import * as React from 'react';
-import { render } from '@react-email/render';
+import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
-import Order from './Models/order.js';
 import 'dotenv/config';
-import PasswordReset from './React Email/emails/passwordreset.jsx';
-import User from './Models/user.js';
-import jwt from 'jsonwebtoken';
-import { check, validationResult } from 'express-validator';
-import bcrypt from 'bcryptjs';
 import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
-import { adminLogin } from './Controllers/adminController.js';
+import ExpressStatusMonitor from 'express-status-monitor';
 
 const {
   DBNAME,
@@ -63,6 +53,7 @@ const db = () => {
 db();
 
 const app = express();
+
 export const myCache = new NodeCache();
 // app.use(cors());
 app.set('trust proxy', true);
@@ -88,6 +79,13 @@ app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  ExpressStatusMonitor({
+    path: '/api/status',
+    title: 'Backend Server ',
+  }),
+);
 app.use('/api', indexRoute);
 app.use('/api/product', productRoute);
 app.use('/api/coupon', couponRoute);

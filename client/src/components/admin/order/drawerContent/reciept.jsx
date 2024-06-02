@@ -16,7 +16,7 @@ function Receipt({}) {
 
     return (
         <section className="mt-4 flex w-full flex-col gap-4">
-            <h3 className="text-sm font-semibold">
+            <h3 className="text-base font-semibold">
                 Receipt <span className=" align-top font-gotham">#</span>
                 {orderInfo?._id}
             </h3>

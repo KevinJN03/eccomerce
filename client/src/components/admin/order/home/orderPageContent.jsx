@@ -39,9 +39,10 @@ function OrderPageContent({ children }) {
 
         setOrderInfo,
         orderInfo,
-
+        statusRef,
         handleOnClose,
         handleChangePageNumber,
+         
     } = useAdminOrderContext();
     const maxPage = _.get(ordersData, 'maxPage');
     const navigate = useNavigate();
@@ -74,6 +75,7 @@ function OrderPageContent({ children }) {
                                         showAmount: true,
                                         handleClick: () => {
                                             navigate('./new');
+                                            setStatus(() => 'new');
                                         },
                                     },
                                     {
@@ -81,6 +83,7 @@ function OrderPageContent({ children }) {
                                         select: 'complete',
                                         handleClick: () => {
                                             navigate('./complete');
+                                            setStatus(() => 'complete');
                                         },
                                     },
                                 ]}
@@ -137,9 +140,6 @@ function OrderPageContent({ children }) {
                         backgroundColor: 'transparent',
                         boxShadow: 'none',
                         width: '50%',
-                        // minHeight: '100vh',
-                        // height: '100vh',
-                        // overflow: 'visible',
                     },
                 }}
             >
@@ -164,25 +164,16 @@ function OrderPageContent({ children }) {
                     overflowY: 'auto',
                 }}
             >
-                {/* <div className=''>
-                    X
-                </div> */}
                 <Box
                     sx={{
                         position: 'absolute',
                         top: '10%',
-                        // top: '0%',
-
                         left: '50%',
-
                         transform: 'translate(-50%, -0%)',
                         boxSizing: 'border-box',
                         maxWidth: '1200px',
                         width: '75vw',
-
                         borderRadius: '4px',
-                        // display: 'flex',
-                        // justifyContent: 'center',
                         border: 'none',
                     }}
                 >

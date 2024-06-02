@@ -5,12 +5,15 @@ import Router from './Router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import minMax from 'dayjs/plugin/minMax';
+
 import { CartProvider } from './context/cartContext';
 import Layout from './components/Layout/layout';
 import { WishlistContextProvider } from './context/wishlistContext';
 import { overwrite } from 'country-list';
 dayjs.extend(objectSupport);
 dayjs.extend(utc);
+dayjs.extend(minMax);
 
 overwrite([
     { code: 'GB', name: 'United Kingdom' },

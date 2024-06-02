@@ -49,7 +49,7 @@ function RefundTable({
                                         charge: _.get(
                                             order,
                                             'transaction_cost.total'
-                                        ) - _.get(order, 'refund.amount'),
+                                        ) - (_.get(order, 'refund.amount') || 0),
                                         delivery: _.get(
                                             order,
                                             'transaction_cost.delivery_cost'
@@ -386,7 +386,7 @@ function RefundTable({
                     <p>
                         £
                         {parseFloat(
-                            _.get(order, 'transaction_cost.total') - _.get(order, 'refund.amount')
+                            _.get(order, 'transaction_cost.total') - (_.get(order, 'refund.amount') || 0)
                         ).toFixed(2)}
                     </p>
                 </td>

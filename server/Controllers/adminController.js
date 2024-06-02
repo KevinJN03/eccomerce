@@ -34,23 +34,51 @@ import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
 import { forEach } from 'lodash';
 import _ from 'lodash';
+import productSearchStage from '../utils/productSearchStage.jsx';
+import OpenAI from 'openai';
 dayjs.extend(minMax);
+const { SENDER, OPENAI_KEY, STRIPE_KEY, OPENAI_ORGANIZATION, OPENAI_PROJECT } =
+  process.env;
 
-const stripe = Stripe(process.env.STRIPE_KEY);
-const { SENDER } = process.env;
+const stripe = Stripe(STRIPE_KEY);
+const openai = new OpenAI({
+  organization: OPENAI_ORGANIZATION,
+  project: OPENAI_PROJECT,
+});
+
+export const ai_word_suggestion = [
+  check('searchText', 'Provide a text to search').escape().trim().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = req.query;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.send({ result: [], searchText, errors: errors.mapped() });
+    }
+
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: `give me product word suggestion for the word "${searchText}" in a JSON array`,
+        },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+
+    console.log(completion.choices[0]);
+    res.send({ result: completion.choices[0], searchText });
+  }),
+];
 export const count_all = asyncHandler(async (req, res, next) => {
   const todayDate = dayjs()
-    .set('hour', 0)
-    .set('minute', 0)
-    .set('second', 0)
+    .endOf('day')
+
     .unix();
 
   const sixMonthsFromToday = dayjs()
     .subtract(6, 'month')
-    .set('D', 1)
-    .set('h', 1)
-    .set('m', 0)
-    .set('s', 0)
+    .startOf('day')
     .toDate();
 
   const [charges, userCount, orderCount, balance, orders, getOrdersByMonth] =
@@ -63,15 +91,15 @@ export const count_all = asyncHandler(async (req, res, next) => {
       stripe.balance.retrieve(),
       Order.find()
         .populate('items.product')
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: 1 })
         .limit(5)
         .exec(),
       Order.aggregate([
         {
           $match: {
-            status: {
-              $in: ['received', 'shipped', 'delivered'],
-            },
+            // status: {
+            //   $in: ['received', 'shipped', 'delivered'],
+            // },
             createdAt: { $gte: sixMonthsFromToday },
           },
         },
@@ -162,6 +190,8 @@ export const adminLogin = [
           .send({ email: 'User does not have admin access.' });
       }
       req.logIn(user, (error) => {
+
+        console.log('login', user.id,  error)
         if (error) {
           return next(err);
         }
@@ -351,15 +381,19 @@ export const cancelOrder = [
       cancel: { ...req.body, date },
       completed_date: date,
     };
-
+    const statusObject = {};
     if (cancel_order) {
-      updateObj.status = 'cancelled';
+      statusObject.status = 'cancelled';
     }
-    const order = await Order.findOneAndUpdate({ _id: id }, updateObj, {
-      populate: { path: 'items.product customer' },
-      new: true,
-      lean: { toObject: true },
-    }).exec();
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      { ...statusObject },
+      {
+        populate: { path: 'items.product customer' },
+        new: true,
+        lean: { toObject: true },
+      },
+    ).exec();
 
     if (order?.payment_intent_id) {
       const refundObj = {
@@ -372,18 +406,26 @@ export const cancelOrder = [
       }
       const refund = await stripe.refunds.create(refundObj);
 
-      await Order.findByIdAndUpdate(
-        id,
-        {
-          $push: { 'refund.id': refund.id },
-        },
-        { new: true, useFindAndModify: false },
-      );
+      updateObj['$push'] = { 'refund.id': refund.id };
+
+      // await Order.findByIdAndUpdate(
+      //   id,
+      //   {
+      //     $push: { 'refund.id': refund.id },
+      //   },
+      //   { new: true, useFindAndModify: false },
+      // );
     }
-    const emailHtml = render(<OrderCancel order={order} />);
+
+    const updateOrder = await Order.findOneAndUpdate({ _id: id }, updateObj, {
+      populate: { path: 'items.product customer' },
+      new: true,
+      lean: { toObject: true },
+    }).exec();
+    const emailHtml = render(<OrderCancel order={updateOrder} />);
     const mailOptions = {
       from: SENDER,
-      to: order?.customer?.email,
+      to: updateOrder?.customer?.email,
       subject: 'Your GLAMO order has been cancelled',
       html: emailHtml,
     };
@@ -728,22 +770,23 @@ export const searchOrder = [
             localField: 'items.product',
             foreignField: '_id',
             as: 'productLookup',
+            pipeline: [
+              {
+                $project: {
+                  variations: 0,
+                  reviews: 0,
+                  detail: 0,
+                  category: 0,
+                  gender: 0,
+                  price: 0,
+                  delivery: 0,
+                  stock: 0,
+                },
+              },
+            ],
           },
         },
-        {
-          $project: {
-            productLookup: {
-              variations: 0,
-              reviews: 0,
-              detail: 0,
-              category: 0,
-              gender: 0,
-              price: 0,
-              delivery: 0,
-              stock: 0,
-            },
-          },
-        },
+
         {
           $addFields: {
             'items.product': { $arrayElemAt: ['$productLookup', 0] },
@@ -762,6 +805,31 @@ export const searchOrder = [
         {
           $replaceRoot: {
             newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'customer',
+            foreignField: '_id',
+            as: 'customer',
+            pipeline: [
+              {
+                $project: {
+                  firstName: 1,
+                  lastName: 1,
+                },
+              },
+            ],
+          },
+        },
+        {
+          $replaceWith: {
+            $setField: {
+              field: 'customer',
+              input: '$$ROOT',
+              value: { $arrayElemAt: ['$customer', 0] },
+            },
           },
         },
         {
@@ -784,6 +852,34 @@ export const searchOrder = [
   }),
 ];
 
+export const searchProducts = [
+  check('searchText').escape().trim().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = await req.query;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.send({ result: [], searchText });
+    }
+    const result = await Product.aggregate([
+      productSearchStage(searchText),
+      ...productAggregateStage({ stats: true }),
+
+      // {
+      //   $project: {
+      //     variations: 0,
+      //   },
+      // },
+    ]);
+
+    res.send({
+      result,
+      success: true,
+      searchText,
+    });
+  }),
+];
 export const getAllProducts = [
   check('check.featured')
     .trim()
@@ -878,35 +974,7 @@ export const getAllProducts = [
       productPipeline.unshift({ $match: { $and: matchArray } });
     }
     if (checks?.searchText) {
-      const should = [
-        {
-          autocomplete: {
-            query: checks.searchText,
-            path: 'title',
-          },
-        },
-      ];
-
-      try {
-        const objectId = new mongoose.Types.ObjectId(checks.searchText);
-        should.push({
-          equals: {
-            value: objectId,
-            path: '_id',
-          },
-        });
-      } catch (error) {
-        console.error('parse string to objectId failed: ', error?.message);
-      }
-
-      const searchStage = {
-        $search: {
-          index: 'products_search_index',
-          compound: {
-            should,
-          },
-        },
-      };
+      const searchStage = productSearchStage(checks.searchText);
       productPipeline.unshift(searchStage);
     }
 

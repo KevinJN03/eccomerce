@@ -2,6 +2,8 @@ import { useAdminContext } from '../../../context/adminContext';
 import { useListingPageContext } from '../../../context/listingPageContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridItem from './gridItem';
+import EmptyListing from './emptylisting';
+import _ from 'lodash';
 
 function GridProduct() {
     const { selectionSet, setSelectionSet, products, loading } =
@@ -23,7 +25,7 @@ function GridProduct() {
                             );
                         })}
                 </>
-            ) : (
+            )  : !_.isEmpty(products) ? (
                 <>
                     {products.map((product, index) => {
                         return (
@@ -35,6 +37,8 @@ function GridProduct() {
                         );
                     })}
                 </>
+            ) :  _.isEmpty(products) && !loading && (
+                <EmptyListing />
             )}
         </section>
     );

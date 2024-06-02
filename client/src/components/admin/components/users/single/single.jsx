@@ -61,7 +61,7 @@ function Single_User({}) {
                                     initial="initial"
                                     animate="animate"
                                 >
-                                    <Link to={'./edit'} className="editButton">
+                                    <Link to={''} className="editButton">
                                         Edit
                                     </Link>
                                     <h1 className="title">Information</h1>

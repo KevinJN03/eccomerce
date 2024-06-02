@@ -10,10 +10,13 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
-import { HomeOutlined, InterestsOutlined , SearchOutlined} from '@mui/icons-material';
-import clipboard_icon from '../../../../assets/icons/clipboard.png'
+import {
+    HomeOutlined,
+    InterestsOutlined,
+    SearchOutlined,
+} from '@mui/icons-material';
+import clipboard_icon from '../../../../assets/icons/clipboard.png';
 const optionsArray = [
-   
     {
         icon: <HomeOutlined className="icons" />,
         title: 'DashBoard',
@@ -31,7 +34,7 @@ const optionsArray = [
         link: '/admin/products',
     },
     {
-        icon: <img src={clipboard_icon} className='icons w-[30px] h-[30px]'/>,
+        icon: <img src={clipboard_icon} className="icons h-[30px] w-[30px]" />,
         // icon: <CreditCardRoundedIcon className="icons" />,
         title: 'Orders',
         link: '/admin/orders/new',
@@ -46,18 +49,20 @@ const optionsArray = [
         icon: <AssessmentRoundedIcon className="icons" />,
         title: 'Stats',
         // link: '/admin/delivery',
+        coming_soon: true,
     },
     {
         icon: <NotificationsActiveRoundedIcon className="icons" />,
         title: '  Notifications',
         // link: '/admin/delivery',
+        coming_soon: true,
     },
-  
 
     {
         icon: <SettingsSystemDaydreamRoundedIcon className="icons" />,
         title: 'System Health',
-        // link: '/admin/delivery',
+        link: '/admin/system_health',
+        // coming_soon: true,
     },
     {
         icon: <PsychologyRoundedIcon className="icons" />,
@@ -66,11 +71,13 @@ const optionsArray = [
     {
         icon: <SettingsSuggestRoundedIcon className="icons" />,
         title: 'Settings',
+        coming_soon: true,
     },
 
     {
         icon: <AccountCircleOutlinedIcon className="icons" />,
         title: 'Profile',
+        coming_soon: true,
 
         // link: '/admin/delivery',
     },

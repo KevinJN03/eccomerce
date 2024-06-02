@@ -117,10 +117,10 @@ function PrivateButton({ toggle, noteCount }) {
     return (
         <button
             onClick={toggle}
-            className="flex w-fit flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
+            className="flex  cursor-pointer w-fit flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
         >
             <AddRounded className="!text-sm" />
-            <p className="text-xxs">
+            <p className="text-xxs !cursor-pointer">
                 {noteCount == 0
                     ? 'Add a private note'
                     : 'Add more private notes'}

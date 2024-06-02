@@ -11,8 +11,9 @@ import {
 import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
 import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
-
+import ExpressStatusMonitor from 'express-status-monitor';
 const router = express.Router();
+
 router.use('/cart', cartRoute);
 router.use('/wishlist', wishlistRoute);
 

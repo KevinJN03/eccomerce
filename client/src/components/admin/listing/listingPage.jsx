@@ -7,7 +7,7 @@ import actionColumn from '../components/users/datatable/actionColumn.jsx';
 import { useAdminContext } from '../../../context/adminContext.jsx';
 import SearchInput from '../order/home/searchInput.jsx';
 import { AddRounded, ArrowDropDownSharp } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ProductItem from './gridItem.jsx';
 import SelectionInput from '../order/home/selectionInput.jsx';
 import SideContainer from './sideContainer.jsx';
@@ -22,7 +22,18 @@ import UserLogout from '../../../hooks/userLogout.jsx';
 import illustration from './illustration3.png';
 import { AnimatePresence, motion, progress } from 'framer-motion';
 import _ from 'lodash';
+import boxIcon from '../../../assets/icons/magic-box.png';
+
 function ListingPage() {
+    const defaultChecks = {
+        format: 'grid',
+        listing_status: 'active',
+        stats: false,
+        featured: false,
+        sort: {
+            title: 1,
+        },
+    };
     const [loading, setLoading] = useState(true);
     const [categoryQuantity, setCategoryQuantity] = useState({});
     const [deliveryQuantityMap, setDeliveryQuantityMap] = useState({});
@@ -35,20 +46,24 @@ function ListingPage() {
     const [productIds, setProductIds] = useState([]);
     const [progressValue, setProgressValue] = useState(0);
     const [deliveryProfile, setDeliveryProfile] = useState([]);
-    const [showStats, setShowStats] = useState(false);
     const abortControllerRef = useRef(new AbortController());
+
+    const [searchParams, setSearchParams] = useSearchParams();
     const [checks, setChecks] = useState(() => {
-        const defaultChecks = {
-            format: 'grid',
-            listing_status: 'active',
-
-            featured: false,
-            sort: {
-                title: 1,
-            },
-        };
-
         try {
+            const newChecks = _.cloneDeep(defaultChecks);
+            const allSearchParams = Object.fromEntries([...searchParams]);
+            _.merge(newChecks, allSearchParams);
+            if (newChecks?.sort_by) {
+                newChecks.sort = {
+                    [newChecks?.sort_by]: parseInt(newChecks?.order || 1),
+                };
+                _.unset(newChecks, 'sort_by');
+                _.unset(newChecks, 'order');
+            }
+            if (!_.isEmpty(allSearchParams)) {
+                return newChecks;
+            }
             if (!_.isEmpty(localStorage.getItem('checks'))) {
                 console.log('in here', localStorage.getItem('checks'));
                 return JSON.parse(localStorage.getItem('checks'));
@@ -68,6 +83,14 @@ function ListingPage() {
     }, [checks]);
 
     useEffect(() => {
+        setChecks((prevState) => ({
+            ...prevState,
+            searchText: searchParams.get('searchText') || '',
+        }));
+        setTriggerSearch((prevState) => !prevState);
+    }, [searchParams.get('searchText')]);
+
+    useEffect(() => {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
         let id = null;
@@ -81,8 +104,6 @@ function ListingPage() {
                 var intervalId = setInterval(handleInterval, 1);
                 id = intervalId;
                 function handleInterval() {
-                    console.log('interval', intervalId);
-
                     setProgressValue((prevValue) => {
                         if (prevValue >= 100) {
                             setDeliveryProfile(() => deliveryProfileData);
@@ -106,8 +127,6 @@ function ListingPage() {
                                     deliveryObj[delivery] = 1;
                                 }
                             });
-
-                            // setCategoryQuantity(() => categoryObj);
 
                             const updateQuantityMap = ({
                                 setState,
@@ -205,11 +224,10 @@ function ListingPage() {
                 logoutUser({ error });
             } finally {
                 setSelectionSet(() => new Set());
-                if (loading) {
-                    setTimeout(() => {
-                        setLoading(() => false);
-                    },200);
-                }
+
+                setTimeout(() => {
+                    setLoading(() => false);
+                }, 400);
             }
         };
 
@@ -222,15 +240,32 @@ function ListingPage() {
             abortControllerRef.current?.abort();
         };
     }, [
-        checks?.listing_status,
-        checks?.sort,
-        checks?.featured,
-        checks?.category,
+        // checks?.listing_status,
+        // checks?.sort,
+        // checks?.featured,
+        // checks?.category,
+        // triggerSearch,
+        // ,
+        // checks?.deliveryProfile,
+        searchParams.get('listing_status'),
+        searchParams.get('sort_by'),
+        searchParams.get('category'),
+        searchParams.get('searchText'),
+        searchParams.get('deliveryProfile'),
+        searchParams.get('featured'),
         triggerSearch,
-        ,
-        checks?.deliveryProfile,
     ]);
 
+    const handleSearchText = () => {
+        setLoading(() => true);
+        if (checks?.searchText) {
+            searchParams.set('searchText', checks?.searchText);
+        } else {
+            searchParams.delete('searchText');
+        }
+        setSearchParams(searchParams);
+        setTriggerSearch((prevState) => !prevState);
+    };
     const value = {
         checks,
         setChecks,
@@ -242,12 +277,15 @@ function ListingPage() {
         categoryQuantity,
         deliveryQuantityMap,
         loading,
-        showStats,
-        setShowStats,
+        setLoading,
         triggerSearch,
         setTriggerSearch,
         setProductIds,
         deliveryProfile,
+        searchParams,
+        setSearchParams,
+        defaultChecks,
+        handleSearchText,
     };
 
     return (
@@ -281,60 +319,11 @@ function ListingPage() {
                     <section className="left flex w-full flex-[5] flex-col">
                         <SubHeader />
                         <section className="w-full">
-                            <>
-                                {checks.format === 'grid' ? (
-                                    <GridProduct />
-                                ) : (
-                                    <VerticalProducts />
-                                )}
-                            </>
-
-                            {/* // <div className="mt-20 flex w-full flex-col items-center justify-center gap-4">
-                                //     <img
-                                //         className="w28 h-28"
-                                //         src={illustration}
-                                //     />
-                                //     <p className="text-lg">
-                                //         {checks?.searchText
-                                //             ? 'No listings matched your search query.'
-                                //             : 'No listings matched these filters.'}
-                                //     </p>
-                                //     <button
-                                //         onClick={() => {
-                                //             if (checks?.searchText) {
-                                //                 setChecks((prevState) => {
-                                //                     return {
-                                //                         ...prevState,
-                                //                         searchText: '',
-                                //                     };
-                                //                 });
-                                //                 setTriggerSearch(
-                                //                     (prevState) => !prevState
-                                //                 );
-
-                                //                 return;
-                                //             }
-
-                                //             setChecks((prevState) => {
-                                //                 const {
-                                //                     sort,
-                                //                     listing_status,
-                                //                     format,
-                                //                 } = prevState;
-                                //                 return {
-                                //                     sort,
-                                //                     listing_status,
-                                //                     format,
-                                //                 };
-                                //             });
-                                //         }}
-                                //         className="rounded border  border-dark-gray px-3 py-2 font-medium transition-all hover:bg-light-grey/50"
-                                //     >
-                                //         {checks?.searchText
-                                //             ? 'Clear Search'
-                                //             : 'Reset Filters'}
-                                //     </button>
-                                // </div> */}
+                            {checks.format === 'grid' ? (
+                                <GridProduct />
+                            ) : (
+                                <VerticalProducts />
+                            )}
                         </section>
                     </section>
 

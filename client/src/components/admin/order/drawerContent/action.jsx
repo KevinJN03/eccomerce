@@ -18,8 +18,13 @@ import { useNavigate } from 'react-router-dom';
 function Actions({ setShowActions, showActions, children, orderId, order }) {
     const { setModalCheck, setModalContent, setShowAlert } = useContent();
     const { logoutUser } = UserLogout();
-    const { setOrderInfo, setModalOpen, setTriggerFetchData, handleMarkGift } =
-        useAdminOrderContext();
+    const {
+        setOrderInfo,
+        setModalOpen,
+        setTriggerFetchData,
+        handleMarkGift,
+        addToPackage,
+    } = useAdminOrderContext();
 
     const navigate = useNavigate();
     const abortControllerRef = useRef(new AbortController());
@@ -32,34 +37,34 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
         setShowActions(false);
     };
 
-    const addToPackage = async () => {
-        try {
-            abortControllerRef.current?.abort();
-            abortControllerRef.current = new AbortController();
-            const { data } = await adminAxios.get(`order/${orderId}`, {
-                signal: abortControllerRef.current.signal,
-            });
-            setOrderInfo(() => ({ ...data?.order }));
-            setModalOpen(() => true);
-            setShowActions(() => false);
-        } catch (error) {
-            logoutUser({ error });
-            console.error(error);
+    // const addToPackage = async () => {
+    //     try {
+    //         abortControllerRef.current?.abort();
+    //         abortControllerRef.current = new AbortController();
+    //         const { data } = await adminAxios.get(`order/${orderId}`, {
+    //             signal: abortControllerRef.current.signal,
+    //         });
+    //         setOrderInfo(() => ({ ...data?.order }));
+    //         setModalOpen(() => true);
+    //         setShowActions(() => false);
+    //     } catch (error) {
+    //         logoutUser({ error });
+    //         console.error(error);
 
-            if (error.response.status != 401) {
-                setShowAlert(() => ({
-                    on: true,
-                    size: 'small',
-                    bg: 'bg-red-900',
-                    icon: 'sadFace',
-                    msg: 'Failed to get order information. Please try again later.',
-                }));
-            }
-        }
+    //         if (error.response.status != 401) {
+    //             setShowAlert(() => ({
+    //                 on: true,
+    //                 size: 'small',
+    //                 bg: 'bg-red-900',
+    //                 icon: 'sadFace',
+    //                 msg: 'Failed to get order information. Please try again later.',
+    //             }));
+    //         }
+    //     }
 
-        setModalOpen(() => true);
-        setShowActions(() => false);
-    };
+    //     setModalOpen(() => true);
+    //     setShowActions(() => false);
+    // };
     return (
         <SeamlessDropdown {...{ setShow: setShowActions, show: showActions }}>
             <section className="mt-9">
@@ -82,7 +87,8 @@ function Actions({ setShowActions, showActions, children, orderId, order }) {
                                 className="disable-drawer"
                             />
                         ),
-                        handleClick: addToPackage,
+                        handleClick: () =>
+                            addToPackage({ orderId, setShowActions , mark_as_completed: false}),
                     },
                     {
                         text: _.get(order, 'mark_as_gift')

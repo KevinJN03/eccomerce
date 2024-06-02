@@ -25,6 +25,7 @@ export default function AdminOrderContextProvider({ children }) {
     const [status, setStatus] = useState(() =>
         location.pathname.split('/').pop()
     );
+
     const statusRef = useRef(status);
 
     const defaultFilterList = {
@@ -52,10 +53,16 @@ export default function AdminOrderContextProvider({ children }) {
         _.merge(newFilterList[status], allSearchParams);
 
         ['has_note_from_buyer', 'mark_as_gift'].forEach((property) => {
-            if (_.isString(newFilterList[status][property])) {
-                newFilterList[status][property] = Boolean(
-                    newFilterList[status][property]
+            const propertyValue = _.get(newFilterList, [status, property]);
+            if (_.isString(propertyValue)) {
+                _.set(
+                    newFilterList,
+                    [status, property],
+                    Boolean(propertyValue)
                 );
+                // newFilterList[status][property] = Boolean(
+                //     newFilterList[status][property]
+                // );
             }
         });
 
@@ -108,6 +115,7 @@ export default function AdminOrderContextProvider({ children }) {
         bg: 'bg-red-900',
         msg: 'Failed to find orders. Please try again later.',
     });
+    const [markAsComplete, setMarkAsComplete] = useState(false);
     const abortControllerRef = useRef(new AbortController());
     const refreshRef = useRef(false);
     const timeoutRef = useRef(null);
@@ -242,7 +250,6 @@ export default function AdminOrderContextProvider({ children }) {
         searchParams.get('has_note_from_buyer'),
         searchParams.get('completed_status'),
         searchParams.get('searchText'),
-
     ]);
 
     const handleMarkGift = async ({
@@ -296,14 +303,11 @@ export default function AdminOrderContextProvider({ children }) {
     const searchForOrder = async (text = searchText) => {
         if (text) {
             setSearchParams({ searchText: text });
-           
         } else {
             searchParams.delete('searchText');
 
             setSearchParams(searchParams);
-       
         }
-      
 
         document.activeElement.blur();
     };
@@ -356,11 +360,10 @@ export default function AdminOrderContextProvider({ children }) {
         searchParams.set('page', num);
         setSearchParams(searchParams);
 
-        if(searchParams.get('searchText')){
-            fetchSearchData(num)
-        }else {
-                   fetchData(num);
- 
+        if (searchParams.get('searchText')) {
+            fetchSearchData(num);
+        } else {
+            fetchData(num);
         }
     };
 
@@ -370,7 +373,46 @@ export default function AdminOrderContextProvider({ children }) {
         setSearchParams(searchParams);
         setOrderPerPage(parseInt(num));
     };
+
+    const addToPackage = async ({
+        orderId,
+        setShowActions,
+        mark_as_completed,
+    }) => {
+        try {
+            orderInfoAbortController.current?.abort();
+            orderInfoAbortController.current = new AbortController();
+            const { data } = await adminAxios.get(`order/${orderId}`, {
+                signal: orderInfoAbortController.current.signal,
+            });
+            setOrderInfo(() => ({ ...data?.order }));
+
+            setMarkAsComplete(() => mark_as_completed || false)
+            setModalOpen(() => true);
+
+            if (setShowActions) {
+                setShowActions(() => false);
+            }
+        } catch (error) {
+            logoutUser({ error });
+            console.error(error);
+
+            if (error.response.status != 401) {
+                setShowAlert(() => ({
+                    on: true,
+                    size: 'small',
+                    bg: 'bg-red-900',
+                    icon: 'sadFace',
+                    msg: 'Failed to get order information. Please try again later.',
+                }));
+            }
+        }
+
+        setModalOpen(() => true);
+        setShowActions(() => false);
+    };
     const value = {
+        addToPackage,
         loading,
         setLoading,
         searchForOrder,
@@ -428,6 +470,8 @@ export default function AdminOrderContextProvider({ children }) {
         handleFetchOrderInfo,
         handleChangePageNumber,
         handleOrderPerPage,
+        statusRef,
+        markAsComplete, setMarkAsComplete
     };
 
     return (

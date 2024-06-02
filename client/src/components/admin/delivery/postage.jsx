@@ -28,7 +28,7 @@ function Input({
     const { postageSetting, setPostageSetting, errors, setErrors } =
         usePostageContext();
     return (
-        <div className="flex w-full flex-1 flex-col gap-2 self-start">
+        <div className="flex w-full flex-1 flex-col gap-2 self-end">
             <label className="relative w-fit font-semibold" htmlFor={property}>
                 {label}{' '}
                 {asterisk ? (

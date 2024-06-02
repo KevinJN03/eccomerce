@@ -18,7 +18,7 @@ function VerticalItem({ product, index }) {
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks, handleFeatured, showStats } =
+    const { selectionSet, setSelectionSet, checks, handleFeatured, } =
         useListingPageContext();
 
     return (
@@ -138,7 +138,7 @@ function VerticalItem({ product, index }) {
                 </section>
 
                 <Stock_Price product={product} />
-                {showStats && <Stats product={product} />}
+                {checks?.stats && <Stats product={product} />}
             </section>
 
             {/* {product?.note && <p>{product?.note}</p>} */}

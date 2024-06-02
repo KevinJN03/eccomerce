@@ -308,7 +308,12 @@ function OrderInformation({ order, feature, checks }) {
               }}
             >
               <Text>Delivery total</Text>
-              <Text>£{order.shipping_option?.cost?.toFixed(2)}</Text>
+              <Text>
+                £
+                {parseFloat(
+                  _.get(order, 'transaction_cost.delivery_cost') || 0,
+                ).toFixed(2)}
+              </Text>
             </View>
 
             <View

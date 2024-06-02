@@ -18,7 +18,8 @@ import Parser from 'html-react-parser';
 import { useContent } from '../../../../../context/ContentContext.jsx';
 
 function AddToPackage({}) {
-    const { orderInfo, setModalOpen, handleOnClose } = useAdminOrderContext();
+    const { orderInfo, setModalOpen, handleOnClose, markAsComplete } =
+        useAdminOrderContext();
     const { logoutUser } = UserLogout();
     const { showAlert, setShowAlert } = useContent();
 
@@ -143,7 +144,9 @@ function AddToPackage({}) {
             ) : (
                 <>
                     <h1 className="mb-2 text-2xl font-semibold">
-                        Add a package to this order
+                        {markAsComplete
+                            ? `Complete ${1} order`
+                            : 'Add a package to this order'}
                     </h1>
                     <p className="text-base">
                         Make sure the carrier receives this order by your
@@ -443,7 +446,9 @@ function AddToPackage({}) {
                                         <div class="spinner-circle ![--spinner-color:225_225_225] ![--spinner-size:25px]"></div>
                                     ) : (
                                         <p className="text-base  font-medium text-white">
-                                            Add to Order
+                                            {markAsComplete
+                                                ? 'Complete order'
+                                                : 'Add to Order'}{' '}
                                         </p>
                                     )}
                                 </div>

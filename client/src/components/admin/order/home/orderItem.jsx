@@ -16,6 +16,7 @@ import {
     CloseSharp,
     UndoOutlined,
     RedeemSharp,
+    PublishedWithChangesRounded,
 } from '@mui/icons-material';
 import truck_icon from '../../../../assets/icons/shipping-truck.png';
 import Actions from '../drawerContent/action';
@@ -31,7 +32,9 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
         markGiftSelection,
         setMarkGiftSelection,
         setSearchParams,
-        searchParams, handleFetchOrderInfo
+        searchParams,
+        handleFetchOrderInfo,
+        addToPackage
     } = useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
@@ -99,13 +102,12 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
             }
             searchParams.set('orderId', order?._id);
             setSearchParams(searchParams);
-            handleFetchOrderInfo
+            handleFetchOrderInfo;
             // const { data } = await adminAxios.get(`order/${order?._id}`);
             // const position = window.pageYOffset;
             // setOrderInfo(() => ({ ...data?.order, position }));
             success = true;
         } catch (error) {
-  
         } finally {
             // if (success) {
             //     setOpenDrawer(true);
@@ -116,7 +118,7 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
     return (
         <section
             onClick={handleClick}
-            className={`flex flex-row gap-3 ${
+            className={`flex !cursor-pointer flex-row gap-3 ${
                 lastOrderInArray ? '' : 'border-b-2'
             } flex w-full cursor-pointer flex-row  px-5 py-6 ${
                 isOrderInSet
@@ -168,15 +170,23 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
                         </div>
                     </div>
                     <div className="flex flex-1 flex-col">
-                        <p
-                            className={`text-sm font-semibold ${order.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
-                        >
-                            {['received', 'processing'].includes(order?.status)
-                                ? `Ship by ${dayjs(
-                                      _.get(order, 'ship_date')
-                                  ).format('MMM DD, YYYY')}`
-                                : _.upperFirst(order.status)}
-                        </p>
+                        {['received'].includes(order?.status) ? (
+                            <p
+                                className={`text-sm font-semibold ${dayjs().isAfter(dayjs(_.get(order, 'ship_date'))) ? 'text-red-700' : 'text-black'}`}
+                            >
+                                {`Ship by 
+                                ${dayjs(_.get(order, 'ship_date')).format(
+                                    'MMM DD, YYYY'
+                                )}`}
+                            </p>
+                        ) : (
+                            <p
+                                className={`text-sm font-semibold ${order.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                            >
+                                {_.upperFirst(order.status)}
+                            </p>
+                        )}
+
                         <p className="text-xs">
                             Ordered{' '}
                             {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
@@ -329,9 +339,20 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
                         className="disable-drawer h-6 w-6"
                     />
                 </div>
+
+                {order?.status == 'received' && (
+                    <button
+                        type="button"
+                        onClick={() => addToPackage({ orderId: order?._id , mark_as_completed: true})}
+                        className="disable-drawer !box-content flex h-10 w-10 items-center justify-center rounded-full hover:bg-light-grey"
+                    >
+                        <PublishedWithChangesRounded className="disable-drawer" />
+                    </button>
+                )}
                 <div className="disable-drawer !box-content flex h-10 w-10 items-center justify-center rounded-full hover:bg-light-grey">
                     <MailOutlineOutlined className="disable-drawer" />
                 </div>
+
                 <section className="disable-drawer relative">
                     <div
                         onClick={() => setShowOptions(true)}

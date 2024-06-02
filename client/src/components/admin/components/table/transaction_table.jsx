@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 function Transaction_Table({ data }) {
     return (
         <TableContainer component={Paper} className="table">
@@ -38,7 +39,13 @@ function Transaction_Table({ data }) {
                     {data.map((row) => (
                         <TableRow key={row._id}>
                             <TableCell className="tableCell">
-                                {row._id}
+                                <Link
+                                className='hover:underline font-medium hover:text-black/80 transition-all'
+                                    to={`/admin/orders/${row.status == 'recieved' ? 'new' : 'complete'}?orderId=${row._id}`}
+                                >
+                                    {' '}
+                                    {row._id}
+                                </Link>
                             </TableCell>
                             <TableCell className="tableCell">
                                 <div className="cellWrapper">
@@ -92,4 +99,3 @@ function Transaction_Table({ data }) {
 }
 
 export default Transaction_Table;
-   

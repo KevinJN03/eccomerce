@@ -22,7 +22,6 @@ import mongoose from 'mongoose';
 import Stripe from 'stripe';
 import Order from '../Models/order.js';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import requestIp from 'request-ip';
 
 import * as React from 'react';
 import ChangePassword from '../React Email/emails/changePassword.jsx';

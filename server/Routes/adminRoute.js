@@ -19,6 +19,8 @@ import {
   shipOrder,
   mark_as_gift,
   cancelOrder,
+  searchProducts,
+  ai_word_suggestion,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -64,6 +66,8 @@ import {
 
 const router = express.Router();
 router.get('/category/all', get_all_category);
+router.get('/product/search', searchProducts);
+router.get('/product/wordSuggestion', ai_word_suggestion);
 router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
 router.get('/count', count_all);

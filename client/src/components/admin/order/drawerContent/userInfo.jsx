@@ -58,12 +58,12 @@ function UserInfo({}) {
                         onClick={toggleShow}
                         className="flex flex-row items-center gap-[2px]"
                     >
-                        <p className="text-xxs underline underline-offset-1">
+                        <p className="text-xs underline underline-offset-1">
                             {`${orderInfo.customer?.firstName} ${orderInfo.customer?.lastName}`}
                         </p>
                         <ArrowDropDownSharp className="!text-xl" />
                     </button>
-                    <p className="align-baseline !text-xxs underline underline-offset-1">
+                    <p className="align-baseline !text-xs underline underline-offset-1">
                         {orderInfo.customer?._id}
                     </p>
                 </div>
@@ -104,12 +104,16 @@ function UserInfo({}) {
                     )}
                 </AnimatePresence>
 
-                <button
+                {/* <button
                     onClick={orderHistory}
-                    className="underline-offset cursor-pointer-1 text-xxs underline hover:no-underline"
+                > */}
+                <p
+                    onClick={orderHistory}
+                    className="underline-offset !cursor-pointer text-xs underline hover:no-underline"
                 >
                     Order history
-                </button>
+                </p>
+                {/* </button> */}
             </section>
         </div>
     );

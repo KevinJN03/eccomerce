@@ -77,7 +77,7 @@ function RefundOrder({}) {
             charge: Math.min(
                 subCharge + delivery,
                 _.get(order, 'transaction_cost.total') -
-                    _.get(order, 'refund.amount')
+                    (_.get(order, 'refund.amount') || 0)
             ),
         }));
     }, [isEditing, order]);
@@ -273,10 +273,15 @@ function RefundOrder({}) {
                                 id,
                             });
                         }}
+                        disabled={btnLoading}
                         type="button"
-                        className="mb-20 self-start rounded bg-black px-3 py-2 text-sm font-medium text-white"
+                        className="mb-20 flex items-center justify-center self-start rounded bg-black px-3 py-2 text-sm font-medium text-white disabled:bg-opacity-80"
                     >
-                        Review refund
+                        {btnLoading ? (
+                            <span className="daisy-loading daisy-loading-spinner daisy-loading-sm !text-white"></span>
+                        ) : (
+                            'Review refund'
+                        )}{' '}
                     </button>
                 </section>
             )}

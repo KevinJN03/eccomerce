@@ -75,6 +75,7 @@ import Postage from './components/admin/delivery/postage.jsx';
 import Upgrades from './components/admin/delivery/upgrades.jsx';
 import RefundOrder from './components/admin/order/home/refund/refundOrder.jsx';
 import Containers from './components/admin/order/home/containers.jsx';
+import SystemHealth from './components/admin/system-health/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -332,6 +333,11 @@ function Router({ Header, Footer }) {
                                 { index: true, element: <AdminLogin /> },
                             ],
                         },
+
+                        {
+                            path: 'system_health',
+                            element: <SystemHealth />,
+                        },
                         {
                             path: 'orders/download/:id',
                             element: <Pdf />,
@@ -339,15 +345,16 @@ function Router({ Header, Footer }) {
                         {
                             path: 'orders',
                             element: <AdminOrder />,
-                            children: [{
-                                path: 'new',
-                                element: <Containers/>
-                            }, 
-                            {
-                                path: 'complete',
-                                element: <Containers/>
-                            }, 
-                        ]
+                            children: [
+                                {
+                                    path: 'new',
+                                    element: <Containers />,
+                                },
+                                {
+                                    path: 'complete',
+                                    element: <Containers />,
+                                },
+                            ],
                         },
 
                         {

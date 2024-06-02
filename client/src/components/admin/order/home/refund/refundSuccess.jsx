@@ -21,7 +21,7 @@ function RefundSuccess({ text }) {
                 <ThemeBtn
                     text={'Return to Orders'}
                     handleClick={() => {
-                        navigate('/admin/orders');
+                        navigate('/admin/orders/new');
                     }}
                 ></ThemeBtn>
             </div>

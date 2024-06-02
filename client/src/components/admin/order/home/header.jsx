@@ -3,6 +3,7 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext.jsx';
 import SearchInput from './searchInput';
 import BubbleButton from '../../../buttons/bubbleButton.jsx';
+import { useNavigate } from 'react-router-dom';
 function Header({}) {
     const {
         searchText,
@@ -10,7 +11,7 @@ function Header({}) {
 
         searchForOrder,
     } = useAdminOrderContext();
-
+    const navigate = useNavigate();
     return (
         <header className="flex w-full flex-row items-center justify-between border-b-2 py-4 pl-6 pr-12">
             <h2 className="flex-1 text-2xl font-semibold">Orders & Delivery</h2>

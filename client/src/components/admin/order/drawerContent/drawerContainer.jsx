@@ -1,19 +1,22 @@
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
 import { useState } from 'react';
+
 import dayjs from 'dayjs';
 import AddressContainer from './addressContainer';
 import Receipt from './reciept';
 import {
     ArrowDropDownSharp,
     CheckRounded,
+    PublishedWithChangesRounded,
     RedeemSharp,
 } from '@mui/icons-material';
 import PrivateNote from './privateNote';
 import UserInfo from './userInfo';
 import { motion } from 'framer-motion';
-
 import Actions from './action';
+import _ from 'lodash';
+import BubbleButton from '../../../buttons/bubbleButton';
 
 function Label({ setShowActions }) {
     return (
@@ -28,7 +31,7 @@ function Label({ setShowActions }) {
     );
 }
 function DrawerContainer() {
-    const { orderInfo, status } = useAdminOrderContext();
+    const { orderInfo, status, addToPackage } = useAdminOrderContext();
 
     const [country, setCountry] = useState(
         () =>
@@ -36,6 +39,25 @@ function DrawerContainer() {
                 ?.country
     );
 
+    const [estimatedDate, setEstimateDate] = useState(() => {
+        const startDates = [];
+
+        const endDates = [];
+        const itemsByProfile = _.get(orderInfo, 'itemsByProfile');
+        _.forEach(itemsByProfile, ({ shippingInfo }) => {
+            startDates.push(dayjs(shippingInfo.startDate));
+            endDates.push(dayjs(shippingInfo.endDate));
+        });
+
+        const formatString = 'DD MMM';
+        const startDate = dayjs.min(startDates);
+        const endDate = dayjs.max(endDates);
+        if (startDate.get('month') == endDate.get('month')) {
+            return `${startDate.format('DD')}-${endDate.format('DD MMM')}`;
+        }
+
+        return `${startDate.format(formatString)}-${endDate.format(formatString)}`;
+    });
     const [showActions, setShowActions] = useState(false);
 
     return (
@@ -49,11 +71,11 @@ function DrawerContainer() {
                         <a
                             href={`/admin/orders/${status}?searchText=${orderInfo?._id}&orderId=${orderInfo?._id}`}
                             target="_blank"
-                            className="cursor-pointer text-xxs underline ring-offset-1"
+                            className="cursor-pointer text-xs underline ring-offset-1"
                         >
                             #{orderInfo?._id}
                         </a>
-                        <p className="text-xxs">
+                        <p className="text-xs">
                             {orderInfo?.items?.length} item, £
                             {parseFloat(
                                 orderInfo.transaction_cost?.total
@@ -61,12 +83,16 @@ function DrawerContainer() {
                         </p>
                     </div>
                     <div className="right">
-                        <p className="text-sm font-semibold">Pre-transit</p>
-                        <p className="text-xxs">
+                        <p
+                            className={`text-sm font-semibold ${orderInfo.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                        >
+                            {_.upperFirst(orderInfo.status)}
+                        </p>
+                        <p className="text-xs">
                             {`Ordered ${dayjs(orderInfo?.createdAt).format(
                                 'HH:mm, ddd, DD MMM, YYYY'
                             )}`}
-                            <p className="text-xxs">
+                            <p className="text-xs">
                                 Deliver to{' '}
                                 {`${orderInfo.shipping_address.address?.city}, ${country}`}
                             </p>
@@ -74,11 +100,25 @@ function DrawerContainer() {
                     </div>
                 </header>
 
-                <div className="flex flex-row gap-5">
-                    <span className="flex flex-row flex-nowrap items-center gap-3">
-                        <CheckRounded />
-                        <p className="text-s font-semibold">Completed</p>
-                    </span>
+                <div className="mt-2 flex flex-row gap-5">
+                    {orderInfo?.status == 'received' ? (
+                        <BubbleButton
+                            className={'!py-0 px-2.5'}
+                            handleClick={() =>
+                                addToPackage({ orderId: orderInfo._id, mark_as_completed: true })
+                            }
+                        >
+                            <div className="flex flex-nowrap items-center justify-center gap-3">
+                                <PublishedWithChangesRounded />
+                                <p className="font-medium">Mark as Complete</p>
+                            </div>
+                        </BubbleButton>
+                    ) : (
+                        <span className="flex flex-row flex-nowrap items-center gap-3">
+                            <CheckRounded />
+                            <p className="text-base font-semibold">Completed</p>
+                        </span>
+                    )}
                     <div className="relative flex flex-col">
                         <section className="relative">
                             <motion.button
@@ -130,15 +170,21 @@ function DrawerContainer() {
                 <PrivateNote />
 
                 <div className="mb-3">
-                    <p className="text-sm font-semibold">Pre-transit</p>
-                    <p className="text-xxs">
-                        Estimated delivery: 27 Dec-18 Jan
+                    <p
+                        className={`text-base font-semibold ${orderInfo.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                    >
+                        {_.upperFirst(orderInfo.status)}
+                    </p>
+                    <p className="text-xs">
+                        Estimated delivery: {estimatedDate}
                     </p>
                 </div>
                 <AddressContainer country={country} />
                 {orderInfo?.mark_as_gift && (
                     <div className="mt-4 flex flex-col gap-3">
-                        <h3 className="text-sm font-semibold">Gift Detail</h3>
+                        <h3 className="text-base font-semibold">
+                            Gift Details
+                        </h3>
 
                         <div className="flex w-full flex-row flex-nowrap items-center gap-2 rounded border px-3 pb-7 pt-4">
                             <RedeemSharp

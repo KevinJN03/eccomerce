@@ -28,7 +28,7 @@ function Widget({ type, amount, idx }) {
         data = {
             title: 'ORDERS',
             isMoney: false,
-            link: <Link to="orders">View all orders</Link>,
+            link: <Link to="orders/new">View all orders</Link>,
             icon: <ShoppingCartOutlinedIcon className="icon" />,
         };
     } else if (type == 'earning') {

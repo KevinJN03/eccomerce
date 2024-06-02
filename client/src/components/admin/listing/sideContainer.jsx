@@ -13,10 +13,11 @@ function SideContainer({}) {
         checks,
         setChecks,
         categoryQuantity,
-        showStats,
-        setShowStats,
+
         deliveryProfile,
         deliveryQuantityMap,
+        setSearchParams,
+        searchParams,
     } = useListingPageContext();
     const { allProducts } = useAdminContext();
     const { logoutUser } = UserLogout();
@@ -63,6 +64,11 @@ function SideContainer({}) {
             ...prevChecks,
             sort: { [dataset.title]: value },
         }));
+
+        searchParams.set('order', value);
+        searchParams.set('sort_by', dataset.title);
+
+        setSearchParams(searchParams);
     };
 
     return (
@@ -81,9 +87,19 @@ function SideContainer({}) {
                     <section className="flex w-full flex-row flex-nowrap justify-between">
                         <GreenSwitch
                             defaultChecked
-                            checked={showStats}
+                            checked={checks?.stats}
                             onChange={() =>
-                                setShowStats((prevState) => !prevState)
+                                setChecks(({ stats, ...prevState }) => {
+                                    const newValue = !stats;
+                                    if (newValue) {
+                                        searchParams.set('stats', newValue);
+                                    } else {
+                                        searchParams.delete('stats');
+                                    }
+                                    setSearchParams(searchParams);
+
+                                    return { ...prevState, stats: newValue };
+                                })
                             }
                         />
 
@@ -104,12 +120,22 @@ function SideContainer({}) {
                             ].map(({ icon, label, className }) => {
                                 return (
                                     <span
-                                        onClick={() =>
+                                        onClick={() => {
                                             setChecks((prevChecks) => ({
                                                 ...prevChecks,
                                                 format: label,
-                                            }))
-                                        }
+                                            }));
+
+                                            if (label == 'vertical') {
+                                                searchParams.set(
+                                                    'format',
+                                                    label
+                                                );
+                                            } else {
+                                                searchParams.delete('format');
+                                            }
+                                            setSearchParams(searchParams);
+                                        }}
                                         className={` ${className} ${
                                             checks?.format == label
                                                 ? 'bg-light-grey'
@@ -173,7 +199,13 @@ function SideContainer({}) {
                             },
                         ].map(({ text, value, title }) => {
                             return (
-                                <option value={value} data-title={title}>
+                                <option
+                                    value={value}
+                                    data-title={title}
+                                    selected={
+                                        _.get(checks, ['sort', title]) == value
+                                    }
+                                >
                                     {text}
                                 </option>
                             );
@@ -206,6 +238,12 @@ function SideContainer({}) {
                                             ...prevState,
                                             listing_status: lowerCaseText,
                                         }));
+
+                                        searchParams.set(
+                                            'listing_status',
+                                            lowerCaseText
+                                        );
+                                        setSearchParams(searchParams);
                                     }
                                 }}
                                 className="flex w-fit cursor-pointer flex-row flex-nowrap gap-2"
@@ -246,12 +284,23 @@ function SideContainer({}) {
 
             <div
                 className="flex w-fit cursor-pointer flex-row flex-nowrap gap-2 "
-                onClick={() =>
-                    setChecks((prevChecks) => ({
-                        ...prevChecks,
-                        featured: !prevChecks?.featured,
-                    }))
-                }
+                onClick={() => {
+                    setChecks((prevChecks) => {
+                        const newValue = !prevChecks?.featured;
+
+                        if (newValue) {
+                            searchParams.set('featured', newValue);
+                        } else {
+                            searchParams.delete('featured');
+                        }
+                        setSearchParams(searchParams);
+
+                        return {
+                            ...prevChecks,
+                            featured: newValue,
+                        };
+                    });
+                }}
             >
                 <input
                     className="daisy-checkbox daisy-checkbox-xs !rounded-sm "
@@ -294,12 +343,19 @@ function SideContainer({}) {
                         </p>
 
                         <select
-                            onChange={(e) =>
+                            onChange={(e) => {
                                 setChecks((prevState) => ({
                                     ...prevState,
                                     [property]: e.target.value,
-                                }))
-                            }
+                                }));
+
+                                if (e.target.value == 'All') {
+                                    searchParams.delete(property);
+                                } else {
+                                    searchParams.set(property, e.target.value);
+                                }
+                                setSearchParams(searchParams);
+                            }}
                             name="sections"
                             id="sections"
                             className="daisy-select daisy-select-bordered daisy-select-sm w-full !rounded border-dark-gray/50"
