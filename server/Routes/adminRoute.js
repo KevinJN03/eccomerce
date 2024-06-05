@@ -21,6 +21,7 @@ import {
   cancelOrder,
   searchProducts,
   ai_word_suggestion,
+  searchUser
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -65,6 +66,12 @@ import {
 } from '../Controllers/settingController.js';
 
 const router = express.Router();
+router.get('/user/search', searchUser)
+router.get('/user/all', getAllUsers);
+router.post('/user/create', create_user);
+router.post('/user/update/:id', update_single);
+router.get('/user/:id', get_single_user);
+
 router.get('/category/all', get_all_category);
 router.get('/product/search', searchProducts);
 router.get('/product/wordSuggestion', ai_word_suggestion);
@@ -83,10 +90,8 @@ router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
 router.post('/delivery/update', update_delivery_profile);
 router.put('/delivery/update/:id', update_single_delivery_profile);
-router.post('/user/create', create_user);
-router.post('/user/update/:id', update_single);
-router.get('/user/all', getAllUsers);
-router.get('/user/:id', get_single_user);
+
+
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);

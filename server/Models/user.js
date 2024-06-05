@@ -28,6 +28,14 @@ const UserSchema = new Schema(
       type: Date,
       required: 'DOB is required. Please enter date of birth.',
     },
+    status: {
+      type: Schema.Types.String,
+      default: 'active',
+      enum: {
+        values: ['active', 'inactive'],
+        message: '{VALUE} is not support, check the supported enums type',
+      },
+    },
     interest: {
       type: String,
       enum: {

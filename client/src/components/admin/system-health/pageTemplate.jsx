@@ -7,13 +7,6 @@ import BoxWithProps, { CloseModalButton } from '../../common/BoxwithProps.jsx';
 import ThemeBtn from '../../buttons/themeBtn.jsx';
 import { QuestionMarkOutlined } from '@mui/icons-material';
 function PageTemplate({ title, options }) {
-    const {
-        VITE_FRONTEND_SYSTEM_HEALTH_URL,
-        VITE_BACKEND_SYSTEM_HEALTH_URL,
-        VITE_FRONTEND_SYSTEM_HEALTH_PASSWORD,
-        VITE_FRONTEND_SYSTEM_HEALTH_ACCOUNT,
-    } = import.meta.env;
-
     const [openModal, setOpenModal] = useState(false);
     const timeoutRef = useRef(null);
     const intervalRef = useRef(null);

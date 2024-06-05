@@ -29,7 +29,7 @@ import mongoose from 'mongoose';
 import logger from '../utils/logger.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
-import { forEach } from 'lodash';
+import { forEach, result } from 'lodash';
 import _ from 'lodash';
 import productSearchStage from '../utils/productSearchStage.jsx';
 import OpenAI from 'openai';
@@ -43,6 +43,75 @@ const openai = new OpenAI({
   project: OPENAI_PROJECT,
 });
 
+export const searchUser = [
+  check('searchText').escape().trim().notEmpty(),
+
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = req.query;
+
+    const errors = validationResult(req);
+
+    const projectionFields = {
+      firstName: 1,
+      lastName: 1,
+      email: 1,
+      dob: 1,
+      _id: 1,
+      status: 1,
+      interest: 1,
+    };
+
+    if (!errors.isEmpty()) {
+      const users = await User.find({}, projectionFields);
+      return res.send({ result: users, searchText });
+    }
+
+    console.log({ searchText });
+    const shouldArray = [
+      'email',
+      'lastName',
+      'firstName',
+      'interest',
+      'status',
+    ].map((field) => ({
+      text: {
+        query: searchText,
+        path: field,
+      },
+    }));
+
+    try {
+      const objectId = new mongoose.Types.ObjectId(searchText);
+      shouldArray.push({
+        equals: {
+          value: objectId,
+          path: '_id',
+        },
+      });
+    } catch (error) {
+      console.error('parse string to objectId failed: ', error?.message);
+    }
+
+    const users = await User.aggregate([
+      {
+        $search: {
+          index: 'user_search_index',
+          compound: {
+            should: shouldArray,
+          },
+        },
+      },
+      {
+        $project: {
+          ...projectionFields,
+          score: { $meta: 'searchScore' },
+        },
+      },
+    ]);
+
+    res.send({ result: users, searchText });
+  }),
+];
 export const ai_word_suggestion = [
   check('searchText', 'Provide a text to search').escape().trim().notEmpty(),
   asyncHandler(async (req, res, next) => {
