@@ -18,7 +18,6 @@ const verifyCallback = async (email, password, cb) => {
       return cb(null, findUser);
     }
   } catch (error) {
-    console.log('error at passport: ', error);
     return cb(error);
   }
 };

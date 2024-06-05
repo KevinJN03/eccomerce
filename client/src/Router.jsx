@@ -76,6 +76,7 @@ import Upgrades from './components/admin/delivery/upgrades.jsx';
 import RefundOrder from './components/admin/order/home/refund/refundOrder.jsx';
 import Containers from './components/admin/order/home/containers.jsx';
 import SystemHealth from './components/admin/system-health/index.jsx';
+import Logs from './components/admin/logs/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -338,6 +339,13 @@ function Router({ Header, Footer }) {
                             path: 'system_health',
                             element: <SystemHealth />,
                         },
+
+                        
+                            {
+                                path: 'logs',
+                                element: <Logs />,
+                            },
+                        
                         {
                             path: 'orders/download/:id',
                             element: <Pdf />,

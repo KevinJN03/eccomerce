@@ -27,7 +27,7 @@ import NodeCache from 'node-cache';
 import 'dotenv/config';
 import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
 import ExpressStatusMonitor from 'express-status-monitor';
-
+import logger from './utils/logger.js';
 const {
   DBNAME,
   URL,
@@ -53,7 +53,7 @@ const db = () => {
 db();
 
 const app = express();
-
+app.use(morgan('dev'));
 export const myCache = new NodeCache();
 // app.use(cors());
 app.set('trust proxy', true);
@@ -75,7 +75,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -115,5 +114,6 @@ console.log({
 });
 const sslServer = https.createServer(httpOptions, app);
 sslServer.listen(PORT, () => {
-  console.log(`Secure server🔑 listening on Port: ${PORT}`);
+  logger.info(`Secure server🔑 listening on Port: ${PORT}`);
+  // logger.error(`Secure server🔑 listening on Port: ${PORT}`);
 });

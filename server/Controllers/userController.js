@@ -32,6 +32,7 @@ import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import { addListener } from 'nodemon';
+import logger from '../utils/logger.js';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
 
@@ -203,7 +204,6 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
     .set('s', 0)
     .toDate();
 
-  console.log({ sixMonthsFromToday });
 
   const [user, orders, getOrdersByMonth] = await Promise.all([
     User.findById(id, null, {
@@ -324,9 +324,12 @@ export const loginUser = [
 export const userLogout = asyncHandler(async (req, res, next) => {
   if (req.isAuthenticated()) {
     req.logout();
+    logger.info(`user ${req.user?._id} log out successfully.`);
   }
-
-  return res.status(200).redirect('/api/user/check');
+  res.status(200).clearCookie('connect.sid').send({
+    msg: 'Successfully logout user.',
+    authenticated: false,
+  });
 });
 
 export const checkUser = asyncHandler(async (req, res, next) => {
@@ -336,17 +339,26 @@ export const checkUser = asyncHandler(async (req, res, next) => {
   return res.status(401).send({ authenticated: false });
 });
 
-export const logoutUser = asyncHandler((req, res, next) => {
+export const logoutUser = asyncHandler(async (req, res, next) => {
+  // req.logOut();
+  // req.session.destroy();
+  // logger.info(`user ${req.user.id} log out successfully`);
+  // return res.status(200).clearCookie('connect.sid').send({
+  //   msg: 'Successfully logout user.',
+  //   authenticated: false,
+  // });
+
   req.logout((err) => {
     if (err) {
-      return next(err);
+      throw new Error(err);
     }
-    req.session.destroy();
-    return res.status(200).clearCookie('connect.sid').send({
+    res.clearCookie('connect.sid').send({
       msg: 'Successfully logout user.',
       authenticated: false,
     });
   });
+
+  logger.info(`user ${req?.user?._id} log out successfully`);
 });
 
 export const getAllUserData = [
@@ -409,7 +421,6 @@ export const changeDetails = [
 
         const difference = todayDate.diff(lastTimeEmailChanged, 'minute');
 
-        console.log({ difference });
 
         if (difference < 30) {
           throw new Error(

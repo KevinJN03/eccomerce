@@ -26,10 +26,7 @@ import s3Upload, {
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
-import multerUpload from '../utils/multerUpload.js';
-
-import productValidator from '../utils/productValidator.js';
-import generateProduct from '../utils/generateProduct.js';
+import logger from '../utils/logger.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
 import { forEach } from 'lodash';
@@ -190,12 +187,10 @@ export const adminLogin = [
           .send({ email: 'User does not have admin access.' });
       }
       req.logIn(user, (error) => {
-
-        console.log('login', user.id,  error)
         if (error) {
           return next(err);
         }
-
+        logger.info(`admin User ${user._id} logged in successfully`);
         return res.status(200).redirect('/api/user/check');
       });
     })(req, res, next);

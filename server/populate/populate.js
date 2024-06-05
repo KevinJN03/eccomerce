@@ -26,7 +26,6 @@ const { DBNAME, URL } = process.env;
 async function populate() {
   try {
     await mongoose.connect(URL, { dbName: DBNAME }).catch((error) => {
-      console.log(`error: ${error}`);
     });
     await dropCollection(mongoose);
     const categoryMap = await createBulkCategories();

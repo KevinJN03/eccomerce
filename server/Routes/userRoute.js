@@ -25,6 +25,7 @@ import {
   cancelOrder,
   getWishlist,
   updateWishlist,
+  userLogout,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
@@ -36,7 +37,7 @@ router.use('/', AuthRoute);
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
 router.post('/login', loginUser);
-router.get('/logout', logoutUser);
+router.get('/logout', userLogout);
 router.post('/signup', signUp_user);
 router.get('/check', checkUser);
 router.get('/userData', getAllUserData);

@@ -67,6 +67,8 @@ const optionsArray = [
     {
         icon: <PsychologyRoundedIcon className="icons" />,
         title: 'Logs',
+        link: '/admin/logs',
+
     },
     {
         icon: <SettingsSuggestRoundedIcon className="icons" />,
