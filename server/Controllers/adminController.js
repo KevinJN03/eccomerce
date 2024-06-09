@@ -17,19 +17,13 @@ import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import ReturnOrder from '../React Email/emails/returnOrder.jsx';
 import { renderToStream } from '@react-pdf/renderer';
 import Pdf from '../pdf/pdf.jsx';
-import s3Upload, {
-  generateSignedUrl,
-  s3Delete,
-  s3Get,
-  s3PdfUpload,
-} from '../utils/s3Service.js';
+import { generateSignedUrl, s3Get, s3PdfUpload } from '../utils/s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
 import logger from '../utils/logger.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
-import { forEach, result } from 'lodash';
 import _ from 'lodash';
 import productSearchStage from '../utils/productSearchStage.jsx';
 import OpenAI from 'openai';
@@ -42,6 +36,36 @@ const openai = new OpenAI({
   organization: OPENAI_ORGANIZATION,
   project: OPENAI_PROJECT,
 });
+
+export const updateUserStatus = [
+  check('id').trim().escape(),
+
+  check('status')
+    .trim()
+    .escape()
+    .customSanitizer((value,) => {
+      console.log({ value });
+
+      if (value == 'active') {
+        return 'inactive';
+      } else {
+        return 'active';
+      }
+    }),
+  asyncHandler(async (req, res, next) => {
+    const { id, status } = req.body;
+
+    console.log({ status });
+
+    const users = await User.updateMany(
+      { _id: id },
+      { status },
+      { new: true, lean: { toObject: true } },
+    );
+
+    res.send({ success: true, users });
+  }),
+];
 
 export const searchUser = [
   check('searchText').escape().trim().notEmpty(),
@@ -260,7 +284,7 @@ export const adminLogin = [
           return next(err);
         }
         logger.info(`admin User ${user._id} logged in successfully`);
-        return res.status(200).redirect('/api/user/check');
+        return res.redirect(303, '/api/user/check');
       });
     })(req, res, next);
     // res.status(200).send({ success: true, msg: 'login in successfully' });

@@ -21,7 +21,8 @@ import {
   cancelOrder,
   searchProducts,
   ai_word_suggestion,
-  searchUser
+  searchUser,
+  updateUserStatus
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -66,7 +67,10 @@ import {
 } from '../Controllers/settingController.js';
 
 const router = express.Router();
+
 router.get('/user/search', searchUser)
+router.post('/user/status', updateUserStatus)
+
 router.get('/user/all', getAllUsers);
 router.post('/user/create', create_user);
 router.post('/user/update/:id', update_single);
@@ -118,4 +122,6 @@ router.put('/setting/update', update_settings);
 router.post('/product/price/update', editPrice);
 router.post('/product/delivery/update', update_product_delivery_profile);
 router.put('/product/category/update', update_product_category);
+
+
 export default router;

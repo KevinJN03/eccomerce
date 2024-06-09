@@ -77,6 +77,8 @@ import RefundOrder from './components/admin/order/home/refund/refundOrder.jsx';
 import Containers from './components/admin/order/home/containers.jsx';
 import SystemHealth from './components/admin/system-health/index.jsx';
 import Logs from './components/admin/logs/index.jsx';
+import PaymentIndex from './components/admin/finance/index.jsx';
+import PaymentAccount from './components/admin/finance/paymentAccount.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -325,6 +327,16 @@ function Router({ Header, Footer }) {
                             index: true,
 
                             element: <Admin_Dashboard />,
+                        },
+
+                        {path: 'payments', 
+                            element: <PaymentIndex/>,
+                            children: [
+                                {
+                                    index: true,
+                                    element: <PaymentAccount/>
+                                }
+                            ]
                         },
 
                         {

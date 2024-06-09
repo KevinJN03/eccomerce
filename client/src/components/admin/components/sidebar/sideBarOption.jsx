@@ -11,6 +11,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import {
+    AccountBalanceSharp,
     HomeOutlined,
     InterestsOutlined,
     SearchOutlined,
@@ -43,6 +44,11 @@ const optionsArray = [
         icon: <LocalShippingIcon className="icons" />,
         title: 'Delivery',
         link: '/admin/delivery',
+    },
+    {
+        icon: <AccountBalanceSharp className="icons"/>,
+        title: 'Finance',
+        link: '/admin/payments',
     },
 
     {

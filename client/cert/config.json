@@ -3,13 +3,12 @@
   "record": {
     "hosts": [
       "localhost",
-      "172.16.0.2",
-      "192.168.1.89",
+      "192.168.0.69",
       "127.0.0.1"
     ],
     "hash": {
-      "key": "9004794c1203070a4cf9214094a80b53ebe41e12a4ce6410aae4a79108089102",
-      "cert": "efbe1ff0dbf6b3d5648692a1563d5a91b91ca713c0fc5353dd7546cd123adf96"
+      "key": "b33f48720506aaef88ad62cca4e18eb139e87ddddabac0367ef999c514645d3c",
+      "cert": "e657d00c4ae4e7cba888f827d98bb2ae61e4cc2b6f59e1b12c81972d9424155a"
     }
   },
   "configFilePath": "C:\\Users\\kevin\\Desktop\\repos\\eccomerce\\client\\cert\\config.json"
