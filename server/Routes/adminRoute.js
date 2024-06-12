@@ -22,7 +22,7 @@ import {
   searchProducts,
   ai_word_suggestion,
   searchUser,
-  updateUserStatus
+  updateUserStatus,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -65,11 +65,13 @@ import {
   get_setting,
   update_settings,
 } from '../Controllers/settingController.js';
+import stripeRoute from './stripeRoute.js';
 
 const router = express.Router();
 
-router.get('/user/search', searchUser)
-router.post('/user/status', updateUserStatus)
+router.use('/stripe', stripeRoute);
+router.get('/user/search', searchUser);
+router.post('/user/status', updateUserStatus);
 
 router.get('/user/all', getAllUsers);
 router.post('/user/create', create_user);
@@ -94,7 +96,6 @@ router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
 router.post('/delivery/update', update_delivery_profile);
 router.put('/delivery/update/:id', update_single_delivery_profile);
-
 
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
@@ -122,6 +123,5 @@ router.put('/setting/update', update_settings);
 router.post('/product/price/update', editPrice);
 router.post('/product/delivery/update', update_product_delivery_profile);
 router.put('/product/category/update', update_product_category);
-
 
 export default router;

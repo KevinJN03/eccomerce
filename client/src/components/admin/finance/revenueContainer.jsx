@@ -23,7 +23,7 @@ function RevenueContainer({
             <h2
                 className={`text-3xl font-semibold ${underline ? 'underline decoration-dashed underline-offset-8' : ''}	 `}
             >
-                £{parseFloat(amount).toFixed(2)}
+                {amount}
             </h2>
             <p>{text}</p>
 

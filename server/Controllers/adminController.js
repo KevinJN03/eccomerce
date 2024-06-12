@@ -43,7 +43,7 @@ export const updateUserStatus = [
   check('status')
     .trim()
     .escape()
-    .customSanitizer((value,) => {
+    .customSanitizer((value) => {
       console.log({ value });
 
       if (value == 'active') {
@@ -486,7 +486,7 @@ export const cancelOrder = [
     if (order?.payment_intent_id) {
       const refundObj = {
         payment_intent: order.payment_intent_id,
-        metadata: { ...req.body, order_id: id },
+        metadata: { ...req.body, order_id: order._id },
       };
 
       if (req.body?.charge) {

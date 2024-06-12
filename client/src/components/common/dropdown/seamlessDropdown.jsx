@@ -68,21 +68,15 @@ export function ThemeDropDown({
     className,
 children}) {
     return (
-        <section className="relative">
-            {/* <BubbleButton
-                key={uuidv4()}
-                className={'border border-transparent px-2 py-1'}
-                handleClick={() => {
-                    setShow(() => true);
-                }}
-            >
-                <ArrowDropDown />
-            </BubbleButton> */}
+        <section className="relative w-full min-w-full">
+            
             {defaultIcon}
             {show && (
-                <div
+                <div 
                     onClick={() => setShow(() => false)}
-                    className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
+                    // className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
+                    className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent"
+
                 >
                     {/* <ArrowDropDown /> */}
 

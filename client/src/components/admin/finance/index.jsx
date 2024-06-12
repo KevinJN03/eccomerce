@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
-
+import '../../../CSS/payment.scss';
 function PaymentIndex({}) {
     return (
-        <section className="w-full h-full payment p-10">
+        <section id='payment-container' className="payment h-full w-full p-10">
             <Outlet />
         </section>
     );

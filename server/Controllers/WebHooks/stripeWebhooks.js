@@ -32,9 +32,9 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       const paymentIntent =
         await stripe.paymentIntents.retrieve(payment_intent);
 
-      const orderNumber = paymentIntent.metadata?.orderNumber;
+      const order_id = paymentIntent.metadata?.order_id;
 
-      const order = await Order.findByIdAndUpdate(orderNumber, {
+      const order = await Order.findByIdAndUpdate(order_id, {
         status: 'failed',
       });
     }
@@ -43,18 +43,18 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       const { payment_intent, id: charge_id } = event.data.object;
       const paymentIntent =
         await stripe.paymentIntents.retrieve(payment_intent);
-      const orderNumber = paymentIntent.metadata?.orderNumber;
+      const order_id = paymentIntent.metadata?.order_id;
 
       const userId = paymentIntent?.customer;
 
       const order = await Order.findByIdAndUpdate(
-        orderNumber,
+        order_id,
         { charge_id, payment_intent_id: payment_intent },
         {
           lean: { toObject: true },
         },
       );
-      // const order = await Order.findById(orderNumber, null, {
+      // const order = await Order.findById(order_id, null, {
       //   lean: { toObject: true },
       // });
 
@@ -144,7 +144,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       );
 
       const updateOrder = await Order.findOneAndUpdate(
-        { _id: orderNumber },
+        { _id: order_id },
         {
           $set: {
             status: 'received',
@@ -165,7 +165,7 @@ const stripeWebHooks = asyncHandler(async (req, res, next) => {
       // const updateUser = await User.findByIdAndUpdate(
       //   userId,
       //   {
-      //     $push: { orders: orderNumber },
+      //     $push: { orders: order_id },
       //   },
       //   {
       //     upsert: true,
