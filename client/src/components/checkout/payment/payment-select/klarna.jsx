@@ -4,7 +4,7 @@ import CheckSharpIcon from '@mui/icons-material/CheckSharp';
 import { useState } from 'react';
 import { Information } from './Information';
 import { createRange } from '../../../dashboard/payment-methods/ranges';
-import localeData from 'dayjs/plugin/localeData';
+// import localeData from 'dayjs/plugin/localeData';
 import dayjs from 'dayjs';
 import { useCheckoutContext } from '../../../../context/checkOutContext';
 import ErrorMessage, {
@@ -12,7 +12,7 @@ import ErrorMessage, {
 } from '../../../Login-SignUp/errorMessage';
 import { usePaymentTypeContext } from '../../../../context/paymentTypeContext';
 
-dayjs.extend(localeData);
+// dayjs.extend(localeData);
 
 function CheckItem({ msg }) {
     return (

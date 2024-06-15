@@ -68,7 +68,7 @@ export function ThemeDropDown({
     className,
 children}) {
     return (
-        <section className="relative w-full min-w-full">
+        <section className="relative w-full">
             
             {defaultIcon}
             {show && (

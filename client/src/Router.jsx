@@ -79,6 +79,8 @@ import SystemHealth from './components/admin/system-health/index.jsx';
 import Logs from './components/admin/logs/index.jsx';
 import PaymentIndex from './components/admin/finance/index.jsx';
 import PaymentAccount from './components/admin/finance/paymentAccount.jsx';
+import MonthlyStatements from './components/admin/finance/monthlyStatements.jsx';
+import MonthStatement from './components/admin/finance/monthStatement.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -329,14 +331,23 @@ function Router({ Header, Footer }) {
                             element: <Admin_Dashboard />,
                         },
 
-                        {path: 'payments', 
-                            element: <PaymentIndex/>,
+                        {
+                            path: 'payments',
+                            element: <PaymentIndex />,
                             children: [
                                 {
                                     index: true,
-                                    element: <PaymentAccount/>
-                                }
-                            ]
+                                    element: <PaymentAccount />,
+                                },
+                                {
+                                    path: 'monthly-statements',
+                                    element: <MonthlyStatements />,
+                                },
+                                {
+                                    path: 'monthly-statement',
+                                    element: <MonthStatement/>,
+                                },
+                            ],
                         },
 
                         {
@@ -352,12 +363,11 @@ function Router({ Header, Footer }) {
                             element: <SystemHealth />,
                         },
 
-                        
-                            {
-                                path: 'logs',
-                                element: <Logs />,
-                            },
-                        
+                        {
+                            path: 'logs',
+                            element: <Logs />,
+                        },
+
                         {
                             path: 'orders/download/:id',
                             element: <Pdf />,

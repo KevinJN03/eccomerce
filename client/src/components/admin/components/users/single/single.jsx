@@ -11,8 +11,8 @@ import { adminAxios } from '../../../../../api/axios';
 import userIcon from '../../../../../assets/icons/user.png';
 import { add } from 'lodash';
 import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale.js';
-dayjs.extend(updateLocale);
+// import updateLocale from 'dayjs/plugin/updateLocale.js';
+// dayjs.extend(updateLocale);
 import {
     get6MonthFromToday,
     get6MonthsData,

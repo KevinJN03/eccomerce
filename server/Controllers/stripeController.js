@@ -9,6 +9,7 @@ import Order from '../Models/order.js';
 import _, { toPlainObject } from 'lodash';
 
 import logger from '../utils/logger';
+import getBalanceTransactionsList from '../utils/getBalanceTransactionsList.js';
 const { STRIPE_KEY } = process.env;
 const stripe = Stripe(STRIPE_KEY);
 
@@ -111,116 +112,9 @@ export const stripeTransactions = [
       }
     };
 
-    const getBalanceTransactionsList = async (
-      created = {
-        gte: start_date,
-        lt: end_date,
-      },
-      // time = null,
-      results = {
-        refunds: {
-          amount: 0,
-          fees: 0,
-          net: 0,
-          total: 0,
-        },
-        payments: {
-          amount: 0,
-          fees: 0,
-          net: 0,
-          total: 0,
-          fee_details: {},
-        },
-        data: [],
-      },
-    ) => {
-      try {
-        const obj = {
-          // type,
-          created,
-          limit: 100,
-        };
-
-        const newResults = { ...results };
-        console.log(obj);
-        const { data, has_more } = await stripe.balanceTransactions.list(obj);
-
-        newResults.data.push(...data);
-        data.forEach(({ amount, fee, net, type, fee_details }) => {
-          if (type == 'refund' || type == 'payment_refund') {
-            newResults.refunds.amount += amount;
-            newResults.refunds.fees += fee;
-            newResults.refunds.net += net;
-            newResults.refunds.total += 1;
-
-            fee_details.forEach(
-              ({ amount: feeAmount, type: feeType, description }) => {
-                if (
-                  !_.hasIn(newResults, [
-                    'refunds',
-                    'fee_details',
-                    feeType,
-                    'credit',
-                  ])
-                ) {
-                  _.set(newResults, ['refunds', 'fee_details', feeType], {
-                    credit: feeAmount,
-                    description,
-                  });
-                } else {
-                  newResults.refunds.fee_details[feeType].credit += feeAmount;
-                }
-              },
-            );
-          }
-
-          if (type == 'charge' || type == 'payment') {
-            newResults.payments.amount += amount;
-            newResults.payments.fees += fee;
-            newResults.payments.net += net;
-            newResults.payments.total += 1;
-
-            fee_details.forEach(
-              ({ amount: feeAmount, type: feeType, description }) => {
-                if (
-                  !_.hasIn(newResults, [
-                    'payments',
-                    'fee_details',
-                    feeType,
-                    'total',
-                  ])
-                ) {
-                  _.set(newResults, ['payments', 'fee_details', feeType], {
-                    total: feeAmount,
-                    description,
-                  });
-                } else {
-                  newResults.payments.fee_details[feeType].total += feeAmount;
-                }
-              },
-            );
-          }
-        });
-
-        if (has_more) {
-          const lastTransaction = _.last(data);
-          return getBalanceTransactionsList(
-            {
-              lt: lastTransaction.created,
-            },
-            newResults,
-          );
-        }
-
-        return results;
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     const [balance, stats] = await Promise.all([
       stripe.balance.retrieve(),
-      getBalanceTransactionsList(),
+      getBalanceTransactionsList({ gte: start_date, lt: end_date }),
       ...fetchPromises,
     ]);
 
@@ -233,5 +127,29 @@ export const stripeTransactions = [
       balance,
       transactions,
     });
+  }),
+];
+
+export const monthlyStatement = [
+  check('month').escape().trim().toInt(),
+  check('year').escape().trim().toInt(),
+
+  asyncHandler(async (req, res, next) => {
+    const { month, year } = req.body;
+    const date = dayjs().year(year).month(month);
+    const createdObj = {
+      gte: date.startOf('month').unix(),
+      lt: date.endOf('month').unix(),
+    };
+    console.log({
+      month,
+      year,
+      createdObj,
+      start_date: date.startOf().toISOString(),
+    });
+
+    const stats = await getBalanceTransactionsList(createdObj);
+
+    res.status(200).send(stats);
   }),
 ];
