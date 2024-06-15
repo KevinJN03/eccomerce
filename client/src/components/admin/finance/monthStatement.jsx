@@ -16,19 +16,14 @@ import { useAdminContext } from '../../../context/adminContext';
 import { adminAxios } from '../../../api/axios';
 import _ from 'lodash';
 import ActivityTable from './activityTable';
+import { generate } from 'generate-password-browser';
 
 function MonthStatement({}) {
     const [show, setShow] = useState(false);
     const [showYears, setShowYears] = useState(false);
-    const [loading, setLoading] = useState(true);
-
-    const {
-        searchParams,
-        setSearchParams,
-        generateText,
-        activityLoading,
-        setActivityLoading,
-    } = useFinanceContext();
+    const [page, setPage] = useState(1);
+    const [activityLoading, setActivityLoading] = useState(true);
+    const { searchParams, setSearchParams, generateText } = useFinanceContext();
     const { logoutUser } = useAdminContext();
     const [selected, setSelected] = useState(() => {
         const month = parseInt(searchParams.get('month'));
@@ -45,9 +40,24 @@ function MonthStatement({}) {
     const [salesTotal, setSalesTotal] = useState({});
     const [feesTotal, setFeesTotal] = useState({});
 
+    const generateCsv = async () => {
+        try {
+            const data = await adminAxios.get(
+                `/stripe/generate-csv?month=${selected.month}&year=${selected.year}`,
+                selected,
+                { signal: abortControllerRef.current.signal }
+                
+            );
+        } catch (error) {
+            logoutUser({ error });
+        }
+    };
+
     const fetchStats = async () => {
         try {
             setActivityLoading(() => true);
+            setPage(() => 1);
+
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
 
@@ -258,7 +268,7 @@ function MonthStatement({}) {
                         {`${dayjs().month(selected.month).format('MMMM')} ${selected.year}`}{' '}
                         was{' '}
                         <span
-                            className={`font-semibold ${netProfit.num > 0 ? 'text-green-700' : netProfit < 0 && 'text-red-700'}`}
+                            className={`font-semibold ${netProfit.num > 0 ? 'text-green-700' : netProfit.num < 0 && 'text-red-700'}`}
                         >
                             {netProfit.numString}
                         </span>
@@ -275,17 +285,23 @@ function MonthStatement({}) {
                             All activities
                         </h2>
 
-                        <ThemeBtn bg={'bg-light-grey'}>
+                        <ThemeBtn
+                            bg={'bg-light-grey'}
+                            handleClick={() => {
+                                generateCsv();
+                            }}
+                        >
                             <p className="  w-full cursor-pointer text-s font-semibold text-black">
                                 Generate CSV
                             </p>
                         </ThemeBtn>
                     </section>
-                    {stats.data?.length > 0 ? (
-                        <ActivityTable activities={stats.data} />
-                    ) : (
-                        <p>No recent activity</p>
-                    )}
+                    <ActivityTable
+                        activities={stats.data}
+                        setLoading={setActivityLoading}
+                        page={page}
+                        setPage={setPage}
+                    />
                 </>
             )}
         </section>

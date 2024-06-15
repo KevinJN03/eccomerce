@@ -12,9 +12,11 @@ import '../../../CSS/payment.scss';
 import ActivitySummary from './activitySummary';
 import { useFinanceContext } from '../../../context/financeContext';
 import ActivityTable from './activityTable';
+import ThemeBtn from '../../buttons/themeBtn';
 
 function PaymentAccount({}) {
     const [transactions, setTransactions] = useState([]);
+    const [page, setPage] = useState(1);
 
     const [balance, setBalance] = useState({});
     const abortControllerRef = useRef(new AbortController());
@@ -29,11 +31,14 @@ function PaymentAccount({}) {
         generateText,
         dateSelection,
         setActivityLoading,
+        stats,
     } = useFinanceContext();
 
     const fetchTransactions = async () => {
         try {
             setActivityLoading(() => true);
+
+            setPage(() => 1);
 
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
@@ -80,9 +85,12 @@ function PaymentAccount({}) {
     };
     useEffect(() => {
         fetchTransactions();
-    }, [dateSelection]);
+    }, [
+        dateSelection.select,
+        dateSelection.start_date,
+        dateSelection.end_date,
+    ]);
 
-    
     const generateValue = (amount) => {
         if (amount < 0) {
             return `-£${parseFloat(Math.abs(amount / 100)).toFixed(2)}`;
@@ -166,14 +174,23 @@ function PaymentAccount({}) {
                                 </span>
                             </h3>
 
-                            <ActivityTable activities={transactions} />
+                            <ActivityTable
+                                activities={transactions}
+                                setLoading={setLoading}
+                                page={page}
+                                setPage={setPage}
+                            />
                             <div className="h-fit w-fit">
-                                <BubbleButton
+                                <ThemeBtn
+                                    bg={'bg-light-grey text-black'}
                                     handleClick={() =>
                                         navigate('monthly-statements')
                                     }
-                                    text={'View all monthly statements'}
-                                />
+                                >
+                                    <p className="cursor-pointer text-base font-medium text-black">
+                                        View all monthly statements
+                                    </p>
+                                </ThemeBtn>
                             </div>
                         </section>
                     </>

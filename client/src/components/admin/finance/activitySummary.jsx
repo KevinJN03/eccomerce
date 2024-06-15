@@ -28,6 +28,7 @@ function ActivitySummary({}) {
         setDateSelection,
         selectString,
         activityLoading,
+        setActivityLoading,
     } = useFinanceContext();
     return (
         <section className="h-full min-h-72">
@@ -84,6 +85,9 @@ function ActivitySummary({}) {
                                                     key={text}
                                                     className={` ${dateSelection.select == text ? 'bg-light-grey' : ''} flex w-full flex-nowrap justify-between px-4 py-3 hover:bg-dark-gray/30`}
                                                     onClick={() => {
+                                                        setActivityLoading(
+                                                            () => true
+                                                        );
                                                         setDateSelection(
                                                             () => ({
                                                                 select: text,
@@ -120,7 +124,9 @@ function ActivitySummary({}) {
                         <span className="font-semibold underline decoration-dashed decoration-2 underline-offset-4">
                             net profit
                         </span>{' '}
-                        for the last 12 months was{' '}
+                        for the{' '}
+                        {_.toLower(dateSelection.select?.replaceAll('_', ' '))}{' '}
+                        was{' '}
                         <span className="font-semibold text-green-700">
                             {
                                 generateText(salesTotal?.num + feesTotal?.num)

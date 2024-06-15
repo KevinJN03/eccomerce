@@ -6,124 +6,57 @@ import asyncHandler from 'express-async-handler';
 import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 import Order from '../Models/order.js';
-import _, { toPlainObject } from 'lodash';
-
+import _, { property, toPlainObject } from 'lodash';
 import logger from '../utils/logger';
-import getBalanceTransactionsList from '../utils/getBalanceTransactionsList.js';
+import getBalanceTransactionsList, {
+  getSourceObject,
+} from '../utils/getBalanceTransactionsList.js';
+import { Parser } from 'json2csv';
+import fs from 'fs';
+import path from 'path';
+import { file } from 'pdfkit';
+import XLSX from 'xlsx';
+
 const { STRIPE_KEY } = process.env;
 const stripe = Stripe(STRIPE_KEY);
 
 export const stripeTransactions = [
   asyncHandler(async (req, res, next) => {
-    const date = dayjs('2024-05-16').unix();
-
     const { start_date, end_date } = req.body;
-    const { data: transactions } = await stripe.balanceTransactions.list({
-      //   created: {
-      //     lte: date,
-      //   },
-      limit: 20,
-    });
 
     const fetchPromises = [];
 
-    const getSourceObject = async (source) => {
-      const first3Letter = source.slice(0, 3);
-      if (first3Letter === 'pyr') {
-        return stripe.refunds.retrieve(source);
-      } else if (first3Letter === 'py_') {
-        return stripe.charges.retrieve(source);
-      } else if (first3Letter === 'po_') {
-        return stripe.payouts.retrieve(source);
-      }
-    };
-
-    transactions.forEach((element, idx) => {
-      const { source } = element;
-      const first3Letter = source.slice(0, 3);
-      const sourcePromise = getSourceObject(source)
-        .then((sourceObject) => {
-          element['sourceObject'] = sourceObject;
-
-          const metadata = sourceObject?.metadata;
-
-          if (metadata?.orderNumber || metadata?.order_id) {
-            const orderId = metadata?.orderNumber || metadata?.order_id;
-            return Order.findById(orderId, null, {
-              lean: { toObject: true },
-            });
-          }
-        })
-        .then((value) => {
-          if (value) {
-            element['order'] = value;
-          }
-        })
-        .catch((error) => {
-          logger.error(error, error.message);
-        });
-      fetchPromises.push(sourcePromise);
+    const { data: transactions } = await stripe.balanceTransactions.list({
+      limit: 100,
     });
 
-    // const payments = stripe.balanceTransactions.list({
-    //   type: 'payment',
-    //   limit: 100,
-    // });
-
-    const getBalanceTransactions = async (
-      type,
-      time = null,
-      results = { amount: 0, fees: 0, net: 0 },
-    ) => {
-      try {
-        const obj = {
-          type,
-          limit: 100,
-          created: {
-            lte: start_date,
-            gte: end_date,
-          },
-        };
-
-        if (time) {
-          obj.created = { lt: time };
-        }
-        console.log(obj);
-        const { data, has_more } = await stripe.balanceTransactions.list(obj);
-
-        data.forEach(({ amount, fee, net }) => {
-          results.amount += amount;
-          results.fees += fee;
-          results.net += net;
-        });
-
-        if (has_more) {
-          const lastTransaction = _.last(data);
-          return await getBalanceTransactions(
-            type,
-            lastTransaction.created,
-            results,
-          );
-        }
-
-        return results;
-      } catch (error) {
-        console.error(error);
-      }
+    const stripeParams = {
+      limit: 100,
+      created: { gte: start_date, lt: end_date },
     };
 
     const [balance, stats] = await Promise.all([
       stripe.balance.retrieve(),
-      getBalanceTransactionsList({ gte: start_date, lt: end_date }),
-      ...fetchPromises,
+      getBalanceTransactionsList(stripeParams, {
+        stripe: 'balanceTransactions',
+      }),
     ]);
 
+    transactions.forEach((element) => {
+      fetchPromises.push(getSourceObject(element, fetchPromises));
+    });
+
+    await Promise.allSettled(fetchPromises);
+
+    const jsonToCsvParser = new Parser();
+    const csv = jsonToCsvParser.parse(stats.data);
+
+    fs.writeFileSync('./data.csv', csv);
     res.send({
-      // chargesResult,
-      // paymentResult,
-      // paymentRefundResult,
-      // refundResult,
       stats,
+      // refunds,
+      // charges,
+      // payouts,
       balance,
       transactions,
     });
@@ -141,6 +74,7 @@ export const monthlyStatement = [
       gte: date.startOf('month').unix(),
       lt: date.endOf('month').unix(),
     };
+    const fetchPromiseArray = [];
     console.log({
       month,
       year,
@@ -148,8 +82,124 @@ export const monthlyStatement = [
       start_date: date.startOf().toISOString(),
     });
 
-    const stats = await getBalanceTransactionsList(createdObj);
+    const stats = await getBalanceTransactionsList(
+      { created: createdObj, limit: 100 },
+      { stripe: 'balanceTransactions' },
+    );
+
+    stats.data.forEach((element) => {
+      fetchPromiseArray.push(getSourceObject(element));
+    });
+
+    await Promise.allSettled(fetchPromiseArray);
 
     res.status(200).send(stats);
+  }),
+];
+
+export const generateCsv = [
+  check('month').escape().trim().toInt(),
+  check('year').escape().trim().toInt(),
+  asyncHandler(async (req, res, next) => {
+    const { month, year } = req.query;
+    const date = dayjs().year(year).month(month);
+    const fetchPromiseArray = [];
+
+    const stats = await getBalanceTransactionsList(
+      {
+        created: {
+          gte: date.startOf('month').unix(),
+          lt: date.endOf('month').unix(),
+        },
+        limit: 100,
+      },
+      { stripe: 'balanceTransactions' },
+    );
+
+    stats.data.forEach((element) => {
+      fetchPromiseArray.push(getSourceObject(element));
+    });
+
+    await Promise.allSettled(fetchPromiseArray);
+
+    const opts = {
+      header: true,
+      fields: [
+        {
+          label: 'ID',
+          value: 'id',
+        },
+        {
+          label: 'Date',
+          value: (record) =>
+            dayjs.unix(record.created).format('MMMM DD, YYYY, h:mm:ss A'),
+        },
+        {
+          label: 'TYPE',
+          value: 'type',
+        },
+
+        {
+          label: 'DESCRIPTION',
+          value: 'description',
+        },
+
+        {
+          label: 'AMOUNT',
+          value: (record) =>
+            new Intl.NumberFormat('en-GB', {
+              style: 'currency',
+              currency: 'GBP',
+            }).format(record.amount / 100),
+        },
+        {
+          label: 'FEES and TAX',
+          value: (record) =>
+            new Intl.NumberFormat('en-GB', {
+              style: 'currency',
+              currency: 'GBP',
+            }).format(record.fee / 100),
+        },
+        {
+          label: 'NET',
+          value: (record) =>
+            new Intl.NumberFormat('en-GB', {
+              style: 'currency',
+              currency: 'GBP',
+            }).format(record.net / 100),
+        },
+        {
+          label: 'SOURCE',
+          value: 'source',
+        },
+        {
+          label: 'ORDER REF',
+          value: 'order._id',
+        },
+      ],
+    };
+
+    // Stream the file to the client
+
+    const jsonToCsvParser = new Parser(opts);
+    const csv = jsonToCsvParser.parse(stats.data);
+    const fileName = `${month}-${year}-report.csv`;
+    const filePath = path.join(__dirname, fileName);
+
+    fs.writeFileSync(filePath, csv);
+
+    res.download(filePath, fileName, (err) => {
+      if (err) {
+        console.error(err);
+      }
+      // fs.unlinkSync(filePath); // Optionally delete the file after sending it
+    });
+
+    // res.header('Content-Type', 'text/csv; charset=utf-8');
+    // res.setHeader('Content-Disposition', 'attachment; filename=data.csv');
+    // res.setHeader('Content-Type', 'text/csv');
+
+    // // res.attachment(fileName);
+    // res.send(csv);
   }),
 ];

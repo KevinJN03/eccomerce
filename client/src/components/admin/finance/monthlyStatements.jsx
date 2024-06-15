@@ -144,7 +144,7 @@ function MonthlyStatements({}) {
                                     <tr key={monthName}>
                                         <td className="">
                                             <Link
-                                                to={`/admin/payments/monthly-statement?month=${month + 1}&year${selected_year}`}
+                                                to={`/admin/payments/monthly-statement?month=${month + 1}&year=${selected_year}`}
                                                 className="w-fit cursor-pointer !text-sm text-black/90 underline underline-offset-1"
                                             >
                                                 {`${monthName} ${selected_year}`}

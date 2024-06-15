@@ -29,7 +29,7 @@ function FinanceContextProvider({ children }) {
         end_date: dayjs().unix(),
     });
 
-    const selectString = `${_.upperFirst(dateSelection.select?.replaceAll('_', ' '))}: ${dayjs.unix(dateSelection?.start_date).format('MMMM YYYY')} ${dateSelection?.end_date ? `- ${dayjs.unix(dateSelection?.end_date).format('MMMM YYYY')}` : ''}`;
+    const selectString = `${_.upperFirst(dateSelection.select?.replaceAll('_', ' '))}: ${dayjs.unix(dateSelection?.start_date).format('MMMM YYYY')} ${dateSelection?.end_date && dateSelection.select != 'this_month' ? `- ${dayjs.unix(dateSelection?.end_date).format('MMMM YYYY')}` : ''}`;
 
     const generateText = (num) => {
         return {

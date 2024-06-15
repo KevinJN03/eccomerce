@@ -31,7 +31,7 @@ function SeamlessDropdown({ show, setShow, children, options, className }) {
                                 },
                             },
                         }}
-                        className={`absolute ${className || 'left-0 top-[-0.25rem] origin-top-left'} z-[2] box-content w-fit   rounded-xl border bg-white pt-1 shadow-normal`}
+                        className={`absolute ${className || 'left-0 top-[-0.25rem] origin-top-left'} z-[10] box-content w-fit   rounded-xl border bg-white pt-1 shadow-normal`}
                     >
                         {children || (
                             <ul className="relative !mt-7 w-full list-none">
@@ -66,17 +66,22 @@ export function ThemeDropDown({
     show,
     options,
     className,
-children}) {
+    children,
+}) {
     return (
         <section className="relative w-full">
-            
-            {defaultIcon}
+            {/* <span
+                style={{
+                    zIndex: 11,
+                }}
+            > */}
+                {defaultIcon}
+            {/* </span> */}
             {show && (
-                <div 
+                <div
                     onClick={() => setShow(() => false)}
                     // className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent px-2 py-1"
                     className="absolute left-0 top-0 !z-[3] rounded-xl border border-transparent"
-
                 >
                     {/* <ArrowDropDown /> */}
 
