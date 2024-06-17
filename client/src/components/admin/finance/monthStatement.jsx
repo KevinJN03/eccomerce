@@ -17,7 +17,8 @@ import { adminAxios } from '../../../api/axios';
 import _ from 'lodash';
 import ActivityTable from './activityTable';
 import { generate } from 'generate-password-browser';
-
+import { CircularProgress } from '@mui/material';
+const { VITE_BACKEND_URL } = import.meta.env;
 function MonthStatement({}) {
     const [show, setShow] = useState(false);
     const [showYears, setShowYears] = useState(false);
@@ -25,34 +26,13 @@ function MonthStatement({}) {
     const [activityLoading, setActivityLoading] = useState(true);
     const { searchParams, setSearchParams, generateText } = useFinanceContext();
     const { logoutUser } = useAdminContext();
-    const [selected, setSelected] = useState(() => {
-        const month = parseInt(searchParams.get('month'));
-
-        return {
-            month: month > 0 && month <= 12 ? month - 1 : dayjs().month(),
-            year: parseInt(searchParams.get('year') || dayjs().year()),
-        };
-    });
 
     const abortControllerRef = useRef(new AbortController());
 
     const [stats, setStats] = useState({});
     const [salesTotal, setSalesTotal] = useState({});
     const [feesTotal, setFeesTotal] = useState({});
-
-    const generateCsv = async () => {
-        try {
-            const data = await adminAxios.get(
-                `/stripe/generate-csv?month=${selected.month}&year=${selected.year}`,
-                selected,
-                { signal: abortControllerRef.current.signal }
-                
-            );
-        } catch (error) {
-            logoutUser({ error });
-        }
-    };
-
+    const [btnLoading, setBtnLoading] = useState(false);
     const fetchStats = async () => {
         try {
             setActivityLoading(() => true);
@@ -63,7 +43,11 @@ function MonthStatement({}) {
 
             const { data } = await adminAxios.post(
                 '/stripe/monthly-statement',
-                selected,
+                {
+                    year: searchParams.get('year'),
+
+                    month: parseInt(searchParams.get('month')) - 1,
+                },
                 { signal: abortControllerRef.current.signal }
             );
 
@@ -90,9 +74,14 @@ function MonthStatement({}) {
 
     useEffect(() => {
         fetchStats();
-    }, [selected.month, selected.year]);
+    }, [searchParams.get('month'), searchParams.get('year')]);
 
     const netProfit = generateText(salesTotal?.num + feesTotal?.num);
+
+    const { month, year } = {
+        month: parseInt(searchParams.get('month')) - 1,
+        year: parseInt(searchParams.get('year')),
+    };
 
     return (
         <section className="flex h-full flex-col gap-5">
@@ -138,7 +127,7 @@ function MonthStatement({}) {
                                             <div className="flex flex-nowrap items-center gap-14">
                                                 <span className=" relative w-full cursor-pointer font-semibold  text-black">
                                                     {dayjs()
-                                                        .month(selected.month)
+                                                        .month(month)
                                                         .format('MMMM')}
                                                 </span>
 
@@ -159,13 +148,13 @@ function MonthStatement({}) {
                                                     return (
                                                         <div
                                                             onClick={() => {
-                                                                setSelected(
-                                                                    (
-                                                                        prevState
-                                                                    ) => ({
-                                                                        ...prevState,
-                                                                        month: idx,
-                                                                    })
+                                                                searchParams.set(
+                                                                    'month',
+                                                                    idx + 1
+                                                                );
+                                                                setSearchParams(
+                                                                    () =>
+                                                                        searchParams
                                                                 );
 
                                                                 setShow(
@@ -173,14 +162,13 @@ function MonthStatement({}) {
                                                                 );
                                                             }}
                                                             key={monthName}
-                                                            className={` ${selected.month == idx ? 'bg-light-grey' : ''} flex w-full cursor-pointer flex-nowrap justify-between gap-14 px-4 py-3 hover:bg-dark-gray/30`}
+                                                            className={` ${month == idx ? 'bg-light-grey' : ''} flex w-full cursor-pointer flex-nowrap justify-between gap-14 px-4 py-3 hover:bg-dark-gray/30`}
                                                         >
                                                             <p className="text-base">
                                                                 {monthName}
                                                             </p>
 
-                                                            {selected.month ==
-                                                                idx && (
+                                                            {month == idx && (
                                                                 <DoneRounded fontSize="small" />
                                                             )}
                                                         </div>
@@ -196,16 +184,16 @@ function MonthStatement({}) {
                                             bg={`border-2 ${showYears ? 'border-transparent' : 'border-black'} `}
                                             className={'z-[3] px-4 py-3'}
                                             hoverClassName={'bg-white'}
-                                            handleClick={() =>
+                                            handleClick={() => {
                                                 setShowYears(
                                                     (prevState) => !prevState
-                                                )
-                                            }
+                                                );
+                                            }}
                                             isDisableHoverEffect={showYears}
                                         >
                                             <div className="flex flex-nowrap items-center">
                                                 <span className=" relative w-full cursor-pointer font-semibold  text-black">
-                                                    {selected.year}
+                                                    {year}
                                                 </span>
 
                                                 <ArrowDropDownSharp />
@@ -220,32 +208,31 @@ function MonthStatement({}) {
                                             {Array.from(
                                                 { length: 10 },
                                                 (v, i) => dayjs().year() - i
-                                            ).map((year, idx) => {
+                                            ).map((value, idx) => {
                                                 return (
                                                     <div
                                                         onClick={() => {
-                                                            setSelected(
-                                                                (
-                                                                    prevState
-                                                                ) => ({
-                                                                    ...prevState,
-                                                                    year,
-                                                                })
+                                                            searchParams.set(
+                                                                'year',
+                                                                value
+                                                            );
+                                                            setSearchParams(
+                                                                () =>
+                                                                    searchParams
                                                             );
 
-                                                            setShow(
+                                                            setShowYears(
                                                                 () => false
                                                             );
                                                         }}
-                                                        key={year}
-                                                        className={` ${selected.year == year ? 'bg-light-grey' : ''} flex w-full cursor-pointer flex-nowrap justify-between gap-2 px-4 py-3 hover:bg-dark-gray/30`}
+                                                        key={value}
+                                                        className={` ${year == value ? 'bg-light-grey' : ''} flex w-full cursor-pointer flex-nowrap justify-between gap-2 px-4 py-3 hover:bg-dark-gray/30`}
                                                     >
                                                         <p className="text-base">
-                                                            {year}
+                                                            {value}
                                                         </p>
 
-                                                        {selected.year ==
-                                                            year && (
+                                                        {year == value && (
                                                             <DoneRounded fontSize="small" />
                                                         )}
                                                     </div>
@@ -265,8 +252,7 @@ function MonthStatement({}) {
                             net profit
                         </span>{' '}
                         for the{' '}
-                        {`${dayjs().month(selected.month).format('MMMM')} ${selected.year}`}{' '}
-                        was{' '}
+                        {`${dayjs().month(month).format('MMMM')} ${year}`} was{' '}
                         <span
                             className={`font-semibold ${netProfit.num > 0 ? 'text-green-700' : netProfit.num < 0 && 'text-red-700'}`}
                         >
@@ -287,13 +273,22 @@ function MonthStatement({}) {
 
                         <ThemeBtn
                             bg={'bg-light-grey'}
-                            handleClick={() => {
-                                generateCsv();
+                            handleClick={async () => {
+                                window.location.href = `${VITE_BACKEND_URL}/admin/stripe/generate-csv?month=${month}&year=${year}`;
                             }}
+                            isDisableHoverEffect={btnLoading}
+                            disabled={btnLoading}
                         >
-                            <p className="  w-full cursor-pointer text-s font-semibold text-black">
-                                Generate CSV
-                            </p>
+                            <section className="flex  w-full flex-nowrap items-center gap-2">
+                                {btnLoading && (
+                                    <div className="h-full w-full">
+                                        <div className="spinner-circle spinner-xs ![--spinner-color:var(--slate-12)]"></div>
+                                    </div>
+                                )}
+                                <p className="  w-full cursor-pointer whitespace-nowrap text-s font-semibold text-black">
+                                    Generate CSV
+                                </p>
+                            </section>
                         </ThemeBtn>
                     </section>
                     <ActivityTable

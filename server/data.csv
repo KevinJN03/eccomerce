@@ -1,0 +1,4 @@
+"id","object","amount","available_on","created","currency","description","exchange_rate","fee","fee_details","net","reporting_category","source","status","type"
+"txn_1PPupWF3yJG49BnpvZ1628vB","balance_transaction",-10000,1717974438,1717974438,"gbp","",,0,"[]",-10000,"payout","po_1PPupWF3yJG49BnpVHLHMsH4","available","payout"
+"txn_1PPl5tF3yJG49BnpyVsvVE3k","balance_transaction",100000,1717977600,1717937013,"gbp","Transferring funds into your Issuing balance from your Payments balance.",,0,"[]",100000,"other_adjustment","btr_1PPl5tF3yJG49BnpbEXgoVVI","available","balance_transfer_inbound"
+"txn_1PPl5tF3yJG49BnpfBQf6gOa","balance_transaction",-100000,1717937013,1717937013,"gbp","Transferring funds from your Payments balance to your Issuing balance.",,0,"[]",-100000,"other_adjustment","btr_1PPl5tF3yJG49BnpbEXgoVVI","available","balance_transfer_outbound"

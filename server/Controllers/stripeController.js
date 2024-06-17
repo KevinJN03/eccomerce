@@ -125,10 +125,10 @@ export const generateCsv = [
     const opts = {
       header: true,
       fields: [
-        {
-          label: 'ID',
-          value: 'id',
-        },
+        // {
+        //   label: 'ID',
+        //   value: 'id',
+        // },
         {
           label: 'Date',
           value: (record) =>
@@ -173,7 +173,7 @@ export const generateCsv = [
           value: 'source',
         },
         {
-          label: 'ORDER REF',
+          label: 'ORDER REFERENCE',
           value: 'order._id',
         },
       ],
@@ -183,23 +183,11 @@ export const generateCsv = [
 
     const jsonToCsvParser = new Parser(opts);
     const csv = jsonToCsvParser.parse(stats.data);
-    const fileName = `${month}-${year}-report.csv`;
+    const fileName = `${month + 1}-${year}-report.csv`;
     const filePath = path.join(__dirname, fileName);
 
-    fs.writeFileSync(filePath, csv);
-
-    res.download(filePath, fileName, (err) => {
-      if (err) {
-        console.error(err);
-      }
-      // fs.unlinkSync(filePath); // Optionally delete the file after sending it
-    });
-
-    // res.header('Content-Type', 'text/csv; charset=utf-8');
-    // res.setHeader('Content-Disposition', 'attachment; filename=data.csv');
-    // res.setHeader('Content-Type', 'text/csv');
-
-    // // res.attachment(fileName);
-    // res.send(csv);
+    res.header('Content-Type', 'text/csv; charset=utf-8');
+    res.attachment(fileName);
+    res.send('\uFEFF' + csv); // Adding BOM to ensure UTF-8 encoding
   }),
 ];

@@ -81,6 +81,7 @@ import PaymentIndex from './components/admin/finance/index.jsx';
 import PaymentAccount from './components/admin/finance/paymentAccount.jsx';
 import MonthlyStatements from './components/admin/finance/monthlyStatements.jsx';
 import MonthStatement from './components/admin/finance/monthStatement.jsx';
+import PaymentSettings from './components/admin/finance/paymentSettings.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -345,7 +346,11 @@ function Router({ Header, Footer }) {
                                 },
                                 {
                                     path: 'monthly-statement',
-                                    element: <MonthStatement/>,
+                                    element: <MonthStatement />,
+                                },
+                                {
+                                    path: 'settings',
+                                    element: <PaymentSettings />,
                                 },
                             ],
                         },
