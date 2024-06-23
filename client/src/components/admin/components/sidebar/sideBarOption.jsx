@@ -17,6 +17,8 @@ import {
     SearchOutlined,
 } from '@mui/icons-material';
 import clipboard_icon from '../../../../assets/icons/clipboard.png';
+import { useContent } from '../../../../context/ContentContext';
+
 const optionsArray = [
     {
         icon: <HomeOutlined className="icons" />,
@@ -46,9 +48,27 @@ const optionsArray = [
         link: '/admin/delivery',
     },
     {
-        icon: <AccountBalanceSharp className="icons"/>,
+        icon: <AccountBalanceSharp className="icons" />,
         title: 'Finance',
         link: '/admin/payments',
+        additional: {
+            title: 'FINANCES',
+            options: [
+
+                {
+                  title: 'Payment Account',
+                  link: '/admin/payments'  
+                },
+                {
+                    title: 'Monthly Statements',
+                    link: '/admin/payments/monthly-statements'  
+                  },
+                  {
+                    title: 'Payment Settings',
+                    link: '/admin/payments/settings'  
+                  }
+            ]
+        },
     },
 
     {
@@ -74,7 +94,6 @@ const optionsArray = [
         icon: <PsychologyRoundedIcon className="icons" />,
         title: 'Logs',
         link: '/admin/logs',
-
     },
     {
         icon: <SettingsSuggestRoundedIcon className="icons" />,

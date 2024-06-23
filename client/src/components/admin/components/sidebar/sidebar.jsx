@@ -10,16 +10,26 @@ import { v4 as uuidv4 } from 'uuid';
 import optionsArray from './sideBarOption';
 import {
     ArrowDropUpSharp,
+    ArrowForwardIos,
+    KeyboardArrowRightRounded,
     KeyboardDoubleArrowRightRounded,
     SearchOutlined,
 } from '@mui/icons-material';
-import { Box, ClickAwayListener, Tooltip } from '@mui/material';
+import {
+    Box,
+    ClickAwayListener,
+    Fade,
+    Paper,
+    Slide,
+    Tooltip,
+} from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchSideBar from './searchSideBar';
 import { useContent } from '../../../../context/ContentContext';
 import { useState } from 'react';
 import { delay } from 'lodash';
 import comingSoonIcon from '../../../../assets/icons/coming-soon.png';
+import AdditionalSideBar from './addditonalSideBar';
 function SideBar({}) {
     const { darkMode, dispatch } = useDarkMode();
 
@@ -33,20 +43,27 @@ function SideBar({}) {
             console.error('error while loginning out', error);
         }
     };
-    const { setOpenSearch, open, setOpen } = useContent();
+    const {
+        setOpenSearch,
+        open,
+        setOpen,
+        additionalSideBar,
+        setAdditionalSideBar,
+    } = useContent();
 
     const location = useLocation();
 
     const route = location?.pathname?.split('/').slice(0, 3).join('/');
+
     // .substring(1);
 
     const variant = {
         section: {
             initial: {
-                maxWidth: open ? '15rem' : '3.875rem',
+                maxWidth: open ? '15rem' : '5rem',
             },
             animate: {
-                maxWidth: open ? '15rem' : '3.875rem',
+                maxWidth: open ? '15rem' : '5rem',
                 transition: {
                     duration: 0.7,
                     // ease: 'easeInOut',
@@ -93,7 +110,9 @@ function SideBar({}) {
                         setOpenSearch(() => false);
                     }}
                 >
-                    <section className="side-bar h-full w-full overflow-x-hidden overflow-y-scroll  border-r border-dark-gray/50 ">
+                    {/* overflow-y-scroll */}
+                    <section className="side-bar !relative h-full w-full overflow-y-auto  overflow-x-hidden border-r border-dark-gray/50 ">
+                        {open && <AdditionalSideBar />}
                         <div className="top my-5 flex pl-4">
                             <Link
                                 to="/admin"
@@ -165,18 +184,37 @@ function SideBar({}) {
                                     </Tooltip>
                                 </div>
                                 {optionsArray.map(
-                                    ({ link, title, icon, coming_soon }) => {
+                                    ({
+                                        link,
+                                        title,
+                                        icon,
+                                        coming_soon,
+                                        additional,
+                                    }) => {
                                         return (
-                                            <Link
+                                            <button
+                                                type="button"
                                                 key={title}
-                                                to={link || '/admin'}
                                                 className={`w-full py-2 ${
                                                     route == link
                                                         ? 'bg-light-grey'
                                                         : ''
                                                 }`}
+                                                onClick={() => {
+                                                    if (additional) {
+                                                        setAdditionalSideBar(
+                                                            () => ({
+                                                                ...additional,
+                                                                on: true,
+                                                            })
+                                                        );
+                                                    } else {
+                                                        navigate(
+                                                            link || '/admin'
+                                                        );
+                                                    }
+                                                }}
                                             >
-                                                {' '}
                                                 <Tooltip
                                                     arrow
                                                     title={`${open ? '' : title}`}
@@ -200,33 +238,48 @@ function SideBar({}) {
                                                 >
                                                     {icon}
                                                     <AnimatePresence>
-                                                        {open && (
-                                                            <motion.p
-                                                                variants={
-                                                                    variant.p
-                                                                }
-                                                                initial={
-                                                                    'initial'
-                                                                }
-                                                                animate={
-                                                                    'animate'
-                                                                }
-                                                                exit={'exit'}
-                                                                className="ml-3 whitespace-nowrap"
-                                                            >
-                                                                {title}
+                                                        {' '}
+                                                        <div className="flex w-full flex-nowrap justify-between">
+                                                            {open && (
+                                                                <motion.p
+                                                                    variants={
+                                                                        variant.p
+                                                                    }
+                                                                    initial={
+                                                                        'initial'
+                                                                    }
+                                                                    animate={
+                                                                        'animate'
+                                                                    }
+                                                                    exit={
+                                                                        'exit'
+                                                                    }
+                                                                    className="ml-3 whitespace-nowrap"
+                                                                >
+                                                                    {title}
 
-                                                                {coming_soon && (
-                                                                    <span className="inline-block  !text-red-600 !font-medium">
-                                                                        
-                                                                        Not Yet! 🚧
-                                                                    </span>
-                                                                )}
-                                                            </motion.p>
-                                                        )}
+                                                                    {coming_soon && (
+                                                                        <span className="inline-block  !font-medium !text-red-600">
+                                                                            Not
+                                                                            Yet!
+                                                                            🚧
+                                                                        </span>
+                                                                    )}
+                                                                </motion.p>
+                                                            )}
+
+                                                            {additional && (
+                                                                <button
+                                                                    type="button"
+                                                                    className=" !w-fit pr-4"
+                                                                >
+                                                                    <KeyboardArrowRightRounded fontSize="small" />
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </AnimatePresence>
                                                 </Tooltip>
-                                            </Link>
+                                            </button>
                                         );
                                     }
                                 )}
@@ -345,6 +398,9 @@ function SideBar({}) {
                     </motion.div>
                 </motion.section>{' '}
             </Box>
+
+            {!open && <AdditionalSideBar closed={true} />}
+
             <SearchSideBar />
         </section>
     );

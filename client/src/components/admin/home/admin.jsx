@@ -68,7 +68,7 @@ function Admin({}) {
         createProfile: <CreateProfile />,
         deleteProfile: <DeleteProfile />,
         deliveryOption: <DeliveryOption />,
-        printOrder: <PrintOrder/>
+        printOrder: <PrintOrder />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -203,7 +203,9 @@ function Admin({}) {
                                         className="absolute right-8 top-1/2 translate-y-[-50%]"
                                         onClick={() => setShowAlert({})}
                                     >
-                                        <CloseRounded className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`} />
+                                        <CloseRounded
+                                            className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`}
+                                        />
                                     </button>
                                 </motion.section>
                             )}
@@ -211,10 +213,10 @@ function Admin({}) {
 
                         <SideBar />
                         <motion.div
-                            className={`homeContainer min-h-screen !z-[0]`}
+                            className={`homeContainer !z-[0] min-h-screen`}
                             initial={false}
                             animate={{
-                                marginLeft: open ? '15rem' : '3.875rem',
+                                marginLeft: open ? '15rem' : '5rem',
 
                                 transition: {
                                     duration: open ? '0.7' : '0.7',

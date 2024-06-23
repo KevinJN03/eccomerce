@@ -36,7 +36,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         setStateMap(
             () => new Map(state.items?.map((item) => [item?.product_id, item]))
         );
-    }, [state?.items]);
+    }, [state]);
 
     const fetchItems = async ({ setLoadState, disableRefresh }) => {
         try {
@@ -49,8 +49,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
 
             const { data } = await axios.get(`/${property}/${_id}`);
             localStorage.setItem(`${property}_id`, data._id);
-            console.log(`------ Fetching ${property} ------`);
-            console.log(data);
+
             dispatch({ newData: data, type: 'UPDATE' });
             setIsUpdated(() => true);
 
@@ -92,17 +91,21 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
             console.error('error while adding item', error);
         } finally {
             // if (property == 'cart') {
-            const timeout = setTimeout(() => {
-                setIsHover(() => ({ on: false, menu: null }));
 
-                // debugger;
-            }, 3000);
-            setIsHover(() => ({
-                on: true,
-                menu: 'cart',
-                timeout,
-                addToCart: true,
-            }));
+            if (property == 'cart') {
+                const timeout = setTimeout(() => {
+                    setIsHover(() => ({ on: false, menu: null }));
+
+                    // debugger;
+                }, 3000);
+                setIsHover(() => ({
+                    on: true,
+                    menu: 'cart',
+                    timeout,
+                    addToCart: true,
+                }));
+            }
+
             // }
         }
     };
@@ -199,7 +202,8 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         formatData,
         deliveryCost,
         setDeliveryCost,
-        total, setTotal
+        total,
+        setTotal,
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

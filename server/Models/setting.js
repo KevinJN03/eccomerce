@@ -33,6 +33,7 @@ const SettingSchema = new Schema({
       sunday: { type: Schema.Types.Boolean, default: false, required: true },
     },
   },
+  account_number: Schema.Types.String,
 });
 
 export default mongoose.model('Settings', SettingSchema);

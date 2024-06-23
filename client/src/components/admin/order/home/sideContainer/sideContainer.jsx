@@ -253,7 +253,7 @@ function SideContainer({}) {
                 className={'px-3 py-2'}
                 handleClick={reset}
             >
-                <p className="px-1 text-s font-medium">Reset filters</p>
+                <p className="px-1 text-s font-medium ">Reset filters </p>
             </ThemeBtn>
         </section>
     );

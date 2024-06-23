@@ -27,6 +27,8 @@ export function ContentProvider({ children, value }) {
     const { logoutUser } = UserLogout();
     const [content, contentDispatch] = useReducer(reducer, { type: 'Main' });
     const [profile, setProfile] = useState([]);
+
+    const [additionalSideBar, setAdditionalSideBar] = useState({ title: 'FINANCES', options: [], on: false });
     const [loading, setLoading] = useState(false);
     const { setShowAlert, setModalCheck } = value;
     useEffect(() => {
@@ -108,7 +110,7 @@ export function ContentProvider({ children, value }) {
         abortControllerRef,
         setErrors,
         setSuccess,
-        id
+        id,
     }) => {
         let isSuccessful = false;
         try {
@@ -156,6 +158,7 @@ export function ContentProvider({ children, value }) {
         fetchSetting,
         save,
         handleCancel,
+        additionalSideBar, setAdditionalSideBar
     };
     return (
         <ContentContext.Provider value={newValue}>

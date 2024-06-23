@@ -32,6 +32,8 @@ function PaymentAccount({}) {
         dateSelection,
         setActivityLoading,
         stats,
+        bankAccount,
+        setBankAccount,
     } = useFinanceContext();
 
     const fetchTransactions = async () => {
@@ -42,11 +44,28 @@ function PaymentAccount({}) {
 
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
-            const { data } = await adminAxios.post(
-                '/stripe/transactions/',
-                { ...dateSelection },
-                { signal: abortControllerRef.current.signal }
-            );
+
+            const [
+                {
+                    value: { data },
+                },
+                {
+                    value: { data: bankAccountData },
+                },
+            ] = await Promise.allSettled([
+                adminAxios.post(
+                    '/stripe/transactions/',
+                    { ...dateSelection },
+                    { signal: abortControllerRef.current.signal }
+                ),
+                adminAxios.get('/stripe/bank-account', {
+                    signal: abortControllerRef.current.signal,
+                }),
+            ]);
+
+            debugger;
+
+            setBankAccount(() => bankAccountData);
 
             setTransactions(() => data.transactions);
             setBalance(() => data.balance);
@@ -139,16 +158,22 @@ function PaymentAccount({}) {
                                 <div className="flex w-full justify-between border-t border-dark-gray pt-4">
                                     <p className="font-medium">
                                         Update billing settings
-                                        <span className="block cursor-pointer text-left font-normal underline">
+                                        <Link
+                                            to={'/admin/payments/settings'}
+                                            className="block cursor-pointer text-left font-normal underline"
+                                        >
                                             weekly
-                                        </span>
+                                        </Link>
                                     </p>
 
                                     <p className="font-medium">
                                         Bank account{' '}
-                                        <span className="block cursor-pointer text-right font-normal underline">
-                                            ...1234
-                                        </span>
+                                        <Link
+                                            to={'/admin/payments/settings'}
+                                            className="block cursor-pointer text-right font-normal underline"
+                                        >
+                                            ...{bankAccount.last4 || '1234'}
+                                        </Link>
                                     </p>
                                 </div>
                             </RevenueContainer>

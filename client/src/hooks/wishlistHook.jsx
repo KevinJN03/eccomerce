@@ -23,8 +23,10 @@ function useWishListHook({ product, variationSelect }) {
         setFavorite(() => true);
     };
     useEffect(() => {
-        setFavorite(() =>  stateMap?.has(product?._id));
-    }, [wishlist, product]);
+        setFavorite(() => stateMap?.has(product?._id));
+
+        //[wishlist, product, stateMap]
+    }, [stateMap]);
 
     return {
         isHoverFavorite,

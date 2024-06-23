@@ -130,8 +130,8 @@ function WishListItem(props) {
                                             parent: true,
                                         }));
 
-                                        // removeItem({ itemId: props?._id });
-                                        // handleDelete(product._id);
+                                        removeItem({ itemId: props?._id });
+                                        handleDelete(product._id);
                                     }
                                 }}
                                 variants={variants.child}

@@ -55,7 +55,6 @@ function Footer({}) {
               <Text className="text-center font-bold text-white">
                 Find inspiration
               </Text>
-              {/* <Container> */}
               <Row
                 align="center"
                 className="w-fit text-center"

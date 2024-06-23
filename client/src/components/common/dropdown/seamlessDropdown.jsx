@@ -31,7 +31,7 @@ function SeamlessDropdown({ show, setShow, children, options, className }) {
                                 },
                             },
                         }}
-                        className={`absolute ${className || 'left-0 top-[-0.25rem] origin-top-left'} z-[10] box-content w-fit   rounded-xl border bg-white pt-1 shadow-normal`}
+                        className={`absolute ${className || 'left-0 top-[-0.25rem] origin-top-left'} z-[15] box-content w-fit   rounded-xl border bg-white pt-1 shadow-normal`}
                     >
                         {children || (
                             <ul className="relative !mt-7 w-full list-none">

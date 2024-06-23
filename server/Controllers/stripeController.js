@@ -16,9 +16,12 @@ import fs from 'fs';
 import path from 'path';
 import { file } from 'pdfkit';
 import XLSX from 'xlsx';
-
-const { STRIPE_KEY } = process.env;
+import { scheduler } from 'timers/promises';
+import Setting from '../Models/setting.js';
+import bcrypt from 'bcryptjs';
+const { STRIPE_KEY, STRIPE_LIVE_KEY, SALT_ROUNDS } = process.env;
 const stripe = Stripe(STRIPE_KEY);
+const stripeLive = Stripe(STRIPE_LIVE_KEY);
 
 export const stripeTransactions = [
   asyncHandler(async (req, res, next) => {
@@ -189,5 +192,132 @@ export const generateCsv = [
     res.header('Content-Type', 'text/csv; charset=utf-8');
     res.attachment(fileName);
     res.send('\uFEFF' + csv); // Adding BOM to ensure UTF-8 encoding
+  }),
+];
+
+export const add_bank_account = [
+  check('account_number', 'Account number is too short.')
+    .escape()
+    .trim()
+    .isLength({ min: 4 }),
+  check('routing_number', 'Sort Code is too short.')
+    .escape()
+    .trim()
+    .isLength({ min: 4 }),
+  check('account_holder_name', 'Name cannot be empty.')
+    .escape()
+    .trim()
+    .isLength({ min: 1 }),
+
+  // check('sort_code').escape().trim(),
+  asyncHandler(async (req, res, next) => {
+    try {
+      const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+      if (!errors.isEmpty()) {
+        return res.status(400).send(errors.mapped());
+      }
+      const accounts = await stripeLive.accounts.retrieve();
+      const externalAccount = await stripeLive.accounts.update(accounts.id, {
+        external_account: {
+          ...req.body,
+          object: 'bank_account',
+          currency: req.body?.currency || req.body?.country,
+        },
+      });
+
+      const hashed_bank_account = await bcrypt.hashSync(
+        req.body.account_number,
+        parseInt(SALT_ROUNDS),
+      );
+      await Setting.findOneAndUpdate(
+        { name: 'general' },
+        { account_number: hashed_bank_account },
+      );
+
+      const bankAccount = externalAccount.external_accounts.data[0];
+
+      res.send(bankAccount);
+    } catch (error) {
+      const { code, param } = error;
+      if (param) {
+        const findParam = param.split('external_account')[1].slice(1, -1) || '';
+        return res.status(400).send({
+          [findParam]: `${
+            findParam == 'routing_number'
+              ? 'Sort code'
+              : _.upperFirst(findParam).replace('_', ' ')
+          } does not match expected format.`,
+        });
+      }
+
+      res.status(400).send(error);
+    }
+  }),
+];
+
+export const retrieve_bank_account = [
+  asyncHandler(async (req, res, next) => {
+    const accounts = await stripeLive.accounts.retrieve();
+
+    const bankAccount = accounts.external_accounts.data[0];
+
+    res.send(bankAccount);
+  }),
+];
+
+export const verify_bank_account = [
+  check(
+    'account_number',
+    'The account number you entered doesn’t match what we have on file. Try again.',
+  )
+    .escape()
+    .trim()
+    .custom(async (value) => {
+      const settings = await Setting.findOne(
+        { name: 'general' },
+        { account_number: 1 },
+        { lean: { toObject: true } },
+      );
+
+      const match = await bcrypt.compareSync(value, settings.account_number);
+
+      if (match) {
+        return true;
+      } else {
+        throw new Error(
+          'The account number you entered doesn’t match what we have on file. Try again.',
+        );
+      }
+    }),
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.mapped());
+    }
+
+    return res.redirect(303, '/api/admin/stripe/bank-account');
+  }),
+];
+
+export const update_schedule = [
+  asyncHandler(async (req, res, next) => {
+    const platform_account = await stripeLive.accounts.retrieve();
+
+    const account = await stripeLive.accounts.update(
+      platform_account.id, // Replace with your account ID
+      {
+        settings: {
+          payouts: {
+            schedule: {
+              interval: 'monthly', // Options: 'daily', 'manual', 'weekly', 'monthly'
+              // weekly_anchor: 'monday', // Use with 'weekly' interval. Options: 'monday', 'tuesday', etc.
+              monthly_anchor: 1, // Use with 'monthly' interval. Day of the month (1-31)
+            },
+          },
+        },
+      },
+    );
   }),
 ];

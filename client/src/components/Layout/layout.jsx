@@ -61,7 +61,6 @@ function Layout() {
             // animate={'animate'}
             // exit={'exit'}
         >
-   
             <ProductsProvider>
                 {layout && <Header />}
                 <main
@@ -70,6 +69,7 @@ function Layout() {
                     // animate={'animate'}
                     // exit={'exit'}
                     id="main"
+                    className="max-h-lg:min-h-[calc(100vh_-_(6.75rem+3.75rem))] lg:min-h-[calc(100vh_-_(6.75rem+3.75rem+19rem))]"
                 >
                     {/* {!loadState && <Outlet />} */}
                     <Outlet />

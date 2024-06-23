@@ -1,6 +1,6 @@
 import { CloseRounded } from '@mui/icons-material';
 import { Box } from '@mui/material';
-function BoxWithProps({ children }) {
+function BoxWithProps({ children, customSx }) {
     return (
         <Box
             sx={{
@@ -10,6 +10,7 @@ function BoxWithProps({ children }) {
                 transform: 'translate(-50%, -50%)',
                 width: '100%',
                 maxWidth: '37.5rem',
+                ...customSx
             }}
         >
             {children}

@@ -56,10 +56,10 @@ function SearchSideBar({}) {
     const variants = {
         overlay: {
             initial: {
-                left: open ? '14rem' : '3.875rem',
+                left: open ? '14rem' : '5rem',
             },
             animate: {
-                left: open ? '14rem' : '3.875rem',
+                left: open ? '14rem' : '5rem',
                 transition: {
                     duration: 0.7,
 
@@ -122,7 +122,9 @@ function SearchSideBar({}) {
             setResults(() => ({
                 listings: productResult,
                 orders: _.get(orderResult, 'searchResult'),
-                totalCount: _.get(productResult,'result.length') + _.get(orderResult, 'searchResult.length')
+                totalCount:
+                    _.get(productResult, 'result.length') +
+                    _.get(orderResult, 'searchResult.length'),
             }));
 
             setFirstSearch(() => false);
@@ -149,7 +151,7 @@ function SearchSideBar({}) {
                 width: '100%',
             }}
             style={{
-                left: open ? '15rem' : '3.875rem',
+                left: open ? '15rem' : '5rem',
             }}
         >
             <Slide
@@ -190,8 +192,7 @@ function SearchSideBar({}) {
                                     options={[
                                         {
                                             text: 'Shop Manager',
-                                            amount:
-                                            results.totalCount,
+                                            amount: results.totalCount,
                                             select: 'shop_manger',
                                             showAmount: true,
                                         },

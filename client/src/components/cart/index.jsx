@@ -35,7 +35,7 @@ function Cart({}) {
         },
     };
     return (
-        <section className="flex  !min-h-main  items-center justify-center  ">
+        <section className="flex  !min-h-main justify-center  ">
             <AnimatePresence mode="wait">
                 {loading ? (
                     <motion.div key={'cart-loading'} className="">
