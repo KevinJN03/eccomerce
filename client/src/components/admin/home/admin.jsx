@@ -213,7 +213,7 @@ function Admin({}) {
 
                         <SideBar />
                         <motion.div
-                            className={`homeContainer !z-[0] min-h-screen`}
+                            className={`homeContainer !z-[0] min-h-screen flex flex-col items-center`}
                             initial={false}
                             animate={{
                                 marginLeft: open ? '15rem' : '5rem',
@@ -224,7 +224,11 @@ function Admin({}) {
                                 },
                             }}
                         >
+                            <section className='max-w-7xl w-full'>
                             <Outlet />
+
+
+                            </section>
 
                             <Modal
                                 open={modalCheck}

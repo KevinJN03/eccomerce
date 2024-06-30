@@ -15,10 +15,10 @@ import UpdateProduct from '../hooks/updateProduct';
 import combineReducer from '../hooks/combineReducer';
 import { contentReducer } from '../hooks/contentReducer';
 import _ from 'lodash';
-export const newProductContext = createContext(null);
+export const NewProductContext = createContext(null);
 
 export const useNewProduct = () => {
-    return useContext(newProductContext);
+    return useContext(NewProductContext);
 };
 
 export const NewProductProvider = (props) => {
@@ -114,9 +114,9 @@ export const NewProductProvider = (props) => {
     };
 
     return (
-        <newProductContext.Provider value={value}>
+        <NewProductContext.Provider value={value}>
             {props.children}
-        </newProductContext.Provider>
+        </NewProductContext.Provider>
     );
 };
 

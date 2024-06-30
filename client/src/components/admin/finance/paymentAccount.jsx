@@ -63,7 +63,6 @@ function PaymentAccount({}) {
                 }),
             ]);
 
-            debugger;
 
             setBankAccount(() => bankAccountData);
 

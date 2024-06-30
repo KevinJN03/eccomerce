@@ -79,6 +79,7 @@ function Order_Info({}) {
         paypal: 'paypal.png',
         'union-pay': 'union-pay.png',
         visa: 'visa.png',
+        'credit-card': 'credit-card-icon.png',
     };
     return (
         <section className="order-info-wrapper h-full w-full">
@@ -250,14 +251,14 @@ function Order_Info({}) {
                                         <Product
                                             key={uuidv4()}
                                             id={item?._id}
-                                            img={item?.product?.images?.[0]}
+                                            img={item?.images?.[0]}
                                             variation1={
                                                 item?.variation1?.variation
                                             }
                                             variation2={
                                                 item?.variation2?.variation
                                             }
-                                            title={item.product?.title}
+                                            title={item.title}
                                             price={item?.price}
                                         />
                                     );
@@ -322,10 +323,11 @@ function Order_Info({}) {
                             <div className="mt-5 flex flex-row items-center gap-x-4">
                                 <img
                                     src={`${url}/${
-                                        logos?.[findOrder?.payment_type]
+                                        logos?.[findOrder?.payment_type] ||
+                                        logos['credit-card']
                                     }`}
                                     alt=""
-                                    className="h-8 w-12 rounded-sm border-2"
+                                    className="h-8 w-12 rounded-sm border-2 object-cover"
                                 />
                                 <p className="text-sm">
                                     {findOrder?.payment_type}

@@ -55,73 +55,24 @@ function UpdateProduct(props, value) {
             );
 
             if (newVariations.length > 2) {
+                const combinedVariations = newVariations.slice(2)[0];
                 combineDispatch({
                     type: 'set',
-                    combine: newVariations.slice(2)[0],
+                    combine: combinedVariations,
                 });
-                'combine', newVariations[2];
+          
                 contentDispatch({ type: 'manage' });
             }
             setVariations(() => newVariations.slice(0, 2));
 
-            const geturlextension = (url) => {
-                return url.split(/[#?]/)[0].split('.').pop().trim();
-            };
+ 
+          
 
-            const onimageedit = async (imgurl, counter) => {
-                var imgext = geturlextension(imgurl);
-
-                const response = await fetch(imgurl);
-                const blob = await response.blob();
-
-                const file = new File([blob], `image-${counter}.` + imgext, {
-                    type: blob.type,
-                });
-                console.log({ blob });
-                return file;
-            };
-            let counter = 0;
-            const createFiles = async () => {
-                const newFiles = (singleValue?.images || []).map(
-                    async (item) => {
-                        counter += 1;
-                        const result = await onimageedit(item, counter);
-                        const newObj = {
-                            file: result,
-                            img: URL.createObjectURL(result),
-                            isDragDisabled: false,
-                            id: uuidV4(),
-                        };
-                        return newObj;
-                    }
-                );
-
-                const data = await Promise.all(newFiles);
-
-                for (let i = data.length; i < 6; i++) {
-                    data.push({ id: uuidV4(), isDragDisabled: true });
-                }
-
-                setFiles(() => data);
-            };
-
-            const detail = singleValue?.detail || [];
-
-            const newDetails = detail.map((text) => {
-                return new ContentBlock({
-                    key: genKey(),
-                    text: text,
-                    type: 'unstyled',
-                    characterList: characterList,
-                    depth: 0,
-                });
-            });
 
             setDescription(
                 () => singleValue?.description || singleValue?.detail?.join('')
             );
 
-            // createFiles();
 
             const generateFiles = () => {
                 const newFiles = (singleValue?.fileResult || [])?.map(

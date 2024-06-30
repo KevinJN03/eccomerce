@@ -50,21 +50,6 @@ function useAddItemToBagHook({ product }) {
                     `variation_data.variation${variationNumber}_data.array.0`
                 );
             }
-
-            // if (
-            //     _.get(
-            //         product,
-            //         `variation_data.variation${variationNumber}_present`
-            //     )
-            // ) {
-            //     setVariationSelection((prevState) => ({
-            //         ...prevState,
-            //         [`variation${variationNumber}`]: {
-            //             ...prevState?.[`variation${variationNumber}`],
-            //             title: product?.[`variation${variationNumber}`]?.title,
-            //         },
-            //     }));
-            // }
         });
 
         if (!_.isEmpty(variationSelectObj)) {
@@ -98,6 +83,8 @@ function useAddItemToBagHook({ product }) {
 
     const handleAddToCart = () => {
         console.log({ variationSelect });
+
+        debugger
         if (
             (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||
@@ -123,8 +110,10 @@ function useAddItemToBagHook({ product }) {
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {
-        const { price, stock, id, variation } =
+        const { id, variation, ...values } =
             e.target.options[e.target.selectedIndex].dataset;
+
+      
 
         if (
             property == 'variation2' &&
@@ -139,20 +128,27 @@ function useAddItemToBagHook({ product }) {
                 ...prevState,
                 [property]: { ...prevState[property], ...findVariation },
             }));
-            debugger;
+
+            if (_.has(findVariation, 'stock')) {
+                setStockState(() => findVariation.stock);
+            }
+
+            if (_.has(findVariation, 'price')) {
+                setPriceState(() => findVariation.price);
+            }
         } else {
             setVariationSelection((prevState) => ({
                 ...prevState,
                 [property]: { ...prevState[property], variation, id },
             }));
-        }
 
-        if (stock == 0 || stock) {
-            setStockState(() => stock);
-        }
+            if (_.has(values, 'stock')) {
+                setStockState(() => values.stock);
+            }
 
-        if (price) {
-            setPriceState(() => price);
+            if (_.has(values, 'price')) {
+                setPriceState(() => values.price);
+            }
         }
     };
     return {

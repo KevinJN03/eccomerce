@@ -82,6 +82,8 @@ import PaymentAccount from './components/admin/finance/paymentAccount.jsx';
 import MonthlyStatements from './components/admin/finance/monthlyStatements.jsx';
 import MonthStatement from './components/admin/finance/monthStatement.jsx';
 import PaymentSettings from './components/admin/finance/paymentSettings.jsx';
+import SalesDiscount from './components/admin/marketing/sales-discount.jsx';
+import Marketing from './components/admin/marketing/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -330,6 +332,21 @@ function Router({ Header, Footer }) {
                             index: true,
 
                             element: <Admin_Dashboard />,
+                        },
+
+                        {
+                            path: 'marketing',
+                            element: <Marketing />,
+                            children: [
+                                {
+                                    index: true,
+                                    element: <SalesDiscount />,
+                                },
+                                {
+                                    path: 'sales-discounts',
+                                    element: <SalesDiscount />,
+                                },
+                            ],
                         },
 
                         {

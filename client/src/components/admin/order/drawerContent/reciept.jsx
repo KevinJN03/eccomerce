@@ -47,16 +47,16 @@ function Receipt({}) {
                                     <td className="pt-3">
                                         <div className="flex flex-row gap-3">
                                             <img
-                                                src={item.product?.images[0]}
+                                                src={item.images[0]}
                                                 className="!h-10 !w-full max-w-10 rounded object-cover"
                                             />
                                             <div className="flex flex-col gap-1">
                                                 <a
                                                     target="_blank"
-                                                    href={`/product/${item.product?._id}`}
+                                                    href={`/product/${item._id}`}
                                                     className="text-xs underline underline-offset-1 mb-2"
                                                 >
-                                                    {item.product?.title}
+                                                    {item.title}
                                                 </a>
                                                 {[1, 2].map((variationNum) => {
                                                     const variationObj =

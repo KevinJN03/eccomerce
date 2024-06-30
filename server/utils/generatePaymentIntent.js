@@ -57,7 +57,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
     metadata: {
       order_id,
     },
-    amount: parseFloat(total.withShipping) * 100,
+    amount: parseInt(parseFloat(total.withShipping) * 100),
     currency: 'gbp',
     customer: userId,
     shipping,

@@ -1,6 +1,6 @@
 import { useWishlistContext } from '../../context/wishlistContext';
 import delete_icon from '../../assets/icons/delete-icon.png';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAddItemToBagHook from '../../hooks/addItemToBagHook';
 import AddToCart from '../Item_page/addToCart';
@@ -8,30 +8,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import _ from 'lodash';
+import axios, { adminAxios } from '../../api/axios';
 function WishListItem(props) {
-    console.log('wishlistItemHook render');
-    const { variation_data } = props;
-
     const { removeItem } = useWishlistContext();
-    const [isDisabled, setDisable] = useState(true);
     const [remove, setRemove] = useState({ parent: false, child: false });
-
-    const [variation1, setVariation1] = useState(() => {
-        if (props?.isVariation1Present && props.variation1.array?.length == 1) {
-            return props.variation1.array[0]?.variation;
-        }
-        return null;
-    });
-    const [variation2, setVariation2] = useState(() => {
-        if (props?.isVariation2Present && props.variation2.array?.length == 2) {
-            return props.variation2.array[0]?.variation;
-        }
-        return null;
-    });
-
     const [stockState, setStockState] = useState();
     const [stockState2, setStockState2] = useState();
-
     const {
         priceState,
         setPriceState,
@@ -60,17 +42,6 @@ function WishListItem(props) {
             setOutOfStock(() => false);
         }
     }, [stockState, stockState2]);
-
-    // useEffect(() => {
-    //     wishListDispatch({
-    //         type: 'updateVariationSelect',
-    //         wishlistId: product.wishlistId,
-    //         variationSelect,
-
-    //         product_id: product._id
-    //     });
-    // }, [variationSelect]);
-
     const variants = {
         parent: {
             exit: {
@@ -102,6 +73,23 @@ function WishListItem(props) {
             setRemove(() => ({ parent: false, child: false }));
         }
     }, [error]);
+
+    const abortControllerRef = useRef(new AbortController());
+
+    const handleUpdateVariation = async (e, index) => {
+        try {
+            const values = e.target.options[e.target.selectedIndex].dataset;
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await axios.post(
+                `/wishlist/${props._id}/variation`,
+                { ...values, index },
+                { signal: abortControllerRef.current.signal }
+            );
+        } catch (error) {
+            console.error(error.message, error);
+        }
+    };
     return (
         <AnimatePresence>
             {!remove.parent && (
@@ -202,7 +190,7 @@ function WishListItem(props) {
                                                 );
                                                 return (
                                                     <div
-                                                        key={uuidv4()}
+                                                        key={`variation-selection-${index}`}
                                                         className="border-t-2"
                                                     >
                                                         {variationArray?.length ==

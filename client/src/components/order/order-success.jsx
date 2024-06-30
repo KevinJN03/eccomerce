@@ -170,71 +170,82 @@ function Order_Success({}) {
                                                 }`}
                                             </h2>
                                             <section className="scrollbar flex max-h-[300px] flex-col flex-nowrap overflow-y-auto">
-                                                {order.items.map((item) => {
-                                                    return (
-                                                        <section className="box-content flex max-h-[120px] flex-row gap-x-4 border-b-[1px] py-6">
-                                                            <div className="left flex-1">
-                                                                <img
-                                                                    className="h-full w-full object-cover"
-                                                                    src={
-                                                                        item
-                                                                            .product
-                                                                            ?.images[0]
-                                                                    }
-                                                                    alt=""
-                                                                />
-                                                            </div>
-                                                            <div className="right flex flex-[4] flex-col gap-y-2">
-                                                                {item?.price && (
-                                                                    <p className="h-fit text-base font-bold !text-dark-gray">
-                                                                        £{' '}
-                                                                        {parseFloat(
-                                                                            item?.price
-                                                                        ).toFixed(
-                                                                            2
-                                                                        )}
-                                                                    </p>
-                                                                )}
-
-                                                                <p className="h-fit w-2/6 text-xs">
-                                                                    {
-                                                                        item
-                                                                            .product
-                                                                            ?.title
-                                                                    }
-                                                                </p>
-
-                                                                <div className="flex flex-row gap-x-4 font-bold tracking-wider ">
-                                                                    {item?.isVariation1Present && (
-                                                                        <p className="font-gotham !text-dark-gray">
-                                                                            {item.variation1?.variation?.toUpperCase()}
-                                                                        </p>
-                                                                    )}
-
-                                                                    {item?.isVariation2Present && (
-                                                                        <Tooltip
-                                                                            text={
-                                                                                item
-                                                                                    .variation2
-                                                                                    ?.variation ||
-                                                                                null
-                                                                            }
-                                                                        />
-                                                                    )}
-                                                                </div>
-
-                                                                <p className="text-sm tracking-wide text-dark-gray">
-                                                                    Qty:
-                                                                    <span className="ml-2 font-gotham font-bold">
-                                                                        {
-                                                                            item?.quantity
+                                                {order.items.map(
+                                                    ({
+                                                        title,
+                                                        images,
+                                                        price,
+                                                        _id,
+                                                        ...item
+                                                    }) => {
+                                                        return (
+                                                            <section
+                                                                key={_id}
+                                                                className="box-content flex max-h-[120px] flex-row gap-x-4 border-b-[1px] py-6"
+                                                            >
+                                                                <div className="left flex-1">
+                                                                    <img
+                                                                        className="h-full w-full object-cover"
+                                                                        src={
+                                                                            images[0]
                                                                         }
-                                                                    </span>
-                                                                </p>
-                                                            </div>
-                                                        </section>
-                                                    );
-                                                })}
+                                                                        alt=""
+                                                                    />
+                                                                </div>
+                                                                <div className="right flex flex-[4] flex-col gap-y-2">
+                                                                   
+                                                                        <p className="h-fit text-base font-bold !text-dark-gray">
+                                                                            {parseFloat(
+                                                                                price
+                                                                            ).toLocaleString(
+                                                                                'en-US',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'GBP',
+                                                                                }
+                                                                            )}
+                                                                        </p>
+                                                                   
+
+                                                                    <p className="h-fit w-3/6 text-sm">
+                                                                        {
+                                                                            title
+                                                                        }
+                                                                    </p>
+
+                                                                    <div className="flex flex-row gap-x-4 font-bold tracking-wider ">
+                                                                        {item?.isVariation1Present && (
+                                                                            <p className="font-gotham !text-dark-gray">
+                                                                                {item.variation1?.variation?.toUpperCase()}
+                                                                            </p>
+                                                                        )}
+
+                                                                        {item?.isVariation2Present && (
+                                                                            <Tooltip
+                                                                                text={
+                                                                                    item
+                                                                                        .variation2
+                                                                                        ?.variation ||
+                                                                                    null
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </div>
+
+                                                                    <p className="text-sm tracking-wide text-dark-gray">
+                                                                        Qty:
+                                                                        <span className="ml-2 font-gotham font-bold">
+                                                                            {
+                                                                                item?.quantity
+                                                                            }
+                                                                        </span>
+                                                                    </p>
+                                                                </div>
+                                                            </section>
+                                                        );
+                                                    }
+                                                )}
                                             </section>
                                         </section>
                                     )}

@@ -48,7 +48,7 @@ function FinanceContextProvider({ children }) {
         };
     };
 
-    const fetchBankAccount = async () => {
+    const fetchBankAccount = async (setLoadState) => {
         try {
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
@@ -56,10 +56,14 @@ function FinanceContextProvider({ children }) {
                 signal: abortControllerRef.current.signal,
             });
 
-            setBankAccount(() => data)
+            setBankAccount(() => data);
         } catch (error) {
             console.error(error.message, error);
             logoutUser({ error });
+        } finally {
+            if (setLoadState) {
+                setLoadState(() => false);
+            }
         }
     };
     const value = {
@@ -91,7 +95,7 @@ function FinanceContextProvider({ children }) {
         setModalState,
         bankAccount,
         setBankAccount,
-        fetchBankAccount
+        fetchBankAccount,
     };
 
     return (

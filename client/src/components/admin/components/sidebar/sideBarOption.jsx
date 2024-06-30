@@ -12,6 +12,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
 import {
     AccountBalanceSharp,
+    CampaignOutlined,
     HomeOutlined,
     InterestsOutlined,
     SearchOutlined,
@@ -54,23 +55,35 @@ const optionsArray = [
         additional: {
             title: 'FINANCES',
             options: [
-
                 {
-                  title: 'Payment Account',
-                  link: '/admin/payments'  
+                    title: 'Payment Account',
+                    link: '/admin/payments',
                 },
                 {
                     title: 'Monthly Statements',
-                    link: '/admin/payments/monthly-statements'  
-                  },
-                  {
+                    link: '/admin/payments/monthly-statements',
+                },
+                {
                     title: 'Payment Settings',
-                    link: '/admin/payments/settings'  
-                  }
-            ]
+                    link: '/admin/payments/settings',
+                },
+            ],
         },
     },
-
+    {
+        icon: <CampaignOutlined className="icons" />,
+        title: 'Marketing',
+        link: '/admin/marketing',
+        additional: {
+            title: 'MARKETING',
+            options: [
+                {
+                    title: 'Sales and discounts',
+                    link: '/admin/marketing/sales-discounts',
+                },
+            ],
+        },
+    },
     {
         icon: <AssessmentRoundedIcon className="icons" />,
         title: 'Stats',

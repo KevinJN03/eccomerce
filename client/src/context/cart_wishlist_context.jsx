@@ -165,13 +165,14 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
         if (priceState) {
             _.set(pickedData, 'price.current', priceState);
 
-            if (variationSelect) {
-                _.set(
-                    pickedData,
-                    ['variation_data', 'select'],
-                    variationSelect
-                );
-            }
+        
+        }
+        if (variationSelect) {
+            _.set(
+                pickedData,
+                ['variation_data', 'select'],
+                variationSelect
+            );
         }
         _.set(pickedData, 'product_id', product._id);
         _.set(pickedData, '_id', objectId().toString());

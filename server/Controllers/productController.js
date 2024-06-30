@@ -80,6 +80,8 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
     },
     ...productAggregateStage({ stats: true }),
   ]);
+
+
   if (newProduct.length < 1) {
     return res.status(404).send('product not found');
   }

@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Pagination, PaginationItem } from '@mui/material';
+import CollapseExpandIcon from './collapseExpandIcon';
 function ActivityTable({ activities, setLoading, page, setPage }) {
     const icons = {
         payout: <SyncAltRounded fontSize="large" />,
@@ -49,8 +50,8 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
     return (
         <section className="h-full w-full">
             {activities?.length <= 0 ? (
-                <div className='mt-12'>
-                    <p className='text-sm'>No recent activity</p>
+                <div className="mt-12">
+                    <p className="text-sm">No recent activity</p>
                 </div>
             ) : (
                 <>
@@ -101,82 +102,88 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                                                 <th className="">
                                                     <section className="!w-full">
                                                         {order ? (
-                                                            <div className=" flex !w-32 flex-row flex-nowrap overflow-hidden">
-                                                                {[
-                                                                    ...order.items,
-                                                                ]?.map(
-                                                                    (
-                                                                        {
-                                                                            images,
-                                                                            ...item
-                                                                        },
-                                                                        idx
-                                                                    ) => {
-                                                                        return (
-                                                                            <motion.img
-                                                                                variants={getVariants(
-                                                                                    idx
-                                                                                )}
-                                                                                initial={
-                                                                                    'initial'
-                                                                                }
-                                                                                whileHover={
-                                                                                    'whileHover'
-                                                                                }
-                                                                                transition={
-                                                                                    'transition'
-                                                                                }
-                                                                                key={`tester-${idx}`}
-                                                                                className={`inset-0 h-14 w-14 min-w-14 cursor-pointer ${idx == 0 ? 'rounded-lg' : 'rounded-r-lg'} object-cover`}
-                                                                                src={
-                                                                                    images[0]
-                                                                                }
-                                                                                style={{
-                                                                                    zIndex:
-                                                                                        order
-                                                                                            .items
-                                                                                            ?.length +
-                                                                                        1 -
-                                                                                        idx,
-                                                                                }}
-                                                                            />
-                                                                        );
-                                                                    }
-                                                                )}
-
-                                                                {order?.items
-                                                                    ?.length >
-                                                                    2 && (
-                                                                    <motion.div
-                                                                        variants={getVariants(
-                                                                            1
-                                                                        )}
-                                                                        initial={
-                                                                            'initial'
-                                                                        }
-                                                                        whileHover={
-                                                                            'whileHover'
-                                                                        }
-                                                                        transition={
-                                                                            'transition'
-                                                                        }
-                                                                        style={{
-                                                                            zIndex: 1,
-                                                                        }}
-                                                                        className=" inset-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-r-lg bg-black/50 "
-                                                                    >
-                                                                        <p className="text-sm text-white">
-                                                                            {`+${
-                                                                                order
-                                                                                    ?.items
-                                                                                    ?.length -
-                                                                                2
-                                                                            }`}
-                                                                        </p>
-                                                                    </motion.div>
-                                                                )}
-                                                            </div>
+                                                            <CollapseExpandIcon
+                                                                array={[
+                                                                     ...order.items,
+                                                                    // ...order.items, ...order.items,
+                                                                ]}
+                                                            />
                                                         ) : (
+                                                            // <div className=" flex !w-32 flex-row flex-nowrap overflow-hidden">
+                                                            //     {[
+                                                            //         ...order.items,
+                                                            //     ]?.map(
+                                                            //         (
+                                                            //             {
+                                                            //                 images,
+                                                            //                 ...item
+                                                            //             },
+                                                            //             idx
+                                                            //         ) => {
+                                                            //             return (
+                                                            //                 <motion.img
+                                                            //                     variants={getVariants(
+                                                            //                         idx
+                                                            //                     )}
+                                                            //                     initial={
+                                                            //                         'initial'
+                                                            //                     }
+                                                            //                     whileHover={
+                                                            //                         'whileHover'
+                                                            //                     }
+                                                            //                     transition={
+                                                            //                         'transition'
+                                                            //                     }
+                                                            //                     key={`tester-${idx}`}
+                                                            //                     className={`inset-0 h-14 w-14 min-w-14 cursor-pointer ${idx == 0 ? 'rounded-lg' : 'rounded-r-lg'} object-cover`}
+                                                            //                     src={
+                                                            //                         images[0]
+                                                            //                     }
+                                                            //                     style={{
+                                                            //                         zIndex:
+                                                            //                             order
+                                                            //                                 .items
+                                                            //                                 ?.length +
+                                                            //                             1 -
+                                                            //                             idx,
+                                                            //                     }}
+                                                            //                 />
+                                                            //             );
+                                                            //         }
+                                                            //     )}
+
+                                                            //     {order?.items
+                                                            //         ?.length >
+                                                            //         2 && (
+                                                            //         <motion.div
+                                                            //             variants={getVariants(
+                                                            //                 1
+                                                            //             )}
+                                                            //             initial={
+                                                            //                 'initial'
+                                                            //             }
+                                                            //             whileHover={
+                                                            //                 'whileHover'
+                                                            //             }
+                                                            //             transition={
+                                                            //                 'transition'
+                                                            //             }
+                                                            //             style={{
+                                                            //                 zIndex: 1,
+                                                            //             }}
+                                                            //             className=" inset-0 flex h-14 w-14 cursor-pointer items-center justify-center rounded-r-lg bg-black/50 "
+                                                            //         >
+                                                            //             <p className="text-sm text-white">
+                                                            //                 {`+${
+                                                            //                     order
+                                                            //                         ?.items
+                                                            //                         ?.length -
+                                                            //                     2
+                                                            //                 }`}
+                                                            //             </p>
+                                                            //         </motion.div>
+                                                            //     )}
+                                                            // </div>
                                                             <div className="flex h-14 w-14 items-center justify-center">
                                                                 {icons[type] ||
                                                                     icons[
@@ -305,22 +312,20 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                             count={Math.ceil(activities?.length / 10)}
                             defaultPage={page}
                             onChange={(e, value) => {
+                                if (value != page) {
+                                    setLoading(() => true);
 
-                                if(value != page){
-                                     setLoading(() => true);
+                                    const slicedActivities =
+                                        getSlicedActivities(value);
 
-                                const slicedActivities =
-                                    getSlicedActivities(value);
+                                    setPageActivities(() => slicedActivities);
 
-                                setPageActivities(() => slicedActivities);
+                                    setPage(() => value);
 
-                                setPage(() => value);
-
-                                setTimeout(() => {
-                                    setLoading(() => false);
-                                }, 1000);
+                                    setTimeout(() => {
+                                        setLoading(() => false);
+                                    }, 1000);
                                 }
-                               
                             }}
                         />
                     </section>

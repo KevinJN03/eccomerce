@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import productAggregateStage from '../utils/productAggregateStage';
 import variationFormat from '../utils/variationFormat.js';
 import cart_wishlist_pipeline from '../utils/cart_wishlist_pipeline.js';
-
+import Product from '../Models/product';
 export default function generateModelSchemaRoute(Model, route) {
   const queryOptions = {
     new: true,
@@ -63,8 +63,6 @@ export default function generateModelSchemaRoute(Model, route) {
       const { id } = req.params;
 
       const errors = validationResult(req);
-      console.log({ id });
-
       const findDoc = await Model.findOne({ _id: id }, null, queryOptions);
 
       if (!findDoc) {
@@ -77,8 +75,6 @@ export default function generateModelSchemaRoute(Model, route) {
         return res.send(findDoc);
       }
 
-      console.log('getting Document from id');
-
       const data = await Model.aggregate([
         {
           $match: {
@@ -88,15 +84,11 @@ export default function generateModelSchemaRoute(Model, route) {
         ...cart_wishlist_pipeline,
       ]);
 
-      //group the cart item
-
-      var document = {
+      console.group('this here');
+      const document = {
         ...data[0],
         items: variationFormat({ products: data[0].items }),
       };
-
-      // const document = data;
-
       res.send(document);
     }),
   ];
@@ -151,7 +143,7 @@ export default function generateModelSchemaRoute(Model, route) {
         return res.redirect(301, `/api/${route}/${id}`);
       }
 
-    await Model.findByIdAndUpdate(
+      await Model.findByIdAndUpdate(
         { _id: id },
         {
           $push: {
@@ -197,6 +189,32 @@ export default function generateModelSchemaRoute(Model, route) {
     }),
   ];
 
+  const getVariationValue = [
+    asyncHandler(async (req, res, next) => {
+      // const { id } = req.params;
+      // const {index} = req.body
+
+      // const document = await Model.findOne(
+      //   {
+      //     'items._id': new mongoose.Types.ObjectId(id),
+      //   },
+      //   { items: { $elemMatch: { _id: id } } },
+      // );
+
+      // if (document) {
+      //   const [{ product_id, ...item }] = document.items;
+
+      //   const product = await Product.findOne({ _id: product_id });
+      //   if(product.variations?.length == 3 && index == 2 ){
+      //     const combineVariations = product.variations[2];
+      //   }
+      // }
+
+      res.send({ success: true });
+      // const { id } = req.body;
+    }),
+  ];
+
   return {
     retrieveDocument,
     createDocument,
@@ -204,5 +222,6 @@ export default function generateModelSchemaRoute(Model, route) {
     removeFromDocument,
     addToDocument,
     updateProperty,
+    getVariationValue,
   };
 }

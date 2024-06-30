@@ -194,7 +194,7 @@ h1 {
     padding: 5px;
     border-radius: 5px;
 
-    &.received {
+    &.received, &.shipped, &.delivered {
         color: green;
         background-color: rgba(0, 128, 0, 0.244);
     }

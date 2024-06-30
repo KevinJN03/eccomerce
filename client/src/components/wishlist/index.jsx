@@ -12,65 +12,6 @@ function WishList({}) {
     const { wishlist, wishListDispatch, loading } = useWishlistContext();
     const abortControllerRef = useRef(new AbortController());
 
-    // const fetchData = async () => {
-    //     try {
-    //         setWishListLoading(() => true);
-    //         const productIdArray = [];
-    //         const wishlistMap = new Map(getWishlistFromLS());
-    //         for (const id of wishlistMap.keys()) {
-    //             productIdArray.push(id);
-    //         }
-    //         if (productIdArray.length < 1) {
-    //             setTimeout(() => {
-    //                 setWishListLoading(() => false);
-    //             }, 1000);
-
-    //             return;
-    //         }
-    //         const { data } = await axios.get(`product/many/${productIdArray}`, {
-    //             signal: abortControllerRef.current?.signal,
-    //         });
-
-    //         // setProducts(() => data?.products || []);
-    //         wishListDispatch({
-    //             type: 'REFRESH',
-    //             products: data?.products || [],
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //     } finally {
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     abortControllerRef.current?.abort();
-
-    //     abortControllerRef.current = new AbortController();
-
-    //     // fetchData();
-
-    //     return () => {
-    //         abortControllerRef.current?.abort();
-    //     };
-    // }, [wishlistRefresh]);
-
-    // useEffect(() => {
-    //     // const productsArray = [];
-
-    //     // wishlist.forEach(function (value, key) {
-    //     //     productsArray.push(value);
-    //     // });
-    //     // console.log({ productsArray });
-    //     // setWishlistProduct(() => productsArray);
-
-    //     // const timeout = setTimeout(() => {
-    //     //     setWishListLoading(() => false);
-    //     // }, 1000);
-
-    //     // return () => {
-    //     //     clearTimeout(timeout);
-    //     // };
-    // }, [wishlist]);
     return (
         <div className="flex w-full flex-col bg-white">
             <AnimatePresence mode="wait">
