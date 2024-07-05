@@ -11,7 +11,10 @@ import { DarkModeContextProvider } from './context/darkModeContext';
 import 'dayjs/locale/en-gb';
 import { WishlistContextProvider } from './context/wishlistContext.jsx';
 import * as Sentry from '@sentry/react';
+import dayjs from 'dayjs';
+import { utc } from 'dayjs';
 const { VITE_SENTRY_DSN } = import.meta.env;
+dayjs.extend(utc)
 
 Sentry.init({
     dsn: VITE_SENTRY_DSN,

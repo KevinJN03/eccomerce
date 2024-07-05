@@ -1,11 +1,14 @@
-import { Outlet } from "react-router-dom"
+import { Outlet } from 'react-router-dom';
+import SalesDiscountProvider from '../../../context/SalesDiscountContext';
 
-function Marketing({}){
-  return (
-    <section className=''>
-      <Outlet/>
-    </section>
-  )
-};
+function Marketing({}) {
+    return (
+        <SalesDiscountProvider>
+            <section className="">
+                <Outlet />
+            </section>
+        </SalesDiscountProvider>
+    );
+}
 
-export default Marketing
+export default Marketing;

@@ -25,13 +25,22 @@ import exampleData from './exampleData';
 
 import BoxWithProps from '../../common/BoxwithProps.jsx';
 import Template from './template.jsx';
+import { useSalesDiscountContext } from '../../../context/SalesDiscountContext.jsx';
 function SalesDiscount({}) {
-    const [showAction, setShowAction] = useState(!false);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedId, setSelectedId] = useState('');
-    const [modalOpen, setModalOpen] = useState(false);
+ 
+    const {
+        showAction,
+        setShowAction,
+        anchorEl,
+        setAnchorEl,
+        selectedId,
+        setSelectedId,
+        modalOpen,
+        setModalOpen,
+    } = useSalesDiscountContext();
     const open = Boolean(anchorEl);
 
+   
     const handleClose = () => {
         setAnchorEl(() => null);
     };
@@ -394,7 +403,7 @@ function SalesDiscount({}) {
                         borderRadius: '1.8rem',
                         maxWidth: '80vw',
                         height: '100%',
-                        minHeight: '100vh'
+                        minHeight: '100vh',
                     }}
                 >
                     <Template />
