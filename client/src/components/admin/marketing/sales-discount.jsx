@@ -27,7 +27,6 @@ import BoxWithProps from '../../common/BoxwithProps.jsx';
 import Template from './template.jsx';
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext.jsx';
 function SalesDiscount({}) {
- 
     const {
         showAction,
         setShowAction,
@@ -37,10 +36,10 @@ function SalesDiscount({}) {
         setSelectedId,
         modalOpen,
         setModalOpen,
+        errorStyle,
     } = useSalesDiscountContext();
     const open = Boolean(anchorEl);
 
-   
     const handleClose = () => {
         setAnchorEl(() => null);
     };
@@ -390,6 +389,7 @@ function SalesDiscount({}) {
                 onClose={() => setModalOpen(() => false)}
                 style={{
                     overflowY: 'auto',
+                    
                 }}
             >
                 <BoxWithProps
@@ -402,8 +402,8 @@ function SalesDiscount({}) {
                         // padding: '2rem',
                         borderRadius: '1.8rem',
                         maxWidth: '80vw',
-                        height: '100%',
-                        minHeight: '100vh',
+                        // height: '100%',
+                        // minHeight: '100vh',
                     }}
                 >
                     <Template />

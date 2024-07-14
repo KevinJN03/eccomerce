@@ -6,7 +6,7 @@ import productAggregateStage from '../utils/productAggregateStage.js';
 const router = express.Router();
 
 export const get_all_category = AsyncHandler(async (req, res, next) => {
-  const categories = await Category.find().populate(['men', 'women']).exec();
+  // const categories = await Category.find().populate(['men', 'women']).exec();
 
   const newCategories = await Category.aggregate([
     // {
@@ -29,6 +29,7 @@ export const get_all_category = AsyncHandler(async (req, res, next) => {
               gender: 'men',
             },
           },
+          ...productAggregateStage({ stats: false }),
         ],
         as: 'men',
       },
@@ -48,6 +49,8 @@ export const get_all_category = AsyncHandler(async (req, res, next) => {
               gender: 'women',
             },
           },
+          ...productAggregateStage({ stats: false }),
+
         ],
         as: 'women',
       },

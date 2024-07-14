@@ -18,7 +18,22 @@ const couponSchema = new Schema({
     enum: ['fixed', 'percentage'],
     default: 'fixed',
   },
-  total_use: { type: Schema.Types.Number, default: 5 },
+  // total_use: { type: Schema.Types.Number, default: 5 },
+  uses: {
+    type: Schema.Types.Number,
+    default: 0,
+  },
+  order_minimum: {
+    type: Schema.Types.String,
+    enum: ['none', 'number_of_items', 'order_total'],
+    default: 'none',
+  },
+  minimum_value: {
+    type: Schema.Types.Number,
+  },
+  start_date: { type: Schema.Types.Date },
+  end_date: { type: Schema.Types.Date },
+  no_end_date: { type: Schema.Types.Boolean },
 });
 
 couponSchema.post('save', (error, doc, next) => {

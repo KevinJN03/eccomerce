@@ -59,7 +59,7 @@ import {
   editPrivateNote,
   getAdminOrders,
 } from '../Controllers/orderController.js';
-import { get_all_coupons } from '../Controllers/couponController.js';
+import { create_coupon, get_all_coupons } from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
 import {
   get_setting,
@@ -87,6 +87,7 @@ router.get('/count', count_all);
 router.get('/order/:id', getSingleOrder);
 router.get('/orders', getAllOrders);
 router.get('/coupon/all', get_all_coupons);
+router.post('/coupon/create', create_coupon);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:ids', delete_product);
 router.post('/delivery/create', create_delivery_profile);
@@ -96,7 +97,6 @@ router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
 router.post('/delivery/update', update_delivery_profile);
 router.put('/delivery/update/:id', update_single_delivery_profile);
-
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);
