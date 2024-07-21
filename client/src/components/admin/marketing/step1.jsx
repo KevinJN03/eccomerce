@@ -1,23 +1,15 @@
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext';
-import _ from 'lodash'
+import _ from 'lodash';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { useOfferContext } from '../../../context/offerContext';
 function Step1({}) {
-
     const { title, description } = {
         title: 'Create a promo code',
         description: `A promo code is an easy way to share a discount with anyone you choose. It can also be a great way to encourage purchases and build loyalty.`,
-    }; 
-    const {
-       
-        errors,
-        setErrors,
-        details,
-        setDetails,
-        clearError,
-        errorStyle,
-     
-    } = useSalesDiscountContext();
+    };
+    const { errors, setErrors, details, setDetails, clearError, errorStyle } =
+        useOfferContext();
     return (
         <>
             <div className="flex flex-col gap-2">
@@ -76,6 +68,7 @@ function Step1({}) {
                                 <input
                                     type="number"
                                     className="daisy-input input flex-1 !pr-10"
+                                    value={details?.amount}
                                     onWheel={(e) => e.target.blur()}
                                     onChange={(e) =>
                                         setDetails((prevState) => ({
@@ -228,7 +221,7 @@ function Step1({}) {
                                                             })
                                                         );
                                                     }}
-                                                    type="number"
+                                                    type={"number"}
                                                     onWheel={(e) =>
                                                         e.target.blur()
                                                     }
@@ -336,21 +329,30 @@ function Step1({}) {
                                             clearError(property);
                                             setDetails((prevState) => ({
                                                 ...prevState,
-                                                [property]: e.utc(true).unix(),
+                                                [property]: e[
+                                                    property == 'start_date'
+                                                        ? 'startOf'
+                                                        : 'endOf'
+                                                ]('day')
+                                                    .utc(true)
+                                                    .unix(),
                                             }));
                                         }}
                                     />
                                     {property == 'end_date' && (
                                         <div
                                             className="mt-3 flex flex-nowrap gap-2"
-                                            onClick={() =>
+                                            onClick={() => {
+                                                clearError(property);
+                                                clearError('start_date');
+
                                                 setDetails((prevState) => ({
                                                     ...prevState,
                                                     no_end_date:
                                                         !prevState.no_end_date,
                                                     end_date: '',
-                                                }))
-                                            }
+                                                }));
+                                            }}
                                         >
                                             <input
                                                 type="checkbox"

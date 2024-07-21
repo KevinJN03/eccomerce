@@ -6,14 +6,16 @@ import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 
 export const get_all_coupons = asyncHandler(async (req, res, next) => {
-  const coupons = await Coupon.find();
+  // const coupons = await Coupon.find({}, null, { lean: { toObject: true } });
 
-  res.status(200).send({ coupons });
+  const coupons = await Coupon.aggregate([{ $sort: { timestamp: -1 } }]);
+
+  res.status(200).send(coupons);
 });
 
 export const get_single_coupon = [
   asyncHandler(async (req, res, next) => {
-    const { code } = rq.body;
+    const { code } = req.body;
 
     const coupon = await Coupon.findOne({ code: code.toUpperCase() });
 
@@ -68,16 +70,23 @@ export const create_coupon = [
     .notEmpty()
     .custom((value, { req }) => {
       const dateDiffToday = dayjs.unix(value).diff(dayjs(), 'day');
-      const { end_date } = req.body;
+      const { end_date, no_end_date } = req.body;
       const dateDiffPeriod = dayjs
         .unix(value)
         .diff(dayjs.unix(end_date), 'day');
       // console.log({ value, dateDiffToday });
 
-      console.log({ value, dateDiffPeriod });
+      console.log({
+        value,
+        dateDiffPeriod,
+        dateDiffToday,
+        date: dayjs.unix(value).toISOString(),
+      });
 
       if (dateDiffToday < 0) {
         throw new Error('Must not be in the past');
+      } else if (no_end_date) {
+        return value;
       } else if (dateDiffPeriod > 0) {
         throw new Error('Must be before end date');
       } else {
@@ -114,8 +123,14 @@ export const create_coupon = [
       return res.status(400).send(errors.mapped());
     }
 
+    if (req.body?.create) {
+      const coupon = (await Coupon.create(req.body)).toObject();
+
+      return res.send({ ...coupon, created: true });
+    }
+
     // const coupoon = await Coupon.create(req.body)
-    return res.send({});
+    return res.send({ msg: 'passed validation' });
     // const { code, amount, type } = req.body;
     // const newCoupon = await Coupon.create({ code, amount, type });
     // res.status(200).send(newCoupon);

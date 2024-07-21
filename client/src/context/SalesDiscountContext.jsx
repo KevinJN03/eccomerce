@@ -1,130 +1,106 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAdminContext } from './adminContext';
 import { adminAxios } from '../api/axios';
+import { useSearchParams } from 'react-router-dom';
 
 const SalesDiscountContext = createContext();
 
 export const useSalesDiscountContext = () => {
     return useContext(SalesDiscountContext);
 };
-function SalesDiscountProvider({ children }) {
-    const [showAction, setShowAction] = useState(!false);
+function SalesDiscountProvider({ children, initialDetails }) {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedId, setSelectedId] = useState('');
+    // const [selectedId, setSelectedId] = useState('');
     const [modalOpen, setModalOpen] = useState(false);
     const [errors, setErrors] = useState({});
     const [modalView, setModalView] = useState(1);
-    const [listingIdsSet, setListingIdsSet] = useState(new Set());
-    const [chosenListings, setChosenListings] = useState([]);
-    const [searchResult, setSearchResult] = useState([]);
-    const [showSearchResult, setShowSearchResult] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
+
     const [categories, setCategories] = useState([]);
-
-    const [details, setDetails] = useState({
-        type: 'fixed',
-        order_minimum: 'none',
-        no_end_date: false,
-        custom: false,
-        listings_type: 'all',
-    });
+    const [categoriesMap, setCategoriesMap] = useState(new Map());
+    const [chosenMap, setChosenMap] = useState(new Map());
+    const [openDrawer, setOpenDrawer] = useState(false);
     const [btnLoading, setBtnLoading] = useState(false);
+    const [allOffers, setAllOffers] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [dateFormat, setDateFormat] = useState(() => 'D MMM YYYY');
 
-    const clearError = (field) => {
-        setErrors(({ [field]: prop, ...prevState }) => prevState);
-    };
-
-    const errorStyle = '!border-red-700 !bg-red-100';
     const { logoutUser } = useAdminContext();
-    const abortCOntrollerRef = useRef(new AbortController());
+    const abortControllerRef = useRef(new AbortController());
+    const onMountAbortControllerRef = useRef(new AbortController());
 
     useEffect(() => {
-        const fetchCategory = async () => {
+        const fetchCategoryAndOffers = async () => {
             try {
                 //
-                const { data } = await adminAxios.get(
-                    'category/all'
 
-                    //   {
-                    //     signal: abortControllerRef.current.signal,
-                    // }
-                );
+                const [{ data }, { data: couponData }] = await Promise.all([
+                    adminAxios.get(
+                        'category/all',
 
-                setCategories(() =>
-                    data.map(({ men, women, ...items }) => ({
-                        ...items,
+                        {
+                            signal: onMountAbortControllerRef.current.signal,
+                        }
+                    ),
+                    adminAxios.get(
+                        'coupon/all',
+
+                        {
+                            signal: onMountAbortControllerRef.current.signal,
+                        }
+                    ),
+                ]);
+
+                const newCategory = [];
+                const newCategoryMap = new Map();
+
+                data.forEach(({ men, women, count, ...element }) => {
+                    newCategoryMap.set(element?._id, {
+                        ...element,
+                        listings: [],
+                    });
+
+                    newCategory.push({
+                        ...element,
                         listings: [...men, ...women],
-                    }))
-                );
+                    });
+                });
+
+                setCategoriesMap(() => newCategoryMap);
+                setCategories(() => newCategory);
+                setAllOffers(() => couponData);
             } catch (error) {
                 logoutUser({ error });
             }
         };
 
-        fetchCategory();
+        fetchCategoryAndOffers();
         return () => {
-            abortCOntrollerRef.current?.abort();
+            abortControllerRef.current?.abort();
+            onMountAbortControllerRef.current?.abort();
         };
     }, []);
 
-    const handleContinue = async () => {
-        try {
-            setBtnLoading(() => true);
-            abortCOntrollerRef.current?.abort();
-            abortCOntrollerRef.current = new AbortController();
-
-            const { data } = await adminAxios.post('/coupon/create', details, {
-                signal: abortCOntrollerRef.current?.signal,
-            });
-
-            setModalView((prevState) => prevState + 1);
-        } catch (error) {
-            logoutUser({ error });
-
-            if (error.response.status == 400) {
-                setErrors(() => error.response.data);
-                setModalView(() => 1);
-            }
-        } finally {
-            setBtnLoading(() => false);
-        }
-    };
-
     const value = {
-        showAction,
-        setShowAction,
+        categoriesMap,
+
         anchorEl,
         setAnchorEl,
-        selectedId,
-        setSelectedId,
+        // selectedId,
+        // setSelectedId,
         modalOpen,
         setModalOpen,
-        errors,
-        setErrors,
-        details,
-        setDetails,
-        clearError,
-        errorStyle,
-        handleContinue,
         btnLoading,
         setBtnLoading,
-        modalView,
-        setModalView,
-        listingIdsSet,
-        setListingIdsSet,
-        chosenListings,
-        setChosenListings,
-        searchResult,
-        setSearchResult,
-        showSearchResult,
-        setShowSearchResult,
-        searchText,
-        setSearchText,
-        isSearching,
-        setIsSearching,
+
         categories,
         setCategories,
+        allOffers,
+        setAllOffers,
+        openDrawer,
+        setOpenDrawer,
+        searchParams,
+        setSearchParams,
+        dateFormat,
     };
     return (
         <SalesDiscountContext.Provider value={value}>

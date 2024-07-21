@@ -26,6 +26,13 @@ import exampleData from './exampleData';
 import BoxWithProps from '../../common/BoxwithProps.jsx';
 import Template from './template.jsx';
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext.jsx';
+import Step4 from './step4.jsx';
+import dayjs from 'dayjs';
+import Drawer from './Drawer/drawer.jsx';
+import { useSearchParams } from 'react-router-dom';
+import OfferContextProvider, {
+    useOfferContext,
+} from '../../../context/offerContext.jsx';
 function SalesDiscount({}) {
     const {
         showAction,
@@ -36,8 +43,13 @@ function SalesDiscount({}) {
         setSelectedId,
         modalOpen,
         setModalOpen,
-        errorStyle,
+
+        allOffers,
+        setOpenDrawer,
+        setSearchParams,
+        dateFormat,
     } = useSalesDiscountContext();
+
     const open = Boolean(anchorEl);
 
     const handleClose = () => {
@@ -48,7 +60,9 @@ function SalesDiscount({}) {
         setAnchorEl(() => e.currentTarget);
         setSelectedId(() => title);
     };
+
     const [option, setOption] = useState('this_month');
+
     return (
         <section className="payment h-full w-full p-10">
             <header>
@@ -323,44 +337,163 @@ function SalesDiscount({}) {
                     </thead>
 
                     <tbody>
-                        {exampleData.map(
-                            ({ type, code, email_sent, revenue }) => {
+                        {allOffers.map(
+                            ({
+                                type,
+                                code,
+                                emails_sent,
+                                revenue,
+                                start_date,
+                                end_date,
+                                offer_type,
+                                no_end_date,
+                                uses,
+                                _id,
+                            }) => {
+                                const isActive =
+                                    dayjs
+                                        .unix(start_date)
+                                        .diff(dayjs(), 'minute') <= 0;
                                 return (
                                     <tr
                                         key={code}
                                         className="border-b border-dark-gray"
                                     >
-                                        <td className="border-r border-dark-gray px-5 py-3">
+                                        <td className="border-r border-dark-gray px-5 py-5">
                                             <p className="text-sm">
-                                                {_.upperFirst(type).replace(
-                                                    '_',
-                                                    ' '
-                                                )}
+                                                {_.upperFirst(
+                                                    offer_type
+                                                ).replace('_', ' ')}
                                             </p>
                                             <p className="text-sm font-semibold">
                                                 {code}
                                             </p>
-                                            <div className="flex flex-nowrap items-center">
-                                                <p className="text-sm underline underline-offset-1">
+                                            <button
+                                                type="button"
+                                                className="group flex cursor-pointer flex-nowrap items-center"
+                                                onClick={() => {
+                                                    setSearchParams({
+                                                        offer: _id,
+                                                    });
+                                                    setOpenDrawer(() => true);
+                                                }}
+                                            >
+                                                <p className="text-sm text-black/90 underline underline-offset-1">
                                                     Details
                                                 </p>
                                                 <KeyboardArrowRightRounded className="!text-base" />
+                                            </button>
+                                        </td>
+
+                                        <td className="px-5">
+                                            <div>
+                                                <p className="text-sm">
+                                                    {isActive
+                                                        ? (() => {
+                                                              const array = [
+                                                                  'year',
+                                                                  'month',
+                                                                  'week',
+                                                                  'day',
+                                                                  'hour',
+                                                                  'minute',
+                                                                  'second',
+                                                              ];
+
+                                                              const findDurationValue =
+                                                                  (
+                                                                      value = 0
+                                                                  ) => {
+                                                                      const diffFromToday =
+                                                                          dayjs
+                                                                              .unix(
+                                                                                  start_date
+                                                                              )
+                                                                              .diff(
+                                                                                  dayjs(),
+                                                                                  array[
+                                                                                      value
+                                                                                  ]
+                                                                              );
+
+                                                                      if (
+                                                                          value ==
+                                                                          array.length -
+                                                                              1
+                                                                      ) {
+                                                                          return '';
+                                                                      }
+
+                                                                      if (
+                                                                          diffFromToday <
+                                                                          0
+                                                                      ) {
+                                                                          const positiveValue =
+                                                                              Math.abs(
+                                                                                  diffFromToday
+                                                                              );
+                                                                          return `${positiveValue} ${_.upperFirst(array[value])}${positiveValue > 1 ? 's' : ''}`;
+                                                                      } else {
+                                                                          return findDurationValue(
+                                                                              value +
+                                                                                  1
+                                                                          );
+                                                                      }
+                                                                  };
+
+                                                              return findDurationValue(
+                                                                  0
+                                                              );
+                                                          })()
+                                                        : `0 Days`}
+                                                    <span
+                                                        className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
+                                                    >
+                                                        {isActive
+                                                            ? 'Active'
+                                                            : 'Scheduled'}
+                                                    </span>
+                                                </p>
+
+                                                <p className="mt-1.5 text-xs text-black/70">
+                                                    {!isActive
+                                                        ? `${dayjs.unix(start_date).utc().format(`[Starts on] ${dateFormat}`)}`
+                                                        : `${dayjs
+                                                              .unix(start_date)
+                                                              .utc()
+                                                              .format(
+                                                                  dateFormat +
+                                                                      ' HH:mm'
+                                                              )}—${
+                                                              !end_date
+                                                                  ? 'no end date'
+                                                                  : dayjs
+                                                                        .unix(
+                                                                            end_date
+                                                                        )
+                                                                        .utc()
+                                                                        .format(
+                                                                            dateFormat +
+                                                                                ' HH:mm'
+                                                                        )
+                                                          } `}
+                                                </p>
                                             </div>
                                         </td>
 
-                                        <td></td>
-
-                                        <td className="px-5">
-                                            <p>{email_sent}</p>
+                                        <td className="px-5" align="left">
+                                            <p className="text-sm">
+                                                {emails_sent || 'N/A'}
+                                            </p>
                                         </td>
                                         <td className="px-5">
-                                            <p>{email_sent - 11}</p>
+                                            <p className="text-sm">{uses}</p>
                                         </td>
                                         <td className="px-5">
-                                            <p>
+                                            <p className="text-sm">
                                                 {parseFloat(
-                                                    revenue
-                                                ).toLocaleString('en-US', {
+                                                    revenue || 0
+                                                ).toLocaleString('en-GB', {
                                                     style: 'currency',
                                                     currency: 'GBP',
                                                 })}
@@ -389,26 +522,13 @@ function SalesDiscount({}) {
                 onClose={() => setModalOpen(() => false)}
                 style={{
                     overflowY: 'auto',
-                    
                 }}
             >
-                <BoxWithProps
-                    customSx={{
-                        top: '5%',
-                        left: '50%',
-
-                        transform: 'translate(-50%, -0%)',
-                        backgroundColor: 'white',
-                        // padding: '2rem',
-                        borderRadius: '1.8rem',
-                        maxWidth: '80vw',
-                        // height: '100%',
-                        // minHeight: '100vh',
-                    }}
-                >
+                <OfferContextProvider>
                     <Template />
-                </BoxWithProps>
+                </OfferContextProvider>
             </Modal>
+            <Drawer />
         </section>
     );
 }

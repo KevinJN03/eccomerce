@@ -59,16 +59,19 @@ import {
   editPrivateNote,
   getAdminOrders,
 } from '../Controllers/orderController.js';
-import { create_coupon, get_all_coupons } from '../Controllers/couponController.js';
+import {
+  create_coupon,
+  get_all_coupons,
+} from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
 import {
   get_setting,
   update_settings,
 } from '../Controllers/settingController.js';
 import stripeRoute from './stripeRoute.js';
-
+import offerRoute from './offersRoute.js';
 const router = express.Router();
-
+router.use('/offers', offerRoute);
 router.use('/stripe', stripeRoute);
 router.get('/user/search', searchUser);
 router.post('/user/status', updateUserStatus);

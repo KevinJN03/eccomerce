@@ -23,6 +23,10 @@ const couponSchema = new Schema({
     type: Schema.Types.Number,
     default: 0,
   },
+
+  emails_sent: {
+    type: Schema.Types.Number,
+  },
   order_minimum: {
     type: Schema.Types.String,
     enum: ['none', 'number_of_items', 'order_total'],
@@ -31,9 +35,21 @@ const couponSchema = new Schema({
   minimum_value: {
     type: Schema.Types.Number,
   },
-  start_date: { type: Schema.Types.Date },
-  end_date: { type: Schema.Types.Date },
+  start_date: { type: Schema.Types.Number },
+  end_date: { type: Schema.Types.Number },
   no_end_date: { type: Schema.Types.Boolean },
+  listings: { type: Schema.Types.Array },
+  listings_type: {
+    type: Schema.Types.String,
+    enum: ['all', 'select'],
+    default: 'all',
+  },
+  timestamp: { type: Schema.Types.Date, default: Date.now },
+  offer_type: {
+    type: Schema.Types.String,
+    default: 'promo_code',
+    required: true,
+  },
 });
 
 couponSchema.post('save', (error, doc, next) => {

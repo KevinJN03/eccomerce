@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext';
 import dayjs from 'dayjs';
+import { useOfferContext } from '../../../context/offerContext';
 const { VITE_CLIENT_URL } = import.meta.env;
 
 function Step3({}) {
-    const { details, listingIdsSet } = useSalesDiscountContext();
+    const { details, listingIdsSet, generateDiscountText } = useOfferContext();
 
     const listingAmount = listingIdsSet.size;
     return (
@@ -19,16 +20,7 @@ function Step3({}) {
                     {[
                         {
                             title: 'Discount',
-                            value: `${
-                                details?.type == 'fixed'
-                                    ? `${parseFloat(
-                                          details?.amount
-                                      ).toLocaleString('en-GB', {
-                                          style: 'currency',
-                                          currency: 'GBP',
-                                      })} GBP`
-                                    : `${details.amount}% off`
-                            }`,
+                            value: generateDiscountText(details),
                         },
                         {
                             title: 'Order minimum',
@@ -39,7 +31,17 @@ function Step3({}) {
                         },
                         {
                             title: 'Duration',
-                            value: `${dayjs.unix(details?.start_date).format('DD MMM YYYY')} - ${dayjs.unix(details?.end_date).format('DD MMM YYYY')}`,
+                            value: (() => {
+                                const start_date = dayjs
+                                    .unix(details?.start_date)
+                                    .format('DD MMM YYYY');
+
+                                if (details?.no_end_date) {
+                                    return start_date;
+                                }
+
+                                return `${start_date} - ${dayjs.unix(details?.end_date).format('DD MMM YYYY')}`;
+                            })(),
                         },
 
                         {
