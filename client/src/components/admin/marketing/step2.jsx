@@ -34,74 +34,16 @@ function Step2({}) {
 
         setIsSearching,
     } = useOfferContext();
+    
 
     const { logoutUser } = useAdminContext();
     const debouncedSearchText = useDebounce(searchText, 300);
     const abortControllerRef = useRef(new AbortController());
     const timeoutRef = useRef(null);
 
-    useEffect(() => {
-        const fetchSearchResult = async () => {
-            try {
-                setIsSearching(() => true);
-                clearTimeout(timeoutRef.current);
-                abortControllerRef.current?.abort();
-                abortControllerRef.current = new AbortController();
-                const { data } = await adminAxios.get(
-                    `/product/search?searchText=${debouncedSearchText}`,
-                    {
-                        signal: abortControllerRef.current.signal,
-                    }
-                );
+    
 
-                setSearchResult(() => {
-                    const filteredResult = [];
-                    data.result.forEach((element) => {
-                        if (!listingIdsSet.has(element?._id)) {
-                            filteredResult.push(element);
-                        }
-                    });
-
-                    return filteredResult;
-                });
-            } catch (error) {
-                logoutUser({ error });
-            } finally {
-                setIsSearching(() => false);
-                setShowSearchResult(() => true);
-
-                // timeoutRef.current = setTimeout(() => {
-                //     setIsSearching(() => false);
-                // }, 500);
-            }
-        };
-
-        if (debouncedSearchText) {
-            fetchSearchResult();
-        } else {
-            setSearchResult(() => []);
-            setIsSearching(() => false);
-        }
-    }, [debouncedSearchText]);
-
-    useEffect(() => {
-        setListingIdsSet(() => {
-            const newListingIdsSet = new Set(
-                _.flatMapDeep(chosenListings, (category) => {
-                    return _.flatMap(category.listings, (value) => value._id);
-                })
-            );
-
-            return newListingIdsSet;
-            // return new Set(
-            //     chosenListings.map((category) => {
-            //         return category.listings?.map((item) => {
-            //             return item._id;
-            //         });
-            //     })
-            // );
-        });
-    }, [chosenListings]);
+    
 
     return (
         <section className="">

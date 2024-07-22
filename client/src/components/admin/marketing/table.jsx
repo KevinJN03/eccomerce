@@ -6,9 +6,10 @@ import { v4 } from 'uuid';
 import { useOfferContext } from '../../../context/offerContext';
 
 function Table({ disableDelete }) {
-    const { chosenListings, setChosenListings } = useOfferContext();
+    const { setCategories, chosenListings, setChosenListings,handleDeleteListing } =
+        useOfferContext();
     return (
-        <table className="">
+        <table className="w-full">
             <colgroup>
                 {[
                     {
@@ -190,71 +191,11 @@ function Table({ disableDelete }) {
                                                                 type="button"
                                                                 className="cursor-pointer"
                                                                 onClick={() => {
-                                                                    setChosenListings(
-                                                                        (
-                                                                            prevState
-                                                                        ) => {
-                                                                            const cloneArray =
-                                                                                _.cloneDeep(
-                                                                                    prevState
-                                                                                ).map(
-                                                                                    (
-                                                                                        category
-                                                                                    ) => {
-                                                                                        if (
-                                                                                            category._id ==
-                                                                                            categoryId
-                                                                                        ) {
-                                                                                            return {
-                                                                                                ...category,
-                                                                                                listings:
-                                                                                                    category.listings?.filter(
-                                                                                                        ({
-                                                                                                            _id,
-                                                                                                        }) =>
-                                                                                                            _id !=
-                                                                                                            item._id
-                                                                                                    ),
-                                                                                            };
-                                                                                        } else {
-                                                                                            return category;
-                                                                                        }
-                                                                                    }
-                                                                                );
-
-                                                                            return cloneArray;
-                                                                        }
-                                                                    );
-                                                                    setCategories(
-                                                                        (
-                                                                            prevState
-                                                                        ) => {
-                                                                            const cloneArray =
-                                                                                _.cloneDeep(
-                                                                                    prevState
-                                                                                ).map(
-                                                                                    (
-                                                                                        category
-                                                                                    ) => {
-                                                                                        if (
-                                                                                            category._id ==
-                                                                                            categoryId
-                                                                                        ) {
-                                                                                            return {
-                                                                                                ...category,
-                                                                                                listings:
-                                                                                                    [
-                                                                                                        item,
-                                                                                                        ...category.listings,
-                                                                                                    ],
-                                                                                            };
-                                                                                        } else {
-                                                                                            return category;
-                                                                                        }
-                                                                                    }
-                                                                                );
-
-                                                                            return cloneArray;
+                                                                    handleDeleteListing(
+                                                                        {
+                                                                            listing:
+                                                                                item,
+                                                                            categoryId,
                                                                         }
                                                                     );
                                                                 }}

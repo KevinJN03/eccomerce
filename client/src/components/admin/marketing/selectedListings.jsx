@@ -9,8 +9,6 @@ import { useSalesDiscountContext } from '../../../context/SalesDiscountContext';
 import { useOfferContext } from '../../../context/offerContext';
 
 function SelectedListings({}) {
-    const { categories, setCategories } = useSalesDiscountContext();
-
     const {
         listingIdsSet,
         chosenListings,
@@ -22,6 +20,10 @@ function SelectedListings({}) {
         setSearchText,
         isSearching,
         setIsSearching,
+        categories,
+        setCategories,
+        handleAddListing,
+        loading,
     } = useOfferContext();
     const [showOptions, setShowOptions] = useState(false);
 
@@ -52,49 +54,10 @@ function SelectedListings({}) {
                                             }
                                             key={`option-${item._id}`}
                                             onClick={() => {
-                                                setChosenListings(
-                                                    (prevState) => {
-                                                        let foundId = false;
-                                                        const cloneArray =
-                                                            _.cloneDeep(
-                                                                prevState
-                                                            ).map(
-                                                                (category) => {
-                                                                    if (
-                                                                        category._id ==
-                                                                        item._id
-                                                                    ) {
-                                                                        foundId = true;
-                                                                        return {
-                                                                            ...category,
-                                                                            listings:
-                                                                                [
-                                                                                    ...item.listings,
-                                                                                    ...category.listings,
-                                                                                ],
-                                                                        };
-                                                                    } else {
-                                                                        return category;
-                                                                    }
-                                                                }
-                                                            );
-
-                                                        if (!foundId) {
-                                                            cloneArray.unshift(
-                                                                item
-                                                            );
-                                                        }
-                                                        return cloneArray;
-                                                    }
-                                                );
-                                                setCategories((prevState) => {
-                                                    const cloneArray =
-                                                        _.cloneDeep(prevState);
-                                                    cloneArray[idx].listings =
-                                                        [];
-
-                                                    return cloneArray;
+                                                handleAddListing({
+                                                    category: item,
                                                 });
+
                                                 setShowOptions(() => false);
                                             }}
                                             className="flex  w-full flex-nowrap justify-between px-3 py-3 enabled:cursor-pointer hover:enabled:bg-dark-gray/40 disabled:cursor-not-allowed hover:disabled:bg-none "
@@ -178,17 +141,24 @@ function SelectedListings({}) {
                     </AnimatePresence>
                 </div>
             </section>
-
-            <section className="mb-12 mt-8 flex min-h-64 w-full flex-col gap-4 rounded">
-                {listingIdsSet.size == 0 ? (
-                    <div className="flex min-h-64 items-center justify-center rounded border p-5">
-                        <p className="text-base text-black/80">
-                            Add some listings to get started
-                        </p>
-                    </div>
+            <section className="mb-12 mt-8 flex h-full min-h-64 w-full flex-col gap-4 rounded">
+                {loading ? (
+                    <section className="w-full min-h-64 border self-center justify-center items-center flex">
+                        <div className="spinner-circle spinner-md ![--spinner-color:var(--slate-12)]"/>
+                    </section>
                 ) : (
-                    <Table />
-                )}
+                    <Fragment>
+                        {listingIdsSet.size == 0 ? (
+                            <div className="flex min-h-64 items-center justify-center rounded border p-5">
+                                <p className="text-base text-black/80">
+                                    Add some listings to get started
+                                </p>
+                            </div>
+                        ) : (
+                            <Table {...{ chosenListings, setChosenListings }} />
+                        )}
+                    </Fragment>
+                )}{' '}
             </section>
         </Fragment>
     );

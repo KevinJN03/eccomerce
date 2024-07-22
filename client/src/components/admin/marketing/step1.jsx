@@ -192,6 +192,7 @@ function Step1({}) {
                                                     details?.order_minimum ==
                                                     text
                                                 }
+                                                readOnly
                                             />
                                             <p className="cursor-pointer text-sm">
                                                 {_.upperFirst(text).replace(
@@ -221,7 +222,7 @@ function Step1({}) {
                                                             })
                                                         );
                                                     }}
-                                                    type={"number"}
+                                                    type={'number'}
                                                     onWheel={(e) =>
                                                         e.target.blur()
                                                     }

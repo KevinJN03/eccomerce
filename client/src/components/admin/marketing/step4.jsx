@@ -18,7 +18,7 @@ import { useOfferContext } from '../../../context/offerContext';
 
 const { VITE_CLIENT_URL, VITE_WEBSITE, VITE_CLOUDFRONT_URL } = import.meta.env;
 
-function Step4({}) {
+function Step4({ handleDone }) {
     const couponUrl = `https://${VITE_WEBSITE}?coupon=Save20`;
     const description = `I'm offering a discount! ${couponUrl} via @${VITE_WEBSITE} \r\n`;
 
@@ -37,7 +37,7 @@ function Step4({}) {
     });
 
     return (
-        <section className=" flex w-full flex-col rounded-t-inherit">
+        <section className=" flex w-full max-w-[37.5rem] flex-col rounded-t-inherit">
             <header className="flex flex-col items-center gap-4 rounded-t-inherit bg-blue-100 px-10 py-5">
                 <div className="h-36 w-36 rounded-full bg-white p-6">
                     <img
@@ -101,7 +101,7 @@ function Step4({}) {
             </body>
 
             <footer className="self-center px-10 py-5">
-                <ThemeBtn text={'Done'} handleClick={reset} />
+                <ThemeBtn text={'Done'} handleClick={handleDone || reset} />
             </footer>
         </section>
     );

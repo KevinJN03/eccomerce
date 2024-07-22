@@ -178,7 +178,7 @@ function Admin({}) {
                                 )}
                             {showAlert?.on && showAlert?.size == 'large' && (
                                 <motion.section
-                                    className={`fixed left-0 top-0 z-[51] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
+                                    className={`fixed left-0 top-0 z-[5000] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 `}
                                     variants={generateAlertVariant('0px')}
                                     initial={'initial'}
                                     animate={'animate'}

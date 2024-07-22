@@ -43,7 +43,7 @@ function Drawer({}) {
                     </div>
                 </div>
                 <OfferContextProvider>
-                    {' '}
+                  
                     <Container />
                 </OfferContextProvider>
             </section>

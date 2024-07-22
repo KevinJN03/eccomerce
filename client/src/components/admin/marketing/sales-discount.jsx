@@ -63,6 +63,98 @@ function SalesDiscount({}) {
 
     const [option, setOption] = useState('this_month');
 
+    const generateDatePeriod = ({
+        start_date,
+        end_date,
+        active,
+        no_end_date,
+    }) => {
+        const array = [
+            'year',
+            'month',
+            'week',
+            'day',
+            'hour',
+            'minute',
+            'second',
+        ];
+
+        const today = dayjs();
+        let isActive = active;
+        let isScheduled = false;
+
+        const findDurationValue = (value = 0) => {
+            const endPeriod = dayjs().utc();
+            const startPeriod = dayjs.unix(start_date).utc();
+
+            // decide a start period and an end period, based on that calculate the difference in minute
+            // if in future, set the value as 0 days
+            // if end_date is past from today, calculate period from start to end
+            // if end_date is in future, calculate from today;
+
+            if (end_date) {
+                const endDateDayjs = dayjs.unix(end_date).utc();
+                const endDateFromNow = endDateDayjs.diff(today, 'minute');
+                const endDiffFromStart = endDateDayjs.diff(
+                    startPeriod,
+                    'minute'
+                );
+
+                // if (endDiffFromStart <= 0) {
+                //     //end on end_date
+                //     return `0 Days`;
+                // }
+
+                if (endDateFromNow <= 0) {
+                    isActive = false;
+                    _.assign(endPeriod, endDateDayjs);
+                } else {
+                    _.assign(endPeriod, endDateDayjs);
+                }
+
+                // else {
+                //     endPeriod = today;
+                // }
+
+                if (end_date == '1721606399') {
+                    debugger;
+                }
+            }
+
+            const diffFromPeriod = startPeriod.diff(endPeriod, array[value]);
+
+            if (value == array.length - 1) {
+                return ``;
+            }
+
+            if (diffFromPeriod < 0) {
+                const positiveValue = Math.abs(diffFromPeriod);
+                return {
+                    text: `${positiveValue} ${_.upperFirst(array[value])}${positiveValue > 1 ? 's' : ''}`,
+                    dateText: `${startPeriod.format(`${dateFormat} HH:mm`)}—${
+                        !end_date
+                            ? 'no end date'
+                            : endPeriod.utc().format(dateFormat + ' HH:mm')
+                    }`,
+                    isActive,
+                };
+            } else if (diffFromPeriod > 0) {
+                // 0 days
+                return {
+                    isActive,
+                    text: `0 Days`,
+                    dateText: (active ? startPeriod : endPeriod).format(
+                        `[${active ? 'Starts on' : 'Ended on'}] ${dateFormat}`
+                    ),
+                };
+            } else {
+                // return `${diffFromPeriod}`;
+                return findDurationValue(value + 1);
+            }
+        };
+
+        return findDurationValue();
+    };
     return (
         <section className="payment h-full w-full p-10">
             <header>
@@ -347,6 +439,7 @@ function SalesDiscount({}) {
                                 end_date,
                                 offer_type,
                                 no_end_date,
+                                active,
                                 uses,
                                 _id,
                             }) => {
@@ -354,6 +447,19 @@ function SalesDiscount({}) {
                                     dayjs
                                         .unix(start_date)
                                         .diff(dayjs(), 'minute') <= 0;
+
+                                const isExpired = !end_date
+                                    ? false
+                                    : dayjs
+                                          .unix(end_date)
+                                          .diff(dayjs(), 'minute') <= 0;
+
+                                const { text, dateText } = generateDatePeriod({
+                                    start_date,
+                                    end_date,
+                                    no_end_date,
+                                    active,
+                                });
                                 return (
                                     <tr
                                         key={code}
@@ -387,96 +493,33 @@ function SalesDiscount({}) {
 
                                         <td className="px-5">
                                             <div>
+                                                {/* <p>
+                                                    expired:{' '}
+                                                    {new String(isExpired)}
+                                                </p> */}
                                                 <p className="text-sm">
-                                                    {isActive
-                                                        ? (() => {
-                                                              const array = [
-                                                                  'year',
-                                                                  'month',
-                                                                  'week',
-                                                                  'day',
-                                                                  'hour',
-                                                                  'minute',
-                                                                  'second',
-                                                              ];
-
-                                                              const findDurationValue =
-                                                                  (
-                                                                      value = 0
-                                                                  ) => {
-                                                                      const diffFromToday =
-                                                                          dayjs
-                                                                              .unix(
-                                                                                  start_date
-                                                                              )
-                                                                              .diff(
-                                                                                  dayjs(),
-                                                                                  array[
-                                                                                      value
-                                                                                  ]
-                                                                              );
-
-                                                                      if (
-                                                                          value ==
-                                                                          array.length -
-                                                                              1
-                                                                      ) {
-                                                                          return '';
-                                                                      }
-
-                                                                      if (
-                                                                          diffFromToday <
-                                                                          0
-                                                                      ) {
-                                                                          const positiveValue =
-                                                                              Math.abs(
-                                                                                  diffFromToday
-                                                                              );
-                                                                          return `${positiveValue} ${_.upperFirst(array[value])}${positiveValue > 1 ? 's' : ''}`;
-                                                                      } else {
-                                                                          return findDurationValue(
-                                                                              value +
-                                                                                  1
-                                                                          );
-                                                                      }
-                                                                  };
-
-                                                              return findDurationValue(
-                                                                  0
-                                                              );
-                                                          })()
-                                                        : `0 Days`}
-                                                    <span
-                                                        className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
-                                                    >
-                                                        {isActive
-                                                            ? 'Active'
-                                                            : 'Scheduled'}
-                                                    </span>
+                                                    {text}
+                                                    {/* {isActive
+                                                        ? generateDatePeriod({
+                                                              start_date,
+                                                              end_date,
+                                                              no_end_date,
+                                                          })
+                                                        : `0 Days`} */}
+                                                    {active && !isExpired && (
+                                                        <span
+                                                            className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
+                                                        >
+                                                            {isActive
+                                                                ? 'Active'
+                                                                : 'Scheduled'}
+                                                        </span>
+                                                    )}
                                                 </p>
 
+                                                {/* <p>dateText: {dateText}</p> */}
                                                 <p className="mt-1.5 text-xs text-black/70">
-                                                    {!isActive
-                                                        ? `${dayjs.unix(start_date).utc().format(`[Starts on] ${dateFormat}`)}`
-                                                        : `${dayjs
-                                                              .unix(start_date)
-                                                              .utc()
-                                                              .format(
-                                                                  dateFormat +
-                                                                      ' HH:mm'
-                                                              )}—${
-                                                              !end_date
-                                                                  ? 'no end date'
-                                                                  : dayjs
-                                                                        .unix(
-                                                                            end_date
-                                                                        )
-                                                                        .utc()
-                                                                        .format(
-                                                                            dateFormat +
-                                                                                ' HH:mm'
-                                                                        )
-                                                          } `}
+                                                    {dateText}
                                                 </p>
                                             </div>
                                         </td>

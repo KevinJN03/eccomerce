@@ -11,7 +11,7 @@ const couponSchema = new Schema({
     min: [6, 'the coupon/gift card must be between 6 and 16 character'],
     max: [16, 'the coupon/gift card must be between 6 and 16 character'],
   },
-  expires: { type: Schema.Types.Date, default: tomorrowDate },
+  // expires: { type: Schema.Types.Date, default: tomorrowDate },
   amount: { type: Schema.Types.Number, min: [5, 'amount must be at least 5'] },
   type: {
     type: Schema.Types.String,
@@ -50,6 +50,8 @@ const couponSchema = new Schema({
     default: 'promo_code',
     required: true,
   },
+  active: { type: Schema.Types.Boolean, default: true, required: true },
+
 });
 
 couponSchema.post('save', (error, doc, next) => {

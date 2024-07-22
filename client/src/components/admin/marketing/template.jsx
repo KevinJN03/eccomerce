@@ -28,21 +28,14 @@ const { title, description } = {
 
 function Template({}) {
     const {
-        errors,
-        setErrors,
-        details,
-        setDetails,
-        clearError,
+        
         btnLoading,
-        setBtnLoading,
-        errorStyle,
-        setModalOpen,
-
         handleContinue,
-
         modalView,
         setModalView,
     } = useOfferContext();
+
+    const {    setModalOpen} = useSalesDiscountContext()
 
     const views = {
         1: <Step1 />,

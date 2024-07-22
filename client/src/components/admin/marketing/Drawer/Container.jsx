@@ -10,7 +10,10 @@ import Table from '../table';
 import { Box, Modal, Slide } from '@mui/material';
 import BoxWithProps from '../../../common/BoxwithProps';
 import SelectedListings from '../selectedListings';
-import { useOfferContext } from '../../../../context/offerContext';
+import OfferContextProvider, {
+    useOfferContext,
+} from '../../../../context/offerContext';
+import IncludedListings from './includedListings';
 const { VITE_WEBSITE } = import.meta.env;
 
 function Container({}) {
@@ -18,16 +21,13 @@ function Container({}) {
         searchParams,
 
         dateFormat,
-        categories,
-        categoriesMap,
     } = useSalesDiscountContext();
     const { logoutUser } = useAdminContext();
 
-    const abortControllerRef = useRef(new AbortController());
     const timeoutRef = useRef(null);
-    const [chosenMap, setChosenMap] = useState(new Map());
-    const [count, setCount] = useState(0);
     const [openListingsModal, setOpenListingsModal] = useState(false);
+    const [onMountChosenListings, setOnMountChosenListings] = useState([]);
+    const [isUpdated, setIsUpdated] = useState(false);
 
     const {
         details,
@@ -35,87 +35,44 @@ function Container({}) {
         generateDiscountText,
         chosenListings,
         setChosenListings,
-        btnLoading: loading,
-        setBtnLoading: setLoading,
+        initialFetch,
         setListingIdsSet,
+        categories,
+        categoriesMap,
+        setChosenMap,
+        loading,
+        setLoading,
+        count,
+        setCount,
     } = useOfferContext();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(() => true);
-                const { data } = await adminAxios.get(
-                    `offers/${searchParams.get('offer')}`,
-                    {
-                        signal: abortControllerRef.current?.signal,
-                    }
-                );
-
-                setDetails(() => data[0]);
-
-                const newChosenListings = [];
-
-                const newChosenMap = new Map();
-
-                const newListingIdSet = new Set();
-
-                data[0]?.listings.forEach((element) => {
-                    newListingIdSet.add(element._id);
-                    if (newChosenMap.has(element.category)) {
-                        const getMapItem = _.cloneDeep(
-                            newChosenMap.get(element.category)
-                        );
-
-                        getMapItem.listings.push(element);
-
-                        newChosenMap.set(element.category, getMapItem);
-                    } else {
-                        const getMapItem = categoriesMap.get(element.category);
-
-                        newChosenMap.set(element.category, {
-                            ...getMapItem,
-                            listings: [element],
-                        });
-                    }
-                });
-                setListingIdsSet(() => newListingIdSet);
-                setChosenMap(() => newChosenMap);
-                clearTimeout(timeoutRef.current);
-
-                timeoutRef.current = setTimeout(() => {
-                    setLoading(() => false);
-                }, 500);
-            } catch (error) {
-                console.error(error.message, error);
-                logoutUser({ error });
-            } finally {
-                // clearTimeout(timeoutRef.current);
-                // timeoutRef.current = setTimeout(() => {
-                //     setLoading(() => false);
-                // }, 500);
-            }
-        };
-
-        fetchData();
-        return () => {
-            abortControllerRef.current?.abort();
-            clearTimeout(timeoutRef.current);
-        };
-    }, []);
+    const [offerType, setOfferType] = useState(() =>
+        _.upperFirst(details?.offer_type).replace(/_/g, ' ')
+    );
 
     useEffect(() => {
-        let newCount = 0;
-        setChosenListings(() =>
-            Array.from(chosenMap, ([name, value]) => {
-                newCount += value.listings?.length;
-                return { _id: name, ...value };
-            })
+        setOfferType(() =>
+            _.upperFirst(details?.offer_type).replace(/_/g, ' ')
         );
-        setCount(() => newCount);
-    }, [chosenMap]);
+    }, [loading]);
+    const handleDeactivate = async () => {
+        try {
+            const { data } = await adminAxios.get(
+                `/offers/deactivate/${details._id}`
+            );
+
+            setDetails(() => data);
+        } catch (error) {
+            logoutUser({ error });
+        }
+    };
 
     const isActive =
         dayjs.unix(details?.start_date).diff(dayjs(), 'minute') <= 0;
+
+    const isExpired = !details?.end_date
+        ? false
+        : dayjs.unix(details?.end_date).diff(dayjs(), 'minute') <= 0;
     return (
         <section className="flex h-full flex-col bg-white p-5">
             {loading ? (
@@ -123,14 +80,18 @@ function Container({}) {
             ) : (
                 <Fragment>
                     <header>
-                        <p className="text-black/70">Promo code</p>
+                        <p className="text-black/70">{offerType}</p>
 
                         <h2 className="mt-2 flex items-center gap-3 text-3xl font-semibold">
                             {details?.code}{' '}
                             <span
-                                className={`rounded-full ${isActive ? 'bg-green-100' : 'bg-dark-gray/50'} px-2 py-1 text-xs font-light tracking-wide`}
+                                className={`rounded-full ${isExpired ? 'bg-dark-gray/50' : isActive ? 'bg-green-100' : 'bg-dark-gray/50'} px-2 py-1 text-xs font-light tracking-wide`}
                             >
-                                {isActive ? 'Active' : 'Scheduled'}
+                                {!details?.active
+                                    ? 'Ended'
+                                    : isActive
+                                      ? 'Active'
+                                      : 'Scheduled'}
                             </span>
                         </h2>
 
@@ -143,23 +104,27 @@ function Container({}) {
                                     Discount: {generateDiscountText(details)}
                                 </p>
                                 <p className="text-base">
-                                    Promo code:{' '}
+                                    {offerType}:{' '}
                                     <span className="font-semibold">
                                         {details?.code}
                                     </span>
                                 </p>
                                 <p className="text-base">
                                     {dayjs
-                                        .unix(details?.start_date)
+                                        .unix(
+                                            !details?.active
+                                                ? details?.end_date
+                                                : details?.start_date
+                                        )
                                         .utc()
                                         .format(
-                                            `[${isActive ? 'Active since' : 'Starts on'}:] ${dateFormat} ${isActive ? 'HH:mm' : ''}`
+                                            `[${!details?.active ? 'Ended on' : isActive ? 'Active since' : 'Starts on'}:] ${dateFormat} ${isActive && details?.active ? 'HH:mm' : ''}`
                                         )}
                                 </p>
                             </div>
                         </div>
                     </header>
-                    <body>
+                    <body className="">
                         <div className="mt-4 flex flex-col gap-2">
                             <p className="text-lg font-semibold">Share</p>
                             <CopyLink
@@ -190,47 +155,58 @@ function Container({}) {
                             </div>
                         </div>
 
-                        <div className="middle">
-                            <div className="top mt-6 flex flex-row justify-between ">
+                        <div className="middle mb-8 w-full">
+                            <div className="top mt-6 flex w-full flex-row justify-between ">
                                 <h2 className="text-xl font-semibold">
-                                    Included listings ({count})
+                                    {`Included listings ${count ? `(${count})` : ''}`}
                                 </h2>
+                                {details?.active &&
+                                    details?.listings_type == 'select' && (
+                                        <ThemeBtn
+                                            bg={
+                                                'bg-white border-black border-2'
+                                            }
+                                            className={'px-3 py-2'}
+                                            handleClick={() =>
+                                                setOpenListingsModal(() => true)
+                                            }
+                                        >
+                                            <span className=" relative !z-[1] w-full cursor-pointer text-sm font-medium text-black">
+                                                {'Edit included listings'}
+                                            </span>
+                                        </ThemeBtn>
+                                    )}
+                            </div>
+
+                            {details?.listings_type == 'all' && (
+                                <p className="mt-3 text-sm">
+                                    This discount applies to your whole shop.
+                                </p>
+                            )}
+
+                            <Table disableDelete={true} />
+                        </div>
+                    </body>
+                    {!isExpired && (
+                        <footer className=" flex w-full flex-col">
+                            <div className="bottom flex w-full flex-col items-center gap-3 text-center ">
                                 <ThemeBtn
                                     bg={'bg-white border-black border-2'}
                                     className={'px-3 py-2'}
-                                    handleClick={() =>
-                                        setOpenListingsModal(() => true)
-                                    }
+                                    handleClick={handleDeactivate}
                                 >
                                     <span className=" relative !z-[1] w-full cursor-pointer text-sm font-medium text-black">
-                                        {'Edit included listings'}
+                                        {'Deactivate code'}
                                     </span>
                                 </ThemeBtn>
+                                <p className="text-bleck/70">
+                                    Once deactivated, no one will be able to
+                                    redeem this offer. This action can’t be
+                                    undone.
+                                </p>
                             </div>
-
-                            <Table
-                                chosenListings={chosenListings}
-                                setChosenListings={setChosenListings}
-                                disableDelete={true}
-                            />
-                        </div>
-                    </body>
-                    <footer className="mt-8 flex w-full flex-col">
-                        <div className="bottom flex w-full flex-col items-center gap-3 text-center ">
-                            <ThemeBtn
-                                bg={'bg-white border-black border-2'}
-                                className={'px-3 py-2'}
-                            >
-                                <span className=" relative !z-[1] w-full cursor-pointer text-sm font-medium text-black">
-                                    {'Deactivate code'}
-                                </span>
-                            </ThemeBtn>
-                            <p className="text-bleck/70">
-                                Once deactivated, no one will be able to redeem
-                                this offer. This action can’t be undone.
-                            </p>
-                        </div>
-                    </footer>
+                        </footer>
+                    )}
                 </Fragment>
             )}
 
@@ -251,7 +227,9 @@ function Container({}) {
                             transform: 'translate(-50%, -0%)',
                             // padding: '2rem',
                             borderRadius: '1.8rem',
-                            maxWidth: '80vw',
+                            maxWidth: isUpdated ? '37.5rem' : '85.375rem',
+                            borderRadius: isUpdated ? '1.8rem' : '0.5rem',
+                            width: '100%',
                         }}
                     >
                         <Slide
@@ -261,41 +239,21 @@ function Container({}) {
                             in={openListingsModal}
                             timeout={500}
                         >
-                            <section className="h-full bg-white">
-                                <header className=" border-b border-dark-gray p-7">
-                                    <h2 className="text-xl font-semibold ">
-                                        Choose listings for discount
-                                    </h2>
-                                </header>
-                                <body className="mt-5 flex flex-col px-32">
-                                    <h2 className="text-xl font-semibold">
-                                        Included Listings (2)
-                                    </h2>
-
-                                    <p className="text-base">
-                                        Choose which listings will be eligible
-                                        for the discount. You can start by
-                                        adding all your listings, and easily
-                                        narrow it down from there if you want to
-                                        exclude any items.
-                                    </p>
-
-                                    <SelectedListings />
-                                </body>
-                                <footer className="flex justify-between border-t border-t-dark-gray px-14 py-5">
-                                    <button
-                                        type="button"
-                                        className="rounded-sm border border-dark-gray p-2 text-sm font-medium hover:bg-dark-gray/30"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="rounded-sm border border-black bg-black p-2 text-sm font-medium text-white transition-all hover:bg-black/80"
-                                    >
-                                        Save changes
-                                    </button>
-                                </footer>
+                            <section className="h-full w-full rounded-inherit bg-white">
+                                {' '}
+                                <OfferContextProvider>
+                                    <IncludedListings
+                                        {...{
+                                            openListingsModal,
+                                            setOpenListingsModal,
+                                            isUpdated,
+                                            setIsUpdated,
+                                            setDetails,
+                                            setChosenListings,
+                                            setCount,
+                                        }}
+                                    />
+                                </OfferContextProvider>
                             </section>
                         </Slide>
                     </BoxWithProps>
