@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const tomorrowDate = new Date();
 tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-const couponSchema = new Schema({
+export const couponSchema = new Schema({
   code: {
     type: String,
     unique: true,

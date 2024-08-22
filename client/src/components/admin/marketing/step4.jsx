@@ -19,16 +19,18 @@ import { useOfferContext } from '../../../context/offerContext';
 const { VITE_CLIENT_URL, VITE_WEBSITE, VITE_CLOUDFRONT_URL } = import.meta.env;
 
 function Step4({ handleDone }) {
-    const couponUrl = `https://${VITE_WEBSITE}?coupon=Save20`;
-    const description = `I'm offering a discount! ${couponUrl} via @${VITE_WEBSITE} \r\n`;
+ 
 
     const { reset, details } = useOfferContext();
+
+    const couponUrl = `https://${VITE_WEBSITE}?coupon=${details?.code}`;
+    const description = `I'm offering a discount! ${couponUrl} via @${VITE_WEBSITE} \r\n`;
 
     const [isLive, setIsLive] = useState(() => {
         const startDateDiffToday = dayjs
             .unix(details?.start_date)
             .diff(dayjs(), 'minute');
-        debugger;
+      
         console.log({ startDateDiffToday });
 
         if (startDateDiffToday > 0) return false;

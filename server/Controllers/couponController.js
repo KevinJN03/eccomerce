@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 import Coupon from '../Models/coupon.js';
 import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
+import endDateValidator from '../utils/endDateValidator.js';
 
 export const get_all_coupons = asyncHandler(async (req, res, next) => {
   // const coupons = await Coupon.find({}, null, { lean: { toObject: true } });
@@ -93,29 +94,31 @@ export const create_coupon = [
         return value;
       }
     }),
-  check('end_date', 'Select a date')
-    .escape()
-    .trim()
-    // .notEmpty()
-    .custom((value, { req }) => {
-      const { start_date, no_end_date } = req.body;
 
-      if (no_end_date) {
-        return true;
-      }
-      const dateDiffToday = dayjs.unix(value).diff(dayjs(), 'day');
-      const dateDiffPeriod = dayjs
-        .unix(value)
-        .diff(dayjs.unix(start_date), 'day');
+  endDateValidator(),
+  // check('end_date', 'Select a date')
+  //   .escape()
+  //   .trim()
+  //   // .notEmpty()
+  //   .custom((value, { req }) => {
+  //     const { start_date, no_end_date } = req.body;
 
-      if (dateDiffToday < 0) {
-        throw new Error('Must not be in the past');
-      } else if (dateDiffPeriod < 0) {
-        throw new Error('Must be after start date');
-      }
+  //     if (no_end_date) {
+  //       return true;
+  //     }
+  //     const dateDiffToday = dayjs.unix(value).diff(dayjs(), 'day');
+  //     const dateDiffPeriod = dayjs
+  //       .unix(value)
+  //       .diff(dayjs.unix(start_date), 'day');
 
-      return value;
-    }),
+  //     if (dateDiffToday < 0) {
+  //       throw new Error('Must not be in the past');
+  //     } else if (dateDiffPeriod < 0) {
+  //       throw new Error('Must be after start date');
+  //     }
+
+  //     return value;
+  //   }),
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req).formatWith(({ msg }) => msg);
 
@@ -136,3 +139,4 @@ export const create_coupon = [
     // res.status(200).send(newCoupon);
   }),
 ];
+ 

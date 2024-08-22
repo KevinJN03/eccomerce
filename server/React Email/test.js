@@ -16,6 +16,7 @@ import { v4 } from 'uuid';
 import ChangeEmail from './emails/changeEmail.jsx';
 import Stripe from 'stripe';
 import _ from 'lodash';
+import GiftCardSend from './emails/giftcard/GiftCardSend.jsx';
 const { SENDER, STRIPE_KEY } = process.env;
 const stripe = Stripe(STRIPE_KEY);
 
@@ -23,20 +24,22 @@ router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const order = await Order.findById(id, null, {
-      populate: [
-        { path: 'items.product' },
-        { path: 'customer' },
-        { path: 'itemsByProfile.items.product' },
-      ],
-      lean: { toObject: true },
-    }).exec();
+    // const order = await Order.findById(id, null, {
+    //   populate: [
+    //     { path: 'items.product' },
+    //     { path: 'customer' },
+    //     { path: 'itemsByProfile.items.product' },
+    //   ],
+    //   lean: { toObject: true },
+    // }).exec();
 
-    const charge = await stripe.charges.retrieve(order.charge_id);
+    // const charge = await stripe.charges.retrieve(order.charge_id);
 
-    console.log({ charge });
-    _.set(order, 'refund.amount', charge.amount_refunded / 100);
-    const emailHtml = render(<ReturnOrder order={order} />);
+    // _.set(order, 'refund.amount', charge.amount_refunded / 100);
+    // const emailHtml = render(<ReturnOrder order={order} />);
+    const emailHtml = render(
+      <GiftCardSend {...{ name: 'Kevin', amount: 5, code: 123 }} />,
+    );
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
     // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
     const emailTestId = v4();
@@ -48,7 +51,7 @@ router.get(
       html: emailHtml,
     };
     console.log({ emailTestId });
-    // const sendEmail = await transporter.sendMail(mailOptions);
+    //const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

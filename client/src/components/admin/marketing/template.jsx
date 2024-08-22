@@ -12,7 +12,7 @@ import { useSalesDiscountContext } from '../../../context/SalesDiscountContext.j
 import dayjs from 'dayjs';
 import { useAdminContext } from '../../../context/adminContext.jsx';
 import { adminAxios } from '../../../api/axios.js';
-import Step1 from './step1.jsx';
+import Step1 from './step1/step1.jsx';
 import Step2 from './step2.jsx';
 import Step3 from './step3.jsx';
 import Step4 from './step4.jsx';
@@ -20,22 +20,12 @@ import { useOfferContext } from '../../../context/offerContext.jsx';
 import BoxWithProps from '../../common/BoxwithProps.jsx';
 
 // delete soon
-const { title, description } = {
-    title: 'Create a promo code',
-    description: `A promo code is an easy way to share a discount with anyone you choose. It can also be a great way to encourage purchases and build loyalty.`,
-};
-//
 
 function Template({}) {
-    const {
-        
-        btnLoading,
-        handleContinue,
-        modalView,
-        setModalView,
-    } = useOfferContext();
+    const { btnLoading, handleContinue, modalView, setModalView, details } =
+        useOfferContext();
 
-    const {    setModalOpen} = useSalesDiscountContext()
+    const { setModalOpen } = useSalesDiscountContext();
 
     const views = {
         1: <Step1 />,
@@ -76,7 +66,11 @@ function Template({}) {
                             />
 
                             <h2 className="font-EBGaramond text-4xl">
-                                {title}
+                                {`Create a ${_.replace(
+                                    details.offer_type,
+                                    /_/g,
+                                    ' '
+                                )}`}
                             </h2>
                         </header>
                         <body className="mt-10 flex h-full  min-h-screen  flex-col gap-6 bg-white px-28 ">

@@ -10,7 +10,7 @@ import {
     KeyboardBackspaceRounded,
     Padding,
 } from '@mui/icons-material';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Actions from '../components/product/actions';
 import _ from 'lodash';
 import {
@@ -33,6 +33,9 @@ import { useSearchParams } from 'react-router-dom';
 import OfferContextProvider, {
     useOfferContext,
 } from '../../../context/offerContext.jsx';
+import OfferDetails from './offerDetails.jsx';
+import OfferTypes from './offerTypes.jsx';
+import { adminAxios } from '../../../api/axios.js';
 function SalesDiscount({}) {
     const {
         showAction,
@@ -49,6 +52,7 @@ function SalesDiscount({}) {
         setSearchParams,
         dateFormat,
     } = useSalesDiscountContext();
+
 
     const open = Boolean(anchorEl);
 
@@ -81,11 +85,10 @@ function SalesDiscount({}) {
 
         const today = dayjs();
         let isActive = active;
-        let isScheduled = false;
 
         const findDurationValue = (value = 0) => {
-            const endPeriod = dayjs().utc();
-            const startPeriod = dayjs.unix(start_date).utc();
+            const endPeriod = dayjs();
+            const startPeriod = dayjs.unix(start_date);
 
             // decide a start period and an end period, based on that calculate the difference in minute
             // if in future, set the value as 0 days
@@ -93,7 +96,7 @@ function SalesDiscount({}) {
             // if end_date is in future, calculate from today;
 
             if (end_date) {
-                const endDateDayjs = dayjs.unix(end_date).utc();
+                const endDateDayjs = dayjs.unix(end_date);
                 const endDateFromNow = endDateDayjs.diff(today, 'minute');
                 const endDiffFromStart = endDateDayjs.diff(
                     startPeriod,
@@ -115,10 +118,6 @@ function SalesDiscount({}) {
                 // else {
                 //     endPeriod = today;
                 // }
-
-                if (end_date == '1721606399') {
-                    debugger;
-                }
             }
 
             const diffFromPeriod = startPeriod.diff(endPeriod, array[value]);
@@ -134,7 +133,7 @@ function SalesDiscount({}) {
                     dateText: `${startPeriod.format(`${dateFormat} HH:mm`)}—${
                         !end_date
                             ? 'no end date'
-                            : endPeriod.utc().format(dateFormat + ' HH:mm')
+                            : endPeriod.format(dateFormat + ' HH:mm')
                     }`,
                     isActive,
                 };
@@ -155,6 +154,8 @@ function SalesDiscount({}) {
 
         return findDurationValue();
     };
+
+   
     return (
         <section className="payment h-full w-full p-10">
             <header>
@@ -169,58 +170,7 @@ function SalesDiscount({}) {
                 </p>
             </header>
 
-            <section className="mt-6 flex w-full flex-nowrap gap-4">
-                {[
-                    {
-                        icon: saleIcon,
-                        title: 'Create a gift card',
-                        description: `Gift cards are a wonderful way to offer your customers a flexible and thoughtful gifting option. With a gift card, customers can choose their own perfect present from your store`,
-                        className: '-rotate-45',
-                    },
-                    {
-                        icon: saleIcon2,
-                        title: 'Create a promo code',
-                        description: `
-                    Share your code with customers, and they can apply it for a discount at checkout`,
-                    },
-                ].map(({ icon, title, description, className }) => {
-                    return (
-                        <div
-                            onClick={() => setModalOpen(() => true)}
-                            className="group flex flex-1 cursor-pointer flex-nowrap gap-5 rounded-xl border border-dark-gray p-6 transition-all hover:shadow-my-shadow"
-                        >
-                            <img
-                                src={icon}
-                                className={`h-14 w-14 object-cover ${className || ''}`}
-                                alt=""
-                                srcset=""
-                            />
-
-                            <div className="flex h-full flex-col gap-2">
-                                <div>
-                                    <h3 className="mb-1 text-base font-semibold">
-                                        {title}
-                                    </h3>
-                                    <p className="text-sm">{description}</p>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className="mt-auto flex flex-nowrap items-center gap-2"
-                                >
-                                    <p className="text-base font-medium">
-                                        Set up
-                                    </p>
-                                    <div className="transition-all !duration-500 ease-in-out group-hover:!translate-x-2">
-                                        <KeyboardBackspaceRounded className="!rotate-180 " />
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                    );
-                })}
-            </section>
-
+            <OfferTypes />
             <section className="mt-5 rounded-xl bg-blue-300/40 p-5">
                 <header className="flex w-full flex-nowrap gap-8">
                     <img src={emailIcon} className="h-14 w-14" />
@@ -392,163 +342,8 @@ function SalesDiscount({}) {
                     )}
                 </div>
             </section>
-            <section className="bottom mt-6 w-full rounded-md border border-dark-gray">
-                <header className="border-b border-dark-gray">
-                    <h2 className="p-4 text-lg font-semibold">
-                        Offer details and stats
-                    </h2>
-                </header>
 
-                <table className="w-full">
-                    <colgroup>
-                        <col style={{ width: '25%' }} />
-                        <col style={{ width: '30%' }} />
-                        <col style={{ width: '15%' }} />
-                        <col style={{ width: '15%' }} />
-                        <col style={{ width: '15%' }} />
-                    </colgroup>
-                    <thead className="bg-black/5 py-4">
-                        <tr className="!py-5">
-                            {[
-                                { text: 'Offer', addBorder: true },
-                                { text: 'Duration' },
-                                { text: 'Emails sent' },
-                                { text: 'Uses' },
-                                { text: 'Revenue' },
-                            ].map(({ text, addBorder }) => {
-                                return (
-                                    <th
-                                        key={text}
-                                        className={`${addBorder ? 'border-r border-r-dark-gray' : ''} border-b border-b-dark-gray  px-5 py-3 text-left text-sm font-medium underline underline-offset-1`}
-                                    >
-                                        {text}
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {allOffers.map(
-                            ({
-                                type,
-                                code,
-                                emails_sent,
-                                revenue,
-                                start_date,
-                                end_date,
-                                offer_type,
-                                no_end_date,
-                                active,
-                                uses,
-                                _id,
-                            }) => {
-                                const isActive =
-                                    dayjs
-                                        .unix(start_date)
-                                        .diff(dayjs(), 'minute') <= 0;
-
-                                const isExpired = !end_date
-                                    ? false
-                                    : dayjs
-                                          .unix(end_date)
-                                          .diff(dayjs(), 'minute') <= 0;
-
-                                const { text, dateText } = generateDatePeriod({
-                                    start_date,
-                                    end_date,
-                                    no_end_date,
-                                    active,
-                                });
-                                return (
-                                    <tr
-                                        key={code}
-                                        className="border-b border-dark-gray"
-                                    >
-                                        <td className="border-r border-dark-gray px-5 py-5">
-                                            <p className="text-sm">
-                                                {_.upperFirst(
-                                                    offer_type
-                                                ).replace('_', ' ')}
-                                            </p>
-                                            <p className="text-sm font-semibold">
-                                                {code}
-                                            </p>
-                                            <button
-                                                type="button"
-                                                className="group flex cursor-pointer flex-nowrap items-center"
-                                                onClick={() => {
-                                                    setSearchParams({
-                                                        offer: _id,
-                                                    });
-                                                    setOpenDrawer(() => true);
-                                                }}
-                                            >
-                                                <p className="text-sm text-black/90 underline underline-offset-1">
-                                                    Details
-                                                </p>
-                                                <KeyboardArrowRightRounded className="!text-base" />
-                                            </button>
-                                        </td>
-
-                                        <td className="px-5">
-                                            <div>
-                                                {/* <p>
-                                                    expired:{' '}
-                                                    {new String(isExpired)}
-                                                </p> */}
-                                                <p className="text-sm">
-                                                    {text}
-                                                    {/* {isActive
-                                                        ? generateDatePeriod({
-                                                              start_date,
-                                                              end_date,
-                                                              no_end_date,
-                                                          })
-                                                        : `0 Days`} */}
-                                                    {active && !isExpired && (
-                                                        <span
-                                                            className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
-                                                        >
-                                                            {isActive
-                                                                ? 'Active'
-                                                                : 'Scheduled'}
-                                                        </span>
-                                                    )}
-                                                </p>
-
-                                                {/* <p>dateText: {dateText}</p> */}
-                                                <p className="mt-1.5 text-xs text-black/70">
-                                                    {dateText}
-                                                </p>
-                                            </div>
-                                        </td>
-
-                                        <td className="px-5" align="left">
-                                            <p className="text-sm">
-                                                {emails_sent || 'N/A'}
-                                            </p>
-                                        </td>
-                                        <td className="px-5">
-                                            <p className="text-sm">{uses}</p>
-                                        </td>
-                                        <td className="px-5">
-                                            <p className="text-sm">
-                                                {parseFloat(
-                                                    revenue || 0
-                                                ).toLocaleString('en-GB', {
-                                                    style: 'currency',
-                                                    currency: 'GBP',
-                                                })}
-                                            </p>
-                                        </td>
-                                    </tr>
-                                );
-                            }
-                        )}
-                    </tbody>
-                </table>
-            </section>
+            <OfferDetails />
 
             <section className="mt-10 w-full bg-blue-200/50 py-8">
                 <p className="text-center text-base font-medium">

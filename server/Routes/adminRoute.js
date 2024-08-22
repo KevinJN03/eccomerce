@@ -70,7 +70,10 @@ import {
 } from '../Controllers/settingController.js';
 import stripeRoute from './stripeRoute.js';
 import offerRoute from './offersRoute.js';
+import giftCardRoute from './giftCardRoute.js';
 const router = express.Router();
+
+router.use('/giftcards', giftCardRoute);
 router.use('/offers', offerRoute);
 router.use('/stripe', stripeRoute);
 router.get('/user/search', searchUser);

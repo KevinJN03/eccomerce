@@ -73,6 +73,24 @@ function Container({}) {
     const isExpired = !details?.end_date
         ? false
         : dayjs.unix(details?.end_date).diff(dayjs(), 'minute') <= 0;
+
+    const generatePromoDuration = () => {
+        const formatDate = (date, additionalFormat = '') => {
+            return dayjs
+                .unix(date)
+                .format(`${dateFormat} ${additionalFormat}`);
+        };
+
+        if (isExpired) {
+            return `Duration: ${formatDate(details?.start_date, 'HH:mm')} - ${formatDate(details?.end_date, 'HH:mm')}`;
+        }
+
+        if (!details?.active) {
+            return `Ended on: ${formatDate(details?.end_date)}`;
+        } else {
+            return `Starts on: ${formatDate(details?.start_date)}`;
+        }
+    };
     return (
         <section className="flex h-full flex-col bg-white p-5">
             {loading ? (
@@ -87,7 +105,7 @@ function Container({}) {
                             <span
                                 className={`rounded-full ${isExpired ? 'bg-dark-gray/50' : isActive ? 'bg-green-100' : 'bg-dark-gray/50'} px-2 py-1 text-xs font-light tracking-wide`}
                             >
-                                {!details?.active
+                                {!details?.active || isExpired
                                     ? 'Ended'
                                     : isActive
                                       ? 'Active'
@@ -110,16 +128,7 @@ function Container({}) {
                                     </span>
                                 </p>
                                 <p className="text-base">
-                                    {dayjs
-                                        .unix(
-                                            !details?.active
-                                                ? details?.end_date
-                                                : details?.start_date
-                                        )
-                                        .utc()
-                                        .format(
-                                            `[${!details?.active ? 'Ended on' : isActive ? 'Active since' : 'Starts on'}:] ${dateFormat} ${isActive && details?.active ? 'HH:mm' : ''}`
-                                        )}
+                                    {generatePromoDuration()}
                                 </p>
                             </div>
                         </div>
@@ -128,7 +137,7 @@ function Container({}) {
                         <div className="mt-4 flex flex-col gap-2">
                             <p className="text-lg font-semibold">Share</p>
                             <CopyLink
-                                url={`https://${VITE_WEBSITE}?coupon=Save20`}
+                                url={`https://${VITE_WEBSITE}?coupon=${details?.code}`}
                             />
                         </div>
 
@@ -199,7 +208,7 @@ function Container({}) {
                                         {'Deactivate code'}
                                     </span>
                                 </ThemeBtn>
-                                <p className="text-bleck/70">
+                                <p className="mb-2 text-black/70">
                                     Once deactivated, no one will be able to
                                     redeem this offer. This action can’t be
                                     undone.

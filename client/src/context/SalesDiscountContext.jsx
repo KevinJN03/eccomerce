@@ -16,6 +16,7 @@ function SalesDiscountProvider({ children }) {
     const [allOffers, setAllOffers] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
     const [dateFormat, setDateFormat] = useState(() => 'D MMM YYYY');
+    const [offerType, setOfferType] = useState('promo_code');
 
     const [selectedId, setSelectedId] = useState(null);
     const { logoutUser } = useAdminContext();
@@ -64,7 +65,9 @@ function SalesDiscountProvider({ children }) {
         searchParams,
         setSearchParams,
         dateFormat,
-        selectedId, setSelectedId
+        selectedId,
+        setSelectedId,
+        offerType, setOfferType
     };
     return (
         <SalesDiscountContext.Provider value={value}>

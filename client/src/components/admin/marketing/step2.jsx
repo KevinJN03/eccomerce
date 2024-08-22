@@ -34,22 +34,39 @@ function Step2({}) {
 
         setIsSearching,
     } = useOfferContext();
-    
 
     const { logoutUser } = useAdminContext();
     const debouncedSearchText = useDebounce(searchText, 300);
     const abortControllerRef = useRef(new AbortController());
     const timeoutRef = useRef(null);
 
-    
+    const [options, setOptions] = useState(() => {
+        const array = [
+            {
+                text: 'All listings',
+                description: `Discount can be used shop-wide, on all current and future listings.`,
+                value: 'all',
+            },
+            {
+                text: 'Select listings',
+                description: `This promo code can only be applied to specific listings.`,
+                value: 'select',
+            },
+        ];
 
-    
+        if (details?.offer_type == 'gift_card') {
+            array.pop();
+        }
+
+        return array;
+    });
 
     return (
         <section className="">
             <header className="flex flex-col gap-2">
                 <h2 className="text-xl font-semibold">
-                    Which listings can buyers use this promo code on?
+                    Which listings can buyers use this{' '}
+                    {_.replace(details?.offer_type, /_/g, ' ')} on?
                 </h2>
                 <p className="text-sm">
                     Your discount can apply shop-wide, or be limited to specific
@@ -58,18 +75,7 @@ function Step2({}) {
             </header>
 
             <section className="mt-5 flex w-full flex-row gap-3">
-                {[
-                    {
-                        text: 'All listings',
-                        description: `Discount can be used shop-wide, on all current and future listings.`,
-                        value: 'all',
-                    },
-                    {
-                        text: 'Select listings',
-                        description: `This promo code can only be applied to specific listings.`,
-                        value: 'select',
-                    },
-                ].map(({ text, value, description }) => {
+                {options.map(({ text, value, description }) => {
                     return (
                         <button
                             type="button"

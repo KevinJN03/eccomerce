@@ -7,13 +7,16 @@ const { VITE_CLIENT_URL } = import.meta.env;
 function Step3({}) {
     const { details, listingIdsSet, generateDiscountText } = useOfferContext();
 
+    const { dateFormat } = useSalesDiscountContext();
+
     const listingAmount = listingIdsSet.size;
     return (
         <section className="flex justify-center">
             <section className="flex w-full max-w-2xl flex-col gap-5">
                 <header>
                     <h2 className="text-xl font-semibold">
-                        Review details for your promo code
+                        Review details for your{' '}
+                        {_.replace(details?.offer_type, /_/g, ' ')}
                     </h2>
                 </header>
                 <section className="flex flex-col gap-7">
@@ -32,6 +35,9 @@ function Step3({}) {
                         {
                             title: 'Duration',
                             value: (() => {
+                                if (details?.offer_type == 'gift_card') {
+                                    return `${dayjs().format(dateFormat)} - ${details?.no_end_date ? 'no end date' : dayjs.unix(details?.end_date).format(dateFormat)}`;
+                                }
                                 const start_date = dayjs
                                     .unix(details?.start_date)
                                     .format('DD MMM YYYY');
@@ -49,7 +55,10 @@ function Step3({}) {
                             value: ` ${details?.listings_type == 'all' ? 'Whole shop' : `${listingAmount} ${listingAmount > 1 ? 'listings' : 'listing'}`}`,
                         },
                         {
-                            title: `Promo code`,
+                            title: _.upperFirst(details?.offer_type).replace(
+                                /_/g,
+                                ' '
+                            ),
                             value: details.code,
                         },
                         {

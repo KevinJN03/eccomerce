@@ -12,7 +12,10 @@ import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
 import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
 import ExpressStatusMonitor from 'express-status-monitor';
+import emailTestRoute from '../React Email/test';
+
 const router = express.Router();
+router.use('/test', emailTestRoute);
 
 router.use('/cart', cartRoute);
 router.use('/wishlist', wishlistRoute);

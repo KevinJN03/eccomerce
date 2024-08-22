@@ -14,7 +14,6 @@ import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
 import webHookRoute from './Routes/webhookRoute.js';
 import userRoute from './Routes/userRoute.js';
-import emailTestRoute from './React Email/test.js';
 import adminRoute from './Routes/adminRoute.js';
 import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
@@ -96,9 +95,7 @@ app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
 app.use('/api/webhook', webHookRoute);
-
 // test email
-app.use('/api/test', emailTestRoute);
 
 app.use(errorHandler);
 

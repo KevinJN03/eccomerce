@@ -15,8 +15,10 @@ const defaultDetails = {
     no_end_date: false,
     custom: false,
     listings_type: 'all',
+    offer_type: 'promo_code',
 };
 function OfferContextProvider({ initialDetails, newValue, children }) {
+    const { offerType } = useSalesDiscountContext();
     const [showAction, setShowAction] = useState(!false);
     const [listingIdsSet, setListingIdsSet] = useState(new Set());
     const [chosenListings, setChosenListings] = useState([]);
@@ -24,7 +26,10 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
     const [showSearchResult, setShowSearchResult] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [chosenMap, setChosenMap] = useState(new Map());
-    const [details, setDetails] = useState(defaultDetails);
+    const [details, setDetails] = useState({
+        ...defaultDetails,
+        offer_type: offerType || 'promo_code',
+    });
     const [isSearching, setIsSearching] = useState(false);
     const [errors, setErrors] = useState({});
     const [btnLoading, setBtnLoading] = useState(false);
@@ -271,8 +276,13 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
 
+            const obj = {
+                promo_code: 'coupon',
+                gift_card: 'giftcards',
+            };
+
             const { data } = await adminAxios.post(
-                '/coupon/create',
+                `/${_.get(obj, details?.offer_type)}/create`,
                 {
                     ...details,
                     listings: Array.from(listingIdsSet),
@@ -565,7 +575,8 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         setInitialFetch,
         handleDeleteListing,
         handleAddListing,
-        generateMapFromOffers, convertMapToArray
+        generateMapFromOffers,
+        convertMapToArray,
     };
     return (
         <OfferContext.Provider value={value}>{children}</OfferContext.Provider>
