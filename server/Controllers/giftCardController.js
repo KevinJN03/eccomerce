@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable camelcase */
+import 'dotenv/config';
+import * as React from 'react';
 import asyncHandler from 'express-async-handler';
 import randomstring from 'randomstring';
 import GiftCard from '../Models/giftCard.js';
@@ -7,40 +9,12 @@ import Voucherify from 'voucher-code-generator';
 import _ from 'lodash';
 import { check, validationResult } from 'express-validator';
 import endDateValidator from '../utils/endDateValidator.js';
-export const create_giftCard = [
-  check('amount', 'Must be equal to or greater than 5')
-    .escape()
-    .trim()
-    .isInt({ min: 5 }),
-
-  check('email', 'Enter the recipient email address')
-    .escape()
-    .trim()
-    .notEmpty()
-    .isEmail(),
-
-  endDateValidator(),
-  asyncHandler(async (req, res, next) => {
-    // const { code, amount, type } = req.body;
-
-    const errors = validationResult(req).formatWith(({ msg }) => msg);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).send(errors.mapped());
-    }
-
-    if (req.body?.create) {
-      const giftCard = (await GiftCard.create(req.body)).toObject();
-
-      return res.send({ ...giftCard, created: true });
-    }
-
-    // const giftCard = await GiftCard.create({ code, amount, type });
-
-    //return res.status(200).send(giftCard);
-    return res.send({ msg: 'passed validation' });
-  }),
-];
+import GiftCardSend from '../React Email/emails/giftcard/GiftCardSend.jsx';
+import transporter from '../utils/nodemailer.js';
+import { renderAsync } from '@react-email/render';
+import crypto from 'crypto';
+import { decrypt } from '../utils/encrypt-decrypt-giftcard.js';
+const { SENDER } = process.env;
 
 export const get_all_giftCard = asyncHandler(async (req, res, next) => {
   const giftCard = await GiftCard.find();
@@ -49,15 +23,16 @@ export const get_all_giftCard = asyncHandler(async (req, res, next) => {
 });
 
 export const get_single_giftCard = asyncHandler(async (req, res, next) => {
-  let { code } = req.query;
-  code = code.toUpperCase();
-
-  if (code.substring(0, 3) != 'GL-') {
-    code = `GL-${code}`;
-  }
-  const giftCard = await GiftCard.findOne({ code });
+  const { code } = req.query;
+  const codeToUpperCase = _.toUpper(code);
+  const hashCode = crypto
+    .createHash('sha256')
+    .update(codeToUpperCase)
+    .digest('hex');
+  const giftCard = await GiftCard.findOne({ hash_code: hashCode });
 
   if (giftCard) {
+    // giftCard.code = decrypt(giftCard.code);
     return res.status(200).send(giftCard);
   } else {
     const error = new Error('Gift Card Not Found');
@@ -94,17 +69,109 @@ export const delete_all = asyncHandler(async (req, res, next) => {
 });
 
 export const generate_new_code = asyncHandler(async (req, res, next) => {
-  const newCode = Voucherify.generate({
-    // length: 16,
-    pattern: '####-####-####-####',
-    // charset: 'alphanumeric',
+  const generateCode = async (success = false) => {
+    if (!req.body?.create) {
+      return next();
+    }
+    if (!success) {
+      const newCode = Voucherify.generate({
+        pattern: '####-####-####-####',
+        // charset: 'alphanumeric',
+      });
+      const codeToUpperCase = _.toUpper(newCode[0]);
+      const findCode = await GiftCard.exists({ code: codeToUpperCase });
+      if (findCode) {
+        return generateCode(false);
+      } else {
+        return codeToUpperCase;
+      }
+    }
+  };
+
+  const gift_card_code = await generateCode(false);
+
+  req.body.code = gift_card_code;
+  next();
+  // res.send({ code: gift_card_code });
+});
+
+export const create_giftCard = [
+  check('amount', 'Must be equal to or greater than 5')
+    .escape()
+    .trim()
+    .isInt({ min: 5 }),
+  check('email', 'Enter the recipient email address')
+    .escape()
+    .trim()
+    .notEmpty()
+    .isEmail(),
+  endDateValidator(),
+  generate_new_code,
+  asyncHandler(async (req, res, next) => {
+    const { code, amount, end_date } = req.body;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.mapped());
+    }
+    if (req.body?.create) {
+      const giftCard = (await GiftCard.create(req.body)).toObject();
+
+      const emailHtml = await renderAsync(
+        <GiftCardSend {...{ amount, code, end_date }} />,
+      );
+
+      const mailOptions = {
+        from: SENDER,
+        to: req.body.email,
+        subject: `🎁 Surprise! Your Glamo Gift Card is Here!`,
+        html: emailHtml,
+      };
+      await transporter.sendMail(mailOptions);
+      return res.send({ ...giftCard, created: true });
+    }
+    // const giftCard = await GiftCard.create({ code, amount, type });
+    //return res.status(200).send(giftCard);
+    return res.send({ msg: 'passed validation', body: req.body });
+  }),
+];
+
+export const resendEmail = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const giftCard = await GiftCard.findById(id, null, {
+    lean: { toObject: true },
   });
 
-  // randomstring.generate({
-  //   length: 16,
-  //   charset: ['GL-', 'alphanumeric'],
-  //   capitalization: 'uppercase',
-  // });
+  if (giftCard) {
+    giftCard.code = decrypt(giftCard.code);
+  }
+  const emailHtml = await renderAsync(<GiftCardSend {...giftCard} />);
 
-  res.send({ code: _.toUpper(newCode[0]), success: true });
+  const mailOptions = {
+    from: SENDER,
+    to: giftCard.email,
+    subject: `🎁 Surprise! Your Glamo Gift Card is Here!`,
+    html: emailHtml,
+  };
+  await transporter.sendMail(mailOptions);
+  await GiftCard.findByIdAndUpdate(
+    id,
+    {
+      $inc: { emails_sent: 1 },
+      $push: {
+        audits: {
+          $each: [
+            {
+              msg: 'Gift card email resent to customer email address.',
+            },
+          ],
+          $position: 0,
+        },
+      },
+    },
+    {
+      lean: { toObject: true },
+    },
+  );
+
+  res.send({ msg: 'email resent', success: true });
 });

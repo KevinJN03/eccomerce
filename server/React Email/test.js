@@ -45,13 +45,13 @@ router.get(
     const emailTestId = v4();
     const mailOptions = {
       from: SENDER,
-      to: process.env.TEST_EMAIL,
+      to:  process.env.TEST_EMAIL,
 
       subject: 'test email ' + emailTestId,
       html: emailHtml,
     };
-    console.log({ emailTestId });
-    //const sendEmail = await transporter.sendMail(mailOptions);
+
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

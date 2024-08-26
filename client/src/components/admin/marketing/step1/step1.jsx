@@ -354,46 +354,48 @@ function Step1({}) {
                     </div>
                 </section>
             )}
-            <section className="flex w-full flex-nowrap gap-5">
-                <div className="left flex-1">
-                    <p className="text-lg font-semibold">
-                        Custom {_.replace(details?.offer_type, /_/g, ' ')}
-                    </p>
+            {details?.offer_type == 'promo_code' && (
+                <section className="flex w-full flex-nowrap gap-5">
+                    <div className="left flex-1">
+                        <p className="text-lg font-semibold">
+                            Custom {_.replace(details?.offer_type, /_/g, ' ')}
+                        </p>
 
-                    <p>
-                        This is what shoppers will enter at checkout to get a
-                        discount. Each code should be unique, and only use
-                        letters and numbers.
-                    </p>
-                </div>
-                <div className="right flex w-full flex-[2_2_0%] flex-col gap-2">
-                    <div className="flex flex-wrap gap-4">
-                        <input
-                            type="input"
-                            className={`daisy-input input !w-full ${errors.code ? errorStyle : ''} `}
-                            placeholder="EX. SAVE50"
-                            value={details.code}
-                            maxLength={16}
-                            onChange={(e) =>
-                                setDetails((prevState) => ({
-                                    ...prevState,
-                                    code: e.target.value,
-                                }))
-                            }
-                        />
-                        {details?.offer_type == 'gift_card' && (
+                        <p>
+                            This is what shoppers will enter at checkout to get
+                            a discount. Each code should be unique, and only use
+                            letters and numbers.
+                        </p>
+                    </div>
+                    <div className="right flex w-full flex-[2_2_0%] flex-col gap-2">
+                        <div className="flex flex-wrap gap-4">
+                            <input
+                                type="input"
+                                className={`daisy-input input !w-full ${errors.code ? errorStyle : ''} `}
+                                placeholder="EX. SAVE50"
+                                value={details.code}
+                                maxLength={16}
+                                onChange={(e) =>
+                                    setDetails((prevState) => ({
+                                        ...prevState,
+                                        code: e.target.value,
+                                    }))
+                                }
+                            />
+                            {/* {details?.offer_type == 'gift_card' && (
                             <BubbleButton
                                 text={'Generate'}
                                 handleClick={generateGiftCardCode}
                             ></BubbleButton>
+                        )} */}
+                        </div>
+
+                        {errors?.code && (
+                            <p className="text-red-700">{errors.code}</p>
                         )}
                     </div>
-
-                    {errors?.code && (
-                        <p className="text-red-700">{errors.code}</p>
-                    )}
-                </div>
-            </section>
+                </section>
+            )}
         </>
     );
 }

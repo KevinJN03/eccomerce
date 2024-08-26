@@ -3,6 +3,7 @@ import {
   deactivate_offer,
   get_offer,
   update_listings,
+  overallPerformance,
 } from '../Controllers/offersController';
 
 const router = express.Router();

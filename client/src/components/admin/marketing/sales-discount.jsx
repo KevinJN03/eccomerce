@@ -1,58 +1,33 @@
-import saleIcon from '../../../assets/icons/shopping.png';
-import saleIcon2 from '../../../assets/icons/promo-code.png';
-import saleIcon3 from '../../../assets/icons/icons8-sale-price-tag-100.png';
 import emailIcon from '../../../assets/icons/email.png';
-import {
-    ArrowDropDown,
-    ArrowRightAltRounded,
-    Height,
-    KeyboardArrowRightRounded,
-    KeyboardBackspaceRounded,
-    Padding,
-} from '@mui/icons-material';
-import { useEffect, useRef, useState } from 'react';
-import Actions from '../components/product/actions';
+import '../../../CSS/mui-calender.scss';
+import { ArrowDropDown } from '@mui/icons-material';
 import _ from 'lodash';
-import {
-    Box,
-    Modal,
-    Popover,
-    Popper,
-    Typography,
-    createStyles,
-} from '@mui/material';
-import exampleData from './exampleData';
-
-import BoxWithProps from '../../common/BoxwithProps.jsx';
+import { Modal, Popover } from '@mui/material';
 import Template from './template.jsx';
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext.jsx';
-import Step4 from './step4.jsx';
 import dayjs from 'dayjs';
 import Drawer from './Drawer/drawer.jsx';
-import { useSearchParams } from 'react-router-dom';
-import OfferContextProvider, {
-    useOfferContext,
-} from '../../../context/offerContext.jsx';
+import OfferContextProvider from '../../../context/offerContext.jsx';
 import OfferDetails from './offerDetails.jsx';
 import OfferTypes from './offerTypes.jsx';
-import { adminAxios } from '../../../api/axios.js';
+import ActionsForSales from './actionsforSales.jsx';
+import CustomDateRange from './CustomDateRange.jsx';
 function SalesDiscount({}) {
     const {
-        showAction,
-        setShowAction,
         anchorEl,
         setAnchorEl,
         selectedId,
         setSelectedId,
         modalOpen,
         setModalOpen,
-
-        allOffers,
-        setOpenDrawer,
-        setSearchParams,
         dateFormat,
+        showCustomPicker,
+        setShowCustomPicker,
+        option,
+        showAction,
+        setShowAction,
+        overallPerformance,
     } = useSalesDiscountContext();
-
 
     const open = Boolean(anchorEl);
 
@@ -64,8 +39,6 @@ function SalesDiscount({}) {
         setAnchorEl(() => e.currentTarget);
         setSelectedId(() => title);
     };
-
-    const [option, setOption] = useState('this_month');
 
     const generateDatePeriod = ({
         start_date,
@@ -155,7 +128,6 @@ function SalesDiscount({}) {
         return findDurationValue();
     };
 
-   
     return (
         <section className="payment h-full w-full p-10">
             <header>
@@ -210,20 +182,16 @@ function SalesDiscount({}) {
                             className={`relative flex flex-row  flex-nowrap items-center justify-center rounded border !border-dark-gray px-2.5 py-1 outline-2 outline-offset-2  outline-green-500 focus:outline active:outline`}
                         >
                             <p className="whitespace-nowrap text-sm font-semibold">
-                                {_.upperFirst(option).replace(/_/g, ' ')}
+                                {_.upperFirst(option?.value).replace(/_/g, ' ')}
                             </p>
 
                             <ArrowDropDown className="!fill-black/40" />
                         </button>
+                        <ActionsForSales />
 
-                        {/* <Actions
-                                {...{
-                                    product,
-                                    showAction,
-                                    setShowAction,
-                                    className: 'translate-y-2',
-                                }}
-                            /> */}
+                        <CustomDateRange
+                            {...{ showCustomPicker, setShowCustomPicker }}
+                        />
                     </section>
                 </div>
 
@@ -231,19 +199,19 @@ function SalesDiscount({}) {
                     {[
                         {
                             title: 'Orders with a discount',
-                            amount: 0,
+                            amount: overallPerformance?.orders_with_discount,
                             currency: false,
                             description: `This is the total number of orders placed that included a discount offer or a sale item.`,
                         },
                         {
                             title: `Average order value`,
-                            amount: 0,
+                            amount: overallPerformance?.average_order_value,
                             currency: true,
                             description: `Average order value is revenue divided by number of orders, used to estimate how much buyers typically spent per order.`,
                         },
                         {
                             title: 'Revenue from discounts',
-                            amount: 0,
+                            amount: overallPerformance?.revenue_from_discounts,
                             currency: true,
                             description: `This is the total revenue from all orders that included a discount or sale.`,
                             anchorOrigin: {

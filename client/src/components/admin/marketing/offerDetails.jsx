@@ -2,6 +2,9 @@ import dayjs from 'dayjs';
 import { useSalesDiscountContext } from '../../../context/SalesDiscountContext';
 import _ from 'lodash';
 import { KeyboardArrowRightRounded } from '@mui/icons-material';
+import { Fragment, useState } from 'react';
+import { text } from '@fortawesome/fontawesome-svg-core';
+import IndividualOffer from './individualOffer';
 
 function OfferDetails({}) {
     const {
@@ -9,6 +12,10 @@ function OfferDetails({}) {
         setOpenDrawer,
         setSearchParams,
         dateFormat,
+        selectedOfferType,
+        setSelectedOfferType,
+        loading,
+        
     } = useSalesDiscountContext();
 
     const generateDatePeriod = ({
@@ -99,163 +106,207 @@ function OfferDetails({}) {
         return findDurationValue();
     };
     return (
-        <section className="bottom mt-6 w-full rounded-md border border-dark-gray">
-            <header className="border-b border-dark-gray">
-                <h2 className="p-4 text-lg font-semibold">
-                    Offer details and stats
-                </h2>
-            </header>
+        <section className="mt-24">
+            <div className="tabs tabs-boxed !mb-4 gap-1">
+                {[
+                    { text: 'Promo code', value: 'promo_code' },
+                    { text: 'Gift card', value: 'gift_card' },
+                ].map(({ value, text }) => {
+                    return (
+                        <Fragment key={value}>
+                            <input
+                                type="radio"
+                                id={`radio-${value}`}
+                                name="tab-5"
+                                className="tab-toggle"
+                                checked={value === selectedOfferType}
+                                onChange={() => {
+                                    setSelectedOfferType(value);
+                                }}
+                            />
+                            <label htmlFor={`radio-${value}`} className="tab">
+                                {text}
+                            </label>
+                        </Fragment>
+                    );
+                })}
+            </div>
+            <section className="bottom w-full rounded-md border border-dark-gray">
+                <header className="border-b border-dark-gray">
+                    <h2 className="p-4 text-lg font-semibold">
+                        Offer details and stats
+                    </h2>
+                </header>
 
-            <table className="w-full">
-                <colgroup>
-                    <col style={{ width: '25%' }} />
-                    <col style={{ width: '30%' }} />
-                    <col style={{ width: '15%' }} />
-                    <col style={{ width: '15%' }} />
-                    <col style={{ width: '15%' }} />
-                </colgroup>
-                <thead className="bg-black/5 py-4">
-                    <tr className="!py-5">
-                        {[
-                            { text: 'Offer', addBorder: true },
-                            { text: 'Duration' },
-                            { text: 'Emails sent' },
-                            { text: 'Uses' },
-                            { text: 'Revenue' },
-                        ].map(({ text, addBorder }) => {
-                            return (
-                                <th
-                                    key={text}
-                                    className={`${addBorder ? 'border-r border-r-dark-gray' : ''} border-b border-b-dark-gray  px-5 py-3 text-left text-sm font-medium underline underline-offset-1`}
-                                >
-                                    {text}
-                                </th>
-                            );
-                        })}
-                    </tr>
-                </thead>
+                <table className="w-full">
+                    <colgroup>
+                        <col style={{ width: '25%' }} />
+                        <col style={{ width: '30%' }} />
+                        <col style={{ width: '15%' }} />
+                        <col style={{ width: '15%' }} />
+                        <col style={{ width: '15%' }} />
+                    </colgroup>
+                    <thead className="bg-black/5 py-4">
+                        <tr className="!py-5">
+                            {[
+                                { text: 'Offer', addBorder: true },
+                                { text: 'Duration' },
+                                { text: 'Emails sent' },
+                                { text: 'Uses' },
+                                { text: 'Revenue' },
+                            ].map(({ text, addBorder }) => {
+                                return (
+                                    <th
+                                        key={text}
+                                        className={`${addBorder ? 'border-r border-r-dark-gray' : ''} border-b border-b-dark-gray  px-5 py-3 text-left text-sm font-medium underline underline-offset-1`}
+                                    >
+                                        {text}
+                                    </th>
+                                );
+                            })}
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    {allOffers.map(
-                        ({
-                            type,
-                            code,
-                            emails_sent,
-                            revenue,
-                            start_date,
-                            end_date,
-                            offer_type,
-                            no_end_date,
-                            active,
-                            uses,
-                            _id,
-                        }) => {
-                            const isActive =
-                                dayjs
-                                    .unix(start_date)
-                                    .diff(dayjs(), 'minute') <= 0;
+                    <tbody>
+                        {loading ? (
+                            <tr>
+                                <td className=" h-80" colSpan={5}>
+                                    <div className="flex w-full items-center justify-center">
+                                        <div className="spinner-circle spinner-lg ![--spinner-color:var(--slate-12)]"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : (
+                            <>
+                                {allOffers.map((props) => {
+                                    // const isActive =
+                                    //     dayjs
+                                    //         .unix(start_date)
+                                    //         .diff(dayjs(), 'minute') <= 0;
 
-                            const isExpired = !end_date
-                                ? false
-                                : dayjs
-                                      .unix(end_date)
-                                      .diff(dayjs(), 'minute') <= 0;
+                                    // const isExpired = !end_date
+                                    //     ? false
+                                    //     : dayjs
+                                    //           .unix(end_date)
+                                    //           .diff(dayjs(), 'minute') <= 0;
 
-                            const { text, dateText } = generateDatePeriod({
-                                start_date,
-                                end_date,
-                                no_end_date,
-                                active,
-                            });
-                            return (
-                                <tr
-                                    key={code}
-                                    className="border-b border-dark-gray"
-                                >
-                                    <td className="border-r border-dark-gray px-5 py-5">
-                                        <p className="text-sm">
-                                            {_.upperFirst(offer_type).replace(
-                                                '_',
-                                                ' '
-                                            )}
-                                        </p>
-                                        <p className="text-sm font-semibold">
-                                            {code}
-                                        </p>
-                                        <button
-                                            type="button"
-                                            className="group flex cursor-pointer flex-nowrap items-center"
-                                            onClick={() => {
-                                                setSearchParams({
-                                                    offer: _id,
-                                                });
-                                                setOpenDrawer(() => true);
-                                            }}
-                                        >
-                                            <p className="text-sm text-black/90 underline underline-offset-1">
-                                                Details
-                                            </p>
-                                            <KeyboardArrowRightRounded className="!text-base" />
-                                        </button>
-                                    </td>
+                                    // const { text, dateText } =
+                                    //     generateDatePeriod({
+                                    //         start_date,
+                                    //         end_date,
+                                    //         no_end_date,
+                                    //         active,
+                                    //     });
 
-                                    <td className="px-5">
-                                        <div>
-                                            {/* <p>
-                                        expired:{' '}
-                                        {new String(isExpired)}
-                                    </p> */}
-                                            <p className="text-sm">
-                                                {text}
-                                                {/* {isActive
-                                            ? generateDatePeriod({
-                                                  start_date,
-                                                  end_date,
-                                                  no_end_date,
-                                              })
-                                            : `0 Days`} */}
-                                                {active && !isExpired && (
-                                                    <span
-                                                        className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
-                                                    >
-                                                        {isActive
-                                                            ? 'Active'
-                                                            : 'Scheduled'}
-                                                    </span>
-                                                )}
-                                            </p>
+                                    return (
+                                        <IndividualOffer
+                                            {...props}
+                                            key={props._id}
+                                        />
+                                    );
 
-                                            {/* <p>dateText: {dateText}</p> */}
-                                            <p className="mt-1.5 text-xs text-black/70">
-                                                {dateText}
-                                            </p>
-                                        </div>
-                                    </td>
+                                    //     return (
+                                    //         <tr
+                                    //             key={redacted_code || code}
+                                    //             className="border-b border-dark-gray"
+                                    //         >
+                                    //             <td className="border-r border-dark-gray px-5 py-5">
+                                    //                 <p className="text-sm">
+                                    //                     {_.upperFirst(
+                                    //                         offer_type
+                                    //                     ).replace('_', ' ')}
+                                    //                 </p>
+                                    //                 <p className="text-sm font-semibold">
+                                    //                     {redacted_code || code}
+                                    //                 </p>
+                                    //                 <button
+                                    //                     type="button"
+                                    //                     className="group flex cursor-pointer flex-nowrap items-center"
+                                    //                     onClick={() => {
+                                    //                         setSearchParams({
+                                    //                             offer: _id,
+                                    //                             offer_type,
+                                    //                         });
+                                    //                         setOpenDrawer(
+                                    //                             () => true
+                                    //                         );
+                                    //                     }}
+                                    //                 >
+                                    //                     <p className="text-sm text-black/90 underline underline-offset-1">
+                                    //                         Details
+                                    //                     </p>
+                                    //                     <KeyboardArrowRightRounded className="!text-base" />
+                                    //                 </button>
+                                    //             </td>
 
-                                    <td className="px-5" align="left">
-                                        <p className="text-sm">
-                                            {emails_sent || 'N/A'}
-                                        </p>
-                                    </td>
-                                    <td className="px-5">
-                                        <p className="text-sm">{uses}</p>
-                                    </td>
-                                    <td className="px-5">
-                                        <p className="text-sm">
-                                            {parseFloat(
-                                                revenue || 0
-                                            ).toLocaleString('en-GB', {
-                                                style: 'currency',
-                                                currency: 'GBP',
-                                            })}
-                                        </p>
-                                    </td>
-                                </tr>
-                            );
-                        }
-                    )}
-                </tbody>
-            </table>
+                                    //             <td className="px-5">
+                                    //                 <div>
+                                    //                     {/* <p>
+                                    //     expired:{' '}
+                                    //     {new String(isExpired)}
+                                    // </p> */}
+                                    //                     <p className="text-sm">
+                                    //                         {text}
+                                    //                         {/* {isActive
+                                    //         ? generateDatePeriod({
+                                    //               start_date,
+                                    //               end_date,
+                                    //               no_end_date,
+                                    //           })
+                                    //         : `0 Days`} */}
+                                    //                         {active &&
+                                    //                             !isExpired && (
+                                    //                                 <span
+                                    //                                     className={`ml-2 rounded-full px-2 py-0.5 text-xxs font-medium ${isActive ? 'bg-green-100' : 'bg-dark-gray/40'}`}
+                                    //                                 >
+                                    //                                     {isActive
+                                    //                                         ? 'Active'
+                                    //                                         : 'Scheduled'}
+                                    //                                 </span>
+                                    //                             )}
+                                    //                     </p>
+
+                                    //                     {/* <p>dateText: {dateText}</p> */}
+                                    //                     <p className="mt-1.5 text-xs text-black/70">
+                                    //                         {dateText}
+                                    //                     </p>
+                                    //                 </div>
+                                    //             </td>
+
+                                    //             <td
+                                    //                 className="px-5"
+                                    //                 align="left"
+                                    //             >
+                                    //                 <p className="text-sm">
+                                    //                     {emails_sent || 'N/A'}
+                                    //                 </p>
+                                    //             </td>
+                                    //             <td className="px-5">
+                                    //                 <p className="text-sm">
+                                    //                     {uses}
+                                    //                 </p>
+                                    //             </td>
+                                    //             <td className="px-5">
+                                    //                 <p className="text-sm">
+                                    //                     {parseFloat(
+                                    //                         revenue || 0
+                                    //                     ).toLocaleString(
+                                    //                         'en-GB',
+                                    //                         {
+                                    //                             style: 'currency',
+                                    //                             currency: 'GBP',
+                                    //                         }
+                                    //                     )}
+                                    //                 </p>
+                                    //             </td>
+                                    //         </tr>
+                                    //     );
+                                })}
+                            </>
+                        )}
+                    </tbody>
+                </table>
+            </section>
         </section>
     );
 }

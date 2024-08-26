@@ -27,6 +27,13 @@ const itemSchema = new Schema({
   images: { type: [Schema.Types.String], maxlength: 1 },
   title: { type: Schema.Types.String },
 });
+
+const offerProps = {
+  discount: Schema.Types.Number,
+  code: Schema.Types.String,
+  type: Schema.Types.String,
+  offer_id: Schema.Types.ObjectId,
+};
 const OrderSchema = new Schema({
   _id: { type: Schema.Types.String, required: true, unique: true },
   items: [itemSchema],
@@ -73,9 +80,9 @@ const OrderSchema = new Schema({
     subtotal: {
       type: Schema.Types.Number,
     },
-    promo: {
-      discount: Schema.Types.Number,
-      code: Schema.Types.String,
+    offer: {
+      promo_code: offerProps,
+      gift_card: offerProps,
     },
     delivery_cost: Schema.Types.Number,
   },
@@ -115,7 +122,6 @@ const OrderSchema = new Schema({
   completed_date: { type: Schema.Types.Date, default: null },
   payment_intent_id: { type: Schema.Types.String },
   charge_id: { type: Schema.Types.String },
-  
 });
 
 export default model('order', OrderSchema);

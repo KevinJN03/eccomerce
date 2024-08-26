@@ -1,0 +1,41 @@
+.MuiDayCalendar-header {
+    @apply border-b border-dark-gray/20 font-semibold;
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr);
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    place-items: center;
+
+    span {
+        // border: 2px solid red;
+    }
+}
+
+.MuiDayCalendar-monthContainer {
+    @apply h-full w-full;
+    display: grid !important;
+    // place-items: center;
+    grid-template-rows: repeat(5, 1fr);
+
+    & .MuiDayCalendar-weekContainer {
+        // border: 2px solid orange;
+        display: grid !important;
+        place-items: center;
+        grid-template-columns: repeat(7, 1fr);
+
+        & div {
+            // @apply  flex justify-center h-full;
+            width: 100%;
+        }
+    }
+}
+
+.MuiYearCalendar-root,
+.MuiMonthCalendar-root {
+    width: 100% !important;
+}
+
+.Mui-selected {
+    display: 'none' !important;
+}

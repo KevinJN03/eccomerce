@@ -62,6 +62,7 @@
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "country-code-lookup": "^0.1.2",
+    "cryptr": "^6.3.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

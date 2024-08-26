@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import ThemeBtn from '../../buttons/themeBtn';
+import { useOfferContext } from '../../../context/offerContext';
+import { offerTypes } from '../../../context/SalesDiscountContext';
 
-function CopyLink({ url }) {
-    const [isUrlCopied, setCopyUrl] = useState(false);
+function CopyLink({ url, handleAction, button }) {
+    const { trigger, setTrigger, details } = useOfferContext();
+
     const timeoutRef = useRef(null);
 
     useEffect(() => {
@@ -11,6 +14,7 @@ function CopyLink({ url }) {
         };
     }, []);
 
+    const offer = new offerTypes[details?.offer_type](details);
     return (
         <section className=" flex flex-nowrap">
             <div className="left flex-1">
@@ -25,16 +29,24 @@ function CopyLink({ url }) {
             </div>
             <div className="right">
                 <ThemeBtn
-                    text={isUrlCopied ? 'Copied!' : 'Copy Link'}
-                    bg={`rounded-l-none bg-black`}
+                    text={trigger ? button.clicked : button.default}
+                    bg={`rounded-l-none bg-black disabled:bg-black/50`}
+                    disabled={offer?.isExpired}
                     handleClick={() => {
                         clearTimeout(timeoutRef.current);
-                        setCopyUrl(() => true);
 
-                        timeoutRef.current = setTimeout(() => {
-                            setCopyUrl(() => false);
-                        }, 5000);
-                        navigator.clipboard.writeText(url);
+                        if (handleAction) {
+                            handleAction();
+                            // return;
+                        } else {
+                            setTrigger(() => true);
+
+                            timeoutRef.current = setTimeout(() => {
+                                setTrigger(() => false);
+                            }, 5000);
+
+                            navigator.clipboard.writeText(url);
+                        }
                     }}
                 />
             </div>

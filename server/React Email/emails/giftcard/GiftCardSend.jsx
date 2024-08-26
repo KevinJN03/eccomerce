@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   Head,
   Tailwind,
@@ -29,15 +28,7 @@ import dayjs from 'dayjs';
 import 'dotenv/config';
 import _ from 'lodash';
 const { WEBSITE_URL, CLOUDFRONT_URL } = process.env;
-function GiftCardSend({
-  name,
-  amount,
-  code,
-
-  companyName,
-  companyAddress,
-  companyPhone,
-}) {
+function GiftCardSend({ amount, code, end_date }) {
   const images = {
     default: '360_F_903936095_fCncFarCupSKjJIlXN6mZLvCvaUEbS9K.jpg',
     1: `present-8440034_1280.jpg`,
@@ -47,18 +38,22 @@ function GiftCardSend({
     <Html lang="en">
       <EmailHead />
       <EmailTailwind>
-        <Body>
-          <Container className="bg-light-grey w-[600px]" align="center">
-            <Section className="" align="center">
-              <Row>
+        <Body className="mx-auto max-w-full w-[37.5rem]">
+          <Container
+            className="bg-light-grey !max-w-full !w-[37.5rem] "
+            align="center"
+          >
+            <Section className="max-w-full" align="center">
+              <Row className="">
                 <Header />
               </Row>
-              <Row>
-                <Column className="p-10 " align="center">
-                  {' '}
+            </Section>
+            <Section className="w-full">
+              <Row className="w-full">
+                <Column align="center" className="min-w-full p-5">
                   <Container className="bg-white p-4 ">
                     <Img
-                      className=" !max-w-[32rem] object-cover object-center h-72 w-full"
+                      className=" object-cover object-center h-72 w-full"
                       src={`${CLOUDFRONT_URL}/files/gift+card/${images['default']}`}
                     />
                     <Text className="p-4 text-xl">
@@ -69,7 +64,12 @@ function GiftCardSend({
                     <Hr />
                     <Row>
                       <Column className="px-4">
-                        <Text className="font-bold text-2xl mb-0">£50.00</Text>
+                        <Text className="font-bold text-2xl mb-0">
+                          {parseFloat(amount).toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'GBP',
+                          })}
+                        </Text>
                         <Text className="mt-0 text-black/60">
                           Glamo gift card
                         </Text>
@@ -84,9 +84,10 @@ function GiftCardSend({
                   </Container>
                 </Column>
               </Row>
-
-              <Row align="center">
-                <Column align="center">
+            </Section>
+            <Section className="w-full">
+              <Row align="center" className="">
+                <Column align="center" className="">
                   <Button
                     href={WEBSITE_URL}
                     target="_blank"
@@ -109,17 +110,23 @@ function GiftCardSend({
                   </Text>
                 </Column>
               </Row>
-              <Row>
-                <Column
-                  className=" bg-[#dedfe4] px-8 py-4 !w-full"
-                  align="center"
-                >
+            </Section>
+
+            <Section className="">
+              <Row className="">
+                <Column className=" bg-[#dedfe4] px-8 py-4 " align="center">
                   <Text
                     style={{ border: '2px solid black' }}
                     className="w-fit font-semibold py-2 px-6"
                   >
-                    Claim Code: 1234-56789-01234
+                    Claim Code: {code}
                   </Text>
+                  {end_date && (
+                    <Text>
+                      Expires:{' '}
+                      <span>{dayjs.unix(end_date).format('DD MMM YYYY')}</span>
+                    </Text>
+                  )}
 
                   <Text className="text-left">
                     To use your gift card, first add items to your cart and
@@ -141,10 +148,17 @@ function GiftCardSend({
                   </Text>
                 </Column>
               </Row>
-              <Row>
-                <Thanks />
-                <MoreQuestions />
-                <Footer />
+            </Section>
+            <Section className="min-w-full !m-0 !p-0">
+              <Row className="w-full  !m-0 !p-0">
+                <Column className="w-full  !m-0 !p-0">
+                <Container className='!min-w-full !w-full'>
+                 <Thanks />
+                  <MoreQuestions />
+                  <Footer /> 
+                </Container>
+                  
+                </Column>
               </Row>
             </Section>
           </Container>

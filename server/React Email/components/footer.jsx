@@ -47,9 +47,8 @@ function Footer({}) {
     },
   ];
   return (
-    <Container className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] min-w-full">
-      {/* <td className="p-5 w-full"> */}
-        <Section  >
+    //<Container className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
+        <Section  className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
           <Row align="center" className="w-full">
             <Column align='center' className=" pb-4 !w-full !mx-auto !max-w-[50%] ">
               <Text className="text-center font-bold text-white">
@@ -143,8 +142,7 @@ function Footer({}) {
           </Text>
           {/* </Row> */}
         </Section>
-      {/* </td> */}
-    </Container>
+   // </Container>
   );
 }
 

@@ -2,9 +2,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-
 function DOB({ states }) {
     const { dob, setDob } = states;
 

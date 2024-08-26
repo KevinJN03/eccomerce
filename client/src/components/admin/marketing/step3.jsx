@@ -62,8 +62,14 @@ function Step3({}) {
                             value: details.code,
                         },
                         {
-                            title: 'Shareable URL',
-                            value: `${VITE_CLIENT_URL}?coupon=${details.code}`,
+                            title:
+                                details?.offer_type == 'gift_card'
+                                    ? 'Email'
+                                    : 'Shareable URL',
+                            value:
+                                details?.offer_type == 'gift_card'
+                                    ? details?.email
+                                    : `${VITE_CLIENT_URL}?coupon=${details.code}`,
                         },
                     ].map(({ title, value }) => {
                         return (

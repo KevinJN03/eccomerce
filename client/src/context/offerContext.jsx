@@ -9,16 +9,18 @@ const OfferContext = createContext();
 export const useOfferContext = () => {
     return useContext(OfferContext);
 };
-const defaultDetails = {
-    type: 'fixed',
-    order_minimum: 'none',
-    no_end_date: false,
-    custom: false,
-    listings_type: 'all',
-    offer_type: 'promo_code',
-};
+
 function OfferContextProvider({ initialDetails, newValue, children }) {
-    const { offerType } = useSalesDiscountContext();
+    const { offerType, selectedOfferType } = useSalesDiscountContext();
+
+    const [defaultDetails, setDefaultDetails] = useState({
+        type: 'fixed',
+        order_minimum: 'none',
+        no_end_date: false,
+        custom: false,
+        listings_type: 'all',
+        offer_type: offerType || 'promo_code',
+    });
     const [showAction, setShowAction] = useState(!false);
     const [listingIdsSet, setListingIdsSet] = useState(new Set());
     const [chosenListings, setChosenListings] = useState([]);
@@ -28,7 +30,6 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
     const [chosenMap, setChosenMap] = useState(new Map());
     const [details, setDetails] = useState({
         ...defaultDetails,
-        offer_type: offerType || 'promo_code',
     });
     const [isSearching, setIsSearching] = useState(false);
     const [errors, setErrors] = useState({});
@@ -42,6 +43,8 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
     const [categories, setCategories] = useState([]);
     const [categoriesMap, setCategoriesMap] = useState(new Map());
     const debouncedSearchText = useDebounce(searchText, 300);
+    const [trigger, setTrigger] = useState(false);
+
 
     const clearError = (field) => {
         setErrors(({ [field]: prop, ...prevState }) => prevState);
@@ -136,9 +139,12 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
                     (() => {
                         const getOfferId = searchParams.get('offer');
                         if (getOfferId) {
-                            return adminAxios.get(`offers/${getOfferId}`, {
-                                signal: abortControllerRef.current?.signal,
-                            });
+                            return adminAxios.get(
+                                `offers/${getOfferId}?offer_type=${selectedOfferType}`,
+                                {
+                                    signal: abortControllerRef.current?.signal,
+                                }
+                            );
                         } else {
                             return { data: false };
                         }
@@ -309,8 +315,10 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         }
     };
 
-    const reset = () => {
-        setModalOpen(() => false);
+    const reset = (value = { close: true }) => {
+        if (value.close) {
+            setModalOpen(() => false);
+        }
         setModalView(() => 1);
         setChosenListings(() => []);
         setDetails(() => defaultDetails);
@@ -577,6 +585,7 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         handleAddListing,
         generateMapFromOffers,
         convertMapToArray,
+        trigger, setTrigger
     };
     return (
         <OfferContext.Provider value={value}>{children}</OfferContext.Provider>
