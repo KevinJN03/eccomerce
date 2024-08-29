@@ -209,11 +209,18 @@ function SalesDiscount({}) {
                             currency: true,
                             description: `Average order value is revenue divided by number of orders, used to estimate how much buyers typically spent per order.`,
                         },
+
                         {
                             title: 'Revenue from discounts',
                             amount: overallPerformance?.revenue_from_discounts,
                             currency: true,
                             description: `This is the total revenue from all orders that included a discount or sale.`,
+                        },
+                        {
+                            title: `Total Discount Amount`,
+                            amount: overallPerformance?.total_discount_amount,
+                            currency: true,
+                            description: `This is the total value of all discounts applied to orders, representing the cumulative savings given to customers`,
                             anchorOrigin: {
                                 vertical: 'center',
                                 horizontal: 'left',

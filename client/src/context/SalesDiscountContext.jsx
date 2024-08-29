@@ -31,13 +31,14 @@ function SalesDiscountProvider({ children }) {
     const { logoutUser } = useAdminContext();
     const abortControllerRef = useRef(new AbortController());
     const [selectedOfferType, setSelectedOfferType] = useState('promo_code');
-    const [showCustomPicker, setShowCustomPicker] = useState(!false);
+    const [showCustomPicker, setShowCustomPicker] = useState(false);
     const [showAction, setShowAction] = useState(false);
 
     const [overallPerformance, setOverallPerformance] = useState({
         orders_with_discount: 0,
         average_order_value: 0,
         revenue_from_discounts: 0,
+        total_discount_amount: 0,
     });
 
     const [option, setOption] = useState({
@@ -55,17 +56,40 @@ function SalesDiscountProvider({ children }) {
                 abortControllerRef.current = new AbortController();
                 setLoading(() => true);
 
-                const { data: couponData } = await adminAxios.get(
-                    selectedOfferType == 'promo_code'
-                        ? 'coupon/all'
-                        : 'giftcard/all',
+                // {
+                //     value: { data :  couponData },
+                //     status: couponStatus,
+                // },
+                // {
+                //     value: { data: performanceData },
+                //     status: performanceStatus,
+                // },
 
-                    {
-                        signal: abortControllerRef.current.signal,
-                    }
-                );
+                const [{ data: couponData }, { data: performanceData }] =
+                    await Promise.all([
+                        adminAxios.post(
+                            '/offer/all',
+                            { offer_type: selectedOfferType, ...option },
+                            {
+                                signal: abortControllerRef.current.signal,
+                            }
+                        ),
+                        adminAxios.post('/offer/overall-performance', option, {
+                            signal: abortControllerRef.current.signal,
+                        }),
+                    ]);
+             
 
                 setAllOffers(() => couponData);
+                setOverallPerformance(() => performanceData);
+
+                // if (couponStatus == 'fulfilled') {
+                //     setAllOffers(() => couponData);
+                // }
+
+                // if (performanceStatus == 'fulfilled') {
+                //     setOverallPerformance(() => performanceData);
+                // }
             } catch (error) {
                 logoutUser({ error });
                 console.error(error.message, error);
@@ -82,28 +106,28 @@ function SalesDiscountProvider({ children }) {
             clearTimeout(timeoutRef.current);
             abortControllerRef.current?.abort();
         };
-    }, [selectedOfferType]);
+    }, [selectedOfferType, option]);
 
-    useEffect(() => {
-        const fetchOverallPerformance = async () => {
-            try {
-                performanceAbortController.current?.abort();
-                performanceAbortController.current = new AbortController();
+    // useEffect(() => {
+    //     const fetchOverallPerformance = async () => {
+    //         try {
+    //             performanceAbortController.current?.abort();
+    //             performanceAbortController.current = new AbortController();
 
-                const { data } = await adminAxios.post(
-                    '/offer/overall-performance',
-                    option,
-                    { signal: performanceAbortController.current.signal }
-                );
+    //             const { data } = await adminAxios.post(
+    //                 '/offer/overall-performance',
+    //                 option,
+    //                 { signal: performanceAbortController.current.signal }
+    //             );
 
-                setOverallPerformance(() => data);
-            } catch (error) {
-                logoutUser({ error });
-                console.error(error.message, error);
-            }
-        };
-        fetchOverallPerformance();
-    }, [option]);
+    //             setOverallPerformance(() => data);
+    //         } catch (error) {
+    //             logoutUser({ error });
+    //             console.error(error.message, error);
+    //         }
+    //     };
+    //     fetchOverallPerformance();
+    // }, [option]);
 
     const value = {
         anchorEl,

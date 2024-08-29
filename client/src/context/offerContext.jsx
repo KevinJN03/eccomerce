@@ -140,7 +140,7 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
                         const getOfferId = searchParams.get('offer');
                         if (getOfferId) {
                             return adminAxios.get(
-                                `offers/${getOfferId}?offer_type=${selectedOfferType}`,
+                                `offer/${getOfferId}?offer_type=${selectedOfferType}`,
                                 {
                                     signal: abortControllerRef.current?.signal,
                                 }

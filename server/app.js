@@ -27,6 +27,9 @@ import 'dotenv/config';
 import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
 import ExpressStatusMonitor from 'express-status-monitor';
 import logger from './utils/logger.js';
+import dayjs from 'dayjs';
+import { utc } from 'dayjs';
+dayjs.extend(utc);
 const {
   DBNAME,
   URL,

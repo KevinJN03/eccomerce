@@ -75,11 +75,11 @@ import {
   get_all_giftCard,
   resendEmail,
 } from '../Controllers/giftCardController.js';
-import { overallPerformance } from '../Controllers/offersController.js';
+import { get_all_offers, overallPerformance } from '../Controllers/offersController.js';
 const router = express.Router();
 
 router.use('/giftcards', giftCardRoute);
-router.use('/offers', offerRoute);
+router.use('/offer', offerRoute);
 router.use('/stripe', stripeRoute);
 router.get('/user/search', searchUser);
 router.post('/user/status', updateUserStatus);
@@ -136,6 +136,7 @@ router.post('/product/delivery/update', update_product_delivery_profile);
 router.put('/product/category/update', update_product_category);
 router.get('/giftcard/all', get_all_giftCard);
 router.get('/giftcard/resend/:id', resendEmail);
-router.post('/offer/overall-performance', overallPerformance);
+
+
 
 export default router;

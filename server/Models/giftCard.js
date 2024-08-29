@@ -4,6 +4,7 @@ import { couponSchema } from './coupon';
 import { decrypt, encrypt } from '../utils/encrypt-decrypt-giftcard';
 import crypto from 'crypto';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 const { Schema } = mongoose;
 
 const { GIFT_CARD_SALT } = process.env;
@@ -48,11 +49,13 @@ GiftCardSchema.pre('save', function (next) {
   this.hash_code = hash;
   this.emails_sent = 1;
   this.balance = this.amount;
+  //this.start_date = dayjs().utc().unix();
   this.audits = [
     {
       msg: `Gift card generated and email sent to customer email address.`,
     },
   ];
+
   next();
 });
 GiftCardSchema.post('save', async (error, doc, next) => {

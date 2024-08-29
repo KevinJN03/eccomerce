@@ -19,12 +19,13 @@ function IndividualOffer(props) {
         uses,
         _id,
         redacted_code,
+        orders,
     } = props;
 
     const { setOpenDrawer, setSearchParams } = useSalesDiscountContext();
     const offer = new offerTypes[offer_type](props);
 
-     const { text, dateText } = offer.generateDatePeriod
+    const { text, dateText } = offer.generateDatePeriod;
     return (
         <tr key={offer.code} className="border-b border-dark-gray">
             <td className="border-r border-dark-gray px-5 py-5">
@@ -83,11 +84,11 @@ function IndividualOffer(props) {
                 <p className="text-sm">{emails_sent || 'N/A'}</p>
             </td>
             <td className="px-5">
-                <p className="text-sm">{uses}</p>
+                <p className="text-sm">{orders.uses}</p>
             </td>
             <td className="px-5">
                 <p className="text-sm">
-                    {parseFloat(revenue || 0).toLocaleString('en-GB', {
+                    {parseFloat(orders.revenue || 0).toLocaleString('en-GB', {
                         style: 'currency',
                         currency: 'GBP',
                     })}

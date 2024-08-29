@@ -8,6 +8,7 @@ import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 import generateDateRange from '../utils/generateDateRange';
 import _ from 'lodash';
+import offerOrderAggregate from '../utils/offerOrderAggregate';
 // eslint-disable-next-line import/prefer-default-export
 
 const models = {
@@ -15,11 +16,26 @@ const models = {
   gift_card: GiftCard,
 };
 
+const validator = () => {
+  return [
+    check('value').escape().trim(),
+    check('start_date').escape().trim(),
+    check('end_date').escape().trim(),
+  ];
+};
+
 export const get_offer = [
+  check('id').escape().trim(),
+  check('offer_type').escape().trim(),
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { offer_type } = req.query;
 
+    const { start_date: new_start_date, end_date: new_end_date } =
+      generateDateRange({
+        value: 'all_time',
+        converter: 'toDate',
+      });
     const offer = await models[offer_type].aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
@@ -61,6 +77,12 @@ export const get_offer = [
           newRoot: { $mergeObjects: ['$doc', { listings: '$listings' }] },
         },
       },
+
+      ...offerOrderAggregate({
+        offer_type,
+        new_end_date,
+        new_start_date,
+      }),
     ]);
 
     res.send(offer);
@@ -116,36 +138,28 @@ export const deactivate_offer = [
 ];
 
 export const overallPerformance = [
-  check('value').escape().trim(),
-  check('start_date').escape().trim(),
-  check('end_date').escape().trim(),
+  ...validator(),
 
   asyncHandler(async (req, res, next) => {
     const { value } = req.body;
 
-    const dateRangeObj = generateDateRange();
-    const dates = {};
+    const { start_date, end_date } = generateDateRange({
+      ...req.body,
+      converter: 'toDate',
+    });
 
-    if (value === 'custom') {
-      dates.start_date = dayjs(req.body.start_date, 'DD/MM/YYYY').toDate();
-      dates.end_date = dayjs(req.body.end_date, 'DD/MM/YYYY').toDate();
-    } else {
-      _.assign(dates, dateRangeObj[value]);
-    }
-
-    const { start_date, end_date } = dates;
     const pipeline = [
       {
         $match: {
           $and: [{ createdAt: { $gte: start_date, $lte: end_date } }],
           $or: [
             {
-              'offer.promo_code.discount': {
+              'transaction_cost.offer.promo_code.discount': {
                 $gt: 0,
               },
             },
             {
-              'offer.gift_card.discount': {
+              'transaction_cost.offer.gift_card.discount': {
                 $gt: 0,
               },
             },
@@ -160,9 +174,12 @@ export const overallPerformance = [
             $sum: '$transaction_cost.total',
           },
           ids: { $push: '$_id' },
-          discount_total: {
+          total_discount_amount: {
             $sum: {
-              $add: ['$offer.promo_code.discount', '$offer.gift_card.discount'],
+              $add: [
+                '$transaction_cost.offer.promo_code.discount',
+                '$transaction_cost.offer.gift_card.discount',
+              ],
             },
           },
         },
@@ -174,6 +191,7 @@ export const overallPerformance = [
       orders_with_discount: 0,
       average_order_value: 0,
       revenue_from_discounts: 0,
+      total_discount_amount: 0,
       ...performanceResult,
     };
 
@@ -191,5 +209,64 @@ export const overallPerformance = [
       value,
       body: req.body,
     });
+  }),
+];
+
+export const get_all_offers = [
+  ...validator(),
+  check('offer_type').escape().trim(),
+  asyncHandler(async (req, res, next) => {
+    const { value, offer_type } = req.body;
+
+    const { start_date, end_date } = generateDateRange({
+      ...req.body,
+      converter: 'unix',
+    });
+    //
+
+    const new_start_date = new Date(start_date * 1000);
+    const new_end_date = new Date(end_date * 1000);
+
+    const pipeline = [
+      // not all offers will have an end date
+      // i need to find the promos that was active during the time given t search for
+      //
+
+      {
+        $match: {
+          $or: [
+            {
+              $and: [
+                {
+                  timestamp: {
+                    $lte: new_end_date,
+                    $gte: new_start_date,
+                  },
+                },
+                // { end_date: { $lte: end_date } },
+              ],
+            },
+            // offer with no end_date but started before the end_date
+            // if end_date selected is before the start_date of offer dont show offer
+            // end_date <= start_date - no show
+            {
+              $and: [
+                {
+                  end_date: { $eq: null },
+                  timestamp: {
+                    $lte: new_end_date,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      ...offerOrderAggregate({ new_end_date, new_start_date, offer_type }),
+    ];
+
+    const results = await models[offer_type].aggregate(pipeline);
+    // res.send({ results, body: req.body, start_date, end_date });
+    res.send(results);
   }),
 ];

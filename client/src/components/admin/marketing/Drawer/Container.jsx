@@ -71,7 +71,7 @@ function Container({}) {
     const handleDeactivate = async () => {
         try {
             const { data } = await adminAxios.get(
-                `/offers/deactivate/${details._id}?offer_type=${details.offer_type}`
+                `/offer/deactivate/${details._id}?offer_type=${details.offer_type}`
             );
 
             setDetails(() => data);
@@ -170,14 +170,18 @@ function Container({}) {
                                     <p className="text-xl font-semibold">
                                         USED
                                     </p>
-                                    <p className="text-3xl">—</p>
+                                    <p className="text-3xl">
+                                        {details?.orders?.uses || '—'}
+                                    </p>
                                 </div>
                                 <div className="right">
                                     <h3 className="text-xl font-semibold">
                                         REVENUE
                                     </h3>
                                     <h2 className="text-3xl font-semibold">
-                                        {parseFloat(0).toLocaleString('en-GB', {
+                                        {parseFloat(
+                                            details?.orders?.revenue || 0
+                                        ).toLocaleString('en-GB', {
                                             style: 'currency',
                                             currency: 'GBP',
                                         })}

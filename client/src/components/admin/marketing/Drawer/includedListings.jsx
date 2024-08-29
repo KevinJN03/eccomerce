@@ -50,7 +50,7 @@ function IncludedListings({
             setBtnLoading(() => true);
             abortControllerRef.current?.abort();
             abortControllerRef.current = new AbortController();
-            const { data } = await adminAxios.post('/offers/update/listings', {
+            const { data } = await adminAxios.post('/offer/update/listings', {
                 id: details._id,
                 listings: Array.from(listingIdsSet),
             });

@@ -19,7 +19,7 @@ function Index({}) {
         const fetchData = async () => {
             try {
                 const { data } = await adminAxios.get(
-                    `offers/${searchParams.get('offer')}`,
+                    `offer/${searchParams.get('offer')}`,
                     {
                         signal: abortControllerRef.current?.signal,
                     }
