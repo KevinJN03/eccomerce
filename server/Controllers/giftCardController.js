@@ -13,7 +13,9 @@ import GiftCardSend from '../React Email/emails/giftcard/GiftCardSend.jsx';
 import transporter from '../utils/nodemailer.js';
 import { renderAsync } from '@react-email/render';
 import crypto from 'crypto';
-import { decrypt } from '../utils/encrypt-decrypt-giftcard.js';
+import { decrypt, hashCode } from '../utils/encrypt-decrypt-giftcard.js';
+import { rmSync } from 'fs';
+import dayjs from 'dayjs';
 const { SENDER } = process.env;
 
 export const get_all_giftCard = asyncHandler(async (req, res, next) => {
@@ -175,3 +177,103 @@ export const resendEmail = asyncHandler(async (req, res, next) => {
 
   res.send({ msg: 'email resent', success: true });
 });
+
+export const saveGiftCard = [
+  check('code', 'Enter a valid voucher code')
+    .escape()
+    .trim()
+    .isLength({ min: 19, max: 19 })
+    .custom(async (value, { req }) => {
+      const hash_code = hashCode(value);
+      const gift_card = await GiftCard.findOne({ hash_code }, null, {
+        lean: { toObject: true },
+      });
+
+      if (!gift_card) {
+        throw new Error('A voucher with this code does not exist.');
+      }
+      if (gift_card.customer) {
+        console.log({ req: req.user, customer: gift_card.customer });
+        throw new Error(
+          `This voucher has already been applied to ${
+            req.user._id?.equals(gift_card.customer) ? 'your' : 'an'
+          } account.`,
+        );
+      }
+
+      return value;
+    }),
+  asyncHandler(async (req, res, next) => {
+    const { code } = req.body;
+
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.status(404).send(errors.mapped());
+    }
+    const hash_code = hashCode(code);
+    console.log({ code, user: req.user._id, hashCode });
+
+    const gift_card = await GiftCard.findOneAndUpdate(
+      { hash_code },
+      {
+        customer: req.user._id,
+        added: dayjs().toDate(),
+        $push: {
+          audits: {
+            $each: [
+              {
+                msg: 'Gift card added to an account',
+              },
+            ],
+            $position: 0,
+          },
+        },
+      },
+      {
+        new: true,
+        lean: { toObject: true },
+      },
+    );
+
+    res.send({ code, gift_card });
+  }),
+];
+
+export const getAllUserGiftCards = [
+  check('limit').escape().trim().toInt(),
+  check('page').escape().trim().toInt(),
+
+  asyncHandler(async (req, res, next) => {
+    const { page, limit } = req.query;
+    const count = await GiftCard.countDocuments({ customer: req.user._id });
+    const skip = (page - 1) * limit;
+    const pipeline = [
+      {
+        $match: { customer: req.user._id },
+      },
+      {
+        $sort: { added: -1, _id: 1 },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          amount: 1,
+          redacted_code: 1,
+          balance: 1,
+          end_date: 1,
+          timestamp: 1,
+        },
+      },
+     
+    ];
+
+    const result = await GiftCard.aggregate(pipeline);
+    res.send({ vouchers: result, count });
+  }),
+];

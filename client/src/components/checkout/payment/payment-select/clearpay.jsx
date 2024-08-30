@@ -27,7 +27,7 @@ function ClearPaySelect({}) {
                                 setFutureUse((prevState) => !prevState)
                             }
                             type="checkbox"
-                            className="daisy-checkbox daisy-checkbox-md rounded-none "
+                            className="daisy-checkbox daisy-checkbox-md !rounded-none "
                             checked={futureUse}
                         />
                     </div>
@@ -87,8 +87,8 @@ function ClearPaySelect({}) {
                                         idx == 0
                                             ? 'justify-start'
                                             : idx == 3
-                                            ? 'justify-end'
-                                            : ''
+                                              ? 'justify-end'
+                                              : ''
                                     } flex w-full flex-1 items-center `}
                                 >
                                     <p
@@ -96,11 +96,11 @@ function ClearPaySelect({}) {
                                             idx == 0
                                                 ? 'text-left'
                                                 : idx == 3
-                                                ? '!self-end text-right'
-                                                : idx == 2
-                                                ? 'ml-auto  mr-[10%] !self-end text-center'
-                                                : idx == 1 &&
-                                                  'ml-[10%] mr-auto self-start text-center'
+                                                  ? '!self-end text-right'
+                                                  : idx == 2
+                                                    ? 'ml-auto  mr-[10%] !self-end text-center'
+                                                    : idx == 1 &&
+                                                      'ml-[10%] mr-auto self-start text-center'
                                         }`}
                                     >
                                         {item}

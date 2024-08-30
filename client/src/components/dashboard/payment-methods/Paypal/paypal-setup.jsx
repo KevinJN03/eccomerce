@@ -49,7 +49,7 @@ function PayPalSetUp({ clientSecret }) {
             <AnimatePresence>
                 {errorMessage && (
                     <motion.div
-                        className="alert alert-error mb-2  rounded-none"
+                        className="alert alert-error mb-2  !rounded-none"
                         variants={variants}
                         initial={'initial'}
                         animate={'animate'}

@@ -1,6 +1,4 @@
-import { createContext, useEffect, useReducer, useState } from 'react';
-import axios from '../api/axios';
-
+import { createContext, useEffect, useReducer, useRef, useState } from 'react';
 export const AuthContext = createContext();
 
 const authReducer = (state, action) => {
@@ -21,6 +19,15 @@ const authReducer = (state, action) => {
 export function AuthContextProvider({ children }) {
     const getUser = JSON.parse(localStorage.getItem('user'));
     const [authUser, authDispatch] = useReducer(authReducer, getUser);
+
+    // const logoutFunction = ({ error }) => {
+    //     console.error(error);
+    //     if (error?.response?.status == 401) {
+    //         authDispatch({ type: 'LOGOUT' });
+    //         return navigate('/portal/login');
+    //     }
+    // };
+    // logoutRef.current = logoutFunction;
     return (
         <AuthContext.Provider value={{ ...authUser, authDispatch }}>
             {children}

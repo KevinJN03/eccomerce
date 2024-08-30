@@ -34,14 +34,11 @@ function Cart_Item({ cartItem, idx, lastIndex, deliveryMap }) {
         const { ...values } =
             e.target.options[e.target.options.selectedIndex]?.dataset;
 
-
         updateItemProperty({
             itemId: cartItem._id,
             property: 'variation_data.select.variation2',
             value: values,
         });
-
-        
 
         // if (!_.get(cartItem, 'variation_data', 'isVariationCombine')) {
         //     const findSizeVariation = [
@@ -487,7 +484,7 @@ pb-4
                                                 onChange={handleDeliverySelect}
                                                 name="shipping-select"
                                                 id="shipping-select"
-                                                className=" daisy-select daisy-select-bordered daisy-select-sm w-full rounded-none !text-xxs text-black"
+                                                className=" daisy-select daisy-select-bordered daisy-select-sm w-full !rounded-none !text-xxs text-black"
                                             >
                                                 <option
                                                     className=""

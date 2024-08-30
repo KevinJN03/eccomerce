@@ -16,7 +16,7 @@ function Error_Alert({ setError, error, property }) {
         <AnimatePresence>
             {error?.[property] && (
                 <motion.div
-                    className="alert alert-error my-2  rounded-none"
+                    className="alert alert-error my-2  !rounded-none"
                     variants={variants}
                     initial={'initial'}
                     animate={'animate'}

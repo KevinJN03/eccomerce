@@ -43,7 +43,7 @@ function SeamlessDropdown({ show, setShow, children, options, className }) {
                                                 handleClick();
                                                 setShow(() => false);
                                             }}
-                                            className={`w-full cursor-pointer whitespace-nowrap rounded-b-inherit py-3 pl-4 pr-8 text-sm hover:bg-light-grey ${idx == options.length - 1 ? 'rounded-b-xl' : 'rounded-none'}`}
+                                            className={`w-full cursor-pointer whitespace-nowrap rounded-b-inherit py-3 pl-4 pr-8 text-sm hover:bg-light-grey ${idx == options.length - 1 ? 'rounded-b-xl' : '!rounded-none'}`}
                                         >
                                             {text}
                                         </li>
@@ -75,7 +75,7 @@ export function ThemeDropDown({
                     zIndex: 11,
                 }}
             > */}
-                {defaultIcon}
+            {defaultIcon}
             {/* </span> */}
             {show && (
                 <div

@@ -305,7 +305,7 @@ function ListingPage() {
                                         duration: 0.3,
                                     },
                                 }}
-                                className="daisy-progress  !m-0 !h-1  w-full !rounded-none !p-0 "
+                                className="!!rounded-none  daisy-progress !m-0  !h-1 w-full !p-0 "
                                 value={progressValue}
                                 max="100"
                             ></motion.progress>

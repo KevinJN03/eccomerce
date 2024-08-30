@@ -1,12 +1,12 @@
 import { closeError } from '../../../common/handleError';
-function ErrorList({error, setError}) {
+function ErrorList({ error, setError }) {
     return (
         <section id="ErrorList">
             {error.length > 0 &&
                 error.map((err) => {
                     return (
                         <div
-                            className="alert alert-warning rounded-none"
+                            className="alert alert-warning !rounded-none"
                             key={err.id}
                         >
                             <svg

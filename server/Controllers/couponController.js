@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import asyncHandler from 'express-async-handler';
-
 import Coupon from '../Models/coupon.js';
 import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
@@ -15,10 +14,12 @@ export const get_all_coupons = asyncHandler(async (req, res, next) => {
 });
 
 export const get_single_coupon = [
+  check('code').escape().trim().toUpperCase(),
   asyncHandler(async (req, res, next) => {
-    const { code } = req.body;
+    const { code } = req.query;
 
-    const coupon = await Coupon.findOne({ code: code.toUpperCase() });
+    const coupon = await Coupon.findOne({ code });
+    console.log({code, coupon})
 
     if (coupon) {
       res.status(200).send(coupon);
@@ -139,4 +140,3 @@ export const create_coupon = [
     // res.status(200).send(newCoupon);
   }),
 ];
- 

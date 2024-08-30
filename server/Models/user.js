@@ -65,11 +65,11 @@ const UserSchema = new Schema(
     mobile: { type: Schema.Types.String },
     adminAccess: { type: Schema.Types.Boolean, default: false },
     contact_preferences: {
-      discount_newDrops: {
+      discount_new_drops: {
         email: { type: Schema.Types.Boolean, default: false },
         text: { type: Schema.Types.Boolean, default: false },
       },
-      stockAlert: {
+      stock_alert: {
         email: { type: Schema.Types.Boolean, default: false },
       },
     },

@@ -46,7 +46,6 @@ function CancelContainer({
     handleCancelOrder,
     loading,
     className,
-   
 }) {
     const [courierLinks, setCourierLinks] = useState(courierLinksObject);
 
@@ -133,7 +132,7 @@ function CancelContainer({
                         value={extraInfo}
                         maxLength={'500'}
                         rows={'5'}
-                        className="mt-2 w-full resize-none  rounded-none border-2 p-2 text-s"
+                        className="mt-2 w-full resize-none  !rounded-none border-2 p-2 text-s"
                         placeholder="Optional - max 500 characters"
                     />
                     {error?.additional_information && (
@@ -160,7 +159,7 @@ function CancelContainer({
                     exit={'exit'}
                     onClick={() => setShow(false)}
                     type="button"
-                    className="hover:bg-light-grey mt-2 w-full border-2 bg-white px-6 py-2  font-gotham text-s opacity-95"
+                    className="mt-2 w-full border-2 bg-white px-6 py-2 font-gotham  text-s opacity-95 hover:bg-light-grey"
                 >
                     CLOSE
                 </motion.button>

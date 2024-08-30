@@ -8,7 +8,7 @@ function PayPalPayIn3({}) {
 
     const paymentAmount = (withShipping / 3).toFixed(2);
     return (
-        <section className="pr-32 flex flex-col flex-nowrap gap-y-7">
+        <section className="flex flex-col flex-nowrap gap-y-7 pr-32">
             <div className="top flex flex-row items-center gap-x-3">
                 <img
                     src={paypal_logo}
@@ -26,7 +26,7 @@ function PayPalPayIn3({}) {
                                 setFutureUse((prevState) => !prevState)
                             }
                             type="checkbox"
-                            className="daisy-checkbox daisy-checkbox-md rounded-none "
+                            className="daisy-checkbox daisy-checkbox-md !rounded-none "
                             checked={futureUse}
                         />
                     </div>
@@ -78,8 +78,10 @@ function PayPalPayIn3({}) {
             </div>
 
             <div className="bottom ">
-                <p className='
-                mb-7 text-sm'>
+                <p
+                    className="
+                mb-7 text-sm"
+                >
                     Pay in 3 is a form of credit, so carefully consider whether
                     the purchase is affordable and how you will make the
                     repayments. Be aware of the possible impact of using Pay in

@@ -73,7 +73,7 @@ const Select = forwardRef(function Select(
                                 property,
                             })
                         }
-                        className="item-select select mb-3 min-h-0  min-w-full rounded-none border-[1px] border-black !outline-none focus:!drop-shadow-2xl"
+                        className="item-select select mb-3 min-h-0  min-w-full !rounded-none border-[1px] border-black !outline-none focus:!drop-shadow-2xl"
                     >
                         <option value={'null'}>Please Select</option>
                         {array.map((item, index) => {

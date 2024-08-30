@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 function DobPicker({ error, setDob, showDescription, value, setError }) {
     const handleDateChange = (e) => {
         try {
-            
             setDob(() => e.set('h', 1).set('m', 0).set('s', 0).format());
             setError((prevState) => ({
                 ...prevState,
@@ -20,7 +19,7 @@ function DobPicker({ error, setDob, showDescription, value, setError }) {
             <div className="date-picker">
                 <DatePicker
                     inputFormat="DD-MM-YYYY"
-                    views={['day', 'month', 'year']}
+                    views={['year', 'month', 'day']}
                     slotProps={{
                         textField: { size: 'small', fullWidth: true },
                     }}

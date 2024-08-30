@@ -20,7 +20,7 @@ const { VITE_CLIENT_URL, VITE_WEBSITE, VITE_CLOUDFRONT_URL } = import.meta.env;
 
 function Step4({ handleDone }) {
     const { reset, details } = useOfferContext();
-
+    const [trigger, setTrigger] = useState();
     const couponUrl = `https://${VITE_WEBSITE}?coupon=${details?.code}`;
     const description = `I'm offering a discount! ${couponUrl} via @${VITE_WEBSITE} \r\n`;
 
@@ -111,7 +111,14 @@ function Step4({ handleDone }) {
                         </TwitterShareButton>
                     </section>
 
-                    <CopyLink url={couponUrl} />
+                    <CopyLink
+                        {...{
+                            trigger,
+                            setTrigger,
+                            url: couponUrl,
+                            button: { clicked: 'Copied', default: 'Copy' },
+                        }}
+                    />
                 </body>
             )}
 

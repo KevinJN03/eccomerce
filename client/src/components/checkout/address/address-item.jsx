@@ -67,10 +67,7 @@ function Address_Item({ address, idx }) {
             SetDisableOtherComponents({
                 addressType: null,
                 disable: false,
-            })
-           
-
-         
+            });
         }, 1000);
     };
 
@@ -119,7 +116,7 @@ function Address_Item({ address, idx }) {
                             onChange={() => handleDefault(address._id)}
                             type="checkbox"
                             id="checkbox"
-                            className="daisy-checkbox rounded-none"
+                            className="daisy-checkbox !rounded-none"
                         />
                         <p>
                             Set as your default {addressTypeLowerCase} address

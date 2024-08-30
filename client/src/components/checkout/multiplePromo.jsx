@@ -40,7 +40,7 @@ function MultiplePromo({ setCheck, check, setShow }) {
                     border: 'none',
                 }}
             >
-                <div className=" flex w-full flex-col !gap-7 gap-5 rounded-none border-none p-8">
+                <div className=" flex w-full flex-col !gap-7 gap-5 !rounded-none border-none p-8">
                     <h2 className="mb-2 self-center font-gotham text-3xl">
                         MULTIPLE PROMO CODES
                     </h2>

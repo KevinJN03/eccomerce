@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { couponSchema } from './coupon';
-import { decrypt, encrypt } from '../utils/encrypt-decrypt-giftcard';
+import { decrypt, encrypt, hashCode } from '../utils/encrypt-decrypt-giftcard';
 import crypto from 'crypto';
 import _ from 'lodash';
 import dayjs from 'dayjs';
@@ -16,7 +16,8 @@ GiftCardSchema.add({
   email: { type: Schema.Types.String, required: true },
   redacted_code: { type: Schema.Types.String },
   balance: { type: Schema.Types.Number },
-  customer: { type: Schema.Types.ObjectId },
+  customer: { type: Schema.Types.ObjectId, ref: 'users' },
+  added: { type: Schema.Types.Date, default: null },
   // audits: [
   //   {
   //     timestamp: { type: Schema.Types.Date, default: Date.now, required: true },
@@ -35,7 +36,7 @@ GiftCardSchema.set('toObject', { virtuals: true });
 
 GiftCardSchema.pre('save', function (next) {
   const encryptedText = encrypt(this.code);
-  const hash = crypto.createHash('sha256').update(this.code).digest('hex');
+  const hash = hashCode(this.code);
   const redactPositions = [0, 5, 10, 15];
   const randomIndex = _.random(0, redactPositions.length - 1);
   const redacted_portion = this.code.substring(

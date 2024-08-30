@@ -10,11 +10,11 @@ const Input = ({ check, setCheck, text, property }) => {
                         [property]: !prevState[property],
                     }))
                 }
-                className="daisy-checkbox  rounded-none border-[1px] border-black"
+                className="!!rounded-none  daisy-checkbox border-[1px] border-black"
             />
             <p className="text-sm">{text}</p>
         </div>
     );
 };
 
-export default Input
+export default Input;

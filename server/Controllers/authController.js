@@ -130,10 +130,11 @@ router.post('/oauth/disconnect', [
         new: true,
       },
     );
+    console.log({ user });
     res.status(200).send({
       success: true,
       msg: 'account deleted',
-      socialAccounts: user?.social_accounts,
+      social_accounts: user?.social_accounts,
     });
   }),
 ]);

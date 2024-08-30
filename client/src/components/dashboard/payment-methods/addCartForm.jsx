@@ -178,7 +178,7 @@ export function AddCartForm({ clientSecret }) {
                 >
                     <input
                         type="checkbox"
-                        className="daisy-checkbox rounded-none"
+                        className="daisy-checkbox !rounded-none"
                         name="default"
                         id="default-payment-check"
                         checked={defaultCheck}

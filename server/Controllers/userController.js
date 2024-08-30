@@ -204,7 +204,6 @@ export const get_single_user = asyncHandler(async (req, res, next) => {
     .set('s', 0)
     .toDate();
 
-
   const [user, orders, getOrdersByMonth] = await Promise.all([
     User.findById(id, null, {
       populate: {
@@ -362,12 +361,21 @@ export const logoutUser = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllUserData = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const user = await User.findById(
-      req.session.passport.user,
+      req.user._id,
       {
-        password: 0,
+        email: 1,
+        firstName: 1,
+        lastName: 1,
+        interest: 1,
+        _id: 1,
+        id: 1,
+        social_accounts: 1,
+        default_address: 1,
+        contact_preferences: 1,
+        address: 1,
+        dob: 1,
       },
       {
         lean: {
@@ -380,14 +388,11 @@ export const getAllUserData = [
       },
     ).exec();
 
-    console.log({ type: typeof user?.dob });
-    // .populate('address')
     res.send({ user });
   }),
 ];
 
 export const changeDetails = [
-  checkAuthenticated,
   check('firstName', 'Please enter a first name').trim().escape().notEmpty(),
   check('lastName', 'Please enter a last name').trim().escape().notEmpty(),
   check('email', 'Please enter a valid email')
@@ -420,7 +425,6 @@ export const changeDetails = [
         const lastTimeEmailChanged = dayjs(currentUser?.lastEmailChange);
 
         const difference = todayDate.diff(lastTimeEmailChanged, 'minute');
-
 
         if (difference < 30) {
           throw new Error(
@@ -517,7 +521,6 @@ export const changeDetails = [
 ];
 
 export const addUserAddress = [
-  checkAuthenticated,
   addressValidator,
   asyncHandler(async (req, res, next) => {
     const result = validationResult(req);
@@ -557,7 +560,6 @@ export const addUserAddress = [
 ];
 
 export const deleteAddress = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
 
@@ -586,7 +588,6 @@ export const deleteAddress = [
 ];
 
 export const editAddress = [
-  checkAuthenticated,
   addressValidator,
   asyncHandler(async (req, res, next) => {
     const result = validationResult(req);
@@ -624,7 +625,10 @@ export const editAddress = [
 ];
 
 export const updatePreferences = [
-  checkAuthenticated,
+  check('discount_new_drops.email').escape().trim(),
+  check('discount_new_drops.text').escape().trim(),
+  check('stock_alert.email').escape().trim(),
+
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
 
@@ -633,17 +637,21 @@ export const updatePreferences = [
       {
         contact_preferences: req.body,
       },
-      { new: true, upsert: true },
+      {
+        new: true,
+        upsert: true,
+        select: { contact_preferences: 1 },
+        lean: { toObject: true },
+      },
     );
 
     res
       .status(200)
-      .send({ msg: 'User contact preferences successfully updates' });
+      .send({ msg: 'User contact preferences successfully updates', ...user });
   }),
 ];
 
 export const updateDefaultAddress = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const body = req.body;
     const property = Object.keys(body)[0];
@@ -671,8 +679,6 @@ export const updateDefaultAddress = [
 ];
 
 export const addPaymentMethod = [
-  checkAuthenticated,
-
   check('logo').escape().trim(),
   check('description').escape().trim(),
   check('alt').escape().trim(),
@@ -698,7 +704,6 @@ export const addPaymentMethod = [
 ];
 
 export const deletePaymentMethod = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
@@ -723,7 +728,6 @@ export const deletePaymentMethod = [
 ];
 
 export const changeDefaultMethod = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const userId = req.session.passport.user;
@@ -736,7 +740,6 @@ export const changeDefaultMethod = [
 ];
 
 export const saveCustomerCard = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
 
@@ -772,7 +775,6 @@ export const saveCustomerCard = [
 ];
 
 export const getPaymentMethods = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
 
@@ -832,7 +834,6 @@ export const getPaymentMethods = [
 ];
 
 export const setUpPaypal = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
     const session = await stripe.checkout.sessions.create({
@@ -848,7 +849,6 @@ export const setUpPaypal = [
 ];
 
 export const setUpKlarna = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
     // const session = await stripe.checkout.sessions.create({
@@ -906,7 +906,6 @@ export const setUpKlarna = [
 ];
 
 export const getOrders = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.session.passport.user;
     // const getUserOrder = await User.findOne({ _id: userId }, null, {
@@ -928,7 +927,6 @@ export const getOrders = [
 ];
 
 export const changePassword = [
-  checkAuthenticated,
   check('currentPassword')
     .trim()
     .escape()
@@ -995,7 +993,6 @@ export const changePassword = [
 ];
 
 export const addDigitalPaymentMethod = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const { type } = req.body;
     const userId = req.session.passport?.user;
@@ -1065,7 +1062,6 @@ export const addDigitalPaymentMethod = [
 ];
 
 export const cancelOrder = [
-  checkAuthenticated,
   check('orderNumber').trim().escape(),
   check('reason', 'Please select a reason for cancellation')
     .trim()
@@ -1133,7 +1129,6 @@ export const cancelOrder = [
 ];
 
 export const updateWishlist = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.user._id;
     await User.findByIdAndUpdate(userId, { wishlist: req.body.wishlist });
@@ -1142,7 +1137,6 @@ export const updateWishlist = [
 ];
 
 export const getWishlist = [
-  checkAuthenticated,
   asyncHandler(async (req, res, next) => {
     const userId = req.user._id;
 

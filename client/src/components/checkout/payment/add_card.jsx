@@ -215,7 +215,7 @@ export default function Add_Card({}) {
                 >
                     {/* <input
                         type="checkbox"
-                        className="daisy-checkbox rounded-none"
+                        className="daisy-checkbox !rounded-none"
                         name="default"
                         id="default-payment-check"
                         checked={defaultCheck}

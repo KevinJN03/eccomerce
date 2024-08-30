@@ -13,9 +13,9 @@ const router = express.Router();
 
 router.get('/', get_single_giftCard);
 router.post('/create', create_giftCard);
-// router.get('/all', get_all_giftCard);
-router.delete('/delete/all', delete_all);
-router.delete('/delete/:id', delete_single);
+router.get('/all', get_all_giftCard);
+// router.delete('/delete/all', delete_all);
+// router.delete('/delete/:id', delete_single);
 router.get('/newcode', generate_new_code);
 
 export default router;

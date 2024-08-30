@@ -8,6 +8,7 @@ import defaultAxios from '../../api/axios';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import logOutUser from '../common/logoutUser';
+import _ from 'lodash';
 const URL = import.meta.env.VITE_BACKEND_URL;
 function Social_Item({ icon, title, enable, connectSocial, disconnectSocial }) {
     return (
@@ -62,24 +63,24 @@ function Social_Item({ icon, title, enable, connectSocial, disconnectSocial }) {
     );
 }
 function Socials({}) {
-    const { socialAccounts, setSocialAccounts, setFooterMessage } =
+    const { setFooterMessage, userData, setUserData } =
         useUserDashboardContext();
+
     const options = [
-      
         {
             title: 'Facebook',
             icon: facebook_icon,
-            enable: socialAccounts?.['facebook'],
+            enable: _.get(userData, ['social_accounts', 'facebook']),
         },
         {
             title: 'Google',
             icon: google_icon,
-            enable: socialAccounts?.['google'],
+            enable: _.get(userData, ['social_accounts', 'google']),
         },
         {
             title: 'Twitter',
             icon: twitter_icon,
-            enable: socialAccounts?.['twitter'],
+            enable: _.get(userData, ['social_accounts', 'twitter']),
         },
     ];
 
@@ -96,7 +97,10 @@ function Socials({}) {
                 account: title.toLowerCase(),
             });
 
-            setSocialAccounts(() => data?.socialAccounts);
+            setUserData((prevState) => ({
+                ...prevState,
+                social_accounts: data.socialAccounts,
+            }));
             setFooterMessage({ success: true, text: 'Changes saved' });
         } catch (error) {
             console.error(error);

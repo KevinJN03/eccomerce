@@ -10,7 +10,7 @@ function Dropdown_Size({ title, options }) {
                 className="dropdown mb-2 h-14 w-full bg-white"
                 onClick={() => setOpen((prevstate) => !prevstate)}
             >
-                <summary className="border-1 btn m-1 h-full w-full justify-between rounded-none bg-white pb-6">
+                <summary className="border-1 btn m-1 h-full w-full justify-between !rounded-none bg-white pb-6">
                     <div className="text-left">
                         <p className="text-xxs">{title}</p>
                         <span className="mb-3 text-base">{size}</span>
@@ -23,7 +23,7 @@ function Dropdown_Size({ title, options }) {
                         className={open ? 'up-arrow' : 'down-arrow'}
                     />
                 </summary>
-                <ul className="menu dropdown-content rounded-box z-[1] w-52 bg-base-100 p-2 shadow">
+                <ul className="dropdown-content rounded-box menu z-[1] w-52 bg-base-100 p-2 shadow">
                     {options?.map((option) => {
                         return (
                             <li>

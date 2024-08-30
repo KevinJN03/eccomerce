@@ -15,4 +15,10 @@ function decrypt(encryptedText) {
   return decryptedText;
 }
 
-export { encrypt, decrypt };
+
+function hashCode(code) {
+
+  return crypto.createHash('sha256').update(code).digest('hex')
+
+}
+export { encrypt, decrypt, hashCode };

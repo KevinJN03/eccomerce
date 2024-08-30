@@ -16,7 +16,7 @@ function ResetPassword({}) {
 
     const [token, setToken] = useState(() => searchParams.get('pwrt'));
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const inputProps = {
         error,
         setError,
@@ -50,7 +50,7 @@ function ResetPassword({}) {
                 confirmPassword,
             });
 
-            navigate('/portal/login')
+            navigate('/portal/login');
         } catch (error) {
             console.error('error while resetting password:', error);
 
@@ -168,7 +168,7 @@ function ResetPassword({}) {
                         exit={'exit'}
                         initial={'initial'}
                         role="alert"
-                        className="alert alert-error mb-4 w-full rounded-none"
+                        className="alert alert-error mb-4 w-full !rounded-none"
                     >
                         <svg
                             onClick={removeError}
@@ -184,9 +184,7 @@ function ResetPassword({}) {
                                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                         </svg>
-                        <span>
-                            {errorMessage()}
-                        </span>
+                        <span>{errorMessage()}</span>
                     </motion.div>
                 )}
             </AnimatePresence>

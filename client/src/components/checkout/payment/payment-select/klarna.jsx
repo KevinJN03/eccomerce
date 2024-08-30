@@ -161,7 +161,7 @@ function KlarnaSelect({}) {
                     <input
                         onChange={() => setFutureUse((prevState) => !prevState)}
                         type="checkbox"
-                        className="daisy-checkbox rounded-none"
+                        className="daisy-checkbox !rounded-none"
                         checked={futureUse}
                     />
                     <p className="text-sm">Save for future use</p>

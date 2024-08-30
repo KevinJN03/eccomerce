@@ -197,7 +197,7 @@ function New_Product({ Content, type }) {
                     </a>
                 </div>
 
-                <section className="flex w-full max-w-[1366px] flex-col gap-y-3 rounded-none bg-[var(--light-grey)] py-4 pl-16 pr-20">
+                <section className="flex w-full max-w-[1366px] flex-col gap-y-3 !rounded-none bg-[var(--light-grey)] py-4 pl-16 pr-20">
                     {_.get(publishError, 'default') && (
                         <div className="alert alert-error">
                             <svg

@@ -57,7 +57,7 @@ function WishList({}) {
                                 <select
                                     name="sort-by"
                                     id="sort-by"
-                                    className="daisy-select daisy-select-bordered daisy-select-sm w-fit rounded-none text-base font-semibold"
+                                    className="daisy-select daisy-select-bordered daisy-select-sm w-fit !rounded-none text-base font-semibold"
                                 >
                                     <option value="">Recently added</option>
                                 </select>
