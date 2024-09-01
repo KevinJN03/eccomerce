@@ -1,3 +1,4 @@
 {
-    "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
+    "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }],
+    "build": "npm install --legacy-peer-deps && vercel build"
 }
