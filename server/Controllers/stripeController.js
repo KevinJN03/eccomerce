@@ -51,10 +51,10 @@ export const stripeTransactions = [
 
     await Promise.allSettled(fetchPromises);
 
-    const jsonToCsvParser = new Parser();
-    const csv = jsonToCsvParser.parse(stats.data);
+    // const jsonToCsvParser = new Parser();
+    // const csv = jsonToCsvParser.parse(stats.data);
 
-    fs.writeFileSync('./data.csv', csv);
+    // fs.writeFileSync('./data.csv', csv);
     res.send({
       stats,
       // refunds,
