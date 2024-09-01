@@ -3,7 +3,7 @@ import {
     PersonOutlineTwoTone,
     NorthEastRounded,
 } from '@mui/icons-material';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import variant from '../home/variant';
@@ -14,9 +14,10 @@ function UserInfo({}) {
     const {
         orderInfo,
         setOpenDrawer,
-        setSearchResult,
+
         setSearchingOrder,
         setSearchText,
+        searchForOrder,
     } = useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const [show, setShow] = useState(false);
@@ -30,19 +31,21 @@ function UserInfo({}) {
     };
 
     const orderHistory = async () => {
-        try {
-            const { data } = await adminAxios.post('searchOrder', {
-                searchText: orderInfo.customer?._id,
-            });
-            setSearchText(() => orderInfo.customer?._id);
-            setSearchResult(() => data.searchResult);
-        } catch (error) {
-            console.error('error while fetching order history: ', error);
-            logoutUser({ error });
-        } finally {
-            setOpenDrawer(() => false);
-            setSearchingOrder(() => true);
-        }
+        // setSearchText(() => orderInfo.customer?._id);
+        searchForOrder(orderInfo.customer?._id);
+        setOpenDrawer(() => false);
+        // try {
+        //     const { data } = await adminAxios.post('searchOrder', {
+        //         searchText: orderInfo.customer?._id,
+        //     });
+        //     setSearchText(() => orderInfo.customer?._id);
+        // } catch (error) {
+        //     console.error('error while fetching order history: ', error);
+        //     logoutUser({ error });
+        // } finally {
+        //     setOpenDrawer(() => false);
+        //     setSearchingOrder(() => true);
+        // }
     };
     return (
         <div className="my-3 flex flex-row gap-3 rounded-sm border-[1px]  p-4">
@@ -55,12 +58,12 @@ function UserInfo({}) {
                         onClick={toggleShow}
                         className="flex flex-row items-center gap-[2px]"
                     >
-                        <p className="text-xxs underline underline-offset-1">
-                            {orderInfo.customer?.fullName}
+                        <p className="text-xs underline underline-offset-1">
+                            {`${orderInfo.customer?.firstName} ${orderInfo.customer?.lastName}`}
                         </p>
                         <ArrowDropDownSharp className="!text-xl" />
                     </button>
-                    <p className="align-baseline !text-xxs underline underline-offset-1">
+                    <p className="align-baseline !text-xs underline underline-offset-1">
                         {orderInfo.customer?._id}
                     </p>
                 </div>
@@ -101,12 +104,16 @@ function UserInfo({}) {
                     )}
                 </AnimatePresence>
 
-                <button
+                {/* <button
                     onClick={orderHistory}
-                    className="underline-offset cursor-pointer-1 text-xxs underline hover:no-underline"
+                > */}
+                <p
+                    onClick={orderHistory}
+                    className="underline-offset !cursor-pointer text-xs underline hover:no-underline"
                 >
                     Order history
-                </button>
+                </p>
+                {/* </button> */}
             </section>
         </div>
     );

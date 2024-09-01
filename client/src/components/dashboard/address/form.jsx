@@ -11,7 +11,9 @@ function Address_Form({ description, title, handleClick, customer }) {
     const [mobile, setMobile] = useState(customer?.mobile || '');
 
     const [disable, setDisable] = useState(true);
-    const [address, setAddress] = useState(customer?.address || { country: 'GB' });
+    const [address, setAddress] = useState(
+        customer?.address || { country: 'GB' }
+    );
     const onSelect = (code) =>
         setAddress((prevState) => ({ ...prevState, country: code }));
     const options = {
@@ -113,7 +115,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                     manyProperty={true}
                     value={address?.county}
                     setValue={setAddress}
-                    property={'county'}  
+                    property={'county'}
                     label={'COUNTY'}
                     {...options}
                 />
@@ -140,7 +142,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                     className=" flex w-full items-center justify-center !bg-primary py-3 font-semibold tracking-wide text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-50"
                 >
                     {loading ? (
-                        <div class="spinner-circle [--spinner-color:var(--gray-9)] spinner-sm"></div>
+                        <div class="spinner-circle spinner-sm ![--spinner-color:var(--gray-9)]"></div>
                     ) : (
                         'SAVE ADDRESS'
                     )}

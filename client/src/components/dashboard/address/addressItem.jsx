@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import Customer_Info from '../../checkout/address/customer-info';
 import DeleteButton from '../delete-btn';
 import EditButton from '../edit-btn';
@@ -52,12 +52,65 @@ function Address_Item({
 
                 {
                     <div className="mt-4 flex flex-col gap-y-3">
-                        {!isDefaultShippingAddress ? (
+                        {[
+                            {
+                                check: shippingCheck,
+                                isDefault: isDefaultShippingAddress,
+                                setCheck: setShippingCheck,
+                                property: 'shipping_address',
+                                text: 'delivery',
+                            },
+                            {
+                                check: billingCheck,
+                                isDefault: isDefaultBillingAddress,
+                                setCheck: setBillingCheck,
+                                property: 'billing_address',
+                                text: 'billing',
+                            },
+                        ].map(
+                            ({
+                                check,
+                                isDefault,
+                                setCheck,
+                                property,
+                                text,
+                            }) => {
+                                return (
+                                    <Fragment>
+                                        {!isDefault ? (
+                                            <div className="flex items-center justify-start gap-x-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={check}
+                                                    className="!!rounded-none daisy-checkbox border-[1px] border-black"
+                                                    onChange={() =>
+                                                        handleCheck(setCheck, {
+                                                            state: check,
+                                                            property,
+                                                        })
+                                                    }
+                                                />
+                                                <p>
+                                                    {`Set as default ${text}
+                                                    address`}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <p>
+                                                {`This is your default ${text}
+                                                address`}
+                                            </p>
+                                        )}
+                                    </Fragment>
+                                );
+                            }
+                        )}
+                        {/* {!isDefaultShippingAddress ? (
                             <div className="flex items-center justify-start gap-x-2">
                                 <input
                                     type="checkbox"
                                     checked={shippingCheck}
-                                    className="daisy-checkbox rounded-none border-[1px] border-black"
+                                    className="daisy-checkbox !!rounded-none border-[1px] border-black"
                                     onChange={() =>
                                         handleCheck(setShippingCheck, {
                                             state: shippingCheck,
@@ -69,13 +122,14 @@ function Address_Item({
                             </div>
                         ) : (
                             <p>This is your default delivery address</p>
-                        )}
-                        {!isDefaultBillingAddress ? (
+                        )} */}
+
+                        {/* {!isDefaultBillingAddress ? (
                             <div className="m-0 flex items-center justify-start gap-x-2 p-0">
                                 <input
                                     type="checkbox"
                                     checked={billingCheck}
-                                    className="daisy-checkbox rounded-none border-[1px] border-black"
+                                    className="daisy-checkbox !!rounded-none border-[1px] border-black"
                                     onChange={() =>
                                         handleCheck(setBillingCheck, {
                                             state: billingCheck,
@@ -87,7 +141,7 @@ function Address_Item({
                             </div>
                         ) : (
                             <p>This is your default billing address</p>
-                        )}
+                        )} */}
                     </div>
                 }
             </div>

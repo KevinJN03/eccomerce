@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GenerateAddress from './generateAddress.jsx';
 import dayjs from 'dayjs';
-import{isEmpty }from 'lodash';
+import _ from 'lodash';
 import { Text, View, Image, renderToStream } from '@react-pdf/renderer';
 function OrderInformation({ order, feature, checks }) {
   const [fromAddress, setFromAddress] = useState({
@@ -62,7 +62,9 @@ function OrderInformation({ order, feature, checks }) {
             Scheduled to dispatch by
           </Text>
           <Text>
-            {dayjs(order.shipping_option?.delivery_date).format('DD MMM, YYYY')}
+            {dayjs(_.get(order, 'shipped.delivery_date')).format(
+              'DD MMM, YYYY',
+            )}
           </Text>
         </View>
 
@@ -143,7 +145,7 @@ function OrderInformation({ order, feature, checks }) {
           flexDirection: 'column',
         }}
       >
-        {!isEmpty(checks.note?.text) && (
+        {!_.isEmpty(checks.note?.text) && (
           <View style={{ marginBottom: '8pt' }}>
             <Text style={{ fontWeight: 'semibold' }}>A note from the shop</Text>
             <Text style={{ width: '100%', whiteSpace: 'normal' }}>
@@ -306,7 +308,12 @@ function OrderInformation({ order, feature, checks }) {
               }}
             >
               <Text>Delivery total</Text>
-              <Text>£{order.shipping_option?.cost?.toFixed(2)}</Text>
+              <Text>
+                £
+                {parseFloat(
+                  _.get(order, 'transaction_cost.delivery_cost') || 0,
+                ).toFixed(2)}
+              </Text>
             </View>
 
             <View

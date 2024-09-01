@@ -12,6 +12,9 @@ function Footer({ type }) {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const combineRef = useRef();
+    const variationsRef = useRef();
+
     const {
         description,
         title,
@@ -24,19 +27,19 @@ function Footer({ type }) {
         publishError,
         priceValue,
         stockValue,
-        publish,
         combine,
         setPublish,
-        isAllInputValid,
         minVariationPrice,
-        product,
     } = useNewProduct();
 
-    // const { publish, setPulish, publishError, publishErrorDispatch,  ...values } = useNewProduct();
-    const [loading, setLoading] = useState(false);
     useEffect(() => {
-        publishErrorDispatch({ type: 'getValidateInput', isAllInputValid });
-    }, [publish]);
+        combineRef.current = combine;
+    }, [combine]);
+    useEffect(() => {
+        variationsRef.current = variations;
+    }, [variations]);
+
+    const [loading, setLoading] = useState(false);
 
     const publishProduct = (e, draft = false) => {
         e.preventDefault();
@@ -50,10 +53,10 @@ function Footer({ type }) {
             setLoading(() => true);
             const timeout = setTimeout(() => {
                 const value = {
-                    combine,
+                    combine: combineRef.current,
                     description,
                     title,
-                    variations,
+                    variations: variationsRef.current,
                     files,
                     category,
                     gender,
@@ -62,7 +65,6 @@ function Footer({ type }) {
                     stockValue,
                     publishError,
                     publishErrorDispatch,
-                    isAllInputValid,
                     minVariationPrice,
                 };
                 const formData = formatFormData(value);
@@ -74,9 +76,7 @@ function Footer({ type }) {
                 setLoading(() => false);
             }
         } catch (error) {
-
             setLoading(() => false);
-
         }
     };
 
@@ -95,25 +95,28 @@ function Footer({ type }) {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            setLoading(() => false);
-
             navigate('/admin/products');
         } catch (error) {
-            setLoading(() => false);
-
             const errorData = error.response.data;
+            if (error.response.status == 500) {
+                publishErrorDispatch({
+                    type: 'default',
+                    data: errorData,
+                });
 
-            errorData?.[0]?.type == 'field'
-                ? publishErrorDispatch({ type: 'set', data: errorData })
-                : publishErrorDispatch({
-                      type: 'default',
-                      data: errorData,
-                  });
+                return;
+            }
+            publishErrorDispatch({
+                type: 'SET',
+                data: errorData,
+            });
+        } finally {
+            setLoading(() => false);
         }
     }
 
     return (
-        <div className="sticky z-[3] bottom-0 flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
+        <div className="sticky bottom-0 z-[3] flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <BubbleButton handleClick={() => navigate('/admin/products')} />
             <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button
@@ -138,7 +141,7 @@ function Footer({ type }) {
                 )}
                 {loading && (
                     <div className="w-full">
-                        <div className="spinner-dot-pulse spinner-sm [--spinner-color:var(--white)]">
+                        <div className="spinner-dot-pulse spinner-sm ![--spinner-color:var(--white)]">
                             <div className="spinner-pulse-dot "></div>
                         </div>
                     </div>

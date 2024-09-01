@@ -3,9 +3,11 @@ import Upload from './upload/upload';
 import { v4 as uuidv4 } from 'uuid';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
+import OptionError from './variation/error/optionError';
 
-function DragDropFile({ filesError }) {
-    const { files, setFiles, publishError } = useNewProduct();
+function DragDropFile({}) {
+    const { files, setFiles, publishError, publishErrorDispatch } =
+        useNewProduct();
 
     const inputRef = useRef();
     const handleDragOver = (e) => {
@@ -34,6 +36,8 @@ function DragDropFile({ filesError }) {
             }
             setFiles(newFiles);
         }
+
+        publishErrorDispatch({ type: 'CLEAR', path: 'files' });
     };
     const handleInput = (e) => {
         e.preventDefault();
@@ -46,10 +50,11 @@ function DragDropFile({ filesError }) {
         }
 
         setFiles(newFiles);
+        publishErrorDispatch({ type: 'CLEAR', path: 'files' });
     };
 
     return (
-        <section className={filesError && '!bg-red-100'}>
+        <section className={publishError?.files ? '' : ''}>
             {files.length == 0 && (
                 <div
                     className="dropzone"
@@ -80,6 +85,13 @@ function DragDropFile({ filesError }) {
                 </div>
             )}
             {files.length > 0 && <Upload />}
+
+            {publishError?.files && (
+                <OptionError
+                    msg={publishError.files}
+                    className={'!m-0 px-0 pb-0 pt-2'}
+                />
+            )}
         </section>
     );
 }

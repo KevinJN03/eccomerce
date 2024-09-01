@@ -21,11 +21,26 @@ function SubHeader({}) {
     const { setModalCheck, setModalContent } = useContent();
 
     const [showAction, setShowAction] = useState(false);
+    const selectAll = () => {
+        setSelectionSet((prevSet) => new Set([...prevSet, ...productIds]));
+    };
+    const deselect = () => {
+        setSelectionSet(() => new Set());
+    };
 
+    // const toggleSelection = () => {
+    //     if (selectionSet?.size > 0) {
+    //         setSelectionSet(() => new Set());
+    //     } else {
+    //         setSelectionSet(() => new Set([...productIds]));
+    //     }
+    // };
     return (
         <div className="subheader mb-3 flex flex-row  flex-nowrap gap-3">
             <SelectionInput
-                {...{ allIds: productIds, selectionSet, setSelectionSet }}
+                deselect={deselect}
+                selectAll={selectAll}
+                selectionSet={selectionSet}
             />
 
             <div className="flex w-fit flex-row flex-nowrap rounded border border-dark-gray/50">

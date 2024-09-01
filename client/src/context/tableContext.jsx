@@ -10,8 +10,6 @@ export const useTableContext = () => {
 function TableProvider({ children, value }) {
     const [variationIdSet, setVariationsIdSet] = useState(new Set());
     const [variationOptions, setVariationOptions] = useState([]);
-    const { variations } = useVariation();
-
     const { variationList, checkSet, setCheckSet } = value;
 
     useEffect(() => {
@@ -24,7 +22,7 @@ function TableProvider({ children, value }) {
         });
         setVariationOptions(() => valueArray);
         setVariationsIdSet(() => idArray);
-    }, [variations]);
+    }, [variationList?.options]);
 
     const handleCheckAllVariations = () => {
         if (checkSet.size == variationIdSet.length) {

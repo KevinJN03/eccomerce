@@ -4,25 +4,13 @@ import variant from './variant';
 import { ArrowDropDownSharp } from '@mui/icons-material';
 import { useState } from 'react';
 
-function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
+function SelectionInput({ selectionSet, selectAll, deselect }) {
     const [show, setShow] = useState(false);
-    const selectAll = () => {
-        setSelectionSet((prevSet) => new Set([...prevSet, ...allIds]));
-        setShow(() => false);
-    };
-
-    const toggleSelection = () => {
-        if (selectionSet?.size > 0) {
-            setSelectionSet(() => new Set());
-        } else {
-            setSelectionSet(() => new Set([...allIds]));
-        }
-    };
-
-    const deselect = () => {
-        setSelectionSet(() => new Set());
-        setShow(() => false);
-    };
+    // const selectAll = () => {
+    //     setSelectionSet((prevSet) => new Set([...prevSet, ...allIds]));
+    //     handleSelectAllAddition && handleSelectAllAddition()
+    //     setShow(() => false);
+    // };
 
     const handleClick = (e) => {
         if (e.target?.type == 'checkbox') {
@@ -32,6 +20,16 @@ function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
     };
     const onClickAway = () => {
         setShow(() => false);
+    };
+
+    const toggleSelection = () => {
+        if (selectionSet?.size > 0) {
+            // setSelectionSet(() => new Set());
+            deselect();
+        } else {
+            // setSelectionSet(() => new Set([...allOrderIds]));
+            selectAll();
+        }
     };
     return (
         <section className="relative w-fit">
@@ -45,7 +43,7 @@ function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
                     checked={selectionSet?.size}
                     onChange={toggleSelection}
                     type="checkbox"
-                    className="daisy-checkbox daisy-checkbox-xs mr-2 rounded-sm checked:border-orange-400"
+                    className="daisy-checkbox daisy-checkbox-xs mr-2 !rounded-sm checked:border-orange-400"
                 />
                 <p className="font-gotham text-sm text-inherit">
                     {selectionSet?.size}
@@ -69,7 +67,9 @@ function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
                                 className="flex flex-row flex-nowrap items-center gap-1 px-5 py-2 hover:bg-dark-gray/20"
                             >
                                 <p
-                                    onClick={selectAll}
+                                    onClick={() => {
+                                        selectAll();
+                                    }}
                                     className="cursor-pointer whitespace-nowrap text-s "
                                 >
                                     Select all on page
@@ -77,7 +77,11 @@ function SelectionInput({ allIds, selectionSet, setSelectionSet }) {
                             </div>
 
                             <p
-                                onClick={deselect}
+                                onClick={() => {
+                                    deselect();
+
+                                    setShow(() => false);
+                                }}
                                 className=" cursor-pointer whitespace-nowrap px-5 py-2 text-s hover:bg-dark-gray/20"
                             >
                                 Deselect all

@@ -26,45 +26,56 @@ import close_icon from '../../assets/icons/close.png';
 
 import DeletePaymentMethod from './modalContent/delete-payment-method.jsx';
 import MessageFooter from './messageFooter.jsx';
+import _ from 'lodash';
 
 function Dashboard() {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { user, authDispatch } = useAuth();
-    const [firstName, setFirstName] = useState(user?.firstName || '');
-    const [lastName, setLastName] = useState(user?.lastName || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [interest, setInterest] = useState(user?.interest);
-    const [dob, setDob] = useState('');
     const [address, setAddress] = useState([]);
     const [loadingState, setLoadingState] = useState(true);
-    const [contact_preference, setContactPreference] = useState({});
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [defaultAddresses, setDefaultAddresses] = useState({});
     const [ordersArray, setOrdersArray] = useState([]);
-    const [socialAccounts, setSocialAccounts] = useState({});
+    const [userData, setUserData] = useState({});
+    const [giftCardVoucher, setGiftCardVoucher] = useState({});
+
+    const abortControllerRef = useRef(new AbortController());
+    const timeoutRef = useRef(null);
+
     async function fetchResults() {
         try {
-            const [userResult, paymentResult, orderResults] =
-                await Promise.allSettled([
-                    axios.get('user/userData'),
-                    axios.get('user/payment-method/all'),
-                    axios.get('user/orders'),
-                ]);
+            clearTimeout(timeoutRef.current);
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const [
+                userResult,
+                paymentResult,
+                orderResults,
+                giftCardVoucherResult,
+            ] = await Promise.allSettled([
+                axios.get('user/userData', {
+                    signal: abortControllerRef.signal,
+                }),
+                axios.get('user/payment-method/all', {
+                    signal: abortControllerRef.signal,
+                }),
+                axios.get('user/orders', { signal: abortControllerRef.signal }),
 
+                axios.get('user/gift-card/all?page=1&limit=3', {
+                    signal: abortControllerRef.signal,
+                }),
+            ]);
+
+            if (giftCardVoucherResult.status == 'fulfilled') {
+                setGiftCardVoucher(() => giftCardVoucherResult.value?.data);
+            }
             if (userResult.status == 'fulfilled') {
                 const { user } = userResult.value?.data;
 
-                setFirstName(() => user?.firstName);
-
-                setLastName(() => user?.lastName);
-                setDob(() => dayjs(user?.dob).toISOString());
-                console.log('here', { user });
-                setContactPreference(() => user?.contact_preferences);
                 setAddress(() => user?.address);
                 setDefaultAddresses(() => user?.default_address);
-
-                setSocialAccounts(() => user?.social_accounts);
+                setUserData(() => user);
             }
 
             if (paymentResult.status == 'fulfilled') {
@@ -76,8 +87,6 @@ function Dashboard() {
             if (orderResults.status == 'fulfilled') {
                 setOrdersArray(() => orderResults.value?.data?.orders);
             }
-
-            console.log({ userResult });
 
             if (userResult.status == 'rejected') {
                 logOutUser({
@@ -92,7 +101,7 @@ function Dashboard() {
                 error
             );
         } finally {
-            setTimeout(() => {
+            timeoutRef.current = setTimeout(() => {
                 setLoadingState(false);
             }, 1000);
         }
@@ -100,6 +109,10 @@ function Dashboard() {
 
     useEffect(() => {
         fetchResults();
+        return () => {
+            abortControllerRef.current?.abort();
+            clearTimeout(timeoutRef.current);
+        };
     }, []);
 
     const getRoute = () => {
@@ -135,20 +148,9 @@ function Dashboard() {
         modalContentDispatch,
         modalCheck,
         setModalCheck,
-        firstName,
-        setFirstName,
-        email,
-        setEmail,
-        interest,
-        setInterest,
-        dob,
-        setDob,
-        lastName,
-        setLastName,
+
         address,
         setAddress,
-        contact_preference,
-        setContactPreference,
         loadingState,
         defaultAddresses,
         setDefaultAddresses,
@@ -159,8 +161,11 @@ function Dashboard() {
         setIsDetailsUnSaved,
         footerMessage,
         setFooterMessage,
-        socialAccounts,
-        setSocialAccounts,
+
+        userData,
+        setUserData,
+        giftCardVoucher,
+        setGiftCardVoucher,
     };
 
     const view = {
@@ -220,9 +225,13 @@ function Dashboard() {
                                                     className="user-initial flex h-full w-full items-center justify-center rounded-full !bg-primary text-center font-gotham text-4xl !font-extrabold text-white"
                                                 >
                                                     {` ${
-                                                        firstName?.toUpperCase()[0]
+                                                        _.toUpper(
+                                                            userData?.firstName
+                                                        )[0]
                                                     }${
-                                                        lastName?.toUpperCase()[0]
+                                                        _.toUpper(
+                                                            userData?.lastName
+                                                        )[0]
                                                     }`}
                                                 </motion.span>
                                             )}
@@ -244,7 +253,13 @@ function Dashboard() {
                                                 <div className="skeleton-pulse h-5 "></div>
                                             ) : (
                                                 <motion.span className="block font-gotham text-lg tracking-wider">
-                                                    {`${firstName} ${lastName}`}
+                                                    {`${_.get(
+                                                        userData,
+                                                        'firstName'
+                                                    )} ${_.get(
+                                                        userData,
+                                                        'lastName'
+                                                    )}`}
                                                 </motion.span>
                                             )}
                                         </motion.div>
@@ -310,7 +325,7 @@ function Dashboard() {
                     />
 
                     <footer
-                        className=" mt-auto z-10 flex w-full justify-center bg-white p-5"
+                        className=" z-10 mt-auto flex w-full justify-center bg-white p-5"
                         ref={ref}
                     >
                         <section className="flex  w-full max-w-4xl flex-row items-center px-3">

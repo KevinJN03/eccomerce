@@ -52,7 +52,7 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
                         name="order-receipt-banner"
                         id="order-receipt-banner"
                         value={'order_receipt_banner'}
-                        className="daisy-checkbox daisy-checkbox-xs rounded"
+                        className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                         
                     />
                     <p className="w-20">Order receipt banner</p>
@@ -80,7 +80,7 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
                                     checked={checks?.[convertOption]}
                                     type="checkbox"
                                     id={option?.replaceAll(' ', '-')}
-                                    className="daisy-checkbox daisy-checkbox-xs rounded"
+                                    className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                                 />
                                 <p>{option}</p>
                             </div>
@@ -95,7 +95,7 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
                         type="checkbox"
                         id="save-settings"
                         value={'save_setting'}
-                        className="daisy-checkbox daisy-checkbox-xs rounded"
+                        className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
                     />
                     <p className="text-xxs">
                         Save these settings for next time

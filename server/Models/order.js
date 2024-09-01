@@ -27,6 +27,13 @@ const itemSchema = new Schema({
   images: { type: [Schema.Types.String], maxlength: 1 },
   title: { type: Schema.Types.String },
 });
+
+const offerProps = {
+  discount: Schema.Types.Number,
+  code: Schema.Types.String,
+  type: Schema.Types.String,
+  offer_id: Schema.Types.ObjectId,
+};
 const OrderSchema = new Schema({
   _id: { type: Schema.Types.String, required: true, unique: true },
   items: [itemSchema],
@@ -73,40 +80,32 @@ const OrderSchema = new Schema({
     subtotal: {
       type: Schema.Types.Number,
     },
-    promo: {
-      discount: Schema.Types.Number,
-      code: Schema.Types.String,
+    offer: {
+      promo_code: offerProps,
+      gift_card: offerProps,
     },
     delivery_cost: Schema.Types.Number,
   },
-
-  shipping_option: {
-    cost: { type: Schema.Types.Number },
-    // delivery_date: { type: Schema.Types.String },
-    // name: { type: Schema.Types.String },
-    // time: { type: Schema.Types.Number },
-    // type: { type: Schema.Types.String },
-    // id: { type: Schema.Types.ObjectId, ref: 'deliveryProfile' },
-  },
-  //   address: {
-  //     type: Schema.Types.Mixed,
-  //   },
-  //   transaction_cost: { type: Schema.Types.Number },
-
-  cartObj: { type: Schema.Types.Mixed, ref: 'product' },
   cartId: { type: Schema.Types.ObjectId, ref: 'cart' },
-
-  trackingNumber: { type: Schema.Types.String },
-  courier: { type: Schema.Types.String },
-  payment_intent_id: { type: Schema.Types.String },
-  refund_id: { type: Schema.Types.String },
-  ship_date: { type: Schema.Types.Date },
-  return_date: { type: Schema.Types.Date },
-  cancel_date: { type: Schema.Types.Date },
+  shipped: {
+    tracking_number: { type: Schema.Types.String },
+    courier: { type: Schema.Types.String },
+    dispatch_date: { type: Schema.Types.Date },
+    max_delivery_date: { type: Schema.Types.Date },
+    min_delivery_date: { type: Schema.Types.Date },
+    note: { type: Schema.Types.String },
+  },
+  refund: {
+    id: [{ type: Schema.Types.String }],
+    // date: { type: Schema.Types.Date },
+  },
   cancel: {
     reason: { type: Schema.Types.String },
-    additional_information: { type: Schema.Types.String, maxlength: 500 },
+    returning_items: { type: Schema.Types.Boolean },
+    message_to_buyer: { type: Schema.Types.String, maxlength: 500 },
+    date: { type: Schema.Types.Date },
   },
+
   private_note: [
     {
       _id: {
@@ -119,6 +118,10 @@ const OrderSchema = new Schema({
       date: { required: true, type: Schema.Types.Date, default: Date.now },
     },
   ],
+  mark_as_gift: { type: Schema.Types.Boolean, default: false },
+  completed_date: { type: Schema.Types.Date, default: null },
+  payment_intent_id: { type: Schema.Types.String },
+  charge_id: { type: Schema.Types.String },
 });
 
 export default model('order', OrderSchema);

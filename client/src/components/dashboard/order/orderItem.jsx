@@ -117,7 +117,7 @@ function OrderItem({ order }) {
                             return (
                                 <img
                                     className="h-28 w-[86px] object-cover object-center "
-                                    src={item?.product?.images?.[0]}
+                                    src={item?.images?.[0]}
                                     alt=""
                                 />
                             );

@@ -215,7 +215,7 @@ export default function Add_Card({}) {
                 >
                     {/* <input
                         type="checkbox"
-                        className="daisy-checkbox rounded-none"
+                        className="daisy-checkbox !rounded-none"
                         name="default"
                         id="default-payment-check"
                         checked={defaultCheck}
@@ -231,7 +231,7 @@ export default function Add_Card({}) {
                 >
                     {btnLoad ? (
                         <svg
-                            className="spinner-ring spinner-sm [--spinner-color:var(--slate-1)]"
+                            className="spinner-ring spinner-sm ![--spinner-color:var(--slate-1)]"
                             viewBox="25 25 50 50"
                             strokeWidth="5"
                         >

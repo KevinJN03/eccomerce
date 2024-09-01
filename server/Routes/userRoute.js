@@ -25,18 +25,23 @@ import {
   cancelOrder,
   getWishlist,
   updateWishlist,
+  userLogout,
 } from '../Controllers/userController.js';
 
 import passport from 'passport';
 import express from 'express';
 import AuthRoute from '../Controllers/authController';
+import {
+  getAllUserGiftCards,
+  saveGiftCard,
+} from '../Controllers/giftCardController.js';
 
 const router = express.Router();
 router.use('/', AuthRoute);
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
 router.post('/login', loginUser);
-router.get('/logout', logoutUser);
+router.get('/logout', userLogout);
 router.post('/signup', signUp_user);
 router.get('/check', checkUser);
 router.get('/userData', getAllUserData);
@@ -59,6 +64,8 @@ router.post('/change-password', changePassword);
 router.post('/cancel-order', cancelOrder);
 router.post('/payment-method/digital', addDigitalPaymentMethod);
 router.get('/wishlist', getWishlist);
+router.post('/gift-card/save', saveGiftCard);
+router.get('/gift-card/all', getAllUserGiftCards);
 
 router.post('/wishlist/update', updateWishlist);
 export default router;

@@ -286,7 +286,7 @@ function Buy_Now_Btn({ disable }) {
                     >
                         {isOrderSubmit ? (
                             <svg
-                                className="spinner-ring spinner-sm !m-0 !p-0 [--spinner-color:var(--test123)]"
+                                className="spinner-ring spinner-sm !m-0 !p-0 ![--spinner-color:var(--test123)]"
                                 viewBox="25 25 50 50"
                                 strokeWidth="5"
                             >

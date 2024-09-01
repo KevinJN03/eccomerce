@@ -1,30 +1,21 @@
-import secure_icon from '../../../../assets/icons/secure-document.png';
-
-import { useAdminContext } from '../../../../context/adminContext';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
-// import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import { useState } from 'react';
+
 import dayjs from 'dayjs';
 import AddressContainer from './addressContainer';
 import Receipt from './reciept';
 import {
-    CloseSharp,
-    PersonOutlineTwoTone,
-    AddRounded,
     ArrowDropDownSharp,
     CheckRounded,
-    PrintSharp,
-    Inventory2Sharp,
+    PublishedWithChangesRounded,
     RedeemSharp,
 } from '@mui/icons-material';
 import PrivateNote from './privateNote';
 import UserInfo from './userInfo';
-import { AnimatePresence, motion } from 'framer-motion';
-import containerVariants from '../home/containerVariants';
-import { ClickAwayListener } from '@mui/material';
-import { adminAxios } from '../../../../api/axios';
+import { motion } from 'framer-motion';
 import Actions from './action';
+import _ from 'lodash';
 import BubbleButton from '../../../buttons/bubbleButton';
 
 function Label({ setShowActions }) {
@@ -40,70 +31,51 @@ function Label({ setShowActions }) {
     );
 }
 function DrawerContainer() {
-    const {
-        orderInfo,
-        setOpenDrawer,
-        setSearchText,
-        setSearchingOrder,
-        setSearchResult,
-    } = useAdminOrderContext();
+    const { orderInfo, status, addToPackage } = useAdminOrderContext();
 
-    const { logoutUser } = useAdminContext();
-    const { setModalCheck, adminOrderModalContentDispatch } =
-        useAdminOrderContext();
     const [country, setCountry] = useState(
         () =>
             countryLookup.byIso(orderInfo.shipping_address.address?.country)
                 ?.country
     );
 
+    const [estimatedDate, setEstimateDate] = useState(() => {
+        const startDates = [];
+
+        const endDates = [];
+        const itemsByProfile = _.get(orderInfo, 'itemsByProfile');
+        _.forEach(itemsByProfile, ({ shippingInfo }) => {
+            startDates.push(dayjs(shippingInfo.startDate));
+            endDates.push(dayjs(shippingInfo.endDate));
+        });
+
+        const formatString = 'DD MMM';
+        const startDate = dayjs.min(startDates);
+        const endDate = dayjs.max(endDates);
+        if (startDate.get('month') == endDate.get('month')) {
+            return `${startDate.format('DD')}-${endDate.format('DD MMM')}`;
+        }
+
+        return `${startDate.format(formatString)}-${endDate.format(formatString)}`;
+    });
     const [showActions, setShowActions] = useState(false);
 
-    const printOrder = () => {
-        console.log('clicked');
-        adminOrderModalContentDispatch({
-            type: 'printOrder',
-            orders: [orderInfo?._id],
-        });
-        setModalCheck(true);
-        setShowActions(false);
-    };
-
-    const orderHistory = async () => {
-        try {
-            setOpenDrawer(() => false);
-            setSearchingOrder(() => true);
-            setSearchText(() => orderInfo.customer?._id);
-
-            const { data } = await adminAxios('searchOrder', {
-                searchText: orderInfo.customer?._id,
-            });
-
-            setSearchResult(() => data.searchResult);
-        } catch (error) {
-            logoutUser({ error });
-        }
-    };
     return (
         <div className=" relative flex w-full flex-row gap-1 ">
-            <div className="relative h-fit w-12 bg-transparent">
-                <div
-                    onClick={() => setOpenDrawer(false)}
-                    className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
-                >
-                    <CloseSharp className="!fill-primary/80" />
-                </div>
-            </div>
-            <div className="!h-full w-full !bg-white p-8">
+            <div className="min-h-screen w-full !bg-white p-8">
                 <header className="flex flex-row justify-between">
                     <div className="left">
                         <h3 className="text-xl font-semibold ">
                             Order from {orderInfo.shipping_address?.name}
                         </h3>
-                        <p className="text-xxs underline ring-offset-1">
+                        <a
+                            href={`/admin/orders/${status}?searchText=${orderInfo?._id}&orderId=${orderInfo?._id}`}
+                            target="_blank"
+                            className="cursor-pointer text-xs underline ring-offset-1"
+                        >
                             #{orderInfo?._id}
-                        </p>
-                        <p className="text-xxs">
+                        </a>
+                        <p className="text-xs">
                             {orderInfo?.items?.length} item, £
                             {parseFloat(
                                 orderInfo.transaction_cost?.total
@@ -111,12 +83,16 @@ function DrawerContainer() {
                         </p>
                     </div>
                     <div className="right">
-                        <p className="text-sm font-semibold">Pre-transit</p>
-                        <p className="text-xxs">
+                        <p
+                            className={`text-sm font-semibold ${orderInfo.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                        >
+                            {_.upperFirst(orderInfo.status)}
+                        </p>
+                        <p className="text-xs">
                             {`Ordered ${dayjs(orderInfo?.createdAt).format(
                                 'HH:mm, ddd, DD MMM, YYYY'
                             )}`}
-                            <p className="text-xxs">
+                            <p className="text-xs">
                                 Deliver to{' '}
                                 {`${orderInfo.shipping_address.address?.city}, ${country}`}
                             </p>
@@ -124,11 +100,25 @@ function DrawerContainer() {
                     </div>
                 </header>
 
-                <div className="flex flex-row gap-5">
-                    <span className="flex flex-row flex-nowrap items-center gap-3">
-                        <CheckRounded />
-                        <p className="text-s font-semibold">Completed</p>
-                    </span>
+                <div className="mt-2 flex flex-row gap-5">
+                    {orderInfo?.status == 'received' ? (
+                        <BubbleButton
+                            className={'!py-0 px-2.5'}
+                            handleClick={() =>
+                                addToPackage({ orderId: orderInfo._id, mark_as_completed: true })
+                            }
+                        >
+                            <div className="flex flex-nowrap items-center justify-center gap-3">
+                                <PublishedWithChangesRounded />
+                                <p className="font-medium">Mark as Complete</p>
+                            </div>
+                        </BubbleButton>
+                    ) : (
+                        <span className="flex flex-row flex-nowrap items-center gap-3">
+                            <CheckRounded />
+                            <p className="text-base font-semibold">Completed</p>
+                        </span>
+                    )}
                     <div className="relative flex flex-col">
                         <section className="relative">
                             <motion.button
@@ -168,6 +158,7 @@ function DrawerContainer() {
                                     showActions,
                                     setShowActions,
                                     orderId: orderInfo?._id,
+                                    order: orderInfo,
                                 }}
                             />
                         </section>
@@ -179,12 +170,31 @@ function DrawerContainer() {
                 <PrivateNote />
 
                 <div className="mb-3">
-                    <p className="text-sm font-semibold">Pre-transit</p>
-                    <p className="text-xxs">
-                        Estimated delivery: 27 Dec-18 Jan
+                    <p
+                        className={`text-base font-semibold ${orderInfo.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                    >
+                        {_.upperFirst(orderInfo.status)}
+                    </p>
+                    <p className="text-xs">
+                        Estimated delivery: {estimatedDate}
                     </p>
                 </div>
                 <AddressContainer country={country} />
+                {orderInfo?.mark_as_gift && (
+                    <div className="mt-4 flex flex-col gap-3">
+                        <h3 className="text-base font-semibold">
+                            Gift Details
+                        </h3>
+
+                        <div className="flex w-full flex-row flex-nowrap items-center gap-2 rounded border px-3 pb-7 pt-4">
+                            <RedeemSharp
+                                className="!fill-green-800"
+                                fontSize="small"
+                            />
+                            <p className="text-xs">Marked as gift</p>
+                        </div>
+                    </div>
+                )}
                 <Receipt />
             </div>
         </div>

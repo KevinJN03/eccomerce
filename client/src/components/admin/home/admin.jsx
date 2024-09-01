@@ -68,7 +68,7 @@ function Admin({}) {
         createProfile: <CreateProfile />,
         deleteProfile: <DeleteProfile />,
         deliveryOption: <DeliveryOption />,
-        printOrder: <PrintOrder/>
+        printOrder: <PrintOrder />,
     };
     const generateAlertVariant = (stationaryPosition) => ({
         initial: {
@@ -178,7 +178,7 @@ function Admin({}) {
                                 )}
                             {showAlert?.on && showAlert?.size == 'large' && (
                                 <motion.section
-                                    className={`fixed left-0 top-0 z-[51] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 py-5 `}
+                                    className={`fixed left-0 top-0 z-[5000] flex w-full items-center justify-center  ${showAlert?.bg || 'bg-gray-200'} px-5 `}
                                     variants={generateAlertVariant('0px')}
                                     initial={'initial'}
                                     animate={'animate'}
@@ -203,7 +203,9 @@ function Admin({}) {
                                         className="absolute right-8 top-1/2 translate-y-[-50%]"
                                         onClick={() => setShowAlert({})}
                                     >
-                                        <CloseRounded className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`} />
+                                        <CloseRounded
+                                            className={`${showAlert?.closeIcon || '!fill-black'} !text-[1.8rem]`}
+                                        />
                                     </button>
                                 </motion.section>
                             )}
@@ -211,10 +213,10 @@ function Admin({}) {
 
                         <SideBar />
                         <motion.div
-                            className={`homeContainer`}
+                            className={`homeContainer !z-[0] min-h-screen flex flex-col items-center`}
                             initial={false}
                             animate={{
-                                marginLeft: open ? '15rem' : '3.875rem',
+                                marginLeft: open ? '15rem' : '5rem',
 
                                 transition: {
                                     duration: open ? '0.7' : '0.7',
@@ -222,7 +224,11 @@ function Admin({}) {
                                 },
                             }}
                         >
+                            <section className='max-w-7xl w-full'>
                             <Outlet />
+
+
+                            </section>
 
                             <Modal
                                 open={modalCheck}

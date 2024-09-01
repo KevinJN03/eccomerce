@@ -7,7 +7,7 @@ function GLoader({ size }) {
             <div
                 className={`spinner-simple spinner-${
                     size || 'xl'
-                } [--spinner-color:var(--slate-11)]`}
+                } ![--spinner-color:var(--slate-11)]`}
             ></div>
         </div>
     );

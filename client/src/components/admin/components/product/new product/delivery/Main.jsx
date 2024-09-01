@@ -103,7 +103,7 @@ function MainContent() {
             </div>
             <div className="profiles mt-3 flex flex-col">
                 {loading ? (
-                    <div class="spinner-circle self-center [--spinner-color:var(--gray-9)]"></div>
+                    <div class="spinner-circle self-center ![--spinner-color:var(--gray-9)]"></div>
                 ) : (
                     <>
                         {deliveryProfiles &&

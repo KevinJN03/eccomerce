@@ -14,7 +14,7 @@ function Item({
   title,
 }) {
   return (
-    <Row className="mb-4">
+    <Row className="mb-4 !max-w-full !box-border">
       <Column className="w-[100px] h-[140px]">
         <Img
           src={product?.images?.[0] || images?.[0]}
@@ -22,7 +22,7 @@ function Item({
         />
       </Column>
       <Column className="pl-5 align-top">
-        <Text className="text-s p-0 pb-1 m-0 font-medium">{title}</Text>
+        <Text className="text-s !text-wrap !whitespace-normal p-0 pb-1 m-0 font-medium">{title}</Text>
 
         <Text className="text-s p-0 pb-1 m-0 font-semibold">
           £{price?.toFixed(2) || price}

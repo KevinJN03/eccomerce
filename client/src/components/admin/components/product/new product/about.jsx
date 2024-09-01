@@ -1,39 +1,37 @@
 import DragDropFile from './dragDropFile';
 import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
-import useNewProductError from '../../../../../useNewProductError';
 
-import { useRef, useEffect, useState } from 'react';
 import Description from './description';
 import OptionError from './variation/error/optionError';
-import { useInView } from 'framer-motion';
-import useHighlightSection from '../../../../../hooks/useScrollpsy';
+
+import _ from 'lodash';
 function About() {
-    const {
-        title,
-        setTitle,
-        publishError,
-        files,
-        publishErrorDispatch,
-        setCurrentSection,
-        currentSection,
-    } = useNewProduct();
-    const [titleError, setTitleError] = useState('');
-    const [filesError, setFilesError] = useState('');
+    const { title, setTitle, publishError, publishErrorDispatch } =
+        useNewProduct();
 
-    useNewProductError('title', setTitleError);
-    useNewProductError('files', setFilesError);
+    const handleTitleOnchange = (e) => {
+        const value = _.trim(e.target.value);
+        setTitle(() => e.target.value);
+        let error = null;
 
-    useEffect(() => {
-        setTitleError('');
-        publishErrorDispatch({ type: 'clear', path: 'title' });
-    }, [title]);
+        if (e.target.value[0] == ' ') {
+            error =
+                'The first character of your title must be a letter or a number.';
+        } else if (value.length == 0 || value.length > 140) {
+            error = 'Please enter a title between 1 and 140 characters long.';
+        }
 
-    useEffect(() => {
-        setFilesError('');
-        publishErrorDispatch({ type: 'clear', path: 'files' });
-    }, [files]);
-
+        if (error) {
+            publishErrorDispatch({
+                type: 'ADD',
+                path: 'title',
+                msg: error,
+            });
+        } else {
+            publishErrorDispatch({ type: 'CLEAR', path: 'title' });
+        }
+    };
     return (
         <section className="new-product-wrapper">
             <div className="about" id="about">
@@ -49,21 +47,32 @@ function About() {
                         Include keywords that buyers would use to search for
                         this item.
                     </p>
-                    {titleError && (
-                        <OptionError
-                            className={'!m-0 px-0 pb-0 pt-2'}
-                            msg={titleError}
-                        />
-                    )}
-                    <input
-                        type="text"
-                        id="title"
-                        max={140}
-                        min={1}
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className={`input ${titleError ? 'bg-red-100' : ''}`}
-                    />
+
+                    <section className="mb-4 w-full">
+                        <label className="daisy-form-control w-full">
+                            <input
+                                type="text"
+                                max={140}
+                                min={1}
+                                value={title}
+                                onChange={handleTitleOnchange}
+                                className={`${publishError?.title ? '!border-red-700 bg-red-100 ' : ''} daisy-input daisy-input-bordered input !mb-0 w-full `}
+                            />
+                            <div className="daisy-label !m-0 !p-0">
+                                <span className="daisy-label-text-alt">
+                                    {publishError?.title && (
+                                        <OptionError
+                                            className={'!m-0 px-0 pb-0 pt-2'}
+                                            msg={publishError.title}
+                                        />
+                                    )}
+                                </span>
+                                <span className={`daisy-label-text-alt mt-2 ${publishError?.title ? '!text-red-800': 'text-black/70'}`}>
+                                    {`${title.length}/140`}
+                                </span>
+                            </div>
+                        </label>
+                    </section>
                 </section>
 
                 <section className="mb-4">
@@ -71,13 +80,8 @@ function About() {
                         Photo<span className="asterisk">*</span>
                     </p>
                     <p className="mb-2">Add up to 6 photos</p>
-                    {filesError && (
-                        <OptionError
-                            className={'!m-0 px-0 py-2'}
-                            msg={filesError}
-                        />
-                    )}
-                    <DragDropFile filesError={filesError} />
+
+                    <DragDropFile />
                 </section>
 
                 <Description />

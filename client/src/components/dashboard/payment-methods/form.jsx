@@ -60,14 +60,14 @@ function Form({
                 <div className="expiry-date input-container w-3/4">
                     <label htmlFor={'card-number'}>EXPIRY DATE: </label>
                     <div className="flex flex-row gap-x-2 " id="card-expiry">
-                        {/* <select className="select !rounded-none border-[1px] !border-primary !outline-none">
+                        {/* <select className="select !!rounded-none border-[1px] !border-primary !outline-none">
                             <option>Month</option>
 
                             {months.map((item) => {
                                 return <option key={item}>{item}</option>;
                             })}
                         </select>
-                        <select className="select !rounded-none border-[1px] !border-primary !outline-none">
+                        <select className="select !!rounded-none border-[1px] !border-primary !outline-none">
                             <option>Year</option>
 
                             {years.map((item) => {

@@ -4,7 +4,7 @@ function ItemTemplate({ icon, text, isDefault, alt, handleClick, id }) {
     const { selectedMethod, setSelectedMethod } = usePaymentTypeContext();
     return (
         <section
-            className="flex flex-row flex-nowrap justify-between py-5 cursor-pointer"
+            className="flex cursor-pointer flex-row flex-nowrap justify-between py-5"
             onClick={handleClick}
         >
             <div className="left flex flex-[3] flex-col gap-y-4">
@@ -20,7 +20,7 @@ function ItemTemplate({ icon, text, isDefault, alt, handleClick, id }) {
                         <div className="flex flex-row flex-nowrap items-center gap-x-4 text-sm">
                             <input
                                 type="checkbox"
-                                className="daisy-checkbox rounded-none"
+                                className="daisy-checkbox !rounded-none"
                             />
                             <p>Set as default payment method</p>
                         </div>

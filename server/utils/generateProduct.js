@@ -3,6 +3,7 @@
 import 'dotenv/config.js';
 
 import sharpify from '../Upload/sharpify.js';
+import _ from 'lodash';
 
 async function generateProduct(req, id, endPoint = 'products') {
   const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
@@ -19,12 +20,10 @@ async function generateProduct(req, id, endPoint = 'products') {
     price,
     stock,
     category,
-  
+
     description,
   } = req.body;
 
-  const newStock = JSON.parse(stock.replace(/&quot;/g, '"'));
-  const newPrice = JSON.parse(price.replace(/&quot;/g, '"'));
   const parseVariations = variations?.map((item) => {
     const data = JSON.parse(item);
     delete data.id;
@@ -43,13 +42,8 @@ async function generateProduct(req, id, endPoint = 'products') {
     images: imageArr,
     description,
   };
-  if (newStock.on) {
-    productData.stock = newStock.value;
-  }
-
-  if (newPrice.on) {
-    productData.price = { current: newPrice.value };
-  }
+  productData.stock = _.isNaN(stock) ? null : stock;
+  _.set(productData, 'price.current', _.isNaN(price) ? null : price);
 
   const sharpResult = [];
   for (const item of files) {

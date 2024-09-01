@@ -11,7 +11,7 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 function New({ setModalState, edit }) {
     const { contentDispatch, modalContent } = useNewProduct();
     const [disable, setDisable] = useState();
-  
+
     const [customRange, setCustomRange] = useState(false);
     const [name, setName] = useState('');
     const [cost, setCost] = useState(0);
@@ -119,7 +119,7 @@ function New({ setModalState, edit }) {
                         return (
                             <div
                                 key={id}
-                                class="alert alert-error mb-2 rounded-none py-2"
+                                class="alert alert-error mb-2 !rounded-none py-2"
                             >
                                 <svg
                                     onClick={() =>
@@ -163,7 +163,6 @@ function New({ setModalState, edit }) {
                 <select
                     id="options"
                     name="options"
-               
                     className=" !border-1 daisy-select daisy-select-bordered daisy-select-md rounded "
                     onChange={(e) => {
                         handleOnchange(e, e.target.options);

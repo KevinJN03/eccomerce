@@ -8,45 +8,167 @@ import passport from 'passport';
 import 'dotenv/config.js';
 import Stripe from 'stripe';
 import dayjs from 'dayjs';
+import minMax from 'dayjs/plugin/minMax';
 import OrderShipped from '../React Email/emails/orderShipped.jsx';
 import * as React from 'react';
 import { render } from '@react-email/render';
 import transporter from '../utils/nodemailer.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import ReturnOrder from '../React Email/emails/returnOrder.jsx';
-import { renderToStream, renderToBuffer } from '@react-pdf/renderer';
+import { renderToStream } from '@react-pdf/renderer';
 import Pdf from '../pdf/pdf.jsx';
-import s3Upload, {
-  generateSignedUrl,
-  s3Delete,
-  s3Get,
-  s3PdfUpload,
-} from '../utils/s3Service.js';
+import { generateSignedUrl, s3Get, s3PdfUpload } from '../utils/s3Service.js';
 import randomString from 'randomstring';
 import Coupon from '../Models/coupon.js';
 import mongoose from 'mongoose';
-import multerUpload from '../utils/multerUpload.js';
-
-import productValidator from '../utils/productValidator.js';
-import generateProduct from '../utils/generateProduct.js';
+import logger from '../utils/logger.js';
 import Product from '../Models/product.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
+import _ from 'lodash';
+import productSearchStage from '../utils/productSearchStage.jsx';
+import OpenAI from 'openai';
+dayjs.extend(minMax);
+const { SENDER, OPENAI_KEY, STRIPE_KEY, OPENAI_ORGANIZATION, OPENAI_PROJECT } =
+  process.env;
 
-const stripe = Stripe(process.env.STRIPE_KEY);
-const { SENDER } = process.env;
+const stripe = Stripe(STRIPE_KEY);
+const openai = new OpenAI({
+  organization: OPENAI_ORGANIZATION,
+  project: OPENAI_PROJECT,
+});
+
+export const updateUserStatus = [
+  check('id').trim().escape(),
+
+  check('status')
+    .trim()
+    .escape()
+    .customSanitizer((value) => {
+      console.log({ value });
+
+      if (value == 'active') {
+        return 'inactive';
+      } else {
+        return 'active';
+      }
+    }),
+  asyncHandler(async (req, res, next) => {
+    const { id, status } = req.body;
+
+    console.log({ status });
+
+    const users = await User.updateMany(
+      { _id: id },
+      { status },
+      { new: true, lean: { toObject: true } },
+    );
+
+    res.send({ success: true, users });
+  }),
+];
+
+export const searchUser = [
+  check('searchText').escape().trim().notEmpty(),
+
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = req.query;
+
+    const errors = validationResult(req);
+
+    const projectionFields = {
+      firstName: 1,
+      lastName: 1,
+      email: 1,
+      dob: 1,
+      _id: 1,
+      status: 1,
+      interest: 1,
+    };
+
+    if (!errors.isEmpty()) {
+      const users = await User.find({}, projectionFields);
+      return res.send({ result: users, searchText });
+    }
+
+    console.log({ searchText });
+    const shouldArray = [
+      'email',
+      'lastName',
+      'firstName',
+      'interest',
+      'status',
+    ].map((field) => ({
+      text: {
+        query: searchText,
+        path: field,
+      },
+    }));
+
+    try {
+      const objectId = new mongoose.Types.ObjectId(searchText);
+      shouldArray.push({
+        equals: {
+          value: objectId,
+          path: '_id',
+        },
+      });
+    } catch (error) {
+      console.error('parse string to objectId failed: ', error?.message);
+    }
+
+    const users = await User.aggregate([
+      {
+        $search: {
+          index: 'user_search_index',
+          compound: {
+            should: shouldArray,
+          },
+        },
+      },
+      {
+        $project: {
+          ...projectionFields,
+          score: { $meta: 'searchScore' },
+        },
+      },
+    ]);
+
+    res.send({ result: users, searchText });
+  }),
+];
+export const ai_word_suggestion = [
+  check('searchText', 'Provide a text to search').escape().trim().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = req.query;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.send({ result: [], searchText, errors: errors.mapped() });
+    }
+
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: 'user',
+          content: `give me product word suggestion for the word "${searchText}" in a JSON array`,
+        },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+
+    console.log(completion.choices[0]);
+    res.send({ result: completion.choices[0], searchText });
+  }),
+];
 export const count_all = asyncHandler(async (req, res, next) => {
   const todayDate = dayjs()
-    .set('hour', 0)
-    .set('minute', 0)
-    .set('second', 0)
+    .endOf('day')
+
     .unix();
 
   const sixMonthsFromToday = dayjs()
     .subtract(6, 'month')
-    .set('D', 1)
-    .set('h', 1)
-    .set('m', 0)
-    .set('s', 0)
+    .startOf('day')
     .toDate();
 
   const [charges, userCount, orderCount, balance, orders, getOrdersByMonth] =
@@ -59,15 +181,15 @@ export const count_all = asyncHandler(async (req, res, next) => {
       stripe.balance.retrieve(),
       Order.find()
         .populate('items.product')
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: 1 })
         .limit(5)
         .exec(),
       Order.aggregate([
         {
           $match: {
-            status: {
-              $in: ['received', 'shipped', 'delivered'],
-            },
+            // status: {
+            //   $in: ['received', 'shipped', 'delivered'],
+            // },
             createdAt: { $gte: sixMonthsFromToday },
           },
         },
@@ -161,8 +283,8 @@ export const adminLogin = [
         if (error) {
           return next(err);
         }
-
-        return res.status(200).redirect('/api/user/check');
+        logger.info(`admin User ${user._id} logged in successfully`);
+        return res.redirect(303, '/api/user/check');
       });
     })(req, res, next);
     // res.status(200).send({ success: true, msg: 'login in successfully' });
@@ -174,25 +296,235 @@ export const getAllUsers = asyncHandler(async (req, res, next) => {
   res.status(200).send(users);
 });
 
-export const getSingleOrder = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+export const getSingleOrder = [
+  check('id').escape().trim().toUpperCase(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
 
-  const order = await Order.findOne({ _id: id?.toUpperCase() }, null, {
-    populate: {
-      path: 'items.product customer',
-      select: 'tittle _id images firstName lastName email title',
-    },
-  });
+    const order = await Order.findOne({ _id: id }, null, {
+      populate: {
+        path: 'items.product customer',
+        select: 'tittle _id images firstName lastName email title',
+      },
+      lean: { toObject: true },
+    });
 
-  if (!order) {
-    return res.status(404).send({ msg: 'Order not dfound.', success: false });
-  }
+    if (!order) {
+      return res.status(404).send({ msg: 'Order not found.', success: false });
+    }
+    if (_.get(order, 'charge_id')) {
+      const charge = await stripe.charges.retrieve(order.charge_id);
+      _.set(order, 'refund.amount', charge.amount_refunded / 100);
+      // _.set(order, 'refund.data', charge);
+    }
 
-  res.status(200).send({ order, success: true });
-});
+    res.status(200).send({ order, success: true });
+  }),
+];
 
+export const shipOrder = [
+  check('courier', 'Select a courier').escape().trim().notEmpty(),
+  check('tracking_number', 'Invalid Tracking Number')
+    .escape()
+    .trim()
+    .notEmpty(),
+  check('dispatch_date', 'Select a Dispatch Date').escape().trim().notEmpty(),
+  check('note').escape().trim(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const { preview, dispatch_date } = req.body;
+
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty() && !preview) {
+      return res.status(400).send(errors.mapped());
+    }
+
+    const orderInfo = await Order.findById(id, null, {
+      populate: 'customer',
+      lean: { toObject: true },
+      new: true,
+    });
+    const arrays = {
+      start: [],
+      end: [],
+    };
+    orderInfo.itemsByProfile.forEach(({ shippingInfo }) => {
+      const { start, end, type } = _.get(shippingInfo, 'processing_time');
+      let startDate = dayjs(dispatch_date).add(start, type.slice(0, -1));
+      let endDate = dayjs(dispatch_date).add(end, type.slice(0, -1));
+
+      arrays.start.push(startDate);
+      arrays.end.push(endDate);
+    });
+
+    const findMinStartDate = dayjs.min(arrays.start).endOf('day').toISOString();
+    const findMaxEndDate = dayjs.max(arrays.end).endOf('day').toISOString();
+    console.log({ findMinStartDate, findMaxEndDate });
+
+    const shippedObj = {
+      ...req.body,
+      max_delivery_date: findMaxEndDate,
+      min_delivery_date: findMinStartDate,
+    };
+
+    if (preview) {
+      res.status(200).send({
+        success: true,
+        html: render(
+          <OrderShipped
+            order={{ ...orderInfo, shipped: shippedObj }}
+            preview={true}
+          />,
+        ),
+      });
+      return;
+    }
+
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      {
+        shipped: shippedObj,
+        status: 'shipped',
+        // ...req.body,
+        // ship_date: new Date(),
+        // 'shipping_option.delivery_date': newDeliveryDate,
+      },
+      {
+        populate: { path: 'items.product customer' },
+        new: true,
+        lean: { toObject: true },
+      },
+    ).exec();
+
+    const emailHtml = render(<OrderShipped order={order} />);
+    const mailOptions = {
+      from: SENDER,
+      to: order?.customer?.email,
+      subject: 'Your order’s on its way!',
+      html: emailHtml,
+    };
+
+    const sendEmail = await transporter.sendMail(mailOptions);
+    const responseObject = { success: true, msg: 'order shipped email sent' };
+
+    res.send({ success: true, msg: 'order shipped email sent' });
+  }),
+];
+
+export const mark_as_gift = [
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.body;
+
+    if (id.length > 1) {
+      await Order.updateMany({ _id: id }, [
+        {
+          $set: { mark_as_gift: req.body.mark_as_gift },
+        },
+      ]);
+    } else {
+      await Order.findByIdAndUpdate(id[0], [
+        {
+          $set: { mark_as_gift: { $not: '$mark_as_gift' } },
+        },
+      ]);
+    }
+
+    // res.send(order);
+
+    if (id.length == 1) {
+      return res.redirect(`/api/admin/order/${id}`);
+    } else {
+      res.send({
+        success: true,
+        msg: `Orders status updated to ${req.body?.mark_as_gift}`,
+        updateOrderInfo: false,
+      });
+    }
+  }),
+];
+
+export const cancelOrder = [
+  check('reason', 'Choose a reason').escape().trim().notEmpty(),
+  check('returning_items', 'Choose an answer')
+    .escape()
+    .trim()
+    .notEmpty()
+    .toBoolean(),
+  check('message_to_buyer', 'Keep note below 500 characters')
+    .escape()
+    .trim()
+    .isLength({ max: 500 }),
+  check('id').escape().trim(),
+  check('cancel_order').escape().trim().toBoolean(),
+  asyncHandler(async (req, res, next) => {
+    const { cancel_order } = req.body;
+    const { id } = req.params;
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+    if (!errors.isEmpty()) {
+      return res.status(400).send(errors.mapped());
+    }
+    const date = dayjs().toDate();
+    const updateObj = {
+      cancel: { ...req.body, date },
+      completed_date: date,
+    };
+    const statusObject = {};
+    if (cancel_order) {
+      statusObject.status = 'cancelled';
+    }
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      { ...statusObject },
+      {
+        populate: { path: 'items.product customer' },
+        new: true,
+        lean: { toObject: true },
+      },
+    ).exec();
+
+    if (order?.payment_intent_id) {
+      const refundObj = {
+        payment_intent: order.payment_intent_id,
+        metadata: { ...req.body, order_id: order._id },
+      };
+
+      if (req.body?.charge) {
+        refundObj.amount = parseFloat(req.body.charge) * 100;
+      }
+      const refund = await stripe.refunds.create(refundObj);
+
+      updateObj['$push'] = { 'refund.id': refund.id };
+
+      // await Order.findByIdAndUpdate(
+      //   id,
+      //   {
+      //     $push: { 'refund.id': refund.id },
+      //   },
+      //   { new: true, useFindAndModify: false },
+      // );
+    }
+
+    const updateOrder = await Order.findOneAndUpdate({ _id: id }, updateObj, {
+      populate: { path: 'items.product customer' },
+      new: true,
+      lean: { toObject: true },
+    }).exec();
+    const emailHtml = render(<OrderCancel order={updateOrder} />);
+    const mailOptions = {
+      from: SENDER,
+      to: updateOrder?.customer?.email,
+      subject: 'Your GLAMO order has been cancelled',
+      html: emailHtml,
+    };
+
+    const sendEmail = await transporter.sendMail(mailOptions);
+    res.send({ success: true });
+  }),
+];
+// ----------------------------------------------------
 export const updateOrder = [
-  check('courier', 'Please enter a valid courier of 3 or more characters.')
+  check('courier', 'Select a courier')
     .trim()
     .escape()
     .custom((value, { req }) => {
@@ -204,10 +536,7 @@ export const updateOrder = [
       return true;
     }),
 
-  check(
-    'trackingNumber',
-    'Please enter a valid password of 12 or more characters.',
-  )
+  check('trackingNumber', 'Invalid Tracking Number')
     .trim()
     .escape()
     .custom((value, { req }) => {
@@ -455,11 +784,28 @@ export const testPdf = asyncHandler(async (req, res, next) => {
 // search orders
 
 export const searchOrder = [
-  check('searchText').trim('#').trim().escape(),
+  check('searchText', 'Enter a value to search for.')
+    .trim('#')
+    .trim()
+    .escape()
+    .notEmpty(),
   asyncHandler(async (req, res, next) => {
-    const { searchText } = req.body;
+    const { searchText, limit, page } = req.body;
     let objectId = null;
 
+    const errors = validationResult(req).formatWith(({ msg }) => msg);
+
+    if (!errors.isEmpty()) {
+      return res.send({
+        searchResult: [],
+        searchText,
+        totalCount: 0,
+        // pageCount,
+        page: 1,
+        maxPage: 1,
+        errors: errors.mapped(),
+      });
+    }
     const should = [
       {
         autocomplete: {
@@ -484,76 +830,144 @@ export const searchOrder = [
           path: 'customer',
         },
       });
-    } catch (error) {
-      objectId = null;
-      console.error('parse string to objectId failed: ', error?.message);
-    }
+    } catch (error) {}
+    const searchStage = {
+      $search: {
+        index: 'orders_search_index',
+        compound: {
+          should,
+        },
+      },
+    };
+    const skip_limit_stage = [{ $skip: (page - 1) * limit }, { $limit: limit }];
 
-    const searchResult = await Order.aggregate([
-      {
-        $search: {
-          index: 'orders_search_index',
-          compound: {
-            should,
+    const [totalCountResult, searchResult] = await Promise.all([
+      Order.aggregate([searchStage, { $count: 'totalCount' }]),
+      // Order.aggregate([
+      //   searchStage,
+      //   ...skip_limit_stage,
+      //   { $count: 'pageCount' },
+      // ]),
+      Order.aggregate([
+        searchStage,
+        ...skip_limit_stage,
+        { $unwind: '$items' },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'items.product',
+            foreignField: '_id',
+            as: 'productLookup',
+            pipeline: [
+              {
+                $project: {
+                  variations: 0,
+                  reviews: 0,
+                  detail: 0,
+                  category: 0,
+                  gender: 0,
+                  price: 0,
+                  delivery: 0,
+                  stock: 0,
+                },
+              },
+            ],
           },
         },
-      },
 
-      { $unwind: '$items' },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'items.product',
-          foreignField: '_id',
-          as: 'productLookup',
-        },
-      },
-      {
-        $project: {
-          productLookup: {
-            variations: 0,
-            reviews: 0,
-            detail: 0,
-            category: 0,
-            gender: 0,
-            price: 0,
-            delivery: 0,
-            stock: 0,
+        {
+          $addFields: {
+            'items.product': { $arrayElemAt: ['$productLookup', 0] },
           },
         },
-      },
-      {
-        $addFields: {
-          'items.product': { $arrayElemAt: ['$productLookup', 0] },
+        {
+          $unset: 'productLookup',
         },
-      },
-      {
-        $unset: 'productLookup',
-      },
-      {
-        $group: {
-          _id: '$_id',
-          itemsArray: { $push: '$items' },
-          doc: { $first: '$$ROOT' },
+        {
+          $group: {
+            _id: '$_id',
+            itemsArray: { $push: '$items' },
+            doc: { $first: '$$ROOT' },
+          },
         },
-      },
-      {
-        $replaceRoot: {
-          newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+        {
+          $replaceRoot: {
+            newRoot: { $mergeObjects: ['$doc', { items: '$itemsArray' }] },
+          },
         },
-      },
-      {
-        $sort: { _id: 1 },
-      },
-      // {
-      //   $limit: 5,
-      // },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'customer',
+            foreignField: '_id',
+            as: 'customer',
+            pipeline: [
+              {
+                $project: {
+                  firstName: 1,
+                  lastName: 1,
+                },
+              },
+            ],
+          },
+        },
+        {
+          $replaceWith: {
+            $setField: {
+              field: 'customer',
+              input: '$$ROOT',
+              value: { $arrayElemAt: ['$customer', 0] },
+            },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+        // {
+        //   $limit: 5,
+        // },
+      ]),
     ]);
-    console.log({ searchText, should, searchResult });
-    res.status(200).send({ searchResult, success: true });
+    const totalCount = _.get(totalCountResult, '0.totalCount') || 0;
+    res.status(200).send({
+      searchResult,
+      searchText,
+      totalCount,
+      // pageCount,
+      page,
+      maxPage: Math.ceil(totalCount / limit),
+    });
   }),
 ];
 
+export const searchProducts = [
+  check('searchText').escape().trim().notEmpty(),
+  asyncHandler(async (req, res, next) => {
+    const { searchText } = await req.query;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.send({ result: [], searchText });
+    }
+    const result = await Product.aggregate([
+      productSearchStage(searchText),
+      ...productAggregateStage({ stats: true }),
+
+      // {
+      //   $project: {
+      //     variations: 0,
+      //   },
+      // },
+    ]);
+
+    res.send({
+      result,
+      success: true,
+      searchText,
+    });
+  }),
+];
 export const getAllProducts = [
   check('check.featured')
     .trim()
@@ -648,35 +1062,7 @@ export const getAllProducts = [
       productPipeline.unshift({ $match: { $and: matchArray } });
     }
     if (checks?.searchText) {
-      const should = [
-        {
-          autocomplete: {
-            query: checks.searchText,
-            path: 'title',
-          },
-        },
-      ];
-
-      try {
-        const objectId = new mongoose.Types.ObjectId(checks.searchText);
-        should.push({
-          equals: {
-            value: objectId,
-            path: '_id',
-          },
-        });
-      } catch (error) {
-        console.error('parse string to objectId failed: ', error?.message);
-      }
-
-      const searchStage = {
-        $search: {
-          index: 'products_search_index',
-          compound: {
-            should,
-          },
-        },
-      };
+      const searchStage = productSearchStage(checks.searchText);
       productPipeline.unshift(searchStage);
     }
 

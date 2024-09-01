@@ -127,11 +127,6 @@ const cart_wishlist_pipeline = [
               ],
             },
           },
-          {
-            variation_data: {
-              select: '$items.variation_data.select',
-            },
-          },
         ],
       },
     },
@@ -141,198 +136,207 @@ const cart_wishlist_pipeline = [
     $addFields: {
       'items.variation_data': {
         // $arrayToObject: {
-        $reduce: {
-          input: '$items.variationList',
-          initialValue: '$items.variation_data',
-          in: {
-            $cond: {
-              if: {
-                $lt: ['$$this.variationIndex', 2],
-              },
+        $mergeObjects: [
+          '$items.variation_data',
+          {
+            $reduce: {
+              input: '$items.variationList',
+              initialValue: '$items.variation_data',
+              in: {
+                $cond: {
+                  if: {
+                    $lt: ['$$this.variationIndex', 2],
+                  },
 
-              then: {
-                $mergeObjects: [
-                  '$$value',
-                  {
-                    $arrayToObject: [
-                      [
-                        {
-                          k: {
-                            $concat: [
-                              'variation',
-                              {
-                                $toString: {
-                                  $add: ['$$this.variationIndex', 1],
-                                },
+                  then: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_present',
+                                ],
                               },
-                              '_present',
-                            ],
-                          },
-                          v: true,
-                        },
-                        {
-                          k: {
-                            $concat: [
-                              'variation',
-                              {
-                                $toString: {
-                                  $add: ['$$this.variationIndex', 1],
-                                },
+                              v: true,
+                            },
+                            {
+                              k: {
+                                $concat: [
+                                  'variation',
+                                  {
+                                    $toString: {
+                                      $add: ['$$this.variationIndex', 1],
+                                    },
+                                  },
+                                  '_data',
+                                ],
                               },
-                              '_data',
-                            ],
-                          },
-                          v: '$$this',
-                        },
-                      ],
+                              v: '$$this',
+                            },
+                          ],
+                        ],
+                      },
                     ],
                   },
-                ],
+
+                  else: {
+                    $mergeObjects: [
+                      '$$value',
+                      {
+                        $arrayToObject: [
+                          [{ k: 'isVariationCombine', v: true }],
+                        ],
+                      },
+                    ],
+                  },
+
+                  // {
+                  //   $mergeObjects: [
+                  //     '$$value',
+                  //     {
+                  //       $arrayToObject: [
+                  //         [
+                  //           {
+                  //             k: 'combineVariation',
+                  //             v: {
+                  //               $reduce: {
+                  //                 input: '$$this.array',
+                  //                 initialValue: {},
+                  //                 in: {
+                  //                   $mergeObjects: [
+                  //                     '$$value',
+                  //                     {
+                  //                       $arrayToObject: [
+                  //                         [
+                  //                           {
+                  //                             k: '$$this.variation',
+                  //                             v: {
+                  //                               $concatArrays: [
+                  //                                 {
+                  //                                   $let: {
+                  //                                     vars: {
+                  //                                       converted: {
+                  //                                         $filter: {
+                  //                                           as: 'convertedArray',
+                  //                                           input: {
+                  //                                             $objectToArray:
+                  //                                               '$$value',
+                  //                                           },
+
+                  //                                           cond: {
+                  //                                             $eq: [
+                  //                                               '$$convertedArray.k',
+                  //                                               '$$this.variation',
+                  //                                             ],
+                  //                                           },
+                  //                                         },
+                  //                                       },
+                  //                                     },
+
+                  //                                     in: {
+                  //                                       $cond: {
+                  //                                         if: {
+                  //                                           $eq: [
+                  //                                             {
+                  //                                               $type:
+                  //                                                 '$$converted.v',
+                  //                                             },
+                  //                                             'object',
+                  //                                           ],
+                  //                                         },
+                  //                                         then: '$$converted.v',
+                  //                                         else: [],
+                  //                                       },
+                  //                                     },
+                  //                                   },
+                  //                                 },
+
+                  //                                 [
+                  //                                   {
+                  //                                     k: '$$this.variation2',
+                  //                                     v: '$$this',
+                  //                                   },
+                  //                                 ],
+                  //                               ],
+                  //                               // $mergeObjects: [
+                  //                               //   {
+                  //                               //     $let: {
+                  //                               //       vars: {
+                  //                               //         converted: {
+                  //                               //           $filter: {
+                  //                               //             as: 'convertedArray',
+                  //                               //             input: {
+                  //                               //               $objectToArray:
+                  //                               //                 '$$value',
+                  //                               //             },
+
+                  //                               //             cond: {
+                  //                               //               $eq: [
+                  //                               //                 '$$convertedArray.k',
+                  //                               //                 '$$this.variation',
+                  //                               //               ],
+                  //                               //             },
+                  //                               //           },
+                  //                               //         },
+                  //                               //       },
+
+                  //                               //       in: {
+                  //                               //         $cond: {
+                  //                               //           if: {
+                  //                               //             $eq: [
+                  //                               //               {
+                  //                               //                 $type:
+                  //                               //                   '$$converted.v',
+                  //                               //               },
+                  //                               //               'object',
+                  //                               //             ],
+                  //                               //           },
+                  //                               //           then: '$$converted.v',
+                  //                               //           else: {},
+                  //                               //         },
+                  //                               //       },
+                  //                               //     },
+                  //                               //   },
+                  //                               //   {
+                  //                               //     $arrayToObject: [
+                  //                               //       [
+                  //                               //         {
+                  //                               //           k: '$$this.variation2',
+                  //                               //           v: '$$this',
+                  //                               //         },
+                  //                               //       ],
+                  //                               //     ],
+                  //                               //   },
+                  //                               // ],
+                  //                             },
+                  //                           },
+                  //                         ],
+                  //                       ],
+                  //                     },
+                  //                   ],
+                  //                 },
+                  //               },
+                  //             },
+                  //           },
+                  //         ],
+                  //       ],
+                  //     },
+                  //   ],
+                  // },
+                },
               },
-
-              else: {
-                $mergeObjects: [
-                  '$$value',
-                  { $arrayToObject: [[{ k: 'isVariationCombine', v: true }]] },
-                ],
-              },
-
-              // {
-              //   $mergeObjects: [
-              //     '$$value',
-              //     {
-              //       $arrayToObject: [
-              //         [
-              //           {
-              //             k: 'combineVariation',
-              //             v: {
-              //               $reduce: {
-              //                 input: '$$this.array',
-              //                 initialValue: {},
-              //                 in: {
-              //                   $mergeObjects: [
-              //                     '$$value',
-              //                     {
-              //                       $arrayToObject: [
-              //                         [
-              //                           {
-              //                             k: '$$this.variation',
-              //                             v: {
-              //                               $concatArrays: [
-              //                                 {
-              //                                   $let: {
-              //                                     vars: {
-              //                                       converted: {
-              //                                         $filter: {
-              //                                           as: 'convertedArray',
-              //                                           input: {
-              //                                             $objectToArray:
-              //                                               '$$value',
-              //                                           },
-
-              //                                           cond: {
-              //                                             $eq: [
-              //                                               '$$convertedArray.k',
-              //                                               '$$this.variation',
-              //                                             ],
-              //                                           },
-              //                                         },
-              //                                       },
-              //                                     },
-
-              //                                     in: {
-              //                                       $cond: {
-              //                                         if: {
-              //                                           $eq: [
-              //                                             {
-              //                                               $type:
-              //                                                 '$$converted.v',
-              //                                             },
-              //                                             'object',
-              //                                           ],
-              //                                         },
-              //                                         then: '$$converted.v',
-              //                                         else: [],
-              //                                       },
-              //                                     },
-              //                                   },
-              //                                 },
-
-              //                                 [
-              //                                   {
-              //                                     k: '$$this.variation2',
-              //                                     v: '$$this',
-              //                                   },
-              //                                 ],
-              //                               ],
-              //                               // $mergeObjects: [
-              //                               //   {
-              //                               //     $let: {
-              //                               //       vars: {
-              //                               //         converted: {
-              //                               //           $filter: {
-              //                               //             as: 'convertedArray',
-              //                               //             input: {
-              //                               //               $objectToArray:
-              //                               //                 '$$value',
-              //                               //             },
-
-              //                               //             cond: {
-              //                               //               $eq: [
-              //                               //                 '$$convertedArray.k',
-              //                               //                 '$$this.variation',
-              //                               //               ],
-              //                               //             },
-              //                               //           },
-              //                               //         },
-              //                               //       },
-
-              //                               //       in: {
-              //                               //         $cond: {
-              //                               //           if: {
-              //                               //             $eq: [
-              //                               //               {
-              //                               //                 $type:
-              //                               //                   '$$converted.v',
-              //                               //               },
-              //                               //               'object',
-              //                               //             ],
-              //                               //           },
-              //                               //           then: '$$converted.v',
-              //                               //           else: {},
-              //                               //         },
-              //                               //       },
-              //                               //     },
-              //                               //   },
-              //                               //   {
-              //                               //     $arrayToObject: [
-              //                               //       [
-              //                               //         {
-              //                               //           k: '$$this.variation2',
-              //                               //           v: '$$this',
-              //                               //         },
-              //                               //       ],
-              //                               //     ],
-              //                               //   },
-              //                               // ],
-              //                             },
-              //                           },
-              //                         ],
-              //                       ],
-              //                     },
-              //                   ],
-              //                 },
-              //               },
-              //             },
-              //           },
-              //         ],
-              //       ],
-              //     },
-              //   ],
-              // },
             },
           },
-        },
+        ],
         // },
       },
     },

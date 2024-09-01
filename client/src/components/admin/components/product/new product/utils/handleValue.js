@@ -1,51 +1,29 @@
-export default function handleValue(options) {
-    const {
-        value,
-        setValue,
-        property,
-        text,
-        errorMessage,
-        setError,
-        maxValue,
-    } = options;
-
-    let err = null;
-
-    const minValue = options?.minValue || 0;
+export default function handleValue({
+    value,
+    setValue,
+    property,
+    text,
+    errorMessage,
+    maxValue,
+    publishErrorDispatch,
+    minValue,
+}) {
+    let error = null;
     if (!value || isNaN(value)) {
-        err = `Please enter a valid ${text}.`;
-        setError((prevState) => {
-            return {
-                ...prevState,
-                [property]: `Please enter a valid ${text}.`,
-            };
-        });
+        error = `Please enter a valid ${text}.`;
     } else if (value == 0) {
-        err = errorMessage.zero;
-        setError((prevState) => {
-            return { ...prevState, [property]: errorMessage.zero };
-        });
+        error = errorMessage.zero;
     } else if (value < minValue || value > maxValue) {
-        err = errorMessage.underZero;
-        setError((prevState) => {
-            return {
-                ...prevState,
-                [property]: errorMessage.underZero,
-            };
-        });
-    } else {
-        setError((prevState) => {
-            return {
-                ...prevState,
-                [property]: null,
-            };
-        });
+        error = errorMessage.underZero;
     }
 
-    options?.isObject
-        ? setValue((obj) => {
-              return { ...obj, value, on: true };
-          })
-        : setValue(() => value);
-    return err;
+    setValue(() => value);
+
+    if (error) {
+        publishErrorDispatch({ type: 'ADD', msg: error, path: property });
+    } else {
+        publishErrorDispatch({ type: 'CLEAR', path: property });
+    }
+
+    return;
 }

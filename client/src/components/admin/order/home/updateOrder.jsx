@@ -173,9 +173,9 @@ function UpdateOrder({}) {
                         <p className="absolute left-2/4 top-2/4 translate-x-[-50%] translate-y-[-60%] font-gotham text-lg">
                             g
                         </p>
-                        <div class="spinner-circle [--spinner-color:var(--slate-11)]"></div>
+                        <div class="spinner-circle ![--spinner-color:var(--slate-11)]"></div>
                         {/* <svg
-                            className="spinner-circle spinner-lg [--spinner-color:var(--slate-11)]"
+                            className="spinner-circle spinner-lg ![--spinner-color:var(--slate-11)]"
                             viewBox="25 25 50 50"
                             strokeWidth="5"
                         >
@@ -233,7 +233,7 @@ function UpdateOrder({}) {
                 {loading && (
                     <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
                         <svg
-                            className="spinner-ring spinner-sm [--spinner-color:var(--slate-11)]"
+                            className="spinner-ring spinner-sm ![--spinner-color:var(--slate-11)]"
                             viewBox="25 25 50 50"
                             strokeWidth="5"
                         >

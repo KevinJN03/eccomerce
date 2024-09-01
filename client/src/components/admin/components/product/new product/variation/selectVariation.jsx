@@ -2,16 +2,8 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import Manage from './manage/manage';
-import {
-    generateVariation,
-    generateCustomVariation,
-    filteredVariation,
-    defaultMap,
-    getValuesFromMap,
-} from './variationData';
+import { useEffect, useRef, useState } from 'react';
+import { generateVariation, filteredVariation } from './variationData';
 import ErrorAlert from './error/errorAlert';
 import SearchResult from './searchResults';
 import { useVariation } from '../../../../../../context/variationContext';
@@ -20,17 +12,16 @@ import { useNewProduct } from '../../../../../../context/newProductContext';
 import _ from 'lodash';
 import ObjectID from 'bson-objectid';
 import ThemeBtn from '../../../../../buttons/themeBtn';
-import BubbleButton from '../../../../../buttons/bubbleButton';
 import { Menu, MenuItem } from '@mui/material';
+import { useDebounce } from '@uidotdev/usehooks';
+import BubbleButton from '../../../../../buttons/bubbleButton';
 
 function SelectVariation({}) {
     const { setTemporaryVariation, temporaryVariation } = useVariation();
 
     const { contentDispatch, modalContent } = useNewProduct();
     const currentVariation = modalContent.currentVariation;
-    const [option, setOption] = useState(
-        currentVariation ? currentVariation.options : new Map()
-    );
+    // debugger;
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [name, setName] = useState(modalContent.title || '');
@@ -39,12 +30,11 @@ function SelectVariation({}) {
     );
     const [error, setError] = useState();
     const [exist, setExist] = useState(false);
-    const [optionArray, setOptionArray] = useState([]);
+    const [optionArray, setOptionArray] = useState(
+        currentVariation?.options || []
+    );
     const [anchorEl, setAnchorEl] = useState(null);
-    useEffect(() => {
-        const result = getValuesFromMap(option);
-        setOptionArray(result);
-    }, [option]);
+    const timeoutRef = useRef();
     useEffect(() => {
         try {
             if (currentVariation) {
@@ -59,7 +49,13 @@ function SelectVariation({}) {
 
                 setVariation(() => list);
             }
-        } catch (error) {}
+        } catch (error) {
+            console.error('', error);
+        }
+
+        return () => {
+            clearTimeout(timeoutRef.current);
+        };
     }, []);
 
     const onNameChange = (value) => {
@@ -82,24 +78,19 @@ function SelectVariation({}) {
     };
 
     const addOption = (variationOption) => {
-
         if (searchText.length > 0) {
             setSearchText('');
         }
-        setOption((prevState) => {
-            const newMap = new Map(prevState);
-            newMap.set(variationOption.id, variationOption);
-            return newMap;
+
+        setOptionArray((prevState) => {
+            return [variationOption, ...prevState];
         });
         filterColor(variationOption.id);
     };
 
     const deleteOption = (variationOption) => {
-        setOption((prevState) => {
-            const newOptionMap = new Map(prevState);
-            newOptionMap.delete(variationOption.id);
-
-            return newOptionMap;
+        setOptionArray((prevState) => {
+            return prevState.filter((item) => item.id != variationOption.id);
         });
         if (variationOption && variationOption.type != 'custom') {
             setVariation([variationOption, ...variation]);
@@ -126,14 +117,20 @@ function SelectVariation({}) {
     };
 
     const handleCustom = () => {
-        const customVariation = generateCustomVariation(searchText);
-        setOption((prevState) =>
-            new Map(prevState).set(customVariation.id, customVariation)
-        );
-        setSearchText('');
+        const newId = ObjectID().toString();
+        const customVariation = {
+            variation: searchText,
+            id: newId,
+            _id: newId,
+            type: 'custom',
+        };
+
+        setOptionArray((prevState) => [customVariation, ...prevState]);
+        setSearchText(() => '');
     };
 
     const createVariation = () => {
+        const optionsMap = new Map(optionArray.map((item) => [item.id, item]));
         try {
             if (modalContent?.currentVariation) {
                 const newTemporaryVariation = _.cloneDeep(
@@ -142,7 +139,11 @@ function SelectVariation({}) {
                     if (
                         item._id == _.get(modalContent, 'currentVariation._id')
                     ) {
-                        return { ...item, options: option, name: name };
+                        return {
+                            ...item,
+                            options: optionsMap,
+                            name: name,
+                        };
                     } else {
                         return item;
                     }
@@ -169,7 +170,7 @@ function SelectVariation({}) {
 
                 const newVariation = {
                     name,
-                    options: option,
+                    options: optionsMap,
                     _id: ObjectID()?.toString(),
                     default: defaultVariation,
                     disabled: false,
@@ -193,12 +194,8 @@ function SelectVariation({}) {
     };
 
     const addRemainingColors = () => {
-        setOption((prevState) => {
-            const newMap = new Map(prevState);
-            variation.map((item) => {
-                newMap.set(item.id, item);
-            });
-            return newMap;
+        setOptionArray((prevState) => {
+            return [...variation, ...prevState];
         });
         setVariation([]);
     };
@@ -236,7 +233,7 @@ function SelectVariation({}) {
                     <h2 className="font-Poppin flex items-center text-lg font-semibold">
                         Options{' '}
                         <span className="ml-1 flex h-4 items-center rounded-full bg-black px-2 text-xxs text-white">
-                            {option.size}
+                            {optionArray.length}
                         </span>
                     </h2>
                     <p className="text-s">
@@ -256,18 +253,44 @@ function SelectVariation({}) {
                         <input
                             type="text"
                             value={searchText}
-                            className="input input-lg !min-w-full rounded-md pr-10"
+                            className="input input-lg !min-w-full rounded-md pr-10 mr-1.5"
                             placeholder="Enter an option..."
                             onClick={(e) => {
                                 setAnchorEl(e.currentTarget);
-
-                                console.log(e.currentTarget);
                             }}
                             onChange={(e) => {
-                                setSearchText(e.target.value);
+                                setSearchText(() => e.target.value);
+
+                                clearTimeout(timeoutRef.current);
+
+                                timeoutRef.current = setTimeout(() => {
+                                    setAnchorEl(() => e.target);
+                                }, 500);
                             }}
                         />
                         <ArrowDropDownIcon className="absolute right-3" />
+
+                        {!defaultVariation && (
+                            <BubbleButton
+                                handleClick={handleCustom}
+                                text={'Add'}
+                                disabled={
+                                    searchText.length < 1 ||
+                                    searchText.length > 20
+                                }
+                            ></BubbleButton>
+                            //   <button
+                            //       type="button"
+                            //       className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
+                            //       onClick={handleCustom}
+                            //       disabled={
+                            //           searchText.length < 1 ||
+                            //           searchText.length > 20
+                            //       }
+                            //   >
+                            //       Add
+                            //   </button>
+                        )}
                     </div>{' '}
                     {!defaultVariation && searchText.length > 20 && (
                         <OptionError
@@ -290,8 +313,8 @@ function SelectVariation({}) {
                             },
                         }}
                     >
-                        {!defaultVariation && (
-                            <MenuItem>
+                        {/* {!defaultVariation && (
+                          
                                 <button
                                     type="button"
                                     className="ml-2 rounded-3xl px-3 py-2 font-medium hover:bg-[var(--light-grey)] disabled:opacity-40"
@@ -303,8 +326,7 @@ function SelectVariation({}) {
                                 >
                                     Add
                                 </button>
-                            </MenuItem>
-                        )}
+                        )} */}
 
                         <SearchResult
                             addRemainingColors={addRemainingColors}
@@ -316,11 +338,11 @@ function SelectVariation({}) {
                         />
                     </Menu>
                 </section>
-                <div className="options-wrapper mt-3 flex min-h-[200px] w-full  basis-full flex-col gap-y-2  ">
+                <div className="options-wrapper mt-4 flex min-h-[200px] w-full  basis-full flex-col gap-y-3  ">
                     {optionArray.map(({ variation, id, ...item }) => {
                         return (
                             <div
-                                className="border-1 flex w-full w-full cursor-pointer  flex-row items-center justify-between rounded-lg p-2"
+                                className="border-1 flex w-full cursor-pointer flex-row  items-center justify-between rounded-lg border p-3"
                                 key={id}
                             >
                                 <span className="flex flex-row items-center gap-3">
@@ -365,7 +387,7 @@ function SelectVariation({}) {
                         (name.length < 1 && (
                             <ErrorMessage message={'Enter a variation name'} />
                         )) ||
-                        (option && option.length < 1 && (
+                        (optionArray.length < 1 && (
                             <ErrorMessage message={'Add at least 1 option'} />
                         ))}
 
@@ -373,7 +395,10 @@ function SelectVariation({}) {
                         text={'Done'}
                         handleClick={createVariation}
                         disabled={
-                            option.size < 1 || name.length < 1 || exist || error
+                            optionArray.length < 1 ||
+                            name.length < 1 ||
+                            exist ||
+                            error
                         }
                     />
                 </div>

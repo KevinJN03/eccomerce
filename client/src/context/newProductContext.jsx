@@ -14,10 +14,11 @@ import { EditorState, ContentState } from 'draft-js';
 import UpdateProduct from '../hooks/updateProduct';
 import combineReducer from '../hooks/combineReducer';
 import { contentReducer } from '../hooks/contentReducer';
-export const newProductContext = createContext(null);
+import _ from 'lodash';
+export const NewProductContext = createContext(null);
 
 export const useNewProduct = () => {
-    return useContext(newProductContext);
+    return useContext(NewProductContext);
 };
 
 export const NewProductProvider = (props) => {
@@ -32,30 +33,28 @@ export const NewProductProvider = (props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [profile, setProfile] = useState({});
-    const [globalUpdate, setGlobalUpdate] = useState({
-        price: null,
-        quantity: null,
-    });
+
     const [category, setCategory] = useState();
     const [publishError, publishErrorDispatch] = useReducer(
         publishError_Reducer,
-        new Map()
+        {}
     );
 
-    const [priceValue, setPriceValue] = useState({
-        value: '',
-        on: false,
-    });
-    const [stockValue, setStockValue] = useState({ value: '', on: false });
+    // const [priceValue, setPriceValue] = useState({
+    //     value: '',
+    //     on: false,
+    // });
+    const [priceValue, setPriceValue] = useState(null);
+    const [stockValue, setStockValue] = useState(null);
+
+    // const [stockValue, setStockValue] = useState({ value: '', on: false });
     const [publish, setPublish] = useState({
         firstAttempt: false,
         value: false,
         count: 0,
     });
 
-    const [gender, setGender] = useState();
-    const isAllInputValid = useRef(true);
-
+    const [gender, setGender] = useState(null);
     const [modalCheck, setModalCheck] = useState(false);
     const [modalContent, contentDispatch] = useReducer(contentReducer, {
         type: 'main',
@@ -93,15 +92,14 @@ export const NewProductProvider = (props) => {
         setGender,
         profile,
         setProfile,
-        globalUpdate,
-        setGlobalUpdate,
+
         publishError,
         publishErrorDispatch,
         priceValue,
         setPriceValue,
         stockValue,
         setStockValue,
-        isAllInputValid,
+
         publish,
         setPublish,
         combine,
@@ -116,92 +114,110 @@ export const NewProductProvider = (props) => {
     };
 
     return (
-        <newProductContext.Provider value={value}>
+        <NewProductContext.Provider value={value}>
             {props.children}
-        </newProductContext.Provider>
+        </NewProductContext.Provider>
     );
 };
 
 function publishError_Reducer(state, action) {
+    if (action.type == 'SET') {
+        // action?.data?.forEach((element) => {
+        //     const { path } = element;
+        //     map.set(path, element);
+        // });
+        return action.data;
+    }
+
+    if (action.type == 'ADD') {
+        const newState = _.cloneDeep(state);
+        _.set(newState, action.path, action.msg);
+
+        return newState;
+    }
+
     if (action.type == 'default') {
-        const map = new Map(state).set('default', action.data.msg[0]);
-        return map;
+        return { ...state, default: _.get(action, 'data.msg.0') };
     }
     if (action.type === 'getValidateInput') {
-        const size = state.get('validateInput')?.size;
+        // const size = _.get(state, 'validateInput')?.length;
 
-        if (size > 0) {
-            action.isAllInputValid.current = false;
-        } else {
-            action.isAllInputValid.current = true;
-        }
+        // if (size > 0) {
+        //     action.isAllInputValid.current = false;
+        // } else {
+        //     action.isAllInputValid.current = true;
+        // }
 
         return state;
     }
     if (action == 'clearValidateInput') {
-        const newMap = new Map(state);
-        newMap.delete('validateInput');
-        return newMap;
+        const newState = _.cloneDeep(state);
+        _.unset(newState, 'validateInput');
+        return newState;
     }
 
-    if (action.type == 'addToValidateInput2') {
-        return action.map;
-    }
+    // if (action.type == 'addToValidateInput2') {
+    //     return action.map;
+    // }
 
-    if (action.type == 'addToValidateInput') {
-        if (!state.has('validateInput')) {
-            const map = new Map(state);
-            return map.set(
-                'validateInput',
-                new Map([[action.path, action.error]])
-            );
-        }
-        const getMap = state.get('validateInput');
+    // if (action.type == 'addToValidateInput') {
 
-        if (!getMap.has(action.path)) {
-            const map = new Map(getMap);
-            map.set(action.path, action.error);
+    //     const newState = _.cloneDeep(state)
+    //     if (!_.has(newState, 'validateInput')) {
+    //         const map = new Map(state);
+    //         return map.set(
+    //             'validateInput',
+    //             new Map([[action.path, action.error]])
+    //         );
+    //     }
+    //     const getMap = state.get('validateInput');
 
-            const newMap = new Map(state).set('validateInput', map);
-            return newMap;
-        } else {
-            return state;
-        }
-    }
+    //     if (!getMap.has(action.path)) {
+    //         const map = new Map(getMap);
+    //         map.set(action.path, action.error);
+
+    //         const newMap = new Map(state).set('validateInput', map);
+    //         return newMap;
+    //     } else {
+    //         return state;
+    //     }
+    // }
     if (action.type == 'deleteValidateInput') {
-        const map = new Map(state);
-        const newMap = map.get('validateInput');
-        if (newMap.has(action.path)) {
-            if (newMap.size <= 1) {
-                map.delete('validateInput');
-                map.delete('isAllInputValid');
+        const newState = _.cloneDeep(newState);
+        const validateInputObj = _.get(newState, 'validateInput');
+
+        if (_.has(validateInputObj, action.path)) {
+            if (_.keys(validateInputObj).length <= 1) {
+                _.unset(newState, 'validateInput');
+                _.unset(newState, 'isAllInputValid');
             } else {
-                newMap.delete(action.path);
-                map.set('validateInput', newMap);
+                _.unset(validateInputObj, action.path);
+                _.set(newState, 'validateInput', validateInputObj);
             }
         }
-        return map;
+
+        return newState;
+        // if (newMap.has(action.path)) {
+        //     if (newMap.size <= 1) {
+        //         map.delete('validateInput');
+        //         map.delete('isAllInputValid');
+        //     } else {
+        //         newMap.delete(action.path);
+        //         map.set('validateInput', newMap);
+        //     }
+        // }
+        // return map;
     }
 
-    if (action.type == 'set') {
-        const map = new Map(state);
-        action?.data?.forEach((element) => {
-            const { path } = element;
-            map.set(path, element);
-        });
+    if (action.type == 'CLEAR') {
+        const newState = _.cloneDeep(state);
+        _.unset(newState, action.path);
 
-        return map;
-    }
-    if (action.type == 'clear') {
-        const newMap = new Map(state);
-
-        newMap.delete(action.path);
-
-        return newMap;
+        return newState;
     }
 
     if (action == 'clearAll') {
-        return new Map();
+        return {};
     }
 
     throw new Error(`please enter a valid action. ${action} is not valid.`);

@@ -2,7 +2,7 @@ import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import dayjs from 'dayjs';
 import SingleItem from './singleItem';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
 import { useRef, useState } from 'react';
 import { adminAxios } from '../../../../api/axios';
@@ -15,16 +15,27 @@ import {
     MailOutlineOutlined,
     CloseSharp,
     UndoOutlined,
+    RedeemSharp,
+    PublishedWithChangesRounded,
 } from '@mui/icons-material';
 import truck_icon from '../../../../assets/icons/shipping-truck.png';
 import Actions from '../drawerContent/action';
-import { AnimatePresence, motion } from 'framer-motion';
-import containerVariants from './containerVariants';
-import { ClickAwayListener } from '@mui/material';
+
 import { useNavigate } from 'react-router-dom';
-function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
-    const { setOpenDrawer, setOrderInfo, selectionSet, setSelectionSet } =
-        useAdminOrderContext();
+import _ from 'lodash';
+function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
+    const {
+        setOpenDrawer,
+        setOrderInfo,
+        selectionSet,
+        setSelectionSet,
+        markGiftSelection,
+        setMarkGiftSelection,
+        setSearchParams,
+        searchParams,
+        handleFetchOrderInfo,
+        addToPackage
+    } = useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
 
@@ -35,6 +46,23 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const addressRef = useRef(null);
 
     const { logoutUser } = userLogout();
+
+    const [shippingOptions, setShippingOptions] = useState({
+        services: Array.from(
+            new Set(
+                _.map(order?.itemsByProfile, (element) =>
+                    _.get(element, 'shippingInfo.shipping.service')
+                )
+            )
+        ).join(', '),
+        cost: _.reduce(
+            order?.itemsByProfile,
+            (total, element) => {
+                return (total += _.get(element, 'shippingInfo.cost'));
+            },
+            0
+        ),
+    });
 
     const navigate = useNavigate();
     const handleCopy = () => {
@@ -49,15 +77,18 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
     const isOrderInSet = selectionSet?.has(order?._id);
 
     const toggleSelection = () => {
-        setSelectionSet((prevSet) => {
-            const newSet = new Set(prevSet);
-            if (prevSet?.has(order?._id)) {
-                newSet.delete(order._id);
-            } else {
-                newSet.add(order?._id);
-            }
-            return newSet;
-        });
+        const newSelectionSet = new Set(selectionSet);
+        const newMarkGift = _.cloneDeep(markGiftSelection);
+        if (newSelectionSet?.has(order?._id)) {
+            newSelectionSet.delete(order._id);
+            newMarkGift[order?.mark_as_gift || false] -= 1;
+        } else {
+            newSelectionSet.add(order?._id);
+            newMarkGift[order?.mark_as_gift || false] += 1;
+        }
+
+        setSelectionSet(() => newSelectionSet);
+        setMarkGiftSelection(() => newMarkGift);
     };
 
     const handleClick = async (e) => {
@@ -69,25 +100,25 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
             ) {
                 return;
             }
-            const { data } = await adminAxios.get(`order/${order?._id}`);
-            console.log({ data }, 'here');
-            setOrderInfo(() => ({ ...data?.order }));
+            searchParams.set('orderId', order?._id);
+            setSearchParams(searchParams);
+            handleFetchOrderInfo;
+            // const { data } = await adminAxios.get(`order/${order?._id}`);
+            // const position = window.pageYOffset;
+            // setOrderInfo(() => ({ ...data?.order, position }));
             success = true;
         } catch (error) {
-            logoutUser({ error });
-            console.error('errow while fetching order', error);
         } finally {
-            if (success) {
-                setOpenDrawer(true);
-            }
+            // if (success) {
+            //     setOpenDrawer(true);
+            // }
         }
     };
 
     return (
         <section
-            // htmlFor="my-drawer-4"
             onClick={handleClick}
-            className={`flex flex-row gap-3 ${
+            className={`flex !cursor-pointer flex-row gap-3 ${
                 lastOrderInArray ? '' : 'border-b-2'
             } flex w-full cursor-pointer flex-row  px-5 py-6 ${
                 isOrderInSet
@@ -103,7 +134,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             onChange={toggleSelection}
                             type="checkbox"
                             id=""
-                            className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 rounded-sm"
+                            className="disable-drawer  daisy-checkbox daisy-checkbox-sm !z-50 mt-2 !rounded-sm"
                         />
                     )}
                 </div>
@@ -119,10 +150,10 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             <ArrowDropDownSharp />
                         </p>
                         <p>
-                            <span className="text-xxs underline underline-offset-1">
+                            <span className="text-xs underline underline-offset-1">
                                 #{order?._id}
                             </span>
-                            <span className="ml-2 text-xxs">
+                            <span className="ml-2 text-xs">
                                 £
                                 {parseFloat(
                                     order.transaction_cost?.total
@@ -139,25 +170,40 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         </div>
                     </div>
                     <div className="flex flex-1 flex-col">
-                        <p className="text-xs font-medium">
-                            {['received', 'processing'].includes(order?.status)
-                                ? `Ship by ${dayjs(
-                                      order.shipping_option?.delivery_date
-                                  ).format('MMM DD, YYYY')}`
-                                : 'Ordered'}
-                        </p>
-                        <p className="text-xxs">
+                        {['received'].includes(order?.status) ? (
+                            <p
+                                className={`text-sm font-semibold ${dayjs().isAfter(dayjs(_.get(order, 'ship_date'))) ? 'text-red-700' : 'text-black'}`}
+                            >
+                                {`Ship by 
+                                ${dayjs(_.get(order, 'ship_date')).format(
+                                    'MMM DD, YYYY'
+                                )}`}
+                            </p>
+                        ) : (
+                            <p
+                                className={`text-sm font-semibold ${order.status == 'cancelled' ? 'text-red-700' : 'text-black'}`}
+                            >
+                                {_.upperFirst(order.status)}
+                            </p>
+                        )}
+
+                        <p className="text-xs">
                             Ordered{' '}
                             {dayjs(order?.createdAt)?.format('DD MMM, YYYY')}
                         </p>
-                        <p className="my-3 text-xxs">
-                            {['received', 'processing'].includes(order?.status)
-                                ? `${
-                                      order.shipping_option?.name
-                                  } (£${order.shipping_option?.cost?.toFixed(
-                                      2
-                                  )})`
-                                : ''}
+                        <p className="my-3 text-xs">
+                            {order.status != 'shipped' && (
+                                <>
+                                    {shippingOptions?.services}{' '}
+                                    <span>
+                                        (£
+                                        {parseFloat(
+                                            shippingOptions?.cost
+                                        ).toFixed(2)}
+                                        )
+                                    </span>
+                                </>
+                            )}
                         </p>
 
                         <div className="relative flex flex-col ">
@@ -170,7 +216,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                 id="deliver-to"
                                 className="disable-drawer relative left-[-6px] flex h-5 w-fit flex-row flex-nowrap items-center gap-[2px] border-2 border-transparent pl-1   focus:border-light-grey active:border-light-grey"
                             >
-                                <p className="disable-drawer text-xxs text-black/85 underline-offset-1 hover:underline">
+                                <p className="disable-drawer text-xs text-black/85 underline-offset-1 hover:underline">
                                     Deliver To
                                 </p>
                                 <ExpandMoreRounded
@@ -181,11 +227,11 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                     }`}
                                 />
                             </button>
-                            <p className="text-xxs font-semibold">
+                            <p className="text-xs font-semibold">
                                 {order.shipping_address?.name}
                             </p>
                             {!showFullAddress && (
-                                <p className="text-xxs">
+                                <p className="text-xs">
                                     {order.shipping_address.address?.city},{' '}
                                     {
                                         countryLookup.byIso(
@@ -198,7 +244,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                             {showFullAddress && (
                                 <div>
                                     {' '}
-                                    <p className="text-xxs" ref={addressRef}>
+                                    <p className="text-xs" ref={addressRef}>
                                         {address?.line1}
                                         <br />
 
@@ -238,6 +284,16 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                             Copy address
                                         </button>
                                     </span>
+                                </div>
+                            )}
+
+                            {_.get(order, 'mark_as_gift') && (
+                                <div className="flex flex-row flex-nowrap items-center gap-2 py-3">
+                                    <RedeemSharp
+                                        className="!fill-green-800"
+                                        fontSize="small"
+                                    />
+                                    <p className="text-xs">Marked as gift</p>
                                 </div>
                             )}
                         </div>
@@ -283,9 +339,20 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                         className="disable-drawer h-6 w-6"
                     />
                 </div>
+
+                {order?.status == 'received' && (
+                    <button
+                        type="button"
+                        onClick={() => addToPackage({ orderId: order?._id , mark_as_completed: true})}
+                        className="disable-drawer !box-content flex h-10 w-10 items-center justify-center rounded-full hover:bg-light-grey"
+                    >
+                        <PublishedWithChangesRounded className="disable-drawer" />
+                    </button>
+                )}
                 <div className="disable-drawer !box-content flex h-10 w-10 items-center justify-center rounded-full hover:bg-light-grey">
                     <MailOutlineOutlined className="disable-drawer" />
                 </div>
+
                 <section className="disable-drawer relative">
                     <div
                         onClick={() => setShowOptions(true)}
@@ -297,17 +364,18 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                     {showOptions && (
                         <div
                             onClick={() => setShowOptions(true)}
-                            className="disable-drawer absolute top-0 left-0 z-[3] flex h-10 w-10 items-center  justify-center rounded-full"
+                            className="disable-drawer absolute left-0 top-0 z-[3] flex h-10 w-10 items-center  justify-center rounded-full"
                         >
                             <MoreVertSharp className="disable-drawer" />
                         </div>
                     )}
                     <Actions
+                        order={order}
                         orderId={order?._id}
                         setShowActions={setShowOptions}
                         showActions={showOptions}
                     >
-                        <button
+                        {/* <button
                             onClick={() =>
                                 navigate(
                                     `/admin/orders/${order?._id}/cancel_order`
@@ -330,7 +398,7 @@ function OrderItem({ order, date, lastOrderInArray, disableCheckBox }) {
                                 />
                             </span>
                             <p className=" w-full whitespace-nowrap">Refund</p>
-                        </button>
+                        </button> */}
                     </Actions>
                 </section>
             </div>

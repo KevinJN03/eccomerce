@@ -16,6 +16,13 @@ import {
   updateStatus,
   editTitle,
   editPrice,
+  shipOrder,
+  mark_as_gift,
+  cancelOrder,
+  searchProducts,
+  ai_word_suggestion,
+  searchUser,
+  updateUserStatus,
 } from '../Controllers/adminController.js';
 import {
   create_new_product,
@@ -52,42 +59,63 @@ import {
   editPrivateNote,
   getAdminOrders,
 } from '../Controllers/orderController.js';
-import { get_all_coupons } from '../Controllers/couponController.js';
+import {
+  create_coupon,
+  get_all_coupons,
+} from '../Controllers/couponController.js';
 import { get_all_category } from '../Controllers/categoryController.js';
 import {
   get_setting,
   update_settings,
 } from '../Controllers/settingController.js';
+import stripeRoute from './stripeRoute.js';
+import offerRoute from './offersRoute.js';
+import giftCardRoute from './giftCardRoute.js';
+import {
+  get_all_giftCard,
+  resendEmail,
+} from '../Controllers/giftCardController.js';
+import { get_all_offers, overallPerformance } from '../Controllers/offersController.js';
 const router = express.Router();
+
+router.use('/giftcards', giftCardRoute);
+router.use('/offer', offerRoute);
+router.use('/stripe', stripeRoute);
+router.get('/user/search', searchUser);
+router.post('/user/status', updateUserStatus);
+
+router.get('/user/all', getAllUsers);
+router.post('/user/create', create_user);
+router.post('/user/update/:id', update_single);
+router.get('/user/:id', get_single_user);
+
 router.get('/category/all', get_all_category);
-//  router.get('/product/search', searchProduct)
+router.get('/product/search', searchProducts);
+router.get('/product/wordSuggestion', ai_word_suggestion);
 router.get('/product/:id', getProductsInfo);
 router.get('/product/:id/variation', getVariations);
-
 router.get('/count', count_all);
 router.get('/order/:id', getSingleOrder);
 router.get('/orders', getAllOrders);
 router.get('/coupon/all', get_all_coupons);
+router.post('/coupon/create', create_coupon);
 router.delete('/delete/user/:id', delete_user);
 router.delete('/delete/product/:ids', delete_product);
-
 router.post('/delivery/create', create_delivery_profile);
 router.get('/delivery/all', get_all_delivery_profile);
 router.get('/delivery/paginate', get_delivery_profile_pagination);
-
 router.delete('/delete/delivery/:id', delete_single_delivery_profile);
 router.get('/delivery/:id', get_single_delivery_profile);
 router.post('/delivery/update', update_delivery_profile);
 router.put('/delivery/update/:id', update_single_delivery_profile);
-router.post('/user/create', create_user);
-router.post('/user/update/:id', update_single);
-router.get('/user/all', getAllUsers);
-router.get('/user/:id', get_single_user);
 router.delete('/delete/user/many/:id', delete_many_user);
 router.post('/product/create', create_new_product);
 router.get('/product', get_all_products);
 router.put('/product/update/:id', update_product);
 router.put('/order/:id/update', updateOrder);
+router.put('/order/:id/shipped', shipOrder);
+router.post('/order/:id/cancelled', cancelOrder);
+router.post('/order/mark_as_gift', mark_as_gift);
 router.post('/orders/all', getAdminOrders);
 router.post('/pdf/export', exportPdf);
 router.post('/pdf/url', generatePresignUrl);
@@ -106,5 +134,9 @@ router.put('/setting/update', update_settings);
 router.post('/product/price/update', editPrice);
 router.post('/product/delivery/update', update_product_delivery_profile);
 router.put('/product/category/update', update_product_category);
-// router.get('/check', checkLogin)
+router.get('/giftcard/all', get_all_giftCard);
+router.get('/giftcard/resend/:id', resendEmail);
+
+
+
 export default router;

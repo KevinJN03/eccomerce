@@ -14,35 +14,44 @@ import ReturnOrder from './emails/returnOrder.jsx';
 import ChangePassword from './emails/changePassword.jsx';
 import { v4 } from 'uuid';
 import ChangeEmail from './emails/changeEmail.jsx';
+import Stripe from 'stripe';
+import _ from 'lodash';
+import GiftCardSend from './emails/giftcard/GiftCardSend.jsx';
+const { SENDER, STRIPE_KEY } = process.env;
+const stripe = Stripe(STRIPE_KEY);
 
-const { SENDER } = process.env;
 router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const order = await Order.findById(id, null, {
+    // const order = await Order.findById(id, null, {
+    //   populate: [
+    //     { path: 'items.product' },
+    //     { path: 'customer' },
+    //     { path: 'itemsByProfile.items.product' },
+    //   ],
+    //   lean: { toObject: true },
+    // }).exec();
 
+    // const charge = await stripe.charges.retrieve(order.charge_id);
 
-      populate: [
-        { path: 'items.product' },
-        { path: 'customer' },
-        { path: 'itemsByProfile.items.product' },
-      ],
-      lean: { toObject: true },
-    }).exec();
-    const emailHtml = render(<OrderReceived order={order} />);
+    // _.set(order, 'refund.amount', charge.amount_refunded / 100);
+    // const emailHtml = render(<ReturnOrder order={order} />);
+    const emailHtml = render(
+      <GiftCardSend {...{ name: 'Kevin', amount: 5, code: 123 }} />,
+    );
     // const emailHtml = render(<PasswordReset url={'google.com'} />);
     // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
     const emailTestId = v4();
     const mailOptions = {
       from: SENDER,
-      to: process.env.TEST_EMAIL,
+      to:  process.env.TEST_EMAIL,
 
       subject: 'test email ' + emailTestId,
       html: emailHtml,
     };
-    console.log({ emailTestId });
-    // const sendEmail = await transporter.sendMail(mailOptions);
+
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );

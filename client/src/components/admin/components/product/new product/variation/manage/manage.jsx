@@ -22,9 +22,12 @@ function Manage({}) {
         setPublish,
         publishErrorDispatch,
         setApply,
+        publishError,
         combineDispatch,
         contentDispatch,
         setModalCheck,
+        setPriceValue,
+        setStockValue,
     } = useNewProduct();
     const [priceSelection, setPriceSelection] = useState('');
     const [quantitySelection, setQuantitySelection] = useState('');
@@ -66,8 +69,10 @@ function Manage({}) {
     const notDisableVariations = () => {
         let countPriceHeader = 0;
         let countQuantityHeader = 0;
+        let combineQuantity = 1;
         const filtered = temporaryVariation.filter((item) => {
             if (item.disabled == false) {
+                combineQuantity *= item.options?.size;
                 if (item.priceHeader.on) {
                     countPriceHeader++;
                 }
@@ -78,20 +83,23 @@ function Manage({}) {
                 return item;
             }
         });
-
         let newObj = {
             countPriceHeader,
             countQuantityHeader,
             arr: filtered,
+            combineQuantity,
         };
         return newObj;
     };
 
     const notDisableVariation = notDisableVariations();
-    const { countPriceHeader, countQuantityHeader, arr } = notDisableVariation;
+    const { countPriceHeader, countQuantityHeader, arr, combineQuantity } =
+        notDisableVariation;
     const notDisabled = arr.length;
 
     const apply = () => {
+        const clonePublishError = _.cloneDeep(publishError);
+
         const newArr = [...arr];
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
@@ -105,6 +113,12 @@ function Manage({}) {
 
             setVariations(() => update);
             combineDispatch({ type: 'combineVariations', variations: update });
+            setStockValue(() => null);
+            setPriceValue(() => null);
+
+            publishErrorDispatch({ type: 'CLEAR', path: 'price' });
+            publishErrorDispatch({ type: 'CLEAR', path: 'stock' });
+
             setModalCheck(() => false);
         } else {
             combineDispatch({ type: 'clear' });
@@ -117,12 +131,16 @@ function Manage({}) {
                     const newObj = _.cloneDeep(value);
 
                     if (!quantityHeader.on) {
-                        delete newObj?.stock;
+                        _.unset(newObj, 'stock');
+                        setStockValue(() => null);
+                        _.unset(clonePublishError, `${key}-stock`);
                     }
                     if (!priceHeader.on) {
-                        delete newObj?.price;
+                        _.unset(newObj, 'price');
+                        setPriceValue(() => null);
+                        _.unset(clonePublishError, `${key}-price`);
                     }
-                    newObj.visible = true;
+                    _.set(newObj, 'visible', true);
                     newOptions.set(key, newObj);
                 }
 
@@ -132,7 +150,8 @@ function Manage({}) {
 
             setModalCheck(() => false);
         }
-        publishErrorDispatch('clearValidateInput');
+        // publishErrorDispatch('clearValidateInput');
+        publishErrorDispatch({ type: 'SET', data: clonePublishError });
         setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
     };
 
@@ -203,10 +222,7 @@ function Manage({}) {
                                 in at least one area,
                                 <span className="font-semibold">
                                     {' '}
-                                    {notDisableVariation.arr[0].options.size *
-                                        notDisableVariation.arr[1].options
-                                            .size}{' '}
-                                    option combinations
+                                    {combineQuantity} option combinations
                                 </span>{' '}
                                 will be created automatically.
                             </p>

@@ -20,7 +20,7 @@ function GridItem({ product, index }) {
     const [featured, setFeatured] = useState(product?.featured || false);
     const { logoutUser } = UserLogout();
     const [showAction, setShowAction] = useState(false);
-    const { setSelectionSet, selectionSet, handleFeatured, showStats } =
+    const { setSelectionSet, selectionSet, handleFeatured, checks } =
         useListingPageContext();
     const { setModalCheck, setModalContent } = useContent();
 
@@ -123,7 +123,7 @@ function GridItem({ product, index }) {
                         </div>
                     </div>
 
-                    {showStats && (
+                    {checks?.stats && (
                         <div className="stats border-t border-dark-gray/5 p-2">
                             <h6 className="text-sm font-semibold">
                                 LAST 30 DAYS
@@ -179,7 +179,7 @@ function GridItem({ product, index }) {
                                     });
                                 }}
                                 type="checkbox"
-                                className="daisy-checkbox daisy-checkbox-xs rounded border hover:border-dark-gray hover:!bg-light-grey/50"
+                                className="daisy-checkbox daisy-checkbox-xs !rounded-sm border hover:border-dark-gray hover:!bg-light-grey/50"
                                 name={`${product?._id}-checkbox`}
                                 id={`${product?._id}-checkbox`}
                             />

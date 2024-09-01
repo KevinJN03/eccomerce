@@ -5,13 +5,13 @@ function SingleItem({ itemObj }) {
         <div className="single-item mt-2 flex flex-row gap-3 border-black">
             <img
                 className="h-16 w-16 rounded-sm object-cover object-center"
-                src={itemObj.product?.images[0]}
+                src={itemObj.images[0]}
                 alt=""
             />
             <div className="product-order-info flex max-w-[400px] flex-col gap-[2px] ">
-                <p className="text-xxs">{itemObj.product?.title}</p>
+                <p className="text-xs">{itemObj.title}</p>
 
-                <p className="mt-2 text-xs !text-primary/80 text-xxs">
+                <p className="mt-2 text-xs !text-primary/80 text-xs">
                     Quantity{' '}
                     <span className="font-semibold">{itemObj?.quantity}</span>
                 </p>
@@ -20,8 +20,8 @@ function SingleItem({ itemObj }) {
                         return (
                             <Fragment key={uuidV4()}>
                                 {variation && (
-                                    <p className="!text-primary/80 text-xxs">
-                                        {title} <span className="text-xxs">{variation}</span>
+                                    <p className="!text-primary/80 text-xs">
+                                        {title} <span className="text-xs">{variation}</span>
                                     </p>
                                 )}
                             </Fragment>

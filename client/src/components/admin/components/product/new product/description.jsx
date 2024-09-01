@@ -1,27 +1,25 @@
 import { useNewProduct } from '../../../../../context/newProductContext';
-import { Editor, RichUtils } from 'draft-js';
-import FormatUnderlinedSharpIcon from '@mui/icons-material/FormatUnderlinedSharp';
-import FormatBoldSharpIcon from '@mui/icons-material/FormatBoldSharp';
-import FormatItalicSharpIcon from '@mui/icons-material/FormatItalicSharp';
-import '../../../../../CSS/draftStyle.scss';
-import FormatUnderlinedSharp from '@mui/icons-material/FormatUnderlinedSharp';
-import FormatListBulletedSharpIcon from '@mui/icons-material/FormatListBulletedSharp';
-import { useEffect, useState } from 'react';
-import useNewProductError from '../../../../../useNewProductError';
+
 import OptionError from './variation/error/optionError';
+import _ from 'lodash';
 function Description({}) {
-    const { description, setDescription, publishErrorDispatch } =
+    const { description, setDescription, publishErrorDispatch, publishError } =
         useNewProduct();
-    const [descriptionError, setDescriptionError] = useState('');
 
-    useNewProductError('description', setDescriptionError);
+    const handleOnchange = (e) => {
+        const value = _.trim(e.target.value);
+        setDescription(() => e.target.value);
 
-    useEffect(() => {
-        setDescriptionError('');
-
-        publishErrorDispatch({ type: 'clear', path: 'description' });
-    }, [description]);
-
+        if (value.length == 0) {
+            publishErrorDispatch({
+                type: 'ADD',
+                path: 'description',
+                msg: `Description can't be empty.`,
+            });
+        } else {
+            publishErrorDispatch({ type: 'CLEAR', path: 'description' });
+        }
+    };
     return (
         <section id="Description">
             <p className="text-lg font-medium">
@@ -32,19 +30,19 @@ function Description({}) {
                 lines unless they expand the description.
             </p>
 
-            {descriptionError && (
+            <section className="w-full ">
+                <textarea
+                    onChange={handleOnchange}
+                    value={description}
+                    className={`input mt-4 h-full !min-h-60 w-full min-w-full rounded-lg border-black p-3 text-sm ${publishError?.description ? '!border-red-700 bg-red-100' : ''}`}
+                />
+            </section>
+            {publishError?.description && (
                 <OptionError
-                    msg={descriptionError}
+                    msg={publishError.description}
                     className={'!mb-[-8px] px-0  py-0 pt-1'}
                 />
             )}
-            <section className="w-full ">
-                <textarea
-                    onChange={(e) => setDescription(() => e.target.value)}
-                    value={description}
-                    className="mt-4 min-h-[200px] w-full rounded-lg border-[1px] border-black p-3 text-sm"
-                />
-            </section>
         </section>
     );
 }

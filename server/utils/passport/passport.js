@@ -1,17 +1,13 @@
 import passport from 'passport';
-
-// import GoogleAuthStrategy from 'passport-google-oauth20';
-import bcrypt from 'bcryptjs';
-import _ from 'lodash';
 import User from '../../Models/user.js';
-
 import strategy from './localStrategy.js';
 import googleStrategy from './googleStrategy.js';
 import facebookStrategy from './facebookStrategy.js';
 import twitterStrategy from './twiiterStrategy.js';
+import logger from '../logger.js';
 
 passport.serializeUser((user, cb) => {
-  return cb(null, user.id);
+  return cb(null, user._id?.toString());
 });
 
 passport.deserializeUser(async (userId, cb) => {
@@ -22,21 +18,24 @@ passport.deserializeUser(async (userId, cb) => {
         email: 1,
         firstName: 1,
         lastName: 1,
-        interest: 1,
+        //interest: 1,
+        _id: 1,
+        id: 1,
+        // social_accounts: 1,
+        // default_address: 1,
+        // contact_preferences: 1,
         // adminAccess: 1,
         // password: 0,
-        // dob: 0,
+        //dob: 1,
         // address: 0,
         // __v: 0,
       },
       { lean: { toObject: true } },
     );
-
-    // const newResult = findUser.toObject({ virtuals: false });
-
-    // delete newResult._id;
+    // console.log({ findUser });
     return cb(null, findUser);
   } catch (error) {
+    logger.error(error);
     return cb(error);
   }
 });

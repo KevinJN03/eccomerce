@@ -2,7 +2,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-function BubbleButton({ handleClick, children, className, hoverClassName }) {
+function BubbleButton({
+    handleClick,
+    children,
+    className,
+    hoverClassName,
+    text,
+    disabled
+}) {
     const [isHover, setIsHover] = useState(false);
 
     const variant = {
@@ -26,20 +33,23 @@ function BubbleButton({ handleClick, children, className, hoverClassName }) {
     return (
         <AnimatePresence>
             <motion.button
+            disabled={disabled || false}
                 onMouseEnter={() => {
                     setIsHover(() => true);
                 }}
                 onMouseLeave={() => {
                     setIsHover(() => false);
                 }}
-                className={` relative  rounded-full ${className || 'px-5 py-3'}`}
+                className={`${className || 'px-5 py-3'} relative  rounded-full !cursor-pointer `}
                 onClick={handleClick}
             >
                 {children ? (
                     <span className="relative !z-[1] ">{children}</span>
                 ) : (
-                    <span className=" relative !z-[1] w-full text-base font-medium">
-                        Cancel
+                    <span
+                    
+                    className={`${disabled ? 'text-black/60': 'text-black'} relative !z-[1] w-full text-base font-medium`}>
+                        {text || 'Cancel'}
                     </span>
                 )}
 

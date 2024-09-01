@@ -119,7 +119,7 @@ function DeliveryProfile({ status, setStatus }) {
         <section className=" flex flex-col gap-6 sm+md:w-full lg:w-10/12">
             {loading ? (
                 <div className="flex w-full justify-center">
-                    <div className="spinner-circle spinner-lg [--spinner-color:0,0,0]" />
+                    <div className="spinner-circle spinner-lg ![--spinner-color:0,0,0]" />
                 </div>
             ) : (
                 <>

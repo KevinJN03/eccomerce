@@ -4,7 +4,7 @@ function variationFormat({ products }) {
     if (_.get(Props, 'variation_data.isVariationCombine') == true) {
       const combineVariation = {};
 
-      variationList[2].array.forEach(
+      variationList?.[2]?.array.forEach(
         ({ variation, variation2, ...newProps }) => {
           // console.log({variation, variation2, newProps})
           if (!combineVariation.hasOwnProperty(variation)) {

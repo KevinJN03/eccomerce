@@ -4,13 +4,14 @@ import { v4 as uuidV4 } from 'uuid';
 export default function CategorySelect({
     options,
     title,
-    setState,
+    
     state,
     isCategory,
+    handleChange
 }) {
-    const handleChange = (e) => {
-        setState(e.target.value);
-    };
+    // const handleChange = (e) => {
+    //     setState(e.target.value);
+    // };
     return (
         <select
             id="options"
@@ -20,8 +21,8 @@ export default function CategorySelect({
             value={state}
             onChange={handleChange}
         >
-            <option disabled key={uuidV4()}>
-                {title}
+            <option disabled selected>
+                Select {title}
             </option>
             {options.map((option, index) => {
                 //

@@ -33,7 +33,10 @@ function EditProduct({ type }) {
                         adminAxios.get(`/productFiles/${id}`),
                     ]);
                     console.log({ data });
-                    setSingleValue(() => ({ ...data[0], fileResult : fileResult?.files }));
+                    setSingleValue(() => ({
+                        ...data[0],
+                        fileResult: fileResult?.files,
+                    }));
                 }
 
                 setTimeout(() => {
@@ -51,7 +54,7 @@ function EditProduct({ type }) {
     return (
         <NewProductProvider singleValue={singleValue}>
             {loading ? (
-                <div className="spinner-circle  spinner-xl mx-auto mt-44 [--spinner-color:var(--gray-8)]"></div>
+                <div className="spinner-circle  spinner-xl mx-auto mt-44 ![--spinner-color:var(--gray-8)]"></div>
             ) : (
                 <New_Product type={searchQuery == 'true' ? 'draft' : type} />
             )}

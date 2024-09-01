@@ -21,7 +21,7 @@ function Payment_Btn({
                     loading="lazy"
                     src={button_img}
                     className={`h-6 w-9 object-cover ${
-                        view == 'paypal' ? 'rounded-none border-[1px]' : ''
+                        view == 'paypal' ? '!rounded-none border-[1px]' : ''
                     }`}
                 />
                 <aside>
@@ -31,7 +31,9 @@ function Payment_Btn({
                     {additional_text ? <p>{additional_text}</p> : null}
                 </aside>
             </button>
-            {disable && disableMsg && <p  className="bg-red-100 p-2">{disableMsg}</p>}
+            {disable && disableMsg && (
+                <p className="bg-red-100 p-2">{disableMsg}</p>
+            )}
         </div>
     );
 }

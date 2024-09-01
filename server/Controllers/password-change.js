@@ -6,7 +6,7 @@ import PasswordReset from '../React Email/emails/passwordreset.jsx';
 import 'dotenv/config';
 import transporter from '../utils/nodemailer';
 import bcrypt from 'bcryptjs';
-
+import logger from '../utils/logger.js';
 const { CLIENT_URL, PASSWORD_RESET_JWT_SECRET, SENDER } = process.env;
 export const forgetPassword = [
   check('email', 'Email is Invalid.')
@@ -56,6 +56,10 @@ export const forgetPassword = [
     };
 
     await transporter.sendMail(mailOptions);
+    logger.info(
+      req.body,
+      'Password reset link generated and email sent to user ',
+    );
     return res.status(200).send({
       success: true,
       msg: 'password link successfully generated and sent to user email.',
@@ -107,9 +111,13 @@ export const resetPassword = [
       const hashPassword = bcrypt.hashSync(confirmPassword, salt);
       user.password = hashPassword;
       user.save();
+      logger.info(user, 'Password reset successful ');
+
       res.send({ success: true, msg: 'password successfully updated!' });
     } catch (error) {
       console.error('invalid jwt', error);
+      logger.warn(error, error.message);
+
       let expired = false;
       let invalid = false;
       if (error?.name == 'TokenExpiredError') {

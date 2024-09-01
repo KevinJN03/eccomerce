@@ -2,7 +2,7 @@ import Header from './header';
 import contact_icon from '../../assets/icons/contact.png';
 
 import Input from '../Login-SignUp/input.jsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ErrorMessage from '../Login-SignUp/errorMessage.jsx';
 import { DatePicker } from '@mui/x-date-pickers';
 import Interest from '../Login-SignUp/interest.jsx';
@@ -22,52 +22,27 @@ function Details({}) {
     const [error, setError] = useState({});
     const navigate = useNavigate();
     const {
-        firstName,
-        lastName,
-        email,
-        interest,
-        dob,
         setFooterMessage,
         setIsDetailsUnSaved,
-        setEmail,
-        setDob,
-        setInterest,
-        setFirstName,
-        setLastName,
+        userData,
+        setUserData,
     } = useUserDashboardContext();
+    const [newUserData, setNewUserData] = useState(() => ({ ...userData }));
 
-    const [onMountValue, setOnMountValue] = useState({
-        firstName,
-        lastName,
-        email,
-        interest,
-        dob,
-    });
-    // const [lastName, setLastName] = useState(user?.lastName || '');
-    const [newEmail, setNewEmail] = useState(email);
-    const [newFirstName, setNewFirstName] = useState(firstName);
-    const [newLastName, setNewLastName] = useState(lastName);
-    const [newDob, setNewDob] = useState(dob);
-    const [newInterest, setNewInterest] = useState(interest);
     const [disable, setDisable] = useState(true);
+
+    const abortControllerRef = useRef(new AbortController());
 
     const options = {
         error,
         setError,
         asterisk: true,
+        manyProperty: true,
     };
 
     useEffect(() => {
-        const newValues = {
-            firstName: newFirstName,
-            lastName: newLastName,
-            email: newEmail,
-            dob: newDob,
-            interest: newInterest,
-        };
+        const isSame = _.isEqual(userData, newUserData);
 
-        const isSame = _.isEqual(onMountValue, newValues);
-      
         if (!isSame) {
             setIsDetailsUnSaved(true);
             setDisable(false);
@@ -75,34 +50,28 @@ function Details({}) {
             setDisable(true);
             setIsDetailsUnSaved(() => false);
         }
-    }, [newFirstName, newLastName, newEmail, newDob, newInterest]);
+    }, [newUserData]);
 
     const onSubmit = async () => {
         try {
-            const data = {
-                firstName: newFirstName,
-                lastName: newLastName,
-                email: newEmail,
-                dob: newDob,
-                interest: newInterest,
-            };
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            const { data } = await axios.put(
+                'user/changedetails',
+                newUserData,
+                {
+                    signal: abortControllerRef.current.signal,
+                }
+            );
 
-        
-            const result = await axios.put('user/changedetails', data);
-
-            authDispatch({ type: 'LOGIN', payload: result.data });
+            authDispatch({ type: 'LOGIN', payload: data });
 
             //update mountValues
-            setOnMountValue(() => data);
+            console.log({ dataafterapply: { user: data.user } });
+            const { user } = data;
+            setUserData(() => user);
 
-            // update values
-            setEmail(() => newEmail);
-            setInterest(() => newInterest);
-            setDob(() => newDob);
-            setLastName(() => newLastName);
-            setFirstName(() => newFirstName);
             setDisable(() => true);
-            setIsDetailsUnSaved(() => false);
 
             // notify user that changes were successfull
             setFooterMessage(() => ({ success: true, text: 'Changes saved' }));
@@ -129,6 +98,7 @@ function Details({}) {
             }
         }
     };
+    console.log({ newUserData, userData });
     return (
         <section className="Details bg-white">
             <Header
@@ -139,25 +109,23 @@ function Details({}) {
                 }
             />
             <div className="w-4/6 bg-white px-4 pb-4">
-
-                
                 <Input
-                    value={newFirstName}
-                    setValue={setNewFirstName}
+                    value={newUserData.firstName}
+                    setValue={setNewUserData}
                     property={'firstName'}
                     label={'FIRST NAME'}
                     {...options}
                 />
                 <Input
-                    value={newLastName}
-                    setValue={setNewLastName}
+                    value={newUserData.lastName}
+                    setValue={setNewUserData}
                     property={'lastName'}
                     label={'LAST NAME'}
                     {...options}
                 />
                 <Input
-                    value={newEmail}
-                    setValue={setNewEmail}
+                    value={newUserData.email}
+                    setValue={setNewUserData}
                     property={'email'}
                     label={'Email'}
                     {...options}
@@ -165,12 +133,25 @@ function Details({}) {
                 <DobPicker
                     showDescription={false}
                     error={error}
-                    value={newDob}
+                    value={newUserData?.dob}
                     setError={setError}
-                    setDob={setNewDob}
+                    setDob={(callback) => {
+                        setNewUserData((prevState) => ({
+                            ...prevState,
+                            dob: callback(),
+                        }));
+                    }}
                 />
 
-                <Interest setInterest={setNewInterest} interest={newInterest} />
+                <Interest
+                    setInterest={(callback) => {
+                        setNewUserData((prevState) => ({
+                            ...prevState,
+                            interest: callback(),
+                        }));
+                    }}
+                    interest={newUserData?.interest}
+                />
 
                 <Button
                     submit={onSubmit}

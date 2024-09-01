@@ -1,37 +1,64 @@
+import 'dotenv/config';
 import mongoose from 'mongoose';
-
+import { couponSchema } from './coupon';
+import { decrypt, encrypt, hashCode } from '../utils/encrypt-decrypt-giftcard';
+import crypto from 'crypto';
+import _ from 'lodash';
+import dayjs from 'dayjs';
 const { Schema } = mongoose;
-const GiftCardSchema = new Schema({
-  code: {
-    type: String,
-    required: true,
-    unique: true,
-    minlength: [6, 'the coupon/gift card must be between 6 and 16 character'],
-    maxlength: [16, 'the coupon/gift card must be between 6 and 16 character'],
-  },
-  expires: Schema.Types.Date,
-  amount: {
-    type: Schema.Types.Number,
-    min: [5, 'Gift Card must be £5 or over'],
-  },
 
-  type: {
-    type: Schema.Types.String,
-    enum: ['fixed', 'percentage'],
-    default: 'fixed',
-  },
+const { GIFT_CARD_SALT } = process.env;
+const GiftCardSchema = couponSchema.clone();
+
+GiftCardSchema.add({
+  hash_code: { type: Schema.Types.String }, // New property for gift cards
+  applied: { type: Schema.Types.Boolean, default: false, required: true },
+  email: { type: Schema.Types.String, required: true },
+  redacted_code: { type: Schema.Types.String },
+  balance: { type: Schema.Types.Number },
+  customer: { type: Schema.Types.ObjectId, ref: 'users' },
+  added: { type: Schema.Types.Date, default: null },
+  // audits: [
+  //   {
+  //     timestamp: { type: Schema.Types.Date, default: Date.now, required: true },
+  //     msg: { type: Schema.Types.String, default: '', required: true },
+  //   },
+  // ],
 });
+GiftCardSchema.set('toJSON', { virtuals: true });
+GiftCardSchema.set('toObject', { virtuals: true });
 
-GiftCardSchema.pre('save', async function (next) {
-  this.code = this.code.toUpperCase();
-  if (this.code.substring(0, 3) != 'gl-'.toUpperCase()) {
-    this.code = `GL-${this.code}`;
-    return next();
-  } else {
-    next();
-  }
+// GiftCardSchema.virtual('decryptedCode').get(function () {
+//   const decryptedCode = decrypt(this.code);
+//   const censoredText = `XXXX-XXXX-${decryptedCode.substring(10, 14)}-XXXX`;
+//   return censoredText;
+// });
+
+GiftCardSchema.pre('save', function (next) {
+  const encryptedText = encrypt(this.code);
+  const hash = hashCode(this.code);
+  const redactPositions = [0, 5, 10, 15];
+  const randomIndex = _.random(0, redactPositions.length - 1);
+  const redacted_portion = this.code.substring(
+    redactPositions[randomIndex],
+    redactPositions[randomIndex] + 4,
+  );
+  const redacted_array = ['XXXX', 'XXXX', 'XXXX', 'XXXX'];
+  redacted_array[randomIndex] = redacted_portion;
+  this.redacted_code = redacted_array.join('-');
+  this.code = encryptedText;
+  this.hash_code = hash;
+  this.emails_sent = 1;
+  this.balance = this.amount;
+  //this.start_date = dayjs().utc().unix();
+  this.audits = [
+    {
+      msg: `Gift card generated and email sent to customer email address.`,
+    },
+  ];
+
+  next();
 });
-
 GiftCardSchema.post('save', async (error, doc, next) => {
   if (error.name === 'MongoServerError' && error.code === 11000) {
     next(new Error(`GiftCard ${doc.code} already Exists`));
@@ -39,4 +66,5 @@ GiftCardSchema.post('save', async (error, doc, next) => {
     next();
   }
 });
+
 export default mongoose.model('giftCard', GiftCardSchema);

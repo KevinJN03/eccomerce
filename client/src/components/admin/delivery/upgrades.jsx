@@ -30,7 +30,7 @@ function Upgrades({}) {
         <section>
             {loading ? (
                 <div className="flex w-full justify-center">
-                    <div className="spinner-circle spinner-lg [--spinner-color:0,0,0]" />
+                    <div className="spinner-circle spinner-lg ![--spinner-color:0,0,0]" />
                 </div>
             ) : (
                 <section className="flex flex-col gap-4">

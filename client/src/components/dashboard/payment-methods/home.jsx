@@ -31,7 +31,7 @@ function Home({}) {
         const timeout = setTimeout(() => {
             setLoading(false);
         }, 500);
-       
+
         return () => {
             clearTimeout(timeout);
         };
@@ -116,8 +116,8 @@ function Home({}) {
                                             type === 'paypal'
                                                 ? paypal_icon
                                                 : type === 'klarna'
-                                                ? klarna_icon
-                                                : cardData.icon || card_icon
+                                                  ? klarna_icon
+                                                  : cardData.icon || card_icon
                                         }
                                         type={type}
                                         method={
@@ -150,7 +150,7 @@ function Home({}) {
                 </div>
             ) : (
                 <div className="flex h-[400px] w-full items-center justify-center">
-                    <div className="spinner-circle [--spinner-color:var(--gray-9)]"></div>
+                    <div className="spinner-circle ![--spinner-color:var(--gray-9)]"></div>
                 </div>
             )}
         </section>

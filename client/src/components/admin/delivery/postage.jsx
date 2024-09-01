@@ -28,7 +28,7 @@ function Input({
     const { postageSetting, setPostageSetting, errors, setErrors } =
         usePostageContext();
     return (
-        <div className="flex w-full flex-1 flex-col gap-2 self-start">
+        <div className="flex w-full flex-1 flex-col gap-2 self-end">
             <label className="relative w-fit font-semibold" htmlFor={property}>
                 {label}{' '}
                 {asterisk ? (
@@ -141,7 +141,7 @@ function Postage({}) {
         <PostageContextProvider value={value}>
             {loading ? (
                 <div className="flex w-full justify-center">
-                    <div className="spinner-circle spinner-lg [--spinner-color:0,0,0]" />
+                    <div className="spinner-circle spinner-lg ![--spinner-color:0,0,0]" />
                 </div>
             ) : (
                 <section className="flex flex-col gap-8">
@@ -308,7 +308,7 @@ function Postage({}) {
                             }
                         >
                             {btnLoad ? (
-                                <div className="spinner-circle spinner-sm [--spinner-color:255,255,255]" />
+                                <div className="spinner-circle spinner-sm ![--spinner-color:255,255,255]" />
                             ) : (
                                 <p className="text-base font-medium text-white">
                                     Save preferences

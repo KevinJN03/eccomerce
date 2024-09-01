@@ -18,7 +18,7 @@ import {
 } from '@react-email/components';
 import _ from 'lodash';
 
-function TotalContainer({ order }) {
+function TotalContainer({ order, showRefund }) {
   const array = [
     {
       title: 'SUB-TOTAL',
@@ -35,11 +35,19 @@ function TotalContainer({ order }) {
       cost: order?.transaction_cost?.total?.toFixed(2),
     },
   ];
+
   const discount = _.get(order, ['transaction_cost', 'promo', 'discount']);
   if (discount > 0) {
     array.splice(1, 0, {
       title: 'DISCOUNT',
       cost: parseFloat(discount).toFixed(2),
+    });
+  }
+
+  if (_.get(order, 'refund.amount')) {
+    array.push({
+      title: 'REFUND',
+      cost: _.get(order, 'refund.amount').toFixed(2),
     });
   }
   return (
@@ -53,13 +61,21 @@ function TotalContainer({ order }) {
 
               <Row className="w-full">
                 <Column className="w-full">
-                  <Text className="font-semibold p-0 m-0 text-sm  text-dark-gray text-left tracking-wider">
+                  <Text
+                    className={`${
+                      title == 'REFUND' ? 'text-red-700' : ' text-dark-gray'
+                    } font-semibold p-0 m-0 text-sm  text-left tracking-wider`}
+                  >
                     {title}{' '}
                   </Text>
                 </Column>
                 <Column className="w-full">
-                  <Text className="text-right p-0 m-0 text-s flex whitespace-nowrap  tracking-wider">
-                    {title == 'DISCOUNT' && '-'}£{cost}
+                  <Text
+                    className={`${
+                      title == 'REFUND' ? 'text-red-700' : ' text-dark-gray'
+                    } text-right p-0 m-0 text-s flex whitespace-nowrap  tracking-wider`}
+                  >
+                    {title == 'DISCOUNT' || title == 'REFUND' && '-'}£{cost}
                   </Text>
                 </Column>
               </Row>

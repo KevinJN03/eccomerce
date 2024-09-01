@@ -13,7 +13,6 @@ import AddCartForm from './addCartForm';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function Add_Card({}) {
-
     // const stripePromise = loadStripe(STRIPE_KEY);
 
     const [loading, setLoading] = useState(true);
@@ -72,7 +71,7 @@ function Add_Card({}) {
             <div className="mb-4 mt-4 flex w-4/6 flex-col justify-center">
                 {loading ? (
                     <svg
-                        className="spinner-ring spinner-sm [--spinner-color:var(--slate-12)]"
+                        className="spinner-ring spinner-sm ![--spinner-color:var(--slate-12)]"
                         viewBox="25 25 50 50"
                         strokeWidth="5"
                     >
@@ -83,7 +82,7 @@ function Add_Card({}) {
                     //     ffff
                     // </p>
                     // <Elements stripe={stripePromise} options={options}>
-                         <AddCartForm clientSecret={options.clientSecret} />
+                    <AddCartForm clientSecret={options.clientSecret} />
                     // </Elements>
                 )}
             </div>

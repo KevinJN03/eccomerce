@@ -1,51 +1,68 @@
-import { useEffect, useReducer, useState, useRef } from 'react';
+import { useEffect, useReducer, useState, useRef, useMemo } from 'react';
 
 import Header from './header';
 import SubHeader from './subheader';
 
 import PageOptions from './pageOption';
 import Containers from './containers';
-import SideContainer from './sideContainer';
 
 import AdminOrderContextProvider, {
     useAdminOrderContext,
-} from '../../../../context/adminOrder';
-import { Box, Drawer, Modal } from '@mui/material';
+} from '../../../../context/adminOrderContext';
+import { Box, Drawer, Modal, Pagination } from '@mui/material';
 import DrawerContainer from '../drawerContent/drawerContainer';
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
 import { adminOrderModalReducer } from '../../../../hooks/adminOrderModalReducer';
-// import Modal from '../components/modal/modal';
 import views from '../modalView/modalView';
 import '../../home/admin.scss';
 import SearchOrder from './searchOrder';
-import { adminAxios } from '../../../../api/axios';
 import OptionSelection from './optionSelection';
+import AddToPackage from '../modalView/addToPackage/addToPackage';
+import _ from 'lodash';
+import { CloseSharp } from '@mui/icons-material';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import SideContainer from './sideContainer/sideContainer';
 
-function OrderPageContent({}) {
+function OrderPageContent({ children }) {
     const {
         loading,
         isSearchingOrder,
-        resultMap,
         openDrawer,
-        setOpenDrawer,
-        modalCheck,
-        setModalCheck,
-        modalContent,
-        currentPage,
-        totalOrders,
+        totalCount,
         status,
         setStatus,
+        modalOpen,
+        setModalOpen,
+        currentPage,
+        ordersData,
+
+        setOrderInfo,
+        orderInfo,
+        statusRef,
+        handleOnClose,
+        handleChangePageNumber,
+         
     } = useAdminOrderContext();
+    const maxPage = _.get(ordersData, 'maxPage');
+    const navigate = useNavigate();
+    useEffect(() => {
+        const element = document.getElementById('order-page');
+
+        if (orderInfo?.position) {
+            window.scrollTo(0, orderInfo.position);
+        }
+    }, [loading]);
 
     return (
-        <section className="order-page ">
-            <section className="w-full">
+        <section id="order-page" className="order-page h-full min-h-screen ">
+            <section className="w-full pb-8 ">
                 <Header />
                 {isSearchingOrder ? (
                     <SearchOrder />
                 ) : (
-                    <section className="flex flex-row gap-7">
-                        <section className="left flex-[4] px-5">
+                    <section className="flex h-full min-h-screen flex-row gap-7">
+                        <section className="left flex-[4] pl-5">
                             <SubHeader />
                             <OptionSelection
                                 status={status}
@@ -54,28 +71,54 @@ function OrderPageContent({}) {
                                     {
                                         text: 'New',
                                         select: 'new',
-                                        amount: totalOrders,
+                                        amount: totalCount,
+                                        showAmount: true,
+                                        handleClick: () => {
+                                            navigate('./new');
+                                            setStatus(() => 'new');
+                                        },
                                     },
                                     {
                                         text: 'Complete',
                                         select: 'complete',
+                                        handleClick: () => {
+                                            navigate('./complete');
+                                            setStatus(() => 'complete');
+                                        },
                                     },
                                 ]}
                             />
                             {loading ? (
-                                <section className="mt-14 flex min-w-full justify-center">
+                                <section className="mt-14 flex w-full justify-center">
                                     <GLoader />
                                 </section>
                             ) : (
-                                <>
-                                    <PageOptions />
-
-                                    <Containers
-                                        ordersByDate={resultMap.get(
-                                            currentPage
+                                <AnimatePresence>
+                                    <motion.section
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: 1,
+                                            transition: { duration: 0.5 },
+                                        }}
+                                    >
+                                        <PageOptions />
+                                        <Outlet />
+                                        {maxPage > 1 && (
+                                            <Pagination
+                                                page={currentPage}
+                                                onChange={(e, value) => {
+                                                    // setCurrentPage(() => value);
+                                                    handleChangePageNumber(
+                                                        value
+                                                    );
+                                                }}
+                                                count={maxPage}
+                                                variant="outlined"
+                                                shape="rounded"
+                                            />
                                         )}
-                                    />
-                                </>
+                                    </motion.section>
+                                </AnimatePresence>
                             )}
                         </section>
                         <SideContainer />
@@ -86,18 +129,57 @@ function OrderPageContent({}) {
                 style={{ zIndex: 50 }}
                 anchor="right"
                 open={openDrawer}
-                onClose={() => setOpenDrawer(false)}
+                onClose={handleOnClose}
+                ModalProps={{
+                    onTransitionExited: () => {
+                        setOrderInfo(() => ({}));
+                    },
+                }}
                 PaperProps={{
                     sx: {
                         backgroundColor: 'transparent',
                         boxShadow: 'none',
                         width: '50%',
-                        minHeight: '100vh',
                     },
                 }}
             >
-                <DrawerContainer />
+                <section className="relative">
+                    <div className="absolute left-[-4rem] top-0 z-50 h-20 w-12 border-4 border-red-500 bg-transparent">
+                        <div
+                            onClick={handleOnClose}
+                            className="fixed top-2 flex cursor-pointer  items-center justify-center rounded-md border-2 border-white p-2"
+                        >
+                            <CloseSharp className="!fill-primary/80" />
+                        </div>
+                    </div>
+                    <DrawerContainer />
+                </section>
             </Drawer>
+            <Modal
+                open={modalOpen}
+                onClose={() => {
+                    setModalOpen(() => false);
+                }}
+                sx={{
+                    overflowY: 'auto',
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '10%',
+                        left: '50%',
+                        transform: 'translate(-50%, -0%)',
+                        boxSizing: 'border-box',
+                        maxWidth: '1200px',
+                        width: '75vw',
+                        borderRadius: '4px',
+                        border: 'none',
+                    }}
+                >
+                    <AddToPackage />
+                </Box>
+            </Modal>
         </section>
     );
 }

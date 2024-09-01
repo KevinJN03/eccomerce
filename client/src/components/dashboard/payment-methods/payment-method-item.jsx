@@ -18,7 +18,7 @@ function PaymentMethodItem({
         klarna: 'You may be required to enter further personal details at checkout.',
         paypal: "You'll need to enter your login details when you place your order.",
     };
- 
+
     return (
         <section className="flex !h-full  !min-h-[106px] flex-col bg-white p-4">
             <section className="mb-3 flex h-full flex-row">
@@ -62,7 +62,7 @@ function PaymentMethodItem({
                         disabled={inputDisable}
                         type="checkbox"
                         checked={check}
-                        className="daisy-checkbox rounded-none border-[1px] border-black"
+                        className="daisy-checkbox !rounded-none border-[1px] border-black"
                         onChange={handleDefault}
                     />
                     <p className="w-fit text-sm">

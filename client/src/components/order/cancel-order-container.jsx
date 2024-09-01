@@ -66,10 +66,7 @@ function OrderCancelContainer({
                                     }
                                 />
                             </div>
-                            {
-                                <>
-                                </>
-                            }
+                            {<></>}
                             <h6 className="mt-2 font-gotham text-sm !text-dark-gray text-opacity-5">
                                 REASON FOR CANCELLATION
                             </h6>
@@ -123,7 +120,7 @@ function OrderCancelContainer({
                                     value={info}
                                     maxLength={'500'}
                                     rows={'8'}
-                                    className="mt-2 w-full resize-none  rounded-none border-2 p-2 text-s"
+                                    className="mt-2 w-full resize-none  !rounded-none border-2 p-2 text-s"
                                     placeholder="Optional - max 500 characters"
                                 />
 

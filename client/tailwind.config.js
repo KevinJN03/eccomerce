@@ -16,6 +16,7 @@ export default {
                 lg: '0 8px 16px var(--tw-shadow-color)',
             },
             colors: {
+                'admin-primary-blue': '#4d6bc6',
                 'primary-gray': '#525050',
                 'primary-2': '#525050',
                 primary: '#2d2d2d',
@@ -67,6 +68,8 @@ export default {
             lg: '1024px',
 
             'md+lg': '481px',
+            'max-h-lg': {'raw': '(max-height: 900px)'}
+
         },
     },
     plugins: [require('daisyui'), require('rippleui')],

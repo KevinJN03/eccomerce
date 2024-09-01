@@ -11,8 +11,8 @@ import { adminAxios } from '../../../../../api/axios';
 import userIcon from '../../../../../assets/icons/user.png';
 import { add } from 'lodash';
 import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale.js';
-dayjs.extend(updateLocale);
+// import updateLocale from 'dayjs/plugin/updateLocale.js';
+// dayjs.extend(updateLocale);
 import {
     get6MonthFromToday,
     get6MonthsData,
@@ -61,7 +61,7 @@ function Single_User({}) {
                                     initial="initial"
                                     animate="animate"
                                 >
-                                    <Link to={'./edit'} className="editButton">
+                                    <Link to={''} className="editButton">
                                         Edit
                                     </Link>
                                     <h1 className="title">Information</h1>

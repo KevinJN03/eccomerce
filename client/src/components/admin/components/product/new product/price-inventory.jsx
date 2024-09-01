@@ -7,81 +7,53 @@ import './new_product.scss';
 import { useClickAway } from '@uidotdev/usehooks';
 import formatData from './variation/formatData';
 import { forwardRef, useRef, useState } from 'react';
-import OptionError from './variation/error/optionError';
-import { useEffect } from 'react';
-import useNewProductError from '../../../../../useNewProductError';
 import handleValue from './utils/handleValue';
 import { quantityOptions, priceOptions } from './utils/handleValueOptions';
-import { v4 as uuidv4 } from 'uuid';
-import useHighlightSection from '../../../../../hooks/useScrollpsy.jsx';
 function Price_Inventory() {
     const {
-        globalUpdate,
-        setGlobalUpdate,
         publishError,
         priceValue,
         setPriceValue,
         stockValue,
         setStockValue,
-        publish,
         publishErrorDispatch,
         variations,
     } = useNewProduct();
+    const onClickAway = ({ setValue, value, toDecimals }) => {
+     if (!value) return;
 
-    const [error, setError] = useState({ price: null, stock: null });
-    useNewProductError('price', setError, { obj: true, property: 'price' });
-    useNewProductError('stock', setError, { obj: true, property: 'stock' });
-
-    useEffect(() => {
-        publishErrorDispatch({ type: 'clear', path: 'price' });
-    }, [priceValue.value]);
-
-    useEffect(() => {
-        publishErrorDispatch({ type: 'clear', path: 'stock' });
-    }, [stockValue.value]);
+        const formatValue = formatData(value, toDecimals);
+        setValue(() => formatValue);
+    };
 
     const onStockClickAwayRef = useClickAway(() => {
-        if (!stockValue.value) return;
-        const formatStock = formatData(stockValue.value, 0);
-
-        setStockValue({ value: formatStock, on: true });
-        // setGlobalUpdate((prev) => {
-        //     return { ...prev, stock: formatStock };
-        // });
+        onClickAway({
+            setValue: setStockValue,
+            toDecimals: 0,
+            value: stockValue,
+        });
     });
 
     const onPriceClickAwayRef = useClickAway(() => {
-        if (!priceValue.value) return;
-
-        const formatPrice = formatData(priceValue.value, 2);
-
-        setPriceValue({ value: formatPrice, on: true });
-        // setGlobalUpdate((prev) => {
-        //     return { ...prev, price: formatPrice };
-        // });
+        console.log('here', priceValue);
+        onClickAway({
+            setValue: setPriceValue,
+            toDecimals: 2,
+            value: priceValue,
+        });
     });
+
     const checkQuantity = variations.some(
         (item) => item.quantityHeader.on == true
     );
     const checkPrice = variations.some((item) => item.priceHeader.on == true);
-    const handlePriceChange = (value) => {
-        const options = {
-            ...priceOptions,
-            value,
-            setValue: setPriceValue,
-            setError,
-            isObject: true,
-        };
-        handleValue(options);
-    };
 
-    const handleStockChange = (value) => {
+    const handleOnchange = ({ value, optionObj, setValue, clearError }) => {
         const options = {
-            ...quantityOptions,
+            ...optionObj,
             value,
-            setValue: setStockValue,
-            setError,
-            isObject: true,
+            setValue,
+            publishErrorDispatch,
         };
         handleValue(options);
     };
@@ -92,11 +64,17 @@ function Price_Inventory() {
         checker: checkPrice,
         visible: true,
         property: 'price',
-        value: priceValue.value,
-        handleOnchange: handlePriceChange,
-        error,
+        value: priceValue || '',
+        handleOnchange: (e) =>
+            handleOnchange({
+                setValue: setPriceValue,
+                value: e.target.value,
+                optionObj: priceOptions,
+            }),
+        error: publishError,
         setValue: setPriceValue,
         ref: onPriceClickAwayRef,
+        enablePoundSign: true,
     };
 
     const stockInputProps = {
@@ -105,11 +83,17 @@ function Price_Inventory() {
         checker: checkQuantity,
         visible: true,
         property: 'stock',
-        value: stockValue.value,
-        handleOnchange: handleStockChange,
-        error,
+        value: stockValue || '',
+        handleOnchange: (e) =>
+            handleOnchange({
+                setValue: setStockValue,
+                value: e.target.value,
+                optionObj: quantityOptions,
+            }),
+        error: publishError,
         setValue: setStockValue,
         ref: onStockClickAwayRef,
+        enablePoundSign: false
     };
 
     return (
@@ -130,10 +114,7 @@ function Price_Inventory() {
                                         id={label.toLowerCase()}
                                     />
 
-                                    <InventoryInput
-                                        {...props}
-                                        ref={props.ref}
-                                    />
+                                    <Input {...props} ref={props.ref} />
                                 </>
                             ) : (
                                 <DisableInput text={label} />
@@ -161,13 +142,13 @@ function DisableInput({ text }) {
 const InventoryInput = forwardRef(function InventoryInput(props, ref) {
     const { setValue, value } = props;
 
-    useEffect(() => {
-        setValue((obj) => ({ ...obj, on: true }));
+    // useEffect(() => {
+    //     setValue((obj) => ({ ...obj, on: true }));
 
-        return () => {
-            setValue((obj) => ({ ...obj, on: false }));
-        };
-    }, []);
+    //     return () => {
+    //         setValue((obj) => ({ ...obj, on: false }));
+    //     };
+    // }, []);
 
     return (
         // <div className="h-fit w-fit bg-transparent" ref={ref}>

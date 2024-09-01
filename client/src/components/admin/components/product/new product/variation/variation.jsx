@@ -1,33 +1,9 @@
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import New_Product_Header from '../header';
-import Modal from '../../../modal/modal';
-
-import { forwardRef, useEffect, useReducer, useState } from 'react';
-
-import SelectVariation from './selectVariation';
-import Manage from './manage/manage';
-
-import Main from './main';
-import { resetDefaultMap } from './variationData';
-import {
-    variationReducer,
-    VariationProvider,
-    useVariation,
-} from '../../../../../../context/variationContext';
-
+import { useVariation } from '../../../../../../context/variationContext';
 import Update from './update';
-
 import { useNewProduct } from '../../../../../../context/newProductContext';
 import VariationList from './variationList';
-import OptionError from './error/optionError';
-import { useAdminContext } from '../../../../../../context/adminContext';
-
-const views = {
-    manage: <Manage />,
-    select: <SelectVariation />,
-    main: <Main />,
-    update: <Update />,
-};
 
 function Variation() {
     const { temporaryVariation } = useVariation();

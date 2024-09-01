@@ -50,14 +50,14 @@ function OrderReceived({ order }) {
       <EmailTailwind>
         <Body>
           <Container
-            className="!bg-light-grey w-full max-w-[600px]"
+            className="!bg-light-grey w-full"
             align="center"
           >
             <Section className="w-full" align="center">
               <Row>
                 <Header />
               </Row>
-              <Row className="w-full box-border !max-w-[600px] !min-w-full">
+              <Row className="w-full box-border  ">
                 <Column
                   className="text-center p-4 pb-0 w-full min-w-full"
                   align="center"

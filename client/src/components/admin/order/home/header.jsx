@@ -1,41 +1,17 @@
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
-import { useRef, useState } from 'react';
-import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext.jsx';
 import SearchInput from './searchInput';
-import ThemeBtn from '../../../buttons/themeBtn.jsx';
 import BubbleButton from '../../../buttons/bubbleButton.jsx';
 import { useNavigate } from 'react-router-dom';
 function Header({}) {
     const {
-        setSearchResult,
-        setSearchingOrder,
-        setSearchTerm,
         searchText,
         setSearchText,
+
+        searchForOrder,
     } = useAdminOrderContext();
-
-    const { logoutUser } = UserLogout();
     const navigate = useNavigate();
-
-    const handleClick = async () => {
-        try {
-            document.activeElement.blur();
-            setSearchResult(() => []);
-            setSearchingOrder(true);
-            const { data } = await adminAxios.post(`searchOrder`, {
-                searchText,
-            });
-            setSearchTerm(() => searchText);
-            setSearchResult(() => data.searchResult);
-        } catch (error) {
-            console.error('error while getting search result', error);
-            logoutUser({ error });
-        }
-    };
-
     return (
         <header className="flex w-full flex-row items-center justify-between border-b-2 py-4 pl-6 pr-12">
             <h2 className="flex-1 text-2xl font-semibold">Orders & Delivery</h2>
@@ -45,7 +21,7 @@ function Header({}) {
                         setSearchText(e.target.value);
                     }}
                     placeHolder={'Search your orders'}
-                    handleClick={handleClick}
+                    handleClick={() => searchForOrder()}
                     searchText={searchText}
                 />
                 <BubbleButton

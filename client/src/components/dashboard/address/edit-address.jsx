@@ -67,7 +67,7 @@ function Edit_Address({}) {
             });
 
             setAddress(() => result.data.user.address);
-            success = true
+            success = true;
         } catch (error) {
             if (error.response.status == 404) {
                 setNotFound(() => true);
@@ -75,7 +75,6 @@ function Edit_Address({}) {
             logOutUser({ error, authDispatch, navigate });
 
             Object.assign(errorData, error.response.data);
-          
         } finally {
             setTimeout(() => {
                 setLoading(false);
@@ -95,7 +94,7 @@ function Edit_Address({}) {
         <section className="edit_address">
             {loadState ? (
                 <div className="flex h-[400px] w-full items-center justify-center">
-                    <div className="spinner-circle [--spinner-color:var(--gray-9)]"></div>
+                    <div className="spinner-circle ![--spinner-color:var(--gray-9)]"></div>
                 </div>
             ) : notFound ? (
                 <div className="flex h-[400px] min-h-full w-full flex-col items-center justify-center bg-white p-4">

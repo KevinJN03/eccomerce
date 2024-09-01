@@ -13,7 +13,7 @@ function Modal({
     setLoading,
     ModalContent,
     className,
-   
+
     selection,
 }) {
     const handleDelete = () => {
@@ -23,10 +23,10 @@ function Modal({
                 .then((res) => {
                     if (res.status === 200) {
                         setLoading(true);
-                      setTimeout(() => {
-                        setLoading(false);
-                        setCheck(false)
-                      }, 1000)
+                        setTimeout(() => {
+                            setLoading(false);
+                            setCheck(false);
+                        }, 1000);
                     }
                 });
         } else {
@@ -35,15 +35,15 @@ function Modal({
                     setLoading(true);
                     setTimeout(() => {
                         setLoading(false);
-                        setCheck(false)
-                      }, 1000)
+                        setCheck(false);
+                    }, 1000);
                 }
             });
         }
     };
 
     return (
-        <section className='z-50'>
+        <section className="z-50">
             <input
                 className="modal-state  "
                 id="modal-3"
@@ -58,10 +58,10 @@ function Modal({
                     onClick={() => setCheck(false)}
                 ></label>
                 <div
-                    className={`modal-content flex flex-col items-center gap-4 rounded-none border-none ${className} !bg-white`}
+                    className={`modal-content flex flex-col items-center gap-4 !rounded-none border-none ${className} !bg-white`}
                 >
                     {loading ? (
-                        <div class="spinner-circle [--spinner-color:var(--gray-9)]"></div>
+                        <div class="spinner-circle ![--spinner-color:var(--gray-9)]"></div>
                     ) : (
                         <>
                             {ModalContent && { ...ModalContent }}
@@ -69,7 +69,7 @@ function Modal({
                                 <>
                                     <label
                                         htmlFor="modal-1"
-                                        className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+                                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                                         onClick={() => setCheck(false)}
                                     >
                                         ✕

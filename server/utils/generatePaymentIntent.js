@@ -51,13 +51,13 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
   //     calculateTotalCost +=
   //       _.get(item, 'price.current') * _.get(item, 'quantity');
   //   });
-  const orderNumber = generateOrderNumber();
+  const order_id = generateOrderNumber();
 
   const paymentIntent = await stripe.paymentIntents.create({
     metadata: {
-      orderNumber,
+      order_id,
     },
-    amount: parseFloat(total.withShipping) * 100,
+    amount: parseInt(parseFloat(total.withShipping) * 100),
     currency: 'gbp',
     customer: userId,
     shipping,
@@ -124,7 +124,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
   //   });
 
   const orderObj = {
-    _id: orderNumber,
+    _id: order_id,
     customer: userId,
     status: 'processing',
     shipping_address: shipping,
@@ -157,7 +157,7 @@ const generatePaymentIntent = asyncHandler(async (req, res, next) => {
   res.status(200).send({
     success: true,
     clientSecret: paymentIntent.client_secret,
-    orderNumber: orderNumber,
+    orderNumber: order_id,
     id: paymentIntent.id,
   });
 });

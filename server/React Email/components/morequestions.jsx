@@ -2,23 +2,25 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
-    Head,
-    Tailwind,
-    Html,
-    Body,
-    Text,
-    Img,
-    Section,
-    Row,
-    Column,
-    Hr,
-    Button,
-    Container,
-  } from '@react-email/components';
+  Head,
+  Tailwind,
+  Html,
+  Body,
+  Text,
+  Img,
+  Section,
+  Row,
+  Column,
+  Hr,
+  Button,
+  Container,
+} from '@react-email/components';
 
-function MoreQuestions({}) {
+function MoreQuestions({ preview }) {
   return (
-    <Container className="bg-[#dedfe4] px-5 py-7 m-0 !min-w-[600px] max-w-[600px]">
+    <Section className="bg-[#dedfe4] w-full p-5 w-full">
+      {/* <Container className="bg-[#dedfe4] w-full">
+        <div className={`p-5 w-full`}> */}
       <Text className="m-0 p-0 font-semibold text-base pb-2">
         ANY QUESTIONS?
       </Text>
@@ -61,7 +63,10 @@ function MoreQuestions({}) {
           );
         })}{' '}
       </Section>
-    </Container>
+      {/* </td> */}
+      {/* </div>
+      </Container> */}
+    </Section>
   );
 }
 

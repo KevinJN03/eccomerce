@@ -1,7 +1,7 @@
 import ArrowDropDownSharpIcon from '@mui/icons-material/ArrowDropDownSharp';
 import { useEffect, useState } from 'react';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
-import { forEach } from 'lodash';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
+import _, { forEach } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ClickAwayListener } from '@mui/material';
 import variant from './variant';
@@ -13,35 +13,21 @@ function SubHeader({}) {
     const {
         selectionSet,
         setSelectionSet,
-        allOrderPerPage,
-        adminOrderModalContentDispatch,
-        resultMap,
-        currentPage,
+        ordersData,
+        allOrderIds,
+        setAllOrdersId,
+        markGiftSelection,
+        setMarkGiftSelection,
+        allMarkGiftSelection,
+        defaultMarkGiftSelection,
+        handleMarkGift,
     } = useAdminOrderContext();
     const { setModalCheck, setModalContent } = useContent();
 
-    const [showAction, setShowAction] = useState(false);
-    const [allOrderIds, setAllOrdersId] = useState();
-
-    const getIdsFromPage = () => {
-        const orderIdArray = [];
-        const newAllOrderPerPage = [...resultMap.get(currentPage)];
-        newAllOrderPerPage.forEach((obj) => {
-            const getOnlyIds = obj.orders?.map((order) => order?._id);
-
-            orderIdArray.push(...getOnlyIds);
-        });
-
-        return orderIdArray;
-    };
-    useEffect(() => {
-        if (resultMap.size > 0) {
-            setAllOrdersId(() => getIdsFromPage());
-        }
-    }, [currentPage, resultMap]);
+    const [showAction, setShowActions] = useState(false);
 
     const toggleAction = () => {
-        setShowAction((prevState) => !prevState);
+        setShowActions((prevState) => !prevState);
     };
 
     const printOrders = () => {
@@ -55,16 +41,34 @@ function SubHeader({}) {
     const markAsGift = () => {};
 
     const actionClickAway = () => {
-        setShowAction(() => false);
+        setShowActions(() => false);
     };
+
+    const selectAll = () => {
+        setSelectionSet((prevSet) => new Set([...prevSet, ...allOrderIds]));
+
+        setMarkGiftSelection((prevSet) => allMarkGiftSelection);
+    };
+    const deselect = () => {
+        setSelectionSet(() => new Set());
+        setMarkGiftSelection(() => defaultMarkGiftSelection);
+    };
+
+    // const toggleSelection = () => {
+    //     if (selectionSet?.size > 0) {
+    //         // setSelectionSet(() => new Set());
+    //         deselect();
+    //     } else {
+    //         // setSelectionSet(() => new Set([...allOrderIds]));
+    //         selectAll();
+    //     }
+    // };
     return (
         <section className="subheader flex flex-row gap-x-3  pb-6 pt-5">
             <SelectionInput
-                {...{
-                    allIds: allOrderIds,
-                    setSelectionSet,
-                    selectionSet,
-                }}
+                deselect={deselect}
+                selectAll={selectAll}
+                selectionSet={selectionSet}
             />
 
             <button
@@ -103,10 +107,22 @@ function SubHeader({}) {
                                 </div>
 
                                 <p
-                                    onClick={markAsGift}
+                                    onClick={() =>
+                                        handleMarkGift({
+                                            orderId: Array.from(selectionSet),
+                                            setShowActions,
+                                            mark_as_gift:
+                                                markGiftSelection.false >= 1
+                                                    ? true
+                                                    : false,
+                                        })
+                                    }
                                     className="cursor-pointer whitespace-nowrap px-5 py-2 text-s hover:bg-dark-gray/20"
                                 >
-                                    Mark as gift(s)
+                                    {/* if a false value is present, set value to  set mark_as_gift to true else false */}
+                                    {markGiftSelection.false >= 1
+                                        ? 'Mark as gift(s)'
+                                        : 'Unmark as gift(s)'}
                                 </p>
                             </motion.div>
                         </ClickAwayListener>

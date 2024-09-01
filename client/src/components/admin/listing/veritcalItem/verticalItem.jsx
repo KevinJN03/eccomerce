@@ -18,7 +18,7 @@ function VerticalItem({ product, index }) {
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks, handleFeatured, showStats } =
+    const { selectionSet, setSelectionSet, checks, handleFeatured, } =
         useListingPageContext();
 
     return (
@@ -46,7 +46,7 @@ function VerticalItem({ product, index }) {
                         return newSet;
                     });
                 }}
-                className=" daisy-checkbox daisy-checkbox-xs mt-6  rounded-sm"
+                className=" daisy-checkbox daisy-checkbox-xs mt-6  !rounded-sm"
                 type="checkbox"
                 name={`select-${product?._id}`}
                 id={`select-${product?._id}`}
@@ -138,7 +138,7 @@ function VerticalItem({ product, index }) {
                 </section>
 
                 <Stock_Price product={product} />
-                {showStats && <Stats product={product} />}
+                {checks?.stats && <Stats product={product} />}
             </section>
 
             {/* {product?.note && <p>{product?.note}</p>} */}

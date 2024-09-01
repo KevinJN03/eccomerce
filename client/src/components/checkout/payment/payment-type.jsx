@@ -182,7 +182,7 @@ function Payment_Type({ initialView, setDisableAddress }) {
     const viewVariants = {
         initial: {
             opacity: 0,
-      
+
             // translateY: -100,
             translateX: -100,
             height: containerRef?.current?.clientHeight
@@ -194,7 +194,7 @@ function Payment_Type({ initialView, setDisableAddress }) {
             translateY: 0,
             translateX: 0,
             height: 'auto',
-          
+
             transition: {
                 duration: 0.4,
                 ease: easeIn,
@@ -203,7 +203,7 @@ function Payment_Type({ initialView, setDisableAddress }) {
 
         exit: {
             opacity: 0,
-translateY: -100,
+            translateY: -100,
             transition: {
                 duration: 0.5,
                 ease: easeOut,
@@ -233,11 +233,11 @@ translateY: -100,
     return (
         <PaymentTypeProvider value={value}>
             <ClickAwayListener onClickAway={onClickAway}>
-                <div className='w-full h-full' >
+                <div className="h-full w-full">
                     {initialView && (
                         <section
                             id="payment-type"
-                            className={`relative mt-4 px-6  h-full ${
+                            className={`relative mt-4 h-full  px-6 ${
                                 disable
                                     ? 'disable-component'
                                     : 'display-component'
@@ -247,7 +247,7 @@ translateY: -100,
                                 {loading && (
                                     <div className="absolute left-2/4 top-2/4 z-10 translate-x-[-50%] translate-y-[-50%] opacity-100">
                                         <svg
-                                            className="spinner-ring spinner-sm [--spinner-color:var(--slate-11)]"
+                                            className="spinner-ring spinner-sm ![--spinner-color:var(--slate-11)]"
                                             viewBox="25 25 50 50"
                                             strokeWidth="5"
                                         >
@@ -274,20 +274,17 @@ translateY: -100,
                                     </div>
 
                                     <section
-                                 className=''
+                                        className=""
                                         ref={containerRef}
-                                        
+
                                         // key={viewContent}
                                         // variants={containerVariants}
                                         // animate={'animate'}
                                         // initial={'initial'}
                                         // exit={'exit'}
                                     >
-                                  
                                         <AnimatePresence mode="wait">
                                             <motion.div
-
-                                            
                                                 key={viewContent}
                                                 variants={viewVariants}
                                                 animate={'animate'}

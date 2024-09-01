@@ -37,14 +37,14 @@ function Index({}) {
                 const [
                     counts,
                     usersData,
-                    productsData,
-                    ordersData,
+                    // productsData,
+                    // ordersData,
                     deliveryData,
                 ] = await Promise.all([
                     adminAxios.get('/count'),
                     adminAxios.get('/user/all'),
-                    adminAxios.post('/products/all', { checks: { sort: {title: 1} } }),
-                    adminAxios.get('/orders'),
+                    // adminAxios.post('/products/all', { checks: { sort: {title: 1} } }),
+                    // adminAxios.get('/orders'),
                     adminAxios.get('/delivery/all'),
                 ]);
 
@@ -54,9 +54,9 @@ function Index({}) {
                 );
 
                 setAllUsers(() => usersData?.data);
-                setAllProducts(() => productsData.data?.products);
+                // setAllProducts(() => productsData.data?.products);
 
-                setOrders(() => ordersData?.data?.orders);
+                // setOrders(() => ordersData?.data?.orders);
                 setDeliveryData(() => deliveryData?.data);
             } catch (error) {
                 console.log('error while trying to get data');

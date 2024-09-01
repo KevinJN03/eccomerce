@@ -73,6 +73,17 @@ import WishList from './components/wishlist/index.jsx';
 import DeliveryProfile from './components/admin/delivery/deliveryProfile.jsx';
 import Postage from './components/admin/delivery/postage.jsx';
 import Upgrades from './components/admin/delivery/upgrades.jsx';
+import RefundOrder from './components/admin/order/home/refund/refundOrder.jsx';
+import Containers from './components/admin/order/home/containers.jsx';
+import SystemHealth from './components/admin/system-health/index.jsx';
+import Logs from './components/admin/logs/index.jsx';
+import PaymentIndex from './components/admin/finance/index.jsx';
+import PaymentAccount from './components/admin/finance/paymentAccount.jsx';
+import MonthlyStatements from './components/admin/finance/monthlyStatements.jsx';
+import MonthStatement from './components/admin/finance/monthStatement.jsx';
+import PaymentSettings from './components/admin/finance/paymentSettings.jsx';
+import SalesDiscount from './components/admin/marketing/sales-discount.jsx';
+import Marketing from './components/admin/marketing/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -324,12 +335,61 @@ function Router({ Header, Footer }) {
                         },
 
                         {
+                            path: 'marketing',
+                            element: <Marketing />,
+                            children: [
+                                {
+                                    index: true,
+                                    element: <SalesDiscount />,
+                                },
+                                {
+                                    path: 'sales-discounts',
+                                    element: <SalesDiscount />,
+                                },
+                            ],
+                        },
+
+                        {
+                            path: 'payments',
+                            element: <PaymentIndex />,
+                            children: [
+                                {
+                                    index: true,
+                                    element: <PaymentAccount />,
+                                },
+                                {
+                                    path: 'monthly-statements',
+                                    element: <MonthlyStatements />,
+                                },
+                                {
+                                    path: 'monthly-statement',
+                                    element: <MonthStatement />,
+                                },
+                                {
+                                    path: 'settings',
+                                    element: <PaymentSettings />,
+                                },
+                            ],
+                        },
+
+                        {
                             path: 'login',
                             element: <AdminPortal />,
                             children: [
                                 { index: true, element: <AdminLogin /> },
                             ],
                         },
+
+                        {
+                            path: 'system_health',
+                            element: <SystemHealth />,
+                        },
+
+                        {
+                            path: 'logs',
+                            element: <Logs />,
+                        },
+
                         {
                             path: 'orders/download/:id',
                             element: <Pdf />,
@@ -337,11 +397,25 @@ function Router({ Header, Footer }) {
                         {
                             path: 'orders',
                             element: <AdminOrder />,
+                            children: [
+                                {
+                                    path: 'new',
+                                    element: <Containers />,
+                                },
+                                {
+                                    path: 'complete',
+                                    element: <Containers />,
+                                },
+                            ],
                         },
 
                         {
                             path: 'orders/:id/cancel_order',
                             element: <CancelOrder />,
+                        },
+                        {
+                            path: 'orders/:id/refund_order',
+                            element: <RefundOrder />,
                         },
                         {
                             path: 'orders/edit/:id',

@@ -41,7 +41,7 @@ function ChangeEmail({ firstName, newEmail }) {
         )}
         <Body>
           <Container
-            className="!bg-light-grey w-full max-w-[600px]"
+            className="!bg-light-grey w-full"
             align="center"
           >
             <Section align="center">

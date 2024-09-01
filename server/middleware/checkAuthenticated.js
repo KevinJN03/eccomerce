@@ -13,6 +13,7 @@ export const checkAuthenticated = AsyncHandler((req, res, next) => {
 });
 
 export const checkAdminAuthenticated = AsyncHandler(async (req, res, next) => {
+  console.log({ adminAuth: req.isAuthenticated() });
   if (req.isAuthenticated()) {
     const { _id } = req.user;
     const findUser = await user.findById(

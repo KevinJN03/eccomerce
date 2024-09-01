@@ -22,7 +22,7 @@ function Footer({}) {
 
             <ThemeBtn text={'Save profile'} handleClick={handleSubmit}>
                 {btnLoad ? (
-                    <div className="spinner-circle spinner-sm [--spinner-color:255,255,255]" />
+                    <div className="spinner-circle spinner-sm ![--spinner-color:255,255,255]" />
                 ) : (
                     <div className="flex flex-row flex-nowrap items-center text-base font-medium text-white">
                         {modalContent?.button?.text || 'Save profile'}

@@ -4,23 +4,15 @@ import { useState } from 'react';
 import { useAdminContext } from '../../../../context/adminContext';
 import { ClickAwayListener } from '@mui/material';
 import { adminAxios } from '../../../../api/axios';
-import { useAdminOrderContext } from '../../../../context/adminOrder';
+import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import dayjs from 'dayjs';
 
 function Note({ idx, note, date, _id, lastIdx }) {
     const [error, setError] = useState({});
     const [edit, setEdit] = useState(false);
     const [text, setText] = useState(note);
-    const {
-        orderInfo,
-        setOrderInfo,
-        status,
-        setOrderData,
-        setSearchResult,
-        searchedTerm,
-        setSearchTerm,
-        isSearchingOrder,
-    } = useAdminOrderContext();
+    const { orderInfo, setOrderInfo, fetchData, setTriggerFetchData } =
+        useAdminOrderContext();
 
     const { logoutUser } = useAdminContext();
     const saveEdit = async () => {
@@ -35,39 +27,9 @@ function Note({ idx, note, date, _id, lastIdx }) {
                 note: text,
             });
 
-            // const { data: orderResult } = await adminAxios.post('/orders/all', {
-            //     status,
-            // });
-
-            // const { data: searchDataResult } = await adminAxios.post(
-            //     `searchOrder`,
-            //     {
-            //         searchText: searchedTerm,
-            //     }
-            // );
-
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
-            setOrderData(() => orderResult || {});
             setEdit(() => false);
             setOrderInfo(() => data.order);
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             logoutUser({ error });
         }
@@ -77,28 +39,8 @@ function Note({ idx, note, date, _id, lastIdx }) {
             const { data } = await adminAxios.delete(
                 `privateNote/delete?noteId=${_id}&orderId=${orderInfo?._id}`
             );
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
-
-            setOrderData(() => orderResult || {});
             setOrderInfo(() => data.order);
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             console.error(error);
             logoutUser({ error });
@@ -175,10 +117,10 @@ function PrivateButton({ toggle, noteCount }) {
     return (
         <button
             onClick={toggle}
-            className="flex w-fit flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
+            className="flex  cursor-pointer w-fit flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
         >
             <AddRounded className="!text-sm" />
-            <p className="text-xxs">
+            <p className="text-xxs !cursor-pointer">
                 {noteCount == 0
                     ? 'Add a private note'
                     : 'Add more private notes'}
@@ -190,16 +132,8 @@ function PrivateNote({}) {
     const [open, setOpen] = useState(false);
     const [error, setError] = useState({});
     const [note, setNote] = useState('');
-    const {
-        orderInfo,
-        setOrderInfo,
-        status,
-        ordersData,
-        setOrderData,
-        isSearchingOrder,
-        searchedTerm,
-        setSearchResult,
-    } = useAdminOrderContext();
+    const { orderInfo, setOrderInfo, setTriggerFetchData } =
+        useAdminOrderContext();
     const { logoutUser } = useAdminContext();
     const toggle = () => {
         setOpen((prevState) => !prevState);
@@ -217,30 +151,10 @@ function PrivateNote({}) {
                 orderId: orderInfo?._id,
             });
 
-            const [{ data: orderResult }, searchDataResult] = await Promise.all(
-                [
-                    adminAxios.post('/orders/all', {
-                        status,
-                    }),
-                    (() => {
-                        if (isSearchingOrder) {
-                            return adminAxios.post(`searchOrder`, {
-                                searchText: searchedTerm,
-                            });
-                        }
-                    })(),
-                ]
-            );
-         
-            if (isSearchingOrder) {
-                setSearchResult(
-                    () => searchDataResult.data?.searchResult || []
-                );
-            }
             setOrderInfo(() => data.order);
-            setOrderData(() => orderResult || {});
             setOpen(() => false);
             setNote(() => '');
+            setTriggerFetchData((prevState) => !prevState);
         } catch (error) {
             console.error(error);
             logoutUser({ error });

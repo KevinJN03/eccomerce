@@ -2,45 +2,36 @@ import Header from '../header.jsx';
 import chat_icon from '../../../assets/icons/profile-icons/chat.png';
 import discount_icon from '../../../assets/icons/discount.png';
 import alert_icon from '../../../assets/icons/alert.png';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from '../../../api/axios';
-import _ from 'lodash';
+import _, { property } from 'lodash';
 import Alert_Item from './alert.item.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
-import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx'
+import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
 function Contact_Preferences({}) {
-    const { contact_preference, setContactPreference, setFooterMessage } =
-        useUserDashboardContext();
+    const {
+      
+        setFooterMessage,
+        userData,
+        setUserData,
+        logoutUser,
+    } = useUserDashboardContext();
 
-  
     const [confirmLoadState, setConfirmLoadState] = useState(false);
     const [isAllSelected, setIsAllSelected] = useState(false);
-    const [discountCheck, setDiscountCheck] = useState(
-        contact_preference?.discount_newDrops || {
-            email: false,
-            text: false,
-        }
-    );
-    const [stockCheck, setStockCheck] = useState(
-        contact_preference?.stockAlert || { email: false }
-    );
-    const [onMountValue, setOnMountValue] = useState({
-        discountCheck,
-        stockCheck,
-    });
+   
+    const [checks, setChecks] = useState({ ...userData.contact_preferences });
+  
     const [disable, setDisable] = useState(true);
 
     const { authDispatch } = useAuth();
     const navigate = useNavigate();
-    useEffect(() => {
-        const newValue = {
-            stockCheck,
-            discountCheck,
-        };
 
-        const isObjectSame = _.isEqual(newValue, onMountValue);
+    const abortControllerRef = useRef(new AbortController());
+    useEffect(() => {
+        const isObjectSame = _.isEqual(userData?.contact_preferences, checks);
 
         if (isObjectSame) {
             setDisable(true);
@@ -48,40 +39,51 @@ function Contact_Preferences({}) {
             setDisable(false);
         }
 
+        const stockAlertEmail = _.get(checks, ['stock_alert', 'email']);
         if (
-            stockCheck.email === discountCheck.email &&
-            stockCheck.email === discountCheck.text
+            stockAlertEmail ===
+                _.get(checks, ['discount_new_drops', 'email']) &&
+            stockAlertEmail === _.get(checks, ['discount_new_drops', 'text'])
         ) {
-            setIsAllSelected(() => stockCheck.email);
+            setIsAllSelected(() => stockAlertEmail);
         } else {
             setIsAllSelected(() => false);
         }
-    }, [stockCheck, discountCheck]);
+    }, [checks]);
 
     const setAllCheck = (value) => {
-        setDiscountCheck((prevState) => ({
-            ...prevState,
-            email: value,
-            text: value,
-        }));
+        const updateValues = _.mapValues(checks, (element) => {
+            return _.mapValues(element, (item) => {
+                return value;
+            });
+        });
 
-        setStockCheck((prevState) => ({ ...prevState, email: value }));
+        setChecks(() => updateValues);
     };
 
-    const onConfirm = () => {
-        setConfirmLoadState(() => true);
-        const data = {
-            discount_newDrops: discountCheck,
-            stockAlert: stockCheck,
-        };
-        axios
-            .put('user/changepreferences', data)
-            .then(() => {
-                setContactPreference(() => data);
+    const onConfirm = async () => {
+        let success = false;
+        try {
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+            setConfirmLoadState(() => true);
+
+            console.log({ checks });
+
+            const { data } = await axios.put('user/changepreferences', checks, {
+                signal: abortControllerRef.current.signal,
+            });
+            setUserData((prevState) => ({
+                ...prevState,
+                contact_preferences: data?.contact_preferences,
+            }));
+            success = true;
+        } catch (error) {
+            console.error(error.message, error);
+            logoutUser({ error });
+        } finally {
+            if (success) {
                 setTimeout(() => {
-                    setOnMountValue(() => {
-                        return { stockCheck, discountCheck };
-                    });
                     setFooterMessage(() => ({
                         text: 'Preferences saved',
                         success: true,
@@ -89,21 +91,17 @@ function Contact_Preferences({}) {
                     setDisable(() => true);
                     setConfirmLoadState(() => false);
                 }, 700);
-            })
-            .catch((error) => {
-                'error at preferences: ', error;
-                logOutUser({ error, authDispatch, navigate });
-            });
+            }
+        }
     };
     return (
         <section className="contact_preferences">
             <Header text={'CONTACT PREFERENCES'} icon={chat_icon} />
             <section className="relative mt-2 bg-white p-4">
                 {confirmLoadState && (
-                    <div className='absolute top-2/4 left-2/4 translate-x-[-50%] translate-y-[-50%] '>
-                        <GLoader /> 
+                    <div className="absolute left-2/4 top-2/4 translate-x-[-50%] translate-y-[-50%] ">
+                        <GLoader />
                     </div>
-                   
                 )}
                 <div className="top mb-8 ">
                     <h2 className="mb-3 text-lg font-bold tracking-wide">
@@ -123,27 +121,42 @@ function Contact_Preferences({}) {
                     </div>
                 </div>
                 <div className="bottom">
-                    <Alert_Item
-                        check={discountCheck}
-                        setCheck={setDiscountCheck}
-                        textMessage={true}
-                        icon={discount_icon}
-                        title={'DISCOUNTS AND NEW DROPS'}
-                        description={
-                            'Be first in line to grab the stuff you love for less, get exclusive deals, and all the best just-landed looks.'
-                        }
-                    />
-
-                    <Alert_Item
-                        check={stockCheck}
-                        setCheck={setStockCheck}
-                        textMessage={false}
-                        icon={alert_icon}
-                        title={'STOCK ALERTS'}
-                        description={
-                            'If that product you’re into comes back in stock, get a heads-up so you can add to bag pronto.'
-                        }
-                    />
+                    {[
+                        {
+                            type: 'discount_new_drops',
+                            textMessage: true,
+                            icon: discount_icon,
+                            title: 'DISCOUNTS AND NEW DROPS',
+                            description:
+                                'Be first in line to grab the stuff you love for less, get exclusive deals, and all the best just-landed looks.',
+                        },
+                        {
+                            type: 'stock_alert',
+                            textMessage: false,
+                            icon: alert_icon,
+                            title: 'STOCK ALERTS',
+                            description:
+                                'If that product you’re into comes back in stock, get a heads-up so you can add to bag pronto.',
+                        },
+                    ].map((props) => {
+                        return (
+                            <Alert_Item
+                                key={props.title}
+                                {...{
+                                    ...props,
+                                    setCheck: (callback) => {
+                                        setChecks((prevState) => ({
+                                            ...prevState,
+                                            [props.type]: callback(
+                                                prevState[props.type]
+                                            ),
+                                        }));
+                                    },
+                                    check: checks[props.type],
+                                }}
+                            />
+                        );
+                    })}
                 </div>
             </section>
 

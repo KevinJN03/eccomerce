@@ -59,7 +59,7 @@ const verifyCallBack = async (token, tokenSecret, profile, cb) => {
   }
 };
 
-const twitterStrategy = new TwitterStrategy(
+const twitterStrategy = new TwitterStrategy.Strategy(
   twitterStrategyOption,
   verifyCallBack,
 );

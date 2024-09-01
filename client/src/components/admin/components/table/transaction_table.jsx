@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import CollapseExpandIcon from '../../finance/collapseExpandIcon';
 function Transaction_Table({ data }) {
     return (
         <TableContainer component={Paper} className="table">
@@ -38,30 +40,39 @@ function Transaction_Table({ data }) {
                     {data.map((row) => (
                         <TableRow key={row._id}>
                             <TableCell className="tableCell">
-                                {row._id}
+                                <Link
+                                className='hover:underline font-medium hover:text-black/80 transition-all'
+                                    to={`/admin/orders/${row.status == 'recieved' ? 'new' : 'complete'}?orderId=${row._id}`}
+                                >
+                                    {' '}
+                                    {row._id}
+                                </Link>
                             </TableCell>
                             <TableCell className="tableCell">
                                 <div className="cellWrapper">
-                                    {row?.items?.map((item) => {
+
+                                <CollapseExpandIcon array={row?.items}/>
+
+                                    {/* {row?.items?.map((item) => {
                                         return (
-                                            <span
-                                                key={uuidv4()}
-                                                className="tooltip tooltip-top"
-                                                data-tooltip={
-                                                    item?.product?.title
-                                                }
-                                            >
-                                                <img
-                                                    src={
-                                                        item?.product
-                                                            ?.images?.[0]
-                                                    }
-                                                    alt=""
-                                                    className="h-10 w-10 rounded-full object-cover"
-                                                />
-                                            </span>
+                                           <CollapseExpandIcon array={}/>
+                                            // <span
+                                            //     key={uuidv4()}
+                                            //     className="tooltip tooltip-top"
+                                            //     data-tooltip={
+                                            //         item?.title
+                                            //     }
+                                            // >
+                                            //     <img
+                                            //         src={
+                                            //             item?.images?.[0]
+                                            //         }
+                                            //         alt=""
+                                            //         className="h-10 w-10 rounded-full object-cover"
+                                            //     />
+                                            // </span>
                                         );
-                                    })}
+                                    })} */}
                                 </div>
                             </TableCell>
                             <TableCell className="tableCell">
@@ -92,4 +103,3 @@ function Transaction_Table({ data }) {
 }
 
 export default Transaction_Table;
-   

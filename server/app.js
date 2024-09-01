@@ -14,7 +14,6 @@ import searchRoute from './Routes/searchRoute.js';
 import giftCardRoute from './Routes/giftCardRoute.js';
 import webHookRoute from './Routes/webhookRoute.js';
 import userRoute from './Routes/userRoute.js';
-import emailTestRoute from './React Email/test.js';
 import adminRoute from './Routes/adminRoute.js';
 import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
@@ -22,22 +21,15 @@ import errorHandler from './errorHandler.js';
 import passport from './utils/passport/passport.js';
 import https from 'https';
 import fs from 'fs';
-import indexRoute from './Routes/indexRoute';
-import asyncHandler from 'express-async-handler';
-import transporter from './utils/nodemailer.js';
-import * as React from 'react';
-import { render } from '@react-email/render';
+import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
-import Order from './Models/order.js';
 import 'dotenv/config';
-import PasswordReset from './React Email/emails/passwordreset.jsx';
-import User from './Models/user.js';
-import jwt from 'jsonwebtoken';
-import { check, validationResult } from 'express-validator';
-import bcrypt from 'bcryptjs';
-import { checkAdminAuthenticated } from './middleware/checkAuthenticated.js';
-import { adminLogin } from './Controllers/adminController.js';
-
+import { checkAdminAuthenticated, checkAuthenticated } from './middleware/checkAuthenticated.js';
+import ExpressStatusMonitor from 'express-status-monitor';
+import logger from './utils/logger.js';
+import dayjs from 'dayjs';
+import { utc } from 'dayjs';
+dayjs.extend(utc);
 const {
   DBNAME,
   URL,
@@ -63,6 +55,7 @@ const db = () => {
 db();
 
 const app = express();
+app.use(morgan('dev'));
 export const myCache = new NodeCache();
 // app.use(cors());
 app.set('trust proxy', true);
@@ -84,24 +77,28 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  ExpressStatusMonitor({
+    path: '/api/status',
+    title: 'Backend Server ',
+  }),
+);
 app.use('/api', indexRoute);
 app.use('/api/product', productRoute);
 app.use('/api/coupon', couponRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/search', searchRoute);
-app.use('/api/giftcard', giftCardRoute);
-app.use('/api/user', userRoute);
+//app.use('/api/giftcard', giftCardRoute);
+app.use('/api/user', [checkAuthenticated,userRoute]);
 app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
 app.use('/api/webhook', webHookRoute);
-
 // test email
-app.use('/api/test', emailTestRoute);
 
 app.use(errorHandler);
 
@@ -117,5 +114,6 @@ console.log({
 });
 const sslServer = https.createServer(httpOptions, app);
 sslServer.listen(PORT, () => {
-  console.log(`Secure server🔑 listening on Port: ${PORT}`);
+  logger.info(`Secure server🔑 listening on Port: ${PORT}`);
+  // logger.error(`Secure server🔑 listening on Port: ${PORT}`);
 });

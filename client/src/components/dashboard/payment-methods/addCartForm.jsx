@@ -178,7 +178,7 @@ export function AddCartForm({ clientSecret }) {
                 >
                     <input
                         type="checkbox"
-                        className="daisy-checkbox rounded-none"
+                        className="daisy-checkbox !rounded-none"
                         name="default"
                         id="default-payment-check"
                         checked={defaultCheck}
@@ -197,7 +197,7 @@ export function AddCartForm({ clientSecret }) {
             >
                 {btnLoad ? (
                     <svg
-                        className="spinner-ring spinner-sm [--spinner-color:var(--gray-1)]"
+                        className="spinner-ring spinner-sm ![--spinner-color:var(--gray-1)]"
                         viewBox="25 25 50 50"
                         strokeWidth="5"
                     >

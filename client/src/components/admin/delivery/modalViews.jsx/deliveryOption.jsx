@@ -41,6 +41,7 @@ function DeliveryProfile(props) {
                 text: 'Save and apply',
                 handleClick: (data) => {
                     modalContent.setProfile(() => data);
+                    modalContent?.handleClick();
                 },
             },
         }));
@@ -52,6 +53,8 @@ function DeliveryProfile(props) {
         setTimeout(() => {
             const { handleCancel, ...profileProp } = props;
             modalContent.setProfile(() => profileProp);
+            modalContent?.handleClick();
+
             setLoading(() => false);
             setModalCheck(() => false);
         }, 500);
@@ -91,7 +94,7 @@ function DeliveryProfile(props) {
                     >
                         {loading ? (
                             <div className="w-fit">
-                                <div className="spinner-circle   [--spinner-color:var(--slate-10)] [--spinner-size:25px]"></div>
+                                <div className="spinner-circle   ![--spinner-color:var(--slate-10)] spinner-sm"></div>
                             </div>
                         ) : (
                             <p className="text-base font-medium text-black ">
@@ -226,9 +229,9 @@ function DeliveryOption({}) {
                     <h2 className="text-2xl font-semibold">Delivery options</h2>
                     <p>Select a delivery profile or create a new one.</p>
                 </div>
-                {loading ? (
+                { loading ? (
                     <div className="flex  h-44 w-full items-center justify-center">
-                        <div className="spinner-circle spinner-lg [--spinner-color:var(--slate-12)]"></div>
+                        <div className="spinner-circle spinner-lg ![--spinner-color:var(--slate-12)]"></div>
                     </div>
                 ) : (
                     <>

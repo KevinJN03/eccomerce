@@ -8,10 +8,17 @@ import { useEffect, useState } from 'react';
 import VerticalItem from './veritcalItem/verticalItem';
 import { useListingPageContext } from '../../../context/listingPageContext';
 import { v4 as uuidv4 } from 'uuid';
+import EmptyListing from './emptylisting';
 function VerticalProducts() {
     const { allProducts } = useAdminContext();
-    const { selectionSet, setSelectionSet, checks, products, loading } =
-        useListingPageContext();
+    const {
+        selectionSet,
+        setSelectionSet,
+        checks,
+        products,
+        loading,
+        
+    } = useListingPageContext();
 
     return (
         <section className="w-full ">
@@ -28,7 +35,9 @@ function VerticalProducts() {
                             );
                         })}
                 </>
-            ) : (
+            ) : products.length == 0 ? (
+                <EmptyListing/>
+            ): (
                 <>
                     {products?.map((product, index) => {
                         return (

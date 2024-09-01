@@ -28,6 +28,14 @@ const UserSchema = new Schema(
       type: Date,
       required: 'DOB is required. Please enter date of birth.',
     },
+    status: {
+      type: Schema.Types.String,
+      default: 'active',
+      enum: {
+        values: ['active', 'inactive'],
+        message: '{VALUE} is not support, check the supported enums type',
+      },
+    },
     interest: {
       type: String,
       enum: {
@@ -57,11 +65,11 @@ const UserSchema = new Schema(
     mobile: { type: Schema.Types.String },
     adminAccess: { type: Schema.Types.Boolean, default: false },
     contact_preferences: {
-      discount_newDrops: {
+      discount_new_drops: {
         email: { type: Schema.Types.Boolean, default: false },
         text: { type: Schema.Types.Boolean, default: false },
       },
-      stockAlert: {
+      stock_alert: {
         email: { type: Schema.Types.Boolean, default: false },
       },
     },
@@ -73,8 +81,7 @@ const UserSchema = new Schema(
     },
   },
   {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true, getters: true },
   },
 );
 

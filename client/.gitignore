@@ -27,3 +27,8 @@ cert.pem
 dev.pem
 cert
 cert/
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Sentry Config File
+.env.sentry-build-plugin

@@ -30,7 +30,7 @@ function PasswordReset({ url }) {
         <Body key={uuidv4()}>
           <Container
             key={uuidv4()}
-            className="bg-light-grey w-[600px] max-w-[600px]"
+            className="bg-light-grey w-[600px]"
             align="center"
           >
             <Section className="" align="center" key={uuidv4()}>
