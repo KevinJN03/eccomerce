@@ -2,8 +2,6 @@ import { useCart } from '../../context/cartContext';
 import { v4 as uuidv4 } from 'uuid';
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp';
 function AddToCart({ isOutOfStock, handleAddToCart }) {
-
-
     return (
         <div className="w-full flex-1">
             {!isOutOfStock ? (

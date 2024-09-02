@@ -3,7 +3,7 @@ import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import { useEffect, useRef, useState } from 'react';
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import _ from 'lodash';
 import { handleTimeout, handleUpdateProduct } from './handleTimeout';
 function Edit_Delivery({}) {

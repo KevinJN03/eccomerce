@@ -2,7 +2,7 @@ import { Fragment, useRef, useState, useEffect } from 'react';
 import search_icon from '../../assets/search.svg';
 import { SearchRounded, CloseRounded } from '@mui/icons-material';
 
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { useDebounce, useWindowSize } from '@uidotdev/usehooks';
 import { Link, useNavigate } from 'react-router-dom';
 import { Backdrop, Box, Modal } from '@mui/material';
@@ -68,7 +68,7 @@ function Search({ search }) {
                     id="search-input"
                     // onChange={search}
                     placeholder="Search for items"
-                    className="z-[3] placeholder:text-s sm:!hidden py-2 px-5  h-full w-full rounded-full border border-black"
+                    className="z-[3] h-full w-full rounded-full border  border-black px-5 py-2 placeholder:text-s sm:!hidden"
                     onChange={(e) => handleOnChange(e)}
                     ref={inputRef}
                     onClick={openSearch}

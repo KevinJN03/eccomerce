@@ -1,8 +1,7 @@
 import ObjectID from 'bson-objectid';
 export default function combineReducer(state, action) {
     if (action.type == 'UPDATE_OPTIONS') {
-return {...state, options: action.options}
-
+        return { ...state, options: action.options };
     }
     if (action.type == 'set') {
         const data = { ...action.combine };

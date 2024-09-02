@@ -1,7 +1,7 @@
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import Size from './size';
-import Color from './color';
-import Category from './category';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded.js';
+import Size from './size.jsx';
+import Color from './color.jsx';
+import Category from './category.jsx';
 function Mobile_Filter({ filterCount, count, setFilterCount }) {
     return (
         <>

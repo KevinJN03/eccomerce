@@ -181,14 +181,14 @@ function All_Users() {
 
             <section className="my-8 flex w-full flex-col items-center gap-1 px-6">
                 {loading ? (
-                    <div class="spinner-circle spinner-lg overflow-hidden ![--spinner-color:var(--slate-12)]"></div>
+                    <div className="spinner-circle spinner-lg overflow-hidden ![--spinner-color:var(--slate-12)]"></div>
                 ) : allUsers.length <= 0 ? (
                     <section className="mt-20 flex h-full w-full flex-col items-center justify-center gap-4">
                         <div className=" w-fit rounded-full bg-light-grey/70 p-5 transition-all hover:bg-light-grey/100">
                             <img
                                 src={emptyFolder}
                                 alt="empty folder with magnifying glass"
-                                srcset=""
+                                srcSet=""
                                 className="h-28 w-28  "
                             />
                         </div>
@@ -405,7 +405,7 @@ function All_Users() {
                                 disabled={btnLoading}
                             >
                                 {btnLoading ? (
-                                    <div class="spinner-circle spinner-sm ![--spinner-color:255,255,255]"></div>
+                                    <div className="spinner-circle spinner-sm ![--spinner-color:255,255,255]"></div>
                                 ) : (
                                     <span className=" relative !z-[1] w-full cursor-pointer text-base font-medium text-white">
                                         {userInfo?.status == 'active'

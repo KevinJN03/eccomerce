@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import { useAdminContext } from '../../../../context/adminContext';
 import updateProduct from './updateProduct';
 import preventProductFromSelection from './preventProductFromSelection';

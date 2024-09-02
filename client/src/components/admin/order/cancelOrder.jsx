@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import UserLogout from '../../../hooks/userLogout';
 import _ from 'lodash';
 import BubbleButton from '../../buttons/bubbleButton';
@@ -58,7 +58,7 @@ function CancelOrder({}) {
         <section className="flex h-screen w-full">
             {loading ? (
                 <div className="mt-5 flex w-full justify-center">
-                    <div class="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
+                    <div className="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
                 </div>
             ) : success ? (
                 <RefundSuccess />
@@ -380,7 +380,7 @@ function CancelOrder({}) {
                             >
                                 <div>
                                     {btnLoading ? (
-                                        <div class="spinner-circle spinner-sm ![--spinner-color:255,_255,_255]"></div>
+                                        <div className="spinner-circle spinner-sm ![--spinner-color:255,_255,_255]"></div>
                                     ) : (
                                         <p className="text-base font-medium text-white">
                                             Cancel order

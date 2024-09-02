@@ -1,6 +1,6 @@
 import '../../CSS/item_page.scss';
 import { useProductContext } from '../../context/productContext';
-function Item_List({  }) {
+function Item_List({}) {
     const { product, handleImgChange, loading } = useProductContext();
     return (
         <section id="item-list-section">

@@ -60,19 +60,14 @@ function UpdateProduct(props, value) {
                     type: 'set',
                     combine: combinedVariations,
                 });
-          
+
                 contentDispatch({ type: 'manage' });
             }
             setVariations(() => newVariations.slice(0, 2));
 
- 
-          
-
-
             setDescription(
                 () => singleValue?.description || singleValue?.detail?.join('')
             );
-
 
             const generateFiles = () => {
                 const newFiles = (singleValue?.fileResult || [])?.map(

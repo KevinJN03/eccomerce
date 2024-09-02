@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';
 
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import ProductContextProvider from '../../context/productContext';
 import _ from 'lodash';
 
@@ -57,8 +57,6 @@ function ItemPage() {
             abortControllerRef.current?.abort();
         };
     }, []);
-
- 
 
     const example = exampleData;
     const imageRef = useRef(null);

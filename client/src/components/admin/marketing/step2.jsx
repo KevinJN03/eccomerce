@@ -8,7 +8,7 @@ import { useSalesDiscountContext } from '../../../context/SalesDiscountContext';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/base';
 import { useAdminContext } from '../../../context/adminContext';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import _, { cloneDeep, forEach, result } from 'lodash';
 import { Link } from 'react-router-dom';
 import { useDebounce } from '@uidotdev/usehooks';

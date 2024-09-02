@@ -253,7 +253,7 @@ function SelectVariation({}) {
                         <input
                             type="text"
                             value={searchText}
-                            className="input input-lg !min-w-full rounded-md pr-10 mr-1.5"
+                            className="input input-lg mr-1.5 !min-w-full rounded-md pr-10"
                             placeholder="Enter an option..."
                             onClick={(e) => {
                                 setAnchorEl(e.currentTarget);

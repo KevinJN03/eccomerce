@@ -2,7 +2,7 @@ import * as React from 'react';
 import './modal.scss';
 import { useEffect } from 'react';
 
-import axios from '../../../../api/axios';
+import axios from '../../../../api/axios.js';
 function Modal({
     id,
 
@@ -61,7 +61,7 @@ function Modal({
                     className={`modal-content flex flex-col items-center gap-4 !rounded-none border-none ${className} !bg-white`}
                 >
                     {loading ? (
-                        <div class="spinner-circle ![--spinner-color:var(--gray-9)]"></div>
+                        <div className="spinner-circle ![--spinner-color:var(--gray-9)]"></div>
                     ) : (
                         <>
                             {ModalContent && { ...ModalContent }}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { adminAxios } from '../../../../../api/axios';
+import { adminAxios } from '../../../../../api/axios.js';
 import _ from 'lodash';
 import { ClickAwayListener } from '@mui/base';
 import dayjs from 'dayjs';

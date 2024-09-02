@@ -1,7 +1,7 @@
 import { PasswordSharp } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import '../../CSS/login-signup.css';
 import ErrorMessage from './errorMessage';
 import Input from './input';
@@ -12,12 +12,11 @@ import { usePortalContext } from '../../context/portalContext';
 const URL = import.meta.env.VITE_BACKEND_URL;
 function Login({}) {
     const [error, setError] = useState({ email: null, password: null });
-   
+
     const [loadState, setLoadState] = useState(false);
     const navigate = useNavigate();
     const { authDispatch } = useAuth();
 
-   
     const onSubmit = ({ email, password }) => {
         setLoadState(true);
 

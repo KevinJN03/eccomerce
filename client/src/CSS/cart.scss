@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto&family=Roboto+Slab:wght@100;200;300;400;500;600&display=swap');
 
-
 .cart {
     @apply w-full md:w-[100%] lg:w-[500px];
 }
@@ -10,13 +9,11 @@
 }
 
 .cart-img-container {
-  
-    @apply white flex justify-start w-28 h-36 min-h-full;
+    @apply white flex h-36 min-h-full w-28 justify-start;
 }
 
 #cart-info {
     width: 70%;
-   
 }
 
 .cart-options {
@@ -48,21 +45,17 @@
     font-family: "Gotham"; */
     // @apply absolute right-6  flex h-4 w-4 items-center justify-center text-xl;
 
-    @apply absolute right-6 flex h-6 w-6 items-center justify-center p-[6px] transition-all ;
+    @apply absolute right-6 flex h-6 w-6 items-center justify-center p-[6px] transition-all;
     font-family: 'Roboto', sans-serif;
     border-radius: 50%;
 
     img {
-
-    
         width: 100%;
         height: 100%;
         object-position: center;
         object-fit: contain;
     }
 }
-
-
 
 // #delivery-container {
 //     @apply flex flex-row items-baseline justify-between;

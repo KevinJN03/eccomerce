@@ -15,7 +15,7 @@ function PaginationButton({
                                 onClick={() => setPage(() => item)}
                                 className={`${buttonClassName || 'btn'}  ${
                                     page == item
-                                        ? (activeClassName || 'btn-active')
+                                        ? activeClassName || 'btn-active'
                                         : ''
                                 }`}
                                 key={item}
@@ -70,7 +70,9 @@ function PaginationButton({
                                 <button
                                     onClick={() => setPage(() => idx + 1)}
                                     className={` ${buttonClassName || 'btn'} ${
-                                        page == idx + 1 ? (activeClassName || 'btn-active') : ''
+                                        page == idx + 1
+                                            ? activeClassName || 'btn-active'
+                                            : ''
                                     }`}
                                     key={idx + 1}
                                 >

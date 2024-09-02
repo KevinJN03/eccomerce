@@ -16,7 +16,7 @@ function Card_Item({
 
     return (
         <section
-            className="flex w-full flex-row gap-x-4 py-5 cursor-pointer"
+            className="flex w-full cursor-pointer flex-row gap-x-4 py-5"
             onClick={handleClick}
         >
             <div className="left">

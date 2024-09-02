@@ -15,7 +15,6 @@ function Actions({ showAction, setShowAction, className, product }) {
         setShowAction(() => false);
     };
 
-
     return (
         <AnimatePresence>
             {showAction && (

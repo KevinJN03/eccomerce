@@ -86,11 +86,14 @@ export default function NavOption({ selectOption, loadingState }) {
                                                 <motion.div className=" skeleton-pulse min-h-full min-w-full rounded-[50%] p-0 "></motion.div>
                                             ) : (
                                                 <motion.img
-                                                // key={loadingState}
-                                                variants={variants}
-                                                animate={'animate'}
-                                                initial={'initial'}
-                                                transition={{duration: 0, delay: 0}}
+                                                    // key={loadingState}
+                                                    variants={variants}
+                                                    animate={'animate'}
+                                                    initial={'initial'}
+                                                    transition={{
+                                                        duration: 0,
+                                                        delay: 0,
+                                                    }}
                                                     className="mr-6 h-9 w-9"
                                                     src={icon}
                                                     alt={

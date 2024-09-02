@@ -9,14 +9,14 @@ function EmptyListing({}) {
         checks,
         setLoading,
         defaultChecks,
-        setTriggerSearch
+        setTriggerSearch,
     } = useListingPageContext();
 
     return (
         <section className="mt-20 flex h-full w-full flex-col items-center justify-center gap-4">
             <div className="rounded-full bg-light-grey p-5 ">
                 <img
-                key={'boxIcon'}
+                    key={'boxIcon'}
                     src={boxIcon}
                     className="h-20 w-20"
                     alt="open-delivered-box"
@@ -45,7 +45,7 @@ function EmptyListing({}) {
                         setSearchParams(searchParams);
                     } else {
                         setChecks(() => defaultChecks);
-                        setSearchParams({})
+                        setSearchParams({});
                     }
                 }}
                 type="button"

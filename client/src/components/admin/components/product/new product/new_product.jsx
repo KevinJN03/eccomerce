@@ -28,9 +28,8 @@ import {
     MoreVertSharp,
     SettingsRounded,
 } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { motion, inView } from 'framer-motion';
 
-import { inView } from 'framer-motion';
 import dayjs from 'dayjs';
 import useScrollpsy from '../../../../../hooks/useScrollpsy.jsx';
 import Delete from './delivery/delete.jsx';

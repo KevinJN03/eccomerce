@@ -1,12 +1,7 @@
 .side-bar {
     @apply flex-1;
 
-   
-
- 
     .center {
-
-
         ul {
             .title {
                 font-size: 10px;
@@ -16,8 +11,9 @@
                 margin-bottom: 5px;
             }
 
-            a, button {
-                @apply flex cursor-pointer items-center w-full;
+            a,
+            button {
+                @apply flex w-full cursor-pointer items-center;
 
                 &:hover {
                     @apply bg-light-grey;

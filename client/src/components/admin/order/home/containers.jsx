@@ -62,7 +62,7 @@ function Containers({ ordersByDate }) {
                                     Try removing some filters
                                 </p>
 
-                                <div className="flex flex-row flex-nowrap gap-2 justify-center w-full">
+                                <div className="flex w-full flex-row flex-nowrap justify-center gap-2">
                                     {_.toPairs(filterList?.[status]).map(
                                         ([key, value], idx) => {
                                             return (

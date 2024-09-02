@@ -5,7 +5,7 @@ import SingleItem from './singleItem';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import countryLookup from 'country-code-lookup';
 import { useRef, useState } from 'react';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import userLogout from '../../../../hooks/userLogout';
 import secure_icon from '../../../../assets/icons/secure-document.png';
 import {
@@ -34,7 +34,7 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
         setSearchParams,
         searchParams,
         handleFetchOrderInfo,
-        addToPackage
+        addToPackage,
     } = useAdminOrderContext();
     const [showFullAddress, setShowFullAddress] = useState(false);
     const [copyAddress, setCopyAddress] = useState(false);
@@ -343,7 +343,12 @@ function OrderItem({ order, lastOrderInArray, disableCheckBox }) {
                 {order?.status == 'received' && (
                     <button
                         type="button"
-                        onClick={() => addToPackage({ orderId: order?._id , mark_as_completed: true})}
+                        onClick={() =>
+                            addToPackage({
+                                orderId: order?._id,
+                                mark_as_completed: true,
+                            })
+                        }
                         className="disable-drawer !box-content flex h-10 w-10 items-center justify-center rounded-full hover:bg-light-grey"
                     >
                         <PublishedWithChangesRounded className="disable-drawer" />

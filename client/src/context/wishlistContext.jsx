@@ -9,7 +9,7 @@ import {
     useState,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import axios from '../api/axios';
+import axios from '../api/axios.js';
 import Cart_Wishlist_Context from './cart_wishlist_context';
 
 const getWishlistFromLS = () => {

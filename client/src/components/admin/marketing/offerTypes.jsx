@@ -41,7 +41,7 @@ function OfferTypes({}) {
                             src={icon}
                             className={`h-14 w-14 object-cover ${className || ''}`}
                             alt=""
-                            srcset=""
+                            srcSet=""
                         />
 
                         <div className="flex h-full flex-col gap-2">

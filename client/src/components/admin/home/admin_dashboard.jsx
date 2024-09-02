@@ -5,7 +5,7 @@ import Featured from '../components/featured/featured';
 import Chart from '../components/chart/chart';
 import Transaction_Table from '../components/table/transaction_table';
 import { Outlet } from 'react-router-dom';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { get6MonthsData } from '../../common/months';
@@ -14,8 +14,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import animationVariant from './animationVariant';
 
 function Admin_Dashboard() {
-
-
     const { dashBoardData, chartData } = useAdminContext();
     const variants = {
         initial: {
@@ -46,7 +44,6 @@ function Admin_Dashboard() {
                         />
                     );
                 })}
-       
             </div>
             <div className="charts">
                 <Featured todayAmount={dashBoardData?.todayAmount} />

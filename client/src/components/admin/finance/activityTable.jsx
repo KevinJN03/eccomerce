@@ -104,7 +104,7 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                                                         {order ? (
                                                             <CollapseExpandIcon
                                                                 array={[
-                                                                     ...order.items,
+                                                                    ...order.items,
                                                                     // ...order.items, ...order.items,
                                                                 ]}
                                                             />

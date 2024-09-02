@@ -1,14 +1,9 @@
 import { forwardRef } from 'react';
 
-const FormInput = forwardRef(function Input({
-    inputInfo,
-    setState,
-    content,
-    value,
-    className
-},ref) {
-
-
+const FormInput = forwardRef(function Input(
+    { inputInfo, setState, content, value, className },
+    ref
+) {
     return (
         <div className="formInput relative">
             <label>{inputInfo.label}</label>

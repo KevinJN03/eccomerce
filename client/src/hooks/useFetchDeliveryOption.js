@@ -1,5 +1,5 @@
 import _, { forEach } from 'lodash';
-import axios from '../api/axios';
+import axios from '../api/axios.js';
 import { useCart } from '../context/cartContext';
 import { useState, useEffect, useRef } from 'react';
 const useFetchDeliveryOptions = (setState) => {

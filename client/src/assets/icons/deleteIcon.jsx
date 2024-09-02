@@ -2,11 +2,12 @@ import { SvgIcon } from '@mui/material';
 
 function DeleteIcon({}) {
     return (
-        <SvgIcon inheritViewBox className="  hover:!fill-red-600 transition-all">
+        <SvgIcon
+            inheritViewBox
+            className="  transition-all hover:!fill-red-600"
+        >
             <svg
-            
                 xmlns="http://www.w3.org/2000/svg"
-              
                 viewBox="0 0 24 24"
                 width="24px"
                 height="24px"

@@ -5,7 +5,7 @@ import SalesDiscountProvider, {
 import { CloseRounded } from '@mui/icons-material';
 import Container from './Container';
 import { useEffect, useRef, useState } from 'react';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import OfferContextProvider from '../../../../context/offerContext';
 function Drawer({}) {
     const { openDrawer, setOpenDrawer, searchParams, setSearchParams } =
@@ -22,7 +22,6 @@ function Drawer({}) {
             open={openDrawer}
             onClose={handleClose}
             anchor="right"
-          
             PaperProps={{
                 sx: {
                     backgroundColor: 'transparent',
@@ -43,7 +42,6 @@ function Drawer({}) {
                     </div>
                 </div>
                 <OfferContextProvider>
-                  
                     <Container />
                 </OfferContextProvider>
             </section>

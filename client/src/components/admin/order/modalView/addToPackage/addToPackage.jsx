@@ -443,7 +443,7 @@ function AddToPackage({}) {
                             >
                                 <div>
                                     {btnLoad ? (
-                                        <div class="spinner-circle ![--spinner-color:225_225_225] ![--spinner-size:25px]"></div>
+                                        <div className="spinner-circle ![--spinner-color:225_225_225] ![--spinner-size:25px]"></div>
                                     ) : (
                                         <p className="text-base  font-medium text-white">
                                             {markAsComplete

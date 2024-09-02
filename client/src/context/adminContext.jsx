@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer, useState } from 'react';
 import { AdminReducer } from '../hooks/adminReducer';
 import { useNavigate } from 'react-router-dom';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 
 const AdminContext = createContext(null);
 
@@ -42,8 +42,6 @@ export function AdminContextProvider({ children, newValue }) {
             return navigate('/admin/login');
         }
     };
-
-
 
     const value = {
         logoutUser,

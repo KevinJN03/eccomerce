@@ -32,7 +32,7 @@ function Template({ setModalOpen, children, headerText, footer }) {
                 >
                     {footer?.loading ? (
                         <div>
-                            <div className="spinner-circle ![--spinner-size:25px] ![--spinner-color:255,255,255] "></div>
+                            <div className="spinner-circle ![--spinner-color:255,255,255] ![--spinner-size:25px] "></div>
                         </div>
                     ) : (
                         <span className=" relative !z-[1] w-full cursor-pointer text-base font-medium text-white">

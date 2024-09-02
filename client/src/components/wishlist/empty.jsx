@@ -3,12 +3,13 @@ import heartIcon from '../../assets/icons/broken-heart.png';
 import { Diversity2Outlined, HeartBrokenOutlined } from '@mui/icons-material';
 function EmptyWishList({}) {
     return (
-        <motion.section 
-        key={'empty-wishlist'}
-        className="flex h-full w-full flex-col items-center justify-center !self-center ">
+        <motion.section
+            key={'empty-wishlist'}
+            className="flex h-full w-full flex-col items-center justify-center !self-center "
+        >
             <div className="flex h-full w-72 flex-col items-center justify-center gap-4">
                 {/* <img  className='w-10 h-10' src={'https://img.icons8.com/ios/50/heart-puzzle.png'} alt="broken heart" /> */}
-                <Diversity2Outlined   className='!text-4xl'/>
+                <Diversity2Outlined className="!text-4xl" />
                 <h3 className=" text-center text-lg font-bold">
                     You have no Saved Items
                 </h3>

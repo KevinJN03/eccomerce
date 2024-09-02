@@ -3,7 +3,7 @@ import { useFinanceContext } from '../../../context/financeContext';
 import Template from './template';
 import { useAdminContext } from '../../../context/adminContext';
 import { getName } from 'country-list';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import OptionError from '../components/product/new product/variation/error/optionError';
 import { GppGoodRounded } from '@mui/icons-material';
 import _ from 'lodash';

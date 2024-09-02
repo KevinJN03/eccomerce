@@ -12,7 +12,6 @@ export default function formatFormData(value) {
         priceValue,
         stockValue,
 
-        
         combine,
         minVariationPrice,
     } = value;
@@ -34,7 +33,7 @@ export default function formatFormData(value) {
         formData.append('files', item);
     }
     formData.append('delivery', _.get(profile, '_id'));
-    
+
     const newVariations = [...variations];
 
     if (combine.on) {

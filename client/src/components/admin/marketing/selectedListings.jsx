@@ -143,8 +143,8 @@ function SelectedListings({}) {
             </section>
             <section className="mb-12 mt-8 flex h-full min-h-64 w-full flex-col gap-4 rounded">
                 {loading ? (
-                    <section className="w-full min-h-64 border self-center justify-center items-center flex">
-                        <div className="spinner-circle spinner-md ![--spinner-color:var(--slate-12)]"/>
+                    <section className="flex min-h-64 w-full items-center justify-center self-center border">
+                        <div className="spinner-circle spinner-md ![--spinner-color:var(--slate-12)]" />
                     </section>
                 ) : (
                     <Fragment>

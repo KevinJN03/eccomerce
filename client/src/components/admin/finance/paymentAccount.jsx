@@ -3,7 +3,7 @@ import BubbleButton from '../../buttons/bubbleButton';
 import RevenueContainer from './revenueContainer';
 import { useContent } from '../../../context/ContentContext';
 import { useAdminContext } from '../../../context/adminContext';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import _, { upperFirst } from 'lodash';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -62,7 +62,6 @@ function PaymentAccount({}) {
                     signal: abortControllerRef.current.signal,
                 }),
             ]);
-
 
             setBankAccount(() => bankAccountData);
 

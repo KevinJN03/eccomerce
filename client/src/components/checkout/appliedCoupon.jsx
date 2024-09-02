@@ -22,7 +22,8 @@ function AppliedCoupon() {
         });
 
         setPromo([]);
-    };    return (
+    };
+    return (
         <section className="applied-coupon h-24  w-full self-center  !bg-green-200 p-6">
             <div className="flex flex-row items-end gap-2 font-gotham">
                 {promo[0].promoType == 'coupon' ? (
@@ -46,8 +47,7 @@ function AppliedCoupon() {
 
                 <button
                     className="ml-auto flex self-start text-s text-[var(--primary-2)]"
-                    onClick={
-                        remove}
+                    onClick={remove}
                 >
                     Remove
                 </button>

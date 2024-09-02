@@ -1,12 +1,11 @@
 import Footer from './footer/footer';
 import Header from './header';
 import { useLayoutContext } from '../../context/layoutContext';
-import { Fragment, useContext, useRef } from 'react';
+import { Fragment, useContext, useRef, useState, useEffect } from 'react';
 import { ProductsProvider } from '../../hooks/genderCategory.jsx';
 import { Outlet, useLocation } from 'react-router-dom';
 import { DarkModeContextProvider } from '../../context/darkModeContext';
 import { CartProvider, useCart } from '../../context/cartContext';
-import { useState, useEffect } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import variants from '../common/framerMotionVariants.jsx';
@@ -69,7 +68,7 @@ function Layout() {
                     // animate={'animate'}
                     // exit={'exit'}
                     id="main"
-                    className="max-h-lg:min-h-[calc(100vh_-_(6.75rem+3.75rem))] lg:min-h-[calc(100vh_-_(6.75rem+3.75rem+19rem))]"
+                    className="lg:min-h-[calc(100vh_-_(6.75rem+3.75rem+19rem))] max-h-lg:min-h-[calc(100vh_-_(6.75rem+3.75rem))]"
                 >
                     {/* {!loadState && <Outlet />} */}
                     <Outlet />

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import Template from './template';
-import { OrderInfo } from './order-success';
-import cancelOptions from './cancelOptions';
+import Template from './template.jsx';
+import { OrderInfo } from './order-success.jsx';
+import cancelOptions from './cancelOptions.js';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage';
-import axios from '../../api/axios';
-import Checkout_Item from '../checkout/checkout_total/checkout-item';
-import GLoader from '../Login-SignUp/socialRegister/gloader';
-import userLogout from '../../hooks/userLogout';
+import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage.jsx';
+import axios from '../../api/axios.js';
+import Checkout_Item from '../checkout/checkout_total/checkout-item.jsx';
+import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
+import userLogout from '../../hooks/userLogout.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import OrderCancelContainer from './cancel-order-container';
-import LoadingPage from './loadingPage';
+import OrderCancelContainer from './cancel-order-container.jsx';
+import LoadingPage from './loadingPage.jsx';
 function OrderCancel({}) {
     const [order, setOrder] = useState({});
 

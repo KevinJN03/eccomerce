@@ -1,13 +1,13 @@
-import Header from './header';
+import Header from './header.jsx';
 import social_icon from '../../assets/icons/guardian.png';
 import twitter_icon from '../../assets/icons/twitter.png';
 import facebook_icon from '../../assets/icons/facebook-icon.png';
 import google_icon from '../../assets/icons/google-icon.png';
-import { useUserDashboardContext } from '../../context/userContext';
-import defaultAxios from '../../api/axios';
-import { useAuth } from '../../hooks/useAuth';
+import { useUserDashboardContext } from '../../context/userContext.jsx';
+import defaultAxios from '../../api/axios.js';
+import { useAuth } from '../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
-import logOutUser from '../common/logoutUser';
+import logOutUser from '../common/logoutUser.js';
 import _ from 'lodash';
 const URL = import.meta.env.VITE_BACKEND_URL;
 function Social_Item({ icon, title, enable, connectSocial, disconnectSocial }) {

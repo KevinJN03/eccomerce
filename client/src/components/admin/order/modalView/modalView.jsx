@@ -4,5 +4,4 @@ const views = {
     printOrder: <PrintOrder />,
 };
 
-
-export default views
+export default views;

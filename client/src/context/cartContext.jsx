@@ -8,7 +8,7 @@ import {
 } from 'react';
 import _, { cloneDeep, isEqual } from 'lodash';
 import cartReducer, { getCartFromLocalStorage } from '../hooks/cartReducer';
-import axios from '../api/axios';
+import axios from '../api/axios.js';
 import { useLayoutContext } from './layoutContext';
 import Cart_Wishlist_Context from './cart_wishlist_context.jsx';
 

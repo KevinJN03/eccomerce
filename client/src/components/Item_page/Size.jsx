@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-function Size({ size,select, handleClick }) {
-
+function Size({ size, select, handleClick }) {
     return (
-      
         <section className="item-size-section">
             <div>
                 <h3 className="section-title">Size</h3>

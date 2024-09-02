@@ -4,11 +4,11 @@ import ReactCountryFlag from 'react-country-flag';
 import ReactFlagsSelect from 'react-flags-select';
 import Address_Form from './form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserDashboardContext } from '../../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import sorry_logo from '../../../assets/icons/sorry.png';
 
 import notFound_logo from '../../../assets/icons/not-found.png';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { useAuth } from '../../../hooks/useAuth';
 function Edit_Address({}) {
     const [notFound, setNotFound] = useState(false);

@@ -1,7 +1,7 @@
 import { ArrowDropDown, ModeEditOutlineRounded } from '@mui/icons-material';
 import SeamlessDropdown from '../../common/dropdown/seamlessDropdown';
 import { useRef, useState } from 'react';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import ThemeBtn from '../../buttons/themeBtn';
 import UserLogout from '../../../hooks/userLogout';
 import { useContent } from '../../../context/ContentContext';

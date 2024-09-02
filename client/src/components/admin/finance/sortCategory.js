@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const sortCategory = [
     {
@@ -33,4 +33,4 @@ const sortCategory = [
     },
 ];
 
-export default sortCategory
+export default sortCategory;

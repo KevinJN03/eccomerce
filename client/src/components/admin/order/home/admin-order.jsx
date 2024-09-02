@@ -5,8 +5,7 @@ import OrderPageContent from './orderPageContent';
 function AdminOrder({}) {
     return (
         <AdminOrderContextProvider>
-            <OrderPageContent/>
-          
+            <OrderPageContent />
         </AdminOrderContextProvider>
     );
 }

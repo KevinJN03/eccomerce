@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import SearchInput from '../../order/home/searchInput';
 import search_icon from './search_icon.png';
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import _ from 'lodash';
 import {
     Backdrop,

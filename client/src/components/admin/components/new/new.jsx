@@ -7,7 +7,7 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import User_Form from './userForm';
 import Product_Form from './productForm';
 import { Save } from '@mui/icons-material';
-import axios, { adminAxios } from '../../../../api/axios';
+import axios, { adminAxios } from '../../../../api/axios.js';
 import handleError, { closeError } from '../../../common/handleError';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { v4 as uuidv4 } from 'uuid';
@@ -47,10 +47,9 @@ function New({ type, title }) {
 
     useEffect(() => {
         if (id) {
-       
             adminAxios.get(`/user/${id}`).then((res) => {
                 let data = res.data;
-            
+
                 // setFile(data.profileImg)
                 setAddress(data.address[0]);
                 setGenerateUrl(false);
@@ -96,7 +95,7 @@ function New({ type, title }) {
     };
 
     file && (body.file = file);
-   
+
     const save = () => {
         // const form = new FormData()
 
@@ -117,14 +116,12 @@ function New({ type, title }) {
         if (type == 'new') {
             body.password = password;
         }
-      
+
         let option = type == 'new' ? 'create' : `update/${id}`;
 
         adminAxios
             .postForm(`/user/${option}`, body)
             .then((res) => {
-               
-
                 if (res.status == 201 || 200) {
                     setError([]);
                     setSuccess(true);
@@ -167,8 +164,8 @@ function New({ type, title }) {
                                         file && generateUrl
                                             ? URL.createObjectURL(file)
                                             : !generateUrl
-                                            ? file
-                                            : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
+                                              ? file
+                                              : 'https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg'
                                     }
                                     alt=""
                                 />

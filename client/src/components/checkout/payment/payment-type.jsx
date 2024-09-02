@@ -13,7 +13,7 @@ import ErrorMessage from '../../Login-SignUp/errorMessage';
 import Add_Card from './add_card';
 import Selected_Method from './selectedMethod';
 import Wallet from './wallet/wallet';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import PaymentTypeProvider from '../../../context/paymentTypeContext';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { AnimatePresence, easeIn, easeOut, motion } from 'framer-motion';

@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import Divider from '../divider';
-import useCurrentLocation from '../../../hooks/useCurrentLocation';
+import Divider from '../divider.jsx';
+import useCurrentLocation from '../../../hooks/useCurrentLocation.jsx';
 
 const Button = ({ text, link }) => {
     return (

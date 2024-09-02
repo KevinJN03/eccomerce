@@ -1,5 +1,4 @@
-
-function preventProductFromSelection({setProductIds, productIds}){
+function preventProductFromSelection({ setProductIds, productIds }) {
     setProductIds((prevState) => {
         const newSet = new Set([...prevState]);
 
@@ -9,5 +8,5 @@ function preventProductFromSelection({setProductIds, productIds}){
 
         return newSet;
     });
-};
-export default preventProductFromSelection
+}
+export default preventProductFromSelection;

@@ -15,10 +15,7 @@ function DropDown_Detail({
     toggleShow,
     disable,
 }) {
-
     let toggleClass = show ? 'up-arrow' : 'down-arrow';
-
-
 
     return (
         <section

@@ -10,9 +10,9 @@ function CardSelect({}) {
 
     const { selectedMethod, setNextView } = usePaymentTypeContext();
 
-    const { footerMessage, setFooterMessage ,error, setError} = useCheckoutContext();
+    const { footerMessage, setFooterMessage, error, setError } =
+        useCheckoutContext();
 
-   
     useEffect(() => {
         if (elements) {
             console.log('create cardcvc');
@@ -41,7 +41,7 @@ function CardSelect({}) {
 
     const handleClick = () => {};
     return (
-        <section className='h-fit'>
+        <section className="h-fit">
             <h2 className="font-gotham text-sm">CREDIT / DEBIT CARD</h2>
             <Card_Item
                 {...selectedMethod}
@@ -55,7 +55,7 @@ function CardSelect({}) {
                 icon={{ img: cvv_icon, alt: 'cvc icon' }}
                 error={error}
                 property={'cvc'}
-                className={'w-3/12 m-0 p-0'}
+                className={'m-0 w-3/12 p-0'}
             />
         </section>
     );

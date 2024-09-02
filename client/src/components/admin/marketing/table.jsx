@@ -6,8 +6,12 @@ import { v4 } from 'uuid';
 import { useOfferContext } from '../../../context/offerContext';
 
 function Table({ disableDelete }) {
-    const { setCategories, chosenListings, setChosenListings,handleDeleteListing } =
-        useOfferContext();
+    const {
+        setCategories,
+        chosenListings,
+        setChosenListings,
+        handleDeleteListing,
+    } = useOfferContext();
     return (
         <table className="w-full">
             <colgroup>
@@ -72,7 +76,7 @@ function Table({ disableDelete }) {
                                         <tr>
                                             <td
                                                 className="relative py-2"
-                                                colspan="5"
+                                                colSpan="5"
                                             >
                                                 <p className=" whitespace-nowrap text-sm font-semibold">
                                                     {`Listings from ${_.upperFirst(name)} (${listings?.length || 0})`}
@@ -111,7 +115,7 @@ function Table({ disableDelete }) {
                                                             <img
                                                                 src={image}
                                                                 alt=""
-                                                                srcset=""
+                                                                srcSet=""
                                                                 className="h-12 w-12 min-w-12 object-cover"
                                                             />
                                                         </div>

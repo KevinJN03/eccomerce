@@ -8,7 +8,7 @@ import https from 'https';
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
 import Navigation_Links from './navigationLinks';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -29,27 +29,22 @@ function Product_Page() {
     const [state, dispatch] = useGenderCategory();
     const [products, setProducts] = useState([]);
 
- const location = useLocation()
+    const location = useLocation();
 
+    useEffect(() => {
+        setLoading(true);
+        const timeout = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
 
- useEffect(()=> {
-    setLoading(true)
-const timeout = setTimeout(()=> {
-setLoading(false)
-}, 1000)
-
-
-return()=> {
-    clearTimeout(timeout)
-}
- }, [location.pathname])
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [location.pathname]);
     useEffect(() => {
         axios
             .get(`/category/${state.productCategory}/${state.gender}`)
             .then((res) => {
-                
-                
-
                 setTimeout(() => {
                     setProducts(res.data);
                     setLoading(() => false);

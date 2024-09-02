@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../../../CSS/user-dashboard.scss';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import {
     Elements,
     PaymentElement,
@@ -8,7 +8,7 @@ import {
     useElements,
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import AddCartForm from './addCartForm';
+import AddCartForm from './addCartForm.jsx';
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 

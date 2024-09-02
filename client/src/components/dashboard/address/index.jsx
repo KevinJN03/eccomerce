@@ -2,7 +2,7 @@ import Header from '../header';
 import home_icon from '../../../assets/icons/home.png';
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUserDashboardContext } from '../../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import Address_Item from './addressItem';
 import Empty_Body from '../empty-body';
 import Pagination from '../pagination/pagination.jsx';

@@ -2,7 +2,7 @@ import delete_icon from '../../assets/icons/delete-icon.png';
 export function DeleteButton({ isDefault, handleDelete }) {
     return (
         <button
-            className={`bottom flex w-fit h-fit cursor-pointer items-center gap-x-2 disabled:opacity-40`}
+            className={`bottom flex h-fit w-fit cursor-pointer items-center gap-x-2 disabled:opacity-40`}
             disabled={isDefault}
             onClick={handleDelete}
         >

@@ -172,7 +172,7 @@ function PackingSlipOption({
                             {coupons?.map((coupon) => {
                                 return (
                                     <option
-                                    selected={checks?.coupon == coupon?._id}
+                                        selected={checks?.coupon == coupon?._id}
                                         key={coupon?._id}
                                         value={coupon?._id}
                                     >

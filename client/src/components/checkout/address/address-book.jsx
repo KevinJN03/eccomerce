@@ -29,7 +29,6 @@ function Address_Book({}) {
                         key={address._id}
                         address={address}
                         idx={idx}
-                 
                     />
                 );
             })}

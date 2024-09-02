@@ -1,5 +1,5 @@
-import Banner from './Banner';
-import Carousel from './carousel/carousel';
+import Banner from './Banner.jsx';
+import Carousel from './carousel/carousel.jsx';
 
 //import hero image
 import hero_img from '../../assets/hero-image/hero.avif';
@@ -26,12 +26,12 @@ import ensemble from '../../assets/icons/ensemble2.png';
 import infashion from '../../assets/icons/infashion2.png';
 import infashion_mod from '../../assets/icons/infashion-modified.png';
 //
-import Section_1 from './Section_1';
-import Hero from './hero';
-import SaleBanner_1 from './salebanner/Salebanner_1';
-import SaleBanner_2 from './salebanner/Salebanner_2';
-import SaleBanner_3 from './salebanner/salebanner_3';
-import SaleBanner_4 from './salebanner/salebanner_4';
+import Section_1 from './Section_1.jsx';
+import Hero from './hero.jsx';
+import SaleBanner_1 from './salebanner/Salebanner_1.jsx';
+import SaleBanner_2 from './salebanner/Salebanner_2.jsx';
+import SaleBanner_3 from './salebanner/salebanner_3.jsSalebanner_2.jsx';
+import SaleBanner_4 from './salebanner/salebanner_4.jsSalebanner_2.jsx';
 
 function Home() {
     const slides = [

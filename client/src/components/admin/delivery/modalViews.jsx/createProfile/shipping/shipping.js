@@ -14,5 +14,5 @@ export default {
     FR,
     DE,
     PL,
-    ES
+    ES,
 };

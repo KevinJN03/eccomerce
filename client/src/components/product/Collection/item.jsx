@@ -1,20 +1,21 @@
-import Info from '../../common/info';
-import { Link, useNavigate } from 'react-router-dom';
-import { useGenderCategory } from '../../../hooks/genderCategory';
-
-import variants from '../../common/framerMotionVariants';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useGenderCategory } from '../../../hooks/genderCategory.jsx';
+import variants from '../../common/framerMotionVariants.jsx';
 import { useEffect, useState } from 'react';
-import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { random } from 'lodash';
-import { useWishlistContext } from '../../../context/wishlistContext';
-import WishListBtn from '../../buttons/wishlistBtn';
-import useWishListHook from '../../../hooks/wishlistHook';
+import WishListBtn from '../../buttons/wishlistBtn.jsx';
+import useWishListHook from '../../../hooks/wishlistHook.jsx';
 function Item({ image, text, loading, product }) {
     const [state] = useGenderCategory();
     const [isHover, setIsHover] = useState(false);
-    const { isHoverFavorite, setIsHoverFavorite, favorite, setFavorite, handleWishlist, showAnimation } =
-        useWishListHook({ product });
+    const {
+        isHoverFavorite,
+        setIsHoverFavorite,
+        favorite,
+        setFavorite,
+        handleWishlist,
+        showAnimation,
+    } = useWishListHook({ product });
     const [randomNum, setRandomNum] = useState(() => random(-3, 1));
     const navigate = useNavigate();
 
@@ -31,7 +32,7 @@ function Item({ image, text, loading, product }) {
 
                 // navigate(`/${state.gender}/product/${product?._id}`);
 
-                window.location = `/${state.gender}/product/${product?._id}`
+                window.location = `/${state.gender}/product/${product?._id}`;
             }}
             onMouseEnter={() => setIsHover(() => true)}
             onMouseLeave={() => setIsHover(() => false)}
@@ -55,7 +56,6 @@ function Item({ image, text, loading, product }) {
                     <div className=" relative flex items-center justify-center self-end rounded-full bg-white p-1">
                         <WishListBtn
                             {...{
-                            
                                 favorite,
                                 showAnimation,
                                 isHoverFavorite,

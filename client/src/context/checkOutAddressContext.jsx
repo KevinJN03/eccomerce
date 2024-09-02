@@ -58,8 +58,6 @@ export function AddressContextProvider({ children, value }) {
         }, 500);
     };
 
-   
-
     const handleEdit = (address) => {
         setTemporaryMainAddress(() => address);
 
@@ -81,7 +79,7 @@ export function AddressContextProvider({ children, value }) {
                 ...value,
                 cancel,
                 handleChange,
-              
+
                 handleEdit,
                 handleNewAddress,
             }}

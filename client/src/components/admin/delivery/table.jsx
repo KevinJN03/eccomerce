@@ -58,7 +58,7 @@ function Table({
                                 {refreshLoading &&
                                 (modalContent?.profileId == _id ||
                                     selection.has(_id)) ? (
-                                    <div class="skeleton-static absolute left-1/2 top-1/2 h-9 w-9 translate-x-[-50%] translate-y-[-50%]  rounded-full" />
+                                    <div className="skeleton-static absolute left-1/2 top-1/2 h-9 w-9 translate-x-[-50%] translate-y-[-50%]  rounded-full" />
                                 ) : (
                                     <input
                                         onChange={() => {
@@ -88,7 +88,7 @@ function Table({
                                     {refreshLoading &&
                                     (modalContent?.profileId == _id ||
                                         selection.has(_id)) ? (
-                                        <div class="skeleton-static h-9 w-full rounded !pr-5 " />
+                                        <div className="skeleton-static h-9 w-full rounded !pr-5 " />
                                     ) : (
                                         <p
                                             className={`align-middle text-base font-semibold  `}
@@ -103,7 +103,7 @@ function Table({
                                 {refreshLoading &&
                                 (modalContent?.profileId == _id ||
                                     selection.has(_id)) ? (
-                                    <div class="skeleton-static  h-9 w-full rounded" />
+                                    <div className="skeleton-static  h-9 w-full rounded" />
                                 ) : (
                                     <p className={`text-base `}>
                                         {`${processing_time.start}-${processing_time.end} ${processing_time.type}`}
@@ -115,7 +115,7 @@ function Table({
                                 {refreshLoading &&
                                 (modalContent?.profileId == _id ||
                                     selection.has(_id)) ? (
-                                    <div class="skeleton-static h-12 w-full rounded" />
+                                    <div className="skeleton-static h-12 w-full rounded" />
                                 ) : (
                                     <p
                                         className={`w-full max-w-10 text-wrap break-words text-base `}
@@ -129,7 +129,7 @@ function Table({
                                 {refreshLoading &&
                                 (modalContent?.profileId == _id ||
                                     selection.has(_id)) ? (
-                                    <div class="skeleton-static h-9 w-full rounded" />
+                                    <div className="skeleton-static h-9 w-full rounded" />
                                 ) : (
                                     <p className={`text-base `}>
                                         {active_listings}
@@ -172,7 +172,7 @@ function Table({
                                                 {refreshLoading &&
                                                 modalContent?.profileId ==
                                                     _id ? (
-                                                    <div class="skeleton-static !h-9 !w-9 rounded-full" />
+                                                    <div className="skeleton-static !h-9 !w-9 rounded-full" />
                                                 ) : (
                                                     <Tooltip
                                                         arrow

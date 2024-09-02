@@ -8,7 +8,7 @@ function BubbleButton({
     className,
     hoverClassName,
     text,
-    disabled
+    disabled,
 }) {
     const [isHover, setIsHover] = useState(false);
 
@@ -33,22 +33,22 @@ function BubbleButton({
     return (
         <AnimatePresence>
             <motion.button
-            disabled={disabled || false}
+                disabled={disabled || false}
                 onMouseEnter={() => {
                     setIsHover(() => true);
                 }}
                 onMouseLeave={() => {
                     setIsHover(() => false);
                 }}
-                className={`${className || 'px-5 py-3'} relative  rounded-full !cursor-pointer `}
+                className={`${className || 'px-5 py-3'} relative  !cursor-pointer rounded-full `}
                 onClick={handleClick}
             >
                 {children ? (
                     <span className="relative !z-[1] ">{children}</span>
                 ) : (
                     <span
-                    
-                    className={`${disabled ? 'text-black/60': 'text-black'} relative !z-[1] w-full text-base font-medium`}>
+                        className={`${disabled ? 'text-black/60' : 'text-black'} relative !z-[1] w-full text-base font-medium`}
+                    >
                         {text || 'Cancel'}
                     </span>
                 )}

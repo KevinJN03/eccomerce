@@ -10,7 +10,7 @@ import disableLayout from '../../hooks/disableLayout';
 import { AnimatePresence, motion } from 'framer-motion';
 import PortalProvider from '../../context/portalContext';
 import LoadingPage from '../order/loadingPage';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
     const [loading, setLoading] = useState(true);
@@ -84,11 +84,11 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
             {/* </AnimatePresence> */}
 
             {!loading && (
-                <section className="h-full !min-h-screen w-screen flex justify-center items-center">
+                <section className="flex h-full !min-h-screen w-screen items-center justify-center">
                     <section className="m-0 flex h-fit flex-col items-center bg-light-grey p-0">
                         <section
                             id="login-signup-container"
-                            className="flex w-full mt-5 flex-col items-center justify-center bg-white p-3"
+                            className="mt-5 flex w-full flex-col items-center justify-center bg-white p-3"
                         >
                             <a
                                 href={!admin && '/'}
@@ -146,7 +146,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                 </motion.section>
                             </AnimatePresence>
                         </section>
-                        <div className=" py-4 flex flex-row gap-2 text-xs underline underline-offset-2">
+                        <div className=" flex flex-row gap-2 py-4 text-xs underline underline-offset-2">
                             <span>
                                 <a href="/pages/privacy-policy">
                                     Privacy Policy

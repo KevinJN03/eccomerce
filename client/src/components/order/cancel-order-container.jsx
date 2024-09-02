@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useTemplate } from '../../context/templeteContext';
-import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage';
-import Checkout_Item from '../checkout/checkout_total/checkout-item';
-import MessageFooter from '../dashboard/messageFooter';
-import { OrderInfo } from './order-success';
-import cancelOptions from './cancelOptions';
-import axios from '../../api/axios';
-import userLogout from '../../hooks/userLogout';
+import { useTemplate } from '../../context/templeteContext.jsx';
+import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage.jsx';
+import Checkout_Item from '../checkout/checkout_total/checkout-item.jsx';
+import MessageFooter from '../dashboard/messageFooter.jsx';
+import { OrderInfo } from './order-success.jsx';
+import cancelOptions from './cancelOptions.js';
+import axios from '../../api/axios.js';
+import userLogout from '../../hooks/userLogout.jsx';
 function OrderCancelContainer({
     loading,
     setLoading,

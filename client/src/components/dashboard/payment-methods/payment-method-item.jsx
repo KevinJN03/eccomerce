@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DeleteButton } from '../delete-btn';
+import { DeleteButton } from '../delete-btn.jsx';
 
 function PaymentMethodItem({
     check,

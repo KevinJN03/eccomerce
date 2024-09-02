@@ -76,17 +76,24 @@ export const productColumn = [
             );
         },
     },
-    { field: 'gender', headerName: 'Gender', width: 100, renderCell: (params) => {
-
-       const gender = params.row.gender[0].toUpperCase() + params.row.gender.slice(1)
-       return gender
-       
-    }},
-    { field: 'category', headerName: 'Category', width: 140, renderCell: (params) => {
-        return (
-            params.row.category.name.toUpperCase()
-        )
-    } },
+    {
+        field: 'gender',
+        headerName: 'Gender',
+        width: 100,
+        renderCell: (params) => {
+            const gender =
+                params.row.gender[0].toUpperCase() + params.row.gender.slice(1);
+            return gender;
+        },
+    },
+    {
+        field: 'category',
+        headerName: 'Category',
+        width: 140,
+        renderCell: (params) => {
+            return params.row.category.name.toUpperCase();
+        },
+    },
     // {
     //     field: 'size',
     //     headerName: 'Size',
@@ -133,11 +140,21 @@ export const deliveryColumn = [
     { field: '_id', headerName: 'ID', width: 200 },
     { field: 'name', headerName: 'Name', width: 200 },
 
-    { field: 'processingTime', headerName: 'Processing Time', width: 150, renderCell: (params) => {
-        const {start, end} = params.row.processingTime
-        return `${start} - ${end}`
-    } },
-    { field: 'cost', headerName: 'Cost', width: 100, renderCell: (params) => {
-        return `£ ${params.row.cost}` 
-    }},
+    {
+        field: 'processingTime',
+        headerName: 'Processing Time',
+        width: 150,
+        renderCell: (params) => {
+            const { start, end } = params.row.processingTime;
+            return `${start} - ${end}`;
+        },
+    },
+    {
+        field: 'cost',
+        headerName: 'Cost',
+        width: 100,
+        renderCell: (params) => {
+            return `£ ${params.row.cost}`;
+        },
+    },
 ];

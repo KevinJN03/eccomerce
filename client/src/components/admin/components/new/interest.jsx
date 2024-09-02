@@ -1,5 +1,3 @@
-
-
 function Interest({ states }) {
     const { interest, setInterest } = states[5];
     const handleInterest = (e) => {

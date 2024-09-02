@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSalesDiscountContext } from './SalesDiscountContext';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 import { useAdminContext } from './adminContext';
 import _ from 'lodash';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -44,7 +44,6 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
     const [categoriesMap, setCategoriesMap] = useState(new Map());
     const debouncedSearchText = useDebounce(searchText, 300);
     const [trigger, setTrigger] = useState(false);
-
 
     const clearError = (field) => {
         setErrors(({ [field]: prop, ...prevState }) => prevState);
@@ -585,7 +584,8 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         handleAddListing,
         generateMapFromOffers,
         convertMapToArray,
-        trigger, setTrigger
+        trigger,
+        setTrigger,
     };
     return (
         <OfferContext.Provider value={value}>{children}</OfferContext.Provider>

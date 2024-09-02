@@ -44,7 +44,7 @@ function PaymentSettings({}) {
 
             <section>
                 {loading ? (
-                    <div className='flex justify-center w-full mt-12'>
+                    <div className="mt-12 flex w-full justify-center">
                         <div className="spinner-circle ![--spinner-color:var(--slate-12)]"></div>
                     </div>
                 ) : (

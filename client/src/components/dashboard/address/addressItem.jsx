@@ -2,8 +2,8 @@ import { Fragment, useState } from 'react';
 import Customer_Info from '../../checkout/address/customer-info';
 import DeleteButton from '../delete-btn';
 import EditButton from '../edit-btn';
-import axios from '../../../api/axios';
-import { useUserDashboardContext } from '../../../context/userContext';
+import axios from '../../../api/axios.js';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 function Address_Item({
     idx,
     addressItem,

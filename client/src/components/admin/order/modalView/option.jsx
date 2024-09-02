@@ -12,17 +12,15 @@ function Option({
     return (
         <div className="flex w-full flex-row">
             <input
-                onChange={() =>
-                  {  setPrintChecks((prevState) => ({
+                onChange={() => {
+                    setPrintChecks((prevState) => ({
                         ...prevState,
                         [property]: {
                             ...prevState?.[property],
                             on: !prevState?.[property]?.on,
                         },
-                    }))}
-
-                    
-                }
+                    }));
+                }}
                 checked={printChecks?.[property]?.on}
                 type="checkbox"
                 className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
@@ -32,7 +30,7 @@ function Option({
                 <p className="text-xs text-black/80">{description}</p>
             </div>
 
-            {(printChecks?.[property]?.on && !showOptions?.[property]) && (
+            {printChecks?.[property]?.on && !showOptions?.[property] && (
                 <button
                     onClick={handleClick}
                     type="button"

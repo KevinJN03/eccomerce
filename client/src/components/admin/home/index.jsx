@@ -11,7 +11,7 @@ import { AdminContextProvider } from '../../../context/adminContext';
 
 import Admin from './admin';
 import { useEffect, useState } from 'react';
-import axios, { adminAxios } from '../../../api/axios';
+import axios, { adminAxios } from '../../../api/axios.js';
 import { get6MonthsData } from '../../common/months';
 import { useNavigate } from 'react-router-dom';
 import { getAllData } from './getAllData';

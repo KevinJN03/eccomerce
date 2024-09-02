@@ -1,12 +1,10 @@
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
 function DOB({ states }) {
     const { dob, setDob } = states;
 
     const handleDateChange = (date) => {
-      
         setDob(date.format('YYYY-MM-DD'));
     };
     return (

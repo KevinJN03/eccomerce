@@ -1,5 +1,5 @@
 import { useElements, useStripe } from '@stripe/react-stripe-js';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { useCart } from '../../context/cartContext';
 import { useCheckoutContext } from '../../context/checkOutContext';
 import { useEffect, useRef, useState } from 'react';

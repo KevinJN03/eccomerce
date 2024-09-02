@@ -12,7 +12,7 @@ import { useContent } from '../../../context/ContentContext';
 import Actions from '../components/product/actions';
 import { useListingPageContext } from '../../../context/listingPageContext';
 import UserLogout from '../../../hooks/userLogout';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 
 function GridItem({ product, index }) {
     const navigate = useNavigate();

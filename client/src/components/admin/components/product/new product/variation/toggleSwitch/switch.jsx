@@ -1,7 +1,7 @@
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { useEffect, useRef, useState } from 'react';
-function Switch({state, toggle}) {
+function Switch({ state, toggle }) {
     return (
         <div
             className={`relative flex h-full max-w-fit cursor-pointer flex-row items-center`}
@@ -14,7 +14,6 @@ function Switch({state, toggle}) {
                 } `}
                 readOnly
                 checked={state}
-           
             />
             <span className="absolute right-[5px] flex items-center justify-center bg-transparent">
                 <CheckRoundedIcon

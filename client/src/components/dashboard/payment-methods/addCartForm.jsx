@@ -18,13 +18,13 @@ import Input from '../../Login-SignUp/input';
 import logos from './logos';
 import ErrorMessage from '../../Login-SignUp/errorMessage';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { usePaymentMethods } from '../../../context/paymentMethodContext';
 import Error_Alert from '../../common/error-alert';
 import ElementDiv from '../../checkout/payment/element-div';
 import MountCardComponents from '../../../hooks/mountCardComponents';
 import '../../../CSS/checkout.scss';
-import { useUserDashboardContext } from '../../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 export function AddCartForm({ clientSecret }) {
     const { setFooterMessage } = useUserDashboardContext();
     const [errors, setErrors] = useState({});

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import UserLogout from '../../../../hooks/userLogout';
 import { AnimatePresence } from 'framer-motion';
 import OptionError from '../../components/product/new product/variation/error/optionError';
@@ -171,7 +171,7 @@ function EditPrice({}) {
                 setBtnLoading(() => false);
 
                 if (success) {
-                    setLoading(() => true)
+                    setLoading(() => true);
                     setTimeout(() => {
                         setShowAlert(() => ({
                             on: true,

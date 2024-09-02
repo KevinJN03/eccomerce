@@ -3,7 +3,7 @@ import secure_icon from '../../../../assets/icons/secure-document.png';
 import { useState } from 'react';
 import { useAdminContext } from '../../../../context/adminContext';
 import { ClickAwayListener } from '@mui/material';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import dayjs from 'dayjs';
 
@@ -117,10 +117,10 @@ function PrivateButton({ toggle, noteCount }) {
     return (
         <button
             onClick={toggle}
-            className="flex  cursor-pointer w-fit flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
+            className="flex  w-fit cursor-pointer flex-nowrap items-center gap-1 whitespace-nowrap rounded-sm border-[1px] border-dark-gray/60 px-2 py-1 hover:bg-light-grey/100"
         >
             <AddRounded className="!text-sm" />
-            <p className="text-xxs !cursor-pointer">
+            <p className="!cursor-pointer text-xxs">
                 {noteCount == 0
                     ? 'Add a private note'
                     : 'Add more private notes'}

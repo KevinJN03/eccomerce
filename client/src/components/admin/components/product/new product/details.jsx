@@ -1,7 +1,7 @@
 import New_Product_Header from './header';
 import CategorySelect from './select/select';
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../../../api/axios';
+import { adminAxios } from '../../../../../api/axios.js';
 import { useNewProduct } from '../../../../../context/newProductContext';
 import OptionError from './variation/error/optionError';
 import { motion, AnimatePresence, easeInOut } from 'framer-motion';
@@ -92,7 +92,6 @@ function Details() {
 
                     <div className="my-3 flex flex-col gap-y-8">
                         <span className="flex h-full  flex-col ">
-                            
                             <div className="flex !h-full flex-nowrap items-center gap-2">
                                 <CategorySelect
                                     isCategory={true}

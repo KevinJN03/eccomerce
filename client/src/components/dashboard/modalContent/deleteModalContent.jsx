@@ -1,4 +1,4 @@
-import { useUserDashboardContext } from '../../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import close_icon from '../../../assets/icons/close.png';
 function DeleteModalContent({
     handleClick,

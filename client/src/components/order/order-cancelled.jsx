@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { OrderInfo } from './order-success';
-import Template from './template';
-import SocialIcons from './social-icons';
+import { OrderInfo } from './order-success.jsx';
+import Template from './template.jsx';
+import SocialIcons from './social-icons.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { AnimatePresence } from 'framer-motion';
-import LoadingPage from './loadingPage';
+import LoadingPage from './loadingPage.jsx';
 
 function OrderCancelled({}) {
     const [order, setOrder] = useState({});
@@ -24,7 +24,7 @@ function OrderCancelled({}) {
             } finally {
                 setTimeout(() => {
                     setLoading(false);
-                },1500);
+                }, 1500);
             }
         };
 

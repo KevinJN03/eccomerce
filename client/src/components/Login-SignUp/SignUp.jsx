@@ -6,7 +6,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 import { SetMealRounded } from '@mui/icons-material';
 import { async } from 'postcss-js';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import ErrorMessage from './errorMessage';
 import Button from './button';
 import Interest from './interest';
@@ -38,7 +38,7 @@ function SignUp() {
         }
     };
     return (
-        <section className='flex flex-col w-full justify-center items-center'>
+        <section className="flex w-full flex-col items-center justify-center">
             <SocialLogin text={'SIGN UP WITH...'} description={true} />
             <section className="flex w-8/12 flex-col flex-nowrap">
                 <h1 className="mb-9 text-center font-gotham text-base">

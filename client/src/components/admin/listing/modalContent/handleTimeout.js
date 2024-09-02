@@ -50,14 +50,13 @@ export const handleTimeout = ({
 };
 
 export const handleUpdateProduct = ({
-    
     note,
     allProducts,
     productIds,
     setProductIds,
     listing_status,
     clearSelection,
-    setAllProducts
+    setAllProducts,
 }) => {
     const generateUpdateProduct = updateProduct({
         listing_status,
@@ -69,9 +68,7 @@ export const handleUpdateProduct = ({
 
     setAllProducts((prevState) => ({
         ...prevState,
-        [listing_status]:
-            generateUpdateProduct ||
-            prevState[listing_status],
+        [listing_status]: generateUpdateProduct || prevState[listing_status],
     }));
-clearSelection && clearSelection()
+    clearSelection && clearSelection();
 };

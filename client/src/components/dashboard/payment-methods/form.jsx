@@ -1,6 +1,6 @@
-import getRanges from './ranges';
-import logos from './logos';
-import Input from '../../Login-SignUp/input';
+import getRanges from './ranges.js';
+import logos from './logos.jsx';
+import Input from '../../Login-SignUp/input.jsx';
 function Form({
     error,
     setError,
@@ -28,7 +28,7 @@ function Form({
                         )}
                         <label htmlFor={'card-number'}>CARD NUMBER:</label>
                         <div className="relative">
-                            <div id="card-number" class="border-2"></div>
+                            <div id="card-number" className="border-2"></div>
                             {/* <input
                                 onPaste={(e) => e.preventDefault()}
                                 onCopy={(e) => e.preventDefault()}

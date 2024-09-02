@@ -1,7 +1,7 @@
 import { useNewProduct } from '../../../../../../context/newProductContext';
 import { convertToRaw } from 'draft-js';
 
-import { adminAxios } from '../../../../../../api/axios';
+import { adminAxios } from '../../../../../../api/axios.js';
 import { useEffect, useState, useRef } from 'react';
 import formatFormData from '../utils/formatFormData';
 import { useNavigate, useParams } from 'react-router-dom';

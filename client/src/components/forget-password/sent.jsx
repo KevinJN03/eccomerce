@@ -1,9 +1,13 @@
 function ResetSent({}) {
     return (
-        <section className="w-9/12 flex flex-col gap-y-5 items-center mb-6">
-            <h3 className="font-semibold tracking-wider font-gotham text-lg">RESET PASSWORD LINK SENT</h3>
+        <section className="mb-6 flex w-9/12 flex-col items-center gap-y-5">
+            <h3 className="font-gotham text-lg font-semibold tracking-wider">
+                RESET PASSWORD LINK SENT
+            </h3>
 
-            <p className="text-center">We've sent you an email to reset your password</p>
+            <p className="text-center">
+                We've sent you an email to reset your password
+            </p>
 
             <p className="text-center">
                 To create your new password, click the link in the email and
@@ -16,9 +20,13 @@ function ResetSent({}) {
                 the email
             </p>
 
-            <section className="flex flex-row gap-x-3 w-full">
-                <button className="border-2 py-3 px-6 font-gotham tracking-wider hover:opacity-60 flex-1">RESEND EMAIL</button>
-                <button className="border-2 py-3 px-6 font-gotham tracking-wider hover:opacity-60 flex-1">SIGN IN</button>
+            <section className="flex w-full flex-row gap-x-3">
+                <button className="flex-1 border-2 px-6 py-3 font-gotham tracking-wider hover:opacity-60">
+                    RESEND EMAIL
+                </button>
+                <button className="flex-1 border-2 px-6 py-3 font-gotham tracking-wider hover:opacity-60">
+                    SIGN IN
+                </button>
             </section>
         </section>
     );

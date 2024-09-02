@@ -9,7 +9,7 @@ function Header({ text, icon, description, buttonText, buttonClick }) {
                     <button
                         type="button"
                         onClick={buttonClick}
-                        className="hover:bg-grey-100 self-start border-2 px-16 py-2 mb-3 font-gotham text-lg !font-bold"
+                        className="mb-3 self-start border-2 px-16 py-2 font-gotham text-lg !font-bold hover:bg-grey-100"
                     >
                         {buttonText}
                     </button>

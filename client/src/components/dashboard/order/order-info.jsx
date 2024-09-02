@@ -307,6 +307,7 @@ function Order_Info({}) {
                                                 ]
                                             }${findOrder?.trackingNumber}`}
                                             className="mt-2 w-7/12 flex-[1] border-2 py-3 text-center  font-gotham text-sm transition-all hover:!bg-[var(--light-grey)]"
+                                            rel="noreferrer"
                                         >
                                             TRACK PARCEL
                                         </a>

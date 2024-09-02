@@ -1,6 +1,6 @@
 import Payment_Methods from './payment_methods';
 import Shipping from './shipping';
-import {  useState } from 'react';
+import { useState } from 'react';
 import { useCart } from '../../context/cartContext';
 
 function Total({ subTotal, delivery_cost }) {
@@ -18,17 +18,16 @@ function Total({ subTotal, delivery_cost }) {
                     </p>
                     <p>£{subTotal}</p>
                 </div>
-                <div id="delivery-container" className='flex flex-row items-baseline justify-between mb-6'>
+                <div
+                    id="delivery-container"
+                    className="mb-6 flex flex-row items-baseline justify-between"
+                >
                     <p className="text-base font-semibold tracking-wide">
                         Delivery
                     </p>
-                    <p>
-                        {delivery_cost
-                            ? `£${delivery_cost}`
-                            : 'FREE'}
-                    </p>
+                    <p>{delivery_cost ? `£${delivery_cost}` : 'FREE'}</p>
                 </div>
-            {/* {    <p className="flex justify-center text-sm text-red-800 ">
+                {/* {    <p className="flex justify-center text-sm text-red-800 ">
                     Yay! You've saved £38.50
                 </p>} */}
                 <a href="/checkout" className="checkout-btn">

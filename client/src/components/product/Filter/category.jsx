@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import Arrow from './arrow';
+import Arrow from './arrow.jsx';
 function Category({ loading }) {
     const [count, setCount] = useState();
     const [show, setShow] = useState(true);

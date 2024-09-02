@@ -24,4 +24,4 @@ const containerVariants = {
     },
 };
 
-export default containerVariants
+export default containerVariants;

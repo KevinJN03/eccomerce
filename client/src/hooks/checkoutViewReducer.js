@@ -6,16 +6,13 @@ const checkoutViewReducer = (state, action) => {
         action.type == 'add'
     ) {
         return action.type;
-    }else {
-  
+    } else {
         throw new Error(
-        `invalid action for viewReducer, you action is ${JSON.stringify(
-            action
-        )}}. please check the reducer to check it accepted actions.`
-    ); 
+            `invalid action for viewReducer, you action is ${JSON.stringify(
+                action
+            )}}. please check the reducer to check it accepted actions.`
+        );
     }
-
-   
 };
 
 export default checkoutViewReducer;

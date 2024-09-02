@@ -1,9 +1,9 @@
-import Header from './header';
+import Header from './header.jsx';
 import contact_icon from '../../assets/icons/contact.png';
 
 import Input from '../Login-SignUp/input.jsx';
 import { useEffect, useRef, useState } from 'react';
-import ErrorMessage from '../Login-SignUp/errorMessage.jsx';
+import ErrorMessage from '../Login-SignUp/errorMessage';
 import { DatePicker } from '@mui/x-date-pickers';
 import Interest from '../Login-SignUp/interest.jsx';
 import Button from '../Login-SignUp/button.jsx';
@@ -21,12 +21,8 @@ function Details({}) {
     const { user, authDispatch } = useAuth();
     const [error, setError] = useState({});
     const navigate = useNavigate();
-    const {
-        setFooterMessage,
-        setIsDetailsUnSaved,
-        userData,
-        setUserData,
-    } = useUserDashboardContext();
+    const { setFooterMessage, setIsDetailsUnSaved, userData, setUserData } =
+        useUserDashboardContext();
     const [newUserData, setNewUserData] = useState(() => ({ ...userData }));
 
     const [disable, setDisable] = useState(true);

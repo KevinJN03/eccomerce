@@ -42,7 +42,6 @@ function OrderPageContent({ children }) {
         statusRef,
         handleOnClose,
         handleChangePageNumber,
-         
     } = useAdminOrderContext();
     const maxPage = _.get(ordersData, 'maxPage');
     const navigate = useNavigate();

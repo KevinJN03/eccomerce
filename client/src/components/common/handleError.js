@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 
 const handleError = (error) => {
@@ -12,8 +11,6 @@ const handleError = (error) => {
 
     return messageArr;
 };
-
-
 
 export const closeError = (id, error, setState) => {
     const newErrors = [...error];

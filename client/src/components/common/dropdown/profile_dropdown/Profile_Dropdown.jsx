@@ -1,4 +1,4 @@
-import axios from '../../../../api/axios';
+import axios from '../../../../api/axios.js';
 import chat_icon from '../../../../assets/icons/profile-icons/chat.png';
 import dashboard_icon from '../../../../assets/icons/person.png';
 import return_icon from '../../../../assets/icons/profile-icons/delivery-status.png';
@@ -77,11 +77,9 @@ function Profile_Dropdown({}) {
                         <a
                             key={option.text}
                             href={`/${linkTo}`}
-                           
                             className="group flex w-full flex-row  items-center justify-start gap-3 px-3 py-3"
                         >
                             <img
-                            
                                 src={option.src}
                                 className="h-7 w-7 object-cover"
                             />

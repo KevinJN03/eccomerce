@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAdminContext } from './adminContext';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 import { useSearchParams } from 'react-router-dom';
 import PromoCode from '../components/admin/marketing/classes/promo_code';
 import GiftCard from '../components/admin/marketing/classes/giftCard';
@@ -78,7 +78,6 @@ function SalesDiscountProvider({ children }) {
                             signal: abortControllerRef.current.signal,
                         }),
                     ]);
-             
 
                 setAllOffers(() => couponData);
                 setOverallPerformance(() => performanceData);

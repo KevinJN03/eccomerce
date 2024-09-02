@@ -35,9 +35,9 @@ function Update({ category, closeModal }) {
         const value = checkValue();
         setCurrent(value);
 
-        return() => {
-            publishErrorDispatch({type: 'CLEAR', path: property})
-        }
+        return () => {
+            publishErrorDispatch({ type: 'CLEAR', path: property });
+        };
     }, []);
 
     const handleOnchange = (value) => {

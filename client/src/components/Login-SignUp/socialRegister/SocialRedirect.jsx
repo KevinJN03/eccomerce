@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import disableLayout from '../../../hooks/disableLayout';
 import { useAuth } from '../../../hooks/useAuth';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { useNavigate } from 'react-router-dom';
 import GLoader from './gloader';
 
@@ -32,9 +32,9 @@ function SocialRedirect({}) {
         fetchData();
     }, []);
 
-    return(
+    return (
         <section className="relative flex h-screen w-screen items-center justify-center">
-           <GLoader/>
+            <GLoader />
         </section>
     );
 }

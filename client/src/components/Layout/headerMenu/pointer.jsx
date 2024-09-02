@@ -20,7 +20,7 @@ function Pointer({ isHover }) {
         },
     };
     return (
-        <div className="ignore  pointer absolute bottom-[-0.2rem] w-full flex justify-center">
+        <div className="ignore  pointer absolute bottom-[-0.2rem] flex w-full justify-center">
             <AnimatePresence>
                 {isHover && (
                     <motion.div

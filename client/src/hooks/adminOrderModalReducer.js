@@ -3,5 +3,7 @@ export function adminOrderModalReducer(state, action) {
         return action;
     }
 
-    throw new Error(`invalid reducer for orderadminmodalreducer ${JSON.stringify(action)}`)
+    throw new Error(
+        `invalid reducer for orderadminmodalreducer ${JSON.stringify(action)}`
+    );
 }

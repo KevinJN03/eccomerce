@@ -8,13 +8,13 @@ function Address({ states }) {
     const { address, setAddress } = states[6];
     useEffect(() => {
         let { country } = address;
-       
+
         const newCode = getCode(`${country}`);
-       
+
         if (newCode) {
-            setSelected(newCode)
+            setSelected(newCode);
         }
-    
+
         // setSelected(getCode(address.country))
     }, []);
     const addressFields = [

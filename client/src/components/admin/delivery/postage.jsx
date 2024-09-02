@@ -65,7 +65,7 @@ function Input({
                     type="text"
                     name={property}
                     id={property}
-                    autocomplete={autocomplete}
+                    autoComplete={autocomplete}
                     className={`daisy-input daisy-input-bordered w-full border-dark-gray shadow-inner-2 ${_.has(errors, [`delivery.${property}`]) ? 'border-red-700 bg-red-100' : ''}`}
                 />
                 {errors?.[`delivery.${property}`] && (

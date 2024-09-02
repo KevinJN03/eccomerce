@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 
 import GLoader from '../../../Login-SignUp/socialRegister/gloader';
 import { useLocation } from 'react-router-dom';
@@ -35,7 +35,7 @@ function Pdf({}) {
                     ref={iframeRef}
                     className="min-h-screen w-full"
                     src={pdfLink}
-                    frameborder="0"
+                    frameBorder="0"
                 />
             ) : (
                 <GLoader />
