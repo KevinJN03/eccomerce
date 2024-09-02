@@ -5,7 +5,7 @@ import { Modal } from '@mui/material';
 import BoxWithProps from '../../../common/BoxwithProps';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useAdminContext } from '../../../../context/adminContext';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import Step4 from '../step4';
 import { useContent } from '../../../../context/ContentContext';
 

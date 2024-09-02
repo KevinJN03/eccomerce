@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Drawer from '../common/drawer.jsx';
-function Reviews({ product,  }) {
+function Reviews({ product }) {
     return (
         <section className="reviews">
             <div className="flex w-11/12 flex-row items-center justify-between rounded-lg bg-gray-100 px-4 py-6 sm+md:mb-10 lg:mb-28">

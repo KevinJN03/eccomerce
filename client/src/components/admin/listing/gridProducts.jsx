@@ -25,7 +25,7 @@ function GridProduct() {
                             );
                         })}
                 </>
-            )  : !_.isEmpty(products) ? (
+            ) : !_.isEmpty(products) ? (
                 <>
                     {products.map((product, index) => {
                         return (
@@ -37,8 +37,8 @@ function GridProduct() {
                         );
                     })}
                 </>
-            ) :  _.isEmpty(products) && !loading && (
-                <EmptyListing />
+            ) : (
+                _.isEmpty(products) && !loading && <EmptyListing />
             )}
         </section>
     );

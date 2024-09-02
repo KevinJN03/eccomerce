@@ -84,7 +84,7 @@ function useAddItemToBagHook({ product }) {
     const handleAddToCart = () => {
         console.log({ variationSelect });
 
-        debugger
+        debugger;
         if (
             (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||
@@ -112,8 +112,6 @@ function useAddItemToBagHook({ product }) {
     const handleOnChange = ({ e, stockState, setStockState, property }) => {
         const { id, variation, ...values } =
             e.target.options[e.target.selectedIndex].dataset;
-
-      
 
         if (
             property == 'variation2' &&

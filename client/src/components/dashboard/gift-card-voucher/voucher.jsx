@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Input from '../../Login-SignUp/input';
 import _ from 'lodash';
-import { useUserDashboardContext } from '../../../context/userContext';
-import axios from '../../../api/axios';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import axios from '../../../api/axios.js';
 import { useNavigate } from 'react-router-dom';
 
 function Card() {

@@ -24,8 +24,9 @@ const calculatePromo = (promo, withOutShipping) => {
                 amountOff = withOutShipping;
             } else {
                 amountOff = discountedAmount;
-                savePercent = Math.ceil((discountedAmount * 100) / withOutShipping);
-
+                savePercent = Math.ceil(
+                    (discountedAmount * 100) / withOutShipping
+                );
             }
         }
 

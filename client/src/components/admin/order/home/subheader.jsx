@@ -73,7 +73,7 @@ function SubHeader({}) {
 
             <button
                 disabled
-                class=" !rounded-sm border-[1px] bg-white px-3 text-sm font-medium disabled:bg-light-grey/40"
+                className=" !rounded-sm border-[1px] bg-white px-3 text-sm font-medium disabled:bg-light-grey/40"
             >
                 Print postage labels
             </button>
@@ -81,7 +81,7 @@ function SubHeader({}) {
                 <button
                     disabled={selectionSet?.size == 0}
                     onClick={toggleAction}
-                    class="h-full !rounded-sm border-[1px] bg-white px-3 text-sm font-medium disabled:bg-light-grey/40"
+                    className="h-full !rounded-sm border-[1px] bg-white px-3 text-sm font-medium disabled:bg-light-grey/40"
                 >
                     More actions
                     <ArrowDropDownSharpIcon className="ml-1 !fill-dark-gray" />

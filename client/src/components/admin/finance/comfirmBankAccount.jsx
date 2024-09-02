@@ -4,7 +4,7 @@ import BubbleButton from '../../buttons/bubbleButton';
 import ThemeBtn from '../../buttons/themeBtn';
 import Template from './template';
 import { useAdminContext } from '../../../context/adminContext';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import OptionError from '../components/product/new product/variation/error/optionError.jsx';
 function ConfirmBankAccount({ setModalOpen }) {
     const { bankAccount, modalState, setModalState, setBankAccount } =
@@ -107,7 +107,7 @@ function ConfirmBankAccount({ setModalOpen }) {
                 </p>
 
                 <p className="mt-3 text-base">
-                    <span className="!text-admin-primary-blue font-semibold">
+                    <span className="font-semibold !text-admin-primary-blue">
                         Keep in mind:
                     </span>{' '}
                     To protect your account, funds from your sales will be

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Address_Input from './address-input';
 import { Helmet } from 'react-helmet';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import logOutUser from '../../common/logoutUser';
 import Input from '../../Login-SignUp/input';
@@ -206,12 +206,11 @@ function Address_Form({ type }) {
             {/* {(viewContent == 'add' || viewContent == 'edit') && ( */}
 
             <>
-
-            <div className='flex flex-nowrap justify-between gap-3 items-start'>
-                <p className="mb-6 text-lg font-bold tracking-wider">
-                    {text} 
-                </p>
-                {enableCancelBtn && (
+                <div className="flex flex-nowrap items-start justify-between gap-3">
+                    <p className="mb-6 text-lg font-bold tracking-wider">
+                        {text}
+                    </p>
+                    {enableCancelBtn && (
                         <button
                             disabled={loading}
                             onClick={cancel}
@@ -221,25 +220,20 @@ function Address_Form({ type }) {
                             CANCEL
                         </button>
                     )}
-            </div>
-                
+                </div>
 
-                <div className="address-form-wrapper gap-24 flex flex-nowrap">
+                <div className="address-form-wrapper flex flex-nowrap gap-24">
                     <div className="address-input-wrapper md+lg:w-6/12">
                         {newInputArray.map(
                             ({ label, placeHolder, property }, idx) => {
                                 return (
-                                    
-                                        <Input
-                                            {...inputProps}
-                                            key={label}
-                                            label={label}
-                                            value={
-                                                temporaryMainAddress?.[property]
-                                            }
-                                            property={property}
-                                        />
-                                    
+                                    <Input
+                                        {...inputProps}
+                                        key={label}
+                                        label={label}
+                                        value={temporaryMainAddress?.[property]}
+                                        property={property}
+                                    />
                                 );
                             }
                         )}

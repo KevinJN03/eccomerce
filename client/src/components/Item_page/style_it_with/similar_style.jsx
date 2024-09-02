@@ -6,11 +6,15 @@ function Similar_Styles({ images }) {
                     return <img loading="lazy" src={image} key={index}></img>;
                 })}
             </div>
-            <div className="flex w-full flex-row justify-between !items-center lg:mb-12 gap-x-5 h-10">
-                <h2 className=" h-full flex items-center text-xl font-extrabold sm:text-lg whitespace-nowrap">
+            <div className="flex h-10 w-full flex-row !items-center justify-between gap-x-5 lg:mb-12">
+                <h2 className=" flex h-full items-center whitespace-nowrap text-xl font-extrabold sm:text-lg">
                     SEE 20+ SIMILAR STYLES
                 </h2>
-                <button type="button" id="similar-btn" className="!bg-[var(--black)]">
+                <button
+                    type="button"
+                    id="similar-btn"
+                    className="!bg-[var(--black)]"
+                >
                     Shop Similar
                 </button>
             </div>

@@ -2,15 +2,18 @@ import img1 from '../../../assets/menu-bar-images/men/img1.png';
 import { Link } from 'react-router-dom';
 import { useGenderCategory } from '../../../hooks/genderCategory';
 function Nav_Banner({ small, img, title, handleClick, home }) {
-
-    const [state, dispatch] = useGenderCategory()
+    const [state, dispatch] = useGenderCategory();
 
     const updateCategory = () => {
-handleClick()
-dispatch({type: 'changeProductCategory', productCategory: title.toLowerCase()})
-    }
+        handleClick();
+        dispatch({
+            type: 'changeProductCategory',
+            productCategory: title.toLowerCase(),
+        });
+    };
     return (
-        <Link to={home ? '/' : `/${state.gender}/${title.toLowerCase()}`}
+        <Link
+            to={home ? '/' : `/${state.gender}/${title.toLowerCase()}`}
             className={`nav-banner flex flex-row ${
                 small ? 'h-16' : 'h-24'
             } mx-3 mt-3 items-center justify-between bg-[var(--light-grey)]`}

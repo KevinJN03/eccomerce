@@ -7,8 +7,7 @@ import Header_Category from './header-category/header-category';
 import { useRef, useState } from 'react';
 import Mobile_Nav from './mobile/mobile-nav';
 import { useGenderCategory } from '../../hooks/genderCategory.jsx';
-import { Link, useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Search from './search';
 import { useCart } from '../../context/cartContext';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
@@ -83,7 +82,7 @@ function Header() {
 
                 <section
                     id="category-wrapper"
-                    className=" !bg-primary-2 relative    flex min-w-full justify-center outline-4 md:hidden "
+                    className=" relative flex    min-w-full justify-center !bg-primary-2 outline-4 md:hidden "
                 >
                     <section className="relative flex w-full max-w-[85.375rem] justify-between">
                         <Header_Category category={state.gender} />

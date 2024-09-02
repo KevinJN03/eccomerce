@@ -18,7 +18,7 @@ function Newsletter() {
                 <div id="newletter-btn-container">
                     <button
                         type="button"
-                        className="w-8 h-8  rounded-full bg-slate-200 p-2 hover:bg-slate-300 transition-all"
+                        className="h-8 w-8  rounded-full bg-slate-200 p-2 transition-all hover:bg-slate-300"
                     >
                         <img
                             src={arrow}

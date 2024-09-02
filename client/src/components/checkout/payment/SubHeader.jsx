@@ -37,7 +37,7 @@ export function SubHeader({
     enableCancelBtn,
     cancelBtnClick,
 }) {
- const {disableOtherComponents} = useCheckoutContext()
+    const { disableOtherComponents } = useCheckoutContext();
 
     return (
         <div

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function Dropdown_Option({ option , linkTo}) {
+function Dropdown_Option({ option, linkTo }) {
     return (
         <a
             href={`./${linkTo}`}

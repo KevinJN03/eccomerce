@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useUserDashboardContext } from '../../../context/userContext';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import logOutUser from '../../common/logoutUser';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 

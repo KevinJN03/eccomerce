@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import UserLogout from '../../../../hooks/userLogout';
 import {
     ArrowBackIosNewRounded,

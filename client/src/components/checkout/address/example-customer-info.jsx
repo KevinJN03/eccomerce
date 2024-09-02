@@ -1,4 +1,4 @@
- const customerInfo = {
+const customerInfo = {
     firstName: 'John',
     lastName: 'Doe',
     country: 'UK',
@@ -8,7 +8,6 @@
     county: 'Orpington',
     address1: 'Unit 2',
     address2: 'Faraday Way',
+};
 
-}
-
-export default customerInfo
+export default customerInfo;

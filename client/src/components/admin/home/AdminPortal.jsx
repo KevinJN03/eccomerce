@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import '../../../CSS/login-signup.css';
 import Login from '../../Login-SignUp/Login';
 import glamo from '../../../assets/icons/glamo-black-logo.svg';
@@ -41,10 +41,10 @@ function AdminPortal({}) {
         },
     };
     return (
-         <section className="h-full w-full">
+        <section className="h-full w-full">
             {loading && <LoadingPage />}
             {!loading && (
-                <section className="flex flex-col bg-light-grey h-full !min-h-screen w-screen items-center justify-center">
+                <section className="flex h-full !min-h-screen w-screen flex-col items-center justify-center bg-light-grey">
                     <section className="m-0 flex h-fit flex-col items-center p-0">
                         <section
                             id="login-signup-container"
@@ -87,7 +87,7 @@ function AdminPortal({}) {
                     </div>
                 </section>
             )}
-         </section>
+        </section>
     );
 }
 

@@ -25,8 +25,7 @@ const Input = forwardRef(function Input(
                     [property, service._id, prop],
                     'Price must be between £0.00 and £15,865.40.'
                 );
-            }
-            else if (
+            } else if (
                 prop === 'additional_item' &&
                 e.target.value > charges?.one_item
             ) {
@@ -35,13 +34,9 @@ const Input = forwardRef(function Input(
                     [property, service._id, prop],
                     `Price can't be greater than the One item price.`
                 );
-
-            }else {
-                                _.unset(cloneErrors, [property, service._id, prop]);
-
+            } else {
+                _.unset(cloneErrors, [property, service._id, prop]);
             }
-
-          
 
             return cloneErrors;
         });

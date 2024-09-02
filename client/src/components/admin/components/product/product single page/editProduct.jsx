@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import New_Product from '../new product/new_product';
-import axios, { adminAxios } from '../../../../../api/axios';
+import axios, { adminAxios } from '../../../../../api/axios.js';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
     NewProductProvider,

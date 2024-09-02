@@ -2,7 +2,7 @@ import { OrderNumberDate } from '../../../dashboard/order/order-info';
 import order_icon from '../../../../assets/icons/profile-icons/package.svg';
 import calendar_icon from '../../../../assets/icons/profile-icons/calender.png';
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import logos from '../../../dashboard/payment-methods/logos';

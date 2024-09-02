@@ -23,7 +23,7 @@ function Payment_Methods({ className }) {
                     <img
                         src={img}
                         alt={img.split('/', 6).slice(-1)}
-                        className={`${className} bg-white` }
+                        className={`${className} bg-white`}
                         key={index}
                     />
                 );

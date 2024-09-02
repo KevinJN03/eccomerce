@@ -8,7 +8,7 @@ function CancelOrderBtn({ show, setShow, disabled }) {
                     disabled={disabled}
                     onClick={() => setShow(true)}
                     type="button"
-                    className="h-full w-full disabled:cursor-not-allowed  border-2 py-2 text-center font-gotham text-sm tracking-wider transition-all hover:!bg-[var(--light-grey)]"
+                    className="h-full w-full border-2  py-2 text-center font-gotham text-sm tracking-wider transition-all hover:!bg-[var(--light-grey)] disabled:cursor-not-allowed"
                 >
                     CANCEL ORDER
                 </button>

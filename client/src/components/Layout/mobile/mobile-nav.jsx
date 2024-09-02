@@ -6,7 +6,6 @@ import close from '../../../assets/icons/close.png';
 import Nav_Options from './nav-options';
 function Mobile_Nav({}) {
     const [sideBar, setSideBar] = useState(false);
-    
 
     const openMenu = () => {
         setSideBar((prevState) => !prevState);
@@ -19,7 +18,6 @@ function Mobile_Nav({}) {
     };
     return (
         <section className="mobile-nav">
-      
             <div
                 className={sideBar ? 'opacity-0' : 'burger'}
                 onClick={() => openMenu()}

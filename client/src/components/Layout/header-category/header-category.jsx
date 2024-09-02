@@ -3,7 +3,6 @@ import Header_link from './header-category-link';
 
 function Header_Category({ category }) {
     const menCategory = () => {
-     
         const menCategory = [
             'New In',
             'Clothing',
@@ -17,13 +16,10 @@ function Header_Category({ category }) {
         ];
         return (
             <section id="header_category-container">
-                {
-                    menCategory.map((category, index) => {
-                      return <Header_link text={category} key={index}/>  
-                    })
-                }
-                
-            
+                {menCategory.map((category, index) => {
+                    return <Header_link text={category} key={index} />;
+                })}
+
                 <div className="parallelogram flex h-full w-20 items-center justify-center bg-red-800 font-semibold ">
                     <Header_link text="Outlet" />
                 </div>

@@ -1,13 +1,18 @@
 import { useNavigate } from 'react-router-dom';
-import axios from '../../../api/axios';
-import { useUserDashboardContext } from '../../../context/userContext';
+import axios from '../../../api/axios.js';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useAuth } from '../../../hooks/useAuth';
-import DeleteModalContent from './deleteModalContent';
+import DeleteModalContent from './deleteModalContent.jsx';
 
 function DeleteAddress() {
     const { authDispatch } = useAuth();
-    const { modalContent, setAddress, setModalCheck, address, setFooterMessage } =
-        useUserDashboardContext();
+    const {
+        modalContent,
+        setAddress,
+        setModalCheck,
+        address,
+        setFooterMessage,
+    } = useUserDashboardContext();
 
     const navigate = useNavigate();
     const deleteMethod = async () => {
@@ -18,19 +23,20 @@ function DeleteAddress() {
             );
 
             setAddress(result.data.address);
-            success = true
+            success = true;
             setModalCheck(false);
         } catch (error) {
             console.error('error: ', error);
             logOutUser({ error, authDispatch, navigate });
-        }finally {
-
-            if(success) {
-               setFooterMessage({success: null, text: 'Address deleted'}) 
-            }else {
-                setFooterMessage({success, text: 'Address failed to deleted. Please try again later'})   
+        } finally {
+            if (success) {
+                setFooterMessage({ success: null, text: 'Address deleted' });
+            } else {
+                setFooterMessage({
+                    success,
+                    text: 'Address failed to deleted. Please try again later',
+                });
             }
-            
         }
     };
 

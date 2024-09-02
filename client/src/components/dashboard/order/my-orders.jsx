@@ -4,7 +4,7 @@ import order_icon from '../../../assets/icons/profile-icons/package.png';
 import Header from '../header';
 import Empty_Body from '../empty-body';
 import { useEffect, useMemo, useState } from 'react';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import logOutUser from '../../common/logoutUser';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import dayjs from 'dayjs';

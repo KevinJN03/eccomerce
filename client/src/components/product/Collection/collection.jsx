@@ -1,22 +1,13 @@
-import Item from './item';
-import { AnimatePresence, motion } from 'framer-motion';
-import variants from '../../common/framerMotionVariants';
+import Item from './item.jsx';
+import { motion } from 'framer-motion';
+import variants from '../../common/framerMotionVariants.jsx';
 function Collection({ products, loading }) {
     return (
-        <motion.section 
-      
-        className='md+lg:mx-5 sm:mx-3 sm+md:gap-x-3 sm+md:gap-y-5 lg:gap-y-4 lg:gap-x-3 flex-[2_2_80%]'
-        >
+        <motion.section className="flex-[2_2_80%] sm:mx-3 sm+md:gap-x-3 sm+md:gap-y-5 lg:gap-x-3 lg:gap-y-4 md+lg:mx-5">
             {!loading ? (
-                <section className='flex flex-row !gap-5 !flex-wrap '>
+                <section className="flex flex-row !flex-wrap !gap-5 ">
                     {products.map((product) => {
-                        return (
-                            <Item
-                            product={product}
-                                key={product._id}
-                                
-                            />
-                        );
+                        return <Item product={product} key={product._id} />;
                     })}
                 </section>
             ) : (
@@ -24,7 +15,7 @@ function Collection({ products, loading }) {
                     {new Array(6).fill(1).map((item, idx) => {
                         return (
                             <motion.div
-                            key={idx}
+                                key={idx}
                                 className="card"
                                 variants={variants}
                                 animate={'animate'}

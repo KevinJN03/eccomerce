@@ -72,6 +72,7 @@ function DrawerContainer() {
                             href={`/admin/orders/${status}?searchText=${orderInfo?._id}&orderId=${orderInfo?._id}`}
                             target="_blank"
                             className="cursor-pointer text-xs underline ring-offset-1"
+                            rel="noreferrer"
                         >
                             #{orderInfo?._id}
                         </a>
@@ -105,7 +106,10 @@ function DrawerContainer() {
                         <BubbleButton
                             className={'!py-0 px-2.5'}
                             handleClick={() =>
-                                addToPackage({ orderId: orderInfo._id, mark_as_completed: true })
+                                addToPackage({
+                                    orderId: orderInfo._id,
+                                    mark_as_completed: true,
+                                })
                             }
                         >
                             <div className="flex flex-nowrap items-center justify-center gap-3">

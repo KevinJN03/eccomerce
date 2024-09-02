@@ -9,7 +9,7 @@ import { useCheckoutContext } from '../../../context/checkOutContext';
 import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import PaymentMethodProvider from '../../../context/paymentMethodContext';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function Payment({
@@ -27,16 +27,15 @@ function Payment({
         setSelectedMethod,
         isFirstPaymentSet,
         setIsFirstPaymentSet,
-        initialView, setInitialView
+        initialView,
+        setInitialView,
     } = useCheckoutContext();
 
- 
     const [disableAddress, setDisableAddress] = useState(false);
     const disable =
         disableOtherComponents?.disable &&
         disableOtherComponents.addressType != 'BILLING';
 
-   
     return (
         <section className={`bg-white `}>
             <h1 className="checkout-title mb-0 p-6 pb-0">PAYMENT</h1>
@@ -72,14 +71,12 @@ function Payment({
             </div>
             <AnimatePresence mode="wait">
                 <motion.div className="relative !bg-[var(--light-grey)]">
-                 
-                        <Payment_Type
-                            disable={disable}
-                            initialView={initialView}
-                            disableAddress={disableAddress}
-                            setDisableAddress={setDisableAddress}
-                        />
-                  
+                    <Payment_Type
+                        disable={disable}
+                        initialView={initialView}
+                        disableAddress={disableAddress}
+                        setDisableAddress={setDisableAddress}
+                    />
                 </motion.div>
             </AnimatePresence>
         </section>

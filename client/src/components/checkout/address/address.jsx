@@ -4,7 +4,7 @@ import Address_Form from './address-form';
 import Customer_Info from './customer-info';
 import Change_Btn from '../../common/btn/change-btn';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import Address_Item from './address-item';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import Address_Book from './address-book';

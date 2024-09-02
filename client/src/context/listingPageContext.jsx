@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 import UserLogout from '../hooks/userLogout';
 import { useAdminContext } from './adminContext';
 import { useContent } from './ContentContext';
@@ -31,8 +31,6 @@ function ListingPageProvider({ children, newValue }) {
         featured,
         index,
     }) => {
-        
-
         try {
             console.log({ index });
             setFeatured(() => !featured);
@@ -77,9 +75,8 @@ function ListingPageProvider({ children, newValue }) {
             value={{
                 ...value,
                 handleFeatured,
-text,
+                text,
                 handleClick,
-                
             }}
         >
             {children}

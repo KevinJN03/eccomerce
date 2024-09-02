@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import { useAdminContext } from './adminContext';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 
 const FinanceContext = createContext();
 

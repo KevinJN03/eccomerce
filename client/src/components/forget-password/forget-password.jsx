@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Input from '../Login-SignUp/input';
+import Input from '../Login-SignUp/input.jsx';
 import emailValidator from 'email-validator';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 function ForgetPassword({}) {
     const [error, setError] = useState({});
     const [email, setEmail] = useState('');

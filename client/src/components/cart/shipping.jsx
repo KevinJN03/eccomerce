@@ -24,7 +24,7 @@ function Shipping({ options }) {
                 {options.map(({ name, cost, _id }) => {
                     return (
                         <option
-                        selected={deliveryOption?.id == _id}
+                            selected={deliveryOption?.id == _id}
                             key={_id}
                             data-cost={cost}
                             data-name={name}

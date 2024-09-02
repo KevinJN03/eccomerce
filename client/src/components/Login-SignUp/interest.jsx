@@ -7,7 +7,7 @@ function Interest({ setInterest, interest }) {
                     return (
                         <div className="radio-containers" key={option}>
                             <input
-                            className="daisy-radio"
+                                className="daisy-radio"
                                 type="radio"
                                 name="interest"
                                 id={option}

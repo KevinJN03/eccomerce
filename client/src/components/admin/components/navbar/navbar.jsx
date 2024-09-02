@@ -12,7 +12,12 @@ function Navbar({}) {
         <section className="navbar-section">
             <div className="wrapper">
                 <div className="search">
-                    <input type="text" placeholder="search" id='search' name='search' />
+                    <input
+                        type="text"
+                        placeholder="search"
+                        id="search"
+                        name="search"
+                    />
                     <img loading="lazy" src={search_icon} className="h-4 w-4" />
                 </div>
                 <div className="items">

@@ -52,7 +52,7 @@ export class CodeBase {
             'hour',
             'minute',
             'second',
-            'millisecond'
+            'millisecond',
         ];
 
         const today = dayjs();
@@ -60,7 +60,9 @@ export class CodeBase {
 
         const findDurationValue = (value = 0) => {
             const endPeriod = dayjs();
-            const startPeriod = this?.start_date ? dayjs.unix(this.start_date) : dayjs(this.timestamp)
+            const startPeriod = this?.start_date
+                ? dayjs.unix(this.start_date)
+                : dayjs(this.timestamp);
 
             // decide a start period and an end period, based on that calculate the difference in minute
             // if in future, set the value as 0 days
@@ -94,11 +96,11 @@ export class CodeBase {
 
             const diffFromPeriod = startPeriod.diff(endPeriod, array[value]);
 
-            if (value == (array.length -1)) {
-                console.log({value, length: array.length})
+            if (value == array.length - 1) {
+                console.log({ value, length: array.length });
                 return {
                     text: 'failed',
-                    dateText: 'failed'
+                    dateText: 'failed',
                 };
             }
 

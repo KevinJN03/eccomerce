@@ -5,7 +5,7 @@ const variants = {
     animate: {
         opacity: 1,
 
-        transition: { duration:5,  },
+        transition: { duration: 5 },
     },
 
     exit: {

@@ -1,4 +1,4 @@
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import { get6MonthsData } from '../../common/months';
 
 export async function getAllData({

@@ -8,7 +8,7 @@ import { easeQuadInOut } from 'd3-ease';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { Typography } from '@mui/material';
 import { useCountUp } from 'use-count-up';
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion';
 import animationVariant from '../../home/animationVariant';
 function Featured({ todayAmount }) {
     const { value, reset } = useCountUp({
@@ -18,7 +18,12 @@ function Featured({ todayAmount }) {
         end: 75,
     });
     return (
-        <motion.section className="featured" variants={animationVariant(2)} animate={'animate'} initial={'initial'}>
+        <motion.section
+            className="featured"
+            variants={animationVariant(2)}
+            animate={'animate'}
+            initial={'initial'}
+        >
             <div className="top">
                 <h1 className="title">Total Revenue</h1>
                 <MoreVertRoundedIcon />
@@ -50,7 +55,6 @@ function Featured({ todayAmount }) {
                     <CircularProgress
                         determinate
                         value={value}
-                       
                         sx={{
                             '--CircularProgress-size': '90px',
                             '--CircularProgress-progressThickness': '9px',

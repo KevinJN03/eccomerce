@@ -1,6 +1,6 @@
-import Header from './header';
+import Header from './header.jsx';
 import return_icon from '../../assets/icons/profile-icons/delivery-status.png';
-import Empty_Body from './empty-body';
+import Empty_Body from './empty-body.jsx';
 
 import duplicate_icon from '../../assets/icons/duplicate.png';
 function Returns({}) {

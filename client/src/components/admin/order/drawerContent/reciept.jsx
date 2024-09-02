@@ -54,7 +54,8 @@ function Receipt({}) {
                                                 <a
                                                     target="_blank"
                                                     href={`/product/${item._id}`}
-                                                    className="text-xs underline underline-offset-1 mb-2"
+                                                    className="mb-2 text-xs underline underline-offset-1"
+                                                    rel="noreferrer"
                                                 >
                                                     {item.title}
                                                 </a>
@@ -69,9 +70,8 @@ function Receipt({}) {
                                                         >
                                                             {variationObj?.variation && (
                                                                 <p className="text-xs">
-                                                                    {
-                                                                        variationObj?.title || `Variation ${variationNum}`
-                                                                    }
+                                                                    {variationObj?.title ||
+                                                                        `Variation ${variationNum}`}
                                                                     :{' '}
                                                                     <span>
                                                                         {

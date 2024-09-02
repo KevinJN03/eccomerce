@@ -6,7 +6,7 @@ function actionColumn({
     selection,
     viewClick,
     disable2ndBtn,
-    buttonText 
+    buttonText,
 }) {
     return [
         {
@@ -35,9 +35,7 @@ function actionColumn({
                         {!disable2ndBtn && (
                             <button
                                 className="deleteButton"
-                                onClick={() =>
-                                    secondBtnClick(params?.row?._id)
-                                }
+                                onClick={() => secondBtnClick(params?.row?._id)}
                             >
                                 {buttonText || 'Delete'}
                             </button>

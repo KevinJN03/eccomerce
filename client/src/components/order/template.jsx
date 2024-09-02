@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import Checkout_Header from '../checkout/checkout_header';
+import Checkout_Header from '../checkout/checkout_header.jsx';
 import { useInView } from 'framer-motion';
-import MessageFooter from '../dashboard/messageFooter';
-import TemplateProvider from '../../context/templeteContext';
+import MessageFooter from '../dashboard/messageFooter.jsx';
+import TemplateProvider from '../../context/templeteContext.jsx';
 function Template({ children }) {
     const footerRef = useRef();
     const isInView = useInView(footerRef);
@@ -17,11 +17,11 @@ function Template({ children }) {
         isInView,
     };
 
-    console.log({isInView})
+    console.log({ isInView });
     return (
         <TemplateProvider value={value}>
-            <section className="flex  relative h-full min-h-screen w-full flex-wrap justify-center bg-[var(--light-grey)]">
-                <section className=" relative pb-16 flex w-full max-w-4xl flex-col flex-nowrap md:px-20">
+            <section className="relative  flex h-full min-h-screen w-full flex-wrap justify-center bg-[var(--light-grey)]">
+                <section className=" relative flex w-full max-w-4xl flex-col flex-nowrap pb-16 md:px-20">
                     <div className="mb-5 lg:max-w-[580px]">
                         <Checkout_Header
                             text={'CHECKOUT'}

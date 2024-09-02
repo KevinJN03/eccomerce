@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { dateFormat } from '../../../../context/SalesDiscountContext';
-import { CodeBase } from './codeBase';
+import { CodeBase } from './codeBase.js';
 
 export default class PromoCode extends CodeBase {
     constructor(props) {
@@ -40,5 +40,4 @@ export default class PromoCode extends CodeBase {
     //         return `Starts on: ${formatDate(this.start_date)}`;
     //     }
     // }
-    
 }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import close_icon from '../../../assets/icons/close.png';
-import { usePaymentMethods } from '../../../context/paymentMethodContext';
-import { useUserDashboardContext } from '../../../context/userContext';
-import DeleteModalContent from './deleteModalContent';
+import { usePaymentMethods } from '../../../context/paymentMethodContext.jsx';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import DeleteModalContent from './deleteModalContent.jsx';
 function DeletePaymentMethod() {
     const { setModalCheck, setFooterMessage } = useUserDashboardContext();
 

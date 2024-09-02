@@ -13,7 +13,7 @@ function CheckOutProvider({ children, value }) {
         _.get(stateProps, 'delivery_option') || {}
     );
     useEffect(() => {
-        setDeliverySelect(() => _.get(stateProps, 'delivery_option') )
+        setDeliverySelect(() => _.get(stateProps, 'delivery_option'));
     }, [stateProps?.delivery_option]);
     return (
         <CheckoutContext.Provider

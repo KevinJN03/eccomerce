@@ -28,7 +28,7 @@
 
 #collection-section .card {
     /* min-height: 500px; */
-    @apply h-full w-full bg-white shadow-none sm:max-h-max lg:!h-[300px] cursor-pointer;
+    @apply h-full w-full cursor-pointer bg-white shadow-none sm:max-h-max lg:!h-[300px];
     max-height: max-content;
     /* width: 300px; */
     border: none;
@@ -144,5 +144,3 @@
     @apply mb-3 mr-2 rounded-full px-5 py-2 text-sm font-medium sm:px-3 sm:py-3 sm:text-xs sm+md:whitespace-nowrap sm+md:!shadow-sm lg:px-5 lg:py-4;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 2px;
 }
-
-

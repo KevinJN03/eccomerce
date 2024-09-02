@@ -1,4 +1,4 @@
-import { adminAxios } from '../../../../../../api/axios';
+import { adminAxios } from '../../../../../../api/axios.js';
 import { useState, useEffect } from 'react';
 
 export default function fetchProfile(setState) {
@@ -9,7 +9,5 @@ export default function fetchProfile(setState) {
                 setState(res.data);
             }
         })
-        .catch((error) => {
-       
-        });
+        .catch((error) => {});
 }

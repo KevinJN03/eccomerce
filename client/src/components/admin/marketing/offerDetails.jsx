@@ -15,7 +15,6 @@ function OfferDetails({}) {
         selectedOfferType,
         setSelectedOfferType,
         loading,
-        
     } = useSalesDiscountContext();
 
     const generateDatePeriod = ({

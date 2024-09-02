@@ -20,7 +20,7 @@ function Price_Inventory() {
         variations,
     } = useNewProduct();
     const onClickAway = ({ setValue, value, toDecimals }) => {
-     if (!value) return;
+        if (!value) return;
 
         const formatValue = formatData(value, toDecimals);
         setValue(() => formatValue);
@@ -93,7 +93,7 @@ function Price_Inventory() {
         error: publishError,
         setValue: setStockValue,
         ref: onStockClickAwayRef,
-        enablePoundSign: false
+        enablePoundSign: false,
     };
 
     return (

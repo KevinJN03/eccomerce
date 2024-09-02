@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Input from '../Login-SignUp/input';
+import Input from '../Login-SignUp/input.jsx';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function ResetPassword({}) {

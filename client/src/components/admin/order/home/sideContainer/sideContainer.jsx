@@ -220,7 +220,7 @@ function SideContainer({}) {
                                     lowerCaseItem,
                                     !_.get(filterList, [status, lowerCaseItem])
                                 );
-                                setSearchParams(searchParams)
+                                setSearchParams(searchParams);
                                 setFilterList((prevState) => ({
                                     ...prevState,
                                     [status]: {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import defaultAxios from '../../../api/axios';
+import defaultAxios from '../../../api/axios.js';
 import Input from '../input';
 import { SetMeal } from '@mui/icons-material';
 import DobPicker from '../dobPicker';

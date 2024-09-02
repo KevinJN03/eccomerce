@@ -5,7 +5,7 @@ import {
     useReducer,
     useState,
 } from 'react';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 import UserLogout from '../hooks/userLogout';
 import _ from 'lodash';
 const ContentContext = createContext(null);
@@ -28,7 +28,11 @@ export function ContentProvider({ children, value }) {
     const [content, contentDispatch] = useReducer(reducer, { type: 'Main' });
     const [profile, setProfile] = useState([]);
 
-    const [additionalSideBar, setAdditionalSideBar] = useState({ title: 'FINANCES', options: [], on: false });
+    const [additionalSideBar, setAdditionalSideBar] = useState({
+        title: 'FINANCES',
+        options: [],
+        on: false,
+    });
     const [loading, setLoading] = useState(false);
     const { setShowAlert, setModalCheck } = value;
     useEffect(() => {
@@ -158,7 +162,8 @@ export function ContentProvider({ children, value }) {
         fetchSetting,
         save,
         handleCancel,
-        additionalSideBar, setAdditionalSideBar
+        additionalSideBar,
+        setAdditionalSideBar,
     };
     return (
         <ContentContext.Provider value={newValue}>

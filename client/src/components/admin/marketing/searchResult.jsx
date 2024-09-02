@@ -79,14 +79,14 @@ function SearchResult({}) {
                                 onClick={() => handleOnClick(listingItem)}
                             >
                                 <div
-                                    className="searchoverlay !z-10  bg-transparent absolute left-0 top-0 h-full w-full"
+                                    className="searchoverlay absolute  left-0 top-0 !z-10 h-full w-full bg-transparent"
                                     // onClick={() => alert('hi')}
                                 ></div>
                                 <div className=" rounded-sm border p-0.5">
                                     <img
                                         src={listingItem?.images?.[0]}
                                         alt=""
-                                        srcset=""
+                                        srcSet=""
                                         className="h-12 w-12 object-cover "
                                     />
                                 </div>

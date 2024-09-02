@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import giftCard_icon from '../../../assets/icons/gift-card.png';
-import Empty_Body from '../empty-body';
-import Header from '../header';
+import Empty_Body from '../empty-body.jsx';
+import Header from '../header.jsx';
 // import './voucher.scss';
-import { useUserDashboardContext } from '../../../context/userContext';
-import axios from '../../../api/axios';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import axios from '../../../api/axios.js';
 import dayjs from 'dayjs';
 import { LinearProgress, Pagination, PaginationItem } from '@mui/material';
 import glamo_icon from '../../../assets/glamo.png';
 import { ArrowBackRounded, ArrowForwardRounded } from '@mui/icons-material';
 import { useTab } from '@mui/base';
-import GLoader from '../../Login-SignUp/socialRegister/gloader';
+import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
 // import Pagination from '../pagination/pagination';
 function GiftCard_Voucher({}) {
     const abortControllerRef = useRef(new AbortController());

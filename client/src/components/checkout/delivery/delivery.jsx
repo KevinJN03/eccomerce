@@ -20,7 +20,7 @@ function Delivery({ disable }) {
             }
         );
 
-        setBetaDeliveryInfo(() => _.sortBy(objectToArray, ['_id' ]));
+        setBetaDeliveryInfo(() => _.sortBy(objectToArray, ['_id']));
     }, [stateProps?.deliveryInfoObj]);
 
     // useEffect(() => {

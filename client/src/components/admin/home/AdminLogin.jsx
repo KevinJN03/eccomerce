@@ -1,6 +1,6 @@
 import LoginForm from '../../Login-SignUp/loginForm';
 import { useEffect, useState } from 'react';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import { useAdminContext } from '../../../context/adminContext.jsx';
 
 import { useNavigate } from 'react-router-dom';

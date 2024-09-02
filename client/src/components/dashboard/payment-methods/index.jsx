@@ -7,16 +7,14 @@ import { useEffect, useState } from 'react';
 
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 function Index({}) {
-
-    console.log({env: STRIPE_KEY})
+    console.log({ env: STRIPE_KEY });
     const [stripePromise, setStripePromise] = useState(() =>
-    loadStripe(STRIPE_KEY)
-);
+        loadStripe(STRIPE_KEY)
+    );
 
-   
     return (
         <section className="w-full">
-         <Elements stripe={stripePromise}>
+            <Elements stripe={stripePromise}>
                 <Outlet />
             </Elements>
         </section>

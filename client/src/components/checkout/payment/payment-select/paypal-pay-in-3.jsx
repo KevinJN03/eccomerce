@@ -93,6 +93,7 @@ function PayPalPayIn3({}) {
                         href="https://www.paypal.com/uk/webapps/mpp/paypal-payin3/terms"
                         target="_blank"
                         className="underline"
+                        rel="noreferrer"
                     >
                         terms
                     </a>{' '}

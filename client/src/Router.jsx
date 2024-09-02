@@ -4,7 +4,7 @@ import {
     useRoutes,
 } from 'react-router-dom';
 
-import Product from './components/Product/Product_Page';
+import Product from './components/Product/Product_Page.jsx';
 import ItemPage from './components/Item_page/ItemPage';
 import About from './components/miscellaneos/About';
 import Dashboard from './components/dashboard/index';

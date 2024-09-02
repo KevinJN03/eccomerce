@@ -112,22 +112,21 @@ export default function Main() {
                         );
                     })}
                 </div>
-<div className='mt-6 mb-10'>
-    <BubbleButton
-                
-                    handleClick={() =>
-                        contentDispatch({
-                            type: 'select',
-                            default: false,
-                            title: '',
-                        })
-                    }
-                >
-                    <AddRoundedIcon className="bg-transparent" />
-                    <span className="bg-transparent">Create your Own</span>
-                </BubbleButton>
-</div>
-                
+                <div className="mb-10 mt-6">
+                    <BubbleButton
+                        handleClick={() =>
+                            contentDispatch({
+                                type: 'select',
+                                default: false,
+                                title: '',
+                            })
+                        }
+                    >
+                        <AddRoundedIcon className="bg-transparent" />
+                        <span className="bg-transparent">Create your Own</span>
+                    </BubbleButton>
+                </div>
+
                 {/* <button
                     type="button"
                     className="mb-14 mt-2 rounded-full px-3 py-2 font-gotham transition-all hover:bg-[var(--light-grey)]"

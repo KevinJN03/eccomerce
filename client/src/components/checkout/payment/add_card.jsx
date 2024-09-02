@@ -9,7 +9,7 @@ import { SubHeader } from './SubHeader';
 import { useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { ElementDiv } from './element-div';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import Error_Alert from '../../common/error-alert';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import { usePaymentTypeContext } from '../../../context/paymentTypeContext';

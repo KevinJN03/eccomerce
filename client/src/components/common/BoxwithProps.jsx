@@ -10,7 +10,7 @@ function BoxWithProps({ children, customSx }) {
                 transform: 'translate(-50%, -50%)',
                 width: '100%',
                 maxWidth: '37.5rem',
-                ...customSx
+                ...customSx,
             }}
         >
             {children}

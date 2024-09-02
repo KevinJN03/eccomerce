@@ -59,7 +59,8 @@ function VariationTableContainer({ variation, isCombine }) {
         isPriceHeaderOn: variation.priceHeader.on,
         isCombine,
         layout,
-        showAllVariants, setShowAllVariants
+        showAllVariants,
+        setShowAllVariants,
     };
     return (
         <TableProvider value={value}>

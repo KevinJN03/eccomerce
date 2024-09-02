@@ -21,7 +21,7 @@ function Stock_Price({ product }) {
                 </div>
             </section>
             {product?.note && (
-                <p className="pr-6 text-right text-xs text-black/70 whitespace-nowrap">
+                <p className="whitespace-nowrap pr-6 text-right text-xs text-black/70">
                     {product.note}
                 </p>
             )}

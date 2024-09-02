@@ -1,16 +1,15 @@
-import disableLayout from '../../hooks/disableLayout';
-import Checkout_Header from '../checkout/checkout_header';
+import disableLayout from '../../hooks/disableLayout.jsx';
+import Checkout_Header from '../checkout/checkout_header.jsx';
 import recycle_logo from '../../assets/icons/recycle.png';
 
 import image from '../../assets/images/order-photo-women.jpg';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
-import axios from '../../api/axios';
-import { useReducer } from 'react';
-import { useCart } from '../../context/cartContext';
-import SocialIcons from './social-icons';
-import Template from './template';
-import LoadingPage from './loadingPage';
+import { useEffect, useRef, useState, useReducer } from 'react';
+import axios from '../../api/axios.js';
+import { useCart } from '../../context/cartContext.jsx';
+import SocialIcons from './social-icons.jsx';
+import Template from './template.jsx';
+import LoadingPage from './loadingPage.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function OrderInfo({ header, text, headerClassName, pClassName }) {
@@ -193,25 +192,21 @@ function Order_Success({}) {
                                                                     />
                                                                 </div>
                                                                 <div className="right flex flex-[4] flex-col gap-y-2">
-                                                                   
-                                                                        <p className="h-fit text-base font-bold !text-dark-gray">
-                                                                            {parseFloat(
-                                                                                price
-                                                                            ).toLocaleString(
-                                                                                'en-US',
-                                                                                {
-                                                                                    style: 'currency',
-                                                                                    currency:
-                                                                                        'GBP',
-                                                                                }
-                                                                            )}
-                                                                        </p>
-                                                                   
+                                                                    <p className="h-fit text-base font-bold !text-dark-gray">
+                                                                        {parseFloat(
+                                                                            price
+                                                                        ).toLocaleString(
+                                                                            'en-US',
+                                                                            {
+                                                                                style: 'currency',
+                                                                                currency:
+                                                                                    'GBP',
+                                                                            }
+                                                                        )}
+                                                                    </p>
 
                                                                     <p className="h-fit w-3/6 text-sm">
-                                                                        {
-                                                                            title
-                                                                        }
+                                                                        {title}
                                                                     </p>
 
                                                                     <div className="flex flex-row gap-x-4 font-bold tracking-wider ">

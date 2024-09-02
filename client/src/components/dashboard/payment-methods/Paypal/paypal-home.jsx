@@ -6,8 +6,8 @@ import {
 } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
-import PayPalSetUp from './paypal-setup';
-import axios from '../../../../api/axios';
+import PayPalSetUp from './paypal-setup.jsx';
+import axios from '../../../../api/axios.js';
 const STRIPE_KEY = import.meta.env.VITE_STRIPE_KEY;
 
 function PayPalHome({}) {

@@ -1,4 +1,3 @@
-
 .dropzone {
     @apply flex flex-col items-center justify-center gap-y-3;
     height: 200px;
@@ -25,68 +24,57 @@
     }
 }
 
-
 #upload-section {
-  @apply min-w-[200px];
+    @apply min-w-[200px];
 
+    #upload {
+        @apply flex w-full flex-row gap-1;
 
-#upload {
-    @apply flex w-full flex-row gap-1 ;
+        height: 300px;
+        // min-width: 500px;
 
-    height: 300px;
-    // min-width: 500px;
+        .img-container,
+        .add-img-container {
+            @apply w-full rounded-xl;
+            border: 1px solid var(--light-grey);
+            height: calc(100% / 2);
+            min-width: 100%;
+        }
 
-    .img-container,
-    .add-img-container {
-        @apply w-full rounded-xl;
-        border: 1px solid var(--light-grey);
-        height: calc(100% / 2);
-        min-width: 100%;
-    }
-
-    .main-img {
-        flex: 1;
-        
-       
-        @apply flex flex-col h-full w-full ;
-        gap: 4px;
-
-        .img-container {
-        
+        .main-img {
             flex: 1;
-            position: relative;
 
-            &:nth-of-type(1)::before {
-                content: 'Primary';
-               
-                position: absolute;
-                top: 5px;
-                right: 5px;
-              z-index: 3;
-                @apply m-1 rounded-xl px-2 py-1 text-xs bg-green-200 ;
+            @apply flex h-full w-full flex-col;
+            gap: 4px;
+
+            .img-container {
+                flex: 1;
+                position: relative;
+
+                &:nth-of-type(1)::before {
+                    content: 'Primary';
+
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    z-index: 3;
+                    @apply m-1 rounded-xl bg-green-200 px-2 py-1 text-xs;
+                }
             }
         }
-    }
 
-    .additional-img {
-    
-        flex: 1 ;
-;
-      @apply grid grid-cols-2 grid-rows-2 h-full w-full gap-1;
+        .additional-img {
+            flex: 1;
+            @apply grid h-full w-full grid-cols-2 grid-rows-2 gap-1;
 
-        .add-img-container {
-          
-            @apply w-full h-full;
-         
-    
+            .add-img-container {
+                @apply h-full w-full;
+            }
+        }
+
+        img {
+            @apply h-full w-full object-cover object-center;
+            border-radius: inherit;
         }
     }
-
-    img {
-        @apply h-full w-full object-cover object-center ;
-        border-radius: inherit;
-    }
-}
-
-
 }

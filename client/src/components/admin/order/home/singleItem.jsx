@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import {v4 as uuidV4 } from 'uuid'
+import { Fragment } from 'react';
+import { v4 as uuidV4 } from 'uuid';
 function SingleItem({ itemObj }) {
     return (
         <div className="single-item mt-2 flex flex-row gap-3 border-black">
@@ -11,7 +11,7 @@ function SingleItem({ itemObj }) {
             <div className="product-order-info flex max-w-[400px] flex-col gap-[2px] ">
                 <p className="text-xs">{itemObj.title}</p>
 
-                <p className="mt-2 text-xs !text-primary/80 text-xs">
+                <p className="mt-2 text-xs text-xs !text-primary/80">
                     Quantity{' '}
                     <span className="font-semibold">{itemObj?.quantity}</span>
                 </p>
@@ -20,8 +20,11 @@ function SingleItem({ itemObj }) {
                         return (
                             <Fragment key={uuidV4()}>
                                 {variation && (
-                                    <p className="!text-primary/80 text-xs">
-                                        {title} <span className="text-xs">{variation}</span>
+                                    <p className="text-xs !text-primary/80">
+                                        {title}{' '}
+                                        <span className="text-xs">
+                                            {variation}
+                                        </span>
                                     </p>
                                 )}
                             </Fragment>

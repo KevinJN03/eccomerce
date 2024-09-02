@@ -10,7 +10,7 @@ const StyledPaper = withStyles({
         left: '0px',
         maxWidth: '31rem',
         width: '100%',
-        borderRadius: '0px'
+        borderRadius: '0px',
     },
 })(Paper);
 

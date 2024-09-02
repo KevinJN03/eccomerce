@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Modal from '../../modal/modal';
-import axios from '../../../../../api/axios';
+import axios from '../../../../../api/axios.js';
 function Datatable({
     type,
     loading,

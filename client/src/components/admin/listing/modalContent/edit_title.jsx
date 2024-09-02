@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Template from './template';
 import { useContent } from '../../../../context/ContentContext';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import TitleDescriptionTemplate from './titleDescriptionTemplate';
 
 function Edit_Title() {

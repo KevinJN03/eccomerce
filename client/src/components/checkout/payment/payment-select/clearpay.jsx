@@ -122,6 +122,7 @@ function ClearPaySelect({}) {
                         className="cursor-pointer underline"
                         href="https://www.clearpay.co.uk/en-GB/terms-of-service"
                         target="_blank"
+                        rel="noreferrer"
                     >
                         T&Cs
                     </a>

@@ -18,7 +18,7 @@
 
             .left {
                 flex: 1;
-                @apply flex flex-col justify-between items-center;
+                @apply flex flex-col items-center justify-between;
                 img {
                     width: 100px;
                     height: 100px;
@@ -32,7 +32,7 @@
 
                 form {
                     // @apply flex flex-wrap justify-around gap-6;
-@apply grid grid-cols-2 gap-6 px-10;
+                    @apply grid grid-cols-2 gap-6 px-10;
                     .formInput {
                         width: 100%;
 

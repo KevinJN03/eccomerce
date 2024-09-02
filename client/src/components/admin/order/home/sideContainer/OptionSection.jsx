@@ -1,6 +1,6 @@
-import { getName } from "country-list";
-import { useAdminOrderContext } from "../../../../../context/adminOrderContext";
-import _ from "lodash";
+import { getName } from 'country-list';
+import { useAdminOrderContext } from '../../../../../context/adminOrderContext';
+import _ from 'lodash';
 
 function OptionSection({ title, options, property }) {
     const {
@@ -16,7 +16,7 @@ function OptionSection({ title, options, property }) {
             <p className="text-base font-semibold">{title}</p>
             {options.map((item) => {
                 const lowerCaseItem = item.toLowerCase().replaceAll(' ', '_');
-                
+
                 return (
                     <div
                         key={`${property}-${lowerCaseItem}`}
@@ -56,4 +56,4 @@ function OptionSection({ title, options, property }) {
     );
 }
 
-export default OptionSection
+export default OptionSection;

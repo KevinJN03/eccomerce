@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import axios from '../../../api/axios';
-import { useUserDashboardContext } from '../../../context/userContext';
+import axios from '../../../api/axios.js';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import Address_Form from './form';
 import { useAuth } from '../../../hooks/useAuth';
 

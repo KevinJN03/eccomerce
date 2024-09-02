@@ -1,7 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
-function OptionSelection({ options, status, setStatus, className , textClassName}) {
+function OptionSelection({
+    options,
+    status,
+    setStatus,
+    className,
+    textClassName,
+}) {
     const [hover, setHover] = useState('');
 
     const variant = ({ currentStatus }) => {
@@ -31,9 +37,10 @@ function OptionSelection({ options, status, setStatus, className , textClassName
     };
 
     return (
-        <section className={`${className || ''} mb-4 flex flex-col gap-x-5 !z-0`}>
+        <section
+            className={`${className || ''} !z-0 mb-4 flex flex-col gap-x-5`}
+        >
             <div className="flex flex-row gap-6">
-                
                 {options.map((option) => {
                     return (
                         <div
@@ -44,11 +51,13 @@ function OptionSelection({ options, status, setStatus, className , textClassName
                                     setStatus(() => option.select);
                                 }
                             }}
-                            className="relative cursor-pointer !z-0"
+                            className="relative !z-0 cursor-pointer"
                             onMouseEnter={() => setHover(() => option.select)}
                             onMouseLeave={() => setHover(() => null)}
                         >
-                            <p className={`flex flex-row flex-nowrap items-center gap-1 pb-3  !z-0 ${textClassName || 'text-base' }`}>
+                            <p
+                                className={`!z-0 flex flex-row flex-nowrap items-center gap-1  pb-3 ${textClassName || 'text-base'}`}
+                            >
                                 {option.text}
                                 {option?.showAmount && (
                                     <span className="pl-1 text-sm">

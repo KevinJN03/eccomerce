@@ -24,9 +24,6 @@ export const userInput = [
         placeHolder: '+44 1234 5678',
     },
 
-    
-
-
     // {
     //     id: 5,
     //     label: 'Address',
@@ -46,7 +43,7 @@ export const passwordInput = {
     id: 4,
     label: 'Password',
     type: 'password',
-}
+};
 export const productInputs = [
     {
         id: 1,

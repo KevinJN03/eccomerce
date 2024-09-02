@@ -1,8 +1,6 @@
 import { KeyboardArrowUpRounded } from '@mui/icons-material';
 
 function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
-    
-
     const toggleCheck = (e) => {
         setPrintChecks((prevState) => ({
             ...prevState,
@@ -24,11 +22,15 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
                 ...prevState?.[property],
                 checks: {
                     ...prevState?.[property]?.checks,
-                    ['shop_info']: (prevState?.[property]?.checks?.['shop_info'] == e.target?.value ? 'none' : e.target?.value )
+                    ['shop_info']:
+                        prevState?.[property]?.checks?.['shop_info'] ==
+                        e.target?.value
+                            ? 'none'
+                            : e.target?.value,
                 },
             },
         }));
-    }
+    };
     return (
         <section className="flex flex-col">
             <button
@@ -46,14 +48,13 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
 
                 <div className="flex flex-row flex-nowrap gap-2">
                     <input
-                    onChange={toggleShopInfo}
+                        onChange={toggleShopInfo}
                         type="checkbox"
                         checked={checks?.shop_info == 'order_receipt_banner'}
                         name="order-receipt-banner"
                         id="order-receipt-banner"
                         value={'order_receipt_banner'}
                         className="daisy-checkbox daisy-checkbox-xs !rounded-sm"
-                        
                     />
                     <p className="w-20">Order receipt banner</p>
                 </div>
@@ -90,8 +91,8 @@ function OrderReceiptOption({ handleClick, setPrintChecks, checks, property }) {
 
                 <div className="mt-2 flex flex-nowrap gap-2 border-t-[1px] border-dark-gray/50 pt-3">
                     <input
-                    onChange={toggleCheck}
-                    checked={checks?.save_setting}
+                        onChange={toggleCheck}
+                        checked={checks?.save_setting}
                         type="checkbox"
                         id="save-settings"
                         value={'save_setting'}

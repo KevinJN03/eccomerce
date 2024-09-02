@@ -13,7 +13,7 @@ import { useFinanceContext } from '../../../context/financeContext';
 import ActivitySummary from './activitySummary';
 import SalesAndFees from './sales-and-fees';
 import { useAdminContext } from '../../../context/adminContext';
-import { adminAxios } from '../../../api/axios';
+import { adminAxios } from '../../../api/axios.js';
 import _ from 'lodash';
 import ActivityTable from './activityTable';
 import { generate } from 'generate-password-browser';

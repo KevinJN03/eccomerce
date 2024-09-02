@@ -105,7 +105,7 @@ function ProcessOrder({}) {
                     }
                 >
                     {btnLoad ? (
-                        <div className="spinner-circle [--spinner-size:25px] ![--spinner-color:255,255,255]" />
+                        <div className="spinner-circle ![--spinner-color:255,255,255] [--spinner-size:25px]" />
                     ) : (
                         <p className="text-base font-medium text-white">
                             Update

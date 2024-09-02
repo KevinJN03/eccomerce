@@ -6,8 +6,6 @@ export const usePaymentTypeContext = () => {
     return useContext(PaymentTypeContext);
 };
 
-
-
 function PaymentTypeProvider({ children, value }) {
     return (
         <PaymentTypeContext.Provider value={value}>

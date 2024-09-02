@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import Template from './template';
 import { useContent } from '../../../../context/ContentContext';
 import UserLogout from '../../../../hooks/userLogout';

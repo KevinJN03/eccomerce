@@ -4,10 +4,10 @@ import { v4 as uuidV4 } from 'uuid';
 export default function CategorySelect({
     options,
     title,
-    
+
     state,
     isCategory,
-    handleChange
+    handleChange,
 }) {
     // const handleChange = (e) => {
     //     setState(e.target.value);

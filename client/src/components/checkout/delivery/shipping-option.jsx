@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../../../context/cartContext';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 
 import dayjs from 'dayjs';
 import { useCheckoutContext } from '../../../context/checkOutContext';

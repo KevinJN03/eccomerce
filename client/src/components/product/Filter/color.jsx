@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import arrow from '../../../assets/footer-icons/right-arrow.png';
-import Arrow from './arrow';
+import Arrow from './arrow.jsx';
 
 function Color({ loading }) {
     const [count, setCount] = useState();

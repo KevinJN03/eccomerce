@@ -10,7 +10,7 @@ import SeamlessDropdown from '../../../common/dropdown/seamlessDropdown';
 import { useContent } from '../../../../context/ContentContext';
 
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import _ from 'lodash';
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -142,7 +142,7 @@ function Address_Form({ description, title, handleClick, customer }) {
                     className=" flex w-full items-center justify-center !bg-primary py-3 font-semibold tracking-wide text-white opacity-90 transition-all hover:opacity-100 disabled:opacity-50"
                 >
                     {loading ? (
-                        <div class="spinner-circle spinner-sm ![--spinner-color:var(--gray-9)]"></div>
+                        <div className="spinner-circle spinner-sm ![--spinner-color:var(--gray-9)]"></div>
                     ) : (
                         'SAVE ADDRESS'
                     )}

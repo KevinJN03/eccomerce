@@ -41,7 +41,7 @@ function Transaction_Table({ data }) {
                         <TableRow key={row._id}>
                             <TableCell className="tableCell">
                                 <Link
-                                className='hover:underline font-medium hover:text-black/80 transition-all'
+                                    className="font-medium transition-all hover:text-black/80 hover:underline"
                                     to={`/admin/orders/${row.status == 'recieved' ? 'new' : 'complete'}?orderId=${row._id}`}
                                 >
                                     {' '}
@@ -50,8 +50,7 @@ function Transaction_Table({ data }) {
                             </TableCell>
                             <TableCell className="tableCell">
                                 <div className="cellWrapper">
-
-                                <CollapseExpandIcon array={row?.items}/>
+                                    <CollapseExpandIcon array={row?.items} />
 
                                     {/* {row?.items?.map((item) => {
                                         return (

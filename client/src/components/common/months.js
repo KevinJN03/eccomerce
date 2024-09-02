@@ -39,10 +39,10 @@ const get6MonthsData = (data) => {
     }
     let newData = monthsArray.map(({ month, num }, idx) => {
         let total = 0;
-        let numOfOrders =0
+        let numOfOrders = 0;
         if (num == pointer) {
             total = data[counter]?.total;
-            numOfOrders = data[counter]?.numOfOrders
+            numOfOrders = data[counter]?.numOfOrders;
             if (data?.[counter + 1]) {
                 pointer = data?.[counter + 1]?._id;
                 counter++;
@@ -51,11 +51,11 @@ const get6MonthsData = (data) => {
         return {
             month: month,
             total,
-            numOfOrders
+            numOfOrders,
         };
     });
 
     return newData;
 };
 
-export { get6MonthFromToday, months,get6MonthsData };
+export { get6MonthFromToday, months, get6MonthsData };

@@ -54,7 +54,7 @@ function Labels() {
                         })}
                     </div>
                 </div>
-                <div className="right  flex h-full w-full max-w-full flex-1 flex-col items-center min-w-36">
+                <div className="right  flex h-full w-full min-w-36 max-w-full flex-1 flex-col items-center">
                     <img
                         src={icons?.[postageSetting?.label_format]}
                         className=" h-full max-h-[12.5rem]"

@@ -3,7 +3,7 @@ import PackingSlipOption from './packingSlipOptions';
 import OrderReceiptOption from './orderReceiptOption';
 
 import Option from './option';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import UserLogout from '../../../../hooks/userLogout.jsx';
 import defaultChecks from './defaultChecks';
 import { useContent } from '../../../../context/ContentContext.jsx';

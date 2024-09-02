@@ -20,8 +20,6 @@ function Promo({ disable }) {
         }
     }, [promo]);
 
-
-   
     const details = () => {
         return (
             <div className="promo-container">
@@ -44,7 +42,11 @@ function Promo({ disable }) {
                         );
                     })}
                 </section>
-                {option == 'promo' ? <Promo_Student setShow={setShow} /> : <Voucher  setShow={setShow} />}
+                {option == 'promo' ? (
+                    <Promo_Student setShow={setShow} />
+                ) : (
+                    <Voucher setShow={setShow} />
+                )}
             </div>
         );
     };
@@ -81,7 +83,11 @@ function Promo({ disable }) {
                 disable={disable}
             />
             {_.get(promo, [0]) && !show && <AppliedCoupon />}
-            <MultiplePromo setCheck={setModalCheck} check={modalCheck}  setShow={setShow}/>
+            <MultiplePromo
+                setCheck={setModalCheck}
+                check={modalCheck}
+                setShow={setShow}
+            />
         </section>
     );
 }

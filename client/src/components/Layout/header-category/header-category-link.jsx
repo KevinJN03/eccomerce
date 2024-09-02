@@ -4,7 +4,13 @@ import { useGenderCategory } from '../../../hooks/genderCategory.jsx';
 function Header_link({ text, link }) {
     const [state, dispatch] = useGenderCategory();
     return (
-        <Link onClick={()=> dispatch({type: 'changeProductCategory', productCategory: text})}
+        <Link
+            onClick={() =>
+                dispatch({
+                    type: 'changeProductCategory',
+                    productCategory: text,
+                })
+            }
             className="header-link text-xxs tracking-wider"
             to={link ? link : `/${state.gender}/${text.toLowerCase()}`}
         >

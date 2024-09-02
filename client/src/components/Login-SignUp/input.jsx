@@ -34,8 +34,6 @@ function Input({
     return (
         <div className={`input-container`}>
             <div className="relative flex flex-col">
-          
-
                 <label
                     htmlFor={label.toLowerCase().replaceAll(' ', '-')}
                     className={className}
@@ -61,10 +59,6 @@ function Input({
                             className="absolute right-2 top-2/4 h-6 w-6 translate-y-[-50%]"
                         />
                     )}
-
-
-
-
                 </div>
 
                 {error?.[property] && (
@@ -72,8 +66,10 @@ function Input({
                     //     msg={error[property]}
                     //     className={errorMsgClassName}
                     // />
-                    <ErrorMessagePointerUp  msg={error[property]}
-                        className={'w-full !top-3 !relative'} />
+                    <ErrorMessagePointerUp
+                        msg={error[property]}
+                        className={'!relative !top-3 w-full'}
+                    />
                 )}
             </div>
         </div>

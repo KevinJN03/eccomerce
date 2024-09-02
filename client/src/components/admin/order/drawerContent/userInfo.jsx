@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import variant from '../home/variant';
 import { ClickAwayListener } from '@mui/material';
 import { useAdminContext } from '../../../../context/adminContext';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 function UserInfo({}) {
     const {
         orderInfo,

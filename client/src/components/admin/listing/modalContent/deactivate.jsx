@@ -3,7 +3,7 @@ import { useContent } from '../../../../context/ContentContext';
 import Template from './template';
 import UserLogout from '../../../../hooks/userLogout';
 
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import { useAdminContext } from '../../../../context/adminContext';
 import { check } from 'prettier';
 import updateProduct from './updateProduct';

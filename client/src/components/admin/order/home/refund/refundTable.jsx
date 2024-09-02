@@ -46,10 +46,13 @@ function RefundTable({
                                             order,
                                             'transaction_cost.subtotal'
                                         ),
-                                        charge: _.get(
-                                            order,
-                                            'transaction_cost.total'
-                                        ) - (_.get(order, 'refund.amount') || 0),
+                                        charge:
+                                            _.get(
+                                                order,
+                                                'transaction_cost.total'
+                                            ) -
+                                            (_.get(order, 'refund.amount') ||
+                                                0),
                                         delivery: _.get(
                                             order,
                                             'transaction_cost.delivery_cost'
@@ -132,6 +135,7 @@ function RefundTable({
                                     href={`/product/${_id}`}
                                     target="_blank"
                                     className="mt-2 cursor-pointer text-sm font-semibold underline hover:text-black/70"
+                                    rel="noreferrer"
                                 >
                                     {title}
                                 </a>
@@ -386,7 +390,8 @@ function RefundTable({
                     <p>
                         £
                         {parseFloat(
-                            _.get(order, 'transaction_cost.total') - (_.get(order, 'refund.amount') || 0)
+                            _.get(order, 'transaction_cost.total') -
+                                (_.get(order, 'refund.amount') || 0)
                         ).toFixed(2)}
                     </p>
                 </td>

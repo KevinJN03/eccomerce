@@ -7,7 +7,7 @@ import Transaction_Table from '../../table/transaction_table.jsx';
 import { Link, Outlet, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Error from '../../../../error/error.jsx';
-import { adminAxios } from '../../../../../api/axios';
+import { adminAxios } from '../../../../../api/axios.js';
 import userIcon from '../../../../../assets/icons/user.png';
 import { add } from 'lodash';
 import dayjs from 'dayjs';

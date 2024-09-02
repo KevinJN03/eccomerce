@@ -3,7 +3,7 @@ import Header from '../header';
 import Input from '../../Login-SignUp/input.jsx';
 import ErrorMessage, {
     ErrorMessagePointerUp,
-} from '../../Login-SignUp/errorMessage.jsx';
+} from '../../Login-SignUp/errorMessage';
 import defaultAxios from '../../../api/axios.js';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 

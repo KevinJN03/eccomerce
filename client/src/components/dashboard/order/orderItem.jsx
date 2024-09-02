@@ -1,19 +1,19 @@
 import dayjs from 'dayjs';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import courierLinksObject from './courierLinks';
-import CancelOrderBtn from './cancel-order';
-import { ErrorMessagePointerUp } from '../../Login-SignUp/errorMessage';
-import cancelOptions from '../../order/cancelOptions';
+import courierLinksObject from './courierLinks.js';
+import CancelOrderBtn from './cancel-order.jsx';
+import { ErrorMessagePointerUp } from '../../Login-SignUp/errorMessage.jsx';
+import cancelOptions from '../../order/cancelOptions.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { initial } from 'lodash';
-import axios from '../../../api/axios';
-import logOutUser from '../../common/logoutUser';
-import { useAuth } from '../../../hooks/useAuth';
-import { useUserDashboardContext } from '../../../context/userContext';
-import GLoader from '../../Login-SignUp/socialRegister/gloader';
-import CancelContainer from './cancelContainer';
-import submitCancellation from './handleCancelOrder';
+import axios from '../../../api/axios.js';
+import logOutUser from '../../common/logoutUser.js';
+import { useAuth } from '../../../hooks/useAuth.jsx';
+import { useUserDashboardContext } from '../../../context/userContext.jsx';
+import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
+import CancelContainer from './cancelContainer.jsx';
+import submitCancellation from './handleCancelOrder.js';
 function OrderItem({ order }) {
     const [show, setShow] = useState(false);
     const [courierLinks, setCourierLinks] = useState(courierLinksObject);
@@ -69,7 +69,7 @@ function OrderItem({ order }) {
         setLoading,
         setError,
         setShow,
-        orderNumber: order?._id
+        orderNumber: order?._id,
     });
 
     const cancelContainerProps = {
@@ -78,7 +78,6 @@ function OrderItem({ order }) {
         error,
         setShow,
         handleCancelOrder,
-        
     };
     return (
         // <AnimatePresence>
@@ -131,6 +130,7 @@ function OrderItem({ order }) {
                                 courierLinks?.[order?.courier?.toLowerCase()]
                             }${order?.trackingNumber}`}
                             className="h-fit flex-[1] border-2 py-2 text-center font-gotham text-sm tracking-wider transition-all hover:!bg-[var(--light-grey)]"
+                            rel="noreferrer"
                         >
                             TRACK ORDER
                         </a>

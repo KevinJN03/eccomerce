@@ -9,19 +9,17 @@ import Passwordinput from './passwordInput.jsx';
 import DOB from './dob.jsx';
 import Interest from './interest.jsx';
 
-function User_Form({ states, interestState, type}) {
- 
+function User_Form({ states, interestState, type }) {
     const { password, setPassword } = states[4];
     const { dob, setDob } = states[7];
     const passwordRef = useRef(null);
- 
 
     return (
         <>
             {userInput.map((input, idx) => {
-                 const state = Object.values(states[idx]);
-                 const value = state[0]
-                 const setState = state[1]
+                const state = Object.values(states[idx]);
+                const value = state[0];
+                const setState = state[1];
                 return (
                     <FormInput
                         inputInfo={input}
@@ -31,11 +29,13 @@ function User_Form({ states, interestState, type}) {
                     />
                 );
             })}
-            { type !== 'edit' && <Passwordinput
-                passwordRef={passwordRef}
-                setPassword={setPassword}
-                password={password}
-            />}
+            {type !== 'edit' && (
+                <Passwordinput
+                    passwordRef={passwordRef}
+                    setPassword={setPassword}
+                    password={password}
+                />
+            )}
             {/* <FormInput
                 inputInfo={passwordInput}
                 content={<PasswordContent />}
@@ -43,11 +43,10 @@ function User_Form({ states, interestState, type}) {
                 setState={setPassword}
                 className={'pr-10'}
             /> */}
- 
+
             <DOB states={{ dob, setDob }} />
-                   <Interest states={states}/>
+            <Interest states={states} />
             <Address states={states} />
-     
         </>
     );
 }

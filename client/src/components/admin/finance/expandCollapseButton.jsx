@@ -22,14 +22,14 @@ function ExpandCollapseButton({}) {
                 {!salesOpen || !feesOpen ? (
                     <>
                         <OpenInFullRounded />
-                        <p className="text-base font-medium whitespace-nowrap">
+                        <p className="whitespace-nowrap text-base font-medium">
                             Expand categories
                         </p>
                     </>
                 ) : (
                     <>
                         <CloseFullscreenRounded />
-                        <p className="text-base font-medium whitespace-nowrap">
+                        <p className="whitespace-nowrap text-base font-medium">
                             Collapse categories
                         </p>
                     </>

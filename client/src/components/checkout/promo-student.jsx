@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import ActivePromo from './active-promo';
 import { useCart } from '../../context/cartContext';
 import calculateTotal from '../common/calculateTotal';
 import _ from 'lodash';
-function Promo_Student({ setShow,}) {
+function Promo_Student({ setShow }) {
     const [promoText, setPromoText] = useState();
     const [error, setError] = useState({ bool: false });
     const { savePercent, amountOff } = calculateTotal();

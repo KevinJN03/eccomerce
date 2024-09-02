@@ -8,7 +8,7 @@ import {
 } from 'react';
 import _, { cloneDeep, isEqual } from 'lodash';
 import cartReducer, { getCartFromLocalStorage } from '../hooks/cartReducer';
-import axios from '../api/axios';
+import axios from '../api/axios.js';
 import { useLayoutContext } from './layoutContext';
 import objectId from 'bson-objectid';
 
@@ -164,15 +164,9 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
 
         if (priceState) {
             _.set(pickedData, 'price.current', priceState);
-
-        
         }
         if (variationSelect) {
-            _.set(
-                pickedData,
-                ['variation_data', 'select'],
-                variationSelect
-            );
+            _.set(pickedData, ['variation_data', 'select'], variationSelect);
         }
         _.set(pickedData, 'product_id', product._id);
         _.set(pickedData, '_id', objectId().toString());

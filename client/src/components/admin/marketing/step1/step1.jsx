@@ -9,7 +9,7 @@ import Durations from './durations';
 import BubbleButton from '../../../buttons/bubbleButton';
 import { useContent } from '../../../../context/ContentContext';
 import { useAdminContext } from '../../../../context/adminContext';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 function Step1({}) {
     //
     const { errors, setErrors, details, setDetails, clearError, errorStyle } =

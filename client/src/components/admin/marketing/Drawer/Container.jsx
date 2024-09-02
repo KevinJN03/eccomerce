@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import ThemeBtn from '../../../buttons/themeBtn';
 import CopyLink from '../copyLink';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import {
     offerTypes,
     useSalesDiscountContext,

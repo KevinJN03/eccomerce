@@ -21,11 +21,9 @@ function Country_Picker({ select, setSelect, disable }) {
         handleCloseOption();
     }, [select]);
 
-
     return (
         <section
             id="country-picker"
-       
             className={`px-6 py-6 ${disable ? 'disable-component' : 'display-component'}`}
         >
             <h1 className="mb-2 text-lg font-bold tracking-wider">

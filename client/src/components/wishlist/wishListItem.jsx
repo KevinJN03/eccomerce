@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AnimatePresence, motion } from 'framer-motion';
 import _ from 'lodash';
-import axios, { adminAxios } from '../../api/axios';
+import axios, { adminAxios } from '../../api/axios.js';
 function WishListItem(props) {
     const { removeItem } = useWishlistContext();
     const [remove, setRemove] = useState({ parent: false, child: false });

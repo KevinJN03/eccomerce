@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useListingPageContext } from '../../../../context/listingPageContext';
 import qs from 'qs';
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import Stats from './stats';
 import Stock_Price from './stock-price';
 
@@ -18,7 +18,7 @@ function VerticalItem({ product, index }) {
 
     const [showAction, setShowAction] = useState(false);
 
-    const { selectionSet, setSelectionSet, checks, handleFeatured, } =
+    const { selectionSet, setSelectionSet, checks, handleFeatured } =
         useListingPageContext();
 
     return (
@@ -64,14 +64,9 @@ function VerticalItem({ product, index }) {
             <section className="flex w-full flex-col">
                 <section className="top flex w-full flex-row gap-16">
                     <div className="flex-[5] flex-col">
-                        <Link
-                            to={`edit/${product?._id}`}
-                        >
-                            <p
-                                title={product?.title}
-                                className="text-sm "
-                            >
-                                <span className="underline font-medium">
+                        <Link to={`edit/${product?._id}`}>
+                            <p title={product?.title} className="text-sm ">
+                                <span className="font-medium underline">
                                     {product?.title} {product?.title}
                                 </span>
                                 {product?.note && (

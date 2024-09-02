@@ -1,12 +1,12 @@
 import Input from './input';
 import Promo_Voucher_header from './promo-voucher-header';
 import { useState } from 'react';
-import axios from '../../api/axios';
+import axios from '../../api/axios.js';
 import ActivePromo from './active-promo';
 import { v4 as uuidv4 } from 'uuid';
 import { useCart } from '../../context/cartContext.jsx';
 import _ from 'lodash';
-function Voucher({setShow}) {
+function Voucher({ setShow }) {
     const [voucherText, setVoucherText] = useState();
     const [error, setError] = useState({ bool: false });
     const { promo, setPromo, updateItemProperty } = useCart();
@@ -15,10 +15,13 @@ function Voucher({setShow}) {
             if (voucherText) {
                 const { data } = await axios.get(
                     `/giftCard?code=${voucherText}`
-                )
+                );
 
                 if (promo?.length < 1) {
-                    updateItemProperty({ property: 'giftCard', value: data._id });
+                    updateItemProperty({
+                        property: 'giftCard',
+                        value: data._id,
+                    });
                     setShow(() => false);
                 }
 

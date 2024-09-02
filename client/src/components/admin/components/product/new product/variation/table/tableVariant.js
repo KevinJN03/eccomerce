@@ -1,4 +1,4 @@
-import { easeInOut } from "framer-motion";
+import { easeInOut } from 'framer-motion';
 
 const tableRowVariants = {
     hover: {
@@ -31,4 +31,4 @@ const tableRowVariants = {
     },
 };
 
-export default tableRowVariants
+export default tableRowVariants;

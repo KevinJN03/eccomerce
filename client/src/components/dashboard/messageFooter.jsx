@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
-import CloseSharpIcon from '@mui/icons-material/CloseSharp';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp.js';
+import CloseSharpIcon from '@mui/icons-material/CloseSharp.js';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined.js';
 function MessageFooter({
     footerMessage,
     setFooterMessage,

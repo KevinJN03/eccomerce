@@ -4,7 +4,7 @@ import './sidebar.scss';
 import { useDarkMode } from '../../../../context/darkModeContext';
 
 import shop_icon from '../../../../assets/icons/shop.png';
-import axios from '../../../../api/axios';
+import axios from '../../../../api/axios.js';
 import { v4 as uuidv4 } from 'uuid';
 
 import optionsArray from './sideBarOption';

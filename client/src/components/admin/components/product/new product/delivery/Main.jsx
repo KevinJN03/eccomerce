@@ -8,7 +8,7 @@ import {
     ModeEditOutlineOutlined,
     RemoveCircleOutlineRounded,
 } from '@mui/icons-material';
-import { adminAxios } from '../../../../../../api/axios';
+import { adminAxios } from '../../../../../../api/axios.js';
 import UserLogout from '../../../../../../hooks/userLogout';
 import BubbleButton from '../../../../../buttons/bubbleButton';
 
@@ -103,7 +103,7 @@ function MainContent() {
             </div>
             <div className="profiles mt-3 flex flex-col">
                 {loading ? (
-                    <div class="spinner-circle self-center ![--spinner-color:var(--gray-9)]"></div>
+                    <div className="spinner-circle self-center ![--spinner-color:var(--gray-9)]"></div>
                 ) : (
                     <>
                         {deliveryProfiles &&

@@ -1,6 +1,12 @@
 import PaginationButton from './buttons';
 
-function Pagination({ divideBy, setPage, page, buttonClassName,  activeClassName }) {
+function Pagination({
+    divideBy,
+    setPage,
+    page,
+    buttonClassName,
+    activeClassName,
+}) {
     const nextPage = () => {
         console.log('next');
 
@@ -19,7 +25,11 @@ function Pagination({ divideBy, setPage, page, buttonClassName,  activeClassName
     };
     return (
         <>
-            <button className={`${buttonClassName ||  'btn'}`} onClick={previousPage} disabled={page == 1}>
+            <button
+                className={`${buttonClassName || 'btn'}`}
+                onClick={previousPage}
+                disabled={page == 1}
+            >
                 <svg
                     width="18"
                     height="18"

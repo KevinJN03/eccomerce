@@ -11,16 +11,17 @@ function SearchOrder({}) {
         setSearchText,
         searchData,
         setSearchData,
-        
+
         setTriggerFetchData,
         setLoading,
         currentPage,
         setCurrentPage,
         setSearchDataLoading,
         fetchSearchData,
-        searchParams, setSearchParams,
+        searchParams,
+        setSearchParams,
         loading,
-        handleChangePageNumber
+        handleChangePageNumber,
     } = useAdminOrderContext();
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -31,8 +32,8 @@ function SearchOrder({}) {
         setSearchingOrder(() => false);
         setSearchText(() => '');
         setSearchData(() => ({}));
-        searchParams.delete('searchText')
-        setSearchParams(searchParams)
+        searchParams.delete('searchText');
+        setSearchParams(searchParams);
         setLoading(() => true);
         setTriggerFetchData((prevState) => !prevState);
     };
@@ -87,7 +88,7 @@ function SearchOrder({}) {
                             <Pagination
                                 page={currentPage}
                                 onChange={(e, value) => {
-                                    handleChangePageNumber(value)
+                                    handleChangePageNumber(value);
                                     // setLoading(() => true);
                                     // fetchSearchData(value);
                                     // setCurrentPage(() => value);

@@ -10,7 +10,7 @@ import {
     EditRounded,
     MoreHorizRounded,
 } from '@mui/icons-material';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 import _ from 'lodash';
 import ThemeBtn from '../../../buttons/themeBtn';
 import Pagination from '../../../dashboard/pagination/pagination';
@@ -94,7 +94,7 @@ function DeliveryProfile(props) {
                     >
                         {loading ? (
                             <div className="w-fit">
-                                <div className="spinner-circle   ![--spinner-color:var(--slate-10)] spinner-sm"></div>
+                                <div className="spinner-circle   spinner-sm ![--spinner-color:var(--slate-10)]"></div>
                             </div>
                         ) : (
                             <p className="text-base font-medium text-black ">
@@ -229,7 +229,7 @@ function DeliveryOption({}) {
                     <h2 className="text-2xl font-semibold">Delivery options</h2>
                     <p>Select a delivery profile or create a new one.</p>
                 </div>
-                { loading ? (
+                {loading ? (
                     <div className="flex  h-44 w-full items-center justify-center">
                         <div className="spinner-circle spinner-lg ![--spinner-color:var(--slate-12)]"></div>
                     </div>

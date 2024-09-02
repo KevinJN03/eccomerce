@@ -38,7 +38,7 @@ function Input({ header, button_text, handleClick, setText, error, setError }) {
                     {error.bool && (
                         <ErrorMessagePointerUp
                             msg={msg[error.msg]}
-                            className={'!top-full mt-3 left-0'}
+                            className={'!top-full left-0 mt-3'}
                         />
                     )}
                 </div>

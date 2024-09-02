@@ -21,7 +21,7 @@ womenImg.sort((a, b) => {
     return numA - numB;
 });
 
-function Nav_Category({ category , handleClick}) {
+function Nav_Category({ category, handleClick }) {
     let counter = 0;
     const newUrl = (image, index) => {
         let url = new URL(image[index], import.meta.url).href;
@@ -47,19 +47,21 @@ function Nav_Category({ category , handleClick}) {
     return (
         <section className="nav-category">
             {categoryNavs.map((banner, idx) => {
-        
                 return (
                     <Nav_Banner
-                    key={uuidv4()}
+                        key={uuidv4()}
                         title={banner.title}
                         small={banner.small || false}
                         home={banner.home || false}
-                        img={category ? newUrl(menImg, idx) : newUrl(womenImg, idx)}
+                        img={
+                            category
+                                ? newUrl(menImg, idx)
+                                : newUrl(womenImg, idx)
+                        }
                         handleClick={handleClick}
                     />
                 );
             })}
-
         </section>
     );
 }

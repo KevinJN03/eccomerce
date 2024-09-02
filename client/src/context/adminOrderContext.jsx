@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { adminOrderModalReducer } from '../hooks/adminOrderModalReducer';
 import UserLogout from '../hooks/userLogout';
-import { adminAxios } from '../api/axios';
+import { adminAxios } from '../api/axios.js';
 import _, { forEach } from 'lodash';
 import { useContent } from './ContentContext';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -387,7 +387,7 @@ export default function AdminOrderContextProvider({ children }) {
             });
             setOrderInfo(() => ({ ...data?.order }));
 
-            setMarkAsComplete(() => mark_as_completed || false)
+            setMarkAsComplete(() => mark_as_completed || false);
             setModalOpen(() => true);
 
             if (setShowActions) {
@@ -471,7 +471,8 @@ export default function AdminOrderContextProvider({ children }) {
         handleChangePageNumber,
         handleOrderPerPage,
         statusRef,
-        markAsComplete, setMarkAsComplete
+        markAsComplete,
+        setMarkAsComplete,
     };
 
     return (

@@ -68,8 +68,7 @@ export default {
             lg: '1024px',
 
             'md+lg': '481px',
-            'max-h-lg': {'raw': '(max-height: 900px)'}
-
+            'max-h-lg': { raw: '(max-height: 900px)' },
         },
     },
     plugins: [require('daisyui'), require('rippleui')],

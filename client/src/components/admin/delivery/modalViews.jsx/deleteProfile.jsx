@@ -3,7 +3,7 @@ import BubbleButton from '../../../buttons/bubbleButton';
 import { useContent } from '../../../../context/ContentContext';
 import ThemeBtn from '../../../buttons/themeBtn';
 import UserLogout from '../../../../hooks/userLogout';
-import { adminAxios } from '../../../../api/axios';
+import { adminAxios } from '../../../../api/axios.js';
 
 function DeleteProfile({}) {
     const { setModalCheck, modalContent, setShowAlert } = useContent();

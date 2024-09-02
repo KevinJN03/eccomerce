@@ -1,15 +1,13 @@
-import disableLayout from '../../hooks/disableLayout';
+import disableLayout from '../../hooks/disableLayout.jsx';
 import { Link } from 'react-router-dom';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
-import Layout from '../Layout/layout';
-import Header from '../Layout/header';
-import Footer from '../Layout/footer/footer';
+import Layout from '../Layout/layout.jsx';
+import Header from '../Layout/header.jsx';
+import Footer from '../Layout/footer/footer.jsx';
 export default function Error({ message, link, buttonText }) {
     return (
-        <section className="error-page flex w-full h-screen items-center justify-center">
-            
+        <section className="error-page flex h-screen w-full items-center justify-center">
             <section className="error-container flex max-w-[1366px] flex-col items-center justify-center">
-   
                 <img loading="lazy" src={emoji} className="h-44 w-44" />
                 <h1 className="mb-4 text-6xl font-black tracking-wider">
                     OH NO!
@@ -25,8 +23,6 @@ export default function Error({ message, link, buttonText }) {
                     {buttonText ? buttonText : 'GO TO HOMEPAGE'}
                 </Link>
             </section>
-
-          
         </section>
     );
 }

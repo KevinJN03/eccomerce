@@ -74,7 +74,9 @@ function DeliverySection({}) {
                             <BubbleButton
                                 handleClick={() =>
                                     setProfile((prevState) => {
-                                        const newValue = {...generateNewService()};
+                                        const newValue = {
+                                            ...generateNewService(),
+                                        };
                                         if (isUpgrade) {
                                             newValue.destination = 'domestic';
                                             newValue.upgrade = 'Express';

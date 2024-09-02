@@ -3,7 +3,7 @@ import chat_icon from '../../../assets/icons/profile-icons/chat.png';
 import discount_icon from '../../../assets/icons/discount.png';
 import alert_icon from '../../../assets/icons/alert.png';
 import { useEffect, useRef, useState } from 'react';
-import axios from '../../../api/axios';
+import axios from '../../../api/axios.js';
 import _, { property } from 'lodash';
 import Alert_Item from './alert.item.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
@@ -11,19 +11,14 @@ import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
 import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
 function Contact_Preferences({}) {
-    const {
-      
-        setFooterMessage,
-        userData,
-        setUserData,
-        logoutUser,
-    } = useUserDashboardContext();
+    const { setFooterMessage, userData, setUserData, logoutUser } =
+        useUserDashboardContext();
 
     const [confirmLoadState, setConfirmLoadState] = useState(false);
     const [isAllSelected, setIsAllSelected] = useState(false);
-   
+
     const [checks, setChecks] = useState({ ...userData.contact_preferences });
-  
+
     const [disable, setDisable] = useState(true);
 
     const { authDispatch } = useAuth();

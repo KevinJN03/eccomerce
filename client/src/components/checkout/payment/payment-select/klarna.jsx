@@ -121,6 +121,7 @@ function KlarnaSelect({}) {
                                 href="https://www.klarna.com/uk/smoooth/"
                                 target="_blank"
                                 className="underline "
+                                rel="noreferrer"
                             >
                                 Learn more
                             </a>{' '}
@@ -134,6 +135,7 @@ function KlarnaSelect({}) {
                             className="underline"
                             target="_blank"
                             href="https://cdn.klarna.com/1.0/shared/content/legal/terms/0/en_gb/user"
+                            rel="noreferrer"
                         >
                             Klarna Shopping Service
                         </a>{' '}
@@ -142,6 +144,7 @@ function KlarnaSelect({}) {
                             className="underline"
                             target="_blank"
                             href="https://cdn.klarna.com/1.0/shared/content/legal/terms/0/en_gb/privacy"
+                            rel="noreferrer"
                         >
                             Privacy Notice
                         </a>{' '}
@@ -150,6 +153,7 @@ function KlarnaSelect({}) {
                             className="underline"
                             target="_blank"
                             href="https://cdn.klarna.com/1.0/shared/content/legal/terms/0/en_gb/cookie_purchase"
+                            rel="noreferrer"
                         >
                             Cookie Notice
                         </a>

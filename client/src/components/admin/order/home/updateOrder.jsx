@@ -12,7 +12,7 @@ import animationVariant from '../../home/animationVariant.js';
 
 import ErrorMessage, {
     BetaErrorMessage,
-} from '../../../Login-SignUp/errorMessage.jsx';
+} from '../../../Login-SignUp/errorMessage';
 import OptionError from '../../components/product/new product/variation/error/optionError.jsx';
 import { ClickAwayListener } from '@mui/material';
 
@@ -173,7 +173,7 @@ function UpdateOrder({}) {
                         <p className="absolute left-2/4 top-2/4 translate-x-[-50%] translate-y-[-60%] font-gotham text-lg">
                             g
                         </p>
-                        <div class="spinner-circle ![--spinner-color:var(--slate-11)]"></div>
+                        <div className="spinner-circle ![--spinner-color:var(--slate-11)]"></div>
                         {/* <svg
                             className="spinner-circle spinner-lg ![--spinner-color:var(--slate-11)]"
                             viewBox="25 25 50 50"

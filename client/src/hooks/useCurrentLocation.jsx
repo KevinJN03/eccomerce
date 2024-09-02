@@ -11,7 +11,7 @@ function useCurrentLocation() {
     } else {
         currentLocation = locationArray[locationArray.length - 2];
     }
-  
+
     return { currentLocation };
 }
 
