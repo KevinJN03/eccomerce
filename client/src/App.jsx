@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import minMax from 'dayjs/plugin/minMax';
-
+import localeData from 'dayjs/plugin/localeData'
 import { CartProvider } from './context/cartContext';
 import Layout from './components/Layout/layout';
 import { WishlistContextProvider } from './context/wishlistContext';
@@ -19,6 +19,7 @@ dayjs.extend(timezone);
 dayjs.extend(minMax);
 dayjs.extend(customParseFormat);
 dayjs.tz.setDefault('Europe/London');
+dayjs.extend(localeData)
 
 export const defaultDayjs = dayjs;
 overwrite([

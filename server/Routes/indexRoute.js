@@ -13,6 +13,7 @@ import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
 import ExpressStatusMonitor from 'express-status-monitor';
 import emailTestRoute from '../React Email/test';
+import { loginUser } from '../Controllers/userController.js';
 
 const router = express.Router();
 router.use('/test', emailTestRoute);
@@ -24,6 +25,7 @@ router.get('/server-status', (req, res) => {
   res.send('OK');
 });
 router.post('/admin/login', adminLogin);
+router.post('/user/login', loginUser);
 router.get('/admin/check', [
   checkAdminAuthenticated,
   asyncHandler((req, res, next) => {

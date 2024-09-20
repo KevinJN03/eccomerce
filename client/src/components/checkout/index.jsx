@@ -58,7 +58,7 @@ function Checkout() {
         addressType: null,
     });
     const [deliveryDate, setDeliveryDate] = useState('');
-    const { cart, fetchItems } = useCart();
+    const { cart, fetchItems, loading: cartProviderLoading } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
     const [isDataSet, setIsDataSet] = useState(false);
@@ -67,7 +67,6 @@ function Checkout() {
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [initialView, setInitialView] = useState(null);
     const abortControllerRef = useRef(new AbortController());
-    const [error, setError] = useState({});
     const [loading, setLoading] = useState(true);
     const [cartLoading, setCartLoading] = useState();
     // useEffect(() => {
@@ -208,8 +207,6 @@ function Checkout() {
                 setIsDeliveryAddressFill,
                 initialView,
                 setInitialView,
-                error,
-                setError,
             }}
         >
             <section className="checkout-page-wrapper m-0 flex h-full min-h-screen w-full  max-w-[100vw] items-center justify-center p-0">
@@ -225,7 +222,8 @@ function Checkout() {
                         </div>
                     ) : (
                         !cartLoading &&
-                        !loading && (
+                        !loading &&
+                        !cartProviderLoading && (
                             <section
                                 id="checkout-page"
                                 className="m-0 flex h-full w-full flex-col items-center justify-center p-0"

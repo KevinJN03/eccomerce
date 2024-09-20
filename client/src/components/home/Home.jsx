@@ -30,8 +30,8 @@ import Section_1 from './Section_1.jsx';
 import Hero from './hero.jsx';
 import SaleBanner_1 from './salebanner/Salebanner_1.jsx';
 import SaleBanner_2 from './salebanner/Salebanner_2.jsx';
-import SaleBanner_3 from './salebanner/salebanner_3.jsSalebanner_2.jsx';
-import SaleBanner_4 from './salebanner/salebanner_4.jsSalebanner_2.jsx';
+import SaleBanner_3 from './salebanner/salebanner_3.jsx';
+import SaleBanner_4 from './salebanner/salebanner_4.jsx';
 
 function Home() {
     const slides = [

@@ -8,8 +8,14 @@ import _, { property } from 'lodash';
 import generateEstimatedTime from '../../admin/components/product/new product/utils/generateEstimateTime';
 
 function Shipping_Option({ disable, cartByDelivery }) {
-    const { deliverySelect, setDeliverySelect } = useCheckoutContext();
+    const {
+        deliverySelect,
+        setDeliverySelect,
+        error: checkoutErrors,
+        setError: setCheckOutErrors,
+    } = useCheckoutContext();
     const { updateItemProperty, stateProps } = useCart();
+
     const handleClick = ({ _id, shippingId }) => {
         try {
             setDeliverySelect((prevState) => ({
@@ -21,6 +27,12 @@ function Shipping_Option({ disable, cartByDelivery }) {
                 property: `delivery_option.${_id}`,
                 value: shippingId,
             });
+            debugger;
+
+            setCheckOutErrors((prevState) => ({
+                ...prevState,
+                cart_id: { ...prevState?.cart_id, [_id]: true },
+            }));
         } catch (error) {
             console.error('error at Shipping_Option', error);
         }
@@ -30,9 +42,10 @@ function Shipping_Option({ disable, cartByDelivery }) {
             {cartByDelivery.map(({ _id, cartItems, info, shipping_costs }) => {
                 return (
                     <section
-                        className="flex flex-row flex-nowrap border border-2 p-2"
+                        className={`flex flex-row flex-nowrap  border-2 p-2 ${!_.get(checkoutErrors, ['cart_id', _id]) ? '!border-red-700' : 'border'}`}
                         key={_id}
                     >
+
                         <div className="flex-1 pt-8">
                             {cartItems.map(
                                 ({
