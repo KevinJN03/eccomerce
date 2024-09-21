@@ -58,7 +58,7 @@ function Checkout() {
         addressType: null,
     });
     const [deliveryDate, setDeliveryDate] = useState('');
-    const { cart, fetchItems, loading: cartProviderLoading } = useCart();
+    const { cart, fetchItems } = useCart();
     const [selectedMethod, setSelectedMethod] = useState({});
     const [klarnaDob, setKlarnaDob] = useState({});
     const [isDataSet, setIsDataSet] = useState(false);
@@ -222,8 +222,7 @@ function Checkout() {
                         </div>
                     ) : (
                         !cartLoading &&
-                        !loading &&
-                        !cartProviderLoading && (
+                        !loading && (
                             <section
                                 id="checkout-page"
                                 className="m-0 flex h-full w-full flex-col items-center justify-center p-0"

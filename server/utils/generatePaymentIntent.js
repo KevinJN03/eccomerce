@@ -17,23 +17,19 @@ const generatePaymentIntent = [
     .escape()
     .trim()
     .custom(async (value) => {
-      const cart = await Cart.findById(value);
+      const cart = await Cart.findById(value, null, {
+        lean: { toObject: true },
+      });
       let failed = false;
       const delivery_option = {};
       _.forEach(_.get(cart, 'items'), ({ delivery }) => {
         if (_.get(cart, ['delivery_option', delivery])) {
-          delivery_option[delivery] = true;
-          return {
-            [delivery]: true,
-          };
+          delivery_option[delivery] = cart.delivery_option?.[delivery];
+          return
         }
 
         failed = true;
         delivery_option[delivery] = false;
-
-        return {
-          [delivery]: false,
-        };
       });
 
       console.log({ value, delivery_option });

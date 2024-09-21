@@ -49,22 +49,54 @@ function Checkout_Total() {
 
                 <div className="flex flex-col gap-3">
                     <p className="flex justify-between">
-                        Subtotal <span>£ {withOutShipping}</span>
+                        Subtotal{' '}
+                        <span>
+                            {parseFloat(withOutShipping).toLocaleString(
+                                'en-GB',
+                                {
+                                    style: 'currency',
+                                    currency: 'GBP',
+                                }
+                            )}
+                        </span>
                     </p>
                     {promo[0]?.bool && (
                         <p className="flex justify-between">
-                            Promo <span>-£ {amountOff}</span>
+                            Promo{' '}
+                            <span>
+                                {parseFloat(-amountOff).toLocaleString(
+                                    'en-GB',
+                                    {
+                                        style: 'currency',
+                                        currency: 'GBP',
+                                    }
+                                )}
+                            </span>
                         </p>
                     )}
 
                     <p className="flex justify-between">
                         Delivery{' '}
                         <span>
-                            {delivery_cost ? `£ ${delivery_cost}` : 'FREE'}
+                            {delivery_cost
+                                ? parseFloat(delivery_cost).toLocaleString(
+                                      'en-GB',
+                                      {
+                                          style: 'currency',
+                                          currency: 'GBP',
+                                      }
+                                  )
+                                : 'FREE'}
                         </span>
                     </p>
                     <p className="flex justify-between font-gotham font-bold">
-                        TOTAL TO PAY <span>£ {total}</span>
+                        TOTAL TO PAY{' '}
+                        <span>
+                            {parseFloat(total).toLocaleString('en-GB', {
+                                style: 'currency',
+                                currency: 'GBP',
+                            })}
+                        </span>
                     </p>
                 </div>
             </section>

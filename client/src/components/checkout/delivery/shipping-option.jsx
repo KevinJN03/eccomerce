@@ -27,7 +27,7 @@ function Shipping_Option({ disable, cartByDelivery }) {
                 property: `delivery_option.${_id}`,
                 value: shippingId,
             });
-            debugger;
+            
 
             setCheckOutErrors((prevState) => ({
                 ...prevState,
@@ -42,10 +42,9 @@ function Shipping_Option({ disable, cartByDelivery }) {
             {cartByDelivery.map(({ _id, cartItems, info, shipping_costs }) => {
                 return (
                     <section
-                        className={`flex flex-row flex-nowrap  border-2 p-2 ${!_.get(checkoutErrors, ['cart_id', _id]) ? '!border-red-700' : 'border'}`}
+                        className={`flex flex-row flex-nowrap  border-2 p-2 ${!_.get(deliverySelect, [_id]) ? '!border-red-700' : 'border'}`}
                         key={_id}
                     >
-
                         <div className="flex-1 pt-8">
                             {cartItems.map(
                                 ({

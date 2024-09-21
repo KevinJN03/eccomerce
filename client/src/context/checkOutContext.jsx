@@ -17,12 +17,7 @@ function CheckOutProvider({ children, value }) {
     //     cart_id: stateProps,
     // });
 
-    const [error, setError] = useState(() => {
-        debugger;
-        return {
-            cart_id: _.get(stateProps, 'delivery_option') || {},
-        };
-    });
+    const [error, setError] = useState({});
 
     useEffect(() => {
         setDeliverySelect(() => _.get(stateProps, 'delivery_option'));

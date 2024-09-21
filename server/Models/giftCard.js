@@ -16,7 +16,7 @@ GiftCardSchema.add({
   email: { type: Schema.Types.String, required: true },
   redacted_code: { type: Schema.Types.String },
   balance: { type: Schema.Types.Number },
-  customer: { type: Schema.Types.ObjectId, ref: 'users' },
+  customer: { type: Schema.Types.ObjectId, ref: 'users', default: null },
   added: { type: Schema.Types.Date, default: null },
   // audits: [
   //   {

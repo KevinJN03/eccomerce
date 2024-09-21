@@ -241,7 +241,7 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                                                 >
                                                     {parseFloat(
                                                         amount / 100
-                                                    ).toLocaleString('en-US', {
+                                                    ).toLocaleString('en-GB', {
                                                         style: 'currency',
                                                         currency: 'GBP',
                                                     })}
@@ -251,7 +251,7 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                                                 >
                                                     {parseFloat(
                                                         fee / 100
-                                                    ).toLocaleString('en-US', {
+                                                    ).toLocaleString('en-GB', {
                                                         style: 'currency',
                                                         currency: 'GBP',
                                                     })}
@@ -261,7 +261,7 @@ function ActivityTable({ activities, setLoading, page, setPage }) {
                                                 >
                                                     {parseFloat(
                                                         net / 100
-                                                    ).toLocaleString('en-US', {
+                                                    ).toLocaleString('en-GB', {
                                                         style: 'currency',
                                                         currency: 'GBP',
                                                     })}
