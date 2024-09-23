@@ -196,7 +196,7 @@ function Order_Success({}) {
                                                                         {parseFloat(
                                                                             price
                                                                         ).toLocaleString(
-                                                                            'en-US',
+                                                                            'en-GB',
                                                                             {
                                                                                 style: 'currency',
                                                                                 currency:

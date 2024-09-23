@@ -40,7 +40,7 @@ function FinanceContextProvider({ children }) {
 
     const generateText = (num) => {
         return {
-            numString: parseFloat(num / 100).toLocaleString('en-US', {
+            numString: parseFloat(num / 100).toLocaleString('en-GB', {
                 style: 'currency',
                 currency: 'GBP',
             }),

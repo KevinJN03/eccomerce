@@ -4,6 +4,7 @@ import Coupon from '../Models/coupon.js';
 import { check, validationResult } from 'express-validator';
 import dayjs from 'dayjs';
 import endDateValidator from '../utils/endDateValidator.js';
+import _ from 'lodash';
 
 export const get_all_coupons = asyncHandler(async (req, res, next) => {
   // const coupons = await Coupon.find({}, null, { lean: { toObject: true } });
@@ -18,16 +19,29 @@ export const get_single_coupon = [
   asyncHandler(async (req, res, next) => {
     const { code } = req.query;
 
-    const coupon = await Coupon.findOne({ code });
-    console.log({code, coupon})
+    // check if end date has not passed today, and th coupon is active
+    const findCoupon = await Coupon.aggregate([
+      {
+        $match: {
+          $and: [
+            { code },
+            { active: true },
+            {
+              $or: [{ end_date: null }, { end_date: { $gte: dayjs().unix() } }],
+            },
+          ],
+        },
+      },
+    ]);
+    console.log({ code, coupon: findCoupon[0] });
 
-    if (coupon) {
-      res.status(200).send(coupon);
-    } else {
+    if (_.isEmpty(findCoupon)) {
       const err = new Error('Coupon Not Found');
       err.statusCode = 404;
       next(err);
       // res.status(404).send('Coupon Not Found');
+    } else {
+      res.status(200).send(_.get(findCoupon, 0));
     }
   }),
 ];

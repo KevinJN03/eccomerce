@@ -67,7 +67,6 @@ function Checkout() {
     const [userPaymentMethods, setUserPaymentMethods] = useState([]);
     const [initialView, setInitialView] = useState(null);
     const abortControllerRef = useRef(new AbortController());
-    const [error, setError] = useState({});
     const [loading, setLoading] = useState(true);
     const [cartLoading, setCartLoading] = useState();
     // useEffect(() => {
@@ -208,8 +207,6 @@ function Checkout() {
                 setIsDeliveryAddressFill,
                 initialView,
                 setInitialView,
-                error,
-                setError,
             }}
         >
             <section className="checkout-page-wrapper m-0 flex h-full min-h-screen w-full  max-w-[100vw] items-center justify-center p-0">

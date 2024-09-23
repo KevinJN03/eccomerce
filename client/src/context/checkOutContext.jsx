@@ -8,16 +8,29 @@ export const useCheckoutContext = () => {
     return useContext(CheckoutContext);
 };
 function CheckOutProvider({ children, value }) {
-    const { stateProps } = useCart();
+    const { stateProps, } = useCart();
     const [deliverySelect, setDeliverySelect] = useState(
         _.get(stateProps, 'delivery_option') || {}
     );
+
+    // const [checkoutErrors, setCheckOutErrors] = useState({
+    //     cart_id: stateProps,
+    // });
+
+    const [error, setError] = useState({});
+
     useEffect(() => {
         setDeliverySelect(() => _.get(stateProps, 'delivery_option'));
     }, [stateProps?.delivery_option]);
     return (
         <CheckoutContext.Provider
-            value={{ ...value, deliverySelect, setDeliverySelect }}
+            value={{
+                ...value,
+                deliverySelect,
+                setDeliverySelect,
+                error,
+                setError,
+            }}
         >
             {children}
         </CheckoutContext.Provider>

@@ -17,7 +17,7 @@ function Product({ img, title, price, variation1, variation2, id }) {
                 </p>
 
                 <p className="h-8  py-0 font-gotham text-base tracking-widest text-primary">
-                    {parseFloat(price).toLocaleString('en-US', {
+                    {parseFloat(price).toLocaleString('en-GB', {
                         style: 'currency',
                         currency: 'GBP',
                     })}

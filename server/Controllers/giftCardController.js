@@ -24,24 +24,57 @@ export const get_all_giftCard = asyncHandler(async (req, res, next) => {
   return res.status(200).send(giftCard);
 });
 
-export const get_single_giftCard = asyncHandler(async (req, res, next) => {
-  const { code } = req.query;
-  const codeToUpperCase = _.toUpper(code);
-  const hashCode = crypto
-    .createHash('sha256')
-    .update(codeToUpperCase)
-    .digest('hex');
-  const giftCard = await GiftCard.findOne({ hash_code: hashCode });
+export const get_single_giftCard = [
+  check('code').escape().trim().toUpperCase(),
+  asyncHandler(async (req, res, next) => {
+    const { code } = req.query;
+    const hashCode = crypto.createHash('sha256').update(code).digest('hex');
+    const giftCard = await GiftCard.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              hash_code: hashCode,
+            },
+            {
+              active: true,
+            },
+            {
+              $or: [{ end_date: null }, { end_date: { $gte: dayjs().unix() } }],
+            },
+            {
+              $or: [{ customer: null }, { customer: req.user?._id }],
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          code: 0,
+          hash_code: 0,
+          // _id: 0,
+        },
+      },
 
-  if (giftCard) {
-    // giftCard.code = decrypt(giftCard.code);
-    return res.status(200).send(giftCard);
-  } else {
-    const error = new Error('Gift Card Not Found');
-    error.statusCode = 404;
-    return next(error);
-  }
-});
+      {
+        $addFields: {
+          code: '$redacted_code',
+        },
+      },
+    ]);
+
+    console.log({ giftCard: giftCard[0] });
+
+    if (!_.isEmpty(giftCard)) {
+      // giftCard.code = decrypt(giftCard.code);
+      return res.status(200).send(_.get(giftCard, 0));
+    } else {
+      const error = new Error('Gift Card Not Found');
+      error.statusCode = 404;
+      return next(error);
+    }
+  }),
+];
 
 export const delete_single = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -270,7 +303,6 @@ export const getAllUserGiftCards = [
           timestamp: 1,
         },
       },
-     
     ];
 
     const result = await GiftCard.aggregate(pipeline);

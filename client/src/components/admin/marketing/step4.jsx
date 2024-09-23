@@ -65,7 +65,7 @@ function Step4({ handleDone }) {
                     <p className="text-base">
                         {`Great job! The gift card for ${parseFloat(
                             details?.amount
-                        ).toLocaleString('en-US', {
+                        ).toLocaleString('en-GB', {
                             style: 'currency',
                             currency: 'GBP',
                         })} has been successfully created and delivered to the recipient at ${details?.email}. They will receive it shortly in their inbox. You can track its status or generate more gift cards anytime.`}

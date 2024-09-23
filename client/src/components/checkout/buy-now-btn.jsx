@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import calculateTotal from '../common/calculateTotal';
 import _ from 'lodash';
+import UserLogout from '../../hooks/userLogout.jsx';
 dayjs.extend(customParseFormat);
 const CLIENT_URL = import.meta.env.VITE_CLIENT_URL;
 
@@ -28,6 +29,7 @@ function Buy_Now_Btn({ disable }) {
         klarnaDob,
         setKlarnaDob,
         deliveryDate,
+        
     } = useCheckoutContext();
 
     const { user } = useAuth();
@@ -38,6 +40,7 @@ function Buy_Now_Btn({ disable }) {
     const elements = useElements();
     const navigate = useNavigate();
     const paymentIntentInfo = useRef();
+    const { logoutUser } = UserLogout();
     const fetchPaymentIntent = async () => {
         const { data } = await axios.post('/order/create-payment-intent', {
             billing: {
@@ -63,11 +66,11 @@ function Buy_Now_Btn({ disable }) {
                 name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
                 phone: shippingAddress?.mobile,
             },
-            cart,
-            total,
-            promo: _.get(promo, 0),
+            // cart,
+            // total,
+            // promo: _.get(promo, 0),
             cart_id: localStorage.getItem('cart_id'),
-            cartInfo: stateProps,
+            //  cartInfo: stateProps,
         });
 
         return data;
@@ -188,6 +191,14 @@ function Buy_Now_Btn({ disable }) {
             }
         } catch (error) {
             console.error('error whil setingg up paymnetIntent: ', error);
+
+            if (error.response.status == 400) {
+                setCheckOutError((prevState) => ({
+                    ...prevState,
+                    ...error.response?.data,
+                }));
+            }
+            logoutUser({ error });
         } finally {
             setTimeout(() => {
                 if (isCardPaymentSuccessful) {

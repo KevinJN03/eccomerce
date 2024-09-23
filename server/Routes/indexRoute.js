@@ -13,10 +13,12 @@ import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
 import ExpressStatusMonitor from 'express-status-monitor';
 import emailTestRoute from '../React Email/test';
+import { loginUser } from '../Controllers/userController.js';
+import { get_single_giftCard } from '../Controllers/giftCardController.js';
 
 const router = express.Router();
 router.use('/test', emailTestRoute);
-
+router.get('/giftCard', get_single_giftCard);
 router.use('/cart', cartRoute);
 router.use('/wishlist', wishlistRoute);
 
@@ -24,6 +26,7 @@ router.get('/server-status', (req, res) => {
   res.send('OK');
 });
 router.post('/admin/login', adminLogin);
+router.post('/user/login', loginUser);
 router.get('/admin/check', [
   checkAdminAuthenticated,
   asyncHandler((req, res, next) => {

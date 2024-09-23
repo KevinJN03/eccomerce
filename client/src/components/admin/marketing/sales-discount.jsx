@@ -249,7 +249,7 @@ function SalesDiscount({}) {
                                     <p className="font-gotham text-4xl ">
                                         {currency
                                             ? parseFloat(amount).toLocaleString(
-                                                  'en-US',
+                                                  'en-GB',
                                                   {
                                                       style: 'currency',
                                                       currency: 'GBP',

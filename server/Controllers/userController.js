@@ -291,6 +291,7 @@ export const loginUser = [
     .trim()
     .isLength({ min: 10, max: 20 }),
   asyncHandler(async (req, res, next) => {
+    console.log('checker')
     const result = validationResult(req).formatWith(({ msg }) => {
       return msg;
     });
@@ -313,7 +314,7 @@ export const loginUser = [
         if (error) {
           return next(err);
         }
-
+console.log({user})
         return res.redirect('/api/user/check');
       });
     })(req, res, next);
