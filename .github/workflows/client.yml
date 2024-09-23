@@ -22,7 +22,12 @@ jobs:
     needs: build
     runs-on: frontend-runner
     steps:
+        - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-frontend-app:latest
+      - name: Delete old container
+        run: docker rm -f glamo-frontend-container
       - name: Run Docker Container
-        run: docker run -d -p 3000:3000 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
+        run: docker run -d -p --env-file .env 3000:3000 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
