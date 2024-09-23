@@ -24,5 +24,7 @@ jobs:
     steps:
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-backend-app:latest
+       - name: Delete old container
+        run: docker rm -f glamo-backend-container
       - name: Run Docker Container
         run: docker run -d -p 3000:3000 --name glamo-backend-container -e URL='${{ secrets.URL }}' kevinjean/glamo-backend-app:latest
