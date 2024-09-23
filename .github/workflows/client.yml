@@ -1,4 +1,4 @@
-name: Deploy Glamo Backend
+name: Deploy Glamo Frontend
 
 on:
   push:
@@ -14,15 +14,15 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker Image
-        run: docker build -t kevinjean/glamo-backend-app ./server
+        run: docker build -t kevinjean/glamo-frontend-app ./client
       - name: Publish Image to docker hub
-        run: docker push kevinjean/glamo-backend-app:latest
+        run: docker push kevinjean/glamo-frontend-app:latest
 
   deploy:
     needs: build
-    runs-on: backend-runner
+    runs-on: frontend-runner
     steps:
       - name: Pull image from docker hub
-        run: docker pull kevinjean/glamo-backend-app:latest
+        run: docker pull kevinjean/glamo-frontend-app:latest
       - name: Run Docker Container
-        run: docker run -d -p 3000:3000 --name glamo-backend-container -e URL='${{ secrets.URL }}' kevinjean/glamo-backend-app:latest
+        run: docker run -d -p 3000:3000 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
