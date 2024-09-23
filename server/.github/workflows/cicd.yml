@@ -1,0 +1,28 @@
+name: Deploy Glamo Backend 
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker Image
+        run: docker build -t kevinjean/glamo-backend-app .
+      - name: Publish Image to docker hub
+        run: docker push kevinjean/glamo-backend-app:latest
+
+  deploy:
+    needs: build
+    runs-on: backend-runner
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull kevinjean/glamo-backend-app:latest
+      - name: Run Docker Container
+        run: docker run -d -p 3000:3000 --name glamo-backend-container -e URL='${{ secrets.URL }}' kevinjean/glamo-backend-app:latest
