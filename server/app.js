@@ -24,7 +24,10 @@ import fs from 'fs';
 import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
 import 'dotenv/config';
-import { checkAdminAuthenticated, checkAuthenticated } from './middleware/checkAuthenticated.js';
+import {
+  checkAdminAuthenticated,
+  checkAuthenticated,
+} from './middleware/checkAuthenticated.js';
 import ExpressStatusMonitor from 'express-status-monitor';
 import logger from './utils/logger.js';
 import dayjs from 'dayjs';
@@ -93,7 +96,7 @@ app.use('/api/coupon', couponRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/search', searchRoute);
 //app.use('/api/giftcard', giftCardRoute);
-app.use('/api/user', [checkAuthenticated,userRoute]);
+app.use('/api/user', [checkAuthenticated, userRoute]);
 app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
 app.use('/api/order', orderRoute);
 app.use('/api/delivery', deliveryRoute);
@@ -112,8 +115,12 @@ console.log({
   NODE_ENV: process.env.NODE_ENV,
   bool: process.env.NODE_ENV === 'production',
 });
-const sslServer = https.createServer(httpOptions, app);
-sslServer.listen(PORT, () => {
-  logger.info(`Secure server🔑 listening on Port: ${PORT}`);
-  // logger.error(`Secure server🔑 listening on Port: ${PORT}`);
+// const sslServer = https.createServer(httpOptions, app);
+// sslServer.listen(PORT, () => {
+//   logger.info(`Secure server🔑 listening on Port: ${PORT}`);
+//   // logger.error(`Secure server🔑 listening on Port: ${PORT}`);
+// });
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
