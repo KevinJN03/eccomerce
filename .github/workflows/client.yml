@@ -23,8 +23,7 @@ jobs:
     runs-on: frontend-runner
     steps:
         - name: Create .env file
-        run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
+        run: echo "${{ secrets.ENV_FILE }}" > .env
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-frontend-app:latest
       - name: Delete old container
