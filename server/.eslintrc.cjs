@@ -4,7 +4,12 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['airbnb-base', 'plugin:prettier/recommended'],
+  extends: [
+    'airbnb-base',
+    'plugin:prettier/recommended',
+    '@babel/plugin-transform-private-property-in-object',
+    '@babel/plugin-proposal-private-property-in-object',
+  ],
   overrides: [
     {
       env: {
