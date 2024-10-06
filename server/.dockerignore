@@ -1,0 +1,11 @@
+# Ignore the dist folder
+dist/
+
+# Other ignores (optional)
+.env
+node_modules
+node_modules/
+build
+build/
+mkcert/
+mkcert

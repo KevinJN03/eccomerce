@@ -5,11 +5,12 @@
       "localhost",
       "172.16.0.2",
       "192.168.0.69",
-      "127.0.0.1"
+      "127.0.0.1",
+      "172.18.240.1"
     ],
     "hash": {
-      "key": "f22a8ada3d79ac95654901a6baa91f11d7b445df31069b747c115e577206b9dc",
-      "cert": "cdb9e9727b7bccc9e96c003628da5f3954275bf424a86cef4c0fa8b3806b3d8d"
+      "key": "86093d896c4beb1e737c7bfb26c7e410b81a42d0674e2624e0f0f9e9013ce37d",
+      "cert": "43476a82e93c443d84c819c24d80bfd04c641f8cbfacc6d6041bafe0a5b4e4c6"
     }
   },
   "configFilePath": "C:\\Users\\kevin\\Desktop\\repos\\eccomerce\\client\\cert\\config.json"
