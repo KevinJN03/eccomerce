@@ -10,7 +10,7 @@ import s3Upload, { s3Delete } from '../utils/s3Service.js';
 import 'dotenv/config';
 import _, { has } from 'lodash';
 import multerUpload from '../utils/multerUpload';
-import sortCombineVariation from '../utils/sortCOmbineVariations.js';
+import sortCombineVariation from '../utils/sortCombineVariations.js';
 import generateProduct from '../utils/generateProduct.js';
 import { Endpoint } from 'aws-sdk';
 import productAggregateStage from '../utils/productAggregateStage.js';
