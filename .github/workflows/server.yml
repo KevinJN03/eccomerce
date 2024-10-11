@@ -39,4 +39,4 @@ jobs:
           docker container prune -f
           docker image prune -a -f
       - name: Run Docker Container
-        run: docker run -d -p 3000:3000 --name glamo-backend-container -e URL='${{ secrets.URL }}' kevinjean/glamo-backend-app
+        run: docker run -d -p --env 3000:3000 --name glamo-backend-container kevinjean/glamo-backend-app
