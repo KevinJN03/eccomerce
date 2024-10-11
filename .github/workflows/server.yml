@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env 
       - name: Build Docker Image
-        run: docker build -t kevinjean/glamo-backend-app ./server
+        run: docker build --env-file ./.env -t kevinjean/glamo-backend-app ./server
       - name: Publish Image to docker hub
         run: docker push kevinjean/glamo-backend-app:latest
 
@@ -39,4 +39,4 @@ jobs:
           docker container prune -f
           docker image prune -a -f
       - name: Run Docker Container
-        run: docker run --env-file .env -d -p 3000:3000 --name glamo-backend-container kevinjean/glamo-backend-app
+        run: docker run -d -p 3000:3000 --name glamo-backend-container kevinjean/glamo-backend-app
