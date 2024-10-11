@@ -18,7 +18,6 @@ import orderRoute from './Routes/orderRoute.js';
 import deliveryRoute from './Routes/deliveryRoute.js';
 import errorHandler from './errorHandler.js';
 import passport from './utils/passport/passport.js';
-import fs from 'fs';
 import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
 import 'dotenv/config';
@@ -56,7 +55,7 @@ const db = () => {
 db();
 
 const app = express();
-app.use(morgan('dev'));
+app.use(morgan((process.env.NODE_ENV = 'production' ? 'tiny' : 'dev')));
 export const myCache = new NodeCache();
 // app.use(cors());
 app.set('trust proxy', true);
@@ -103,16 +102,13 @@ app.use('/api/webhook', webHookRoute);
 
 app.use(errorHandler);
 
-const httpOptions = {
-  key: fs.readFileSync('./mkcert/key.pem'),
-  cert: fs.readFileSync('./mkcert/cert.pem'),
-  requestCert: false,
-  rejectUnauthorized: process.env.NODE_ENV === 'production',
-};
-console.log({
-  NODE_ENV: process.env.NODE_ENV,
-  bool: process.env.NODE_ENV === 'production',
-});
+// const httpOptions = {
+//   key: fs.readFileSync('./mkcert/key.pem'),
+//   cert: fs.readFileSync('./mkcert/cert.pem'),
+//   requestCert: false,
+//   rejectUnauthorized: process.env.NODE_ENV === 'production',
+// };
+
 // const sslServer = https.createServer(httpOptions, app);
 // sslServer.listen(PORT, () => {
 //   logger.info(`Secure server🔑 listening on Port: ${PORT}`);

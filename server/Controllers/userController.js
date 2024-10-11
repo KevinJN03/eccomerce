@@ -31,7 +31,6 @@ import 'dotenv/config';
 import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
-import { addListener } from 'nodemon';
 import logger from '../utils/logger.js';
 
 const stripe = Stripe(process.env.STRIPE_KEY);
