@@ -5,7 +5,7 @@ RUN npm install --legacy-peer-deps
 COPY  . . 
 RUN npm run build
 
-FROM nginx:1.27.1-alpine
+FROM nginx:1.27.2-alpine
 WORKDIR /usr/share/nginx/html
 RUN rm -rf *
 COPY --from=build /app/build .

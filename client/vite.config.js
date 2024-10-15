@@ -26,7 +26,9 @@ export default defineConfig(({ mode }) => {
         server: {
             https: true,
         },
-
+        preview: {
+            port: 4000
+          },
         base: './',
         mode: 'development',
 
