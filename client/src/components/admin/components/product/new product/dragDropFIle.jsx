@@ -5,7 +5,7 @@ import { useNewProduct } from '../../../../../context/newProductContext';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
 import OptionError from './variation/error/optionError';
 
-function DragDropFile({}) {
+function dragDropFile({}) {
     const { files, setFiles, publishError, publishErrorDispatch } =
         useNewProduct();
 
@@ -95,4 +95,4 @@ function DragDropFile({}) {
         </section>
     );
 }
-export default DragDropFile;
+export default dragDropFile;

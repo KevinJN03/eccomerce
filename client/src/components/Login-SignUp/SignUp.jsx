@@ -103,7 +103,6 @@ function SignUp() {
 
                     <div className="relative">
                         <input
-                            type="password"
                             id="password"
                             className="login-signup-input"
                             value={password}

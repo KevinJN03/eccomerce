@@ -24,7 +24,7 @@ function Drawer({}) {
             anchor="right"
             PaperProps={{
                 sx: {
-                    backgroundColor: 'transparent',
+                //    backgroundColor: 'transparent',
                     boxShadow: 'none',
                     width: '50%',
                     height: '100%',

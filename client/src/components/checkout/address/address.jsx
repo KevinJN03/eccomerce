@@ -124,7 +124,7 @@ function Address({
         setDefaultAddresses,
         disableRef,
         viewDispatch,
-        addressType,
+    
         viewContent,
         mainAddress,
         setMainAddress,
@@ -132,7 +132,7 @@ function Address({
         addressType,
         enableAddressEdit,
         defaultAddresses,
-        viewDispatch,
+    
         checkAddress,
         setCheckAddress,
         sortAddresses,

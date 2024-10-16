@@ -25,13 +25,15 @@ export default defineConfig(({ mode }) => {
 
         server: {
             https: true,
+            port: 8080,
+            
         },
         preview: {
-            port: 4000
+            port: 80
           },
         base: './',
-        mode: 'development',
-
+      //  mode: 'development',
+mode: 'production',
         build: {
             sourcemap: true,
         },

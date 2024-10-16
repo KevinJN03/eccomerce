@@ -4,7 +4,7 @@ import {
     useRoutes,
 } from 'react-router-dom';
 
-import Product from './components/Product/Product_Page.jsx';
+import Product from './components/product/Product_Page.jsx';
 import ItemPage from './components/Item_page/ItemPage';
 import About from './components/miscellaneos/About';
 import Dashboard from './components/dashboard/index';
@@ -26,7 +26,7 @@ import Error from './components/error/error';
 import Layout from './components/Layout/layout';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
-import AdminLogin from './components/admin/home/adminLogin.jsx';
+import AdminLogin from './components/admin/home/AdminLogin.jsx';
 import My_Orders from './components/dashboard/order/my-orders.jsx';
 import Overview from './components/dashboard/Overview';
 import Returns from './components/dashboard/returns';

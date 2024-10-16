@@ -26,7 +26,7 @@ export function PasswordInput({
 
             <div className="relative">
                 <input
-                    type="password"
+                   
                     id="password"
                     className="login-signup-input pr-20"
                     value={value}

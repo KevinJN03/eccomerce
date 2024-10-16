@@ -7,7 +7,7 @@ import Reviews from './reviews';
 import exampleData from './exampleData';
 import { useEffect, useRef, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
-import Navigation_Links from '../product/navigationLinks';
+import Navigation_Links from '../product/NavigationLinks';
 import { useParams } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
 import Shipping from '../cart/shipping';

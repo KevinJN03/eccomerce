@@ -179,12 +179,12 @@ function KlarnaSelect({}) {
                         <div className="relative mb-4 flex flex-row gap-x-1">
                             <Select dataArray={days} header={'Day'} />
                             <Select
-                                dataArray={[1, 2, 3]}
+                               // dataArray={[1, 2, 3]}
                                 header={'Month'}
                                 dataArray={months}
                             />
                             <Select
-                                dataArray={[1, 2, 3]}
+                               // dataArray={[1, 2, 3]}
                                 header={'Year'}
                                 dataArray={years}
                             />

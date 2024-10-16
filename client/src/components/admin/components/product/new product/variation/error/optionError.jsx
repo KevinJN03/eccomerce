@@ -14,7 +14,7 @@ const variants = {
         },
     },
     exit: {
-        opacity: 0,
+        // opacity: 0,
         opacity: 1,
 
         transition: {

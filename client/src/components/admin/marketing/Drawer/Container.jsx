@@ -322,7 +322,7 @@ function Container({}) {
 
                             transform: 'translate(-50%, -0%)',
                             // padding: '2rem',
-                            borderRadius: '1.8rem',
+                           // borderRadius: '1.8rem',
                             maxWidth: isUpdated ? '37.5rem' : '85.375rem',
                             borderRadius: isUpdated ? '1.8rem' : '0.5rem',
                             width: '100%',

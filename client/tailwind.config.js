@@ -8,7 +8,7 @@ export default {
             // sans: ["Poppins", "sans-serif"]
 
             minHeight: {
-                main: 'calc(100vh-(6.75rem+3.75rem))',
+                main: 'calc(100vh-(6.75rem_+_3.75rem))',
             },
             textShadow: {
                 sm: '0 1px 2px var(--tw-shadow-color)',
