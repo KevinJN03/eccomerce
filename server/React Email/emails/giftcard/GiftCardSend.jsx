@@ -101,7 +101,7 @@ function GiftCardSend({ amount, code, end_date }) {
                     <span>
                       <Link
                         className="underline"
-                        href={`${WEBSITE_URL}/${'portal/signup'}`}
+                        href={`${WEBSITE_URL}/${'portal/sign-up'}`}
                       >
                         Sign up
                       </Link>{' '}
@@ -152,12 +152,11 @@ function GiftCardSend({ amount, code, end_date }) {
             <Section className="min-w-full !m-0 !p-0">
               <Row className="w-full  !m-0 !p-0">
                 <Column className="w-full  !m-0 !p-0">
-                <Container className='!min-w-full !w-full'>
-                 <Thanks />
-                  <MoreQuestions />
-                  <Footer /> 
-                </Container>
-                  
+                  <Container className="!min-w-full !w-full">
+                    <Thanks />
+                    <MoreQuestions />
+                    <Footer />
+                  </Container>
                 </Column>
               </Row>
             </Section>
