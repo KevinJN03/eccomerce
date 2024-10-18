@@ -1,3 +1,6 @@
+import daisyui from 'daisyui';
+import rippleui from 'rippleui';
+
 /** @type {import('tailwindcss').Config} */
 
 export default {
@@ -71,9 +74,5 @@ export default {
             'max-h-lg': { raw: '(max-height: 900px)' },
         },
     },
-    plugins: [require('daisyui'), require('rippleui')],
-
-    daisyui: {
-        prefix: 'daisy-',
-    },
+    plugins: [daisyui, rippleui],
 };

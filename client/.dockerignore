@@ -6,3 +6,7 @@ build
 mkcert
 cert
 npm-debug.log
+.eslint*
+.prettier*
+.editorconfig
+.DS_Store
