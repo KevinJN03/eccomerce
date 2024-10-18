@@ -1,6 +1,6 @@
 import getRanges from './ranges.js';
 import logos from './logos.jsx';
-import Input from '../../Login-SignUp/input.jsx';
+import Input from '../../portal/input.jsx';
 function Form({
     error,
     setError,

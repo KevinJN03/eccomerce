@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import axios from '../../../api/axios.js';
 import { useCheckoutContext } from '../../../context/checkOutContext';
 import logOutUser from '../../common/logoutUser';
-import Input from '../../Login-SignUp/input';
+import Input from '../../portal/input';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateVariants } from './address-item';

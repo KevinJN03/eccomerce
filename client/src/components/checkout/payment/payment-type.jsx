@@ -9,7 +9,7 @@ import { usePaymentMethods } from '../../../context/paymentMethodContext';
 
 import logos from '../../dashboard/payment-methods/logos';
 import { Input } from 'postcss';
-import ErrorMessage from '../../Login-SignUp/errorMessage';
+import ErrorMessage from '../../portal/errorMessage';
 import Add_Card from './add_card';
 import Selected_Method from './selectedMethod';
 import Wallet from './wallet/wallet';

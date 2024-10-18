@@ -1,4 +1,4 @@
-import dragDropFile from './dragDropFile.jsx';
+import DragDropFile from './dragDropFile.jsx';
 import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
 
@@ -83,7 +83,7 @@ function About() {
                     </p>
                     <p className="mb-2">Add up to 6 photos</p>
 
-                    <dragDropFile />
+                    <DragDropFile />
                 </section>
 
                 <Description />

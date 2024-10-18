@@ -1,4 +1,4 @@
-import { ErrorMessagePointerUp } from '../../Login-SignUp/errorMessage';
+import { ErrorMessagePointerUp } from '../../portal/errorMessage';
 
 export function ElementDiv({ label, id, icon, className, error, property }) {
     return (

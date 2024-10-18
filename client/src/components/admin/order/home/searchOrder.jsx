@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
 import OrderItem from './orderItem';
 import _ from 'lodash';
-import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import GLoader from '../../../portal/socialRegister/gloader';
 import { Pagination } from '@mui/material';
 
 function SearchOrder({}) {

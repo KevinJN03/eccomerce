@@ -1,13 +1,13 @@
 import Header from './header.jsx';
 import contact_icon from '../../assets/icons/contact.png';
 
-import Input from '../Login-SignUp/input.jsx';
+import Input from '../portal/input.jsx';
 import { useEffect, useRef, useState } from 'react';
-import ErrorMessage from '../Login-SignUp/errorMessage';
+import ErrorMessage from '../portal/errorMessage';
 import { DatePicker } from '@mui/x-date-pickers';
-import Interest from '../Login-SignUp/interest.jsx';
-import Button from '../Login-SignUp/button.jsx';
-import DobPicker from '../Login-SignUp/dobPicker.jsx';
+import Interest from '../portal/interest.jsx';
+import Button from '../portal/button.jsx';
+import DobPicker from '../portal/dobPicker.jsx';
 import { useAuth } from '../../hooks/useAuth.jsx';
 
 import _ from 'lodash';

@@ -10,7 +10,7 @@ import { LinearProgress, Pagination, PaginationItem } from '@mui/material';
 import glamo_icon from '../../../assets/glamo.png';
 import { ArrowBackRounded, ArrowForwardRounded } from '@mui/icons-material';
 import { useTab } from '@mui/base';
-import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../../portal/socialRegister/gloader.jsx';
 // import Pagination from '../pagination/pagination';
 function GiftCard_Voucher({}) {
     const abortControllerRef = useRef(new AbortController());

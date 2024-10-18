@@ -19,7 +19,6 @@ export default defineConfig(({ command, mode }) => {
                 },
             },
         },
-
         plugins: [
             react(),
             // mkcert({ autoUpgrade: true, savePath: './cert/' }),
@@ -31,9 +30,13 @@ export default defineConfig(({ command, mode }) => {
             //     telemetry: false,
             // }),
         ],
-server: {
-    //https: true
-},
+        server: {
+            //https: true
+            historyApiFallback: true,
+            watch: {
+                usePolling: true
+              }
+        },
         // server: {
         //     //  https: true,
         //     port: 3000,
@@ -46,11 +49,14 @@ server: {
         // preview: {
         //     port: 4000,
         // },
-        base: './',
+        // base: './',
         //  mode: 'development',
         // mode: 'production',
         build: {
             sourcemap: true,
+            chunkSizeWarningLimit: 5000,
+            // outDir: 'build',
+
         },
     };
 });

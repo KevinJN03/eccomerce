@@ -6,7 +6,7 @@ import { v4 as uuidV4 } from 'uuid';
 import Drawer from '../drawerContent/drawerContainer';
 import OrderList from './orderList';
 import { useAdminOrderContext } from '../../../../context/adminOrderContext';
-import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import GLoader from '../../../portal/socialRegister/gloader';
 
 import boxIcon from '../../../../assets/icons/magic-box.png';
 import _ from 'lodash';

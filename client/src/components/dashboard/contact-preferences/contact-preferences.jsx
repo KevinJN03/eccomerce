@@ -9,7 +9,7 @@ import Alert_Item from './alert.item.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useNavigate } from 'react-router-dom';
-import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../../portal/socialRegister/gloader.jsx';
 function Contact_Preferences({}) {
     const { setFooterMessage, userData, setUserData, logoutUser } =
         useUserDashboardContext();

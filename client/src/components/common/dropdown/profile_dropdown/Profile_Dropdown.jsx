@@ -29,7 +29,7 @@ function Profile_Dropdown({}) {
                             Sign In
                         </a>
                         <a
-                            href="/portal/signup"
+                            href="/portal/sign-up"
                             type="button"
                             className="profile_dropdown-btn bg-black text-white"
                         >

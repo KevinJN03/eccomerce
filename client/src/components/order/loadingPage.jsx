@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import GLoader from '../Login-SignUp/socialRegister/gloader';
+import GLoader from '../portal/socialRegister/gloader';
 
 function LoadingPage({}) {
     const variants = {

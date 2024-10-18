@@ -3,7 +3,6 @@ import Navbar from '../navbar/navbar.jsx';
 import './list.scss';
 import '../sidebar/sidebar.scss';
 import Datatable from './datatable/datatable.jsx';
-import dragDropFile from '../product/new product/dragDropFile.jsx';
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios, { adminAxios } from '../../../../api/axios.js';

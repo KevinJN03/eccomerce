@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import ErrorMessage from '../../Login-SignUp/errorMessage';
-import Input from '../../Login-SignUp/input';
+import ErrorMessage from '../../portal/errorMessage';
+import Input from '../../portal/input';
 import logos from '../../dashboard/payment-methods/logos';
 import credit_icon from '../../../assets/icons/credit-card.png';
 import dayjs from 'dayjs';

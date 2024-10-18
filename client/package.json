@@ -8,6 +8,7 @@
         "build": "vite build",
         "lint": "eslint . --ext js,jsx --fix --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
+        "serve": "npm run build && vite preview",
         "build-css": "tailwindcss -i ./src/index.css -o ./src/style/style.css --watch",
         "prettier": "npx prettier . --write"
     },

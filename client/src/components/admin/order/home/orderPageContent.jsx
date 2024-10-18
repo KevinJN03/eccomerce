@@ -11,7 +11,7 @@ import AdminOrderContextProvider, {
 } from '../../../../context/adminOrderContext';
 import { Box, Drawer, Modal, Pagination } from '@mui/material';
 import DrawerContainer from '../drawerContent/drawerContainer';
-import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import GLoader from '../../../portal/socialRegister/gloader';
 import { adminOrderModalReducer } from '../../../../hooks/adminOrderModalReducer';
 import views from '../modalView/modalView';
 import '../../home/admin.scss';

@@ -39,6 +39,7 @@ function SocialLogin({ text, description }) {
                 ].map(({ icon, text, onClick, className }, idx) => {
                     return (
                         <button
+                        key={text}
                             className={`flex flex-1 flex-row flex-nowrap items-center gap-x-3 border-2 px-4 py-3 `}
                             onClick={onClick}
                         >
