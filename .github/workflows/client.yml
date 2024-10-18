@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-frontend-app:latest
+      - name: Stop container
+        run: docker stop glamo-frontend-container
       - name: Delete old container
         run: docker rm -f glamo-frontend-container
       - name: Create .env file 

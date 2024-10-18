@@ -13,10 +13,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Remove old Docker images (optional)
-        run: |
-          docker image prune -a -f
-          docker container prune -f
       - name: Build Docker Image
         run: docker build -t kevinjean/glamo-backend-app ./server
       - name: Publish Image to docker hub
@@ -28,13 +24,10 @@ jobs:
     steps:
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-backend-app:latest
+      - name: Stop container
+        run: docker stop glamo-backend-container
       - name: Delete old container
         run: docker rm -f glamo-backend-container
-      - name: Remove any existing containers (optional)
-        run: |
-          docker rm -f glamo-backend-container || true
-          docker container prune -f
-          docker image prune -a -f
       - name: Create .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env 
