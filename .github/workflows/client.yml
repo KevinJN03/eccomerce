@@ -32,4 +32,4 @@ jobs:
         run: |
           echo "${{ secrets.FRONTEND_ENV_FILE }}" > .env
       - name: Run Docker Container
-        run: docker run --env-file .env -d -p 4000:80 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
+        run: docker run --env-file .env -d -p 80:80 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
