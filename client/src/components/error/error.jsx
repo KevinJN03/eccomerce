@@ -1,7 +1,7 @@
 import disableLayout from '../../hooks/disableLayout.jsx';
 import { Link } from 'react-router-dom';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
-import Layout from '../Layout/layout.jsx';
+import Layout from '../Layout/container.jsx';
 import Header from '../Layout/header.jsx';
 import Footer from '../Layout/footer/footer.jsx';
 export default function Error({ message, link, buttonText }) {

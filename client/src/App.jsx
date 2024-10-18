@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import minMax from 'dayjs/plugin/minMax';
-import localeData from 'dayjs/plugin/localeData'
+import localeData from 'dayjs/plugin/localeData';
 import { CartProvider } from './context/cartContext';
-import Layout from './components/Layout/layout';
+import Layout from './components/Layout/container';
 import { WishlistContextProvider } from './context/wishlistContext';
 import timezone from 'dayjs/plugin/timezone';
 import { overwrite } from 'country-list';
@@ -19,7 +19,7 @@ dayjs.extend(timezone);
 dayjs.extend(minMax);
 dayjs.extend(customParseFormat);
 dayjs.tz.setDefault('Europe/London');
-dayjs.extend(localeData)
+dayjs.extend(localeData);
 
 export const defaultDayjs = dayjs;
 overwrite([
@@ -29,13 +29,13 @@ overwrite([
 function App() {
     return (
         <div id="App">
-            <LayoutProvider>
-                <CartProvider>
-                    <WishlistContextProvider>
-                        <Router />
-                    </WishlistContextProvider>
-                </CartProvider>
-            </LayoutProvider>
+            {/* <LayoutProvider> */}
+            <CartProvider>
+                <WishlistContextProvider>
+                    <Router />
+                </WishlistContextProvider>
+            </CartProvider>
+            {/* </LayoutProvider> */}
         </div>
     );
 }

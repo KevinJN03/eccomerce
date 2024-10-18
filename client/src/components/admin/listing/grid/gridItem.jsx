@@ -7,12 +7,12 @@ import { ClickAwayListener } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import variant from '../order/home/variant';
-import { useContent } from '../../../context/ContentContext';
-import Actions from '../components/product/actions';
-import { useListingPageContext } from '../../../context/listingPageContext';
-import UserLogout from '../../../hooks/userLogout';
-import { adminAxios } from '../../../api/axios.js';
+import variant from '../../order/home/variant.js';
+import { useContent } from '../../../../context/ContentContext.jsx';
+import Actions from '../../components/product/actions.jsx';
+import { useListingPageContext } from '../../../../context/listingPageContext.jsx';
+import UserLogout from '../../../../hooks/userLogout.jsx';
+import { adminAxios } from '../../../../api/axios.js';
 
 function GridItem({ product, index }) {
     const navigate = useNavigate();

@@ -38,7 +38,8 @@ function Admin_Dashboard() {
                 ].map((item, idx) => {
                     return (
                         <Widget
-                            type={item?.type}
+                        key={item.type}
+                            type={item.type}
                             amount={dashBoardData?.[item?.amount]}
                             idx={idx}
                         />

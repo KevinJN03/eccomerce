@@ -23,7 +23,7 @@ import All_Products from './components/admin/listing/listingPage.jsx';
 
 import New_Product from './components/admin/components/product/new product/new_product';
 import Error from './components/error/error';
-import Layout from './components/Layout/layout';
+import Layout from './components/Layout/index.jsx';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
 import AdminLogin from './components/admin/home/AdminLogin.jsx';
