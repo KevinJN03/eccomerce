@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../header';
-import Input from '../../Login-SignUp/input.jsx';
-import ErrorMessage, {
-    ErrorMessagePointerUp,
-} from '../../Login-SignUp/errorMessage';
+import Input from '../../portal/input.jsx';
+import ErrorMessage, { ErrorMessagePointerUp } from '../../portal/errorMessage';
 import defaultAxios from '../../../api/axios.js';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
 
@@ -26,7 +24,6 @@ export function PasswordInput({
 
             <div className="relative">
                 <input
-                    type="password"
                     id="password"
                     className="login-signup-input pr-20"
                     value={value}

@@ -12,7 +12,7 @@ import animationVariant from '../../home/animationVariant.js';
 
 import ErrorMessage, {
     BetaErrorMessage,
-} from '../../../Login-SignUp/errorMessage';
+} from '../../../portal/errorMessage';
 import OptionError from '../../components/product/new product/variation/error/optionError.jsx';
 import { ClickAwayListener } from '@mui/material';
 

@@ -285,7 +285,7 @@ function Step1({}) {
                                     {details.order_minimum != 'none' &&
                                         details.order_minimum == text && (
                                             <input
-                                                type="text"
+                                              //  type="text"
                                                 className="daisy-input input !w-32  !max-w-32"
                                                 value={
                                                     details?.[

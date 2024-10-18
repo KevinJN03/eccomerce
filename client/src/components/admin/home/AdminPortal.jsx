@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { adminAxios } from '../../../api/axios.js';
 import '../../../CSS/login-signup.css';
-import Login from '../../Login-SignUp/Login';
+import Login from '../../portal/Login';
 import glamo from '../../../assets/icons/glamo-black-logo.svg';
 import { AnimatePresence, motion } from 'framer-motion';
 import adminLogo from '../../../assets/icons/admin.png';

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { adminAxios } from '../../../../api/axios.js';
 
-import GLoader from '../../../Login-SignUp/socialRegister/gloader';
+import GLoader from '../../../portal/socialRegister/gloader';
 import { useLocation } from 'react-router-dom';
 
 function Pdf({}) {

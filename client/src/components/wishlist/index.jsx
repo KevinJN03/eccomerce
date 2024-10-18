@@ -2,7 +2,7 @@ import FavoriteBorderSharpIcon from '@mui/icons-material/FavoriteBorderSharp';
 import { useWishlistContext } from '../../context/wishlistContext';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import axios from '../../api/axios.js';
-import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../portal/socialRegister/gloader.jsx';
 import WishListItem from './wishListItem';
 import { AnimatePresence, motion } from 'framer-motion';
 import EmptyWishList from './empty.jsx';

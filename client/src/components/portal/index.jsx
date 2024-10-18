@@ -1,17 +1,13 @@
 import '../../CSS/login-signup.css';
 import glamo from '../../assets/icons/glamo-black-logo.svg';
 import adminLogo from '../../assets/icons/admin.png';
-import SignUp from './SignUp';
-import Login from './Login';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import disableLayout from '../../hooks/disableLayout';
 import { AnimatePresence, motion } from 'framer-motion';
-import PortalProvider from '../../context/portalContext';
-import LoadingPage from '../order/loadingPage';
+import PortalProvider from '../../context/portalContext.jsx';
+import LoadingPage from '../order/loadingPage.jsx';
 import axios from '../../api/axios.js';
-function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
+function Portal({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
@@ -30,7 +26,7 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
         if (routesSet.has(route)) {
             setOption(() => 'login');
         } else {
-            setOption(() => 'signup');
+            setOption(() => 'sign-up');
         }
     }, [location.pathname]);
 
@@ -108,10 +104,10 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
                                 {!admin && (
                                     <>
                                         <Link
-                                            to={!admin && 'signup'}
-                                            onClick={() => setOption('signup')}
+                                            to={!admin && 'sign-up'}
+                                            onClick={() => setOption('sign-up')}
                                             className={
-                                                option == 'signup'
+                                                option == 'sign-up'
                                                     ? 'active-option'
                                                     : 'not-active-option'
                                             }
@@ -166,4 +162,4 @@ function LoginSignUp({ loginorSignup, admin, handleSubmit }) {
     );
 }
 
-export default LoginSignUp;
+export default Portal;

@@ -561,12 +561,12 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         setSearchText,
         chosenMap,
         setChosenMap,
-        details,
-        setDetails,
+        
+      
         isSearching,
         setIsSearching,
-        chosenMap,
-        setChosenMap,
+       
+        
         errors,
         setErrors,
         clearError,

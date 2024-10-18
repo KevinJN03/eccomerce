@@ -1,13 +1,16 @@
-FROM node:alpine3.19
-WORKDIR /app
+FROM node:20-alpine3.19 AS builder
+WORKDIR /usr/src/app
 COPY package.json ./
-RUN npm install --legacy-peer-deps
+RUN npm i --force
 COPY  . . 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
-FROM nginx:1.27.2-alpine
-WORKDIR /usr/share/nginx/html
-RUN rm -rf *
-COPY --from=build /app/build .
+FROM nginx:stable-alpine
+# copy nginx configuration in side conf.d folder
+COPY --from=builder /usr/src/app/nginx /etc/nginx/conf.d
+# Copy the build output from the dist folder into the Nginx html directory
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+
 EXPOSE 80
-ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
+ENTRYPOINT ["nginx", "-g", "daemon off;"] 

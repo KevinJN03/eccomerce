@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import cancelOptions from '../../order/cancelOptions';
 import courierLinksObject from './courierLinks';
 import { useState } from 'react';
-import { ErrorMessagePointerUp } from '../../Login-SignUp/errorMessage';
+import { ErrorMessagePointerUp } from '../../portal/errorMessage';
 const containerVariants = {
     initial: {
         opacity: 0,

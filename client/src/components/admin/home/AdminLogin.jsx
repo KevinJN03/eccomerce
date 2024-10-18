@@ -1,4 +1,4 @@
-import LoginForm from '../../Login-SignUp/loginForm';
+import LoginForm from '../../portal/loginForm';
 import { useEffect, useState } from 'react';
 import { adminAxios } from '../../../api/axios.js';
 import { useAdminContext } from '../../../context/adminContext.jsx';

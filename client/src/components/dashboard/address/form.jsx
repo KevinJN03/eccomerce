@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Input from '../../Login-SignUp/input';
+import Input from '../../portal/input';
 import ReactCountryFlag from 'react-country-flag';
 import ReactFlagsSelect from 'react-flags-select';
 import _ from 'lodash';

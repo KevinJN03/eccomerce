@@ -52,7 +52,7 @@ export function AdminContextProvider({ children, newValue }) {
         modalContent,
         adminDispatch,
         authAdminUser,
-        adminDispatch,
+        
         ...newValue,
         authAdminUserDispatch,
     };

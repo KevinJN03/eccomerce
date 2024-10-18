@@ -1,4 +1,6 @@
+import _, { toLower } from 'lodash';
 import { createContext, useContext, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const LayoutContext = createContext('');
 
@@ -7,23 +9,33 @@ export function useLayoutContext() {
 }
 
 export function LayoutProvider({ children }) {
-    const set = new Set([
-        'portal',
-        'my-account',
-        'checkout',
-        'admin',
-        'order-success',
-        'order-cancel',
-        'order-cancelled',
-       // 'home'
-    ]);
 
-    const splitLocation = window.location.href
-        .replace(import.meta.env.VITE_CLIENT_URL, '')
-        .split('/')[1]
-        .split('?');
-    console.log({splitLocation});
-    const [layout, setLayout] = useState(() => !set.has(splitLocation[0]));
+    const location = useLocation();
+
+    const getRoute = () => {
+
+        const route = toLower(location.pathname.split('/')[1])
+
+
+        debugger
+        //  split( location.pathname, '/').split('?')
+        
+        //location.pathname.split('/')[1].split('?').join('');
+    
+        const set = new Set([
+            'portal',
+            'my-account',
+            'checkout',
+            'admin',
+            'order-success',
+            'order-cancel',
+            'order-cancelled',
+            // 'home'
+        ]);
+        return !set.has(route);
+    };
+
+    const [layout, setLayout] = useState(() => getRoute());
     const [isHover, setIsHover] = useState({ on: false, menu: null });
     return (
         <LayoutContext.Provider

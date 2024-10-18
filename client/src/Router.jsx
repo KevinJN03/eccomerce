@@ -4,11 +4,10 @@ import {
     useRoutes,
 } from 'react-router-dom';
 
-import Product from './components/Product/Product_Page.jsx';
+import Product from './components/product/Product_Page.jsx';
 import ItemPage from './components/Item_page/ItemPage';
 import About from './components/miscellaneos/About';
 import Dashboard from './components/dashboard/index';
-import LoginSignUp from './components/Login-SignUp/Index';
 import Home from './components/home/Home';
 import Cart from './components/cart';
 import Checkout from './components/checkout';
@@ -20,13 +19,12 @@ import Users from './components/admin/components/users/users';
 import New from './components/admin/components/new/new';
 import Admin_Product from './components/admin/components/product/admin_product';
 import All_Products from './components/admin/listing/listingPage.jsx';
-
 import New_Product from './components/admin/components/product/new product/new_product';
 import Error from './components/error/error';
-import Layout from './components/Layout/layout';
+import Layout from './components/Layout/index.jsx';
 import Delivery from './components/admin/delivery/delivery';
 import { NewProductProvider } from './context/newProductContext';
-import AdminLogin from './components/admin/home/adminLogin.jsx';
+import AdminLogin from './components/admin/home/AdminLogin.jsx';
 import My_Orders from './components/dashboard/order/my-orders.jsx';
 import Overview from './components/dashboard/Overview';
 import Returns from './components/dashboard/returns';
@@ -51,16 +49,16 @@ import Cancel_Payment from './components/dashboard/payment-methods/cancelPayment
 import Order_Success from './components/order/order-success.jsx';
 import Order_Info from './components/dashboard/order/order-info.jsx';
 import ForgetPassword from './components/forget-password/forget-password.jsx';
-import Login from './components/Login-SignUp/Login.jsx';
-import SignUp from './components/Login-SignUp/SignUp.jsx';
+import Login from './components/portal/Login.jsx';
+import SignUp from './components/portal/SignUp.jsx';
 import ResetSent from './components/forget-password/sent.jsx';
 import ResetPassword from './components/forget-password/reset.password.jsx';
 import AdminOrder from './components/admin/order/home/admin-order.jsx';
 import AdminPortal from './components/admin/home/AdminPortal.jsx';
 import Order_Edit from './components/admin/order/home/edit_order.jsx';
 import ChangePassword from './components/dashboard/change-password/index.jsx';
-import SocialRegister from './components/Login-SignUp/socialRegister/socialRegister.jsx';
-import SocialRedirect from './components/Login-SignUp/socialRegister/SocialRedirect.jsx';
+import SocialRegister from './components/portal/socialRegister/socialRegister.jsx';
+import SocialRedirect from './components/portal/socialRegister/SocialRedirect.jsx';
 import OrderCancel from './components/order/order-cancel.jsx';
 import OrderCancelled from './components/order/order-cancelled.jsx';
 
@@ -84,6 +82,7 @@ import MonthStatement from './components/admin/finance/monthStatement.jsx';
 import PaymentSettings from './components/admin/finance/paymentSettings.jsx';
 import SalesDiscount from './components/admin/marketing/sales-discount.jsx';
 import Marketing from './components/admin/marketing/index.jsx';
+import Portal from './components/portal/index.jsx';
 function Router({ Header, Footer }) {
     const productRoutes = () => {
         const paths = ['/men/:category', '/women/:category'];
@@ -248,26 +247,23 @@ function Router({ Header, Footer }) {
                 },
                 {
                     path: '/portal',
-                    // element: <LoginSignUp loginorSignup={'login'} />,
                     // index: true,
-                    element: <LoginSignUp />,
+                    element: <Portal />,
                     children: [
                         {
-                            // path: 'login',
                             element: <Login />,
                             index: true,
                         },
                         {
-                            path: 'login',
+                            path: 'login/*',
                             element: <Login />,
-                            index: true,
                         },
                         {
                             path: 'forget-password',
                             element: <ForgetPassword />,
                         },
                         {
-                            path: 'signup',
+                            path: 'sign-up',
                             element: <SignUp />,
                         },
 

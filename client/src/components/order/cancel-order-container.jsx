@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTemplate } from '../../context/templeteContext.jsx';
-import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage.jsx';
+import { ErrorMessagePointerUp } from '../portal/errorMessage.jsx';
 import Checkout_Item from '../checkout/checkout_total/checkout-item.jsx';
 import MessageFooter from '../dashboard/messageFooter.jsx';
 import { OrderInfo } from './order-success.jsx';

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/cartContext';
 import Empty_Cart from './emptyCart';
 import calculateTotal from '../common/calculateTotal';
-import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../portal/socialRegister/gloader.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 
 function Cart({}) {

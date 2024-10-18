@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import courierLinksObject from './courierLinks.js';
 import CancelOrderBtn from './cancel-order.jsx';
-import { ErrorMessagePointerUp } from '../../Login-SignUp/errorMessage.jsx';
+import { ErrorMessagePointerUp } from '../../portal/errorMessage.jsx';
 import cancelOptions from '../../order/cancelOptions.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { initial } from 'lodash';
@@ -11,7 +11,7 @@ import axios from '../../../api/axios.js';
 import logOutUser from '../../common/logoutUser.js';
 import { useAuth } from '../../../hooks/useAuth.jsx';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
-import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../../portal/socialRegister/gloader.jsx';
 import CancelContainer from './cancelContainer.jsx';
 import submitCancellation from './handleCancelOrder.js';
 function OrderItem({ order }) {

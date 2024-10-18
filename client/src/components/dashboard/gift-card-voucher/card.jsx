@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import gift_card_svg from '../../../assets/icons/gift-card-back.svg';
-import Input from '../../Login-SignUp/input.jsx';
+import Input from '../../portal/input.jsx';
 
 function Card({}) {
     const [error, setError] = useState({});

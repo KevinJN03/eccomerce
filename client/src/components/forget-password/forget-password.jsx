@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Input from '../Login-SignUp/input.jsx';
+import Input from '../portal/input.jsx';
 import emailValidator from 'email-validator';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios.js';

@@ -1,3 +1,6 @@
+import daisyui from 'daisyui';
+import rippleui from 'rippleui';
+
 /** @type {import('tailwindcss').Config} */
 
 export default {
@@ -8,7 +11,7 @@ export default {
             // sans: ["Poppins", "sans-serif"]
 
             minHeight: {
-                main: 'calc(100vh-(6.75rem+3.75rem))',
+                main: 'calc(100vh-(6.75rem_+_3.75rem))',
             },
             textShadow: {
                 sm: '0 1px 2px var(--tw-shadow-color)',
@@ -71,9 +74,5 @@ export default {
             'max-h-lg': { raw: '(max-height: 900px)' },
         },
     },
-    plugins: [require('daisyui'), require('rippleui')],
-
-    daisyui: {
-        prefix: 'daisy-',
-    },
+    plugins: [daisyui, rippleui],
 };

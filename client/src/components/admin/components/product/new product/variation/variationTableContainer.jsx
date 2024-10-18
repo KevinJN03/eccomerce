@@ -139,7 +139,7 @@ function VariationTableContainer({ variation, isCombine }) {
                     <Box
                         sx={{
                             backgroundColor: 'white',
-                            maxWidth: '500px',
+                           // maxWidth: '500px',
                             position: 'absolute',
                             top: '50%',
                             left: '50%',

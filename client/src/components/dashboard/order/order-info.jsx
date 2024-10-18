@@ -14,7 +14,7 @@ import CancelContainer from './cancelContainer.jsx';
 import courierLinksObject from './courierLinks.js';
 import { AnimatePresence } from 'framer-motion';
 import submitCancellation from './handleCancelOrder.js';
-import GLoader from '../../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../../portal/socialRegister/gloader.jsx';
 import emoji from '../../../assets/icons/sad-emoji.png';
 const { VITE_CLOUDFRONT_URL } = import.meta.env;
 export function OrderNumberDate({ icon, title, text, className }) {

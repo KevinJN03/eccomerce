@@ -3,10 +3,10 @@ import Template from './template.jsx';
 import { OrderInfo } from './order-success.jsx';
 import cancelOptions from './cancelOptions.js';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ErrorMessagePointerUp } from '../Login-SignUp/errorMessage.jsx';
+import { ErrorMessagePointerUp } from '../portal/errorMessage.jsx';
 import axios from '../../api/axios.js';
 import Checkout_Item from '../checkout/checkout_total/checkout-item.jsx';
-import GLoader from '../Login-SignUp/socialRegister/gloader.jsx';
+import GLoader from '../portal/socialRegister/gloader.jsx';
 import userLogout from '../../hooks/userLogout.jsx';
 import { AnimatePresence, motion } from 'framer-motion';
 

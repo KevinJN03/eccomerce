@@ -1,4 +1,4 @@
-import DragDropFile from './dragDropFile';
+import DragDropFile from './dragDropFile.jsx';
 import New_Product_Header from './header';
 import { useNewProduct } from '../../../../../context/newProductContext';
 

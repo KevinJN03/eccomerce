@@ -4,10 +4,9 @@ import Collection from './Collection/collection';
 
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import Mobile_Filter from './Filter/mobile-filter';
-import https from 'https';
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '@uidotdev/usehooks';
-import Navigation_Links from './navigationLinks';
+import Navigation_Links from './NavigationLinks.jsx';
 import axios from '../../api/axios.js';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';

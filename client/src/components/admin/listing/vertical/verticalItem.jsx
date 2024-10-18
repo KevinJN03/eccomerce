@@ -4,14 +4,14 @@ import {
     StarRateRounded,
 } from '@mui/icons-material';
 import { useState } from 'react';
-import Actions from '../../components/product/actions';
+import Actions from '../../components/product/actions.jsx';
 import { Link } from 'react-router-dom';
-import { useListingPageContext } from '../../../../context/listingPageContext';
+import { useListingPageContext } from '../../../../context/listingPageContext.jsx';
 import qs from 'qs';
-import UserLogout from '../../../../hooks/userLogout';
+import UserLogout from '../../../../hooks/userLogout.jsx';
 import { adminAxios } from '../../../../api/axios.js';
-import Stats from './stats';
-import Stock_Price from './stock-price';
+import Stats from './stats.jsx';
+import Stock_Price from './stock-price.jsx';
 
 function VerticalItem({ product, index }) {
     const [featured, setFeatured] = useState(product?.featured || false);
