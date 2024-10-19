@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => {
     const { VITE_SENTRY_PROJECT, VITE_SENTRY_ORG, VITE_SENTRY_AUTH_TOKEN } =
         env;
     return {
-        base: './',
+        base: '/',
         optimizeDeps: {
             esbuildOptions: {
                 // Node.js global to browser globalThis
