@@ -25,9 +25,11 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull kevinjean/glamo-frontend-app:latest
       - name: Stop container
-        run: docker stop glamo-frontend-container 
+        run: | 
+          docker stop glamo-frontend-container || true 
       - name: Delete old container
-        run: docker rm -f glamo-frontend-container
+        run: | 
+          docker rm -f glamo-frontend-container || true
       - name: Create .env file 
         run: |
           echo "${{ secrets.FRONTEND_ENV_FILE }}" > .env

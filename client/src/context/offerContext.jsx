@@ -108,7 +108,6 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
                     ...getMapItem,
                     listings: newListings,
                 });
-                // debugger;
                 categoryListings.delete(element._id);
                 newCategoryMap.set(getMapItem._id, {
                     ...getMapItem,
@@ -150,7 +149,6 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
                     })(),
                 ]);
 
-                // debugger;
 
                 const newChosenMap = new Map();
 
@@ -219,7 +217,6 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
                     //             ...getMapItem,
                     //             listings: newListings,
                     //         });
-                    //         // debugger;
                     //         categoryListings.delete(element._id);
                     //         newCategoryMap.set(getMapItem._id, {
                     //             ...getMapItem,
@@ -492,7 +489,7 @@ function OfferContextProvider({ initialDetails, newValue, children }) {
         const { listings: categoryListingsMap, ...getCategory } =
             newCategoriesMap.get(category._id);
 
-        debugger;
+        
 
         if (newChosenMap.has(category._id)) {
             const { listings: chosenListingMap, ...getChosenCategory } =

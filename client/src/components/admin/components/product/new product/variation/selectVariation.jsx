@@ -21,7 +21,6 @@ function SelectVariation({}) {
 
     const { contentDispatch, modalContent } = useNewProduct();
     const currentVariation = modalContent.currentVariation;
-    // debugger;
     const [variation, setVariation] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [name, setName] = useState(modalContent.title || '');

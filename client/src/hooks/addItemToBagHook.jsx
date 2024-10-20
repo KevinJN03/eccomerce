@@ -84,7 +84,6 @@ function useAddItemToBagHook({ product }) {
     const handleAddToCart = () => {
         console.log({ variationSelect });
 
-        debugger;
         if (
             (_.get(product, ['variation_data', 'variation1_present']) &&
                 !variationSelect.variation1.variation) ||

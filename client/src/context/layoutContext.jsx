@@ -17,7 +17,7 @@ export function LayoutProvider({ children }) {
         const route = toLower(location.pathname.split('/')[1])
 
 
-        debugger
+        
         //  split( location.pathname, '/').split('?')
         
         //location.pathname.split('/')[1].split('?').join('');

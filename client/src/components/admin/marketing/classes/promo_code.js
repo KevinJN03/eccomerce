@@ -25,7 +25,6 @@ export default class PromoCode extends CodeBase {
               : 'Scheduled';
     }
     // get generatePromoDuration() {
-    //     debugger;
     //     const formatDate = (date, additionalFormat = '') => {
     //         return dayjs.unix(date).format(`${dateFormat} ${additionalFormat}`);
     //     };

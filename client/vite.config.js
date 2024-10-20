@@ -10,6 +10,8 @@ export default defineConfig(({ command, mode }) => {
 
     const { VITE_SENTRY_PROJECT, VITE_SENTRY_ORG, VITE_SENTRY_AUTH_TOKEN } =
         env;
+
+        console.log({vite_env_start: env})
     return {
         base: '/',
         optimizeDeps: {

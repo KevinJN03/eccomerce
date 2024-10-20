@@ -12,7 +12,6 @@ const calculatePromo = (promo, withOutShipping) => {
                 (parseFloat(amount) / withOutShipping) * 100;
             savePercent = _.round(calculatePercent, 2);
 
-            //debugger;
 
             if (amount > withOutShipping) {
                 amountOff = withOutShipping;
