@@ -11,6 +11,10 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
+      - name: Create .env file 
+        run: |
+          echo -e "${{ secrets.FRONTEND_ENV_FILE }}" > .env
+          cat .env  # Optional: Check the contents of the .env file
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker Image
@@ -30,9 +34,6 @@ jobs:
       - name: Delete old container
         run: | 
           docker rm -f glamo-frontend-container || true
-      - name: Create .env file 
-        run: |
-          echo "${{ secrets.FRONTEND_ENV_FILE }}" > .env
       - name: Run Docker Container
         run: docker run --env-file .env -d -p 80:80 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
         
