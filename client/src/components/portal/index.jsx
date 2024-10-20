@@ -7,11 +7,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import PortalProvider from '../../context/portalContext.jsx';
 import LoadingPage from '../order/loadingPage.jsx';
 import axios from '../../api/axios.js';
+const env = import.meta.env
 function Portal({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
-
+console.log({env})
     const navigate = useNavigate();
     useEffect(() => {
         const route = location.pathname.split('/').slice(-1)[0];
