@@ -11,7 +11,7 @@ export default defineConfig(({ command, mode }) => {
     const { VITE_SENTRY_PROJECT, VITE_SENTRY_ORG, VITE_SENTRY_AUTH_TOKEN } =
         env;
 
-        console.log({vite_env_start: env})
+    console.log({ vite_env_start: env });
     return {
         base: '/',
         optimizeDeps: {
@@ -37,8 +37,10 @@ export default defineConfig(({ command, mode }) => {
             //https: true
             historyApiFallback: true,
             watch: {
-                usePolling: true
-              }
+                usePolling: true,
+            },
+            host: true,
+            port: 80,
         },
         // server: {
         //     //  https: true,
@@ -59,7 +61,6 @@ export default defineConfig(({ command, mode }) => {
             sourcemap: true,
             chunkSizeWarningLimit: 5000,
             // outDir: 'build',
-
         },
     };
 });
