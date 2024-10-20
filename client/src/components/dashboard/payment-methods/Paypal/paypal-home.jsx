@@ -19,7 +19,6 @@ function PayPalHome({}) {
         axios('user/payment-method/paypal')
             .then(({ data }) => {
                 data;
-                debugger;
                 setOptions((prevState) => ({
                     ...prevState,
                     clientSecret: data.client_secret,

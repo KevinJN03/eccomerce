@@ -11,7 +11,6 @@ function Navigation_Links({ className, product, loading, shouldUpdateGender }) {
         if (product.gender && product.gender != state.gender) {
             'not the same gender', product;
 
-            debugger;
             dispatch({ type: product.gender });
         }
     }, [product]);

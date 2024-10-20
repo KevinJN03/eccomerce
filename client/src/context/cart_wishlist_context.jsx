@@ -96,7 +96,7 @@ export function Cart_Wishlist_Context({ children, property, Context }) {
                 const timeout = setTimeout(() => {
                     setIsHover(() => ({ on: false, menu: null }));
 
-                    // debugger;
+
                 }, 3000);
                 setIsHover(() => ({
                     on: true,
