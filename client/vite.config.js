@@ -42,6 +42,9 @@ export default defineConfig(({ command, mode }) => {
             host: true,
             port: 80,
         },
+        preview: {
+            port: 80,
+        },
         // server: {
         //     //  https: true,
         //     port: 3000,
