@@ -12,7 +12,6 @@ import card_icon from '../../../assets/icons/credit-card.png';
 import duplicate_icon from '../../../assets/icons/duplicate.png';
 import coming_soon_icon from '../../../assets/icons/coming-soon.png';
 import giftCard_icon from '../../../assets/icons/gift-card.png';
-import 'dotenv/config';
 
 const CLOUDFRONT_URL = import.meta.env.VITE_CLOUDFRONT_URL
 export const navOptionsArray = [
