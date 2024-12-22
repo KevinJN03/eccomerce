@@ -4,7 +4,7 @@ import Input from '../../portal/input.jsx';
 import ErrorMessage, { ErrorMessagePointerUp } from '../../portal/errorMessage';
 import defaultAxios from '../../../api/axios.js';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
-
+import 'dotenv/config';
 export function PasswordInput({
     error,
     property,
@@ -111,13 +111,13 @@ function ChangePassword({}) {
         <section className="bg-white">
             <Header
                 icon={
-                    'https://dknhps0hwilzj.cloudfront.net/files/logos/lock.png'
+                    `${process.env.CLOUDFRONT_URL}/files/logos/lock.png`
                 }
                 text={'CHANGE PASSWORD'}
                 description={
                     'Feel free to update your password so your GLAMO account stays secure. (* Indicates a required field).'
                 }
-            />
+            /> 
 
             <section className="w-7/12 p-4">
                 <PasswordInput

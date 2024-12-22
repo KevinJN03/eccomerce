@@ -1,51 +1,19 @@
 import * as React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import 'dotenv/config';
+import footer_icons from './footer_icons';
 import {
-  Head,
-  Tailwind,
-  Html,
-  Body,
   Text,
   Img,
   Section,
   Row,
   Column,
-  Hr,
-  Button,
   Container,
-  Font,
 } from '@react-email/components';
 
-const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
+const url = `${process.env.CLOUDFRONT_URL}/files/logos` ;
 function Footer({}) {
-  const icons = [
-    { icon: `icons8-facebook-48+(1).png` },
-
-    {
-      icon: 'icons8-instagram-48+(1).png',
-      shinkIcon: true,
-      style: {
-        background: 'linear-gradient(115deg, #f9ce34, #ee2a7b, #6228d7)',
-      },
-    },
-    {
-      icon: 'icons8-pinterest-48.png',
-    },
-    {
-      icon: 'icons8-twitter-50.png',
-      style: {
-        background: '#1da1f2',
-      },
-      shinkIcon: true,
-    },
-    {
-      icon: 'icons8-tiktok-48.png',
-      style: {
-        background: '#eee',
-      },
-      shinkIcon: true,
-    },
-  ];
+  
   return (
     //<Container className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
         <Section  className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
@@ -58,7 +26,7 @@ function Footer({}) {
                 align="center"
                 className="w-fit text-center"
               >
-                {icons.map(
+                {footer_icons.map(
                   ({
                     icon,
                     style,

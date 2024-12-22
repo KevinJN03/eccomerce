@@ -19,7 +19,7 @@ import {
 import 'dotenv/config';
 const clientUrl = process.env.CLIENT_URL;
 import { v4 as uuidv4 } from 'uuid';
-
+import 'dotenv/config';
 import TotalContainer from '../components/totalContainer.jsx';
 import Item from '../components/item.jsx';
 import Thanks from '../components/thanks.jsx';
@@ -50,7 +50,7 @@ export default function OrderSuccess({
 }) {
   // const { firstName, shipping_address, subtotal, orderNumber, orderDate, deliveryCost, total, paymentType } = props;
 
-  const url = 'https://dknhps0hwilzj.cloudfront.net/files/logos';
+  const url = `${process.env.CLOUDFRONT_URL}/files/logos`;
 
   const title = {
     received: 'IT’S ORDERED!',

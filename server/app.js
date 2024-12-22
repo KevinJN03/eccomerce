@@ -22,7 +22,7 @@ import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
 import 'dotenv/config';
 import {
-  checkAdminAuthenticated,
+  checkAdminAuthenticated,   
   checkAuthenticated,
 } from './middleware/checkAuthenticated.js';
 import ExpressStatusMonitor from 'express-status-monitor';
