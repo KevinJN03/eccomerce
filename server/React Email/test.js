@@ -19,7 +19,7 @@ import _ from 'lodash';
 import GiftCardSend from './emails/giftcard/GiftCardSend.jsx';
 const { SENDER, STRIPE_KEY } = process.env;
 const stripe = Stripe(STRIPE_KEY);
-
+  
 router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
@@ -30,7 +30,7 @@ router.get(
     //     { path: 'customer' },
     //     { path: 'itemsByProfile.items.product' },
     //   ],
-    //   lean: { toObject: true },
+    //   lean: { toObject: true }, 
     // }).exec();
 
     // const charge = await stripe.charges.retrieve(order.charge_id);
