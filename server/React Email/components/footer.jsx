@@ -13,14 +13,14 @@ import {
 
 const url = `${process.env.CLOUDFRONT_URL}/files/logos` ;
 function Footer({}) {
-  
+   
   return (
     //<Container className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
         <Section  className="bg-[#333333] text-white p-5 border-[1.25rem] border-[#333333] ">
           <Row align="center" className="w-full">
             <Column align='center' className=" pb-4 !w-full !mx-auto !max-w-[50%] ">
               <Text className="text-center font-bold text-white">
-                Find inspiration
+                Find inspiration hh
               </Text>
               <Row
                 align="center"
