@@ -3,6 +3,8 @@ WORKDIR /usr/src/app
 COPY package.json ./
 RUN npm i --force
 COPY  . . 
+# Copy the .env file into the container
+COPY .env .env
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
