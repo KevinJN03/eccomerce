@@ -4,7 +4,7 @@ import Input from '../../portal/input.jsx';
 import ErrorMessage, { ErrorMessagePointerUp } from '../../portal/errorMessage';
 import defaultAxios from '../../../api/axios.js';
 import { useUserDashboardContext } from '../../../context/userContext.jsx';
-import 'dotenv/config';
+
 export function PasswordInput({
     error,
     property,
@@ -111,7 +111,7 @@ function ChangePassword({}) {
         <section className="bg-white">
             <Header
                 icon={
-                    `${process.env.CLOUDFRONT_URL}/files/logos/lock.png`
+                    `${import.meta.env.VITE_CLOUDFRONT_URL}/files/logos/lock.png`
                 }
                 text={'CHANGE PASSWORD'}
                 description={
