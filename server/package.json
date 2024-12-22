@@ -9,7 +9,7 @@
     "babel:start-build": "node ./build/app.js",
     "babel:start": "node -r @babel/register ./app.js",
     "babel": "nodemon --exec babel-node app.js",
-    "build": "webpack --config ./webpack.server.js --mode=none --watch",
+    "build": "webpack --config ./webpack.server.js --mode=none",
     "start": "node ./server-build/index.js",
     "dev:start": "nodemon ./server-build/index.js",
     "dev": "npm-run-all --parallel build dev:start",
