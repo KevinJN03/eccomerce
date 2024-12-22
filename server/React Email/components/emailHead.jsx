@@ -4,14 +4,14 @@ import { v4 as uuid } from 'uuid';
 import {
   Font,
 } from '@react-email/components';
-
+import 'dotenv/config';
 function EmailHead({}) {
   return (
     <Font
       fontFamily="Poppins"
       fallbackFontFamily="Verdana"
       webFont={{
-        url: 'https://dknhps0hwilzj.cloudfront.net/fonts/Poppins-Regular.ttf',
+        url: `${process.env.CLOUDFRONT_URL}/fonts/Poppins-Regular.ttf`,
         format: 'ttf',
       }}
       fontWeight={400}
