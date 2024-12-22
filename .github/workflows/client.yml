@@ -35,5 +35,5 @@ jobs:
         run: | 
           docker rm -f glamo-frontend-container || true
       - name: Run Docker Container
-        run: docker run --env-file .env -d -p 80:80 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
+        run: docker run -d -p 80:80 --name glamo-frontend-container kevinjean/glamo-frontend-app:latest
         
