@@ -3,9 +3,9 @@ WORKDIR /usr/src/app
 COPY package.json ./
 RUN npm i --force
 COPY  . . 
-# Copy the .env file into the container
-COPY .env .env
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+# Log the contents of the .env file
+RUN echo "Contents of the .env file:" && cat .env
 RUN npm run build
 
 # FROM nginx:stable-alpine
