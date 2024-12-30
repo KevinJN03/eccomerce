@@ -12,7 +12,7 @@ function Portal({ loginorSignup, admin, handleSubmit }) {
     const [option, setOption] = useState(loginorSignup);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
-console.log({env, env_vite: import.meta.env.VITE_BASE_URL})
+console.log({env, env_vite: import.meta.env.VITE_BACKEND_URL})
     const navigate = useNavigate();
     useEffect(() => {
         const route = location.pathname.split('/').slice(-1)[0];

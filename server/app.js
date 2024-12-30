@@ -7,39 +7,25 @@ import morgan from 'morgan';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import 'dotenv/config';
-import productRoute from './Routes/productRoute.js';
-import categoryRoute from './Routes/categoryRoute.js';
-import couponRoute from './Routes/couponRoute.js';
-import searchRoute from './Routes/searchRoute.js';
-import webHookRoute from './Routes/webhookRoute.js';
-import userRoute from './Routes/userRoute.js';
-import adminRoute from './Routes/adminRoute.js';
-import orderRoute from './Routes/orderRoute.js';
-import deliveryRoute from './Routes/deliveryRoute.js';
 import errorHandler from './errorHandler.js';
-import passport from './utils/passport/passport.js';
+import passport from 'passport';
+import './utils/passport'
 import indexRoute from './Routes/indexRoute.js';
 import NodeCache from 'node-cache';
 import 'dotenv/config';
-import {
-  checkAdminAuthenticated,   
-  checkAuthenticated,
-} from './middleware/checkAuthenticated.js';
 import ExpressStatusMonitor from 'express-status-monitor';
 import logger from './utils/logger.js';
 import dayjs from 'dayjs';
 import { utc } from 'dayjs';
+import fs from 'fs'
+import https from 'https'
 dayjs.extend(utc);
 const {
   DBNAME,
   URL,
-  SECRET,
-  PASSWORD_RESET_JWT_SECRET,
-  CLIENT_URL,
-  SENDER,
-  SALT_ROUNDS,
+  SECRET, PORT
 } = process.env;
-const PORT = 3000;
+
 
 const db = () => {
   mongoose
@@ -58,7 +44,7 @@ const app = express();
 app.use(morgan((process.env.NODE_ENV = 'production' ? 'tiny' : 'dev')));
 export const myCache = new NodeCache();
 // app.use(cors());
-app.set('trust proxy', true);
+//app.set('trust proxy', true);
 app.use(cors({ origin: true, credentials: true }));
 
 app.use(
@@ -75,11 +61,12 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false, httpOnly: false }, // 1 day
   }),
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
 
 app.use(
   ExpressStatusMonitor({
@@ -88,18 +75,6 @@ app.use(
   }),
 );
 app.use('/api', indexRoute);
-app.use('/api/product', productRoute);
-app.use('/api/coupon', couponRoute);
-app.use('/api/category', categoryRoute);
-app.use('/api/search', searchRoute);
-//app.use('/api/giftcard', giftCardRoute);
-app.use('/api/user', [checkAuthenticated, userRoute]);
-app.use('/api/admin', [checkAdminAuthenticated, adminRoute]);
-app.use('/api/order', orderRoute);
-app.use('/api/delivery', deliveryRoute);
-app.use('/api/webhook', webHookRoute);
-// test email
-
 app.use(errorHandler);
 
 // const httpOptions = {
@@ -118,3 +93,4 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+ 

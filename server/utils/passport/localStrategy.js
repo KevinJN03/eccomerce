@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import LocalStrategy from 'passport-local';
 import User from '../../Models/user.js';
-
+// delete 
 const verifyCallback = async (email, password, cb) => {
   try {
-    const findUser = await User.findOne({ email });
+    const findUser = await User.findOne({ email }, null, {lean: {toObject: true}});
 
     if (!findUser) {
       return cb(null, false);
@@ -26,6 +26,6 @@ const verificationFields = {
   usernameField: 'email',
   passwordField: 'password',
 };
-const strategy = new LocalStrategy(verificationFields, verifyCallback);
+const localStrategy = new LocalStrategy.Strategy(verificationFields, verifyCallback);
 
-export default strategy;
+export default localStrategy;

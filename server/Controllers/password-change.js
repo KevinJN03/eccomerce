@@ -7,13 +7,15 @@ import 'dotenv/config';
 import transporter from '../utils/nodemailer';
 import bcrypt from 'bcryptjs';
 import logger from '../utils/logger.js';
-const { CLIENT_URL, PASSWORD_RESET_JWT_SECRET, SENDER } = process.env;
+import { render } from '@react-email/render';
+import * as React from 'react';
+const { CLIENT_URL, PASSWORD_RESET_JWT_SECRET, SENDER, SALT_ROUNDS } = process.env;
 export const forgetPassword = [
   check('email', 'Email is Invalid.')
     .trim()
     .escape()
     .isEmail()
-    .custom(async (value, { req }) => {
+    .custom(async (value, { req }) => { 
       const user = await User.findOne({ email: value });
       if (!user) {
         throw new Error(
@@ -68,14 +70,12 @@ export const forgetPassword = [
 ];
 
 export const resetPassword = [
-  check('password', 'Password must be between 10 to 20 characters.')
+  check('password', 'Password must be between 8 to 50 characters.')
     .trim()
-    .escape()
     .notEmpty()
-    .isLength({ min: 10, max: 20 }),
+    .isLength({ min: 8, max: 50 }),
   check('confirmPassword')
     .trim()
-    .escape()
     .custom((value, { req }) => {
       if (value != req.body.password) {
         throw new Error('passwords does not match.');

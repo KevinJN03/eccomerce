@@ -11,7 +11,7 @@ import { body, check, validationResult } from 'express-validator';
 import timezone from 'dayjs/plugin/timezone.js';
 import utc from 'dayjs/plugin/utc.js';
 import dayjs from 'dayjs';
-import passport from '../utils/passport/passport.js';
+import passport from 'passport';
 import { checkAuthenticated } from '../middleware/checkAuthenticated.js';
 import Address from '../Models/address.js';
 import addressValidator from '../utils/addressValidator.js';
@@ -282,15 +282,13 @@ export const loginUser = [
     }),
   check(
     'password',
-    'Please enter a valid password between 10 to 20 characters.',
+    'Please enter a valid password between 8 to 50 characters.',
   )
     .trim()
     .notEmpty()
-    .escape()
     .trim()
-    .isLength({ min: 10, max: 20 }),
+    .isLength({ min: 8, max: 50 }),
   asyncHandler(async (req, res, next) => {
-    console.log('checker')
     const result = validationResult(req).formatWith(({ msg }) => {
       return msg;
     });
@@ -298,26 +296,34 @@ export const loginUser = [
     if (!result.isEmpty()) {
       return res.status(400).send(result.mapped());
     }
-    passport.authenticate('local', (err, user, info) => {
+
+    await passport.authenticate('local', async (err, user, info) => {
       if (err) {
         return next(err);
       }
-
       if (!user) {
         return res
           .status(400)
           .send({ password: 'The password is invalid. Please try again.' });
       }
 
-      req.logIn(user, (error) => {
+      return req.logIn(user, (error) => {
+ 
         if (error) {
-          return next(err);
+          next(error)
         }
-console.log({user})
-        return res.redirect('/api/user/check');
+
+       return res.redirect('/api/user/check');
       });
+  
     })(req, res, next);
+
+    
   }),
+
+
+ 
+ 
 ];
 
 export const userLogout = asyncHandler(async (req, res, next) => {

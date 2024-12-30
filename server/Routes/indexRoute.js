@@ -3,7 +3,10 @@ import urllib from 'urllib';
 import 'dotenv/config.js';
 import asyncHandler from 'express-async-handler';
 import { adminLogin } from '../Controllers/adminController.js';
-import { checkAdminAuthenticated } from '../middleware/checkAuthenticated.js';
+import {
+  checkAdminAuthenticated,   
+  checkAuthenticated,
+} from '../middleware/checkAuthenticated.js';
 import {
   forgetPassword,
   resetPassword,
@@ -11,12 +14,32 @@ import {
 import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
 import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
-import ExpressStatusMonitor from 'express-status-monitor';
 import emailTestRoute from '../React Email/test';
 import { loginUser } from '../Controllers/userController.js';
 import { get_single_giftCard } from '../Controllers/giftCardController.js';
-
+import productRoute from './productRoute.js';
+import categoryRoute from './categoryRoute.js';
+import couponRoute from './couponRoute.js';
+import searchRoute from './searchRoute.js';
+import webHookRoute from './webhookRoute.js';
+import userRoute from './userRoute.js';
+import adminRoute from './adminRoute.js';
+import orderRoute from './orderRoute.js';
+import deliveryRoute from './deliveryRoute.js';
+import authRoute from './authRoute.js'
 const router = express.Router();
+// Add routes to the index router
+router.use('/product', productRoute);
+router.use('/coupon', couponRoute);
+router.use('/category', categoryRoute);
+router.use('/search', searchRoute);
+//router.use('/giftcard', giftCardRoute);
+router.post('/user/login', loginUser);
+router.use('/user', [authRoute, [checkAuthenticated, userRoute]]);
+router.use('/admin', [checkAdminAuthenticated, adminRoute]);
+router.use('/order', orderRoute);
+router.use('/delivery', deliveryRoute);
+router.use('/webhook', webHookRoute);
 router.use('/test', emailTestRoute);
 router.get('/giftCard', get_single_giftCard);
 router.use('/cart', cartRoute);
@@ -25,8 +48,9 @@ router.use('/wishlist', wishlistRoute);
 router.get('/server-status', (req, res) => {
   res.send('OK');
 });
+
 router.post('/admin/login', adminLogin);
-router.post('/user/login', loginUser);
+
 router.get('/admin/check', [
   checkAdminAuthenticated,
   asyncHandler((req, res, next) => {
@@ -34,8 +58,8 @@ router.get('/admin/check', [
   }),
 ]);
 
-router.post('reset-password', resetPassword);
-router.post('forget-password', forgetPassword);
+router.post('/reset-password', resetPassword);
+router.post('/forget-password', forgetPassword);
 
 // router.get(
 //   '/searchIndex',

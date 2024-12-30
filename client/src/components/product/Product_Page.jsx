@@ -10,7 +10,7 @@ import Navigation_Links from './NavigationLinks.jsx';
 import axios from '../../api/axios.js';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useGenderCategory } from '../../hooks/genderCategory';
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const tagButtons = [
     '  ActiveWear',

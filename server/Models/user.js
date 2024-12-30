@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
 import expressAsyncHandler from 'express-async-handler';
+import 'dotenv/config';
 dayjs.extend(relativeTime);
 const { Schema } = mongoose;
 
@@ -79,10 +80,12 @@ const UserSchema = new Schema(
       twitter: { type: Schema.Types.String },
       facebook: { type: Schema.Types.String },
     },
+    salt: { type: Schema.Types.Number, default: 10 },
   },
   {
-    toObject: { virtuals: true, getters: true },
-  },
+    toObject: { virtuals: true }, // Make sure virtuals (if any) are included
+    toJSON: { virtuals: true },   // Same for JSON
+  }
 );
 
 UserSchema.path('dob').validate({
@@ -101,5 +104,6 @@ UserSchema.virtual('id').get(function () {
 UserSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
+
 
 export default mongoose.model('Users', UserSchema);

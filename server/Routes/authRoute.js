@@ -18,6 +18,8 @@ const { CLIENT_URL, OAUTH_REGISTRATION_JWT_SECRET, SALT_ROUNDS, STRIPE_KEY } =
   process.env;
 const stripe = Stripe(STRIPE_KEY);
 router.get('/login/google', passport.authenticate('google'));
+
+
 router.get('/login/facebook', passport.authenticate('facebook'));
 router.get('/login/twitter', passport.authenticate('twitter'));
 
@@ -52,7 +54,6 @@ const authenticateUser = (provider) => {
 };
 
 router.get('/login/twitter/callback', authenticateUser('twitter'));
-
 router.get('/login/facebook/callback', authenticateUser('facebook'));
 router.get('/login/google/callback', authenticateUser('google'));
 

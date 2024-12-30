@@ -1,13 +1,20 @@
 import passport from 'passport';
 import User from '../../Models/user.js';
-import strategy from './localStrategy.js';
 import googleStrategy from './googleStrategy.js';
 import facebookStrategy from './facebookStrategy.js';
 import twitterStrategy from './twiiterStrategy.js';
 import logger from '../logger.js';
+import UserModel from '../../Models/user.js';
+import localStrategy from './localStrategy.js';
+
+passport.use(localStrategy);
+passport.use(googleStrategy);
+passport.use(facebookStrategy);
+passport.use(twitterStrategy);
 
 passport.serializeUser((user, cb) => {
-  return cb(null, user._id?.toString());
+  const userId =user._id.toString()
+  return cb(null, userId);
 });
 
 passport.deserializeUser(async (userId, cb) => {
@@ -40,8 +47,5 @@ passport.deserializeUser(async (userId, cb) => {
   }
 });
 
-passport.use(strategy);
-passport.use(googleStrategy);
-passport.use(facebookStrategy);
-passport.use(twitterStrategy);
+
 export default passport;
