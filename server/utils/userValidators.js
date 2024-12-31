@@ -37,15 +37,22 @@ const userValidators = [
     .escape()
     .notEmpty()
     .isEmail(),
-  check('dob', 'Please enter an valid date').custom((value) => {
-    const userDob = dayjs(value);
-    const todayDate = dayjs();
-    const difference = todayDate.diff(userDob, 'year');
-    if (difference < 18) {
-      throw new Error('You must be 18 or older to use Glamo.');
-    }
-    return true;
-  }),
+  check('dob', 'Please enter an valid date')
+    .notEmpty()
+    .withMessage('Please enter an valid date')
+    .bail() // Stops further validation if this fails
+    .custom((value) => {
+      const userDob = dayjs(value);
+      const todayDate = dayjs();
+      const difference = todayDate.diff(userDob, 'year');
+      if (difference < 18) {
+        throw new Error('You must be 18 or older to use Glamo.');
+      }
+      return true;
+    }),
+  check('interest', 'Interest is required. Please enter your Interest.')
+    .notEmpty()
+    .isIn(['menswear', 'womenswear']),
 ];
 
 export default userValidators;

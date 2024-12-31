@@ -39,7 +39,7 @@ const router = express.Router();
 router.get('/dummy', dummy_data);
 router.post('/create', create_user);
 router.get('/logout', userLogout);
-router.post('/sign-up', signUp_user);
+//router.post('/sign-up', signUp_user);
 router.get('/check', checkUser);
 router.get('/userData', getAllUserData);
 router.post('/address/add', addUserAddress);
