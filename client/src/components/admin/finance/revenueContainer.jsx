@@ -23,7 +23,14 @@ function RevenueContainer({
             <h2
                 className={`text-3xl font-semibold ${underline ? 'underline decoration-dashed underline-offset-8' : ''}	 `}
             >
-                {amount}
+              
+                    {parseFloat(
+                        amount
+                    ).toLocaleString('en-GB', {
+                        style: 'currency',
+                        currency: 'GBP',
+                    })}
+                
             </h2>
             <p>{text}</p>
 

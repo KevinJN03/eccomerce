@@ -3,7 +3,10 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
+import tailwind from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
+import commonjs from 'vite-plugin-commonjs'
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd());
@@ -24,6 +27,7 @@ export default defineConfig(({ command, mode }) => {
         },
         plugins: [
             react(),
+            commonjs(),
             // mkcert({ autoUpgrade: true, savePath: './cert/' }),
             svgr(),
             // sentryVitePlugin({
@@ -33,14 +37,19 @@ export default defineConfig(({ command, mode }) => {
             //     telemetry: false,
             // }),
         ],
+        css: {
+            postcss: {
+              plugins: [tailwind, autoprefixer],
+            }
+          }, 
         server: {
             //https: true
             historyApiFallback: true,
             watch: {
                 usePolling: true,
             },
-            host: true,
-            port: 80,
+            // host: true,
+            // port: 80,
         },
         preview: {
             port: 80,
@@ -61,8 +70,8 @@ export default defineConfig(({ command, mode }) => {
         //  mode: 'development',
         // mode: 'production',
         build: {
-            sourcemap: true,
-            chunkSizeWarningLimit: 5000,
+          //  sourcemap: true,
+           // chunkSizeWarningLimit: 5000,
             // outDir: 'build',
         },
     };

@@ -1,11 +1,19 @@
-import daisyui from 'daisyui';
-import rippleui from 'rippleui';
-
 /** @type {import('tailwindcss').Config} */
 
-export default {
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+import daisyui from "daisyui"
+import rippleui from 'rippleui';
 
+
+export default {
+
+    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+    // daisyui: {
+    //     prefix: "daisy"
+    // },
+    // plugins: [daisyui, 
+    //  rippleui
+    // ],
+ 
     theme: {
         extend: {
             // sans: ["Poppins", "sans-serif"]
@@ -13,7 +21,7 @@ export default {
             minHeight: {
                 main: 'calc(100vh-(6.75rem_+_3.75rem))',
             },
-            textShadow: {
+            textShadow: {   
                 sm: '0 1px 2px var(--tw-shadow-color)',
                 DEFAULT: '0 2px 4px var(--tw-shadow-color)',
                 lg: '0 8px 16px var(--tw-shadow-color)',
@@ -74,5 +82,12 @@ export default {
             'max-h-lg': { raw: '(max-height: 900px)' },
         },
     },
+
     plugins: [daisyui, rippleui],
+
+    daisyui: {
+        prefix: 'daisy-',
+    },
+
 };
+ 

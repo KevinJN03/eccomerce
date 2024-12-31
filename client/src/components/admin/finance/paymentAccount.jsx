@@ -136,7 +136,7 @@ function PaymentAccount({}) {
                                 title={'Amount due for June'}
                                 includeQuestion={true}
                                 amount={0}
-                                text={'Your sales covered your fees'}
+                                text={'Amount awaiting clearing'}
                             >
                                 <div className="border-t border-dark-gray pt-4">
                                     <p className="cursor-pointer font-medium underline-offset-2 hover:underline">
@@ -146,10 +146,12 @@ function PaymentAccount({}) {
                             </RevenueContainer>
                             <RevenueContainer
                                 title={'Available for deposit'}
+                                text={'Your sales covered your fees'}
+
                                 amount={
-                                    generateText(
-                                        _.get(balance, 'available.0.amount')
-                                    ).numString
+                                    
+                                        _.get(balance, 'available.0.amount') / 100
+                                    
                                 }
                                 underline
                             >
