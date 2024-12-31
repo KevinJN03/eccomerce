@@ -102,7 +102,7 @@ function Router({ Header, Footer }) {
     const router = createBrowserRouter([
         {
             element: <Layout />,
-            //  errorElement: <Error />,
+            errorElement: <Error />,
 
             children: [
                 {
