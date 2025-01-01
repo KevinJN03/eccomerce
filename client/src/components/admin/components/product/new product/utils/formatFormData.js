@@ -11,7 +11,6 @@ export default function formatFormData(value) {
         profile,
         priceValue,
         stockValue,
-
         combine,
         minVariationPrice,
     } = value;

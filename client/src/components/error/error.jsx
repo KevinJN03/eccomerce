@@ -1,5 +1,5 @@
 import disableLayout from '../../hooks/disableLayout.jsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import emoji from '../../assets/animated-images/wired-flat-262-emoji-wow.apng';
 import Layout from '../Layout/container.jsx';
 import Header from '../Layout/header.jsx';
@@ -16,12 +16,22 @@ export default function Error({ message, link, buttonText }) {
                     This page couldn’t be loaded for some reason, give it a
                     retry or come back later
                 </p>
-                <Link
+
+                <div className='flex flex-row gap-2'>
+                     <Link
                     to={link ? link : '/home'}
                     className="mt-4 bg-[var(--primary)] px-3 py-3 font-bold tracking-wide text-white"
                 >
                     {buttonText ? buttonText : 'GO TO HOMEPAGE'}
                 </Link>
+                <Link
+                    to={-1} // return to previous page
+                    className="mt-4 bg-[var(--primary)] px-3 py-3 font-bold text-center tracking-wide text-white"
+                >
+                  GO BACK
+                </Link>
+                </div>
+               
             </section>
         </section>
     );

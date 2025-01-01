@@ -240,7 +240,7 @@ export const adminLogin = [
     req.password = findUser.password;
     return true;
   }),
-  check('password')
+  check('password', 'password doesnt match.')
     .trim()
     .escape()
     .custom(async (value, { req }) => {
@@ -284,7 +284,7 @@ export const adminLogin = [
           return next(err);
         }
         logger.info(`admin User ${user._id} logged in successfully`);
-        return res.redirect(303, '/api/user/check');
+        res.redirect(303, '/api/admin/check');
       });
     })(req, res, next);
     // res.status(200).send({ success: true, msg: 'login in successfully' });

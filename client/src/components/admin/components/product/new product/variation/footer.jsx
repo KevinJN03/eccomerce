@@ -11,9 +11,14 @@ import BubbleButton from '../../../../../buttons/bubbleButton';
 function Footer({ type }) {
     const { id } = useParams();
     const navigate = useNavigate();
-
+    const abortControllerRef = useRef(new AbortController());
     const combineRef = useRef();
     const variationsRef = useRef();
+    const [loading, setLoading] = useState({
+        preview: false,
+        draft: false,
+        publish: false,
+    }); // state to change which button to display loading animation
 
     const {
         description,
@@ -39,63 +44,35 @@ function Footer({ type }) {
         variationsRef.current = variations;
     }, [variations]);
 
-    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
 
-    const publishProduct = (e, draft = false) => {
-        e.preventDefault();
-
-        setPublish((prevState) => ({
-            ...prevState,
-            firstAttempt: true,
-            value: true,
-        }));
-        try {
-            setLoading(() => true);
-            const timeout = setTimeout(() => {
-                const value = {
-                    combine: combineRef.current,
-                    description,
-                    title,
-                    variations: variationsRef.current,
-                    files,
-                    category,
-                    gender,
-                    profile,
-                    priceValue,
-                    stockValue,
-                    publishError,
-                    publishErrorDispatch,
-                    minVariationPrice,
-                };
-                const formData = formatFormData(value);
-                publishData(formData, draft);
-            }, 1000);
-
-            if (publishError?.size > 0) {
-                clearTimeout(timeout);
-                setLoading(() => false);
-            }
-        } catch (error) {
-            setLoading(() => false);
-        }
-    };
-
-    async function publishData(formData, draft) {
-        const url = draft
+    //async function publishData(formData, draft) {
+    async function publishData(formData) {
+        abortControllerRef.current?.abort();
+        abortControllerRef.current = new AbortController();
+        const url = loading?.['draft']
             ? '/product/create?isDraft=true'
             : type == 'update'
               ? `/product/${type}/${id}`
               : '/product/create';
-
         try {
             await adminAxios({
-                method: draft ? 'post' : type == 'update' ? 'put' : 'post',
+                method: loading?.['draft']
+                    ? 'post'
+                    : type == 'update'
+                      ? 'put'
+                      : 'post',
                 url: url,
                 data: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
+                signal: abortControllerRef.current.signal,
             });
 
-            navigate('/admin/products');
+            //navigate('/admin/products');
         } catch (error) {
             const errorData = error.response.data;
             if (error.response.status == 500) {
@@ -111,14 +88,123 @@ function Footer({ type }) {
                 data: errorData,
             });
         } finally {
-            setLoading(() => false);
+            setLoading(() => ({}));
         }
     }
 
+    // const publishProduct = (e, draft = false) => {
+    const publishProduct = (e) => {
+        //debugger;
+
+        if (publishError?.size > 0) {
+            // clearTimeout(timeout);
+            abortControllerRef.current.abort();
+            setLoading(() => ({}));
+
+            return;
+        }
+        // setPublish((prevState) => ({
+        //     ...prevState,
+        //     firstAttempt: true,
+        //     value: true,
+        // }));
+        try {
+            // const timeout = setTimeout(() => {
+            const value = {
+                combine: combineRef.current,
+                description,
+                title,
+                variations: variationsRef.current,
+                files,
+                category,
+                gender,
+                profile,
+                priceValue,
+                stockValue,
+                minVariationPrice,
+            };
+            const formData = formatFormData(value); // generate format to send data to backend
+            // publishData(formData, draft);
+            publishData(formData);
+            // }, 1000);
+
+            // cancel operation if there is an error
+        } catch (error) {
+            setLoading(() => ({}));
+        }
+    };
+
+    const publishPreview = (e) => {
+        setLoading(() => ({ preview: true }));
+    };
+    const publishDraft = (e) => {
+        e.preventDefault();
+        setLoading(() => ({ draft: true }));
+
+        publishProduct();
+    };
+
+    const publishCreate = (e) => {
+        e.preventDefault();
+        setLoading(() => ({ publish: true }));
+
+        publishProduct();
+    };
+
     return (
-        <div className="sticky bottom-0 z-[3] flex w-full max-w-full gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
+        <div className="sticky bottom-0 z-[3] flex w-full max-w-full justify-between gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <BubbleButton handleClick={() => navigate('/admin/products')} />
-            <button className="theme-btn ml-auto !text-sm">Preview</button>
+            <section className="flex gap-2 ">
+                {[
+                    {
+                        text: 'Preview',
+                        type: 'preview',
+
+                        buttonClick: publishPreview,
+                    },
+                    {
+                        text: 'Save as draft',
+                        type: 'draft',
+                        buttonClick: publishDraft,
+                    },
+                    {
+                        type: 'publish',
+                        text:
+                            type == 'update'
+                                ? 'Publish Changes'
+                                : type == 'copy'
+                                  ? 'Copy'
+                                  : 'Publish',
+                        buttonClick: publishCreate,
+                        className: `bg-black`, // additional classes for publish button
+                        pClassName: 'text-white', // p element class
+                    },
+                ].map(({ text, buttonClick, type, className, pClassName }) => {
+                    return (
+                        <button
+                            className={`theme-btn !text-sm ${className || ''}`}
+                            onClick={buttonClick}
+                        >
+                            {!loading?.[type] ? (
+                                <p
+                                    className={`whitespace-nowrap text-sm ${pClassName || ''}`}
+                                >
+                                    {text}
+                                </p>
+                            ) : (
+                                <div className="w-full">
+                                    <div
+                                        className={`spinner-dot-pulse spinner-sm ![--spinner-color:var(--${type == 'publish' ? 'white' : 'black'})]`}
+                                    >
+                                        <div className="spinner-pulse-dot "></div>
+                                    </div>
+                                </div>
+                            )}
+                        </button>
+                    );
+                })}
+            </section>
+            {/* <button className="theme-btn ml-auto !text-sm">Preview</button>
             <button
                 className="theme-btn !text-sm"
                 onClick={(e) => publishProduct(e, true)}
@@ -146,7 +232,7 @@ function Footer({ type }) {
                         </div>
                     </div>
                 )}
-            </button>
+            </button> */}
         </div>
     );
 }

@@ -17,6 +17,7 @@ import productAggregateStage from '../utils/productAggregateStage.js';
 import mongoose from 'mongoose';
 import deliveryProfile from '../Models/deliveryProfile.js';
 import variationFormat from '../utils/variationFormat.js';
+import VariationOption from '../Models/variationOption.js';
 
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
@@ -80,7 +81,6 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
     },
     ...productAggregateStage({ stats: true }),
   ]);
-
 
   if (newProduct.length < 1) {
     return res.status(404).send('product not found');
@@ -542,19 +542,22 @@ export const create_new_product = [
     }
     const { gender, category } = req.body;
     const { isDraft } = req.query;
-    const newProduct = new Product({ status: isDraft ? 'draft' : 'active' });
+    const newProduct = new Product({
+      ...req.body,
+      status: isDraft ? 'draft' : 'active',
+    });
 
-    const { productData, sharpResult } = await generateProduct(
-      req,
-      newProduct.id,
-    );
+    const { productData, sharpResult, variationOptionsArray } =
+      await generateProduct(req, newProduct._id);
 
     Object.assign(newProduct, productData);
+    //console.log({newProduct})
+    //return res.status(404).send({success:false})
     try {
-      await Category.updateOne(
-        { _id: category },
-        { $push: { [gender]: newProduct.id } },
-      );
+      // await Category.updateOne(
+      //   { _id: category },
+      //   { $push: { [gender]: newProduct.id } },
+      // );
 
       await s3Upload({
         files: sharpResult,
@@ -562,8 +565,9 @@ export const create_new_product = [
         folderId: newProduct.id,
         endPoint: 'products',
       });
-
+      await VariationOption.insertMany(variationOptionsArray);
       await newProduct.save();
+
       return res.send({ success: true, msg: 'product saved' });
     } catch (error) {
       const deleteId = newProduct.id;
