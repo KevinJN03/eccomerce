@@ -80,7 +80,7 @@ const UserSchema = new Schema(
       twitter: { type: Schema.Types.String },
       facebook: { type: Schema.Types.String },
     },
-    salt: { type: Schema.Types.Number, default: 10 },
+   
   },
   {
     toObject: { virtuals: true }, // Make sure virtuals (if any) are included

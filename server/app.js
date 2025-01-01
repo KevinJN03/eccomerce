@@ -9,39 +9,36 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import errorHandler from './errorHandler.js';
 import passport from 'passport';
-import './utils/passport'
-import indexRoute from './Routes/indexRoute.js';
+import './utils/passport';
+import indexRoute from './Routes/index.js';
 import NodeCache from 'node-cache';
-import 'dotenv/config';
 import ExpressStatusMonitor from 'express-status-monitor';
 import logger from './utils/logger.js';
 import dayjs from 'dayjs';
 import { utc } from 'dayjs';
-import fs from 'fs'
-import https from 'https'
+import fs from 'fs';
+import https from 'https';
 dayjs.extend(utc);
-const {
-  DBNAME,
-  URL,
-  SECRET, PORT
-} = process.env;
+const { DBNAME, URL, SECRET, PORT } = process.env;
 
-
-const db = () => {
-  mongoose
-    .connect(URL, { dbName: DBNAME })
-    .then(async () => {
-      // connection.sessions.drop();
-      console.log('successfully database Connection');
-    })
-    .catch((error) => {
-      console.log(`error: ${error}`);
-    });
-};
-db();
+// do not connect to cloud database in test environment.
+if (process.env.NODE_ENV != 'test') {
+  const db = () => {
+    mongoose
+      .connect(URL, { dbName: DBNAME })
+      .then(async () => {
+        // connection.sessions.drop();
+        console.log('successfully database Connection');
+      })
+      .catch((error) => {
+        console.log(`error: ${error}`);
+      });
+  };
+  db();
+}
 
 const app = express();
-app.use(morgan((process.env.NODE_ENV = 'production' ? 'tiny' : 'dev')));
+app.use(morgan(process.env.NODE_ENV == 'production' ? 'tiny' : 'dev'));
 export const myCache = new NodeCache();
 // app.use(cors());
 //app.set('trust proxy', true);
@@ -66,8 +63,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 app.use(
   ExpressStatusMonitor({
     path: '/api/status',
@@ -90,7 +85,4 @@ app.use(errorHandler);
 //   // logger.error(`Secure server🔑 listening on Port: ${PORT}`);
 // });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
- 
+export default app;

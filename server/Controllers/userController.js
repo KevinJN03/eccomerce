@@ -32,30 +32,14 @@ import ChangeEmail from '../React Email/emails/changeEmail.jsx';
 import userValidators from '../utils/userValidators.js';
 import OrderCancel from '../React Email/emails/orderCancelled.jsx';
 import logger from '../utils/logger.js';
-
+import handleProfilePhoto from '../utils/handleProfilePhoto.js';
 const stripe = Stripe(process.env.STRIPE_KEY);
 
 const CLIENT_URL = process.env.CLIENT_URL;
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
 dayjs.extend(utc);
 dayjs.extend(timezone);
-const handleProfilePhoto = async (file, id) => {
-  if (file) {
-    const compressImg = await sharpify(file, 'profile');
-    compressImg.id = id;
-    await s3Upload({
-      files: [compressImg],
-      isProfile: true,
-      endPoint: 'user',
-    });
-    const profileImg = `${process.env.UPLOAD_URL}/user/${id}.${compressImg.format}`;
-    const updateUser = await User.findByIdAndUpdate(
-      id,
-      { profileImg },
-      { upsert: true, new: true },
-    );
-  }
-};
+
 
 // test
 export const dummy_data = asyncHandler(async (req, res, next) => {
@@ -188,7 +172,7 @@ export const signUp_user = [
       name: `${firstName} ${lastName}`,
       email,
     });
-    res.status(200).send({ msg: 'user created', user });
+    res.status(201).send({ msg: 'user created', user });
   }),
 ];
 

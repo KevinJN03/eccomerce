@@ -27,7 +27,7 @@ async function generateProduct(req, id, endPoint = 'products') {
   const parseVariations = variations?.map((item) => {
     const data = JSON.parse(item);
     delete data.id;
-    data.options = new Map(data.options);
+    //data.options = new Map(data.options);
 
     return data;
   });

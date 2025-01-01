@@ -4,7 +4,7 @@ import 'dotenv/config.js';
 import asyncHandler from 'express-async-handler';
 import { adminLogin } from '../Controllers/adminController.js';
 import {
-  checkAdminAuthenticated,   
+  checkAdminAuthenticated,
   checkAuthenticated,
 } from '../middleware/checkAuthenticated.js';
 import {
@@ -14,8 +14,8 @@ import {
 import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
 import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
-import emailTestRoute from '../React Email/test';
-import { loginUser } from '../Controllers/userController.js';
+import emailTestRoute from '../React Email/emailtest.js';
+import { loginUser, signUp_user } from '../Controllers/userController.js';
 import { get_single_giftCard } from '../Controllers/giftCardController.js';
 import productRoute from './productRoute.js';
 import categoryRoute from './categoryRoute.js';
@@ -26,7 +26,7 @@ import userRoute from './userRoute.js';
 import adminRoute from './adminRoute.js';
 import orderRoute from './orderRoute.js';
 import deliveryRoute from './deliveryRoute.js';
-import authRoute from './authRoute.js'
+import authRoute from './authRoute.js';
 const router = express.Router();
 // Add routes to the index router
 router.use('/product', productRoute);
@@ -35,6 +35,8 @@ router.use('/category', categoryRoute);
 router.use('/search', searchRoute);
 //router.use('/giftcard', giftCardRoute);
 router.post('/user/login', loginUser);
+router.post('/user/sign-up', signUp_user);
+// attach oauth route and user authorization route to /user
 router.use('/user', [authRoute, [checkAuthenticated, userRoute]]);
 router.use('/admin', [checkAdminAuthenticated, adminRoute]);
 router.use('/order', orderRoute);
@@ -46,7 +48,7 @@ router.use('/cart', cartRoute);
 router.use('/wishlist', wishlistRoute);
 
 router.get('/server-status', (req, res) => {
-  res.send('OK');
+  return res.send({ success: true });
 });
 
 router.post('/admin/login', adminLogin);
