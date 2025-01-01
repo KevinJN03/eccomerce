@@ -14,13 +14,17 @@ const variationSchema = new Schema(
     on: Boolean,
     name2: String,
   },
-  { strict: false, virtuals: true, toJSON: {virtuals: true} , toObject:{virtuals: true}},
+  {
+    strict: true,
+    virtuals: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
 variationSchema.virtual('id').get(function () {
   return this._id.toHexString();
 });
-
 
 export const productSchema = new Schema(
   {
@@ -70,12 +74,11 @@ export const productSchema = new Schema(
     },
   },
   {
-    strict: false,
+    strict: true,
     toJSON: { virtuals: true },
   },
 );
 
 productSchema.virtual('id');
-
 
 export default model('product', productSchema);

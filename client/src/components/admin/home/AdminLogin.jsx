@@ -27,6 +27,8 @@ function AdminLogin({}) {
     const onSubmit = async ({ email, password }) => {
         console.log('test');
         let success = false;
+
+        debugger
         try {
             setLoading(() => true);
             const { data } = await adminAxios.post('login', {

@@ -4,6 +4,8 @@ import 'dotenv/config.js';
 
 import sharpify from '../Upload/sharpify.js';
 import _ from 'lodash';
+import VariationOption from '../Models/variationOption.js';
+import mongoose from 'mongoose';
 
 async function generateProduct(req, id, endPoint = 'products') {
   const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
@@ -24,11 +26,30 @@ async function generateProduct(req, id, endPoint = 'products') {
     description,
   } = req.body;
 
-  const parseVariations = variations?.map((item) => {
+  const newVariationsArray = [];
+  if (variations?.length == 3) {
+    // only process combined variation
+    newVariationsArray.push(variations[2]);
+  } else {
+    newVariationsArray.push(...variations);
+  }
+
+  const variationOptionsArray = [];
+  const parseVariations = newVariationsArray.map((item) => {
     const data = JSON.parse(item);
     delete data.id;
+    data._id = new mongoose.Types.ObjectId();
     //data.options = new Map(data.options);
 
+    const newOptions = data?.options.map(
+      ([_id, { _id: objectId, ...object }]) => ({
+        ...object,
+        variation_id: data._id,
+        option_id: object.id,
+        product_id: id,
+      }),
+    );
+    variationOptionsArray.push(...newOptions);
     return data;
   });
 
@@ -49,12 +70,14 @@ async function generateProduct(req, id, endPoint = 'products') {
   for (const item of files) {
     const sharpen = await sharpify(item);
     sharpen.fileName = counter;
-    imageArr.push(`${url}/${id}/${sharpen.fileName}.${sharpen.format}`);
+    imageArr.push(
+      `${url}/${id.toString()}/${sharpen.fileName}.${sharpen.format}`,
+    );
     counter += 1;
     sharpResult.push(sharpen);
   }
 
-  return { productData, sharpResult };
+  return { productData, sharpResult, variationOptionsArray };
 }
 
 export default generateProduct;

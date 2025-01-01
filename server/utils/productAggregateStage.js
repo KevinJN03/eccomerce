@@ -1,33 +1,45 @@
+import { populate } from 'dotenv';
+
 function productAggregateStage({ stats }) {
   return [
     {
       $unwind: { path: '$variations', includeArrayIndex: 'variationNumber' },
     },
-
     {
-      $addFields: {
-        variationOptions: {
-          $objectToArray: '$variations.options',
-        },
+      // use the variation _id to reference variationOptions thta belong to that variation
+      $lookup: {
+        from: 'variationoptions',
+        localField: 'variations._id',
+        foreignField: 'variation_id',
+        as: 'variationOptions',
       },
     },
+    // {
+    //   $addFields: {
+    //     variationOptions: {
+    //       $objectToArray: '$variations.options',
+    //     },
+    //   },
+    // },
 
     {
       $addFields: {
         priceArray: {
+          // create an array of all prices, will be used later to find the max and min price
           $cond: {
             if: { $eq: ['$variations.priceHeader.on', true] },
             then: {
               $map: {
                 input: '$variationOptions',
                 as: 'option',
-                in: { $toDouble: '$$option.v.price' },
+                in: { $toDouble: '$$option.price' },
               },
             },
             else: '$$REMOVE',
           },
         },
         stockArray: {
+          // create an array of all stocks, will be used later to find the max and min stock
           $cond: {
             if: { $eq: ['$variations.quantityHeader.on', true] },
             then: {
@@ -36,8 +48,8 @@ function productAggregateStage({ stats }) {
                 as: 'option',
                 in: {
                   $cond: {
-                    if: { $eq: ['$$option.v.visible', true] },
-                    then: { $toInt: '$$option.v.stock' },
+                    if: { $eq: ['$$option.visible', true] },
+                    then: { $toInt: '$$option.stock' },
                     else: 0,
                   },
                 },
@@ -56,101 +68,102 @@ function productAggregateStage({ stats }) {
         variationsArray: { $push: '$variations' },
 
         stockArrays: {
+          // combine all the stocks of each variation into 1 array
           $push: {
             $cond: {
+              // if: {
+              //   $and: [
+              //     {
+              //       $eq: ['$variations.quantityHeader.on', true],
+              //     },
+              //     {
+              //       $eq: ['$variations.combine', true],
+              //     },
+              //   ],
+              // },
+              // then: {
+              //   $cond: {
+              //     if: {
+              //       $eq: ['$variationNumber', 2],
+              //     },
+              //     then: {
+              //       min: { $toInt: { $min: '$stockArray' } },
+              //       max: { $toInt: { $max: '$stockArray' } },
+              //       array: '$stockArray',
+              //       total: {
+              //         $sum: '$stockArray',
+
+              //         // {
+              //         //   $map: {
+              //         //     input: '$stockArray',
+              //         //     as: 'item',
+              //         //     in: { $toInt: '$$item' },
+              //         //   },
+              //         // },
+              //       },
+              //     },
+
+              //     else: '$$REMOVE',
+              //   },
+              // },
+              // else: {
+              //   $cond: {
               if: {
-                $and: [
-                  {
-                    $eq: ['$variations.quantityHeader.on', true],
-                  },
-                  {
-                    $eq: ['$variations.combine', true],
-                  },
-                ],
+                $eq: ['$variations.quantityHeader.on', true],
               },
               then: {
-                $cond: {
-                  if: {
-                    $eq: ['$variationNumber', 2],
-                  },
-                  then: {
-                    min: { $toInt: { $min: '$stockArray' } },
-                    max: { $toInt: { $max: '$stockArray' } },
-                    array: '$stockArray',
-                    total: {
-                      $sum: '$stockArray',
-
-                      // {
-                      //   $map: {
-                      //     input: '$stockArray',
-                      //     as: 'item',
-                      //     in: { $toInt: '$$item' },
-                      //   },
-                      // },
-                    },
-                  },
-
-                  else: '$$REMOVE',
+                min: { $toInt: { $min: '$stockArray' } },
+                max: { $toInt: { $max: '$stockArray' } },
+                array: '$stockArray',
+                total: {
+                  $sum: '$stockArray',
                 },
               },
-              else: {
-                $cond: {
-                  if: {
-                    $eq: ['$variations.quantityHeader.on', true],
-                  },
-                  then: {
-                    min: { $toInt: { $min: '$stockArray' } },
-                    max: { $toInt: { $max: '$stockArray' } },
-                    array: '$stockArray',
-                    total: {
-                      $sum: '$stockArray',
-                    },
-                  },
-                  else: '$$REMOVE',
-                },
-              },
+              else: '$$REMOVE',
             },
+            //   },
+            // },
           },
         },
         priceArrays: {
           $push: {
             $cond: {
+              // if: {
+              //   $and: [
+              //     {
+              //       $eq: ['$variations.priceHeader.on', true],
+              //     },
+              //     {
+              //       $eq: ['$variations.combine', true],
+              //     },
+              //   ],
+              // },
+              // then: {
+              //   $cond: {
+              //     if: {
+              //       $eq: ['$variationNumber', 2],
+              //     },
+              //     then: {
+              //       min: { $min: '$priceArray' },
+              //       max: { $max: '$priceArray' },
+              //     },
+
+              //     else: '$$REMOVE',
+              //   },
+              // },
+              // else: {
+              //   $cond: {
               if: {
-                $and: [
-                  {
-                    $eq: ['$variations.priceHeader.on', true],
-                  },
-                  {
-                    $eq: ['$variations.combine', true],
-                  },
-                ],
+                $eq: ['$variations.priceHeader.on', true],
               },
               then: {
-                $cond: {
-                  if: {
-                    $eq: ['$variationNumber', 2],
-                  },
-                  then: {
-                    min: { $min: '$priceArray' },
-                    max: { $max: '$priceArray' },
-                  },
-
-                  else: '$$REMOVE',
-                },
+                min: { $min: '$priceArray' },
+                max: { $max: '$priceArray' },
               },
-              else: {
-                $cond: {
-                  if: {
-                    $eq: ['$variations.priceHeader.on', true],
-                  },
-                  then: {
-                    min: { $min: '$priceArray' },
-                    max: { $max: '$priceArray' },
-                  },
-                  else: '$$REMOVE',
-                },
-              },
+              else: '$$REMOVE',
             },
+            //   },
+            // },
           },
         },
       },

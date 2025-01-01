@@ -15,7 +15,7 @@ import { orderSearchIndex, productSearchIndex } from '../utils/searchIndex.js';
 import cartRoute from './cartRoute.js';
 import wishlistRoute from './wishlistRoute.js';
 import emailTestRoute from '../React Email/emailtest.js';
-import { loginUser, signUp_user } from '../Controllers/userController.js';
+import { loginUser, signUp_user, userLogout } from '../Controllers/userController.js';
 import { get_single_giftCard } from '../Controllers/giftCardController.js';
 import productRoute from './productRoute.js';
 import categoryRoute from './categoryRoute.js';
@@ -28,14 +28,26 @@ import orderRoute from './orderRoute.js';
 import deliveryRoute from './deliveryRoute.js';
 import authRoute from './authRoute.js';
 const router = express.Router();
+router.post('/user/login', loginUser);
+router.get('/user/logout', userLogout);
+router.post('/user/sign-up', signUp_user);
+router.post('/admin/login', adminLogin);
+router.get('/admin/check', [
+  checkAdminAuthenticated,
+  asyncHandler((req, res, next) => {
+    res.status(200).send({ success: true });
+  }),
+]);
+router.post('/reset-password', resetPassword);
+router.post('/forget-password', forgetPassword);
+
 // Add routes to the index router
 router.use('/product', productRoute);
 router.use('/coupon', couponRoute);
 router.use('/category', categoryRoute);
 router.use('/search', searchRoute);
 //router.use('/giftcard', giftCardRoute);
-router.post('/user/login', loginUser);
-router.post('/user/sign-up', signUp_user);
+
 // attach oauth route and user authorization route to /user
 router.use('/user', [authRoute, [checkAuthenticated, userRoute]]);
 router.use('/admin', [checkAdminAuthenticated, adminRoute]);
@@ -51,17 +63,9 @@ router.get('/server-status', (req, res) => {
   return res.send({ success: true });
 });
 
-router.post('/admin/login', adminLogin);
 
-router.get('/admin/check', [
-  checkAdminAuthenticated,
-  asyncHandler((req, res, next) => {
-    res.send({ success: true });
-  }),
-]);
 
-router.post('/reset-password', resetPassword);
-router.post('/forget-password', forgetPassword);
+
 
 // router.get(
 //   '/searchIndex',

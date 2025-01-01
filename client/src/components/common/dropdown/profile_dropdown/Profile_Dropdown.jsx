@@ -20,7 +20,7 @@ function Profile_Dropdown({}) {
         <section className="!mb-0 !pb-0">
             <div className=" bg-light-grey px-3 py-3">
                 {!user?.firstName ? (
-                    <>
+                    <div className='flex flex-col gap-2'>
                         <a
                             href="/portal/login"
                             type="button"
@@ -35,7 +35,7 @@ function Profile_Dropdown({}) {
                         >
                             Sign Up
                         </a>
-                    </>
+                    </div>
                 ) : (
                     <span className="flex gap-x-3">
                         <p className="text-base font-semibold">
