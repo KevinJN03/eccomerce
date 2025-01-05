@@ -18,6 +18,7 @@ import mongoose from 'mongoose';
 import deliveryProfile from '../Models/deliveryProfile.js';
 import variationFormat from '../utils/variationFormat.js';
 import VariationOption from '../Models/variationOption.js';
+import variationOption from '../Models/variationOption.js';
 
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
@@ -633,11 +634,7 @@ export const update_product = [
 
 export const getVariations = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const product = await Product.findById(id);
-  const variation = product.variations[0].options.get(
-    '67bec3e8-7010-4e96-b77e-cea2c38b2955',
-  );
-
+  const variation = await variationOption.findById(id);
   res.send(variation);
 });
 

@@ -22,7 +22,7 @@ function UpdateProduct(props, value) {
         setStockValue,
         combineDispatch,
         contentDispatch,
-        setDescription,
+        setDescription,setTemporaryVariation
     } = value;
     props?.singleValue &&
         useEffect(() => {
@@ -42,28 +42,126 @@ function UpdateProduct(props, value) {
 
             setProfile(() => singleValue?.delivery);
 
-            const newVariations = (singleValue?.variations || []).map(
-                (data) => {
-                    const optionArr = Object.entries(data?.options).map(
-                        (item) => [item[0], item[1]]
-                    );
+            // format options array into a map
+            // if combined variation, create a 2 seperate variation type 1 and 2
+            const formatVariationOptions = (variations) => {
+                const newCombinedVariation = {};
+                const newVariations = [];
+                variations.forEach((variation) => {
+                    if (variation.combine) {
+                        
+                        const defaultObj = {
+                            combine: false,
+                            quantityHeader: {
+                                on: false,
+                            },
+                            priceHeader: {
+                                on: false,
+                            },
+                        };
+                        const newVariationTypes = {
+                            1: {
+                                _id: uuidV4(),
+                                name: variation.name,
+                                options: [],
+                                ...defaultObj,
+                            },
+                            2: {
+                                _id: uuidV4(),
+                                name: variation.name2,
+                                options: [],
+                                ...defaultObj,
+                            },
+                        };
+                        variation.options.forEach(([_id, option]) => {
+                            const id_1 = uuidV4();
+                            const id_2 = uuidV4();
+                            newVariationTypes['1'].options.push([
+                                id_1,
+                                {
+                                   // _id: id_1,
+                                    _id: id_1,
+                                    visible: true,
+                                    variation: option.variation,
+                                },
+                            ]);
+                            newVariationTypes['2'].options.push([
+                                id_2,
+                                {
+                                    _id: id_2,
+                                    visible: true,
+                                    variation: option.variation2,
+                                },
+                            ]);
+                        });
+                        newVariationTypes['1'].options = new Map(
+                            newVariationTypes['1'].options
+                        );
+                        newVariationTypes['2'].options = new Map(
+                            newVariationTypes['2'].options
+                        );
+                        newVariations.push(
+                            newVariationTypes['1'],
+                            newVariationTypes['2']
+                        );
 
-                    data.options = new Map(optionArr);
-                    data.disabled = false;
-                    return data;
-                }
-            );
-
-            if (newVariations.length > 2) {
-                const combinedVariations = newVariations.slice(2)[0];
-                combineDispatch({
-                    type: 'set',
-                    combine: combinedVariations,
+                        variation.options = new Map(variation.options);
+                        Object.assign(newCombinedVariation, variation);
+                    } else {
+                        variation.options = new Map(variation.options);
+                        newVariations.push(variation);
+                    }
                 });
 
-                contentDispatch({ type: 'manage' });
-            }
-            setVariations(() => newVariations.slice(0, 2));
+                // const newVariations = (variations).map(
+                //     (data) => {
+                //         debugger
+                //         const optionArr = Object.entries(data?.options).map(
+                //             (item) => [item[0], item[1]]
+                //         );
+
+                //         data.options = new Map(optionArr);
+                //         data.disabled = false;
+                //         return data;
+                //     }
+                // );
+
+                setVariations(() => newVariations);
+                setTemporaryVariation(() => newVariations)
+                if (!_.isEmpty(newCombinedVariation)) {
+                    combineDispatch({
+                        type: 'set',
+                        combine: newCombinedVariation,
+                    });
+                }
+                return;
+            };
+
+    
+                formatVariationOptions(singleValue?.variations || []);
+            // const newVariations = (singleValue?.variations || []).map(
+            //     (data) => {
+            //         debugger;
+            //         const optionArr = Object.entries(data?.options).map(
+            //             (item) => [item[0], item[1]]
+            //         );
+
+            //         data.options = new Map(optionArr);
+            //         data.disabled = false;
+            //         return data;
+            //     }
+            // );
+
+            // if (newVariations.length > 2) {
+            //     const combinedVariations = newVariations.slice(2)[0];
+            //     combineDispatch({
+            //         type: 'set',
+            //         combine: combinedVariations,
+            //     });
+
+            //     contentDispatch({ type: 'manage' });
+            // }
+            // setVariations(() => newVariations.slice(0, 2));
 
             setDescription(
                 () => singleValue?.description || singleValue?.detail?.join('')

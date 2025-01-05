@@ -66,7 +66,7 @@ function VariationTableContainer({ variation, isCombine }) {
         <TableProvider value={value}>
             <section
                 className="mt-12 flex basis-full flex-col"
-                key={variation.id}
+                key={`section-${variation._id}`}
             >
                 <section className="flex w-full flex-row justify-between">
                     <div className="flex flex-col">
@@ -131,7 +131,7 @@ function VariationTableContainer({ variation, isCombine }) {
                         )}
                     </AnimatePresence>
                 </section>
-                <Table key={variation.id} />
+                <Table key={variation._id} />
                 <Modal
                     open={modalOpen}
                     onClose={() => setModalOpen(() => false)}

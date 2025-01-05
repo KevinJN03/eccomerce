@@ -33,26 +33,50 @@ function Manage({}) {
     const [quantitySelection, setQuantitySelection] = useState('');
     const [disableApply, setDisableApply] = useState(true);
     const [priceState, setPriceState] = useState(
-        checkHeader('priceHeader') || false
+        () => checkHeader('priceHeader') || false
     );
     const [quantityState, setQuantityState] = useState(
-        checkHeader('quantityHeader') || false
+        () => checkHeader('quantityHeader') || false
     );
 
     useEffect(() => {
         const isEqual = _.isEqual(variations, temporaryVariation);
         if (!isEqual) {
-            ('not true');
             setDisableApply(() => false);
         }
     }, [temporaryVariation]);
 
+//     useEffect(() => {
+//         const newArr = []
+// debugger
+//         if (state == false) {
+//             newArr = [...temporaryVariation].map((item) => {
+//                 return { ...item, [property]: { on: false }, combine: false };
+//             });
+//         } else if (state == true) {
+//             newArr = [...temporaryVariation].map((item) => {
+//                 return { ...item, [property]: { on: true } };
+//             });
+//         }
+
+//         newArr.push(...temporaryVariation.map((item) => {
+//             return { ...item, ['priceHeader']: { on: priceState } };
+//         }))
+
+//         setTemporaryVariation(() => newArr);
+//     }, [priceSelection, quantitySelection]);
+
+
+
+
+
+// decide if the price or quantities switch should be  on
     function checkHeader(property, arr) {
-        let newTemporaryVariation;
+        const newTemporaryVariation = [];
         if (arr) {
-            newTemporaryVariation = [...arr];
+            newTemporaryVariation.push(...arr);
         } else {
-            newTemporaryVariation = [...temporaryVariation];
+            newTemporaryVariation.push(...temporaryVariation);
         }
 
         return newTemporaryVariation.some((item) => {
@@ -71,7 +95,7 @@ function Manage({}) {
         let countQuantityHeader = 0;
         let combineQuantity = 1;
         const filtered = temporaryVariation.filter((item) => {
-            if (item.disabled == false) {
+            if (!item?.disabled) {
                 combineQuantity *= item.options?.size;
                 if (item.priceHeader.on) {
                     countPriceHeader++;
@@ -101,6 +125,7 @@ function Manage({}) {
         const clonePublishError = _.cloneDeep(publishError);
 
         const newArr = [...arr];
+        debugger;
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -118,8 +143,6 @@ function Manage({}) {
 
             publishErrorDispatch({ type: 'CLEAR', path: 'price' });
             publishErrorDispatch({ type: 'CLEAR', path: 'stock' });
-
-            setModalCheck(() => false);
         } else {
             combineDispatch({ type: 'clear' });
             const newUpdate = newArr.map((item) => {
@@ -147,12 +170,11 @@ function Manage({}) {
                 return { ...item, combine: false, options: newOptions };
             });
             setVariations(() => newUpdate);
-
-            setModalCheck(() => false);
         }
         // publishErrorDispatch('clearValidateInput');
         publishErrorDispatch({ type: 'SET', data: clonePublishError });
         setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
+        setModalCheck(() => false);
     };
 
     const priceToggleProps = {

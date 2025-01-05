@@ -24,6 +24,14 @@ function productAggregateStage({ stats }) {
 
     {
       $addFields: {
+        // 'variations.options': '$variationOptions',
+        'variations.options': {
+          $map: {
+            input: '$variationOptions',
+            as: 'option',
+            in: ['$$option._id','$$option' ],
+          },
+        },
         priceArray: {
           // create an array of all prices, will be used later to find the max and min price
           $cond: {

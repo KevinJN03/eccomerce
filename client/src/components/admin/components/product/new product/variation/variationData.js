@@ -26,12 +26,21 @@ export const defaultMap = new Map([
     [
         'Colour',
         {
-            id: 1,
+            // id: 1,
+            _id: uuidv4(),
             defaultVariations: colorList,
             disabled: false,
         },
     ],
-    ['Size', { id: 2, defaultVariations: sizeList, disabled: false }],
+    [
+        'Size',
+        {
+            // id: 2
+            _id: uuidv4(),
+            defaultVariations: sizeList,
+            disabled: false,
+        },
+    ],
 ]);
 
 // defaultMap.set('Colour', {
@@ -50,11 +59,11 @@ export const resetDefaultMap = () => {
     }
 };
 
-export const updatedDefaultMap = (name, id, boolean) => {
+export const updatedDefaultMap = (name, _id, boolean) => {
     if (defaultMap.has(name)) {
         const result = defaultMap.get(name);
 
-        if (result.id == id) {
+        if (result._id == _id) {
             const newObj = { ...result, disabled: boolean };
             defaultMap.set(name, newObj);
         }
@@ -68,10 +77,10 @@ export const generateVariation = (name, option) => {
     const listMap = new Map();
     if (categoryList) {
         const generatedList = categoryList.defaultVariations.map((item) => {
-            const id = uuidv4();
+            const _id = uuidv4();
             option?.array
-                ? arr.push({ variation: item, id })
-                : listMap.set(id, { variation: item, id });
+                ? arr.push({ variation: item, _id })
+                : listMap.set(id, { variation: item, _id });
         });
     }
 
@@ -109,7 +118,7 @@ export const filteredVariation = (name, options) => {
 export const generateCustomVariation = (text) => {
     const customVariation = {
         variation: text,
-        id: ObjectID().toString(),
+        _id: ObjectID().toString(),
         type: 'custom',
     };
 

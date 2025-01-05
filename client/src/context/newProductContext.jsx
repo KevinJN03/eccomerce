@@ -22,10 +22,11 @@ export const useNewProduct = () => {
 };
 
 export const NewProductProvider = (props) => {
+    const [temporaryVariation, setTemporaryVariation] = useState([]);
     const [variations, setVariations] = useState([]);
     const [loading, setLoading] = useState(false);
     const [combine, combineDispatch] = useReducer(combineReducer, {
-        id: uuidV4(),
+        _id: uuidV4(),
         on: false,
         options: new Map(),
     });
@@ -72,10 +73,11 @@ export const NewProductProvider = (props) => {
         setStockValue,
         combineDispatch,
         contentDispatch,
-
+        temporaryVariation, setTemporaryVariation,
         setDescription,
     });
     const value = {
+        temporaryVariation, setTemporaryVariation,
         loading,
         setLoading,
         variations,

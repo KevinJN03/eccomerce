@@ -61,18 +61,21 @@ function Update({ category, closeModal }) {
     };
 
     const apply = () => {
+        
         try {
             if (errorMsg) {
                 return;
             }
 
             const updateVariationOptionData = (optionMap) => {
+
+const parsedValue = category ==  'stock' ? parseInt(value) : parseFloat(value).toFixed(2)
                 checkSetToArray.forEach((element) => {
                     if (optionMap.has(element)) {
                         const getVariation = optionMap.get(element);
                         optionMap.set(element, {
                             ...getVariation,
-                            [category]: value,
+                            [category]: parsedValue,
                         });
 
                         publishErrorDispatch({

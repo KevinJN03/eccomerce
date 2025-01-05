@@ -36,10 +36,10 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         e.stopPropagation();
         setCheckSet((prevSet) => {
             const newSet = new Set(prevSet);
-            if (newSet.has(singleVariation.id)) {
-                newSet.delete(singleVariation.id);
+            if (newSet.has(singleVariation._id)) {
+                newSet.delete(singleVariation._id);
             } else {
-                newSet.add(singleVariation.id);
+                newSet.add(singleVariation._id);
             }
             return newSet;
         });
@@ -70,7 +70,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         const newVariations = _.cloneDeep(variations).map((item) => {
             if (item._id == variationList._id) {
                 const newOptionMap = new Map(item.options);
-                newOptionMap.set(newObject.id, newObject);
+                newOptionMap.set(newObject._id, newObject);
 
                 return { ...item, options: newOptionMap };
             }
@@ -99,10 +99,11 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         if (isCombine) {
             combineDispatch({
                 type: 'update',
-                id: singleVariation.id,
+                id: singleVariation._id,
                 newObj: newObject,
             });
         } else {
+           
             const newVariations = updateOptionsInVariations(newObject);
 
             setVariations(() => newVariations);
@@ -114,10 +115,11 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
             ...singleVariation,
             visible: !singleVariation.visible,
         };
+        
         if (isCombine) {
             combineDispatch({
                 type: 'update',
-                id: singleVariation.id,
+                _id: singleVariation._id,
                 newObj: newObject,
             });
         } else {
@@ -130,7 +132,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
             <ClickAwayListener onClickAway={onClickAway}>
                 <motion.tr
                     className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.75)_30%,_rgba(255,255,255,1)_90%)]' : beforeLastIndex && !showAllVariants ? 'showAllVariants  relative  border-b-2 after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.5)_90%,_rgba(255,255,255,0.7)_100%)]' : 'border-b-2'} ${
-                        checkSet.has(singleVariation.id) &&
+                        checkSet.has(singleVariation._id) &&
                         singleVariation.visible &&
                         '!bg-gray-200'
                     }`}
@@ -144,13 +146,13 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
                     {(isPriceHeaderOn || isQuantityHeaderOn) && (
                         <motion.td className={`!py-6 !align-top`}>
                             <motion.input
-                                id={`check-${singleVariation.id}`}
-                                name={`check-${singleVariation.id}`}
+                                id={`check-${singleVariation._id}`}
+                                name={`check-${singleVariation._id}`}
                                 // key={inputCheck}
                                 type="checkbox"
                                 className={`daisy-checkbox no-animation daisy-checkbox-sm !rounded-[3px] border-2  border-dark-gray`}
                                 checked={
-                                    checkSet.has(singleVariation.id) &&
+                                    checkSet.has(singleVariation._id) &&
                                     singleVariation.visible
                                 }
                                 onChange={handleCheck}
@@ -215,7 +217,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
                         }) => {
                             return (
                                 <Fragment
-                                    key={`${singleVariation.id}-header${property}`}
+                                    key={`${singleVariation._id}-header${property}`}
                                 >
                                     {isOn && (
                                         <td
@@ -226,13 +228,13 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
                                                     enablePoundSign
                                                 }
                                                 value={value}
-                                                property={`${singleVariation.id}-${property}`}
+                                                property={`${singleVariation._id}-${property}`}
                                                 handleOnchange={(e) =>
                                                     handleOnchange({
                                                         value: e.target.value,
                                                         optionObj: {
                                                             ...options,
-                                                            property: `${singleVariation.id}-${property}`,
+                                                            property: `${singleVariation._id}-${property}`,
                                                         },
                                                         setValue: setValue,
                                                     })
@@ -240,7 +242,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
                                                 visible={
                                                     singleVariation.visible
                                                 }
-                                                id={`${singleVariation.id}-${property}`}
+                                                id={`${singleVariation._id}-${property}`}
                                                 isValueValidate={true}
                                             />
                                         </td>

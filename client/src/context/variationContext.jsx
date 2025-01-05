@@ -44,18 +44,18 @@ export const variationReducer = (state, action) => {
 };
 
 export function VariationProvider({ children }) {
-    const { variations, setVariations, modalCheck } = useNewProduct();
+    const { variations, setVariations, modalCheck,temporaryVariation, setTemporaryVariation } = useNewProduct();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [content, dispatch] = useReducer(variationReducer, {
         type: 'main',
     });
 
-    const [temporaryVariation, setTemporaryVariation] = useState([]);
+    
 
     useEffect(() => {
         setTemporaryVariation(() => variations);
-    }, [modalCheck]);
+    }, [modalCheck]); 
 
     const value = {
         content,

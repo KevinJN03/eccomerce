@@ -14,7 +14,7 @@ function VariationList({}) {
         <>
             {combine?.on && (
                 <VariationTableContainer
-                    key={combine.id}
+                    key={combine._id}
                     variation={combine}
                     isCombine={true}
                 />

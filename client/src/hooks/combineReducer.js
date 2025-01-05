@@ -3,6 +3,7 @@ export default function combineReducer(state, action) {
     if (action.type == 'UPDATE_OPTIONS') {
         return { ...state, options: action.options };
     }
+    // take provided data and set the combinevariation
     if (action.type == 'set') {
         const data = { ...action.combine };
         const newData = { ...data, on: true };
@@ -10,12 +11,14 @@ export default function combineReducer(state, action) {
         return { ...newData, combine: true };
     }
     if (action.type == 'clear') {
+        // empty Map
         return { ...state, options: new Map(), on: false };
     }
 
     if (action?.type == 'update') {
+        // create a new map will updated proprties
         const newOptionsMap = new Map(state.options).set(
-            action.id,
+            action._id,
             action.newObj
         );
 
@@ -23,6 +26,7 @@ export default function combineReducer(state, action) {
     }
 
     if (action.type === 'combineVariations') {
+        // combine variation type 1 and 2 into 1
         const variations = [...action.variations];
         const onlyOptions = variations.map(({ options }) => {
             return options;
