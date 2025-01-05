@@ -22,12 +22,14 @@ function SingleVariation({
 
             <div className="flex w-full flex-row items-center justify-between">
                 <span className="single-variation-options flex w-full flex-row flex-nowrap gap-2 overflow-hidden">
+                    
                     {options &&
                         options.length > 0 &&
-                        options.map(({ variation, id }) => {
+                        options.map(({ variation, _id }) => {
+                        
                             return (
                                 <p
-                                    key={id}
+                                    key={_id}
                                     className="flex h-4 items-center  justify-center whitespace-nowrap rounded-full border-[1px] px-2 py-3 text-xxs font-medium"
                                 >
                                     {variation}

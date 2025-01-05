@@ -69,9 +69,9 @@ function SelectVariation({}) {
 
         return setExist(false);
     };
-    const filterColor = (id) => {
+    const filterColor = (_id) => {
         let newArr = [...variation];
-        const newColor = newArr.filter((item) => item.id != id);
+        const newColor = newArr.filter((item) => item._id != _id);
 
         setVariation(newColor);
     };
@@ -84,12 +84,12 @@ function SelectVariation({}) {
         setOptionArray((prevState) => {
             return [variationOption, ...prevState];
         });
-        filterColor(variationOption.id);
+        filterColor(variationOption._id);
     };
 
     const deleteOption = (variationOption) => {
         setOptionArray((prevState) => {
-            return prevState.filter((item) => item.id != variationOption.id);
+            return prevState.filter((item) => item._id != variationOption._id);
         });
         if (variationOption && variationOption.type != 'custom') {
             setVariation([variationOption, ...variation]);
@@ -101,7 +101,7 @@ function SelectVariation({}) {
             if (modalContent.currentVariation) {
                 const newArr = [...temporaryVariation];
                 const updateArr = newArr.map((item) => {
-                    if (item.id === modalContent.currentVariation.id) {
+                    if (item._id === modalContent.currentVariation._id) {
                         return { ...item, disabled: true };
                     }
                     return item;
@@ -119,7 +119,6 @@ function SelectVariation({}) {
         const newId = ObjectID().toString();
         const customVariation = {
             variation: searchText,
-            id: newId,
             _id: newId,
             type: 'custom',
         };
@@ -129,7 +128,7 @@ function SelectVariation({}) {
     };
 
     const createVariation = () => {
-        const optionsMap = new Map(optionArray.map((item) => [item.id, item]));
+        const optionsMap = new Map(optionArray.map((item) => [item._id, item]));
         try {
             if (modalContent?.currentVariation) {
                 const newTemporaryVariation = _.cloneDeep(
@@ -338,11 +337,11 @@ function SelectVariation({}) {
                     </Menu>
                 </section>
                 <div className="options-wrapper mt-4 flex min-h-[200px] w-full  basis-full flex-col gap-y-3  ">
-                    {optionArray.map(({ variation, id, ...item }) => {
+                    {optionArray.map(({ variation, _id, ...item }) => {
                         return (
                             <div
                                 className="border-1 flex w-full cursor-pointer flex-row  items-center justify-between rounded-lg border p-3"
-                                key={id}
+                                key={_id}
                             >
                                 <span className="flex flex-row items-center gap-3">
                                     <MenuRoundedIcon fontSize="small" />
@@ -352,7 +351,7 @@ function SelectVariation({}) {
                                     onClick={() =>
                                         deleteOption({
                                             ...item,
-                                            id,
+                                            _id,
                                             variation,
                                         })
                                     }

@@ -10,29 +10,11 @@ function ToggleSwitch({
     state,
     setState,
     notDisabled,
-
     property,
     selection,
     setSelection,
 }) {
     const { temporaryVariation, setTemporaryVariation } = useVariation();
-
-    useEffect(() => {
-        let newArr;
-
-        if (state == false) {
-            newArr = [...temporaryVariation].map((item) => {
-                return { ...item, [property]: { on: false }, combine: false };
-            });
-        } else if (state == true) {
-            newArr = [...temporaryVariation].map((item) => {
-                return { ...item, [property]: { on: true } };
-            });
-        }
-
-        setTemporaryVariation(() => newArr);
-    }, [state]);
-
     useEffect(() => {
         const checkSelect = () => {
             const newTemporary = [...temporaryVariation].filter(
@@ -64,7 +46,7 @@ function ToggleSwitch({
 
     return (
         <section className="flex h-12 flex-row items-center gap-x-4">
-            <div className=" flex flex-row items-center gap-3">
+            <div className=" flex flex-1 flex-row items-center gap-3">
                 <Switch state={state} toggle={handleToggle} />
 
                 <label>
@@ -74,11 +56,13 @@ function ToggleSwitch({
             </div>
 
             {notDisabled > 1 && state && (
-                <SelectOptions
-                    property={property}
-                    selection={selection}
-                    setSelection={setSelection}
-                />
+                <div className="flex w-full flex-1 justify-end">
+                    <SelectOptions
+                        property={property}
+                        selection={selection}
+                        setSelection={setSelection}
+                    />
+                </div>
             )}
         </section>
     );

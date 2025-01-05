@@ -19,7 +19,6 @@ function SelectOptions({ property, selection, setSelection }) {
         if (count == 1) {
             setSelection(() => value);
         }
-        // if 2 both variation has header is on, setOnMountSelection value to both variation name
     }, []);
 
     useEffect(() => {
@@ -28,11 +27,12 @@ function SelectOptions({ property, selection, setSelection }) {
     }, [temporaryVariation]);
 
     function filterDisabledVariation() {
-        return [...temporaryVariation].filter((item) => item.disabled == false);
+        return [...temporaryVariation].filter((item) => !item?.disabled);
     }
 
     function getBothVariation() {
         let value;
+        // debugger
         const filterDisabled = filterDisabledVariation();
         if (filterDisabled.length >= 2) {
             value = `${filterDisabled[0].name} and ${filterDisabled[1].name}`;
@@ -41,29 +41,35 @@ function SelectOptions({ property, selection, setSelection }) {
         return value;
     }
 
-    const handleSelect = (value, both) => {
+    const handleSelect = (e) => {
+        debugger
+        const value = e.target.value;
+        const { both, _id } = e.target.options[e.target.selectedIndex].dataset;
+        debugger;
         setSelection(() => value);
-        ('handleSelect triggered');
-        'both', both;
         const newTemporaryVariation = filterDisabledVariation();
 
-        let update;
+        let updatedVariation = [];
         if (both == 'true') {
-            update = newTemporaryVariation.map((item) => {
-                return { ...item, [property]: { on: true } };
-            });
+            updatedVariation.push(
+                ...newTemporaryVariation.map((item) => {
+                    return { ...item, [property]: { on: true } };
+                })
+            );
         } else {
             // update if variation name match
-            update = newTemporaryVariation.map((item) => {
-                if (item.name == value) {
-                    return { ...item, [property]: { on: true } };
-                }
+            updatedVariation.push(
+                ...newTemporaryVariation.map((item) => {
+                    if (item._id == _id) {
+                        return { ...item, [property]: { on: true } };
+                    }
 
-                return { ...item, [property]: { on: false } };
-            });
+                    return { ...item, [property]: { on: false } };
+                })
+            );
         }
 
-        setTemporaryVariation(() => update);
+        setTemporaryVariation(() => updatedVariation);
     };
 
     const handleToggle = () => {
@@ -74,15 +80,11 @@ function SelectOptions({ property, selection, setSelection }) {
         <select
             id="options"
             name="options"
-            className=" select max-h-min max-w-[200px]"
-            onChange={(e) =>
-                handleSelect(
-                    e.target.value,
-                    e.target.options[e.target.selectedIndex].dataset.both
-                )
-            }
+            className=" daisy-select daisy-select-bordered max-h-min w-full max-w-[200px]"
+            onChange={handleSelect}
         >
             <option
+                key={`${property}-both-option`}
                 selected={selection == bothName}
                 data-both="true"
                 value={bothName}
@@ -92,13 +94,14 @@ function SelectOptions({ property, selection, setSelection }) {
 
             {temporaryVariation &&
                 temporaryVariation.map((variation) => {
-                    if (variation.disabled == false) {
+                    if (!variation?.disabled) {
                         return (
                             <option
-                                key={uuidv4()}
+                                key={`${variation._id}-${property}-option`}
                                 selected={selection == variation.name}
                                 value={variation.name}
                                 data-both="false"
+                                data-_id={variation._id}
                             >
                                 {variation.name}
                             </option>

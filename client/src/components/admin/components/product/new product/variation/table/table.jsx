@@ -49,9 +49,10 @@ function Table({}) {
                         ? variationOptions
                         : _.slice(variationOptions, 0, 9)),
                 ].map((item, idx) => {
+                  
                     return (
                         <Row
-                            key={item.id}
+                            key={item._id}
                             singleVariation={item}
                             beforeLastIndex={idx == 7 ? true : false}
                             lastIndex={idx == 8 ? true : false}

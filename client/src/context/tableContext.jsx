@@ -17,7 +17,9 @@ function TableProvider({ children, value }) {
         const valueArray = [];
 
         variationList.options?.forEach((value, key) => {
-            idArray.push(key);
+            if (value.visible) {
+                idArray.push(key);
+            }
             valueArray.push(value);
         });
         setVariationOptions(() => valueArray);

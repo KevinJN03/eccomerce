@@ -39,7 +39,10 @@ export const productSchema = new Schema(
       ref: 'category',
       required: true,
     },
-    price: { type: Schema.Types.Mixed },
+    price: {
+      current: { type: Schema.Types.Number },
+      previous: { type: Schema.Types.Number },
+    },
     stock: { type: Schema.Types.Number },
     gender: {
       type: Schema.Types.String,
