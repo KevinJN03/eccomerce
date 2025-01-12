@@ -82,19 +82,6 @@ function Container({}) {
 
     const offer = new offerTypes[details?.offer_type](details);
 
-    const values = {
-        promo_code: {
-            text: 'share',
-            url: `https://${VITE_WEBSITE}?coupon=${details?.code}`,
-            button: { default: 'Copy Link', clicked: 'Copied!' },
-        },
-        gift_card: {
-            text: 'Resend Email',
-            url: details?.email,
-            button: { default: 'Resend', clicked: 'Resent!' },
-        },
-    };
-
     const handleAction = async () => {
         try {
             abortControllerRef.current?.abort();
@@ -114,6 +101,20 @@ function Container({}) {
                 setTrigger(() => false);
             }, 5000);
         }
+    };
+    const values = {
+        promo_code: {
+            text: 'share',
+            url: `https://${VITE_WEBSITE}?coupon=${details?.code}`,
+            button: { default: 'Copy Link', clicked: 'Copied!' },
+            action: null,
+        },
+        gift_card: {
+            text: 'Resend Email',
+            url: details?.email,
+            button: { default: 'Resend', clicked: 'Resent!' },
+            action: handleAction,
+        },
     };
     return (
         <section className="flex h-full flex-col bg-white p-5">
@@ -159,7 +160,9 @@ function Container({}) {
                             <CopyLink
                                 url={values[details?.offer_type].url}
                                 button={values[details?.offer_type].button}
-                                handleAction={handleAction}
+                                handleAction={
+                                    values[details?.offer_type].action
+                                }
                             />
                         </div>
 
@@ -322,7 +325,7 @@ function Container({}) {
 
                             transform: 'translate(-50%, -0%)',
                             // padding: '2rem',
-                           // borderRadius: '1.8rem',
+                            // borderRadius: '1.8rem',
                             maxWidth: isUpdated ? '37.5rem' : '85.375rem',
                             borderRadius: isUpdated ? '1.8rem' : '0.5rem',
                             width: '100%',

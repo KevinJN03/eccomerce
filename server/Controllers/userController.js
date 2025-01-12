@@ -297,7 +297,7 @@ export const loginUser = [
           next(error)
         }
 
-       return res.redirect('/api/user/check');
+       return res.redirect(303,'/api/user/check');
       });
   
     })(req, res, next);

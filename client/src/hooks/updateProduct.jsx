@@ -22,7 +22,8 @@ function UpdateProduct(props, value) {
         setStockValue,
         combineDispatch,
         contentDispatch,
-        setDescription,setTemporaryVariation
+        setDescription,
+        setTemporaryVariation,
     } = value;
     props?.singleValue &&
         useEffect(() => {
@@ -49,14 +50,13 @@ function UpdateProduct(props, value) {
                 const newVariations = [];
                 variations.forEach((variation) => {
                     if (variation.combine) {
-                        
                         const defaultObj = {
                             combine: false,
                             quantityHeader: {
-                                on: false,
+                                on: true,
                             },
                             priceHeader: {
-                                on: false,
+                                on: true,
                             },
                         };
                         const newVariationTypes = {
@@ -64,35 +64,46 @@ function UpdateProduct(props, value) {
                                 _id: uuidV4(),
                                 name: variation.name,
                                 options: [],
+                                set: new Set(),
                                 ...defaultObj,
                             },
                             2: {
                                 _id: uuidV4(),
                                 name: variation.name2,
                                 options: [],
+                                set: new Set(),
                                 ...defaultObj,
                             },
                         };
+
+                        const variationOption1Set = new Set();
+                        const variationOption2Set = new Set();
                         variation.options.forEach(([_id, option]) => {
                             const id_1 = uuidV4();
                             const id_2 = uuidV4();
-                            newVariationTypes['1'].options.push([
-                                id_1,
-                                {
-                                   // _id: id_1,
-                                    _id: id_1,
-                                    visible: true,
-                                    variation: option.variation,
-                                },
-                            ]);
-                            newVariationTypes['2'].options.push([
-                                id_2,
-                                {
-                                    _id: id_2,
-                                    visible: true,
-                                    variation: option.variation2,
-                                },
-                            ]);
+
+                            [1, 2].forEach((number) => {
+                                const variationProp =
+                                    number == 2 ? 'variation2' : 'variation';
+                                if (
+                                    !newVariationTypes[number].set.has(
+                                        option[variationProp]
+                                    )
+                                ) {
+                                    newVariationTypes[number].options.push([
+                                        id_1,
+                                        {
+                                            // _id: id_1,
+                                            _id: id_1,
+                                            visible: true,
+                                            variation: option[variationProp],
+                                        },
+                                    ]);
+                                    newVariationTypes[number].set.add(
+                                        option[variationProp]
+                                    );
+                                }
+                            });
                         });
                         newVariationTypes['1'].options = new Map(
                             newVariationTypes['1'].options
@@ -127,7 +138,7 @@ function UpdateProduct(props, value) {
                 // );
 
                 setVariations(() => newVariations);
-                setTemporaryVariation(() => newVariations)
+                setTemporaryVariation(() => newVariations);
                 if (!_.isEmpty(newCombinedVariation)) {
                     combineDispatch({
                         type: 'set',
@@ -137,8 +148,7 @@ function UpdateProduct(props, value) {
                 return;
             };
 
-    
-                formatVariationOptions(singleValue?.variations || []);
+            formatVariationOptions(singleValue?.variations || []);
             // const newVariations = (singleValue?.variations || []).map(
             //     (data) => {
             //         debugger;

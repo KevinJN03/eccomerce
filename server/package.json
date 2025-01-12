@@ -8,7 +8,7 @@
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles --runInBand --coverage --verbose --config",
     "babel:build": "rm -rf ./node_modules/.cache/babel-loader/* && rm -rf ./build && babel ./ -d build --ignore node_modules",
     "babel:start-build": "node ./build/server.js",
-    "babel:start": "node -r @babel/register ./server.js",
+    "babel:start": "nodemonf -r @babel/register ./server.js",
     "babel": "cross-env NODE_ENV=development nodemon --exec babel-node server.js",
     "build": "webpack --config ./webpack.server.js --mode=none",
     "start": "node ./server-build/index.js",

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useVariation } from '../../../../../../../context/variationContext.jsx';
 import Switch from './switch.jsx';
 import SelectOptions from './selectOptions.jsx';
+import { useNewProduct } from '../../../../../../../context/newProductContext.jsx';
 function ToggleSwitch({
     label,
     state,
@@ -15,6 +16,17 @@ function ToggleSwitch({
     setSelection,
 }) {
     const { temporaryVariation, setTemporaryVariation } = useVariation();
+    const { combine } = useNewProduct();
+    // useEffect(() => {
+    //     debugger;
+    //     const newArr = temporaryVariation.map((item) => {
+    //         const obj = { ...item, [property]: { on: state } };
+    //         state == false && (obj.combine = false);
+    //         return obj;
+    //     });
+    //     setTemporaryVariation(() => newArr);
+    // }, [state]);
+
     useEffect(() => {
         const checkSelect = () => {
             const newTemporary = [...temporaryVariation].filter(
@@ -41,9 +53,33 @@ function ToggleSwitch({
     }, []);
 
     const handleToggle = () => {
-        setState(!state);
-    };
+        const newArr = temporaryVariation.map((item) => {
+            const obj = { ...item, [property]: { on: !state } };
+            state == false && (obj.combine = false);
+            return obj;
+        });
 
+        if (!state == true) {
+            const bothName = getBothVariation();
+            setSelection(() => bothName);
+        }
+        setState(() => !state);
+        setTemporaryVariation(() => newArr);
+    };
+    function filterDisabledVariation() {
+        return [...temporaryVariation].filter((item) => !item?.disabled);
+    }
+
+    function getBothVariation() {
+        let value;
+        // debugger
+        const filterDisabled = filterDisabledVariation();
+        if (filterDisabled.length >= 2) {
+            value = `${filterDisabled[0].name} and ${filterDisabled[1].name}`;
+        }
+
+        return value;
+    }
     return (
         <section className="flex h-12 flex-row items-center gap-x-4">
             <div className=" flex flex-1 flex-row items-center gap-3">
@@ -61,6 +97,8 @@ function ToggleSwitch({
                         property={property}
                         selection={selection}
                         setSelection={setSelection}
+                        getBothVariation={getBothVariation}
+                        filterDisabledVariation={filterDisabledVariation}
                     />
                 </div>
             )}

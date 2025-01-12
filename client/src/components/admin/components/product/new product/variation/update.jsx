@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import OptionError from './error/optionError';
 
 import formatData from './formatData';
@@ -13,11 +13,10 @@ import { useClickAway } from '@uidotdev/usehooks';
 import { useVariation } from '../../../../../../context/variationContext.jsx';
 import { useNewProduct } from '../../../../../../context/newProductContext.jsx';
 import { Input } from '../utils/Input.jsx';
-function Update({ category, closeModal }) {
+import { ClickAwayListener } from '@mui/base';
+function Update({ category, closeModal, fixedNum, title, enablePoundSign }) {
     const [value, setValue] = useState('');
     const { variations, setVariations } = useVariation();
-
-    const [property, setProperty] = useState(`update-${category}`);
     const { combine, combineDispatch, publishErrorDispatch, publishError } =
         useNewProduct();
 
@@ -27,8 +26,8 @@ function Update({ category, closeModal }) {
         Array.from(checkSet)
     );
     const [current, setCurrent] = useState({});
-    const num = category == 'price' ? 2 : 0;
-
+    const { current: property } = useRef(`update-${category}`);
+    const prevValue = useRef('');
     const errorMsg = _.get(publishError, property);
 
     useEffect(() => {
@@ -40,7 +39,8 @@ function Update({ category, closeModal }) {
         };
     }, []);
 
-    const handleOnchange = (value) => {
+    const handleOnchange = (e) => {
+        const value = e.target.value;
         const options = {
             publishErrorDispatch,
             value,
@@ -60,16 +60,25 @@ function Update({ category, closeModal }) {
         }
     };
 
+    const handleClickAway = () => {
+        if (value && value != prevValue.current) {
+           
+            const newValue = formatData(value, fixedNum);
+            setValue(() => newValue);
+            prevValue.current = newValue;
+            
+        }
+    };
+
     const apply = () => {
-        
         try {
             if (errorMsg) {
                 return;
             }
 
             const updateVariationOptionData = (optionMap) => {
+                const parsedValue = formatData(value, fixedNum);
 
-const parsedValue = category ==  'stock' ? parseInt(value) : parseFloat(value).toFixed(2)
                 checkSetToArray.forEach((element) => {
                     if (optionMap.has(element)) {
                         const getVariation = optionMap.get(element);
@@ -137,18 +146,11 @@ const parsedValue = category ==  'stock' ? parseInt(value) : parseFloat(value).t
         };
     }
 
-    const ref = useClickAway(() => {
-        if (value) {
-            const newValue = formatData(value, num);
-            setValue((prev) => newValue);
-        }
-    });
-
     return (
         <section className="update flex w-full flex-col">
             <h1 className="pb-3 text-3xl font-semibold tracking-wide">
-                Update {category == 'stock' ? 'quantity' : category} for{' '}
-                {checkSet.size} {checkSet.size > 1 ? 'variants' : 'variant'}
+                Update {title} for {checkSet.size}{' '}
+                {checkSet.size > 1 ? 'variants' : 'variant'}
             </h1>
             <p className="mb-4 mt-1 text-sm text-black/70">
                 Current {category}:{' '}
@@ -164,13 +166,16 @@ const parsedValue = category ==  'stock' ? parseInt(value) : parseFloat(value).t
                     <span className="ml-1 text-xl text-red-700">*</span>
                 </label>{' '}
                 <div className=" !w-full">
-                    <Input
-                        visible={true}
-                        value={value}
-                        property={'price'}
-                        handleOnchange={(e) => handleOnchange(e.target.value)}
-                        enablePoundSign={category == 'price' ? true : false}
-                    />
+                    <ClickAwayListener onClickAway={handleClickAway}>
+                        <Input
+                            visible={true}
+                            value={value}
+                            property={'price'}
+                            handleOnchange={handleOnchange}
+                            enablePoundSign={enablePoundSign}
+                        />
+                    </ClickAwayListener>
+
                     {/* <input
                         ref={ref}
                         value={value}

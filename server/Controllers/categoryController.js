@@ -3,6 +3,8 @@ import express from 'express';
 import AsyncHandler from 'express-async-handler';
 import Category from '../Models/category.js';
 import productAggregateStage from '../utils/productAggregateStage.js';
+import { check } from 'express-validator';
+import Product from '../Models/product.js';
 const router = express.Router();
 
 export const get_all_category = AsyncHandler(async (req, res, next) => {
@@ -50,7 +52,6 @@ export const get_all_category = AsyncHandler(async (req, res, next) => {
             },
           },
           ...productAggregateStage({ stats: false }),
-
         ],
         as: 'women',
       },
@@ -78,46 +79,38 @@ export const get_singleCategory = AsyncHandler(async (req, res, next) => {
   }
 });
 
-export const query_category_products_by_gender = AsyncHandler(
-  async (req, res, next) => {
+export const query_category_products_by_gender = [
+  check('name').trim().toLowerCase(),
+  check('gender').trim().toLowerCase(),
+  AsyncHandler(async (req, res, next) => {
     const { name, gender } = req.params;
 
     const categoryResult = await Category.aggregate([
       {
-        $match: { name: name.toLowerCase() },
+        $match: { name },
       },
       {
         $lookup: {
           from: 'products',
-          localField: gender.toLowerCase(),
-          foreignField: '_id',
+          localField: '_id',
+          foreignField: 'category',
           as: 'products',
           pipeline: [
             {
-              $match: { status: 'active' },
+              $match: { status: 'active', gender },
             },
 
             ...productAggregateStage({ stats: false }),
+            { $sort: { _id: 1 } },
           ],
-        },
-      },
-      {
-        $project: {
-          products: {
-            $sortArray: {
-              input: '$products',
-              sortBy: {
-                _id: 1,
-              },
-            },
-          },
         },
       },
     ]);
 
+    // res.send(categoryResult[0].products);
     res.send(categoryResult[0].products);
-  },
-);
+  }),
+];
 
 export const getCategoryIds = AsyncHandler(async (req, res, next) => {
   const categoryResult = await Category.find(

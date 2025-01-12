@@ -7,8 +7,8 @@ import _ from 'lodash';
 import VariationOption from '../Models/variationOption.js';
 import mongoose from 'mongoose';
 
-async function generateProduct(req, id, endPoint = 'products') {
-  const url = `${process.env.CLOUDFRONT_URL}/${endPoint}`;
+async function generateProduct(req, id) {
+  const url = `${process.env.CLOUDFRONT_URL}/products`;
   let counter = 1;
   const imageArr = [];
   const { files } = req;
@@ -27,7 +27,7 @@ async function generateProduct(req, id, endPoint = 'products') {
   } = req.body;
 
   const newVariationsArray = [];
-  if (variations?.length == 3) {
+  if (variations?.length == 3 && !_.isEmpty(variations[2])) {
     // only process combined variation
     newVariationsArray.push(variations[2]);
   } else {
@@ -40,12 +40,11 @@ async function generateProduct(req, id, endPoint = 'products') {
     delete data.id;
     data._id = new mongoose.Types.ObjectId();
     //data.options = new Map(data.options);
-
     const newOptions = data?.options.map(
       ([_id, { _id: objectId, ...object }]) => ({
         ...object,
         variation_id: data._id,
-        option_id: object.id,
+       
         product_id: id,
       }),
     );

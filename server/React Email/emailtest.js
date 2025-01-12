@@ -19,7 +19,7 @@ import _ from 'lodash';
 import GiftCardSend from './emails/giftcard/GiftCardSend.jsx';
 const { SENDER, STRIPE_KEY } = process.env;
 const stripe = Stripe(STRIPE_KEY);
-  
+
 router.get(
   '/:id',
   asyncHandler(async (req, res, next) => {
@@ -30,30 +30,34 @@ router.get(
     //     { path: 'customer' },
     //     { path: 'itemsByProfile.items.product' },
     //   ],
-    //   lean: { toObject: true }, 
+    //   lean: { toObject: true },
     // }).exec();
 
     // const charge = await stripe.charges.retrieve(order.charge_id);
 
     // _.set(order, 'refund.amount', charge.amount_refunded / 100);
-    // const emailHtml = render(<ReturnOrder order={order} />);
+
     const emailHtml = render(
-      <GiftCardSend {...{ name: 'Kevin', amount: 5, code: 123 }} />,
+     // <GiftCardSend {...{ name: 'Kevin', amount: 5, code: 123 }} />,
+      <PasswordReset url={'google.com'} />
+      //<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />
+      // <ReturnOrder order={order} />
     );
-    // const emailHtml = render(<PasswordReset url={'google.com'} />);
-    // const emailHtml = render(<ChangeEmail firstName={'Kevin'} newEmail={process.env.TEST_EMAIL} />);
+ 
+
     const emailTestId = v4();
     const mailOptions = {
       from: SENDER,
-      to:  process.env.TEST_EMAIL,
-
+      to: process.env.TEST_EMAIL,
+  
       subject: 'test email ' + emailTestId,
       html: emailHtml,
     };
 
-   // const sendEmail = await transporter.sendMail(mailOptions);
+    const sendEmail = await transporter.sendMail(mailOptions);
     res.status(200).send(emailHtml);
   }),
 );
 
 export default router;
+ 

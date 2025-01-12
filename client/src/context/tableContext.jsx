@@ -1,9 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useContent } from './ContentContext';
-import { useVariation } from './variationContext';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 const TableContext = createContext();
-
 export const useTableContext = () => {
     return useContext(TableContext);
 };
@@ -11,6 +8,7 @@ function TableProvider({ children, value }) {
     const [variationIdSet, setVariationsIdSet] = useState(new Set());
     const [variationOptions, setVariationOptions] = useState([]);
     const { variationList, checkSet, setCheckSet } = value;
+    const unclearClickAwayRef = useRef(new Set());
 
     useEffect(() => {
         const idArray = [];
@@ -40,6 +38,7 @@ function TableProvider({ children, value }) {
                 variationOptions,
                 variationIdSet,
                 handleCheckAllVariations,
+                unclearClickAwayRef,
             }}
         >
             {children}

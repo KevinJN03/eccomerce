@@ -30,9 +30,9 @@ function VariationTableContainer({ variation, isCombine }) {
             return 'noHeader';
         }
     };
-    const handleUpdate = (category) => {
+    const handleUpdate = (props) => {
+        setModalProps(() => props);
         setModalOpen(() => true);
-        setModalProps(() => ({ category }));
     };
 
     const layout = determineLayout();
@@ -100,28 +100,33 @@ function VariationTableContainer({ variation, isCombine }) {
                                     {` selected`}
                                 </p>
                                 {[
-                                    { property: 'price', on: priceHeader.on },
                                     {
-                                        property: 'stock',
-                                        on: quantityHeader.on,
+                                        category: 'price',
+                                        on: priceHeader.on,
+                                        fixedNum: 2,
+                                        title: 'price',
+                                        enablePoundSign: true,
                                     },
-                                ].map(({ on, property }) => {
+                                    {
+                                        category: 'stock',
+                                        on: quantityHeader.on,
+                                        fixedNum: 0,
+                                        title: 'quantity',
+                                        enablePoundSign: false,
+                                    },
+                                ].map((props) => {
+                                    const { on, category, title } = props;
                                     return (
-                                        <Fragment key={property}>
+                                        <Fragment key={category}>
                                             {on && (
                                                 <button
                                                     type="button"
                                                     className="theme-btn"
                                                     onClick={() =>
-                                                        handleUpdate(property)
+                                                        handleUpdate(props)
                                                     }
                                                 >
-                                                    Update{' '}
-                                                    {_.upperFirst(
-                                                        property == 'stock'
-                                                            ? 'quantity'
-                                                            : property
-                                                    )}
+                                                    Update {_.upperFirst(title)}
                                                 </button>
                                             )}
                                         </Fragment>
@@ -139,7 +144,7 @@ function VariationTableContainer({ variation, isCombine }) {
                     <Box
                         sx={{
                             backgroundColor: 'white',
-                           // maxWidth: '500px',
+                            // maxWidth: '500px',
                             position: 'absolute',
                             top: '50%',
                             left: '50%',

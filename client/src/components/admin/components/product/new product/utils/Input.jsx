@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import OptionError from '../variation/error/optionError';
 
 import { forwardRef, useEffect, useState } from 'react';
@@ -18,12 +18,17 @@ export const Input = forwardRef(function Input(
     return (
         <section className="!w-full !bg-transparent">
             <div className="relative flex !h-fit !w-full items-center">
-                {enablePoundSign && (
-                    <span className=" absolute left-2 top-2/4 !my-auto translate-y-[-50%] animate-none items-center font-medium transition-none">
-                        £
-                    </span>
-                )}
-                <input
+                {/* {enablePoundSign && ( */}
+                <motion.div
+                    key={`pound-sign-${property}`}
+                    animate={enablePoundSign ? { opacity: 1 } : { opacity: 0 }}
+                    className=" absolute left-2 top-2/4 !my-auto translate-y-[-50%] items-center font-medium"
+                >
+                    £
+                </motion.div>
+                {/* )} */}
+
+                <motion.input
                     ref={ref}
                     id={property}
                     name={property}
@@ -32,9 +37,12 @@ export const Input = forwardRef(function Input(
                     value={value}
                     onWheel={handleOnWheel}
                     type="number"
+                    animate={
+                        enablePoundSign
+                            ? { padding: '0.75rem 1.5rem' }
+                            : { padding: '0.75rem 0.5rem' }
+                    }
                     className={`input-number input !h-full !w-full	!min-w-full  touch-none rounded-lg ${
-                        enablePoundSign ? '!px-6' : '!px-2'
-                    }  py-3 ${
                         _.get(publishError, property) &&
                         '!border-red-700 bg-red-100'
                     }`}

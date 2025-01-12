@@ -38,6 +38,8 @@ if (process.env.NODE_ENV != 'test') {
 }
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV == 'production' ? 'tiny' : 'dev'));
 export const myCache = new NodeCache();
 // app.use(cors());
@@ -58,8 +60,6 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24, secure: false, httpOnly: false }, // 1 day
   }),
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 

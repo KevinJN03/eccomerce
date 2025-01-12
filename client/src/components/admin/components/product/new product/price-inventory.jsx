@@ -9,6 +9,7 @@ import formatData from './variation/formatData';
 import { forwardRef, useRef, useState } from 'react';
 import handleValue from './utils/handleValue';
 import { quantityOptions, priceOptions } from './utils/handleValueOptions';
+import _ from 'lodash';
 function Price_Inventory() {
     const {
         publishError,
@@ -18,6 +19,7 @@ function Price_Inventory() {
         setStockValue,
         publishErrorDispatch,
         variations,
+        combine,
     } = useNewProduct();
     const onClickAway = ({ setValue, value, toDecimals }) => {
         if (!value) return;
@@ -42,11 +44,13 @@ function Price_Inventory() {
             value: priceValue,
         });
     });
-
-    const checkQuantity = variations.some(
-        (item) => item.quantityHeader.on == true
+    const [checkQuantity, checkPrice] = ['quantityHeader', 'priceHeader'].map(
+        (property) => {
+            return [...variations, combine].some(
+                (item) => _.get(item, [property, 'on']) == true
+            );
+        }
     );
-    const checkPrice = variations.some((item) => item.priceHeader.on == true);
 
     const handleOnchange = ({ value, optionObj, setValue, clearError }) => {
         const options = {

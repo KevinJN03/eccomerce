@@ -52,7 +52,7 @@ function Admin_Dashboard() {
             </div>
 
             <motion.div
-                className="listContainer"
+                className="listContainer rounded-lg"
                 variants={animationVariant(2)}
                 animate={'animate'}
                 initial={'initial'}

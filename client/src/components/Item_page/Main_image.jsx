@@ -15,7 +15,7 @@ const Main_Image = forwardRef(function Main_Image({}, ref) {
                         <img
                             src={product?.images?.[0]}
                             ref={ref}
-                            className="h-full w-full object-center md:w-[300px] sm+md:object-contain lg:object-cover"
+                            className="h-full w-full object-center md:w-[300px] object-contain"
                         />
                     ) : (
                         <>

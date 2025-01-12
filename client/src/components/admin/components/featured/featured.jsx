@@ -19,7 +19,7 @@ function Featured({ todayAmount }) {
     });
     return (
         <motion.section
-            className="featured"
+            className="featured rounded-lg"
             variants={animationVariant(2)}
             animate={'animate'}
             initial={'initial'}

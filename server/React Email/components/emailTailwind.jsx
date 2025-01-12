@@ -1,22 +1,5 @@
 import * as React from 'react';
-import { useEffect, Fragment } from 'react';
-import { v4 as uuid } from 'uuid';
-import {
-  Head,
-  Tailwind,
-  Html,
-  Body,
-  Text,
-  Img,
-  Section,
-  Row,
-  Column,
-  Hr,
-  Button,
-  Container,
-  Font,
-} from '@react-email/components';
-
+import { Tailwind } from '@react-email/components';
 const config = {
   theme: {
     extend: {
@@ -32,7 +15,11 @@ const config = {
 };
 
 function EmailTailwind({ children }) {
-  return <Tailwind config={config} key={'tailwind'}>{children}</Tailwind>;
+  return (
+    <Tailwind config={config} key={'tailwind'}>
+      {children}
+    </Tailwind>
+  );
 }
 
 export default EmailTailwind;

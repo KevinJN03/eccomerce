@@ -237,19 +237,18 @@ export const adminLogin = [
       throw new Error('User does not have admin access.');
     }
 
-    req.password = findUser.password;
+    req.hassPassword = findUser.password;
     return true;
   }),
   check('password', 'password doesnt match.')
     .trim()
-    .escape()
     .custom(async (value, { req }) => {
-      if (req.password) {
-        const match = await bcrypt.compare(value, req.password);
+      console.log({ passwd: req.hassPassword, value });
 
-        if (!match) {
-          throw new Error('password doesnt match.');
-        }
+      const match = await bcrypt.compare(value, req.hassPassword);
+      console.log({ match });
+      if (!match) {
+        throw new Error('password doesnt match.');
       }
 
       return true;

@@ -28,7 +28,7 @@ function AdminLogin({}) {
         console.log('test');
         let success = false;
 
-        debugger
+        debugger;
         try {
             setLoading(() => true);
             const { data } = await adminAxios.post('login', {
@@ -40,7 +40,7 @@ function AdminLogin({}) {
             authAdminUserDispatch({ type: 'LOGIN', payload: data });
 
             const [counts, usersData, productsData, ordersData, deliveryData] =
-                await Promise.all([
+                await Promise.allSettled([
                     adminAxios.get('/count'),
                     adminAxios.get('/user/all'),
                     adminAxios.get('/product'),
@@ -48,14 +48,24 @@ function AdminLogin({}) {
                     adminAxios.get('/delivery/all'),
                 ]);
 
-            setDashBoardData(() => counts.data);
-            setChartData(() => get6MonthsData(counts.data?.getOrdersByMonth));
+            setDashBoardData((prevState) => counts?.value.data || prevState);
+            setChartData((prevState) =>
+                get6MonthsData(
+                    counts?.value?.data?.getOrdersByMonth || prevState
+                )
+            );
 
-            setAllUsers(() => usersData?.data);
-            setAllProducts(() => productsData?.data);
+            setAllUsers((prevState) => usersData?.value?.data || prevState);
+            setAllProducts(
+                (prevState) => productsData?.value?.data || prevState
+            );
 
-            setOrders(() => ordersData?.data?.orders);
-            setDeliveryData(() => deliveryData?.data);
+            setOrders(
+                (prevState) => ordersData?.valuee?.data?.orders || prevState
+            );
+            setDeliveryData(
+                (prevState) => deliveryData?.value?.data || prevState
+            );
             success = true;
         } catch (error) {
             console.error('error while login in admin', error);

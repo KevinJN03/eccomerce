@@ -1,4 +1,5 @@
 import { populate } from 'dotenv';
+import { pipeline } from 'stream';
 
 function productAggregateStage({ stats }) {
   return [
@@ -11,6 +12,9 @@ function productAggregateStage({ stats }) {
         from: 'variationoptions',
         localField: 'variations._id',
         foreignField: 'variation_id',
+
+        pipeline: [],
+
         as: 'variationOptions',
       },
     },
@@ -29,7 +33,7 @@ function productAggregateStage({ stats }) {
           $map: {
             input: '$variationOptions',
             as: 'option',
-            in: ['$$option._id','$$option' ],
+            in: ['$$option._id', '$$option'],
           },
         },
         priceArray: {
@@ -122,7 +126,7 @@ function productAggregateStage({ stats }) {
               then: {
                 min: { $toInt: { $min: '$stockArray' } },
                 max: { $toInt: { $max: '$stockArray' } },
-                array: '$stockArray',
+               // array: '$stockArray',
                 total: {
                   $sum: '$stockArray',
                 },

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useEffect, Fragment } from 'react';
-import { v4 as uuid } from 'uuid';
 import {
   Font,
 } from '@react-email/components';
