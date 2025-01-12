@@ -14,7 +14,7 @@ import animationVariant from '../../home/animationVariant';
 function Chart({ data }) {
     return (
         <motion.section
-            className="chart"
+            className="chart rounded-lg"
             variants={animationVariant(3)}
             initial={'initial'}
             animate={'animate'}

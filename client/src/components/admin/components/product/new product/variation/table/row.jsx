@@ -13,6 +13,7 @@ import { useTableContext } from '../../../../../../../context/tableContext';
 import _ from 'lodash';
 import tableRowVariants from './tableVariant';
 function Row({ singleVariation, lastIndex, beforeLastIndex }) {
+    // remove  priceValue and stockValue state to use combinereducer & setVariations to update variation values
     const {
         variationList,
         isQuantityHeaderOn,
@@ -21,8 +22,30 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         checkSet,
         setCheckSet,
         showAllVariants,
+        unclearClickAwayRef,
     } = useTableContext();
     const [error, setError] = useState({ price: null, stock: null });
+    const singleVariationRef = useRef({ ...singleVariation });
+
+    useEffect(() => {
+        singleVariationRef.current = {...singleVariation};
+    }, [singleVariation]);
+    const inputProps = [
+        {
+            category: 'price',
+            fixedNum: 2,
+            checker: isPriceHeaderOn,
+            options: priceOptions,
+            enablePoundSign: true,
+        },
+        {
+            category: 'stock',
+            fixedNum: 0,
+            checker: isQuantityHeaderOn,
+            options: quantityOptions,
+            enablePoundSign: false,
+        },
+    ];
     const {
         setVariations,
         combineDispatch,
@@ -30,8 +53,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         publishErrorDispatch,
         publishError,
     } = useNewProduct();
-    const [priceValue, setPriceValue] = useState(null);
-    const [stockValue, setStockValue] = useState(null);
+
     const handleCheck = (e) => {
         e.stopPropagation();
         setCheckSet((prevSet) => {
@@ -45,26 +67,37 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
         });
     };
 
-    const handleOnchange = ({ value, optionObj, setValue }) => {
+    const handleOnchange = (
+        { value, props, newSingleVariation },
+        addToUnclear = true
+    ) => {
+        const { category } = props;
         const options = {
-            ...optionObj,
+            ...props,
             value,
-            setValue,
+            // setValue,
             publishErrorDispatch,
             setError,
+            setValue: (cb) => {
+                const value = cb();
+
+                const newObject = {
+                    ...newSingleVariation,
+                    [category]: value,
+                };
+
+                updateSingleVariation({ newObject });
+                if (addToUnclear) {
+                    unclearClickAwayRef.current.add(
+                        `${singleVariation._id}-${category}`
+                    );
+                }
+            },
         };
 
-        return handleValue(options);
+        handleValue(options);
+        return;
     };
-    useEffect(() => {
-        if (_.has(singleVariation, 'price')) {
-            setPriceValue(() => singleVariation?.price);
-        }
-
-        if (_.has(singleVariation, 'stock')) {
-            setStockValue(() => singleVariation.stock);
-        }
-    }, [singleVariation]);
 
     const updateOptionsInVariations = (newObject) => {
         const newVariations = _.cloneDeep(variations).map((item) => {
@@ -80,42 +113,7 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
 
         return newVariations;
     };
-
-    function onClickAway() {
-        if (
-            (!priceValue && !stockValue) ||
-            (singleVariation.price == priceValue &&
-                singleVariation.stock == stockValue)
-        ) {
-            return;
-        }
-        const newObject = { ...singleVariation };
-        if (isPriceHeaderOn) {
-            newObject.price = formatData(priceValue, 2);
-        }
-        if (isQuantityHeaderOn) {
-            newObject.stock = formatData(stockValue, 0);
-        }
-        if (isCombine) {
-            combineDispatch({
-                type: 'update',
-                id: singleVariation._id,
-                newObj: newObject,
-            });
-        } else {
-           
-            const newVariations = updateOptionsInVariations(newObject);
-
-            setVariations(() => newVariations);
-        }
-    }
-
-    const toggleVisible = () => {
-        const newObject = {
-            ...singleVariation,
-            visible: !singleVariation.visible,
-        };
-        
+    function updateSingleVariation({ newObject }) {
         if (isCombine) {
             combineDispatch({
                 type: 'update',
@@ -126,42 +124,127 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
             const newVariations = updateOptionsInVariations(newObject);
             setVariations(() => newVariations);
         }
+    }
+    function onClickAway(props) {
+        const { category, fixedNum, checker, options } = props;
+        //const { current: singleVariation } = singleVariationRef;
+        if (
+            (!singleVariation?.price && !singleVariation?.stock) ||
+            unclearClickAwayRef.current.has(
+                `${singleVariation._id}-${category}`
+            ) == false
+          //  ||  !singleVariationRef.current.visible
+        ) {
+            return;
+        }
+       
+        const newSingleVariation = { ...singleVariation };
+        //debugger;
+        if (checker) {
+            const newValue = formatData(singleVariation?.[category], fixedNum);
+            newSingleVariation[category] = newValue;
+            handleOnchange({
+                // add or remove error if the newValue is compatible
+                value: newValue,
+                props: {
+                    ...options,
+                    property: `variationoption.${singleVariation._id}-${category}`,
+                    category,
+                },
+                newSingleVariation,
+            });
+        }
+
+        unclearClickAwayRef.current.delete(
+            `${singleVariation._id}-${category}`
+        );
+    }
+
+    const toggleVisible = () => {
+        //debugger
+        const property = `variationoption.${singleVariation._id}`;
+        const newSingleVariation = {
+            ...singleVariation,
+            visible: !singleVariation.visible,
+        };
+
+        singleVariationRef.current = { ...newSingleVariation };
+        if (newSingleVariation.visible == false) {
+            updateSingleVariation({ newObject: newSingleVariation });
+        }
+        [...inputProps].forEach((props) => {
+            const { category, options } = props;
+            const field = `${property}-${category}`;
+            if (newSingleVariation.visible == false) {
+                // if going to be disabled -> cache eror message and remove errors
+debugger
+                publishErrorDispatch({
+                    type: 'CLEAR',
+                    path: field,
+                });
+            } else {
+                // if going to be enabled back -> add or remove error if the value is compatible
+
+                handleOnchange(
+                    {
+                        value: newSingleVariation?.[category],
+                        props: { ...options, category, property: field },
+                        newSingleVariation,
+                    },
+                    false
+                );
+            }
+        });
     };
     return (
         <AnimatePresence>
-            <ClickAwayListener onClickAway={onClickAway}>
-                <motion.tr
-                    className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.75)_30%,_rgba(255,255,255,1)_90%)]' : beforeLastIndex && !showAllVariants ? 'showAllVariants  relative  border-b-2 after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.5)_90%,_rgba(255,255,255,0.7)_100%)]' : 'border-b-2'} ${
-                        checkSet.has(singleVariation._id) &&
-                        singleVariation.visible &&
-                        '!bg-gray-200'
-                    }`}
-                    variants={tableRowVariants}
-                    initial="initial"
-                    animate={'animate'}
-                    whileHover={'hover'}
-                    transition={'transition'}
-                    exit="exit"
-                >
-                    {(isPriceHeaderOn || isQuantityHeaderOn) && (
-                        <motion.td className={`!py-6 !align-top`}>
-                            <motion.input
-                                id={`check-${singleVariation._id}`}
-                                name={`check-${singleVariation._id}`}
-                                // key={inputCheck}
-                                type="checkbox"
-                                className={`daisy-checkbox no-animation daisy-checkbox-sm !rounded-[3px] border-2  border-dark-gray`}
-                                checked={
-                                    checkSet.has(singleVariation._id) &&
-                                    singleVariation.visible
-                                }
-                                onChange={handleCheck}
-                                disabled={!singleVariation.visible}
-                            />
-                        </motion.td>
-                    )}
+            {/* <ClickAwayListener onClickAway={onClickAway}> */}
+            <motion.tr
+                className={`mt-10 h-full max-h-28 w-full min-w-full  ${lastIndex && !showAllVariants ? 'showAllVariants after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.75)_30%,_rgba(255,255,255,1)_90%)]' : beforeLastIndex && !showAllVariants ? 'showAllVariants  relative  border-b-2 after:!bg-[linear-gradient(to_bottom,_rgba(255,255,255,0.5)_90%,_rgba(255,255,255,0.7)_100%)]' : 'border-b-2'} ${
+                    checkSet.has(singleVariation._id) &&
+                    singleVariation.visible &&
+                    '!bg-gray-200'
+                }`}
+                variants={tableRowVariants}
+                initial="initial"
+                animate={'animate'}
+                whileHover={'hover'}
+                transition={'transition'}
+                exit="exit"
+            >
+                {(isPriceHeaderOn || isQuantityHeaderOn) && (
+                    <motion.td className={`!py-6 !align-top`}>
+                        <motion.input
+                            id={`check-${singleVariation._id}`}
+                            name={`check-${singleVariation._id}`}
+                            // key={inputCheck}
+                            type="checkbox"
+                            className={`daisy-checkbox no-animation daisy-checkbox-sm !rounded-[3px] border-2  border-dark-gray`}
+                            checked={
+                                checkSet.has(singleVariation._id) &&
+                                singleVariation.visible
+                            }
+                            onChange={handleCheck}
+                            disabled={!singleVariation.visible}
+                        />
+                    </motion.td>
+                )}
 
-                    <motion.td
+                <motion.td
+                    className={`!pt-6 pl-4  ${
+                        (error.price || error.stock) && ' !align-top'
+                    } 
+                        
+                ${!singleVariation.visible && '!opacity-60 '}
+                `}
+                >
+                    <p className="text-sm font-light">
+                        {singleVariation?.variation}
+                    </p>
+                </motion.td>
+
+                {isCombine && (
+                    <td
                         className={`!pt-6 pl-4  ${
                             (error.price || error.stock) && ' !align-top'
                         } 
@@ -170,113 +253,88 @@ function Row({ singleVariation, lastIndex, beforeLastIndex }) {
                 `}
                     >
                         <p className="text-sm font-light">
-                            {singleVariation?.variation}
+                            {singleVariation?.variation2}
                         </p>
-                    </motion.td>
-
-                    {isCombine && (
-                        <td
-                            className={`!pt-6 pl-4  ${
-                                (error.price || error.stock) && ' !align-top'
-                            } 
-                        
-                ${!singleVariation.visible && '!opacity-60 '}
-                `}
-                        >
-                            <p className="text-sm font-light">
-                                {singleVariation?.variation2}
-                            </p>
-                        </td>
-                    )}
-
-                    {[
-                        {
-                            isOn: isPriceHeaderOn,
-                            property: 'price',
-                            value: priceValue,
-                            options: priceOptions,
-                            setValue: setPriceValue,
-                            enablePoundSign: true,
-                        },
-                        {
-                            isOn: isQuantityHeaderOn,
-                            property: 'stock',
-                            value: stockValue,
-                            options: quantityOptions,
-                            setValue: setStockValue,
-                            enablePoundSign: false,
-                        },
-                    ].map(
-                        ({
-                            isOn,
-                            property,
-                            value,
-                            setValue,
-                            options,
-                            enablePoundSign,
-                        }) => {
-                            return (
-                                <Fragment
-                                    key={`${singleVariation._id}-header${property}`}
-                                >
-                                    {isOn && (
-                                        <td
-                                            className={`relative ${_.get(singleVariation, 'visible') ? 'opacity-100' : 'opacity-0'}`}
-                                        >
-                                            <Input
-                                                enablePoundSign={
-                                                    enablePoundSign
-                                                }
-                                                value={value}
-                                                property={`${singleVariation._id}-${property}`}
-                                                handleOnchange={(e) =>
-                                                    handleOnchange({
-                                                        value: e.target.value,
-                                                        optionObj: {
-                                                            ...options,
-                                                            property: `${singleVariation._id}-${property}`,
-                                                        },
-                                                        setValue: setValue,
-                                                    })
-                                                }
-                                                visible={
-                                                    singleVariation.visible
-                                                }
-                                                id={`${singleVariation._id}-${property}`}
-                                                isValueValidate={true}
-                                            />
-                                        </td>
-                                    )}
-                                </Fragment>
-                            );
-                        }
-                    )}
-
-                    <td
-                        className={` ${
-                            !error.stock &&
-                            !error.price &&
-                            '!ml-auto w-full !min-w-full !align-middle'
-                        }  !text-right`}
-                    >
-                        <div className="flex h-auto items-center justify-end">
-                            {stockValue == 0 && (
-                                <p
-                                    className={`mr-4 flex h-5 items-center justify-center whitespace-nowrap rounded-full bg-black px-2 py-2 text-xs text-white ${
-                                        !singleVariation.visible && '!opacity-0'
-                                    }`}
-                                >
-                                    Sold out
-                                </p>
-                            )}
-                            <Switch
-                                state={singleVariation.visible}
-                                toggle={toggleVisible}
-                            />
-                        </div>
                     </td>
-                </motion.tr>
-            </ClickAwayListener>
+                )}
+
+                {[...inputProps].map((props) => {
+                    const { checker, category, options, enablePoundSign } =
+                        props;
+                    const property = `variationoption.${singleVariation._id}-${category}`;
+                    return (
+                        <Fragment
+                            key={`${singleVariation._id}-header${category}`}
+                        >
+                            {checker && (
+                                <motion.td
+                                    animate={
+                                        _.get(singleVariation, 'visible')
+                                            ? { opacity: 100 }
+                                            : { opacity: 0 }
+                                    }
+                                    transition={{ duration: 0 }}
+                                    className={`relative`}
+                                >
+                                    <ClickAwayListener
+                                        onClickAway={() => onClickAway(props)}
+                                    >
+                                        <Input
+                                            enablePoundSign={enablePoundSign}
+                                            value={
+                                                singleVariation?.[category] ||
+                                                ''
+                                            }
+                                            property={property}
+                                            handleOnchange={(e) =>
+                                                handleOnchange({
+                                                    value: e.target.value,
+                                                    props: {
+                                                        ...options,
+                                                        property,
+                                                        category,
+                                                    },
+                                                    newSingleVariation: {
+                                                        ...singleVariation,
+                                                    },
+                                                })
+                                            }
+                                            visible={singleVariation.visible}
+                                            id={`${singleVariation._id}-${category}`}
+                                            isValueValidate={true}
+                                        />
+                                    </ClickAwayListener>
+                                </motion.td>
+                            )}
+                        </Fragment>
+                    );
+                })}
+
+                <td
+                    className={` ${
+                        !error.stock &&
+                        !error.price &&
+                        '!ml-auto w-full !min-w-full !align-middle'
+                    }  !text-right`}
+                >
+                    <div className="flex h-auto items-center justify-end">
+                        {singleVariation?.stock == 0 && (
+                            <p
+                                className={`mr-4 flex h-5 items-center justify-center whitespace-nowrap rounded-full bg-black px-2 py-2 text-xs text-white ${
+                                    !singleVariation.visible && '!opacity-0'
+                                }`}
+                            >
+                                Sold out
+                            </p>
+                        )}
+                        <Switch
+                            state={singleVariation.visible}
+                            toggle={toggleVisible}
+                        />
+                    </div>
+                </td>
+            </motion.tr>
+            {/* </ClickAwayListener> */}
         </AnimatePresence>
     );
 }

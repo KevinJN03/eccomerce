@@ -46,31 +46,27 @@ function Manage({}) {
         }
     }, [temporaryVariation]);
 
-//     useEffect(() => {
-//         const newArr = []
-// debugger
-//         if (state == false) {
-//             newArr = [...temporaryVariation].map((item) => {
-//                 return { ...item, [property]: { on: false }, combine: false };
-//             });
-//         } else if (state == true) {
-//             newArr = [...temporaryVariation].map((item) => {
-//                 return { ...item, [property]: { on: true } };
-//             });
-//         }
+    //     useEffect(() => {
+    //         const newArr = []
+    // debugger
+    //         if (state == false) {
+    //             newArr = [...temporaryVariation].map((item) => {
+    //                 return { ...item, [property]: { on: false }, combine: false };
+    //             });
+    //         } else if (state == true) {
+    //             newArr = [...temporaryVariation].map((item) => {
+    //                 return { ...item, [property]: { on: true } };
+    //             });
+    //         }
 
-//         newArr.push(...temporaryVariation.map((item) => {
-//             return { ...item, ['priceHeader']: { on: priceState } };
-//         }))
+    //         newArr.push(...temporaryVariation.map((item) => {
+    //             return { ...item, ['priceHeader']: { on: priceState } };
+    //         }))
 
-//         setTemporaryVariation(() => newArr);
-//     }, [priceSelection, quantitySelection]);
+    //         setTemporaryVariation(() => newArr);
+    //     }, [priceSelection, quantitySelection]);
 
-
-
-
-
-// decide if the price or quantities switch should be  on
+    // decide if the price or quantities switch should be  on
     function checkHeader(property, arr) {
         const newTemporaryVariation = [];
         if (arr) {
@@ -122,10 +118,8 @@ function Manage({}) {
     const notDisabled = arr.length;
 
     const apply = () => {
-        const clonePublishError = _.cloneDeep(publishError);
-
         const newArr = [...arr];
-        debugger;
+        // debugger;
         if (countPriceHeader > 1 || countQuantityHeader > 1) {
             const update = newArr.map((item) => {
                 return {
@@ -136,13 +130,19 @@ function Manage({}) {
                 };
             });
 
+            publishErrorDispatch({
+                type: 'CLEAR',
+                path: 'price',
+            });
+            publishErrorDispatch({
+                type: 'CLEAR',
+                path: 'stock',
+            });
+
             setVariations(() => update);
             combineDispatch({ type: 'combineVariations', variations: update });
             setStockValue(() => null);
             setPriceValue(() => null);
-
-            publishErrorDispatch({ type: 'CLEAR', path: 'price' });
-            publishErrorDispatch({ type: 'CLEAR', path: 'stock' });
         } else {
             combineDispatch({ type: 'clear' });
             const newUpdate = newArr.map((item) => {
@@ -152,16 +152,13 @@ function Manage({}) {
 
                 for (const [key, value] of options.entries()) {
                     const newObj = _.cloneDeep(value);
-
                     if (!quantityHeader.on) {
                         _.unset(newObj, 'stock');
                         setStockValue(() => null);
-                        _.unset(clonePublishError, `${key}-stock`);
                     }
                     if (!priceHeader.on) {
                         _.unset(newObj, 'price');
                         setPriceValue(() => null);
-                        _.unset(clonePublishError, `${key}-price`);
                     }
                     _.set(newObj, 'visible', true);
                     newOptions.set(key, newObj);
@@ -171,8 +168,11 @@ function Manage({}) {
             });
             setVariations(() => newUpdate);
         }
-        // publishErrorDispatch('clearValidateInput');
-        publishErrorDispatch({ type: 'SET', data: clonePublishError });
+
+        publishErrorDispatch({
+            type: 'CLEAR',
+            path: 'variationoption',
+        });
         setPublish((prevState) => ({ ...prevState, firstAttempt: false }));
         setModalCheck(() => false);
     };

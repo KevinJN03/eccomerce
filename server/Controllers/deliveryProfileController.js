@@ -249,7 +249,6 @@ export const get_many_delivery_profile = asyncHandler(
   async (req, res, next) => {
     const { ids } = req.body;
 
-   
     const profiles = await DeliveryProfile.find({ _id: ids });
 
     res.status(200).send(profiles);
@@ -259,7 +258,7 @@ export const get_many_delivery_profile = asyncHandler(
 export const getAllOrders = asyncHandler(async (req, res, next) => {
   const orders = await Order.find({}, null, {
     populate: { path: 'items.product' },
-    sort: { createdAt: '-1' },
+    sort: { createdAt: -1 },
   });
 
   return res.status(200).send({ succes: true, orders });

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useVariation } from '../../../../../../../context/variationContext';
 import { v4 as uuidv4 } from 'uuid';
-function SelectOptions({ property, selection, setSelection }) {
+function SelectOptions({ property, selection, setSelection, getBothVariation,
+    filterDisabledVariation }) {
     const { temporaryVariation, setTemporaryVariation } = useVariation();
     const [bothName, setBothName] = useState('');
 
@@ -26,26 +27,26 @@ function SelectOptions({ property, selection, setSelection }) {
         setBothName(() => value);
     }, [temporaryVariation]);
 
-    function filterDisabledVariation() {
-        return [...temporaryVariation].filter((item) => !item?.disabled);
-    }
+    // function filterDisabledVariation() {
+    //     return [...temporaryVariation].filter((item) => !item?.disabled);
+    // }
 
-    function getBothVariation() {
-        let value;
-        // debugger
-        const filterDisabled = filterDisabledVariation();
-        if (filterDisabled.length >= 2) {
-            value = `${filterDisabled[0].name} and ${filterDisabled[1].name}`;
-        }
+    // function getBothVariation() {
+    //     let value;
+    //     // debugger
+    //     const filterDisabled = filterDisabledVariation();
+    //     if (filterDisabled.length >= 2) {
+    //         value = `${filterDisabled[0].name} and ${filterDisabled[1].name}`;
+    //     }
 
-        return value;
-    }
+    //     return value;
+    // }
 
     const handleSelect = (e) => {
-        debugger
+        
         const value = e.target.value;
         const { both, _id } = e.target.options[e.target.selectedIndex].dataset;
-        debugger;
+      
         setSelection(() => value);
         const newTemporaryVariation = filterDisabledVariation();
 

@@ -15,6 +15,7 @@ import UpdateProduct from '../hooks/updateProduct';
 import combineReducer from '../hooks/combineReducer';
 import { contentReducer } from '../hooks/contentReducer';
 import _ from 'lodash';
+import publishError_Reducer from '../hooks/publishErrorReducer';
 export const NewProductContext = createContext(null);
 
 export const useNewProduct = () => {
@@ -73,11 +74,13 @@ export const NewProductProvider = (props) => {
         setStockValue,
         combineDispatch,
         contentDispatch,
-        temporaryVariation, setTemporaryVariation,
+        temporaryVariation,
+        setTemporaryVariation,
         setDescription,
     });
     const value = {
-        temporaryVariation, setTemporaryVariation,
+        temporaryVariation,
+        setTemporaryVariation,
         loading,
         setLoading,
         variations,
@@ -122,105 +125,4 @@ export const NewProductProvider = (props) => {
     );
 };
 
-function publishError_Reducer(state, action) {
-    if (action.type == 'SET') {
-        // action?.data?.forEach((element) => {
-        //     const { path } = element;
-        //     map.set(path, element);
-        // });
-        return action.data;
-    }
 
-    if (action.type == 'ADD') {
-        const newState = _.cloneDeep(state);
-        _.set(newState, action.path, action.msg);
-
-        return newState;
-    }
-
-    if (action.type == 'default') {
-        return { ...state, default: _.get(action, 'data.msg.0') };
-    }
-    if (action.type === 'getValidateInput') {
-        // const size = _.get(state, 'validateInput')?.length;
-
-        // if (size > 0) {
-        //     action.isAllInputValid.current = false;
-        // } else {
-        //     action.isAllInputValid.current = true;
-        // }
-
-        return state;
-    }
-    if (action == 'clearValidateInput') {
-        const newState = _.cloneDeep(state);
-        _.unset(newState, 'validateInput');
-        return newState;
-    }
-
-    // if (action.type == 'addToValidateInput2') {
-    //     return action.map;
-    // }
-
-    // if (action.type == 'addToValidateInput') {
-
-    //     const newState = _.cloneDeep(state)
-    //     if (!_.has(newState, 'validateInput')) {
-    //         const map = new Map(state);
-    //         return map.set(
-    //             'validateInput',
-    //             new Map([[action.path, action.error]])
-    //         );
-    //     }
-    //     const getMap = state.get('validateInput');
-
-    //     if (!getMap.has(action.path)) {
-    //         const map = new Map(getMap);
-    //         map.set(action.path, action.error);
-
-    //         const newMap = new Map(state).set('validateInput', map);
-    //         return newMap;
-    //     } else {
-    //         return state;
-    //     }
-    // }
-    if (action.type == 'deleteValidateInput') {
-        const newState = _.cloneDeep(newState);
-        const validateInputObj = _.get(newState, 'validateInput');
-
-        if (_.has(validateInputObj, action.path)) {
-            if (_.keys(validateInputObj).length <= 1) {
-                _.unset(newState, 'validateInput');
-                _.unset(newState, 'isAllInputValid');
-            } else {
-                _.unset(validateInputObj, action.path);
-                _.set(newState, 'validateInput', validateInputObj);
-            }
-        }
-
-        return newState;
-        // if (newMap.has(action.path)) {
-        //     if (newMap.size <= 1) {
-        //         map.delete('validateInput');
-        //         map.delete('isAllInputValid');
-        //     } else {
-        //         newMap.delete(action.path);
-        //         map.set('validateInput', newMap);
-        //     }
-        // }
-        // return map;
-    }
-
-    if (action.type == 'CLEAR') {
-        const newState = _.cloneDeep(state);
-        _.unset(newState, action.path);
-
-        return newState;
-    }
-
-    if (action == 'clearAll') {
-        return {};
-    }
-
-    throw new Error(`please enter a valid action. ${action} is not valid.`);
-}

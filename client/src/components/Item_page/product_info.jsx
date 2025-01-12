@@ -1,4 +1,4 @@
-import { FavoriteBorder } from '@mui/icons-material';
+import { FavoriteBorder, LocalOfferOutlined } from '@mui/icons-material';
 import Info from '../common/info';
 import Select from './Select';
 import AddToCart from './addToCart';
@@ -16,9 +16,14 @@ import useAddItemToBagHook from '../../hooks/addItemToBagHook';
 import { useProductContext } from '../../context/productContext';
 import _ from 'lodash';
 import { useCart } from '../../context/cartContext';
+import {
+    AddItemToBagProvider,
+    useAddItemToBagContext,
+} from '../../context/addItemToBagContext';
 
 function Product_info({ text, details, images }) {
     const { product, loading } = useProductContext();
+
     const {
         priceState,
         setPriceState,
@@ -32,7 +37,7 @@ function Product_info({ text, details, images }) {
         setError,
         handleAddToCart,
         handleOnChange,
-    } = useAddItemToBagHook({ product });
+    } = useAddItemToBagContext();
     const {
         isHoverFavorite,
         setIsHoverFavorite,
@@ -48,44 +53,40 @@ function Product_info({ text, details, images }) {
             ) : (
                 <div className="skeleton-pulse mb-4 h-full max-h-[100px] w-full"></div>
             )}
+            <div className="flex w-full flex-row items-center gap-2 bg-blue-100 p-2">
+                <div className="scale-x-[-1] transform">
+                    <LocalOfferOutlined />
+                </div>
+                <p>
+                    PSST! NEW HERE? Get 10% off selected styles* With code:
+                    <span className="font-semibold">HIFRIEND</span>
+                </p>
+            </div>
 
-            {[1, 2].map((item, idx) => {
+            {[1, 2].map((num, idx) => {
+                const field = `variation_${num}_array`;
+                const array = _.get(product, ['variation_data', field]);
                 return (
                     <Fragment key={`${product?._id}-productInfo-${idx}`}>
-                        {_.get(product, [
-                            `variation_data`,
-                            `variation1_present`,
-                        ]) && !loading ? (
+                        {!_.isEmpty(array) && !loading ? (
                             <>
-                                <p className="bg-green-300"> </p>
                                 <Select
                                     variationSelect={variationSelect}
                                     setVariationSelection={
                                         setVariationSelection
                                     }
-                                    array={_.get(product, [
-                                        'variation_data',
-                                        `variation${idx + 1}_data`,
-                                        'array',
-                                    ])}
-                                    text={_.get(product, [
-                                        'variation_data',
-                                        `variation${idx + 1}_data`,
-                                        'title',
-                                    ])?.toUpperCase()}
-                                    single={_.get(product, [
-                                        'variation_data',
-                                        `variation${idx + 1}_data`,
-                                        'array',
+                                    array={array}
+                                    variationName={_.get(array, [
                                         0,
-                                        'variation',
-                                    ])}
-                                    property={`variation${idx + 1}`}
-                                    setOutOfStock={setOutOfStock}
-                                    setPrice={setPriceState}
+                                        'name',
+                                    ])?.toUpperCase()}
+                                    single={_.get(array, [0, 'variation'])}
+                                    property={`variation${num}`}
+                                    //setOutOfStock={setOutOfStock}
+                                  //  setPrice={setPriceState}
                                     ref={null}
                                     isSecond={false}
-                                    handleOnChange={handleOnChange}
+                                   // handleOnChange={handleOnChange}
                                 />
                             </>
                         ) : (
@@ -154,11 +155,12 @@ function Product_info({ text, details, images }) {
                 ) : (
                     <div className="relative flex w-full flex-row items-center gap-3">
                         <AddToCart
-                            {...{
-                                handleAddToCart,
-                                isOutOfStock,
-                            }}
+                        // {...{
+                        //     handleAddToCart,
+                        //     isOutOfStock,
+                        // }}
                         />
+
                         {/* <WishList /> */}
 
                         <div
@@ -184,7 +186,7 @@ function Product_info({ text, details, images }) {
                 <div className="skeleton-pulse mb-4 h-full min-h-[100px] w-full"></div>
             )}
 
-            {!loading ? (
+            {/* {!loading ? (
                 <>
                     <div className=" flex flex-col border-t-[thin] sm:mx-4 sm+md:mb-10 sm+md:gap-0 lg:mt-6">
                         <Product_Detail details={details} />
@@ -193,9 +195,9 @@ function Product_info({ text, details, images }) {
                 </>
             ) : (
                 <div className="skeleton-pulse h-full w-full"></div>
-            )}
+            )} */}
 
-            <section className="similar-style-with-container flex sm:mx-4 sm+md:flex-col-reverse sm+md:gap-8 lg:mt-5 lg:flex-col">
+            {/* <section className="similar-style-with-container flex sm:mx-4 sm+md:flex-col-reverse sm+md:gap-8 lg:mt-5 lg:flex-col">
                 {!loading ? (
                     <>
                         <Similar_Styles images={product?.images} />
@@ -203,8 +205,8 @@ function Product_info({ text, details, images }) {
                 ) : (
                     <div className="skeleton-pulse h-full w-full"></div>
                 )}
-                {/* <Style_It_With products={style_it_with_image} /> */}
-            </section>
+       
+            </section> */}
         </section>
     );
 }

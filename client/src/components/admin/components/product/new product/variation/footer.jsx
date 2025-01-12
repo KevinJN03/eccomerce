@@ -7,6 +7,11 @@ import formatFormData from '../utils/formatFormData';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAdminContext } from '../../../../../../context/adminContext';
 import BubbleButton from '../../../../../buttons/bubbleButton';
+import _ from 'lodash';
+import { Box, Modal } from '@mui/material';
+import BoxWithProps, {
+    CloseModalButton,
+} from '../../../../../common/BoxwithProps.jsx';
 
 function Footer({ type }) {
     const { id } = useParams();
@@ -19,7 +24,7 @@ function Footer({ type }) {
         draft: false,
         publish: false,
     }); // state to change which button to display loading animation
-
+    const [modalCheck, setModalCheck] = useState(false);
     const {
         description,
         title,
@@ -51,28 +56,26 @@ function Footer({ type }) {
     }, []);
 
     //async function publishData(formData, draft) {
-    async function publishData(formData) {
+    async function publishData(formData, draft = false) {
         abortControllerRef.current?.abort();
         abortControllerRef.current = new AbortController();
-        const url = loading?.['draft']
-            ? '/product/create?isDraft=true'
-            : type == 'update'
-              ? `/product/${type}/${id}`
-              : '/product/create';
+
+        const url =
+            draft == true
+                ? '/product/create?isDraft=true'
+                : type == 'update'
+                  ? `/product/${type}/${id}`
+                  : '/product/create';
         try {
             await adminAxios({
-                method: loading?.['draft']
-                    ? 'post'
-                    : type == 'update'
-                      ? 'put'
-                      : 'post',
+                method: draft ? 'post' : type == 'update' ? 'put' : 'post',
                 url: url,
                 data: formData,
                 headers: { 'Content-Type': 'multipart/form-data' },
                 signal: abortControllerRef.current.signal,
             });
 
-            //navigate('/admin/products');
+            navigate('/admin/products');
         } catch (error) {
             const errorData = error.response.data;
             if (error.response.status == 500) {
@@ -93,10 +96,10 @@ function Footer({ type }) {
     }
 
     // const publishProduct = (e, draft = false) => {
-    const publishProduct = (e) => {
+    const publishProduct = (draft = false) => {
         //debugger;
 
-        if (publishError?.size > 0) {
+        if (!_.isEmpty(publishError)) {
             // clearTimeout(timeout);
             abortControllerRef.current.abort();
             setLoading(() => ({}));
@@ -125,23 +128,25 @@ function Footer({ type }) {
             };
             const formData = formatFormData(value); // generate format to send data to backend
             // publishData(formData, draft);
-            publishData(formData);
+            publishData(formData, draft);
             // }, 1000);
 
             // cancel operation if there is an error
         } catch (error) {
+            debugger;
             setLoading(() => ({}));
         }
     };
 
     const publishPreview = (e) => {
         setLoading(() => ({ preview: true }));
+        setModalCheck(() => true);
     };
     const publishDraft = (e) => {
         e.preventDefault();
         setLoading(() => ({ draft: true }));
 
-        publishProduct();
+        publishProduct(true);
     };
 
     const publishCreate = (e) => {
@@ -150,7 +155,10 @@ function Footer({ type }) {
 
         publishProduct();
     };
-
+    const handleClose = () => {
+        setModalCheck(() => false);
+        setLoading(() => ({ preview: false }));
+    };
     return (
         <div className="sticky bottom-0 z-[3] flex w-full max-w-full justify-between gap-2 border-t border-dark-gray/50 bg-white px-6 py-4 font-medium">
             <BubbleButton handleClick={() => navigate('/admin/products')} />
@@ -182,8 +190,10 @@ function Footer({ type }) {
                 ].map(({ text, buttonClick, type, className, pClassName }) => {
                     return (
                         <button
-                            className={`theme-btn !text-sm ${className || ''}`}
+                            key={type}
+                            className={`theme-btn w-full !text-sm ${className || ''}`}
                             onClick={buttonClick}
+                            disabled={!_.isEmpty(publishError)}
                         >
                             {!loading?.[type] ? (
                                 <p
@@ -192,12 +202,10 @@ function Footer({ type }) {
                                     {text}
                                 </p>
                             ) : (
-                                <div className="w-full">
-                                    <div
-                                        className={`spinner-dot-pulse spinner-sm ![--spinner-color:var(--${type == 'publish' ? 'white' : 'black'})]`}
-                                    >
-                                        <div className="spinner-pulse-dot "></div>
-                                    </div>
+                                <div
+                                    className={`spinner-dot-pulse ![--spinner-color:var(--${type == 'publish' ? 'white' : 'black'})] spinner-sm`}
+                                >
+                                    <div className="spinner-pulse-dot"></div>
                                 </div>
                             )}
                         </button>
@@ -233,6 +241,26 @@ function Footer({ type }) {
                     </div>
                 )}
             </button> */}
+
+            <Modal open={modalCheck} onClose={handleClose}>
+                <BoxWithProps
+                    customSx={{
+                        top: '5%',
+                        left: '50%',
+
+                        transform: 'translate(-50%, -0%)',
+                        backgroundColor: 'white',
+                        padding: '2rem',
+                        borderRadius: '1.8rem',
+                        maxWidth: '60vw',
+                    }}
+                >
+                    <CloseModalButton handleClick={handleClose} />
+                    <section>
+                        <h1>Listing preview</h1>
+                    </section>
+                </BoxWithProps>
+            </Modal>
         </div>
     );
 }

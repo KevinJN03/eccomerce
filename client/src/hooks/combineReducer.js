@@ -1,22 +1,25 @@
 import ObjectID from 'bson-objectid';
+import { v4 } from 'uuid';
 export default function combineReducer(state, action) {
     if (action.type == 'UPDATE_OPTIONS') {
         return { ...state, options: action.options };
     }
     // take provided data and set the combinevariation
     if (action.type == 'set') {
-        const data = { ...action.combine };
-        const newData = { ...data, on: true };
+        const newData = { ...action.combine, on: true, _id: v4() };
 
         return { ...newData, combine: true };
     }
     if (action.type == 'clear') {
         // empty Map
-        return { ...state, options: new Map(), on: false };
+
+        return { _id: v4() };
+        // return { ...state, options: new Map(), on: false };
     }
 
     if (action?.type == 'update') {
         // create a new map will updated proprties
+    
         const newOptionsMap = new Map(state.options).set(
             action._id,
             action.newObj

@@ -109,6 +109,7 @@ function useAddItemToBagHook({ product }) {
     };
 
     const handleOnChange = ({ e, stockState, setStockState, property }) => {
+        debugger;
         const { id, variation, ...values } =
             e.target.options[e.target.selectedIndex].dataset;
 

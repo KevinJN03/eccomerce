@@ -36,6 +36,7 @@ function CopyLink({ url, handleAction, button }) {
                         clearTimeout(timeoutRef.current);
 
                         if (handleAction) {
+                            debugger
                             handleAction();
                             // return;
                         } else {

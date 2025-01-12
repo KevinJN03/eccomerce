@@ -19,6 +19,7 @@ import deliveryProfile from '../Models/deliveryProfile.js';
 import variationFormat from '../utils/variationFormat.js';
 import VariationOption from '../Models/variationOption.js';
 import variationOption from '../Models/variationOption.js';
+import { v4 } from 'uuid';
 
 export const get_all_products = asyncHandler(async (req, res) => {
   const products = await Product.find().populate('category').exec();
@@ -92,10 +93,474 @@ export const getProductsInfo = asyncHandler(async (req, res, next) => {
   return res.status(200).send(newProduct);
 });
 
+export const beta_get_single_product = [
+  check('id').trim().escape(),
+  asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+
+    console.log({ here: id });
+
+    const variationsField = [
+      { num: 1, props: [] },
+      { num: 2, props: ['price', 'stock', '_id'] },
+    ];
+
+    //const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
+    //console.log({ ids });
+    const products = await Product.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+      },
+      ...productAggregateStage({ stats: false }),
+
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'category',
+          foreignField: 'category',
+          as: 'alsoLike',
+
+          let: { gender: '$gender', id: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $and: [
+                  {
+                    $expr: {
+                      $eq: ['$status', 'active'],
+                    },
+                  },
+                  {
+                    $expr: {
+                      $eq: ['$gender', '$$gender'],
+                    },
+                  },
+                  {
+                    $expr: {
+                      $ne: [{ $toObjectId: '$$id' }, '$_id'],
+                    },
+                  },
+                ],
+              },
+            },
+
+            ...productAggregateStage({ stats: false }),
+
+            {
+              $unset: ['variations'],
+            },
+
+            { $limit: 10 },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'category',
+        },
+      },
+      {
+        $addFields: {
+          category: {
+            $arrayElemAt: ['$category.name', 0],
+          },
+          // find the combined variation and then decombine, splitting into 2 arrays
+          'variation_data.combineVariation': {
+            $arrayElemAt: [
+              {
+                $filter: {
+                  input: '$variations',
+                  as: 'variation',
+                  cond: {
+                    $eq: ['$$variation.combine', true],
+                  },
+                },
+              },
+              0,
+            ],
+
+            // $cond: {
+            //   if: { $gte: [{ $size: '$variations' }, 1] },
+            //   // then: {
+            //   //   $map: {
+            //   //     input: { $arrayElemAt: ['$variations', 2] },
+            //   //     as: 'variation',
+            //   //     in: '$$variation.option'
+            //   //   },
+            //   // },
+
+            //   then: {
+            //     $objectToArray: {
+            //       $arrayElemAt: ['$variations.options', 2],
+            //     },
+            //   },
+            //   else: false,
+            // },
+          },
+        },
+      },
+
+      {
+        $unwind: {
+          path: '$variation_data.combineVariation.options',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $set: {
+          'variation_data.combineVariation.options': {
+            $arrayElemAt: ['$variation_data.combineVariation.options', 1],
+          },
+        },
+      },
+      {
+        $group: {
+          // Group by document ID and create 2 arrays 2 uncombine the combined variation
+          _id: '$_id',
+          doc: { $first: '$$ROOT' }, // Keep original document structure
+          combineVariationOptions: {
+            $push: {
+              $concatArrays: [
+                ['$variation_data.combineVariation.options._id'],
+                ['$variation_data.combineVariation.options'],
+              ],
+            },
+
+            // $push: [
+            //   '$variation_data.combineVariation.options._id',
+            //   '$variation_data.combineVariation.options',
+            // ],
+          },
+          ...[...variationsField].reduce((accumulator, { num, props }) => {
+            const field = `variation_${num}_array`;
+            const additional = num == 2 ? '2' : '';
+            accumulator[field] = {
+              $addToSet: {
+                name: `$variation_data.combineVariation.name${additional}`,
+                variation: `$variation_data.combineVariation.options.variation${additional}`,
+                variation_id:
+                  '$variation_data.combineVariation.options.variation_id',
+                visible: '$variation_data.combineVariation.options.visible',
+                product_id:
+                  '$variation_data.combineVariation.options.product_id',
+                ...props.reduce((accumulator, prop) => {
+                  accumulator[prop] =
+                    `$variation_data.combineVariation.options.${prop}`;
+                  return accumulator;
+                }, {}),
+              },
+            };
+            return accumulator;
+          }, {}),
+        },
+      },
+
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              '$doc',
+              {
+                variation_data: {
+                  $mergeObjects: [
+                    '$doc.variation_data',
+                    {
+                      combineVariation: {
+                        $mergeObjects: [
+                          '$doc.variation_data.combineVariation',
+                          { options: '$combineVariationOptions' },
+                        ],
+                      },
+                    },
+                    // {
+                    //   $mergeObjects: ['$doc.variation_data.combineVariation.options',
+                    //     {
+                    //       combineVariation: {
+                    //         options: '$combineVariationOptions',
+                    //       },
+                    //     },
+                    //   ],
+                    // },
+
+                    ...[...variationsField].map(({ num }) => {
+                      //  const field = `variation_${num}_data`
+                      return {
+                        //[field]: {
+                        [`variation_${num}_array`]: `$variation_${num}_array`,
+                        // },
+                      };
+                    }),
+
+                    // x,
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      },
+
+      {
+        $addFields: {
+          // generate variationArrrays field if variation is not combined
+          'variation_data.isVariationCombine': {
+            $cond: [
+              {
+                $lte: [
+                  // compare bson types number
+                  '$variation_data.combineVariation.options',
+                  null,
+                ],
+              },
+              false,
+              true,
+            ],
+          },
+          ...[...variationsField].reduce((accumulator, { num }) => {
+            const field = `variation_data.variation_${num}_array`;
+            accumulator[field] = {
+              $cond: [
+                {
+                  $and: [
+                    { $isArray: `$${field}` },
+                    {
+                      $gt: [{ $size: `$${field}` }, 0],
+                    },
+                    {
+                      $not: {
+                        $eq: [{ $arrayElemAt: [`$${field}`, 0] }, {}], // not empty
+                      },
+                    },
+                  ],
+                },
+                `$${field}`,
+                {
+                  $cond: [
+                    {
+                      $lte: [
+                        // compare bson types number
+                        { $arrayElemAt: ['$variations.options', num - 1] },
+                        null,
+                      ],
+                    },
+                    '$$REMOVE',
+                    {
+                      $map: {
+                        input: {
+                          $arrayElemAt: ['$variations.options', num - 1],
+                        }, // minus 1 to find the index in variations, array index starts from 0
+
+                        as: 'option',
+                        in: { $arrayElemAt: ['$$option', 1] },
+                      },
+                    },
+                  ],
+                },
+              ],
+            };
+
+            return accumulator;
+          }, {}),
+        },
+      },
+
+      {
+        $unset: ['variation_1_array', 'variation_2_array', 'variations'],
+      },
+
+      // {
+      //   $unwind: {
+      //     path: '$variations',
+      //     includeArrayIndex: 'variationIndex',
+      //   },
+      // },
+      // {
+      //   $addFields: {
+      //     optionArray: { $objectToArray: '$variations.options' },
+      //   },
+      // },
+
+      // {
+      //   $addFields: {
+      //     variationOptionArray: {
+      //       $map: {
+      //         input: '$optionArray',
+      //         as: 'variationOption',
+      //         in: '$$variationOption.v',
+      //       },
+      //     },
+      //   },
+      // },
+
+      // {
+      //   $group: {
+      //     _id: '$_id',
+      //     variations: {
+      //       $push: '$variations',
+      //     },
+      //     doc: { $first: '$$ROOT' },
+      //     variationList: {
+      //       $push: {
+      //         title: '$variations.name',
+      //         variationIndex: '$variationIndex',
+      //         array: '$variationOptionArray',
+      //       },
+      //     },
+      //   },
+      // },
+      // {
+      //   $replaceRoot: {
+      //     newRoot: {
+      //       $mergeObjects: ['$doc', { variationList: '$variationList' }],
+      //     },
+      //   },
+      // },
+
+      // {
+      //   $addFields: {
+      //     variation_data: {
+      //       // $arrayToObject: {
+      //       $reduce: {
+      //         input: '$variationList',
+      //         initialValue: '$variation_data',
+      //         in: {
+      //           $cond: {
+      //             if: {
+      //               $lt: ['$$this.variationIndex', 2],
+      //             },
+
+      //             then: {
+      //               $mergeObjects: [
+      //                 '$$value',
+      //                 {
+      //                   $arrayToObject: [
+      //                     [
+      //                       {
+      //                         k: {
+      //                           $concat: [
+      //                             'variation',
+      //                             {
+      //                               $toString: {
+      //                                 $add: ['$$this.variationIndex', 1],
+      //                               },
+      //                             },
+      //                             '_present',
+      //                           ],
+      //                         },
+      //                         v: true,
+      //                       },
+      //                       {
+      //                         k: {
+      //                           $concat: [
+      //                             'variation',
+      //                             {
+      //                               $toString: {
+      //                                 $add: ['$$this.variationIndex', 1],
+      //                               },
+      //                             },
+      //                             '_data',
+      //                           ],
+      //                         },
+      //                         v: '$$this',
+      //                       },
+      //                     ],
+      //                   ],
+      //                 },
+      //               ],
+      //             },
+
+      //             else: {
+      //               $mergeObjects: [
+      //                 '$$value',
+      //                 {
+      //                   $arrayToObject: [
+      //                     [
+      //                       { k: 'isVariationCombine', v: true },
+      //                       // {
+      //                       //   k: 'testcombineVariation',
+      //                       //   v: {
+      //                       //     $reduce: {
+      //                       //       input: '$$this.array',
+      //                       //       initialValue: { Magenta: [{ tester: true }] },
+      //                       //       in: {
+      //                       //         $mergeObjects: [
+      //                       //           '$$value',
+      //                       //           {
+      //                       //             $arrayToObject: [
+      //                       //               [
+      //                       //                 {
+      //                       //                   k: '$$this.variation',
+      //                       //                   v: {
+      //                       //                     $mergeObjects: [
+
+      //                       //                       // {
+      //                       //                       //   $getField: {
+      //                       //                       //     input: '$$value',
+      //                       //                       //     field: '$this.variation',
+      //                       //                       //   },
+      //                       //                       // },
+
+      //                       //                       {
+      //                       //                         $arrayToObject: [
+      //                       //                           [
+      //                       //                             {
+      //                       //                               k: '$$this.variation2',
+      //                       //                               v: '$$this',
+      //                       //                             },
+      //                       //                           ],
+      //                       //                         ],
+      //                       //                       },
+      //                       //                     ],
+      //                       //                   },
+      //                       //                 },
+      //                       //               ],
+      //                       //             ],
+      //                       //           },
+      //                       //         ],
+      //                       //       },
+      //                       //     },
+      //                       //   },
+      //                       // },
+      //                     ],
+      //                   ],
+      //                 },
+      //               ],
+      //             },
+      //           },
+      //         },
+      //       },
+      //       // },
+      //     },
+      //   },
+      // },
+      // {
+      //   $unset: ['variationOptionArray', 'variationIndex', 'optionArray'],
+      // },
+
+      // { $sort: { _id: 1 } },
+
+      // {
+      //   $project: {
+      //     variations: 0,
+      //   },
+      // },
+    ]);
+
+    // const updateProductVariation = variationFormat({ products: products });
+
+    res.status(200).send({ products, success: true });
+  }),
+];
+
 export const get_many_product = [
   check('id').trim().escape(),
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
+
+    console.log({ here: id });
 
     const ids = id.split(',').map((id) => new mongoose.Types.ObjectId(id));
     console.log({ ids });
@@ -593,7 +1058,8 @@ export const update_product = [
 
     const { id } = req.params;
     const { gender, category } = req.body;
-    const { productData, sharpResult } = await generateProduct(req, id);
+    const { productData, sharpResult, variationOptionsArray } =
+      await generateProduct(req, id, false);
     const oldProduct = await Product.findById(id, {
       category: 1,
       gender: 1,
@@ -627,7 +1093,13 @@ export const update_product = [
     }
 
     await Product.findByIdAndUpdate(id, { ...productData }, { upsert: true });
+    const deleteOldVariations = await VariationOption.deleteMany({
+      product_id: id,
+    });
 
+    const newVariations = await VariationOption.insertMany(
+      variationOptionsArray,
+    );
     res.send({ msg: 'product updated', success: true });
   }),
 ];

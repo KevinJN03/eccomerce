@@ -7,6 +7,7 @@ export default function handleValue({
     maxValue,
     publishErrorDispatch,
     minValue,
+ 
 }) {
     let error = null;
     if (!value || isNaN(value)) {
