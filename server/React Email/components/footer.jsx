@@ -20,7 +20,7 @@ function Footer({}) {
           <Row align="center" className="w-full">
             <Column align='center' className=" pb-4 !w-full !mx-auto !max-w-[50%] ">
               <Text className="text-center font-bold text-white">
-                Find inspiration hh
+                Find inspiration
               </Text>
               <Row
                 align="center"

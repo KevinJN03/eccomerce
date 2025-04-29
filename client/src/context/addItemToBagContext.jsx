@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { AdminReducer } from '../hooks/adminReducer';
 import { useNavigate } from 'react-router-dom';
-import { adminAxios } from '../api/axios.js';
+import axios, { adminAxios } from '../api/axios.js';
 import { useCart } from './cartContext.jsx';
 import { useProductContext } from './productContext.jsx';
 import _ from 'lodash';
@@ -30,53 +30,92 @@ export function AddItemToBagProvider({ children }) {
             variation2: { id: null, variation: null },
         }
     );
+
+    const abortControllerRef = useRef(new AbortController());
     const [isOutOfStock, setOutOfStock] = useState(false);
     const [combineVariation, setCombineVariation] = useState(null);
     const [error, setError] = useState({ on: false, msg: '' });
 
-    const handleOnChange = ({ e, stockState, setStockState, property }) => {
-        const values = e.target.options[e.target.selectedIndex].dataset;
-        const { _id, variation } = values;
-        debugger;
-        if (
-            property == 'variation2' &&
-            _.get(variation_data, 'isVariationCombine')
-        ) {
-            const combineVariationMap = new Map(
-                _.get(product, 'variation_data.combineVariation.options')
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
+
+    const handleOnChange = async ({
+        e,
+        stockState,
+        setStockState,
+        property,
+    }) => {
+        try {
+            const values = e.target.options[e.target.selectedIndex].dataset;
+            const { _id, variation } = values;
+            abortControllerRef.current?.abort();
+            abortControllerRef.current = new AbortController();
+
+            const newVariationSelect = {
+                ...variationSelect,
+                [property]: { ...values },
+            };
+
+            const findOptionValues = await axios.post(
+                '/variation/option',
+                { ...values, variationSelect: newVariationSelect },
+                { signal: abortControllerRef.current?.signal }
             );
 
-            const findVariation = _.get(variation_data, [
-                'combineVariation',
-                variationSelect?.variation1?.variation,
-                variation,
-            ]);
-            setVariationSelection((prevState) => ({
-                ...prevState,
-                [property]: { ...prevState[property], ...findVariation },
-            }));
-
-            if (_.has(findVariation, 'stock')) {
-                setStockState(() => findVariation.stock);
-            }
-
-            if (_.has(findVariation, 'price')) {
-                setPriceState(() => findVariation.price);
-            }
-        } else {
-            setVariationSelection((prevState) => ({
-                ...prevState,
-                [property]: { ...prevState[property], variation, _id },
-            }));
-
-            if (_.has(values, 'stock')) {
-                setStockState(() => values.stock);
-            }
-
-            if (_.has(values, 'price')) {
-                setPriceState(() => values.price);
-            }
+            setVariationSelection(() => newVariationSelect);
+            debugger;
+        } catch (error) {
+            console.log(error);
+            setError(() => ({ on: true, msg: error.response.data?.msg }));
         }
+
+        // const isCombineVariation =
+        //     property == 'variation2' &&
+        //     _.get(variation_data, 'isVariationCombine');
+        // let stock, price;
+        // debugger;
+        // // Check if item is a combined variation item
+        // // if true, find the variation, and set the VariationSelection object as [property] values within the combineVAriation object
+        // //  if false,
+        // if (isCombineVariation) {
+        //     const findVariation = _.get(variation_data, [
+        //         'combineVariation',
+
+        //         variationSelect?.variation1?.variation,
+        //         variation,
+        //     ]);
+        //     setVariationSelection((prevState) => ({
+        //         ...prevState,
+        //         [property]: { ...prevState[property], ...findVariation },
+        //     }));
+
+        //     if (_.has(findVariation, 'stock')) {
+        //         // setStockState(() => findVariation.stock);
+        //         stock = findVariation.stock;
+        //     }
+
+        //     if (_.has(findVariation, 'price')) {
+        //         price = findVariation.price;
+        //     }
+        // } else {
+        //     setVariationSelection((prevState) => ({
+        //         ...prevState,
+        //         [property]: { ...prevState[property], variation, _id },
+        //     }));
+
+        //     if (_.has(values, 'stock')) {
+        //         stock = values.stock;
+        //     }
+
+        //     if (_.has(values, 'price')) {
+        //         price = values.price;
+        //     }
+        // }
+        // setStockState(() => stock);
+        // setPriceState(() => price);
     };
 
     const handleAddToCart = () => {

@@ -26,6 +26,7 @@ import userRoute from './userRoute.js';
 import adminRoute from './adminRoute.js';
 import orderRoute from './orderRoute.js';
 import deliveryRoute from './deliveryRoute.js';
+import variationRoute from './variationRoute.js'
 import authRoute from './authRoute.js';
 const router = express.Router();
 router.post('/user/login', loginUser);
@@ -58,7 +59,7 @@ router.use('/test', emailTestRoute);
 router.get('/giftCard', get_single_giftCard);
 router.use('/cart', cartRoute);
 router.use('/wishlist', wishlistRoute);
-
+router.use('/variation', variationRoute)
 router.get('/server-status', (req, res) => {
   return res.send({ success: true });
 });

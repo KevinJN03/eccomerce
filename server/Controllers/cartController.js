@@ -129,6 +129,7 @@ export default function generateModelSchemaRoute(Model, route) {
         ),
       };
       const findIfExist = await Model.findOne(findObj);
+      
       if (findIfExist) {
         await Model.findOneAndUpdate(
           findObj,

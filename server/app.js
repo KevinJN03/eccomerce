@@ -19,10 +19,10 @@ import { utc } from 'dayjs';
 import fs from 'fs';
 import https from 'https';
 dayjs.extend(utc);
-const { DBNAME, URL, SECRET, PORT } = process.env;
+const { DBNAME, URL, SECRET, PORT, CLIENT_URL, NODE_ENV } = process.env;
 
 // do not connect to cloud database in test environment.
-if (process.env.NODE_ENV != 'test') {
+if (NODE_ENV != 'test') {
   const db = () => {
     mongoose
       .connect(URL, { dbName: DBNAME })
@@ -38,14 +38,18 @@ if (process.env.NODE_ENV != 'test') {
 }
 
 const app = express();
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan(process.env.NODE_ENV == 'production' ? 'tiny' : 'dev'));
+app.use(morgan(NODE_ENV == 'production' ? 'tiny' : 'dev'));
 export const myCache = new NodeCache();
-// app.use(cors());
-//app.set('trust proxy', true);
-app.use(cors({ origin: true, credentials: true }));
 
+//app.set('trust proxy', true);
+//app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: CLIENT_URL, // frontend URL
+  credentials: true                // allow cookies, credentials
+}));
 app.use(
   session({
     secret: SECRET,
